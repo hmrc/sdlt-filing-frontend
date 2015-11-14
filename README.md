@@ -56,18 +56,8 @@ sudo nano /etc/nginx/sites-enabled/default
     location /contact {  
             proxy_pass      http://localhost:9250/contact;  
     }  
-      
-    location /calculate-stamp-duty-land-tax {  
-            proxy_pass      http://localhost:9090/calculate-stamp-duty-land-tax;  
-    }  
 
 Restart nginx  
 ```  
 sudo /etc/init.d/nginx restart
-```  
-
-Access sdltc via nginx  
-```  
-http://localhost/calculate-stamp-duty-land-tax/
-```
-  
+```    
