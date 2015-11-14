@@ -1,0 +1,154 @@
+<div class="previous-answers">
+    <div class="done-questions">
+        <article>
+            <h2 class="previous-answers-title">Previous answers</h2>
+            <table>
+                <tbody>
+                    <!-- Holding -->
+                    <tr class="section">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isHoldingValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Holding Type
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.holdingType)}}</td>
+                        <td class="link-right"><a href="#holding" title="Change your response to the question &quot;Is the property freehold or leasehold?&quot;">Change</a></td>
+                    </tr>
+                    <!-- Property -->
+                    <tr class="section">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isPropertyValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Property Type
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.propertyType)}}</td>
+                        <td class="link-right"><a href="#property" title="Change your response to the question &quot;Is the property residential or non-residential?&quot;">Change</a></td>
+                    </tr>
+                    <!-- Effective Date -->
+                    <tr class="section">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isEffectiveDateValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Effective date
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.effectiveDate)}}</td>
+                        <td class="link-right"><a href="#date" title="Change your response to the question &quot;Effective date of purchase / transaction&quot;">Change</a></td>
+                    </tr>
+                    <!-- Purchase Price -->
+                    <tr class="section" ng-show="data.holdingType === 'freehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isPurchasePriceValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Purchase Price
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.purchasePrice)}}</td>
+                        <td class="link-right"><a href="#purchase-price" title="Change your response to the question &quot;Purchase price&quot;">Change</a></td>
+                    </tr>   
+                    <!-- Start Date -->
+                    <tr class="section" ng-show="data.holdingType === 'leasehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isStartDateValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Start Date
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.startDate)}}</td>
+                        <td class="link-right"><a href="#lease-dates" title="Change your response to the question &quot;Start Date as specified in lease&quot;">Change</a></td>
+                    </tr>    
+                    <!-- End Date -->
+                    <tr class="section" ng-show="data.holdingType === 'leasehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isEndDateValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                End Date
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.endDate)}}</td>
+                        <td class="link-right"><a href="#lease-dates" title="Change your response to the question &quot;End Date as specified in lease&quot;">Change</a></td>
+                    </tr>  
+                    <!-- Premium -->
+                    <tr class="section" ng-show="data.holdingType === 'leasehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isPremiumValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Total premium payable
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.premium)}}</td>
+                        <td class="link-right"><a href="#premium" title="Change your response to the question &quot;Total premium payable&quot;">Change</a></td>
+                    </tr>    
+                    <!-- Year 1 Rent -->
+                    <tr class="section" ng-show="data.holdingType === 'leasehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isYear1RentValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Year 1 Rent
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.year1Rent)}}</td>
+                        <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 1 Rent&quot;">Change</a></td>
+                    </tr>                        
+                    <!-- Year 2 Rent -->
+                    <tr class="section" ng-show="data.holdingType === 'leasehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isYear2RentValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Year 2 Rent
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.year2Rent)}}</td>
+                        <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 2 Rent&quot;">Change</a></td>
+                    </tr>
+                    <!-- Year 3 Rent -->
+                    <tr class="section" ng-show="data.holdingType === 'leasehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isYear3RentValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Year 3 Rent
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.year3Rent)}}</td>
+                        <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 3 Rent&quot;">Change</a></td>
+                    </tr>
+                    <!-- Year 4 Rent -->
+                    <tr class="section" ng-show="data.holdingType === 'leasehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isYear4RentValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Year 4 Rent
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.year4Rent)}}</td>
+                        <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 4 Rent&quot;">Change</a></td>
+                    </tr>    
+                    <!-- Year 5 Rent -->
+                    <tr class="section" ng-show="data.holdingType === 'leasehold'">
+                        <td class="previous-question-title">
+                            <p class="{{validatedModel.isYear5RentValid}}">
+                                <span class="error-notification">You must answer this question</span>
+                                Year 5 Rent
+                            </p>
+                        </td>
+                        <td class="previous-question-body">{{getDisplayValue(data.year5Rent)}}</td>
+                        <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 5 Rent&quot;">Change</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </article>
+    </div>
+</div>
+<div class="form-group">
+    <div ng-show="{{!validatedModel.isModelValid}}">
+        Please fix any errors before continuing to calculation.
+    </div>
+    <a ng-click="submit()">
+        <button id="calculate" type="submit">Calculate</button>
+    </a>
+</div>
+<div class="form-group">
+    <a id="back-summary" href="javascript:history.back()">Back</a>
+</div>

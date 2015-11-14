@@ -1,0 +1,38 @@
+<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
+    <p>Optional description of the error(s) and how to correct them</p>
+    <ul class="error-summary-list">
+      <li ng-show="state.hasError('propertyType')"><a href="javascript:void(0)" data-ng-click="jumpTo('propertyType')">{{state.validationMessage('propertyType')}}</a></li>
+    </ul>
+</div>
+
+<h2 class="heading-medium">Residential or non-residential</h1>
+
+<form name="propertyForm" class="form">
+
+    <div class="form-group {{state.hasError('propertyType')}}">
+        <fieldset>
+            <legend id="propertyType" class="form-label">Is the property residential or non-residential?</legend>
+            <span class="form-hint">For mixed-usage choose Non-residential.</span>
+            <span class="error-notification">{{state.validationMessage('propertyType')}}</span>
+            <div class="inline">
+                <label class="block-label" for="residential">
+                    <input id="residential" ng-model="data.propertyType" name="propertyType" value="residential" type="radio" required>Residential
+                </label>
+                <label class="block-label" for="non-resident">
+                    <input id="non-residential" ng-model="data.propertyType" name="propertyType" value="non-residential" type="radio" required>Non-residential
+                </label>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="form-group">
+        <a ng-click="submit()">
+            <button id="next-property" type="submit">Next</button>
+        </a>
+    </div>
+    <div class="form-group">
+        <a id="back-property" href="javascript:history.back()">Back</a>
+    </div>
+
+</form>

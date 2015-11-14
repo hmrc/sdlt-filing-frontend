@@ -1,0 +1,19 @@
+@(userLoggedIn: Boolean,
+alphaFeedbackUrl: String,
+alphaFeedbackUnauthenticatedUrl: String,
+showFeedbackLinkInAlphaBanner: Boolean = true)
+
+<div class="alpha-banner">
+    <p><strong class="phase-tag">ALPHA</strong><span>This is a new service.
+        @if( showFeedbackLinkInAlphaBanner ) {
+            Help us improve it - send your
+            @defining(if (userLoggedIn) alphaFeedbackUrl else alphaFeedbackUnauthenticatedUrl) { linkUrl =>
+              <a id="feedback-link"
+                 href="@linkUrl"
+                 data-sso="false"
+                 data-journey-click="other-global:Click:Feedback">feedback</a>.
+            }
+        }
+        </span>
+    </p>
+</div>
