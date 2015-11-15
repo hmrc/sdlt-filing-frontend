@@ -4,7 +4,6 @@
 	require("./dataService.js");
 	require("./calculationService.js");
 	require("./navigationService.js");
-	require("./transformationService.js");
 	require("./validationServices/dateValidationService.js");
 	require("./validationServices/holdingValidationService.js");
 	require("./validationServices/leaseDatesValidationService.js");

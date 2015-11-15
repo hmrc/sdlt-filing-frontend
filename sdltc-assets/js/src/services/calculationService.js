@@ -82,7 +82,7 @@
             var slabRate = -1;
             var slabTaxDue = -1;
 
-            for (i = 0; i < slabs.length; i++) {
+            for (var i = 0; i < slabs.length; i++) {
                 if (amount > slabs[i].threshold)
                 {
                     slabRate = slabs[i].rate;
@@ -105,7 +105,7 @@
             var sliceTaxDue = -1;
             var totalTaxDue = 0;
 
-            for (i = 0; i < slices.length; i++) {
+            for (var i = 0; i < slices.length; i++) {
                 if (slices[i].to == -1) {
                     if (amount > slices[i].from) {
                         sliceAmount = amount - slices[i].from;

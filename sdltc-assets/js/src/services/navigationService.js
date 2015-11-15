@@ -55,8 +55,11 @@
                     redirectToNext(locationService, 'summary');
                 } 
             }
-             else if (currentView === 'relevant-rent') {
+            else if (currentView === 'relevant-rent') {
                 redirectToNext(locationService, 'summary');
+            }
+            else {
+                redirectToNext(locationService, 'result');
             }
     	};
 

@@ -211,6 +211,22 @@
                 expect(mockLocation.path()).toEqual('/summary');
             });
         });
+
+        describe('Calling .next() from the summary view', function() {
+            var mockLocation,
+                currentView = 'summary',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
+            it('should set the location path to /result', function() {
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/result');
+            });
+        });
         
     });
 }());

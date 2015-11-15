@@ -1,68 +1,125 @@
 <form name="resultForm" class="form">
 
-    <h2 class="heading-large">Results</h2>
+    <h1 class="heading-large">Result</h1>
 
-    <p class="lede">
-        This is an estimate of what you may be able to get from 6 April 2016 to 5 April 2017.
-    </p>
-    <p class="lede">
-        It’s based on the estimated details you have entered, and could change if your circumstances change.
-    </p>
-
-    <h3 class="heading-medium">Child Tax Credit</h3>
-    <div>
-        <p>You could get</p>
-        <div>
-            <span class="bold-large" id="ctcResult">&pound;{{result.ctc}}</span><span class="bold-small"> every four weeks</span>
-        </div>
-        <p>towards your household costs</p>
+    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
+      <div class = "form-group">
+        <table>
+          <tbody>
+            <tr class="section">
+              <th>Effective date</th>
+              <th>Purchase Price (&pound;)</th>
+              <th>Total SDLT due (&pound;)</th>
+            </tr>
+            <tr class="section">
+              <td>{{data.effectiveDate}}</td>
+              <td>{{data.premium}}</td>
+              <td>{{result.fromTaxDue}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <h3 class="heading-medium">Working Tax Credit</h3>
-    <div>
-        <p>You could get</p>
-        <div>
-            <span class="bold-large" id="wtcResult">&pound;{{result.wtc}}</span><span class="bold-small"> every four weeks</span>
-        </div>
-        <p>towards your household costs</p>
+
+    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014</h2>
+      <label class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
+      <div class = "form-group">
+        <table>
+          <tbody>
+            <tr class="section">
+              <th>Purchase Price (&pound;)</th>
+              <th>Percentage rate (%)</th>
+              <th>Total SDLT due (&pound;)</th>
+            </tr>
+            <tr class="section">
+              <td>{{data.premium}}</td>
+              <td>{{result.rate}}</td>
+              <td>{{result.taxDue}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <br/>
-    <h4 class="heading-small">How you qualify</h4>
-    <span>This is based on your estimated household income of </span><span id="incomeResult"> &pound;{{result.householdIncome}}</span>
-
-
-    <div ng-show="result.incomeBracket === 'under'">
-        <h3 class="heading-medium">Your Income Tax</h3>
-        <div class="bold-medium">You don't pay any tax</div>
-        <div>
-            <p>You estimated your income between 6 April 2015 and 5 April 2016 will be &pound;<span id="underIncome">{{result.youIncome}}</span>.</p>
-            <p>From 6 April 2016 the Income Tax personal allowance will increase to &pound;11,000.</p>
-            <p>You don't pay tax at the moment which means you don't use all of your personal allowance. If you have a partner you may be able to give your unused allowance to them as part of the <a href="https://www.gov.uk/marriage-allowance-guide/how-it-works" target="_blank">Marriage Allowance</a> scheme. This means they'll pay less tax.</p>
-            <p><a href="https://pure-fortress-6652.herokuapp.com/am-i-getting-minimum-wage" target="_blank">Check how the increased National Living Wage affects you (opens in new window)</a></p>
-        </div>
+    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'">
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT</h2>
+      <div class = "form-group">
+        <table>
+          <tbody>
+            <tr class="section">
+              <th>Effective date</th>
+              <th>Purchase Price (&pound;)</th>
+              <th>Percentage rate (%)</th>
+              <th>Total SDLT due (&pound;)</th>
+            </tr>
+            <tr class="section">
+              <td>{{data.effectiveDate}}</td>
+              <td>{{data.premium}}</td>
+              <td>{{result.rate}}</td>
+              <td>{{result.taxDue}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div ng-show="result.incomeBracket === 'in'">
-        <h3 class="heading-medium">Your Income Tax</h3>
-        <div class="bold-medium">You won't pay any tax in 2016-2017</div>
-        <div>
-            <p>You estimated your income between 6 April 2015 and 5 April 2016 will be &pound;<span id="inIncome">{{result.youIncome}}</span>.</p>
-            <p>From 6 April 2016 the Income Tax personal allowance will increase to &pound;11,000.</p>
-            <p>This means that, based on the income you estimated, you won't pay any tax from 6 April 2016. This is a saving of &pound;<span id="inDecrease">{{result.youTaxDecrease}}</span>.</p>
-            <p><a href="https://pure-fortress-6652.herokuapp.com/am-i-getting-minimum-wage" target="_blank">Check how the increased National Living Wage affects you (opens in new window)</a></p>
-        </div>
+    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
+      <div class = "form-group">
+        <table>
+          <tbody>            
+            <tr class="section">
+              <td>Total Amount of Tax for this Transaction</td>
+              <td>{{result.taxDue}}</td>
+            </tr>
+            <tr class="section">
+              <td>Net Present value</td>
+              <td>TODO</td>
+            </tr>
+            <tr class="section">
+              <td>Stamp Duty Land Tax on Rent</td>
+              <td>TODO</td>
+            </tr>
+            <tr class="section">
+              <td>Stamp Duty Land Tax on Premium</td>
+              <td>TODO</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div ng-show="result.incomeBracket === 'over'">
-        <h3 class="heading-medium">Your Income Tax</h3>
-        <div class="bold-medium">You'll pay less tax in 2016-2017</div>
-        <div>
-            <p>You estimated your income between 6 April 2015 and 5 April 2016 will be &pound;<span id="overIncome">{{result.youIncome}}</span>.</p>
-            <p>From 6 April 2016 everyone will get an increase in their Income Tax personal allowance of &pound;400.</p>
-            <p>This means that, based on the income you estimated, you'll pay &pound;<span id="overDecrease">{{result.youTaxDecrease}}</span> less tax from 6 April 2016</p>
-            <p><a href="https://pure-fortress-6652.herokuapp.com/am-i-getting-minimum-wage" target="_blank">Check how the increased National Living Wage affects you (opens in new window)</a></p>
-        </div>
+    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'">
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012</h2>
+      <div class = "form-group">
+        <table>
+          <tbody>            
+            <tr class="section">
+              <td>Total Amount of Tax for this Transaction</td>
+              <td>{{result.taxDue}}</td>
+            </tr>
+            <tr class="section">
+              <td>Net Present value</td>
+              <td>TODO</td>
+            </tr>
+            <tr class="section">
+              <td>Stamp Duty Land Tax on Rent</td>
+              <td>TODO</td>
+            </tr>
+            <tr class="section">
+              <td>Stamp Duty Land Tax on Premium</td>
+              <td>TODO</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
 </form>
+
+<div class="form-group">
+    <a id="back-result" href="javascript:history.back()">Back</a>
+</div>

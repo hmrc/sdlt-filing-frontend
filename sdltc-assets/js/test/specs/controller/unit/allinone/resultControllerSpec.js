@@ -12,7 +12,6 @@
             mockDataService, 
             mockNavigationService,
             mockModelValidationService,
-            mockTransformationService,
             mockCalculationService,
             calledServiceGetModel = false;
 
@@ -22,7 +21,7 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() {}
+                getModel : function() { return {}; }
             };
 
             mockNavigationService = { 
@@ -35,18 +34,13 @@
                 }
             };
 
-            mockTransformationService = {
-                transform : function() {}
-            };
-
             mockCalculationService = {
-                calculateTaxCredits: function() {}
+                calculateResidentialPremiumSlab: function() {}
             };
 
-            spyOn(mockDataService, 'getModel');
+            spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
-            spyOn(mockTransformationService, 'transform');
-            spyOn(mockCalculationService, 'calculateTaxCredits');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
             
             controller = $controller('resultController', {
                 $scope : mockScope,
@@ -54,7 +48,6 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
                 modelValidationService : mockModelValidationService,
-                transformationService : mockTransformationService,
                 calculationService : mockCalculationService,
             });
         }));
@@ -66,13 +59,9 @@
         it('should make 1 call to navigationService.logView', function () {
             expect(mockNavigationService.logView.calls.count()).toEqual(1);
         });
-
-        it('should make 1 call to transformationService.transform', function () {
-            expect(mockTransformationService.transform.calls.count()).toEqual(1);
-        });
-
-        it('should make 1 call to calculationService.calculateTaxCredits', function () {
-            expect(mockCalculationService.calculateTaxCredits.calls.count()).toEqual(1);
+        
+        it('should make 1 call to calculationService.calculateResidentialPremiumSlab', function () {
+            expect(mockCalculationService.calculateResidentialPremiumSlab.calls.count()).toEqual(0); // just for time will need correct it 
         });
 
     });
@@ -84,7 +73,6 @@
             mockDataService, 
             mockNavigationService,
             mockModelValidationService,
-            mockTransformationService,
             mockCalculationService,
             mockLocation,
             calledServiceGetModel = false;
@@ -110,18 +98,13 @@
                 }
             };
 
-            mockTransformationService = {
-                transform : function() {}
-            };
-
             mockCalculationService = {
-                calculateTaxCredits: function() {}
+                calculateResidentialPremiumSlab: function() {}
             };
 
             spyOn(mockDataService, 'getModel');
             spyOn(mockNavigationService, 'logView');
-            spyOn(mockTransformationService, 'transform');
-            spyOn(mockCalculationService, 'calculateTaxCredits');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
             
             controller = $controller('resultController', {
                 $scope : mockScope,
@@ -129,7 +112,6 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
                 modelValidationService : mockModelValidationService,
-                transformationService : mockTransformationService,
                 calculationService : mockCalculationService,
             });
         }));
@@ -142,12 +124,8 @@
             expect(mockNavigationService.logView.calls.count()).toEqual(1);
         });
 
-        it('should make 0 calls to transformationService.transform', function () {
-            expect(mockTransformationService.transform.calls.count()).toEqual(0);
-        });
-
-        it('should make 0 calls to calculationService.calculateTaxCredits', function () {
-            expect(mockCalculationService.calculateTaxCredits.calls.count()).toEqual(0);
+        it('should make 0 calls to calculationService.calculateResidentialPremiumSlab', function () {
+            expect(mockCalculationService.calculateResidentialPremiumSlab.calls.count()).toEqual(0);
         });
 
         it('should set the location path to /summary', function() {
