@@ -185,6 +185,28 @@
                 service.next(currentView, data, mockLocation);
             }));
 
+            it('should set the location path to /summary', function() {
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /relevant-rent when propertyType is "non-residential" and premium < "150000"', function() {
+                data = { propertyType : 'non-residential' , premium : '149000' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/relevant-rent');
+            });
+            
+        });
+
+        describe('Calling .next() from the relevant-rent view', function() {
+            var mockLocation,
+                currentView = 'relevant-rent',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
            it('should set the location path to /summary', function() {
                 expect(mockLocation.path()).toEqual('/summary');
             });

@@ -48,6 +48,12 @@
                 reloadOnSearch: false
             })
 
+            .when('/relevant-rent', {
+                templateUrl : 'relevant-rent.html',
+                controller  : 'relevantRentController',
+                reloadOnSearch: false
+            })
+
             .when('/summary', {
                 templateUrl : 'summary.html',
                 controller  : 'summaryController',

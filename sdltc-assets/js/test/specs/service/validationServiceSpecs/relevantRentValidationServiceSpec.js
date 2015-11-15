@@ -1,0 +1,58 @@
+(function() {
+    'use strict';
+
+    describe('Relevant Rent Validation Service', function () {
+
+        var service;
+
+        beforeEach(angular.mock.module("sdltc.services"));
+
+        beforeEach(inject(function (_relevantRentValidationService_) {
+            service = _relevantRentValidationService_;
+        }));
+
+        it('relevantRent.mandatory should return an error when no data provided', function() {
+            var state = service.validate({});
+            expect(state.isValid).toEqual(false);
+            expect(state.hasError('relevantRent')).toEqual('form-field--error');
+            expect(state.validationMessage('relevantRent')).toEqual("You must complete this box. Enter your Relevant Rent");
+        });
+
+        it('relevantRent.mandatory should return an error when Relevant Rent is empty', function() {
+            var form = {
+                relevantRent : ""
+            };
+
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(false);
+            expect(state.hasError('relevantRent')).toEqual('form-field--error');
+            expect(state.validationMessage('relevantRent')).toEqual("You must complete this box. Enter your Relevant Rent");
+        });
+
+        it('relevantRent.format should return an error when NaN', function() {
+            var form = {
+                relevantRent : "hello"
+            };
+
+            var state = service.validate(form);
+
+            expect(state.isValid).toEqual(false);
+            expect(state.hasError('relevantRent')).toEqual('form-field--error');
+            expect(state.validationMessage('relevantRent')).toEqual("You have entered an incorrect Relevant Rent, check your entry and correct it");
+        });
+
+        it('relevantRent.format should return an error when not an integer', function() {
+            var form = {
+                relevantRent : "1.1"
+            };
+
+            var state = service.validate(form);
+
+            expect(state.isValid).toEqual(false);
+            expect(state.hasError('relevantRent')).toEqual('form-field--error');
+            expect(state.validationMessage('relevantRent')).toEqual("You have entered an incorrect Relevant Rent, check your entry and correct it");
+        });
+
+
+    });
+}());

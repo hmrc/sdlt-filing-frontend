@@ -112,6 +112,20 @@
             });
         });
 
+        describe('relevant-rent route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('relevant-rent.html')
+                        .respond(200);
+                }));
+
+            it('should load the relevant-rent page on successful load of /relevant-rent', function() {
+                location.path('/relevant-rent');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('relevantRentController');
+            });
+        });
+
         describe('summary route', function() {
             beforeEach(inject(
                 function($httpBackend) {

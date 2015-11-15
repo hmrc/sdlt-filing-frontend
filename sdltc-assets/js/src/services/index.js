@@ -11,6 +11,7 @@
 	require("./validationServices/premiumValidationService.js");
 	require("./validationServices/propertyValidationService.js");
 	require("./validationServices/purchasePriceValidationService.js");
+	require("./validationServices/relevantRentValidationService.js");
 	require("./validationServices/rentValidationService.js");
 
 	require("./validationServices/modelValidationService.js");

@@ -30,7 +30,8 @@
             expect(result.isYear3RentValid).toEqual(undefined);
             expect(result.isYear4RentValid).toEqual(undefined);
             expect(result.isYear5RentValid).toEqual(undefined);
-             
+            expect(result.isRelevantRentValid).toEqual(undefined);
+              
         });
 
     });

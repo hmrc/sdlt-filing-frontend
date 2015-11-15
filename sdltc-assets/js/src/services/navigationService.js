@@ -48,6 +48,14 @@
                 redirectToNext(locationService, 'rent');
             }
             else if (currentView === 'rent') {
+                if (model.propertyType === 'non-residential' && model.premium < 150000) {
+                    redirectToNext(locationService, 'relevant-rent');
+                } 
+                else {
+                    redirectToNext(locationService, 'summary');
+                } 
+            }
+             else if (currentView === 'relevant-rent') {
                 redirectToNext(locationService, 'summary');
             }
     	};
