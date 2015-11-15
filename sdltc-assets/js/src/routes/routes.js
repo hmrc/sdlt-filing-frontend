@@ -66,6 +66,12 @@
                 reloadOnSearch: false
             })
 
+            .when('/detail', {
+                templateUrl : 'detail.html',
+                controller  : 'detailController',
+                reloadOnSearch: false
+            })
+
             // unsupported url, redirect to holding page
             .otherwise({redirectTo:'/holding'});
 

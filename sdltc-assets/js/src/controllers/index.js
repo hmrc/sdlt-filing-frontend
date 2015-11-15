@@ -13,5 +13,6 @@
 
 	require("./allinone/resultController");
     require("./allinone/summaryController");
+    require("./allinone/detailController");
 
 }());

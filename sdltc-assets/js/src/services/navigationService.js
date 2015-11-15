@@ -19,6 +19,10 @@
             locationService.hash(null).path(nextView);
         };
 
+        var gotoDetailsView = function(model, locationService) {
+            locationService.path('detail');
+        };
+
     	var gotoNextView = function(currentView, model, locationService) {
 
 			if (currentView === 'holding') {
@@ -65,7 +69,8 @@
 
 	    return {
 	    	logView : logView,
-	    	next : gotoNextView
+	    	next : gotoNextView,
+            viewDetails : gotoDetailsView 
 	    };
 	};
 

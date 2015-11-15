@@ -12,8 +12,6 @@
             mockDataService, 
             mockNavigationService,
             mockModelValidationService,
-            mockTransformationService,
-            mockCalculationService,
             calledServiceGetModel = false;
 
         beforeEach(mocks.module('sdltc.controllers'));
@@ -35,18 +33,8 @@
                 }
             };
 
-            mockTransformationService = {
-                transform : function() {}
-            };
-
-            mockCalculationService = {
-                calculateTaxCredits: function() {}
-            };
-
             spyOn(mockDataService, 'getModel');
             spyOn(mockNavigationService, 'logView');
-            spyOn(mockTransformationService, 'transform');
-            spyOn(mockCalculationService, 'calculateTaxCredits');
             
             controller = $controller('summaryController', {
                 $scope : mockScope,
@@ -54,8 +42,6 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
                 modelValidationService : mockModelValidationService,
-                transformationService : mockTransformationService,
-                calculationService : mockCalculationService,
             });
         }));
 

@@ -3,7 +3,7 @@
 
     var app = require("../module");
 
-    var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
+    var summaryController = function($scope, $location, dataService, modelValidationService, navigationService) {
         
         var pageName = 'summary';
         navigationService.logView(pageName);
@@ -26,5 +26,5 @@
 
     };
 
-    app.controller('summaryController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', summaryController]);
+    app.controller('summaryController', ['$scope', '$location', 'dataService', 'modelValidationService', 'navigationService', summaryController]);
 }());
