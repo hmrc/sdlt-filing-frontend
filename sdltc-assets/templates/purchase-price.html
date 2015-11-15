@@ -2,7 +2,7 @@
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <p>Optional description of the error(s) and how to correct them</p>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('purchasePrice')"><a href="javascript:void(0)" data-ng-click="jumpTo('purchasePrice')">{{state.validationMessage('purchasePrice')}}</a></li>
+      <li ng-show="state.hasError('premium')"><a href="javascript:void(0)" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
     </ul>
 </div>
 
@@ -10,13 +10,13 @@
 
 <form name="priceForm" class="form">
 
-    <div class="form-group {{state.hasError('purchasePrice')}}">
-        <label for="purchasePrice">
+    <div class="form-group {{state.hasError('premium')}}">
+        <label for="premium">
             <span class="form-label">Purchase price</span>
             <span class="form-hint">a.k.a chargeable consideration</span>
-            <span class="error-notification">{{state.validationMessage('purchasePrice')}}</span>
+            <span class="error-notification">{{state.validationMessage('premium')}}</span>
         </label>            
-        &pound; <input id="purchasePrice" class="form-control form-control-1-8" ng-model="data.purchasePrice" name="purchasePrice" type="text" required>
+        &pound; <input id="premium" class="form-control form-control-1-8" ng-model="data.premium" name="premium" type="text" required>
     </div>
 
     <div class="form-group">

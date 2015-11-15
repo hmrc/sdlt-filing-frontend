@@ -9,18 +9,18 @@
             var state = {};
             var buildState = require("../../utilities/buildState");
 
-            // validate the purchasePrice
-            if ( (data.purchasePrice) && (data.purchasePrice.length > 0) ) {
-                if (isNaN(data.purchasePrice)) {
-                    state.purchasePrice = "You have entered an incorrect Purchase Price, check your entry and correct it";
+            // validate the premium
+            if ( (data.premium) && (data.premium.length > 0) ) {
+                if (isNaN(data.premium)) {
+                    state.premium = "You have entered an incorrect Purchase Price, check your entry and correct it";
                 } else {
                     var regex = /^[0-9]+$/;
-                    if (!data.purchasePrice.match(regex)) {
-                        state.purchasePrice = "You have entered an incorrect Purchase Price, check your entry and correct it";
+                    if (!data.premium.match(regex)) {
+                        state.premium = "You have entered an incorrect Purchase Price, check your entry and correct it";
                     }
                 }
             }
-            else state.purchasePrice = "You must complete this box. Enter your Purchase Price";
+            else state.premium = "You must complete this box. Enter your Purchase Price";
 
             return buildState(state);
         };
