@@ -28,10 +28,10 @@
                 redirectToNext(locationService, 'date');
             }
             else if (currentView === 'date') {
-                if (model.holdingType === 'freehold') {
+                if (model.holdingType === 'Freehold') {
                     redirectToNext(locationService, 'purchase-price');
                 } 
-                else if (model.holdingType === 'leasehold') {
+                else if (model.holdingType === 'Leasehold') {
                     redirectToNext(locationService, 'lease-dates');
                 } 
                 else {
@@ -48,7 +48,7 @@
                 redirectToNext(locationService, 'rent');
             }
             else if (currentView === 'rent') {
-                if (model.propertyType === 'non-residential' && model.premium < 150000) {
+                if (model.propertyType === 'Non-residential' && model.premium < 150000) {
                     redirectToNext(locationService, 'relevant-rent');
                 } 
                 else {

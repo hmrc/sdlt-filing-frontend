@@ -79,38 +79,6 @@
             expect(mockScope.getDisplayValue('')).toEqual('-');
         });
 
-        it('calling getDisplayValue() with "yes" should return "Yes"', function () {
-            expect(mockScope.getDisplayValue('yes')).toEqual('Yes');
-        });
-
-        it('calling getDisplayValue() with "no" should return "No"', function () {
-            expect(mockScope.getDisplayValue('no')).toEqual('No');
-        });
-
-        it('calling getDisplayValue() with "selfEmployed" should return "Self-employed"', function () {
-            expect(mockScope.getDisplayValue('selfEmployed')).toEqual('Self-employed');
-        });
-
-        it('calling getDisplayValue() with "notWorking" should return "Not working"', function () {
-            expect(mockScope.getDisplayValue('notWorking')).toEqual('Not working');
-        });
-
-        it('calling getDisplayValue() with "working" should return "Working"', function () {
-            expect(mockScope.getDisplayValue('working')).toEqual('Working');
-        });
-
-        it('calling getDisplayValue() with "you" should return "You"', function () {
-            expect(mockScope.getDisplayValue('you')).toEqual('You');
-        });
-
-        it('calling getDisplayValue() with "partner" should return "Your partner"', function () {
-            expect(mockScope.getDisplayValue('partner')).toEqual('Your partner');
-        });
-
-        it('calling getDisplayValue() with "partner" should return "Partner"', function () {
-            expect(mockScope.getDisplayValue('neither')).toEqual('Neither');
-        });
-
         it('calling getDisplayValue() with "something else" should return "something else"', function () {
             expect(mockScope.getDisplayValue('something else')).toEqual('something else');
         });

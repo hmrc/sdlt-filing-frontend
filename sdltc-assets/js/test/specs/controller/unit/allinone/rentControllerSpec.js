@@ -20,14 +20,14 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() {}
+                getModel : function() { return {}; }
             };
 
             mockNavigationService = { 
                 logView : function() {} 
             };
 
-            spyOn(mockDataService, 'getModel');
+            spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
             
             mockValidationService = {};
@@ -60,7 +60,7 @@
                 mockScope = $rootScope.$new();
 
                 mockDataService = { 
-                    getModel : function() {},
+                    getModel : function() { return {}; },
                     updateModel : function() {}
                 };
 
@@ -110,7 +110,7 @@
                 mockScope = $rootScope.$new();
 
                 mockDataService = { 
-                    getModel : function() {},
+                    getModel : function() { return {}; },
                     updateModel : function() {}
                 };
 

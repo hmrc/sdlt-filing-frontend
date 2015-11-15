@@ -118,13 +118,13 @@
             });
 
             it('should set the location path to /purchse-price when holdingType is "freehold"', function() {
-                data = { holdingType : 'freehold' };
+                data = { holdingType : 'Freehold' };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/purchase-price');
             });
 
             it('should set the location path to /summary when holdingType is "no"', function() {
-                data = { holdingType : 'leasehold' };
+                data = { holdingType : 'Leasehold' };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/lease-dates');
             });
@@ -189,8 +189,8 @@
                 expect(mockLocation.path()).toEqual('/summary');
             });
 
-            it('should set the location path to /relevant-rent when propertyType is "non-residential" and premium < "150000"', function() {
-                data = { propertyType : 'non-residential' , premium : '149000' };
+            it('should set the location path to /relevant-rent when propertyType is "Non-residential" and premium < "150000"', function() {
+                data = { propertyType : 'Non-residential' , premium : '149000' };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/relevant-rent');
             });
