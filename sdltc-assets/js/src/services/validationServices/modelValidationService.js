@@ -25,12 +25,12 @@
             result.isEffectiveDateValid = hasError('effectiveDate');
             
             // must have freehold
-            if(data.holdingType === 'freehold') {
+            if(data.holdingType === 'Freehold') {
                 result.isPurchasePriceValid = hasError('purchasePrice');
             }
 
             // must have leasehold
-            if(data.holdingType === 'leasehold') {
+            if(data.holdingType === 'Leasehold') {
                 result.isStartDateValid = hasError('startDate');
                 result.isEndDateValid = hasError('endDate');
                 result.isPremiumValid = hasError('premium');
