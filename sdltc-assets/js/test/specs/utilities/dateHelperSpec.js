@@ -37,7 +37,7 @@
             });
 
             it('should return "bad date" when an invalid year is specified', function() {
-                var result = dateHelper.parseUIDate('11.9', '1', '11');
+                var result = dateHelper.parseUIDate('1111.9', '1', '11');
                 expect(result).toEqual('bad date');
             });
 
