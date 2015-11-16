@@ -6,6 +6,10 @@
     app.filter('sdltCurrency', ['$filter', function($filter) {
       return function(input, currency) {
 
+        if(input === undefined || input === 'undefined' || input === '') {
+          return '-';
+        }
+
         input = parseFloat(input);
 
         if(input % 1 === 0) {
