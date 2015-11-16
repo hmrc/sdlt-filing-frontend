@@ -13,34 +13,34 @@
               <th>SDLT due (£)</th>
             </tr>
             <tr class="section">
-              <td>Up to 125,000</td>
-              <td>0</td>
-              <td>0</td>
+              <td>Up to {{data.result.freehold.resdential.from.slices[0].to}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[0].rate}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[0].taxDue}}</td>
             </tr>
             <tr class="section">
-              <td>Above 125,000 and up to 250,000</td>
-              <td>2</td>
-              <td>2,500</td>
+              <td>Above {{data.result.freehold.resdential.from.slices[1].from}} and up to {{data.result.freehold.resdential.from.slices[1].to}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[1].rate}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[1].taxDue}}</td>
             </tr>
             <tr class="section">
-              <td>Above 250,000 and up to 925,000</td>
-              <td>5</td>
-              <td>2,500</td>
+              <td>Above {{data.result.freehold.resdential.from.slices[2].from}} and up to {{data.result.freehold.resdential.from.slices[2].to}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[2].rate}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[2].taxDue}}</td>
             </tr>
             <tr class="section">
-              <td>Above 925,000 and up to 1,500,000</td>
-              <td>10</td>
-              <td>0</td>
+              <td>Above {{data.result.freehold.resdential.from.slices[3].from}} and up to {{data.result.freehold.resdential.from.slices[3].to}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[3].rate}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[3].taxDue}}</td>
             </tr>
             <tr class="section">
-              <td>Above 1,500,000+</td>
-              <td>12</td>
-              <td>0</td>
+              <td>Above {{data.result.freehold.resdential.from.slices[4].from}}+</td>
+              <td>{{data.result.freehold.resdential.from.slices[4].rate}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[4].taxDue}}</td>
             </tr>
             <tr class="section">
               <td>&nbsp;</td>
               <td>Total SDLT due</td>
-              <td>{{result.from.totalSDLT}}</td>
+              <td>{{data.result.freehold.resdential.from.totalSDLT}}</td>
             </tr>
           </tbody>
         </table>

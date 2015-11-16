@@ -14,5 +14,6 @@
 	require("./allinone/resultController");
     require("./allinone/summaryController");
     require("./allinone/detailController");
+    require("./allinone/printController");
 
 }());

@@ -1,6 +1,6 @@
 <form name="resultForm" class="form">
 
-    <h1 class="heading-large">Result</h1>
+    <h1 class="heading-large">Print</h1>
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
@@ -19,10 +19,7 @@
             </tr>
           </tbody>
         </table>
-      </div>
-      <div class="form-group">
-          <a ng-click="viewDetails()" href="javascript:void(0)">Detailed calculation</a>
-      </div>
+      </div>     
     </div>
 
 
@@ -121,11 +118,11 @@
       </div>
     </div>
 
-    <div class="form-group">
-        <a ng-click="printView()" href="javascript:void(0)">Click here for a printable version of your inputs and calculation</a>
-    </div>
-
 </form>
+
+<div class="form-group">
+  <a class ="btn button" onCLick="javascript:window.print()">Print</a>
+</div>
 
 <div class="form-group">
     <a id="back-result" href="javascript:history.back()">Back</a>

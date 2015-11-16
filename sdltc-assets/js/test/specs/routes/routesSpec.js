@@ -154,6 +154,34 @@
             });
         });
 
+        describe('detail route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('detail.html')
+                        .respond(200);
+                }));
+
+            it('should load the detail page on load of /detail with no data', function() {
+                location.path('/detail');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('detailController');
+            });
+        });
+
+        describe('print route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('print.html')
+                        .respond(200);
+                }));
+
+            it('should load the print page on load of /print with no data', function() {
+                location.path('/print');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('printController');
+            });
+        });
+
         describe('not found route', function() {
             beforeEach(inject(
                 function($httpBackend) {

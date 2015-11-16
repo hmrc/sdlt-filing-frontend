@@ -21,7 +21,8 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() { return {}; }
+                getModel : function() { return {}; },
+                updateModel : function() { }
             };
 
             mockNavigationService = { 
@@ -35,12 +36,16 @@
             };
 
             mockCalculationService = {
-                calculateResidentialPremiumSlab: function() {}
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlab: function() {},
+                calculateNonResidentialLeaseSlab: function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
-            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
+            spyOn(mockDataService, 'updateModel');
             
             controller = $controller('resultController', {
                 $scope : mockScope,
@@ -60,8 +65,8 @@
             expect(mockNavigationService.logView.calls.count()).toEqual(1);
         });
         
-        it('should make 1 call to calculationService.calculateResidentialPremiumSlab', function () {
-            expect(mockCalculationService.calculateResidentialPremiumSlab.calls.count()).toEqual(0); // just for time will need correct it 
+         it('should make 1 call to dataService.updateModel', function () {
+            expect(mockDataService.updateModel.calls.count()).toEqual(1);
         });
 
     });
