@@ -65,6 +65,25 @@
             var form = { endDate : 'bad date' };
             var state = service.validate(form);
             expect(state.validationMessage('endDate')).toEqual("You have entered an incorrect end date, check your entry and correct it");
-        });        
+        });
+
+        it('endDate cannot be less that startDate when startDate is valid', function() {
+            var form = { 
+                startDate: new Date(2000, 1, 2), 
+                endDate: new Date(2000, 1, 1)
+            };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(false);
+        });
+
+        it('endDate cannot be less that effectiveDate if it exists', function() {
+            var form = { 
+                effectiveDate: new Date(2000, 1, 3), 
+                startDate: new Date(2000, 1, 1), 
+                endDate: new Date(2000, 1, 2)
+            };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(false);
+        });  
     });
 }());
