@@ -14,25 +14,38 @@
         };
 
         if (modelValidationService.validate($scope.data).isModelValid) {
-            $scope.result = {};
+            var result = {
+                freehold  : {
+                    resdential : {
+                        from : {},
+                        before : {}
+                    },
+                    nonResdential : {}
+                },
+                leasehold  : {
+                    resdential : {},
+                    nonResdential : {}
+                }
+            };
             if ($scope.data.holdingType === 'Freehold') {
                 if ($scope.data.propertyType === 'Residential') {
-                    $scope.result.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
-                    $scope.result.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);                    
+                    result.freehold.resdential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
+                    result.freehold.resdential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);                    
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
-                    $scope.result = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, 0); 
+                    result.freehold.nonResdential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, 0); 
                 }
             }
             else if ($scope.data.holdingType === 'Leasehold') {
                  if ($scope.data.propertyType === 'Residential') {
-                    $scope.result = calculationService.calculateResidentialLeaseSlab(1000000, 2000);                    
+                    result.leasehold.resdential = calculationService.calculateResidentialLeaseSlab(1000000, 2000);                    
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
-                    $scope.result = calculationService.calculateNonResidentialLeaseSlab(1000000, 2000); 
+                    result.leasehold.nonResdential = calculationService.calculateNonResidentialLeaseSlab(1000000, 2000); 
                 }
             }
-            
+            $scope.data.result = result;
+            dataService.updateModel($scope.data);
         }
         else {
             $location.path('summary');

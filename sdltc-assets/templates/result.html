@@ -15,7 +15,7 @@
             <tr class="section">
               <td>{{data.effectiveDate}}</td>
               <td>{{data.premium}}</td>
-              <td>{{result.from.totalSDLT}}</td>
+              <td>{{data.result.freehold.resdential.from.totalSDLT}}</td>
             </tr>
           </tbody>
         </table>
@@ -39,8 +39,8 @@
             </tr>
             <tr class="section">
               <td>{{data.premium}}</td>
-              <td>{{result.before.rate}}</td>
-              <td>{{result.before.taxDue}}</td>
+              <td>{{data.result.freehold.resdential.before.rate}}</td>
+              <td>{{data.result.freehold.resdential.before.taxDue}}</td>
             </tr>
           </tbody>
         </table>
@@ -61,8 +61,8 @@
             <tr class="section">
               <td>{{data.effectiveDate}}</td>
               <td>{{data.premium}}</td>
-              <td>{{result.rate}}</td>
-              <td>{{result.taxDue}}</td>
+              <td>{{data.result.freehold.nonResdential.rate}}</td>
+              <td>{{data.result.freehold.nonResdential.taxDue}}</td>
             </tr>
           </tbody>
         </table>
@@ -76,7 +76,7 @@
           <tbody>            
             <tr class="section">
               <td>Total Amount of Tax for this Transaction</td>
-              <td>{{result.taxDue}}</td>
+              <td>{{data.result.leasehold.resdential.taxDue}}</td>
             </tr>
             <tr class="section">
               <td>Net Present value</td>
@@ -102,7 +102,7 @@
           <tbody>            
             <tr class="section">
               <td>Total Amount of Tax for this Transaction</td>
-              <td>{{result.taxDue}}</td>
+              <td>{{data.result.leasehold.nonResdential.taxDue}}</td>
             </tr>
             <tr class="section">
               <td>Net Present value</td>
