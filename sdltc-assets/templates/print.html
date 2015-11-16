@@ -13,9 +13,9 @@
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
-              <td>{{data.effectiveDate}}</td>
-              <td>{{data.premium | currency:""}}</td>
-              <td>{{data.result.freehold.residential.from.totalSDLT | currency:""}}</td>
+              <td>{{data.effectiveDate | date:'dd MMM yyyy'}}</td>
+              <td>{{data.premium | sdltCurrency}}</td>
+              <td>{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
             </tr>
           </tbody>
         </table>
@@ -35,9 +35,9 @@
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
-              <td>{{data.premium | currency:""}}</td>
+              <td>{{data.premium | sdltCurrency}}</td>
               <td>{{data.result.freehold.residential.before.rate}}</td>
-              <td>{{data.result.freehold.residential.before.taxDue | currency:""}}</td>
+              <td>{{data.result.freehold.residential.before.taxDue | sdltCurrency}}</td>
             </tr>
           </tbody>
         </table>
@@ -56,10 +56,10 @@
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
-              <td>{{data.effectiveDate}}</td>
-              <td>{{data.premium | currency:""}}</td>
+              <td>{{data.effectiveDate | date:'dd MMM yyyy'}}</td>
+              <td>{{data.premium | sdltCurrency}}</td>
               <td>{{data.result.freehold.nonResidential.rate}}</td>
-              <td>{{data.result.freehold.nonResidential.taxDue | currency:""}}</td>
+              <td>{{data.result.freehold.nonResidential.taxDue | sdltCurrency}}</td>
             </tr>
           </tbody>
         </table>
@@ -73,19 +73,19 @@
           <tbody>            
             <tr class="section">
               <td>Total Amount of Tax for this Transaction</td>
-              <td>{{data.result.leasehold.residential.totalTax | currency:""}}</td>
+              <td>{{data.result.leasehold.residential.totalTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Net Present value</td>
-              <td>{{data.result.leasehold.residential.npv | currency:""}}</td>
+              <td>{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Rent</td>
-              <td>{{data.result.leasehold.residential.rentTax | currency:""}}</td>
+              <td>{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Premium</td>
-              <td>{{data.result.leasehold.residential.premiumTax | currency:""}}</td>
+              <td>{{data.result.leasehold.residential.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
         </table>
@@ -99,19 +99,19 @@
           <tbody>            
             <tr class="section">
               <td>Total Amount of Tax for this Transaction</td>
-              <td>{{data.result.leasehold.nonResidential.totalTax | currency:""}}</td>
+              <td>{{data.result.leasehold.nonResidential.totalTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Net Present value</td>
-              <td>{{data.result.leasehold.nonResidential.npv | currency:""}}</td>
+              <td>{{data.result.leasehold.nonResidential.npv | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Rent</td>
-              <td>{{data.result.leasehold.nonResidential.rentTax | currency:""}}</td>
+              <td>{{data.result.leasehold.nonResidential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Premium</td>
-              <td>{{data.result.leasehold.nonResidential.premiumTax | currency:""}}</td>
+              <td>{{data.result.leasehold.nonResidential.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
         </table>
