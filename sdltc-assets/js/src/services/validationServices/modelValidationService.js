@@ -26,7 +26,7 @@
             
             // must have freehold
             if(data.holdingType === 'Freehold') {
-                result.isPurchasePriceValid = hasError('purchasePrice');
+                result.isPurchasePriceValid = hasError('premium');
             }
 
             // must have leasehold
