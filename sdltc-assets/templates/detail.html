@@ -13,34 +13,34 @@
               <th>SDLT due (£)</th>
             </tr>
             <tr class="section">
-              <td>Up to {{data.result.freehold.resdential.from.slices[0].to}}</td>
+              <td>Up to {{data.result.freehold.resdential.from.slices[0].to | currency:""}}</td>
               <td>{{data.result.freehold.resdential.from.slices[0].rate}}</td>
-              <td>{{data.result.freehold.resdential.from.slices[0].taxDue}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[0].taxDue | currency:""}}</td>
             </tr>
             <tr class="section">
-              <td>Above {{data.result.freehold.resdential.from.slices[1].from}} and up to {{data.result.freehold.resdential.from.slices[1].to}}</td>
+              <td>Above {{data.result.freehold.resdential.from.slices[1].from | currency:""}} and up to {{data.result.freehold.resdential.from.slices[1].to | currency:""}}</td>
               <td>{{data.result.freehold.resdential.from.slices[1].rate}}</td>
-              <td>{{data.result.freehold.resdential.from.slices[1].taxDue}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[1].taxDue | currency:""}}</td>
             </tr>
             <tr class="section">
-              <td>Above {{data.result.freehold.resdential.from.slices[2].from}} and up to {{data.result.freehold.resdential.from.slices[2].to}}</td>
+              <td>Above {{data.result.freehold.resdential.from.slices[2].from | currency:""}} and up to {{data.result.freehold.resdential.from.slices[2].to | currency:""}}</td>
               <td>{{data.result.freehold.resdential.from.slices[2].rate}}</td>
-              <td>{{data.result.freehold.resdential.from.slices[2].taxDue}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[2].taxDue | currency:""}}</td>
             </tr>
             <tr class="section">
-              <td>Above {{data.result.freehold.resdential.from.slices[3].from}} and up to {{data.result.freehold.resdential.from.slices[3].to}}</td>
+              <td>Above {{data.result.freehold.resdential.from.slices[3].from | currency:""}} and up to {{data.result.freehold.resdential.from.slices[3].to | currency:""}}</td>
               <td>{{data.result.freehold.resdential.from.slices[3].rate}}</td>
-              <td>{{data.result.freehold.resdential.from.slices[3].taxDue}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[3].taxDue | currency:""}}</td>
             </tr>
             <tr class="section">
-              <td>Above {{data.result.freehold.resdential.from.slices[4].from}}+</td>
+              <td>Above {{data.result.freehold.resdential.from.slices[4].from | currency:""}}+</td>
               <td>{{data.result.freehold.resdential.from.slices[4].rate}}</td>
-              <td>{{data.result.freehold.resdential.from.slices[4].taxDue}}</td>
+              <td>{{data.result.freehold.resdential.from.slices[4].taxDue | currency:""}}</td>
             </tr>
             <tr class="section">
               <td>&nbsp;</td>
               <td>Total SDLT due</td>
-              <td>{{data.result.freehold.resdential.from.totalSDLT}}</td>
+              <td>{{data.result.freehold.resdential.from.totalSDLT | currency:""}}</td>
             </tr>
           </tbody>
         </table>
