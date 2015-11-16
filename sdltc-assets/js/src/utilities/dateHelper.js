@@ -4,12 +4,17 @@
     function isValidDate(date, year, month, day) {
 
         var failedNumberCheck,
-            failedDateCheck;
+            failedDateCheck,
+            yearPattern = /^\d{4}$/;
 
         failedNumberCheck = isNaN(date);
         failedDateCheck = date == 'Invalid Date';
 
         if (failedNumberCheck || failedDateCheck) {
+            return false;
+        }
+
+        if (!yearPattern.test(year)) {
             return false;
         }
 
@@ -39,7 +44,7 @@
         }
 
         date = new Date(year, month - 1, day);
-        
+
         return isValidDate(date, year, month, day) ? date : 'bad date';
     };
 
