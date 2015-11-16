@@ -12,21 +12,21 @@
 
     <div class="form-group {{state.hasError('effectiveDate')}}">
         <fieldset>
-            <legent class="form-label">Effective date of purchase / transaction</label>
+            <legend class="form-label">Effective date of purchase / transaction</legend>
             <span class="form-hint">This is normally the completion date</span>
             <span class="error-notification">{{state.validationMessage('effectiveDate')}}</span>
             <div class="form-date">
                 <div class="form-group form-group-day">
                   <label for="effectiveDateDay">Day</label>
-                  <input class="form-control" id="effectiveDateDay" ng-model="data.effectiveDateDay" ng-blur="updateEffectiveDate()" type="text" pattern="[0-9]*" min="0" max="31">
+                  <input class="form-control" id="effectiveDateDay" ng-model="data.effectiveDateDay" ng-change="updateEffectiveDate()" type="text" pattern="[0-9]*" min="0" max="31">
                 </div>
                 <div class="form-group form-group-month">
                   <label for="effectiveDateMonth">Month</label>
-                  <input class="form-control" id="effectiveDateMonth" ng-model="data.effectiveDateMonth"  ng-blur="updateEffectiveDate()" type="text" pattern="[0-9]*" min="0" max="12">
+                  <input class="form-control" id="effectiveDateMonth" ng-model="data.effectiveDateMonth"  ng-change="updateEffectiveDate()" type="text" pattern="[0-9]*" min="0" max="12">
                 </div>
                 <div class="form-group form-group-year">
                   <label for="effectiveDateYear">Year</label>
-                  <input class="form-control" id="effectiveDateYear" ng-model="data.effectiveDateYear"  ng-blur="updateEffectiveDate()" type="text" pattern="[0-9]*" min="0" max="2014">
+                  <input class="form-control" id="effectiveDateYear" ng-model="data.effectiveDateYear"  ng-change="updateEffectiveDate()" type="text" pattern="[0-9]*" min="0" max="2014">
                 </div>
               </div>
         </fieldset>

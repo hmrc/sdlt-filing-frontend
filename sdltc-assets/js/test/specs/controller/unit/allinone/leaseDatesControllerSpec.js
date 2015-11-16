@@ -53,6 +53,144 @@
             expect(mockScope.state.hasError()).toEqual('');
         });
 
+        it('should define a function named updateStartDate', function () {
+            expect(mockScope.updateStartDate).toBeDefined();
+        });
+
+        it('should define a function named updateEndDate', function () {
+            expect(mockScope.updateEndDate).toBeDefined();
+        });
+
+        describe('Calling updateStartDate', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                    
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() {}
+                };
+
+                mockNavigationService = { 
+                    logView : function() {} 
+                };
+
+                spyOn(mockDataService, 'getModel');
+                spyOn(mockNavigationService, 'logView');
+                
+                mockValidationService = {};
+
+                controller = $controller('leaseDatesController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    leaseDatesValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            it('with valid date parts should update the start date', function () {
+
+                mockScope.data = {
+                    startDateDay: '23',
+                    startDateMonth: '9',
+                    startDateYear: '1977'
+                };
+
+                mockScope.updateStartDate();
+                expect(mockScope.data.startDate).toEqual(new Date(1977, 8, 23));
+            });
+
+            it('with invalid date parts should mark start date as bad', function () {
+
+                mockScope.data = {
+                    startDateDay: '23',
+                    startDateMonth: 'bob',
+                    startDateYear: '1977'
+                };
+
+                mockScope.updateStartDate();
+                expect(mockScope.data.startDate).toEqual('bad date');
+            });
+
+            it('with blank date parts should clear the start date', function () {
+
+                mockScope.data = {
+                    startDateDay: '',
+                    startDateMonth: '',
+                    startDateYear: ''
+                };
+
+                mockScope.updateStartDate();
+                expect(mockScope.data.startDate).toEqual('');
+            });
+        });
+
+        describe('Calling updateEndDate', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                    
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() {}
+                };
+
+                mockNavigationService = { 
+                    logView : function() {} 
+                };
+
+                spyOn(mockDataService, 'getModel');
+                spyOn(mockNavigationService, 'logView');
+                
+                mockValidationService = {};
+
+                controller = $controller('leaseDatesController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    leaseDatesValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            it('with valid date parts should update the end date', function () {
+
+                mockScope.data = {
+                    endDateDay: '23',
+                    endDateMonth: '9',
+                    endDateYear: '1977'
+                };
+
+                mockScope.updateEndDate();
+                expect(mockScope.data.endDate).toEqual(new Date(1977, 8, 23));
+            });
+
+            it('with invalid date parts should mark end date as bad', function () {
+
+                mockScope.data = {
+                    endDateDay: '23',
+                    endDateMonth: 'bob',
+                    endDateYear: '1977'
+                };
+
+                mockScope.updateEndDate();
+                expect(mockScope.data.endDate).toEqual('bad date');
+            });
+
+            it('with blank date parts should clear the end date', function () {
+
+                mockScope.data = {
+                    endDateDay: '',
+                    endDateMonth: '',
+                    endDateYear: ''
+                };
+
+                mockScope.updateEndDate();
+                expect(mockScope.data.endDate).toEqual('');
+            });
+        });
+
         describe('Calling .submit() on the Lease Dates Controller with invalid data', function () {
             
             beforeEach(mocks.inject(function ($controller, $rootScope) {

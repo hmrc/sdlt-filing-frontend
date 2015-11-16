@@ -10,91 +10,61 @@
         beforeEach(inject(function (_leaseDatesValidationService_) {
             service = _leaseDatesValidationService_;
         }));
-
-        it('startDate.mandatory should return an error when no data provided', function() {
+        
+        it('startDate should return an error when no data provided', function() {
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
-            expect(state.hasError('startDate')).toEqual('form-field--error');
-            expect(state.validationMessage('startDate')).toEqual("You must complete this box. Enter your start date");
         });
 
-        it('startDate.mandatory should return an error when date is empty', function() {
-            var form = {
-                startDate : ""
-            };
-
-            var state = service.validate(form);
-            expect(state.isValid).toEqual(false);
-            expect(state.hasError('startDate')).toEqual('form-field--error');
-            expect(state.validationMessage('startDate')).toEqual("You must complete this box. Enter your start date");
+        it('startDate should return the correct mandatory error message', function() {
+            var state = service.validate({});
+            expect(state.validationMessage('startDate')).toEqual("You must complete the start date field");
         });
 
-        it('startDate.format should return an error when NaN', function() {
-            var form = {
-                startDate : "hello"
-            };
-
+        it('startDate should return an error when date is empty', function() {
+            var form = { startDate : '' };
             var state = service.validate(form);
-
             expect(state.isValid).toEqual(false);
-            expect(state.hasError('startDate')).toEqual('form-field--error');
+        });
+
+        it('startDate should return an error when bad data supplied', function() {
+            var form = { startDate : 'bad date' };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(false);
+        });
+
+        it('startDate should return the correct invalid date message', function() {
+            var form = { startDate : 'bad date' };
+            var state = service.validate(form);
             expect(state.validationMessage('startDate')).toEqual("You have entered an incorrect start date, check your entry and correct it");
         });
 
-        it('startDate.format should return an error when not an integer', function() {
-            var form = {
-                startDate : "1.1"
-            };
-
-            var state = service.validate(form);
-
-            expect(state.isValid).toEqual(false);
-            expect(state.hasError('startDate')).toEqual('form-field--error');
-            expect(state.validationMessage('startDate')).toEqual("You have entered an incorrect start date, check your entry and correct it");
-        });
-
-
-        it('endDate.mandatory should return an error when no data provided', function() {
+        it('endDate should return an error when no data provided', function() {
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
-            expect(state.hasError('endDate')).toEqual('form-field--error');
-            expect(state.validationMessage('endDate')).toEqual("You must complete this box. Enter your end date");
         });
 
-        it('endDate.mandatory should return an error when date is empty', function() {
-            var form = {
-                endDate : ""
-            };
-
-            var state = service.validate(form);
-            expect(state.isValid).toEqual(false);
-            expect(state.hasError('endDate')).toEqual('form-field--error');
-            expect(state.validationMessage('endDate')).toEqual("You must complete this box. Enter your end date");
+        it('endDate should return the correct mandatory error message', function() {
+            var state = service.validate({});
+            expect(state.validationMessage('endDate')).toEqual("You must complete the end date field");
         });
 
-        it('endDate.format should return an error when NaN', function() {
-            var form = {
-                endDate : "hello"
-            };
-
+        it('endDate should return an error when date is empty', function() {
+            var form = { endDate : '' };
             var state = service.validate(form);
-
             expect(state.isValid).toEqual(false);
-            expect(state.hasError('endDate')).toEqual('form-field--error');
+        });
+
+        it('endDate should return an error when bad data supplied', function() {
+            var form = { endDate : 'bad date' };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(false);
+        });
+
+        it('endDate should return the correct invalid date message', function() {
+            var form = { endDate : 'bad date' };
+            var state = service.validate(form);
             expect(state.validationMessage('endDate')).toEqual("You have entered an incorrect end date, check your entry and correct it");
-        });
-
-        it('endDate.format should return an error when not an integer', function() {
-            var form = {
-                endDate : "1.1"
-            };
-
-            var state = service.validate(form);
-
-            expect(state.isValid).toEqual(false);
-            expect(state.hasError('endDate')).toEqual('form-field--error');
-            expect(state.validationMessage('endDate')).toEqual("You have entered an incorrect end date, check your entry and correct it");
-        });
-
+        });        
     });
 }());

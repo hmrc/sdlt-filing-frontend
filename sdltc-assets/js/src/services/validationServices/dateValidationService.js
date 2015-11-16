@@ -11,9 +11,9 @@
 
             // validate the effectiveDate
             if (data.effectiveDate === '' || data.effectiveDate === undefined) {
-                state.effectiveDate = "You must complete this box. Enter your date";
+                state.effectiveDate = "You must complete the effective date field";
             } else if (data.effectiveDate === 'bad date') {
-                    state.effectiveDate = "You have entered an incorrect date, check your entry and correct it";
+                state.effectiveDate = "You have entered an incorrect date, check your entry and correct it";
             }
 
             return buildState(state);

@@ -2,8 +2,8 @@
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <p>Optional description of the error(s) and how to correct them</p>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('startDate')"><a href="javascript:void(0)" data-ng-click="jumpTo('startDate')">{{state.validationMessage('startDate')}}</a></li>
-      <li ng-show="state.hasError('endDate')"><a href="javascript:void(0)" data-ng-click="jumpTo('endDate')">{{state.validationMessage('endDate')}}</a></li>
+      <li ng-show="state.hasError('startDate')"><a href="javascript:void(0)" data-ng-click="jumpTo('startDateDay')">{{state.validationMessage('startDate')}}</a></li>
+      <li ng-show="state.hasError('endDate')"><a href="javascript:void(0)" data-ng-click="jumpTo('endDateDay')">{{state.validationMessage('endDate')}}</a></li>
     </ul>
 </div>
 
@@ -12,19 +12,45 @@
 <form name="leaseDatesForm" class="form">
 
     <div class="form-group {{state.hasError('startDate')}}">
-        <label for="startDate">
-            <span class="form-label">Start Date as specified in lease</span>
+        <fieldset>
+            <legend class="form-label">Start Date as specified in lease</legend>
             <span class="error-notification">{{state.validationMessage('startDate')}}</span>
-        </label>            
-        <input id="startDate" class="form-control form-control-1-8" ng-model="data.startDate" name="startDate" type="text" required>
+            <div class="form-date">
+                <div class="form-group form-group-day">
+                  <label for="startDateDay">Day</label>
+                  <input class="form-control" id="startDateDay" ng-model="data.startDateDay" ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="31">
+                </div>
+                <div class="form-group form-group-month">
+                  <label for="startDateMonth">Month</label>
+                  <input class="form-control" id="startDateMonth" ng-model="data.startDateMonth"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="12">
+                </div>
+                <div class="form-group form-group-year">
+                  <label for="startDateYear">Year</label>
+                  <input class="form-control" id="startDateYear" ng-model="data.startDateYear"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="2014">
+                </div>
+              </div>
+        </fieldset>
     </div>
 
     <div class="form-group {{state.hasError('endDate')}}">
-        <label for="endDate">
-            <span class="form-label">End Date as specified in lease</span>
+        <fieldset>
+            <legend class="form-label">End Date as specified in lease</legend>
             <span class="error-notification">{{state.validationMessage('endDate')}}</span>
-        </label>            
-        <input id="endDate" class="form-control form-control-1-8" ng-model="data.endDate" name="endDate" type="text" required>
+            <div class="form-date">
+                <div class="form-group form-group-day">
+                  <label for="endDateDay">Day</label>
+                  <input class="form-control" id="endDateDay" ng-model="data.endDateDay" ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="31">
+                </div>
+                <div class="form-group form-group-month">
+                  <label for="endDateMonth">Month</label>
+                  <input class="form-control" id="endDateMonth" ng-model="data.endDateMonth"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="12">
+                </div>
+                <div class="form-group form-group-year">
+                  <label for="endDateYear">Year</label>
+                  <input class="form-control" id="endDateYear" ng-model="data.endDateYear"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="2014">
+                </div>
+              </div>
+        </fieldset>
     </div>
 
     <div class="form-group">

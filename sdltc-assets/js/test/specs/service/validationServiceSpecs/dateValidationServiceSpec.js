@@ -18,7 +18,7 @@
 
         it('effectiveDate should return the correct mandatory error message', function() {
             var state = service.validate({});
-            expect(state.validationMessage('effectiveDate')).toEqual("You must complete this box. Enter your date");
+            expect(state.validationMessage('effectiveDate')).toEqual("You must complete the effective date field");
         });
 
         it('effectiveDate should return an error when date is empty', function() {
