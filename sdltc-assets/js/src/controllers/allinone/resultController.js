@@ -20,32 +20,58 @@
         if (modelValidationService.validate($scope.data).isModelValid) {
             var result = {
                 freehold  : {
-                    resdential : {
+                    residential : {
                         from : {},
                         before : {}
                     },
-                    nonResdential : {}
+                    nonResidential : {}
                 },
                 leasehold  : {
-                    resdential : {},
-                    nonResdential : {}
+                    residential : {
+                        totalTax : -1,
+                        npv : -1,
+                        rentTax : -1,
+                        premiumTax : -1
+                    },
+                    nonResidential : {
+                        totalTax : -1,
+                        npv : -1,
+                        rentTax : -1,
+                        premiumTax : -1
+                    }
                 }
             };
             if ($scope.data.holdingType === 'Freehold') {
                 if ($scope.data.propertyType === 'Residential') {
-                    result.freehold.resdential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
-                    result.freehold.resdential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);                    
+                    result.freehold.residential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
+                    result.freehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);                    
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
-                    result.freehold.nonResdential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, 0); 
+                    result.freehold.nonResidential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, 0); 
                 }
             }
             else if ($scope.data.holdingType === 'Leasehold') {
-                 if ($scope.data.propertyType === 'Residential') {
-                    result.leasehold.resdential = calculationService.calculateResidentialLeaseSlab(1000000, 2000);                    
+                var rentTax = -1;
+                var premiumTax = -1;
+                var rentsArray = [$scope.data.year1Rent,$scope.data.year2Rent,$scope.data.year3Rent,$scope.data.year4Rent,$scope.data.year5Rent];
+                var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
+                if ($scope.data.propertyType === 'Residential') {
+                    rentTax = calculationService.calculateResidentialLeaseSlab($scope.data.premium, npv).taxDue;
+                    premiumTax = calculationService.calculateResidentialPremiumSlab($scope.data.premium).taxDue;
+
+                    result.leasehold.residential.npv = npv;
+                    result.leasehold.residential.rentTax = rentTax;
+                    result.leasehold.residential.premiumTax = premiumTax;
+                    result.leasehold.residential.totalTax = rentTax + premiumTax;
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
-                    result.leasehold.nonResdential = calculationService.calculateNonResidentialLeaseSlab(1000000, 2000); 
+                    rentTax = calculationService.calculateNonResidentialLeaseSlab($scope.data.premium, npv).taxDue;
+                    premiumTax = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, $scope.data.relevantRent).taxDue;
+
+                    result.leasehold.nonResidential.npv = npv;
+                    result.leasehold.nonResidential.rentTax = rentTax;
+                    result.leasehold.nonResidential.premiumTax = premiumTax;
+                    result.leasehold.nonResidential.totalTax = rentTax + premiumTax;
                 }
             }
             $scope.data.result = result;

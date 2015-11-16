@@ -15,7 +15,7 @@
             <tr class="section">
               <td>{{data.effectiveDate}}</td>
               <td>{{data.premium | currency:""}}</td>
-              <td>{{data.result.freehold.resdential.from.totalSDLT | currency:""}}</td>
+              <td>{{data.result.freehold.residential.from.totalSDLT | currency:""}}</td>
             </tr>
           </tbody>
         </table>
@@ -39,8 +39,8 @@
             </tr>
             <tr class="section">
               <td>{{data.premium | currency:""}}</td>
-              <td>{{data.result.freehold.resdential.before.rate}}</td>
-              <td>{{data.result.freehold.resdential.before.taxDue | currency:""}}</td>
+              <td>{{data.result.freehold.residential.before.rate}}</td>
+              <td>{{data.result.freehold.residential.before.taxDue | currency:""}}</td>
             </tr>
           </tbody>
         </table>
@@ -61,8 +61,8 @@
             <tr class="section">
               <td>{{data.effectiveDate}}</td>
               <td>{{data.premium | currency:""}}</td>
-              <td>{{data.result.freehold.nonResdential.rate}}</td>
-              <td>{{data.result.freehold.nonResdential.taxDue | currency:""}}</td>
+              <td>{{data.result.freehold.nonResidential.rate}}</td>
+              <td>{{data.result.freehold.nonResidential.taxDue | currency:""}}</td>
             </tr>
           </tbody>
         </table>
@@ -76,19 +76,19 @@
           <tbody>            
             <tr class="section">
               <td>Total Amount of Tax for this Transaction</td>
-              <td>{{data.result.leasehold.resdential.taxDue | currency:""}}</td>
+              <td>{{data.result.leasehold.residential.totalTax | currency:""}}</td>
             </tr>
             <tr class="section">
               <td>Net Present value</td>
-              <td>TODO</td>
+              <td>{{data.result.leasehold.residential.npv | currency:""}}</td>
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Rent</td>
-              <td>TODO</td>
+              <td>{{data.result.leasehold.residential.rentTax | currency:""}}</td>
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Premium</td>
-              <td>TODO</td>
+              <td>{{data.result.leasehold.residential.premiumTax | currency:""}}</td>
             </tr>
           </tbody>
         </table>
@@ -102,19 +102,19 @@
           <tbody>            
             <tr class="section">
               <td>Total Amount of Tax for this Transaction</td>
-              <td>{{data.result.leasehold.nonResdential.taxDue | currency:""}}</td>
+              <td>{{data.result.leasehold.nonResidential.totalTax | currency:""}}</td>
             </tr>
             <tr class="section">
               <td>Net Present value</td>
-              <td>TODO</td>
+              <td>{{data.result.leasehold.nonResidential.npv | currency:""}}</td>
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Rent</td>
-              <td>TODO</td>
+              <td>{{data.result.leasehold.nonResidential.rentTax | currency:""}}</td>
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Premium</td>
-              <td>TODO</td>
+              <td>{{data.result.leasehold.nonResidential.premiumTax | currency:""}}</td>
             </tr>
           </tbody>
         </table>

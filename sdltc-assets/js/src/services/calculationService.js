@@ -205,7 +205,7 @@
             var highRentFirst5 = 0;
             var rentPartialYear = 0;
 
-            for (i = 0; i <= 4; i++) {
+            for (var i = 0; i <= 4; i++) {
                 divisor = divisor * DIVISOR_RATE;
                 totalNPV += Math.floor(rentsArray[i] * 100 / divisor) / 100;
                 if (rentsArray[i] > highRentFirst5) {
@@ -214,7 +214,7 @@
             }
 
             if (fullYears > 5) {
-                for (i = 6; i <= fullYears; i++) {
+                for (var j = 6; j <= fullYears; j++) {
                     divisor = divisor * DIVISOR_RATE;
                     totalNPV +=  Math.floor(highRentFirst5 * 100 / divisor) / 100;
                 }
