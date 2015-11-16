@@ -39,10 +39,10 @@
                 result.isYear3RentValid = hasError('year3Rent');
                 result.isYear4RentValid = hasError('year4Rent');
                 result.isYear5RentValid = hasError('year5Rent');
-                result.isRelevantRentValid = hasError('relevantRent');
-                
+                if(data.propertyType === 'Non-residential' && data.premium < 150000){
+                    result.isRelevantRentValid = hasError('relevantRent');
+                }
             }
-           
 
             return result;
 
