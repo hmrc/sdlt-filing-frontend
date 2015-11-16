@@ -3,7 +3,7 @@
 
     describe('Calculation Service', function () {
 
-        var service, input, slabResults;
+        var service;
 
         beforeEach(angular.mock.module("sdltc.services"));
 
@@ -26,12 +26,12 @@
                 ]
             };
 
-            // input = {
-            //     holdingType: 'Freehold',
-            //     propertyType: 'Residential',
-            //     effectiveDate: '01/01/2015',
-            //     price: 0
-            // };
+            termOfLeaseResults = {
+                years : 0,
+                days : 0,
+                daysInPartialYear : 0
+            };
+
         }));
 
         // ********************* calculateResidentialPremiumSlab *********************
@@ -271,6 +271,125 @@
             slabResults.rate = 1;
             slabResults.taxDue = 1500;
             expect(service.calculateNonResidentialLeaseSlab(150001)).toEqual(slabResults);
+        });
+
+        // ********************* calculateTermOfLease *********************
+        it(' calculateTermOfLease should return 0 yr 364 Days for lease 01/01/2015 to 30/12/2015', function() {
+            startDate = new Date(2015, 0, 1);
+            endDate = new Date(2015, 11, 30);
+            termOfLeaseResults.years = 0;
+            termOfLeaseResults.days = 364;
+            termOfLeaseResults.daysInPartialYear = 365;
+            expect(service.calculateTermOfLease(startDate, endDate)).toEqual(termOfLeaseResults);
+        });
+
+        it(' calculateTermOfLease should return 1 yr 0 Days for lease 01/01/2015 to 31/12/2015', function() {
+            startDate = new Date(2015, 0, 1);
+            endDate = new Date(2015, 11, 31);
+            termOfLeaseResults.years = 1;
+            termOfLeaseResults.days = 0;
+            termOfLeaseResults.daysInPartialYear = 0;
+            expect(service.calculateTermOfLease(startDate, endDate)).toEqual(termOfLeaseResults);
+        });
+
+        it(' calculateTermOfLease should return 1 yr 1 Days for lease 01/01/2015 to 01/01/2016', function() {
+            startDate = new Date(2015, 0, 1);
+            endDate = new Date(2016, 0, 1);
+            termOfLeaseResults.years = 1;
+            termOfLeaseResults.days = 1;
+            termOfLeaseResults.daysInPartialYear = 366;
+            expect(service.calculateTermOfLease(startDate, endDate)).toEqual(termOfLeaseResults);
+        });
+
+        it(' calculateTermOfLease should return 1 yr 0 Days for lease 01/03/2015 to 29/02/2016', function() {
+            startDate = new Date(2015, 2, 1);
+            endDate = new Date(2016, 1, 29);
+            termOfLeaseResults.years = 1;
+            termOfLeaseResults.days = 0;
+            termOfLeaseResults.daysInPartialYear = 0;
+            expect(service.calculateTermOfLease(startDate, endDate)).toEqual(termOfLeaseResults);
+        });
+
+        it(' calculateTermOfLease should return 5 yr 0 Days for lease 01/03/2015 to 29/02/2020', function() {
+            startDate = new Date(2015, 2, 1);
+            endDate = new Date(2020, 1, 29);
+            termOfLeaseResults.years = 5;
+            termOfLeaseResults.days = 0;
+            termOfLeaseResults.daysInPartialYear = 0;
+            expect(service.calculateTermOfLease(startDate, endDate)).toEqual(termOfLeaseResults);
+        });
+
+        // ********************* calculateNPV *********************
+        it(' calculateNPV should return 9661 for 1 full year, 0 partial days, rents 10000,0,0,0,0 ', function() {
+            var fullYears = 1;
+            var partialDays = 0;
+            var daysInPartialYear = 0;
+            var rentsArray = [10000, 0, 0, 0, 0];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(9661);
+        });
+
+        it(' calculateNPV should return 19930 for 2 full years, 0 partial days, rents 10000,11000,0,0,0 ', function() {
+            var fullYears = 2;
+            var partialDays = 0;
+            var daysInPartialYear = 0;
+            var rentsArray = [10000, 11000, 0, 0, 0];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(19930);
+        });
+
+        it(' calculateNPV should return 19930 for 3 full years, 0 partial days, rents 10000,11000,12000,0,0 ', function() {
+            var fullYears = 3;
+            var partialDays = 0;
+            var daysInPartialYear = 0;
+            var rentsArray = [10000, 11000, 12000, 0, 0];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(30753);
+        });
+
+        it(' calculateNPV should return 42082 for 4 full years, 0 partial days, rents 10000,11000,12000,13000,0 ', function() {
+            var fullYears = 4;
+            var partialDays = 0;
+            var daysInPartialYear = 0;
+            var rentsArray = [10000, 11000, 12000, 13000, 0];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(42082);
+        });
+
+        it(' calculateNPV should return 53870 for 4 full years, 0 partial days, rents 10000,11000,12000,13000,140000 ', function() {
+            var fullYears = 5;
+            var partialDays = 0;
+            var daysInPartialYear = 0;
+            var rentsArray = [10000, 11000, 12000, 13000, 14000];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(53870);
+        });
+
+        it(' calculateNPV should return 65259 for 6 full years, 0 partial days, rents 10000,11000,12000,13000,140000 ', function() {
+            var fullYears = 6;
+            var partialDays = 0;
+            var daysInPartialYear = 0;
+            var rentsArray = [10000, 11000, 12000, 13000, 14000];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(65259);
+        });
+
+        it(' calculateNPV should return 377,834 for 100 full years, 0 partial days, rents 10000,11000,12000,13000,140000 ', function() {
+            var fullYears = 100;
+            var partialDays = 0;
+            var daysInPartialYear = 0;
+            var rentsArray = [10000, 11000, 12000, 13000, 14000];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(377834);
+        });
+
+        it(' calculateNPV should return 54834 for 5 full years, 31/366 partial days, rents 10000,11000,12000,13000,140000 ', function() {
+            var fullYears = 5;
+            var partialDays = 31;
+            var daysInPartialYear = 366;
+            var rentsArray = [10000, 11000, 12000, 13000, 14000];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(54834);
+        });
+
+        it(' calculateNPV should return 272680 for 35 full years, 181/365 partial days, rents 10000,11000,12000,13000,140000 ', function() {
+            var fullYears = 35;
+            var partialDays = 181;
+            var daysInPartialYear = 365;
+            var rentsArray = [10000, 11000, 12000, 13000, 14000];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(272680);
         });
   });
 }());

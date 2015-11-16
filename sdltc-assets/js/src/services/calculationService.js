@@ -139,20 +139,94 @@
             return resultJSON;
         };
 
-        // function round2(amount) {
-        //   return (Math.round(amount * 100) / 100);
-        // }
-
-        // function roundUp2(amount) {
-        //   return (Math.ceil(amount * 100) / 100);
-        // }
-
-        // function roundDown2(amount) {
-        //   return (Math.floor(amount * 100) / 100);
-        // }
-
         function calcTax(amount, rate) {
           return (Math.floor(Math.floor(amount) * rate / 100));
+        }
+
+        function calculateTermOfLease(startDate, endDate) {
+           
+            var numYears = 0;
+            var numDays = 0;
+            var numDaysInPartialYear = 0;
+
+            numYears = 1;
+            var comparisonDate = getEndOfFutureYear(startDate, numYears);
+            while (comparisonDate <= endDate) {
+                numYears++;
+                comparisonDate = getEndOfFutureYear(startDate, numYears);
+            }
+            // we went past the end date so need to go back 1 year
+            numYears--;
+
+            // count the number of partial days, i.e. keep adding 1 day till we get past the end date
+            numDays = 1;
+            comparisonDate = getEndOfFutureYear(startDate, numYears);
+            comparisonDate.setDate(comparisonDate.getDate() + 1);
+            while (comparisonDate <= endDate) {
+                numDays += 1;
+                comparisonDate.setDate(comparisonDate.getDate() + 1);
+            }
+            // we went past the end date so need to go back 1 day
+            numDays--;
+
+            // need to calculate number of days in partial year (is it 365 or 366)
+            if (numDays > 0) {
+                var partialYearEndDate = getEndOfFutureYear(startDate, numYears + 1);
+                // set comparison date to end date of last full year in term
+                comparisonDate = getEndOfFutureYear(startDate, numYears);
+                numDaysInPartialYear = 1;
+                comparisonDate.setDate(comparisonDate.getDate() + 1);
+                while (comparisonDate <= partialYearEndDate) {
+                    numDaysInPartialYear += 1;
+                    comparisonDate.setDate(comparisonDate.getDate() + 1);
+                }
+                numDaysInPartialYear--;
+            }
+
+            var termOfLease = {
+                years : numYears,
+                days : numDays,
+                daysInPartialYear : numDaysInPartialYear
+            };
+            return termOfLease;
+        }
+
+        function getEndOfFutureYear(startDate, numYears) {
+            var futureDate = new Date(startDate.getFullYear() + numYears, startDate.getMonth(), startDate.getDate());
+            futureDate.setDate(futureDate.getDate() -1);
+            return futureDate;
+        }
+
+        function calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray) {
+
+            var totalNPV = 0;
+            var DIVISOR_RATE = 1.035;
+            var divisor = 1.0;
+            var highRentFirst5 = 0;
+            var rentPartialYear = 0;
+
+            for (i = 0; i <= 4; i++) {
+                divisor = divisor * DIVISOR_RATE;
+                totalNPV += Math.floor(rentsArray[i] * 100 / divisor) / 100;
+                if (rentsArray[i] > highRentFirst5) {
+                    highRentFirst5 = rentsArray[i];
+                }
+            }
+
+            if (fullYears > 5) {
+                for (i = 6; i <= fullYears; i++) {
+                    divisor = divisor * DIVISOR_RATE;
+                    totalNPV +=  Math.floor(highRentFirst5 * 100 / divisor) / 100;
+                }
+            }
+
+            if (partialDays > 0) {
+                divisor = divisor * DIVISOR_RATE;
+                rentPartialYear = highRentFirst5 * partialDays / daysInPartialYear;
+                totalNPV += Math.floor(rentPartialYear / divisor);
+            }
+
+            return Math.floor(totalNPV);
         }
 
         return {
@@ -160,8 +234,9 @@
             calculateResidentialPremiumSlice : calculateResidentialPremiumSlice,
             calculateNonResidentialPremiumSlab : calculateNonResidentialPremiumSlab,
             calculateResidentialLeaseSlab : calculateResidentialLeaseSlab,
-            calculateNonResidentialLeaseSlab : calculateNonResidentialLeaseSlab
-
+            calculateNonResidentialLeaseSlab : calculateNonResidentialLeaseSlab,
+            calculateTermOfLease : calculateTermOfLease,
+            calculateNPV : calculateNPV
         };
     });
 })();
