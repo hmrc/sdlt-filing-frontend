@@ -275,6 +275,11 @@
                     navigationService : mockNavigationService
                 });
 
+                mockScope.data = {
+                    startDate: new Date(2015, 0, 1),
+                    endDate: new Date(2017, 11, 30)
+                };
+
                 mockScope.submit({});
             }));
 

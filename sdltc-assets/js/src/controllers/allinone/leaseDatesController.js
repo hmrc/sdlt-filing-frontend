@@ -16,6 +16,10 @@
         $scope.updateEndDate = function() {
             $scope.data.endDate = dateHelper.parseUIDate($scope.data.endDateYear, $scope.data.endDateMonth, $scope.data.endDateDay);
         };
+
+        $scope.beforeUpdateModel = function() {
+            $scope.data.leaseTerm = dateHelper.calculateTermOfLease($scope.data.startDate, $scope.data.endDate);
+        };
     };
 
     app.controller('leaseDatesController', ['$scope', '$location', '$anchorScroll', 'dataService', 'leaseDatesValidationService', 'navigationService', leaseDatesController ]);
