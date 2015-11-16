@@ -13,6 +13,10 @@
             navigationService.viewDetails($scope.data, $location);
         };
 
+        $scope.printView = function() {
+            navigationService.printView($scope.data, $location);
+        };
+
         if (modelValidationService.validate($scope.data).isModelValid) {
             var result = {
                 freehold  : {

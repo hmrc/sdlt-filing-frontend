@@ -72,6 +72,13 @@
                 reloadOnSearch: false
             })
 
+            .when('/print', {
+                templateUrl : 'print.html',
+                controller  : 'printController',
+                reloadOnSearch: false
+            })
+
+
             // unsupported url, redirect to holding page
             .otherwise({redirectTo:'/holding'});
 

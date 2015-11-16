@@ -19,6 +19,10 @@
             locationService.hash(null).path(nextView);
         };
 
+        var gotoPrintView = function(model, locationService) {
+            locationService.path('print');
+        };
+
         var gotoDetailsView = function(model, locationService) {
             locationService.path('detail');
         };
@@ -70,6 +74,7 @@
 	    return {
 	    	logView : logView,
 	    	next : gotoNextView,
+            printView : gotoPrintView,
             viewDetails : gotoDetailsView 
 	    };
 	};
