@@ -1,35 +1,46 @@
 (function() {
     "use strict";
 
-    function isValidDate(date) {
-        var numberCheck = !isNaN(date);
-        var dateCheck = date != 'Invalid Date';
+    function isValidDate(date, year, month, day) {
 
-        return numberCheck && dateCheck;
+        var failedNumberCheck,
+            failedDateCheck;
+
+        failedNumberCheck = isNaN(date);
+        failedDateCheck = date == 'Invalid Date';
+
+        if (failedNumberCheck || failedDateCheck) {
+            return false;
+        }
+
+        if (date.getFullYear() !== parseInt(year) || 
+            date.getMonth() !== (parseInt(month) - 1) || 
+            date.getDate() !== parseInt(day)) {
+            return false;
+        }
+
+        return true;
     }
 
     var parseUIDate = function parseUIDate(year, month, day) {
+
+        var dateString,
+            date;
 
         year = year || 'empty';
         month = month || 'empty';
         day = day || 'empty';
 
-        var dateString = year + month + day;
+        dateString = year + month + day;
 
+        // mandatory check
         if (dateString === 'emptyemptyempty') {
             return '';
-        } else {
-            // this can result in an invalid date but it's OK as data will only be persisted if validation passes
-            var date = new Date(year, month - 1, day);
-
-            return  isValidDate(date) ? date : 'bad date';
         }
-    };
 
-    var getEndOfFutureYear = function getEndOfFutureYear(startDate, numYears) {
-        var futureDate = new Date(startDate.getFullYear() + numYears, startDate.getMonth(), startDate.getDate());
-        futureDate.setDate(futureDate.getDate() -1);
-        return futureDate;
+        date = new Date(year, month - 1, day);
+        
+        return isValidDate(date, year, month, day) ? date : 'bad date';
     };
 
     var calculateTermOfLease = function calculateTermOfLease(startDate, endDate) {
@@ -37,6 +48,12 @@
         var numYears = 0;
         var numDays = 0;
         var numDaysInPartialYear = 0;
+
+        function getEndOfFutureYear(startDate, numYears) {
+            var futureDate = new Date(startDate.getFullYear() + numYears, startDate.getMonth(), startDate.getDate());
+            futureDate.setDate(futureDate.getDate() -1);
+            return futureDate;
+        }
 
         numYears = 1;
         var comparisonDate = getEndOfFutureYear(startDate, numYears);
