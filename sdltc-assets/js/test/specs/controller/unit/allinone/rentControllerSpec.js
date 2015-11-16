@@ -20,7 +20,12 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() { return {}; }
+                getModel : function() { 
+                    return {
+                        holdingType : "Leasehold",
+                        leaseTerm : "banana"
+                    }; 
+                }
             };
 
             mockNavigationService = { 
@@ -60,7 +65,12 @@
                 mockScope = $rootScope.$new();
 
                 mockDataService = { 
-                    getModel : function() { return {}; },
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : "banana"
+                        }; 
+                    },
                     updateModel : function() {}
                 };
 
@@ -110,7 +120,12 @@
                 mockScope = $rootScope.$new();
 
                 mockDataService = { 
-                    getModel : function() { return {}; },
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : "banana"
+                        }; 
+                    },
                     updateModel : function() {}
                 };
 

@@ -92,7 +92,7 @@
                         <td class="link-right"><a href="#premium" title="Change your response to the question &quot;Total premium payable&quot;">Change</a></td>
                     </tr>    
                     <!-- Year 1 Rent -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-show="displayYearOneRent">
                         <td class="previous-question-title">
                             <p class="{{validatedModel.isYear1RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
@@ -103,7 +103,7 @@
                         <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 1 Rent&quot;">Change</a></td>
                     </tr>                        
                     <!-- Year 2 Rent -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-show="displayYearTwoRent">
                         <td class="previous-question-title">
                             <p class="{{validatedModel.isYear2RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
@@ -114,7 +114,7 @@
                         <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 2 Rent&quot;">Change</a></td>
                     </tr>
                     <!-- Year 3 Rent -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-show="displayYearThreeRent">
                         <td class="previous-question-title">
                             <p class="{{validatedModel.isYear3RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
@@ -125,7 +125,7 @@
                         <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 3 Rent&quot;">Change</a></td>
                     </tr>
                     <!-- Year 4 Rent -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-show="displayYearFourRent">
                         <td class="previous-question-title">
                             <p class="{{validatedModel.isYear4RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
@@ -136,7 +136,7 @@
                         <td class="link-right"><a href="#rent" title="Change your response to the question &quot;Year 4 Rent&quot;">Change</a></td>
                     </tr>    
                     <!-- Year 5 Rent -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-show="displayYearFiveRent">
                         <td class="previous-question-title">
                             <p class="{{validatedModel.isYear5RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
