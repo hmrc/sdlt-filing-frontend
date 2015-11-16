@@ -53,6 +53,75 @@
             expect(mockScope.state.hasError()).toEqual('');
         });
 
+        it('should define a function named updateEffectiveDate', function () {
+            expect(mockScope.updateEffectiveDate).toBeDefined();
+        });
+
+        describe('Calling updateEffectiveDate', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                    
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() {}
+                };
+
+                mockNavigationService = { 
+                    logView : function() {} 
+                };
+
+                spyOn(mockDataService, 'getModel');
+                spyOn(mockNavigationService, 'logView');
+                
+                mockValidationService = {};
+
+                controller = $controller('dateController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    dateValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            it('with valid date parts should update the effective date', function () {
+
+                mockScope.data = {
+                    effectiveDateDay: '23',
+                    effectiveDateMonth: '9',
+                    effectiveDateYear: '1977'
+                };
+
+                mockScope.updateEffectiveDate();
+                expect(mockScope.data.effectiveDate).toEqual(new Date(1977, 8, 23));
+            });
+
+            it('with invalid date parts should mark effective date as bad', function () {
+
+                mockScope.data = {
+                    effectiveDateDay: '23',
+                    effectiveDateMonth: 'bob',
+                    effectiveDateYear: '1977'
+                };
+
+                mockScope.updateEffectiveDate();
+                expect(mockScope.data.effectiveDate).toEqual('bad date');
+            });
+
+            it('with blank date parts should clear the effective date', function () {
+
+                mockScope.data = {
+                    effectiveDateDay: '',
+                    effectiveDateMonth: '',
+                    effectiveDateYear: ''
+                };
+
+                mockScope.updateEffectiveDate();
+                expect(mockScope.data.effectiveDate).toEqual('');
+            });
+        });
+
         describe('Calling .submit() on the Date Controller with invalid data', function () {
             
             beforeEach(mocks.inject(function ($controller, $rootScope) {
@@ -87,7 +156,9 @@
                     navigationService : mockNavigationService
                 });
 
-                mockScope.submit({});
+                mockScope.data = {};
+
+                mockScope.submit();
             }));
 
             it('should call the validation service once', function () {
@@ -110,7 +181,7 @@
                 mockScope = $rootScope.$new();
 
                 mockDataService = { 
-                    getModel : function() {},
+                    getModel : function() { return {}; },
                     updateModel : function() {}
                 };
 
@@ -125,7 +196,7 @@
                     }
                 };
 
-                spyOn(mockDataService, 'updateModel');
+                spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
                 
@@ -137,7 +208,7 @@
                     navigationService : mockNavigationService
                 });
 
-                mockScope.submit({});
+                mockScope.submit();
             }));
 
             it('should call the validation service once', function () {
