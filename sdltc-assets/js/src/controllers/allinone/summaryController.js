@@ -59,6 +59,7 @@
             if (!$scope.displayYearThreeRent) $scope.data.year3Rent = 0;
             if (!$scope.displayYearFourRent) $scope.data.year4Rent = 0;
             if (!$scope.displayYearFiveRent) $scope.data.year5Rent = 0;
+            dataService.updateModel($scope.data);
 
             // calculate highest rent
             var highest = 0;
