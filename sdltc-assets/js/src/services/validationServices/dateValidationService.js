@@ -14,8 +14,8 @@
                 state.effectiveDate = 'You must complete the effective date field';
             } else if (data.effectiveDate === 'bad date') {
                 state.effectiveDate = 'You have entered an incorrect date, check your entry and correct it';
-            } else if (data.effectiveDate < new Date(2012, 2, 21)) {
-                state.effectiveDate = 'The effective date cannot be before 21 Mar 2012';
+            } else if (data.effectiveDate < new Date(2012, 2, 22)) {
+                state.effectiveDate = 'The effective date cannot be before 22 Mar 2012';
             }
 
             return buildState(state);

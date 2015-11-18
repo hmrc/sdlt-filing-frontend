@@ -39,20 +39,20 @@
             expect(state.validationMessage('effectiveDate')).toEqual("You have entered an incorrect date, check your entry and correct it");
         });
 
-        it('effectiveDate should return an error when it is set to before 21 March 2012', function() {
-            var form = { effectiveDate : new Date(2012, 2, 20) };
+        it('effectiveDate should return an error when it is set to before 22 March 2012', function() {
+            var form = { effectiveDate : new Date(2012, 2, 21) };
             var state = service.validate(form);
             expect(state.isValid).toEqual(false);
         });
 
         it('effectiveDate should return the correct minimum date message', function() {
-            var form = { effectiveDate : new Date(2012, 2, 20) };
+            var form = { effectiveDate : new Date(2012, 2, 21) };
             var state = service.validate(form);
-            expect(state.validationMessage('effectiveDate')).toEqual("The effective date cannot be before 21 Mar 2012");
+            expect(state.validationMessage('effectiveDate')).toEqual("The effective date cannot be before 22 Mar 2012");
         });
 
-        it('effectiveDate should not return an error when it is set to 21 Mar 2012', function() {
-            var form = { effectiveDate : new Date(2012, 2, 21) };
+        it('effectiveDate should not return an error when it is set to 22 Mar 2012', function() {
+            var form = { effectiveDate : new Date(2012, 2, 22) };
             var state = service.validate(form);
             expect(state.isValid).toEqual(true);
         });
