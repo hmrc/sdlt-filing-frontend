@@ -1,6 +1,25 @@
 <form name="resultForm" class="form">
 
-    <h1 class="heading-large">Print</h1>
+      <div class="done-questions">
+          <article>
+              <h2 class="previous-answers-title">Summary</h2>
+              <table>
+                  <tbody>
+                      <!-- Holding -->
+                      <tr class="section">
+                          <td>Freehold / leasehold</td>
+                          <td>{{data.holdingType}}</td>                          
+                      </tr>
+                      <!-- Property -->
+                      <tr class="section">
+                          <td>Property Type</td>
+                          <td>{{data.propertyType}}</td>                          
+                      </tr>
+                  </tbody>
+              </table>
+          </article>
+      </div>
+  </div>
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
@@ -13,7 +32,7 @@
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
-              <td>{{data.effectiveDate | date:'dd MMMM yyyy'}}</td>
+              <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
               <td>{{data.premium | sdltCurrency}}</td>
               <td>{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
             </tr>
@@ -56,7 +75,7 @@
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
-              <td>{{data.effectiveDate | date:'dd MMMM yyyy'}}</td>
+              <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
               <td>{{data.premium | sdltCurrency}}</td>
               <td>{{data.result.freehold.nonResidential.rate}}</td>
               <td>{{data.result.freehold.nonResidential.taxDue | sdltCurrency}}</td>
