@@ -17,6 +17,9 @@
             navigationService.printView($scope.data, $location);
         };
 
+        var rent = require("../../utilities/displayLeasedYearRentFields");
+        rent = rent().getFunctions($scope.data);
+
         if (modelValidationService.validate($scope.data).isModelValid) {
             var result = {
                 freehold  : {
@@ -53,7 +56,7 @@
             else if ($scope.data.holdingType === 'Leasehold') {
                 var rentTax = -1;
                 var premiumTax = -1;
-                var rentsArray = [$scope.data.year1Rent,$scope.data.year2Rent,$scope.data.year3Rent,$scope.data.year4Rent,$scope.data.year5Rent];
+                var rentsArray = [rent.displayYearOneRent ? $scope.data.year1Rent : 0, rent.displayYearTwoRent ? $scope.data.year2Rent : 0, rent.displayYearThreeRent ? $scope.data.year3Rent : 0, rent.displayYearFourRent ? $scope.data.year4Rent : 0, rent.displayYearFiveRent ? $scope.data.year5Rent : 0];
                 var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
                 if ($scope.data.propertyType === 'Residential') {
                     rentTax = calculationService.calculateResidentialLeaseSlab($scope.data.premium, npv).taxDue;
