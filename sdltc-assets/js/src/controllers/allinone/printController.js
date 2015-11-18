@@ -9,9 +9,14 @@
         navigationService.logView(pageName);
         $scope.data = dataService.getModel();
 
-        if (!modelValidationService.validate($scope.data).isModelValid) {
+        if (modelValidationService.validate($scope.data).isModelValid) {
+            var rent = require("../../utilities/displayLeasedYearRentFields");
+            rent = rent();
+            rent.addFunctionsToScope($scope);            
+        }   
+        else {
             $location.path('summary');
-        }        
+        }     
     };
 
     app.controller('printController', ['$scope', '$location', 'dataService', 'modelValidationService', 'navigationService', printController ]);
