@@ -20,7 +20,7 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() {}
+                getModel : function() { return {} }
             };
 
             mockNavigationService = { 
@@ -34,7 +34,7 @@
             };
 
 
-            spyOn(mockDataService, 'getModel');
+            spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
                         
             controller = $controller('printController', {

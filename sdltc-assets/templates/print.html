@@ -1,25 +1,75 @@
 <form name="resultForm" class="form">
 
-      <div class="done-questions">
+      <div class = "form-group">
           <article>
-              <h2 class="previous-answers-title">Summary</h2>
+              <h2>Summary</h2>
               <table>
-                  <tbody>
-                      <!-- Holding -->
+                  <tbody>                      
                       <tr class="section">
                           <td>Freehold / leasehold</td>
                           <td>{{data.holdingType}}</td>                          
                       </tr>
-                      <!-- Property -->
                       <tr class="section">
                           <td>Property Type</td>
                           <td>{{data.propertyType}}</td>                          
+                      </tr>
+                      <tr class="section">
+                          <td>Effective date</td>
+                          <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>                         
+                      </tr>
+                      <tr class="section" ng-show="data.holdingType === 'Freehold'">
+                          <td>Purchase Price</td>
+                          <td>{{data.premium | sdltCurrency:"£"}}</td>                        
+                      </tr>   
+                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                          <td>Start Date as specified in lease</td>
+                          <td>{{data.startDate | date:'d MMMM yyyy'}}</td>                          
+                      </tr>    
+                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                          <td>End Date as specified in lease</td>
+                          <td>{{data.endDate | date:'d MMMM yyyy'}}</td>                         
+                      </tr>
+                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                          <td>Term of Lease</td>
+                          <td>{{data.leaseTerm.years}} years {{data.leaseTerm.days}} days</td>
+                      </tr>  
+                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                          <td>Total premium payable</td>
+                          <td>{{data.premium | sdltCurrency:"£"}}</td>                          
+                      </tr>    
+                      <tr class="section" ng-show="displayYearOneRent">
+                          <td>Year 1 Rent</td>
+                          <td>{{data.year1Rent | sdltCurrency:"£"}}</td>                          
+                      </tr>                                              
+                      <tr class="section" ng-show="displayYearTwoRent">
+                          <td>Year 2 Rent</td>
+                          <td>{{data.year2Rent | sdltCurrency:"£"}}</td>                          
+                      </tr>                      
+                      <tr class="section" ng-show="displayYearThreeRent">
+                          <td>Year 3 Rent</td>
+                          <td>{{data.year3Rent | sdltCurrency:"£"}}</td>                          
+                      </tr>
+                      <tr class="section" ng-show="displayYearFourRent">
+                          <td>Year 4 Rent</td>
+                          <td>{{data.year4Rent | sdltCurrency:"£"}}</td>                          
+                      </tr>    
+                      <tr class="section" ng-show="displayYearFiveRent">
+                          <td>Year 5 Rent</td>
+                          <td>{{data.year5Rent | sdltCurrency:"£"}}</td>                          
+                      </tr>
+                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                          <td>Highest 12 monthly rent</td>
+                          <td>{{data.highestRent | sdltCurrency:"£"}}</td>                          
+                      </tr>
+                      <tr class="section" ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000">
+                          <td>Relevant Rental Figure</td>
+                          <td>{{data.relevantRent | sdltCurrency:"£"}}</td>                          
                       </tr>
                   </tbody>
               </table>
           </article>
       </div>
-  </div>
+    </div>
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
