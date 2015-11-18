@@ -35,20 +35,12 @@
 
 @afterHeader = {}
 
-@alphaBanner = {
-  @alpha_banner(
-  userLoggedIn = false,
-  alphaFeedbackUrl = "",
-  alphaFeedbackUnauthenticatedUrl = "",
-  showFeedbackLinkInAlphaBanner = false)
-}
-
 @betaBanner = {
     @uiLayouts.betaBanner(
     userLoggedIn = false,
     betaFeedbackUrl = appConfig.betaFeedbackUrl,
     betaFeedbackUnauthenticatedUrl = appConfig.betaFeedbackUnauthenticatedUrl,
-    showFeedbackLinkInBetaBanner = true)
+    showFeedbackLinkInBetaBanner = false)
 }
 
 @bodyEnd = {
@@ -66,7 +58,7 @@
 
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-      betaBanner = alphaBanner,
+      betaBanner = HtmlFormat.empty,
       includeGridWrapper = false,
       serviceInfoContent = Some(serviceInfoContent))
 }
