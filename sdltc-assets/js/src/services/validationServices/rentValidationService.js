@@ -8,7 +8,7 @@
         var validate = function(data) {
             var state = {};
             var buildState = require("../../utilities/buildState");
-            var regex = /^[0-9]+$/;
+            var regex = /^(\d*\.\d{1,2}|\d+)$/;
             var rent = require("../../utilities/displayLeasedYearRentFields");
             rent = rent();
             rent = rent.getFunctions(data);
