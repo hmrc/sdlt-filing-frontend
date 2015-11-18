@@ -48,8 +48,14 @@
         return isValidDate(date, year, month, day) ? date : 'bad date';
     };
 
-    var calculateTermOfLease = function calculateTermOfLease(startDate, endDate) {
-           
+    var calculateTermOfLease = function calculateTermOfLease(effectiveDate, leaseStartDate, leaseEndDate) {
+
+        var startDate = leaseStartDate;
+        if (effectiveDate > leaseStartDate) {
+            startDate = effectiveDate;
+        }
+        var endDate = leaseEndDate;
+
         var numYears = 0;
         var numDays = 0;
         var numDaysInPartialYear = 0;
