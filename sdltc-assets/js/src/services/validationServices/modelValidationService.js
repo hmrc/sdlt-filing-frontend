@@ -6,6 +6,10 @@
     app.service('modelValidationService', function() {
 
         var validate = function(data) {
+            var rent = require("../../utilities/displayLeasedYearRentFields");
+            rent = rent();
+            rent = rent.getFunctions(data);
+
             var result = {
                 isModelValid : true
             };
@@ -34,11 +38,13 @@
                 result.isStartDateValid = hasError('startDate');
                 result.isEndDateValid = hasError('endDate');
                 result.isPremiumValid = hasError('premium');
-                result.isYear1RentValid = hasError('year1Rent');
-                result.isYear2RentValid = hasError('year2Rent');
-                result.isYear3RentValid = hasError('year3Rent');
-                result.isYear4RentValid = hasError('year4Rent');
-                result.isYear5RentValid = hasError('year5Rent');
+
+                if (rent.displayYearOneRent) result.isYear1RentValid = hasError('year1Rent');
+                if (rent.displayYearTwoRent) result.isYear2RentValid = hasError('year2Rent');
+                if (rent.displayYearThreeRent) result.isYear3RentValid = hasError('year3Rent');
+                if (rent.displayYearFourRent) result.isYear4RentValid = hasError('year4Rent');
+                if (rent.displayYearFiveRent) result.isYear5RentValid = hasError('year5Rent');
+
                 if(data.propertyType === 'Non-residential' && data.premium < 150000){
                     result.isRelevantRentValid = hasError('relevantRent');
                 }

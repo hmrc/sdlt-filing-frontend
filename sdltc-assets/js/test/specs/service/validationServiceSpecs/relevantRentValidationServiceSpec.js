@@ -43,7 +43,7 @@
 
         it('relevantRent.format should return an error when not an integer', function() {
             var form = {
-                relevantRent : "1.1"
+                relevantRent : "1.1.1"
             };
 
             var state = service.validate(form);

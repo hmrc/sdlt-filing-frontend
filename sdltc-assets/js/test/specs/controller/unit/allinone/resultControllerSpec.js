@@ -21,7 +21,12 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() { return {}; },
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        leaseTerm : "banana"
+                    }; 
+                },
                 updateModel : function() { }
             };
 
@@ -90,7 +95,12 @@
             mockLocation = $location;
 
             mockDataService = { 
-                getModel : function() {}
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        leaseTerm : "banana"
+                    }; 
+                }
             };
 
             mockNavigationService = { 
@@ -107,7 +117,7 @@
                 calculateResidentialPremiumSlab: function() {}
             };
 
-            spyOn(mockDataService, 'getModel');
+            spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
             spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
             

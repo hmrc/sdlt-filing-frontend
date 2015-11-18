@@ -25,6 +25,9 @@
                         holdingType : "Leasehold",
                         leaseTerm : "banana"
                     }; 
+                },
+                updateModel : function(data) {
+                    return {};
                 }
             };
 
@@ -38,6 +41,7 @@
                 }
             };
 
+            spyOn(mockDataService, 'updateModel');
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
             
@@ -87,7 +91,9 @@
                             leaseTerm : "banana"
                         }; 
                     },
-                    updateModel : function() {}
+                    updateModel : function(data) {
+                        return {};
+                    }                
                 };
 
                 mockNavigationService = { 
@@ -132,8 +138,8 @@
             });
 
             // on submit
-            it('should NOT call dataService.updateModel', function () {
-                expect(mockDataService.updateModel.calls.count()).toEqual(0);
+            it('should make 1 call to dataService.updateModel', function () {
+                expect(mockDataService.updateModel.calls.count()).toEqual(1);
             });
 
             it('should make 1 call to navigationService.next', function () {
