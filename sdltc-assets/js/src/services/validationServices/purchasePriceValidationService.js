@@ -14,7 +14,7 @@
                 if (isNaN(data.premium)) {
                     state.premium = "You have entered an incorrect Purchase Price, check your entry and correct it";
                 } else {
-                    var regex = /^[0-9]+$/;
+                    var regex = /^(\d*\.\d{1,2}|\d+)$/;
                     if (!data.premium.match(regex)) {
                         state.premium = "You have entered an incorrect Purchase Price, check your entry and correct it";
                     }

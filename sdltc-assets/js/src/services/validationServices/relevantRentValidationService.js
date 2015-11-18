@@ -14,7 +14,7 @@
                 if (isNaN(data.relevantRent)) {
                     state.relevantRent = "You have entered an incorrect Relevant Rent, check your entry and correct it";
                 } else {
-                    var regex = /^[0-9]+$/;
+                    var regex = /^(\d*\.\d{1,2}|\d+)$/;
                     if (!data.relevantRent.match(regex)) {
                         state.relevantRent = "You have entered an incorrect Relevant Rent, check your entry and correct it";
                     }

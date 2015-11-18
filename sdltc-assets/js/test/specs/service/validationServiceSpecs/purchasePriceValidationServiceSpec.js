@@ -43,7 +43,7 @@
 
         it('premium.format should return an error when not an integer', function() {
             var form = {
-                premium : "1.1"
+                premium : "1.1.1"
             };
 
             var state = service.validate(form);

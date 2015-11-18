@@ -66,7 +66,7 @@
                         years : 5,
                         days : 1
                 },
-                year1Rent : "1.1"
+                year1Rent : "1.1.1"
             };
 
             var state = service.validate(form);
@@ -132,7 +132,7 @@
                         years : 5,
                         days : 1
                 },
-                year2Rent : "1.1"
+                year2Rent : "1.1.1"
             };
 
             var state = service.validate(form);
@@ -197,7 +197,7 @@
                         years : 5,
                         days : 1
                 },
-                year3Rent : "1.1"
+                year3Rent : "1.1.1"
             };
 
             var state = service.validate(form);
@@ -262,7 +262,7 @@
                         years : 5,
                         days : 1
                 },
-                year4Rent : "1.1"
+                year4Rent : "1.1.1"
             };
 
             var state = service.validate(form);
@@ -327,7 +327,7 @@
                         years : 5,
                         days : 1
                 },
-                year5Rent : "1.1"
+                year5Rent : "1.1.1"
             };
 
             var state = service.validate(form);
