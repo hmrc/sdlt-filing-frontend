@@ -4,6 +4,7 @@
 	require("./allinone/mainController");
 	require("./allinone/dateController");
 	require("./allinone/holdingController");
+	require("./allinone/introController");
 	require("./allinone/leaseDatesController");
 	require("./allinone/premiumController");
 	require("./allinone/propertyController");		

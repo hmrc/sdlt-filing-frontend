@@ -8,7 +8,7 @@ gulp.task("default", function (cb)
     runSequence(
         "clean",
         ["jshint", "copyIndex", "templateCache", "webpack", "karma"],
-        "uglify",
+        // "uglify",
         cb
     );
 });

@@ -6,6 +6,12 @@
     routesModule.config(['$routeProvider', function($routeProvider) {
         $routeProvider
 
+            .when('/intro', {
+                templateUrl : 'intro.html',
+                controller  : 'introController',
+                reloadOnSearch: false
+            })
+
             .when('/holding', {
                 templateUrl : 'holding.html',
                 controller  : 'holdingController',
@@ -79,8 +85,8 @@
             })
 
 
-            // unsupported url, redirect to holding page
-            .otherwise({redirectTo:'/holding'});
+            // unsupported url, redirect to intro page
+            .otherwise({redirectTo:'/intro'});
 
     }]);
 }());

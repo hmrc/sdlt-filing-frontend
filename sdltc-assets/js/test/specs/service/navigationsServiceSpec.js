@@ -72,6 +72,7 @@
             });
         });
 
+        
         describe('Calling .next() from the holding view', function() {
             var mockLocation,
                 currentView = 'holding',
