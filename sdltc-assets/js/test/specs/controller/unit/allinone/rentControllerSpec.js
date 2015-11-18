@@ -140,10 +140,9 @@
                     }
                 };
 
-                spyOn(mockDataService, 'updateModel');
-                spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
-                
+                spyOn(mockDataService, 'updateModel').and.callThrough();    
+                spyOn(mockNavigationService, 'next').and.callThrough();
+                spyOn(mockValidationService, 'validate').and.callThrough();                
                 controller = $controller('rentController', {
                     $scope : mockScope,
                     $location : {},
