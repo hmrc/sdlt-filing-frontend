@@ -13,13 +13,6 @@
         rent = rent();
         rent.addFunctionsToScope($scope);
 
-        // set unused rent fields to 0 for calcs
-        if (!$scope.displayYearOneRent && $scope.data.year1Rent !== undefined) $scope.data.year1Rent = 0;
-        if (!$scope.displayYearTwoRent && $scope.data.year2Rent !== undefined) $scope.data.year2Rent = 0;
-        if (!$scope.displayYearThreeRent && $scope.data.year3Rent !== undefined) $scope.data.year3Rent = 0;
-        if (!$scope.displayYearFourRent && $scope.data.year4Rent !== undefined) $scope.data.year4Rent = 0;
-        if (!$scope.displayYearFiveRent && $scope.data.year5Rent !== undefined) $scope.data.year5Rent = 0;
-
         // calculate highest rent
         var highest = parseFloat("0");
         if ($scope.displayYearOneRent && highest < parseFloat($scope.data.year1Rent)) highest = $scope.data.year1Rent;
@@ -29,7 +22,7 @@
         if ($scope.displayYearFiveRent && highest < parseFloat($scope.data.year5Rent)) highest = $scope.data.year5Rent;
         $scope.data.highestRent = highest;
 
-        // update model with highest rent and reset fields
+        // update data service with highest rent
         dataService.updateModel($scope.data);
 
 
