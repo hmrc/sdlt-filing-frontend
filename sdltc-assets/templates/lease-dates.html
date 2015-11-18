@@ -18,15 +18,15 @@
             <div class="form-date">
                 <div class="form-group form-group-day">
                   <label for="startDateDay">Day</label>
-                  <input class="form-control" id="startDateDay" ng-model="data.startDateDay" ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="31">
+                  <input class="form-control" id="startDateDay" ng-model="data.startDateDay" ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="31" maxlength="2">
                 </div>
                 <div class="form-group form-group-month">
                   <label for="startDateMonth">Month</label>
-                  <input class="form-control" id="startDateMonth" ng-model="data.startDateMonth"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="12">
+                  <input class="form-control" id="startDateMonth" ng-model="data.startDateMonth"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="12" maxlength="2">
                 </div>
                 <div class="form-group form-group-year">
                   <label for="startDateYear">Year</label>
-                  <input class="form-control" id="startDateYear" ng-model="data.startDateYear"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="2014">
+                  <input class="form-control" id="startDateYear" ng-model="data.startDateYear"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" maxlength="4">
                 </div>
               </div>
         </fieldset>
@@ -39,15 +39,15 @@
             <div class="form-date">
                 <div class="form-group form-group-day">
                   <label for="endDateDay">Day</label>
-                  <input class="form-control" id="endDateDay" ng-model="data.endDateDay" ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="31">
+                  <input class="form-control" id="endDateDay" ng-model="data.endDateDay" ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="31" maxlength="2">
                 </div>
                 <div class="form-group form-group-month">
                   <label for="endDateMonth">Month</label>
-                  <input class="form-control" id="endDateMonth" ng-model="data.endDateMonth"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="12">
+                  <input class="form-control" id="endDateMonth" ng-model="data.endDateMonth"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="12" maxlength="2">
                 </div>
                 <div class="form-group form-group-year">
                   <label for="endDateYear">Year</label>
-                  <input class="form-control" id="endDateYear" ng-model="data.endDateYear"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="2014">
+                  <input class="form-control" id="endDateYear" ng-model="data.endDateYear"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" maxlength="4">
                 </div>
               </div>
         </fieldset>
