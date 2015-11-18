@@ -14,6 +14,20 @@
             rootScope = _$rootScope_;
         }));
 
+        describe('intro route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('intro.html')
+                        .respond(200);
+                }));
+
+            it('should load the intro page on successful load of /intro', function() {
+                location.path('/intro');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('introController');
+            });
+        });
+
         describe('holding route', function() {
             beforeEach(inject(
                 function($httpBackend) {
@@ -185,14 +199,14 @@
         describe('not found route', function() {
             beforeEach(inject(
                 function($httpBackend) {
-                    $httpBackend.expectGET('holding.html')
+                    $httpBackend.expectGET('intro.html')
                         .respond(200);
                 }));
 
-            it('should load the holding page on successful load of /holding', function() {
+            it('should load the intro page on successful load of /intro', function() {
                 location.path('/test');
                 rootScope.$digest();
-                expect(route.current.controller).toBe('holdingController');
+                expect(route.current.controller).toBe('introController');
             });
         });
 

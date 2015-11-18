@@ -11,6 +11,10 @@
     		return pageName;
     	};
 
+        var startNow = function(locationService) {
+            locationService.path('holding');
+        };
+
         var redirectToSummary = function(locationService) {
             locationService.path('summary');
         };
@@ -29,7 +33,7 @@
 
     	var gotoNextView = function(currentView, model, locationService) {
 
-			if (currentView === 'holding') {
+            if (currentView === 'holding') {
 				redirectToNext(locationService, 'property');
 			}
             else if (currentView === 'property') {
@@ -73,6 +77,7 @@
 
 	    return {
 	    	logView : logView,
+            startNow : startNow,
 	    	next : gotoNextView,
             printView : gotoPrintView,
             viewDetails : gotoDetailsView 
