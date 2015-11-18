@@ -20,7 +20,12 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() { return {}; }
+                getModel : function() { 
+                    return {
+                        holdingType : "Leasehold",
+                        leaseTerm : "banana"
+                    }; 
+                }
             };
 
             mockNavigationService = { 
@@ -60,7 +65,12 @@
                 mockScope = $rootScope.$new();
 
                 mockDataService = { 
-                    getModel : function() { return {}; },
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : "banana"
+                        }; 
+                    },
                     updateModel : function() {}
                 };
 
@@ -110,7 +120,12 @@
                 mockScope = $rootScope.$new();
 
                 mockDataService = { 
-                    getModel : function() { return {}; },
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : "banana"
+                        }; 
+                    },
                     updateModel : function() {}
                 };
 
@@ -125,10 +140,9 @@
                     }
                 };
 
-                spyOn(mockDataService, 'updateModel');
-                spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
-                
+                spyOn(mockDataService, 'updateModel').and.callThrough();    
+                spyOn(mockNavigationService, 'next').and.callThrough();
+                spyOn(mockValidationService, 'validate').and.callThrough();                
                 controller = $controller('rentController', {
                     $scope : mockScope,
                     $location : {},

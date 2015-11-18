@@ -20,7 +20,12 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() {}
+                getModel : function() { 
+                    return {
+                        holdingType : "Leasehold",
+                        leaseTerm : "banana"
+                    }; 
+                }
             };
 
             mockNavigationService = { 
@@ -33,7 +38,7 @@
                 }
             };
 
-            spyOn(mockDataService, 'getModel');
+            spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
             
             controller = $controller('summaryController', {
@@ -76,7 +81,12 @@
                 mockScope = $rootScope.$new();
 
                 mockDataService = { 
-                    getModel : function() {},
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : "banana"
+                        }; 
+                    },
                     updateModel : function() {}
                 };
 
@@ -91,7 +101,7 @@
                     }
                 };
 
-                spyOn(mockDataService, 'getModel');
+                spyOn(mockDataService, 'getModel').and.callThrough();
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');

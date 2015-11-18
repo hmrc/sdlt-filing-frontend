@@ -8,6 +8,15 @@
         var init = require("../../utilities/initController");
         init($scope, $location, $anchorScroll, 'rent', dataService, rentValidationService, navigationService);
 
+        var rent = require("../../utilities/displayLeasedYearRentFields");
+        rent = rent();
+        rent.addFunctionsToScope($scope);
+
+        // if they have missed required questions redirect to summary
+        if(!$scope.displayYearOneRent) {
+            $location.path('summary');
+        }
+
         $scope.data.highestRent = function() {
         	var highest = 0;
 

@@ -9,6 +9,10 @@
         navigationService.logView(pageName);
         $scope.data = dataService.getModel();
 
+        var rent = require("../../utilities/displayLeasedYearRentFields");
+        rent = rent();
+        rent.addFunctionsToScope($scope);
+
         $scope.validatedModel = modelValidationService.validate($scope.data);
 
         $scope.submit = function() {
