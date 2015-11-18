@@ -20,7 +20,7 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
-                getModel : function() { return {} }
+                getModel : function() { return {}; }
             };
 
             mockNavigationService = { 

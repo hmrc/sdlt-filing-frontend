@@ -18,7 +18,7 @@
         };
 
         $scope.beforeUpdateModel = function() {
-            $scope.data.leaseTerm = dateHelper.calculateTermOfLease($scope.data.startDate, $scope.data.endDate);
+            $scope.data.leaseTerm = dateHelper.calculateTermOfLease($scope.data.effectiveDate, $scope.data.startDate, $scope.data.endDate);
         };
     };
 
