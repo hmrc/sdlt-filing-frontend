@@ -54,7 +54,7 @@
             }
         };
 
-        var calculateResidentialLeaseSlab = function(npv, rent){
+        var calculateResidentialLeaseSlab = function(npv){
 
             var slabsArray = [
                     { "threshold" : 125000, "rate" : 1},
@@ -65,7 +65,7 @@
             return resultJSON;
         };
 
-        var calculateNonResidentialLeaseSlab = function(npv, rent){
+        var calculateNonResidentialLeaseSlab = function(npv){
 
             var slabsArray = [
                     { "threshold" : 150000, "rate" : 1},
