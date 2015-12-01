@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <!--[if lt IE 9]><html class="no-js lte-ie8" lang="en"><![endif]-->
 <!--[if gt IE 8]><!-->
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" data-ng-app="sdltc" data-ng-controller="mainController">
 <!--<![endif]-->
 
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
   <base href="/calculate-stamp-duty-land-tax/" />
-  <title>Stamp Duty Land Tax Calculator</title>
+  <title ng-bind="title"></title>
 
   <script type="text/javascript">
     var regex = /\/calculate-stamp-duty-land-tax\/#\//;
@@ -18,7 +18,7 @@
 
     // catches page refreshes and navigating away from the service
     window.onbeforeunload = function () {
-        return 'Navigating away from this page will result in a loss of data.';
+        return "If you leave this page all the information you've entered won't be saved - you'll need to start again.";
     };
   </script>
 
@@ -74,6 +74,30 @@
   <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
   <link rel="apple-touch-icon-precomposed" href="/template/assets/images/apple-touch-icon-57x57.png">
 
+  <style type="text/css">
+    form .form-label, 
+    form .form-field--error .error-notification {
+      font-weight: bold;
+    }
+    form .form-field--error .error-notification {
+      font-size: 19px;
+    }
+    @media (max-width: 640px) {
+      form .form-field--error .error-notification {
+        font-size: 16px;
+        line-height: 1.14286;
+      }
+    }
+    table .previous-question-body { 
+      white-space: nowrap; 
+    }
+    table .link-right { 
+      white-space: nowrap; 
+      text-align: right;
+    }
+  </style>
+
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta property="og:image" content="/template/assets/images/opengraph-image.png">
 
@@ -94,7 +118,7 @@
 
 </head>
 
-<body data-ng-app="sdltc" data-ng-controller="mainController">
+<body>
 
   <script type="text/javascript">
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
@@ -200,6 +224,9 @@
     } else {
         ga('create', 'UA-43414424-11', 'auto');
     }
+    ga('send', 'event', 'asset-version', 'sdltc-javascripts', 'v1');
+    ga('send', 'event', 'asset-version', 'assets-frontend', '2.118.0');
+    ga('send', 'event', 'asset-version', 'angularjs', '1.2.29');
   </script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.min.js"></script>

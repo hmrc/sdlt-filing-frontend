@@ -12,6 +12,7 @@
 var jsVersion = "v```1```";
 
 #### sdltc-assets/index.html
+ga('send', 'event', 'asset-version', 'v```1```', 'sdltc-javascripts');  
 script src="javascript/v```1```-sdltc.js"  
 script src="javascript/v```1```-sdltc-templates.js"
 

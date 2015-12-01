@@ -5,7 +5,7 @@
 
     var rentController = function($scope, $location, $anchorScroll, dataService, rentValidationService, navigationService) {
         
-        var init = require("../../utilities/initController");
+        var init = require("../../utilities/initFormController");
         init($scope, $location, $anchorScroll, 'rent', dataService, rentValidationService, navigationService);
 
         var rent = require("../../utilities/displayLeasedYearRentFields");

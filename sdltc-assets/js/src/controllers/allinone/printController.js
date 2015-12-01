@@ -3,11 +3,10 @@
 
     var app = require("../module");
 
-    var printController = function($scope, $location, dataService, modelValidationService, navigationService) {
-        
-        var pageName = 'print';
-        navigationService.logView(pageName);
-        $scope.data = dataService.getModel();
+    var printController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
+
+        var init = require("../../utilities/initController");
+        init($scope, $location, $anchorScroll, 'print', dataService, navigationService);
 
         if (modelValidationService.validate($scope.data).isModelValid) {
             var rent = require("../../utilities/displayLeasedYearRentFields");
@@ -16,8 +15,9 @@
         }   
         else {
             $location.path('summary');
-        }     
+        } 
+          
     };
 
-    app.controller('printController', ['$scope', '$location', 'dataService', 'modelValidationService', 'navigationService', printController ]);
+    app.controller('printController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', printController ]);
 }());

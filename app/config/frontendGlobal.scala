@@ -8,11 +8,10 @@ import net.ceedubs.ficus.Ficus._
 import play.api.Mode.Mode
 import play.api._
 import play.api.mvc._
-import play.filters.csrf.CSRFFilter
 import play.twirl.api.Html
 import uk.gov.hmrc.play.config.{ControllerConfig, RunMode}
 import uk.gov.hmrc.play.filters.{RecoveryFilter, CacheControlFilter}
-import uk.gov.hmrc.play.filters.frontend.{CSRFExceptionsFilter, HeadersFilter}
+import uk.gov.hmrc.play.filters.frontend.HeadersFilter
 import uk.gov.hmrc.play.graphite.GraphiteConfig
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 
@@ -29,8 +28,6 @@ object FrontendGlobal
     MetricsFilter,
     HeadersFilter,
     LoggingFilter,
-    CSRFExceptionsFilter,
-    CSRFFilter(),
     CacheControlFilter.fromConfig("caching.allowedContentTypes"),
     RecoveryFilter)
 

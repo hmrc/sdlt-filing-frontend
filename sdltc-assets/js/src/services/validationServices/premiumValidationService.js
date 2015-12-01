@@ -8,6 +8,7 @@
         var validate = function(data) {
             var state = {};
             var buildState = require("../../utilities/buildState");
+            var validator = require("../../utilities/validator")();
 
             // validate the premium
             if ( (data.premium) && (data.premium.length > 0) ) {

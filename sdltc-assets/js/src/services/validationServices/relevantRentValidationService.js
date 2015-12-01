@@ -8,6 +8,7 @@
         var validate = function(data) {
             var state = {};
             var buildState = require("../../utilities/buildState");
+            var validator = require("../../utilities/validator")();
 
             // validate the relevantRent
             if ( (data.relevantRent) && (data.relevantRent.length > 0) ) {

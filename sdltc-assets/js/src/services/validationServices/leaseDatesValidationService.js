@@ -11,9 +11,10 @@
                 endDateValid = false;
 
             var buildState = require('../../utilities/buildState');
+            var validator = require("../../utilities/validator")();
 
             // validate the startDate
-            if (data.startDate === '' || data.startDate === undefined) {
+            if (validator.isNotPopulated(data.startDate)) {
                 state.startDate = 'You must complete the start date field';
             } else if (data.startDate === 'bad date') {
                 state.startDate = 'You have entered an incorrect start date, check your entry and correct it';
@@ -22,7 +23,7 @@
             }
 
             // validate the endDate
-            if (data.endDate === '' || data.endDate === undefined) {
+            if (validator.isNotPopulated(data.endDate)) {
                 state.endDate = 'You must complete the end date field';
             } else if (data.endDate === 'bad date') {
                 state.endDate = 'You have entered an incorrect end date, check your entry and correct it';

@@ -19,6 +19,7 @@
             mockScope = $rootScope.$new();
 
             mockDataService = { 
+                getModel : function() {},
                 updateModel : function() {}
             };
 
@@ -26,6 +27,7 @@
                 logView : function() {} 
             };
 
+            spyOn(mockDataService, 'getModel');
             spyOn(mockDataService, 'updateModel');
             spyOn(mockNavigationService, 'logView');
                         

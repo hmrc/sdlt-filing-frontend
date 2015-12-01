@@ -5,7 +5,7 @@
 
     var premiumController = function($scope, $location, $anchorScroll, dataService, premiumValidationService, navigationService) {
         
-        var init = require("../../utilities/initController");
+        var init = require("../../utilities/initFormController");
         init($scope, $location, $anchorScroll, 'premium', dataService, premiumValidationService, navigationService);
 
     };
