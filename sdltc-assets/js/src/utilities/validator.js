@@ -8,8 +8,12 @@
         var posOrNegFloatRegex = /^-?[0-9]+(\.[0-9]{0,2})?$/;
 
         // Populated
+        var isPopulated = function(value) {
+            return (value && value !== undefined && value.length > 0);
+        };
+
         var isNotPopulated = function(value) {
-            return !(value && value !== undefined && value.length > 0);
+            return !isPopulated(value);
         };
 
         // Format
@@ -70,6 +74,7 @@
         };
 
         return {
+            isPopulated : isPopulated,
             isNotPopulated : isNotPopulated,
             isNotANumber : isNotANumber,
             isInvalidInteger : isInvalidInteger,
