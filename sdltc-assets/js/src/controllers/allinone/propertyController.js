@@ -5,7 +5,7 @@
 
     var propertyController = function($scope, $location, $anchorScroll, dataService, propertyValidationService, navigationService) {
         
-        var init = require("../../utilities/initController");
+        var init = require("../../utilities/initFormController");
         init($scope, $location, $anchorScroll, 'property', dataService, propertyValidationService, navigationService);
 
     };

@@ -1,3 +1,5 @@
+<h1>{{title}}</h1>
+
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <p>Optional description of the error(s) and how to correct them</p>
@@ -9,8 +11,6 @@
       <li ng-show="state.hasError('year5Rent')"><a href="javascript:void(0)" data-ng-click="jumpTo('year5Rent')">{{state.validationMessage('year5Rent')}}</a></li>
     </ul>
 </div>
-
-<h2 class="heading-medium">Rent</h1>
 
 <form name="rentForm" class="form">
 

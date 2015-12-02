@@ -8,8 +8,9 @@
         var validate = function(data) {
             var state = {};
             var buildState = require("../../utilities/buildState");
+            var validator = require("../../utilities/validator")();
 
-            if (!data.holdingType) {
+            if (validator.isNotPopulated(data.holdingType)) {
                 state.holdingType = "You must answer this question. Select 'Freehold' or 'Leasehold'";
             }
 

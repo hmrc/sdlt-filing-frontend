@@ -3,11 +3,10 @@
 
     var app = require("../module");
 
-    var resultController = function($scope, $location, dataService, modelValidationService, navigationService, calculationService) {
-        
-        var pageName = 'result';
-        navigationService.logView(pageName);
-        $scope.data = dataService.getModel();
+    var resultController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, calculationService) {
+
+        var init = require("../../utilities/initController");
+        init($scope, $location, $anchorScroll, 'result', dataService, navigationService);
 
         $scope.viewDetails = function() {
             navigationService.viewDetails($scope.data, $location);
@@ -86,5 +85,5 @@
 
     };
 
-    app.controller('resultController', ['$scope', '$location', 'dataService', 'modelValidationService', 'navigationService', 'calculationService', resultController ]);
+    app.controller('resultController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'calculationService', resultController ]);
 }());

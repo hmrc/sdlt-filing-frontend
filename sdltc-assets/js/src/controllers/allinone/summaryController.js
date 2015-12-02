@@ -3,11 +3,10 @@
 
     var app = require("../module");
 
-    var summaryController = function($scope, $location, dataService, modelValidationService, navigationService) {
-        
-        var pageName = 'summary';
-        navigationService.logView(pageName);
-        $scope.data = dataService.getModel();
+    var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
+
+        var init = require("../../utilities/initController");
+        init($scope, $location, $anchorScroll, 'summary', dataService, navigationService);
 
         var rent = require("../../utilities/displayLeasedYearRentFields");
         rent = rent();
@@ -43,5 +42,5 @@
 
     };
 
-    app.controller('summaryController', ['$scope', '$location', 'dataService', 'modelValidationService', 'navigationService', summaryController]);
+    app.controller('summaryController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', summaryController]);
 }());

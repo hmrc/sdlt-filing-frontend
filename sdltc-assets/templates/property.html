@@ -1,3 +1,5 @@
+<h1>{{title}}</h1>
+
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <p>Optional description of the error(s) and how to correct them</p>
@@ -5,8 +7,6 @@
       <li ng-show="state.hasError('propertyType')"><a href="javascript:void(0)" data-ng-click="jumpTo('propertyType')">{{state.validationMessage('propertyType')}}</a></li>
     </ul>
 </div>
-
-<h1 class="form-title heading-large">Residential or non-residential</h1>
 
 <form name="propertyForm" class="form">
 

@@ -8,13 +8,14 @@
         var validate = function(data) {
             var state = {};
             var buildState = require("../../utilities/buildState");
+            var validator = require("../../utilities/validator")();
 
             // validate the effectiveDate
-            if (data.effectiveDate === '' || data.effectiveDate === undefined) {
+            if (validator.isNotPopulated(data.effectiveDate)) {
                 state.effectiveDate = 'You must complete the effective date field';
-            } else if (data.effectiveDate === 'bad date') {
+            } else if (validator.isInvalidParsedDate(data.effectiveDate)) {
                 state.effectiveDate = 'You have entered an incorrect date, check your entry and correct it';
-            } else if (data.effectiveDate < new Date(2012, 2, 22)) {
+            } else if (validator.isLessThanDate(data.effectiveDate, new Date(2012, 2, 22))) {
                 state.effectiveDate = 'The effective date cannot be before 22 Mar 2012';
             }
 

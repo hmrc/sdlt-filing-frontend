@@ -8,19 +8,14 @@
         var validate = function(data) {
             var state = {};
             var buildState = require("../../utilities/buildState");
+            var validator = require("../../utilities/validator")();
 
             // validate the relevantRent
-            if ( (data.relevantRent) && (data.relevantRent.length > 0) ) {
-                if (isNaN(data.relevantRent)) {
-                    state.relevantRent = "You have entered an incorrect Relevant Rent, check your entry and correct it";
-                } else {
-                    var regex = /^(\d*\.\d{1,2}|\d+)$/;
-                    if (!data.relevantRent.match(regex)) {
-                        state.relevantRent = "You have entered an incorrect Relevant Rent, check your entry and correct it";
-                    }
-                }
+            if (validator.isNotPopulated(data.relevantRent)) {
+                state.relevantRent = "You must complete this box. Enter your Relevant Rent";
+            } else if (validator.isInvalidFloat(data.relevantRent)) {
+                state.relevantRent = "You have entered an incorrect Relevant Rent, check your entry and correct it";
             }
-            else state.relevantRent = "You must complete this box. Enter your Relevant Rent";
 
             return buildState(state);
         };

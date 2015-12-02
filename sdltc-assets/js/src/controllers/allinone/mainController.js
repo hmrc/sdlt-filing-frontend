@@ -2,11 +2,25 @@
     "use strict";
     var app = require("../module");
     // define the main controller
-    var mainController = function($scope) {
+    var mainController = function($scope, loggingService) {
 
         $scope.jumpTo = function(id) {
             var selector = '#' + id;
             $(selector).focus();
+        };
+
+        $scope.optionalHelp = {};
+        
+        $scope.toggleHelp = function(helpId, summary) {
+            var currentValue = $scope.optionalHelp[helpId] || false,
+                action = currentValue ? 'hide' : 'show';
+            
+            $scope.optionalHelp[helpId] = !currentValue;
+            loggingService.logEvent('help', action, summary);
+        };
+
+        $scope.displayHelp = function(helpId) {
+            return $scope.optionalHelp[helpId];
         };
 
         // re-apply radio/checkbox styling
@@ -41,5 +55,5 @@
     };
 
     // register the main controller
-    app.controller('mainController', ['$scope', mainController]);
+    app.controller('mainController', ['$scope', 'loggingService', mainController]);
 }());

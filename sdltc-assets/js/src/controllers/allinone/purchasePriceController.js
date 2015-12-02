@@ -5,7 +5,7 @@
 
     var purchasePriceController = function($scope, $location, $anchorScroll, dataService, purchasePriceValidationService, navigationService) {
         
-        var init = require("../../utilities/initController");
+        var init = require("../../utilities/initFormController");
         init($scope, $location, $anchorScroll, 'purchase-price', dataService, purchasePriceValidationService, navigationService);
 
     };
