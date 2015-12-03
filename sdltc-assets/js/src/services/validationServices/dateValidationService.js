@@ -11,11 +11,11 @@
             var validator = require("../../utilities/validator")();
 
             // validate the effectiveDate
-            if (validator.isNotPopulated(data.effectiveDate)) {
+            if (data.effectiveDate === '' || data.effectiveDate === undefined) {
                 state.effectiveDate = 'You must complete the effective date field';
-            } else if (validator.isInvalidParsedDate(data.effectiveDate)) {
+            } else if (data.effectiveDate === 'bad date') {
                 state.effectiveDate = 'You have entered an incorrect date, check your entry and correct it';
-            } else if (validator.isLessThanDate(data.effectiveDate, new Date(2012, 2, 22))) {
+            } else if (data.effectiveDate < new Date(2012, 2, 22)) {
                 state.effectiveDate = 'The effective date cannot be before 22 Mar 2012';
             }
 
