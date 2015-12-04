@@ -26,6 +26,22 @@
                 ]
             };
 
+            resLeaseSliceResults = {
+                "totalSDLT" : 0,
+                "slices" : [
+                    { "from": 0,       "to" : 125000,  "rate" : 0,  "taxDue" : 0},
+                    { "from": 125000,  "to" : -1    ,  "rate" : 1,  "taxDue" : 0}
+                ]
+            };
+
+            nonResLeaseSliceResults = {
+                "totalSDLT" : 0,
+                "slices" : [
+                    { "from": 0,       "to" : 150000,  "rate" : 0,  "taxDue" : 0},
+                    { "from": 150000,  "to" : -1    ,  "rate" : 1,  "taxDue" : 0}
+                ]
+            };
+
             termOfLeaseResults = {
                 years : 0,
                 days : 0,
@@ -247,31 +263,32 @@
             expect(service.calculateNonResidentialPremiumSlab(500001, 1000)).toEqual(slabResults);
         });
 
-        // ********************* calculateResidentialLeaseSlab *********************
-        it(' calculateResidentialLeaseSlab should return 0 for npv of 125000', function() {
-            slabResults.rate = 0;
-            slabResults.taxDue = 0;
-            expect(service.calculateResidentialLeaseSlab(125000)).toEqual(slabResults);
+        // ********************* calculateResidentialLeaseSlice *********************
+        it(' calculateResidentialLeaseSlice should return 0 for npv of 125099', function() {
+            resLeaseSliceResults.totalSDLT = 0;
+            resLeaseSliceResults.slices[1].taxDue = 0;
+            expect(service.calculateResidentialLeaseSlice(125099)).toEqual(resLeaseSliceResults);
         });
 
-        it(' calculateResidentialLeaseSlab should return 1250 for npv of 125001', function() {
-            slabResults.rate = 1;
-            slabResults.taxDue = 1250;
-            expect(service.calculateResidentialLeaseSlab(125001)).toEqual(slabResults);
+        it(' calculateResidentialLeaseSlice should return 1 for npv of 125100', function() {
+            resLeaseSliceResults.totalSDLT = 1;
+            resLeaseSliceResults.slices[1].taxDue = 1;
+            expect(service.calculateResidentialLeaseSlice(125100)).toEqual(resLeaseSliceResults);
         });
 
-        // ********************* calculateNonResidentialLeaseSlab *********************
-        it(' calculateResidentialLeaseSlab should return 0 for npv of 150000', function() {
-            slabResults.rate = 0;
-            slabResults.taxDue = 0;
-            expect(service.calculateNonResidentialLeaseSlab(150000)).toEqual(slabResults);
+        // ********************* calculateNonResidentialLeaseSlice *********************
+        it(' calculateNonResidentialLeaseSlice should return 0 for npv of 150099', function() {
+            nonResLeaseSliceResults.totalSDLT = 0;
+            nonResLeaseSliceResults.slices[1].taxDue = 0;
+            expect(service.calculateNonResidentialLeaseSlice(150099)).toEqual(nonResLeaseSliceResults);
         });
 
-        it(' calculateResidentialLeaseSlab should return 1500 for npv of 150001', function() {
-            slabResults.rate = 1;
-            slabResults.taxDue = 1500;
-            expect(service.calculateNonResidentialLeaseSlab(150001)).toEqual(slabResults);
+        it(' calculateNonResidentialLeaseSlice should return 1 for npv of 150100', function() {
+            nonResLeaseSliceResults.totalSDLT = 1;
+            nonResLeaseSliceResults.slices[1].taxDue = 1;
+            expect(service.calculateNonResidentialLeaseSlice(150100)).toEqual(nonResLeaseSliceResults);
         });
+
 
         // ********************* calculateNPV *********************
         it(' calculateNPV should return 9661 for 1 full year, 0 partial days, rents 10000,0,0,0,0 ', function() {
@@ -345,5 +362,14 @@
             var rentsArray = [10000, 11000, 12000, 13000, 14000];
             expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(272680);
         });
+
+        it(' calculateNPV should return 237461 for 1 full years, 1/365 partial days, rents 125000, 125000, 0, 0, 0', function() {
+            var fullYears = 1;
+            var partialDays = 1;
+            var daysInPartialYear = 365;
+            var rentsArray = [125000, 125000, 0, 0, 0];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(237461);
+        });
+
   });
 }());

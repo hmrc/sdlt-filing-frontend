@@ -5,6 +5,12 @@
 
         var dateHelper = require("../../../src/utilities/dateHelper.js");
 
+        termOfLeaseResults = {
+            years : 0,
+            days : 0,
+            daysInPartialYear : 0
+        };
+
         describe('Calling parseUIDate', function () {
             it('should return an empty string when no parameters are specified', function() {
                 var result = dateHelper.parseUIDate();
