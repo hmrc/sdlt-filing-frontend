@@ -9,11 +9,11 @@
 
         // Populated
         var isPopulated = function(value) {
-            return (value && value !== undefined && value.length > 0);
+            return !isNotPopulated(value);
         };
 
         var isNotPopulated = function(value) {
-            return !isPopulated(value);
+            return (value === '' || value === undefined || value.length < 1);
         };
 
         // Format
