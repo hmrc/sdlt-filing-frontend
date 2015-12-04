@@ -54,25 +54,25 @@
             }
         };
 
-        var calculateResidentialLeaseSlab = function(npv){
+        var calculateResidentialLeaseSlice = function(npv){
 
-            var slabsArray = [
-                    { "threshold" : 125000, "rate" : 1},
-                    { "threshold" : 0,      "rate" : 0}
+            var slicesArray = [
+                    { "from": 0,       "to" : 125000,   "rate" : 0,  "taxDue" : -1},
+                    { "from": 125000,  "to" : -1    ,   "rate" : 1,  "taxDue" : -1}
             ];
 
-            var resultJSON = calculateTaxDueSlab(npv, slabsArray);
+            var resultJSON = calculateTaxDueSlice(npv, slicesArray);
             return resultJSON;
         };
 
-        var calculateNonResidentialLeaseSlab = function(npv){
+        var calculateNonResidentialLeaseSlice = function(npv){
 
-            var slabsArray = [
-                    { "threshold" : 150000, "rate" : 1},
-                    { "threshold" : 0,      "rate" : 0}
+            var slicesArray = [
+                    { "from": 0,       "to" : 150000,   "rate" : 0,  "taxDue" : -1},
+                    { "from": 150000,  "to" : -1    ,   "rate" : 1,  "taxDue" : -1}
             ];
 
-            var resultJSON = calculateTaxDueSlab(npv, slabsArray);
+            var resultJSON = calculateTaxDueSlice(npv, slicesArray);
             return resultJSON;
         };
 
@@ -166,7 +166,7 @@
                 }
             }
 
-            if (partialDays > 0) {
+            if ((fullYears >= 5) && (partialDays > 0)) {
                 divisor = divisor * DIVISOR_RATE;
                 rentPartialYear = highRentFirst5 * partialDays / daysInPartialYear;
                 totalNPV += Math.floor(rentPartialYear / divisor);
@@ -179,8 +179,8 @@
             calculateResidentialPremiumSlab : calculateResidentialPremiumSlab,
             calculateResidentialPremiumSlice : calculateResidentialPremiumSlice,
             calculateNonResidentialPremiumSlab : calculateNonResidentialPremiumSlab,
-            calculateResidentialLeaseSlab : calculateResidentialLeaseSlab,
-            calculateNonResidentialLeaseSlab : calculateNonResidentialLeaseSlab,
+            calculateResidentialLeaseSlice : calculateResidentialLeaseSlice,
+            calculateNonResidentialLeaseSlice : calculateNonResidentialLeaseSlice,
             calculateNPV : calculateNPV
         };
     });

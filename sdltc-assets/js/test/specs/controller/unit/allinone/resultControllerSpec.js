@@ -44,8 +44,8 @@
                 calculateResidentialPremiumSlice: function() {},
                 calculateResidentialPremiumSlab: function() {},
                 calculateNonResidentialPremiumSlab: function() {},
-                calculateResidentialLeaseSlab: function() {},
-                calculateNonResidentialLeaseSlab: function() {}
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();

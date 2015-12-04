@@ -58,8 +58,8 @@
                 var rentsArray = [rent.displayYearOneRent ? $scope.data.year1Rent : 0, rent.displayYearTwoRent ? $scope.data.year2Rent : 0, rent.displayYearThreeRent ? $scope.data.year3Rent : 0, rent.displayYearFourRent ? $scope.data.year4Rent : 0, rent.displayYearFiveRent ? $scope.data.year5Rent : 0];
                 var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
                 if ($scope.data.propertyType === 'Residential') {
-                    rentTax = calculationService.calculateResidentialLeaseSlab(npv).taxDue;
-                    premiumTax = calculationService.calculateResidentialPremiumSlab($scope.data.premium).taxDue;
+                    premiumTax = calculationService.calculateResidentialPremiumSlice($scope.data.premium).totalSDLT;
+                    rentTax = calculationService.calculateResidentialLeaseSlice(npv).totalSDLT;
 
                     result.leasehold.residential.npv = npv;
                     result.leasehold.residential.rentTax = rentTax;
@@ -67,8 +67,8 @@
                     result.leasehold.residential.totalTax = rentTax + premiumTax;
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
-                    rentTax = calculationService.calculateNonResidentialLeaseSlab(npv).taxDue;
-                    premiumTax = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, $scope.data.relevantRent).taxDue;
+                    premiumTax = calculationService.calculateNonResidentialPremiumSlice($scope.data.premium, $scope.data.relevantRent).totalSDLT;
+                    rentTax = calculationService.calculateNonResidentialLeaseSlice(npv).totalSDLT;
 
                     result.leasehold.nonResidential.npv = npv;
                     result.leasehold.nonResidential.rentTax = rentTax;
