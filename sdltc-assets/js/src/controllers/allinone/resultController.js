@@ -67,7 +67,8 @@
                     result.leasehold.residential.totalTax = rentTax + premiumTax;
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
-                    premiumTax = calculationService.calculateNonResidentialPremiumSlice($scope.data.premium, $scope.data.relevantRent).totalSDLT;
+                    var relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
+                    premiumTax = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, relevantRent).taxDue;
                     rentTax = calculationService.calculateNonResidentialLeaseSlice(npv).totalSDLT;
 
                     result.leasehold.nonResidential.npv = npv;
