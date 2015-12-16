@@ -339,12 +339,12 @@
             expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(65259);
         });
 
-        it(' calculateNPV should return 377,834 for 100 full years, 0 partial days, rents 10000,11000,12000,13000,140000 ', function() {
+        it(' calculateNPV should return 377,835 for 100 full years, 0 partial days, rents 10000,11000,12000,13000,140000 ', function() {
             var fullYears = 100;
             var partialDays = 0;
             var daysInPartialYear = 0;
             var rentsArray = [10000, 11000, 12000, 13000, 14000];
-            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(377834);
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(377835);
         });
 
         it(' calculateNPV should return 54834 for 5 full years, 31/366 partial days, rents 10000,11000,12000,13000,140000 ', function() {
@@ -370,6 +370,57 @@
             var rentsArray = [125000, 125000, 0, 0, 0];
             expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(237461);
         });
+
+        // HMRC LH NonRes 1, 4, 7
+        it(' calculateNPV should return 1471 for 4 full years, 0/365 partial days, rents 100, 1000, 200, 300, 0', function() {
+            var fullYears = 4;
+            var partialDays = 0;
+            var daysInPartialYear = 365;
+            var rentsArray = [100, 1000, 200, 300, 0];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(1471);
+        });
+
+        // HMRC LH NonRes 2, 5, 8
+        it(' calculateNPV should return 9024802 for 4 full years, 0/365 partial days, rents 1000000, 2000000, 3000000, 4000000, 0', function() {
+            var fullYears = 4;
+            var partialDays = 0;
+            var daysInPartialYear = 365;
+            var rentsArray = [1000000, 2000000, 3000000, 4000000, 0];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(9024802);
+        });
+
+        // HMRC LH NonRes 3, 6, 9
+        it(' calculateNPV should return 1836539 for 4 full years, 0/365 partial days, rents 500000, 500000, 500000, 500000, 0', function() {
+            var fullYears = 4;
+            var partialDays = 0;
+            var daysInPartialYear = 365;
+            var rentsArray = [500000, 500000, 500000, 500000, 0];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(1836539);
+        });
+
+        // HMRC LH NonRes 10, 11, 12
+        it(' calculateNPV should return 27655 for 100 full years, 0/365 partial days, rents 1000, 1000, 1000, 1000, 1000', function() {
+            var fullYears = 100;
+            var partialDays = 0;
+            var daysInPartialYear = 365;
+            var rentsArray = [1000, 1000, 1000, 1000, 1000];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(27655);
+        });
+
+// *******************************************
+// 
+// TODO Check rounding 
+// 
+// *******************************************
+        // // HMRC LH NonRes 13
+        // it(' calculateNPV should return 13321376 for 100 full years, 0/365 partial days, rents 2500000, 2500000, 2500000, 2500000, 2500000', function() {
+        //     var fullYears = 30;
+        //     var partialDays = 0;
+        //     var daysInPartialYear = 365;
+        //     var rentsArray = [2500000, 2500000, 2500000, 2500000, 2500000];
+        //     expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(13321376);
+        // });
+
 
   });
 }());
