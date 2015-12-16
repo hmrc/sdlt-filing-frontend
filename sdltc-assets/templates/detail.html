@@ -14,33 +14,33 @@
             </tr>
             <tr class="section">
               <td>Up to {{data.result.freehold.residential.from.slices[0].to | sdltCurrency}}</td>
-              <td>{{data.result.freehold.residential.from.slices[0].rate}}</td>
-              <td>{{data.result.freehold.residential.from.slices[0].taxDue | sdltCurrency}}</td>
+              <td id="band1Rate">{{data.result.freehold.residential.from.slices[0].rate}}</td>
+              <td id="band1Tax">{{data.result.freehold.residential.from.slices[0].taxDue | sdltCurrency}}</td>
             </tr>
             <tr class="section">
               <td>Above {{data.result.freehold.residential.from.slices[1].from | sdltCurrency}} and up to {{data.result.freehold.residential.from.slices[1].to | sdltCurrency}}</td>
-              <td>{{data.result.freehold.residential.from.slices[1].rate}}</td>
-              <td>{{data.result.freehold.residential.from.slices[1].taxDue | sdltCurrency}}</td>
+              <td id="band2Rate">{{data.result.freehold.residential.from.slices[1].rate}}</td>
+              <td id="band2Tax">{{data.result.freehold.residential.from.slices[1].taxDue | sdltCurrency}}</td>
             </tr>
             <tr class="section">
               <td>Above {{data.result.freehold.residential.from.slices[2].from | sdltCurrency}} and up to {{data.result.freehold.residential.from.slices[2].to | sdltCurrency}}</td>
-              <td>{{data.result.freehold.residential.from.slices[2].rate}}</td>
-              <td>{{data.result.freehold.residential.from.slices[2].taxDue | sdltCurrency}}</td>
+              <td id="band3Rate">{{data.result.freehold.residential.from.slices[2].rate}}</td>
+              <td id="band3Tax">{{data.result.freehold.residential.from.slices[2].taxDue | sdltCurrency}}</td>
             </tr>
             <tr class="section">
               <td>Above {{data.result.freehold.residential.from.slices[3].from | sdltCurrency}} and up to {{data.result.freehold.residential.from.slices[3].to | sdltCurrency}}</td>
-              <td>{{data.result.freehold.residential.from.slices[3].rate}}</td>
-              <td>{{data.result.freehold.residential.from.slices[3].taxDue | sdltCurrency}}</td>
+              <td id="band4Rate">{{data.result.freehold.residential.from.slices[3].rate}}</td>
+              <td id="band4Tax">{{data.result.freehold.residential.from.slices[3].taxDue | sdltCurrency}}</td>
             </tr>
             <tr class="section">
               <td>Above {{data.result.freehold.residential.from.slices[4].from | sdltCurrency}}+</td>
-              <td>{{data.result.freehold.residential.from.slices[4].rate}}</td>
-              <td>{{data.result.freehold.residential.from.slices[4].taxDue | sdltCurrency}}</td>
+              <td id="band5Rate">{{data.result.freehold.residential.from.slices[4].rate}}</td>
+              <td id="band5Tax">{{data.result.freehold.residential.from.slices[4].taxDue | sdltCurrency}}</td>
             </tr>
             <tr class="section">
               <td>&nbsp;</td>
               <td>Total SDLT due</td>
-              <td>{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
+              <td id="totalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
             </tr>
           </tbody>
         </table>
