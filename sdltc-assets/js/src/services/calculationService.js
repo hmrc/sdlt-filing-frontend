@@ -153,7 +153,9 @@
 
             for (var i = 0; i <= 4; i++) {
                 divisor = divisor * DIVISOR_RATE;
-                totalNPV += Math.floor(rentsArray[i] * 100 / divisor) / 100;
+                totalNPV += Math.floor(rentsArray[i] * 1000 / divisor) / 1000;
+//                totalNPV += rentsArray[i] / divisor;
+console.log(rentsArray[i] / divisor);   
                 if (rentsArray[i] > highRentFirst5) {
                     highRentFirst5 = rentsArray[i];
                 }
@@ -162,7 +164,8 @@
             if (fullYears > 5) {
                 for (var j = 6; j <= fullYears; j++) {
                     divisor = divisor * DIVISOR_RATE;
-                    totalNPV +=  Math.floor(highRentFirst5 * 100 / divisor) / 100;
+                    totalNPV +=  Math.floor(highRentFirst5 * 1000 / divisor) / 1000;
+//                    totalNPV +=  highRentFirst5 / divisor;
                 }
             }
 
