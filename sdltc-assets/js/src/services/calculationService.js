@@ -42,7 +42,7 @@
                     { "threshold" : 0,      "rate" : 1}
             ];
 
-            if ( (premium <= 150000) && (rent <= 1000) ) {
+            if ( (premium <= 150000) && (rent < 1000) ) {
                 var noTaxResults = {
                     rate : 0,
                     taxDue : 0
