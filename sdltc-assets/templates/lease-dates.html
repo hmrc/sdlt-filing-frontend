@@ -2,10 +2,9 @@
 
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <p>Optional description of the error(s) and how to correct them</p>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('startDate')"><a href="javascript:void(0)" data-ng-click="jumpTo('startDateDay')">{{state.validationMessage('startDate')}}</a></li>
-      <li ng-show="state.hasError('endDate')"><a href="javascript:void(0)" data-ng-click="jumpTo('endDateDay')">{{state.validationMessage('endDate')}}</a></li>
+      <li ng-show="state.hasError('startDate')"><a id="summaryErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('startDateDay')">{{state.validationMessage('startDate')}}</a></li>
+      <li ng-show="state.hasError('endDate')"><a id="summaryErrMsg2" href="javascript:void(0)" data-ng-click="jumpTo('endDateDay')">{{state.validationMessage('endDate')}}</a></li>
     </ul>
 </div>
 
@@ -14,7 +13,7 @@
     <div class="form-group {{state.hasError('startDate')}}">
         <fieldset>
             <legend class="form-label">Start Date as specified in lease</legend>
-            <span class="error-notification">{{state.validationMessage('startDate')}}</span>
+            <span id="startDateErrMsg" class="error-notification">{{state.validationMessage('startDate')}}</span>
             <div class="form-date">
                 <div class="form-group form-group-day">
                   <label for="startDateDay">Day</label>
@@ -35,7 +34,7 @@
     <div class="form-group {{state.hasError('endDate')}}">
         <fieldset>
             <legend class="form-label">End Date as specified in lease</legend>
-            <span class="error-notification">{{state.validationMessage('endDate')}}</span>
+            <span id="endDateErrMsg" class="error-notification">{{state.validationMessage('endDate')}}</span>
             <div class="form-date">
                 <div class="form-group form-group-day">
                   <label for="endDateDay">Day</label>

@@ -2,9 +2,8 @@
 
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <p>Optional description of the error(s) and how to correct them</p>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('premium')"><a href="javascript:void(0)" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
+      <li ng-show="state.hasError('premium')"><a id="summaryErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
     </ul>
 </div>
 
@@ -13,7 +12,7 @@
     <div class="form-group {{state.hasError('premium')}}">
         <label for="premium">
             <span class="form-label">Total premium payable</span>
-            <span class="error-notification">{{state.validationMessage('premium')}}</span>
+            <span id="premiumErrMsg" class="error-notification">{{state.validationMessage('premium')}}</span>
         </label>            
         &pound; <input id="premium" class="form-control form-control-1-8" ng-model="data.premium" name="premium" type="text" required>
     </div>

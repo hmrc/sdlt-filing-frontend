@@ -2,9 +2,8 @@
 
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <p>Optional description of the error(s) and how to correct them</p>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('propertyType')"><a href="javascript:void(0)" data-ng-click="jumpTo('propertyType')">{{state.validationMessage('propertyType')}}</a></li>
+      <li ng-show="state.hasError('propertyType')"><a id="summaryErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('propertyType')">{{state.validationMessage('propertyType')}}</a></li>
     </ul>
 </div>
 
@@ -14,7 +13,7 @@
         <fieldset>
             <legend id="propertyType" class="form-label">Is the property residential or non-residential?</legend>
             <span class="form-hint">For mixed-usage choose Non-residential.</span>
-            <span class="error-notification">{{state.validationMessage('propertyType')}}</span>
+            <span id="propertyTypeErrMsg" class="error-notification">{{state.validationMessage('propertyType')}}</span>
             <div class="inline">
                 <label class="block-label" for="residential">
                     <input id="residential" ng-model="data.propertyType" name="propertyType" value="Residential" type="radio" required>Residential

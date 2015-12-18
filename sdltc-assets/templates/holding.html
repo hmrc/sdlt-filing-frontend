@@ -2,9 +2,8 @@
 
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <p>Optional description of the error(s) and how to correct them</p>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('holdingType')"><a href="javascript:void(0)" data-ng-click="jumpTo('holdingType')">{{state.validationMessage('holdingType')}}</a></li>
+      <li ng-show="state.hasError('holdingType')"><a id="summaryErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('holdingType')">{{state.validationMessage('holdingType')}}</a></li>
     </ul>
 </div>
 
@@ -13,7 +12,7 @@
     <div class="form-group {{state.hasError('holdingType')}}">
         <fieldset>
             <legend id="holdingType" class="form-label">Is the property freehold or leasehold?</legend>
-            <span class="error-notification">{{state.validationMessage('holdingType')}}</span>
+            <span id="holdingTypeErrorMsg" class="error-notification">{{state.validationMessage('holdingType')}}</span>
             <div class="inline">
                 <label class="block-label" for="holding-free">
                     <input id="holding-free" ng-model="data.holdingType" name="holdingType" value="Freehold" type="radio" required>Freehold
