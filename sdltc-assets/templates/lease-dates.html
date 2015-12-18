@@ -2,10 +2,9 @@
 
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <p>Optional description of the error(s) and how to correct them</p>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('startDate')"><a href="javascript:void(0)" data-ng-click="jumpTo('startDateDay')">{{state.validationMessage('startDate')}}</a></li>
-      <li ng-show="state.hasError('endDate')"><a href="javascript:void(0)" data-ng-click="jumpTo('endDateDay')">{{state.validationMessage('endDate')}}</a></li>
+      <li ng-show="state.hasError('startDate')"><a id="summaryErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('startDateDay')">{{state.validationMessage('startDate')}}</a></li>
+      <li ng-show="state.hasError('endDate')"><a id="summaryErrMsg2" href="javascript:void(0)" data-ng-click="jumpTo('endDateDay')">{{state.validationMessage('endDate')}}</a></li>
     </ul>
 </div>
 
