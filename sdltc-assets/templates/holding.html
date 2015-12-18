@@ -12,7 +12,7 @@
     <div class="form-group {{state.hasError('holdingType')}}">
         <fieldset>
             <legend id="holdingType" class="form-label">Is the property freehold or leasehold?</legend>
-            <span class="error-notification">{{state.validationMessage('holdingType')}}</span>
+            <span id="holdingTypeErrorMsg" class="error-notification">{{state.validationMessage('holdingType')}}</span>
             <div class="inline">
                 <label class="block-label" for="holding-free">
                     <input id="holding-free" ng-model="data.holdingType" name="holdingType" value="Freehold" type="radio" required>Freehold

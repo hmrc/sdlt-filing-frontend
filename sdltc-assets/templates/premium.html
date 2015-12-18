@@ -12,7 +12,7 @@
     <div class="form-group {{state.hasError('premium')}}">
         <label for="premium">
             <span class="form-label">Total premium payable</span>
-            <span class="error-notification">{{state.validationMessage('premium')}}</span>
+            <span id="premiumErrMsg" class="error-notification">{{state.validationMessage('premium')}}</span>
         </label>            
         &pound; <input id="premium" class="form-control form-control-1-8" ng-model="data.premium" name="premium" type="text" required>
     </div>

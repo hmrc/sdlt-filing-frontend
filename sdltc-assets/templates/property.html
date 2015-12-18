@@ -13,7 +13,7 @@
         <fieldset>
             <legend id="propertyType" class="form-label">Is the property residential or non-residential?</legend>
             <span class="form-hint">For mixed-usage choose Non-residential.</span>
-            <span class="error-notification">{{state.validationMessage('propertyType')}}</span>
+            <span id="propertyTypeErrMsg" class="error-notification">{{state.validationMessage('propertyType')}}</span>
             <div class="inline">
                 <label class="block-label" for="residential">
                     <input id="residential" ng-model="data.propertyType" name="propertyType" value="Residential" type="radio" required>Residential

@@ -12,7 +12,7 @@
     <div class="form-group {{state.hasError('relevantRent')}}">
         <label for="relevantRent">
             <span class="form-label">Relevant Rental Figure</span>
-            <span class="error-notification">{{state.validationMessage('relevantRent')}}</span>
+            <span id="relevantRentErrMsg" class="error-notification">{{state.validationMessage('relevantRent')}}</span>
         </label>            
         &pound; <input id="relevantRent" class="form-control form-control-1-8" ng-model="data.relevantRent" name="relevantRent" type="text" required>
     </div>
