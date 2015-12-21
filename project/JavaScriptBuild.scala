@@ -20,7 +20,7 @@ object JavaScriptBuild {
   val javaScriptUiSettings = Seq(
 
     // the JavaScript application resides in "ui"
-    uiDirectory <<= (baseDirectory in Compile) { _ /"sdltc-assets" },
+    uiDirectory <<= (baseDirectory in Compile) { _ /"calc-assets" },
 
     // add "npm" and "gulp" commands in sbt
     commands <++= uiDirectory { base => Seq(Gulp.gulpCommand(base), npmCommand(base))},
