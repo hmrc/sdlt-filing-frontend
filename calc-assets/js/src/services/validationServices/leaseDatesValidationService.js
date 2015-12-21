@@ -13,7 +13,6 @@
             var buildState = require('../../utilities/buildState');
             var validator = require("../../utilities/validator")();
 
-            // validate the startDate
             if (validator.isNotPopulated(data.startDate)) {
                 state.startDate = 'You must complete the start date field';
             } else if (validator.isInvalidParsedDate(data.startDate)) {
@@ -22,7 +21,6 @@
                 startDateValid = true;
             }
 
-            // validate the endDate
             if (validator.isNotPopulated(data.endDate)) {
                 state.endDate = 'You must complete the end date field';
             } else if (validator.isInvalidParsedDate(data.endDate)) {
