@@ -8,10 +8,10 @@
 "assets.cache./public/javascript/v```1```-sdltc.js"="public, max-age=31536000"  
 "assets.cache./public/javascript/v```1```-sdltc-templates.js"="public, max-age=31536000"   
 
-#### sdltc-assets/gulpfile.js/config.js
+#### calc-assets/gulpfile.js/config.js
 var jsVersion = "v```1```";
 
-#### sdltc-assets/index.html
+#### calc-assets/index.html
 ga('send', 'event', 'asset-version', 'v```1```', 'sdltc-javascripts');  
 script src="javascript/v```1```-sdltc.js"  
 script src="javascript/v```1```-sdltc-templates.js"

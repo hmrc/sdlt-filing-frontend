@@ -1,2 +1,2 @@
-sdltc-assets
+calc-assets
 =============

@@ -24,7 +24,7 @@ module.exports =
 
     templateCache:
     {
-        file: 'javascript/'+jsVersion+'-sdltc-templates.js',
+        file: 'javascript/'+jsVersion+'-calc-templates.js',
         options: {
             module: 'sdltc-templates',
             standalone: true
@@ -80,7 +80,7 @@ module.exports =
         entry: ["./js/src/app.js"],
         output:
         {
-            filename: "../public/javascript/"+jsVersion+"-sdltc.js"
+            filename: "../public/javascript/"+jsVersion+"-calc.js"
         },
         externals: ["angular"]
     },
