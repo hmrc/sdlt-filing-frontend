@@ -14,19 +14,19 @@ trait ShowErrorPage extends GlobalSettings {
   def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html
 
   def badRequestTemplate(implicit request: Request[_]): Html = standardErrorTemplate(
-    Messages("sdltc.error.badRequest400.title"),
-    Messages("sdltc.error.badRequest400.heading"),
-    Messages("sdltc.error.badRequest400.message"))
+    Messages("calc.error.badRequest400.title"),
+    Messages("calc.error.badRequest400.heading"),
+    Messages("calc.error.badRequest400.message"))
 
   def notFoundTemplate(implicit request: Request[_]): Html = standardErrorTemplate(
-    Messages("sdltc.error.pageNotFound404.title"),
-    Messages("sdltc.error.pageNotFound404.heading"),
-    Messages("sdltc.error.pageNotFound404.message"))
+    Messages("calc.error.pageNotFound404.title"),
+    Messages("calc.error.pageNotFound404.heading"),
+    Messages("calc.error.pageNotFound404.message"))
 
   def internalServerErrorTemplate(implicit request: Request[_]): Html = standardErrorTemplate(
-    Messages("sdltc.error.InternalServerError500.title"),
-    Messages("sdltc.error.InternalServerError500.heading"),
-    Messages("sdltc.error.InternalServerError500.message"))
+    Messages("calc.error.InternalServerError500.title"),
+    Messages("calc.error.InternalServerError500.heading"),
+    Messages("calc.error.InternalServerError500.message"))
 
   final override def onBadRequest(rh: RequestHeader, error: String) =
     Future.successful(BadRequest(badRequestTemplate(rh)))
