@@ -2,11 +2,11 @@
     "use strict";
 
 	var angular = require("angular-wrapper");
-	require("./sdltc-module");
+	require("./calc-module");
 
 	window.name = "NG_DEFER_BOOTSTRAP!";
 
 	angular.element().ready(function () {
-	    angular.bootstrap(document, ['sdltc']);
+	    angular.bootstrap(document, ['calc']);
 	});
 }());

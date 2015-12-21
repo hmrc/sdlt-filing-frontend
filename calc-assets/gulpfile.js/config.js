@@ -26,7 +26,7 @@ module.exports =
     {
         file: 'javascript/'+jsVersion+'-calc-templates.js',
         options: {
-            module: 'sdltc-templates',
+            module: 'calc-templates',
             standalone: true
         }
     },

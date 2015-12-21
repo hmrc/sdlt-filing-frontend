@@ -5,16 +5,16 @@
 ### Change javascript version number for every release, update below files with next version number (in snippet below its version 1):  
 
 #### conf/application.conf
-"assets.cache./public/javascript/v```1```-sdltc.js"="public, max-age=31536000"  
-"assets.cache./public/javascript/v```1```-sdltc-templates.js"="public, max-age=31536000"   
+"assets.cache./public/javascript/v```1```-calc.js"="public, max-age=31536000"  
+"assets.cache./public/javascript/v```1```-calc-templates.js"="public, max-age=31536000"   
 
 #### calc-assets/gulpfile.js/config.js
 var jsVersion = "v```1```";
 
 #### calc-assets/index.html
-ga('send', 'event', 'asset-version', 'v```1```', 'sdltc-javascripts');  
-script src="javascript/v```1```-sdltc.js"  
-script src="javascript/v```1```-sdltc-templates.js"
+ga('send', 'event', 'asset-version', 'v```1```', 'calc-javascripts');  
+script src="javascript/v```1```-calc.js"  
+script src="javascript/v```1```-calc-templates.js"
 
 
 
@@ -56,7 +56,11 @@ sudo nano /etc/nginx/sites-enabled/default
 
     location /contact {  
             proxy_pass      http://localhost:9250/contact;  
-    }  
+    }
+
+    location /calculate-stamp-duty-land-tax {  
+        proxy_pass      http://localhost:9090/calculate-stamp-duty-land-tax;  
+	}  
 
 Restart nginx  
 ```  

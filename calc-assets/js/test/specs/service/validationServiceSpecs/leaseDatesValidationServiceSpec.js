@@ -5,7 +5,7 @@
 
         var service;
 
-        beforeEach(angular.mock.module("sdltc.services"));
+        beforeEach(angular.mock.module("calc.services"));
 
         beforeEach(inject(function (_leaseDatesValidationService_) {
             service = _leaseDatesValidationService_;

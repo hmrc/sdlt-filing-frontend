@@ -3,6 +3,6 @@
 
 	var angular = require("angular-wrapper");
 
-	module.exports = angular.module("sdltc.filters",[]);
+	module.exports = angular.module("calc.filters",[]);
 
 }());

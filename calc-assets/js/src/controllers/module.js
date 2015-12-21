@@ -3,5 +3,5 @@
 
 	var angular = require("angular-wrapper");
 
-	module.exports = angular.module("sdltc.controllers",[]);
+	module.exports = angular.module("calc.controllers",[]);
 }());

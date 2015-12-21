@@ -1,7 +1,7 @@
 {
-  "name": "sdltc-frontend",
+  "name": "calc-assets",
   "version": "0.1.0",
-  "description": "SDLTC Assets",
+  "description": "CALC Assets",
   "main": "index.js",
   "scripts": {
     "test_prev": "./node_modules/mocha/bin/mocha --reporter spec",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hmrc/sdltc-frontend.git"
+    "url": "https://github.com"
   },
   "author": "",
   "license": "ISC",

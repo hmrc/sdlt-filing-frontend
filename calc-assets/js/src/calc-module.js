@@ -7,11 +7,11 @@
 	require("./services/index");
 	require("./filters/index");
 
-	module.exports = angular.module('sdltc', [
-	    'sdltc.services',
-	    'sdltc.routes',
-	    'sdltc.filters',
-	    'sdltc.controllers',
-	    'sdltc-templates'
+	module.exports = angular.module('calc', [
+	    'calc.services',
+	    'calc.routes',
+	    'calc.filters',
+	    'calc.controllers',
+	    'calc-templates'
 	]);
 }());

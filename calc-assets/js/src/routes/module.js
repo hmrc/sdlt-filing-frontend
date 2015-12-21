@@ -3,6 +3,6 @@
 
 	var angular = require("angular-wrapper");
 
-	module.exports = angular.module("sdltc.routes", ['ngRoute']);
+	module.exports = angular.module("calc.routes", ['ngRoute']);
 	
 }());

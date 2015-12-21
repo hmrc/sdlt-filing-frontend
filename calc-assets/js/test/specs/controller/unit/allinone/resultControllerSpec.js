@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    require("sdltc-module");
+    require("calc-module");
 
     var mocks = require("angular-mocks-wrapper");
 
@@ -15,7 +15,7 @@
             mockCalculationService,
             calledServiceGetModel = false;
 
-        beforeEach(mocks.module('sdltc.controllers'));
+        beforeEach(mocks.module('calc.controllers'));
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
@@ -87,7 +87,7 @@
             mockLocation,
             calledServiceGetModel = false;
 
-        beforeEach(mocks.module('sdltc.controllers'));
+        beforeEach(mocks.module('calc.controllers'));
         beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
             
             mockScope = $rootScope.$new();

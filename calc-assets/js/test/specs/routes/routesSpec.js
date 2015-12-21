@@ -4,7 +4,7 @@
     describe('Testing Routes', function() {
 
         // load the controller's module
-        beforeEach(angular.mock.module("sdltc.routes"));
+        beforeEach(angular.mock.module("calc.routes"));
 
         var location, route, rootScope;
 
