@@ -3,19 +3,19 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('premium')"><a id="premiumPageErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
+      <li ng-show="state.hasError('premium')"><a id="purchasePricePageErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
     </ul>
 </div>
 
 <form name="priceForm" class="form">
 
     <div class="form-group {{state.hasError('premium')}}">
-        <label for="premium">
+        <label for="purchasePrice">
             <span class="form-label">Purchase price</span>
             <span class="form-hint">a.k.a chargeable consideration</span>
-            <span id="premiumErrMsg" class="error-notification">{{state.validationMessage('premium')}}</span>
+            <span id="purchasePriceErrMsg" class="error-notification">{{state.validationMessage('premium')}}</span>
         </label>            
-        &pound; <input id="premium" class="form-control form-control-1-8" ng-model="data.premium" name="premium" type="text" required>
+        &pound; <input id="purchasePrice" class="form-control form-control-1-8" ng-model="data.premium" name="premium" type="text" required>
     </div>
 
     <div class="form-group">
