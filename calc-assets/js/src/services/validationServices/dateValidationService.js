@@ -10,7 +10,6 @@
             var buildState = require("../../utilities/buildState");
             var validator = require("../../utilities/validator")();
 
-            // validate the effectiveDate
             if (validator.isNotPopulated(data.effectiveDate)) {
                 state.effectiveDate = 'You must complete the effective date field';
             } else if (validator.isInvalidParsedDate(data.effectiveDate)) {

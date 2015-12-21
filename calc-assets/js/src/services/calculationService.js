@@ -116,16 +116,13 @@
                         slices[i].taxDue = 0;
                     }
                 } else if (amount > slices[i].to) {   
-                    // full tax for slice
                     sliceAmount = slices[i].to - slices[i].from;
                     sliceTaxDue = calcTax(sliceAmount, slices[i].rate);
                     slices[i].taxDue = sliceTaxDue;
                     totalTaxDue += sliceTaxDue;
                 } else if (amount <= slices[i].from) {    
-                    // no tax for slice
                     slices[i].taxDue = 0;
                 } else { 
-                    // amount is between from and to
                     sliceAmount = amount - slices[i].from;
                     sliceTaxDue = calcTax(sliceAmount, slices[i].rate);
                     slices[i].taxDue = sliceTaxDue;
@@ -154,8 +151,7 @@
             for (var i = 0; i <= 4; i++) {
                 divisor = divisor * DIVISOR_RATE;
                 totalNPV += Math.floor(rentsArray[i] * 1000 / divisor) / 1000;
-//                totalNPV += rentsArray[i] / divisor;
-console.log(rentsArray[i] / divisor);   
+  
                 if (rentsArray[i] > highRentFirst5) {
                     highRentFirst5 = rentsArray[i];
                 }
@@ -165,7 +161,6 @@ console.log(rentsArray[i] / divisor);
                 for (var j = 6; j <= fullYears; j++) {
                     divisor = divisor * DIVISOR_RATE;
                     totalNPV +=  Math.floor(highRentFirst5 * 1000 / divisor) / 1000;
-//                    totalNPV +=  highRentFirst5 / divisor;
                 }
             }
 
