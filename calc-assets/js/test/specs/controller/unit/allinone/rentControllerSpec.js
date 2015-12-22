@@ -12,6 +12,7 @@
             mockDataService, 
             mockValidationService, 
             mockNavigationService,
+            mockLocation,
             calledServiceGetModel = false;
 
         beforeEach(mocks.module('calc.controllers'));
@@ -164,6 +165,65 @@
 
             it('should call to navigationService.next once', function () {
                 expect(mockNavigationService.next.calls.count()).toEqual(1);
+            });
+        });
+
+        describe('Calling .submit() on the Rent Controller with missing questions', function () {
+
+            beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
+                
+                mockScope = $rootScope.$new();
+                
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : undefined,
+                            leaseTerm : "banana"
+                        }; 
+                    },
+                    updateModel : function() {}
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+                mockLocation = $location;
+
+                spyOn(mockDataService, 'updateModel').and.callThrough();    
+                spyOn(mockNavigationService, 'next').and.callThrough();
+                spyOn(mockValidationService, 'validate').and.callThrough();
+
+                controller = $controller('rentController', {
+                    $scope : mockScope,
+                    $location : mockLocation,
+                    dataService : mockDataService,
+                    rentValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+                mockScope.submit({});
+            }));
+
+            it('should call the validation service once', function () {
+                expect(mockValidationService.validate.calls.count()).toEqual(1);
+            });
+
+            it('should call dataService.updateModel once', function () {
+                expect(mockDataService.updateModel.calls.count()).toEqual(1);
+            });
+
+            it('should call to navigationService.next once', function () {
+                expect(mockNavigationService.next.calls.count()).toEqual(1);
+            });
+
+            it('should set the location path to /summary', function() {
+                expect(mockLocation.path()).toEqual('/summary');
             });
         });
     });
