@@ -3,8 +3,8 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-      <li ng-show="state.hasError('startDate')"><a id="summaryErrMsg1" href="javascript:void(0)" data-ng-click="jumpTo('startDateDay')">{{state.validationMessage('startDate')}}</a></li>
-      <li ng-show="state.hasError('endDate')"><a id="summaryErrMsg2" href="javascript:void(0)" data-ng-click="jumpTo('endDateDay')">{{state.validationMessage('endDate')}}</a></li>
+      <li ng-show="state.hasError('startDate')"><a id="leaseStartDatePageErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('leaseStartDateDay')">{{state.validationMessage('startDate')}}</a></li>
+      <li ng-show="state.hasError('endDate')"><a id="leaseEndDatePageErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('leaseEndDateDay')">{{state.validationMessage('endDate')}}</a></li>
     </ul>
 </div>
 
@@ -13,19 +13,19 @@
     <div class="form-group {{state.hasError('startDate')}}">
         <fieldset>
             <legend class="form-label">Start Date as specified in lease</legend>
-            <span id="startDateErrMsg" class="error-notification">{{state.validationMessage('startDate')}}</span>
+            <span id="leaseStartDateErrMsg" class="error-notification">{{state.validationMessage('startDate')}}</span>
             <div class="form-date">
                 <div class="form-group form-group-day">
-                  <label for="startDateDay">Day</label>
-                  <input class="form-control" id="startDateDay" ng-model="data.startDateDay" ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="31" maxlength="2">
+                  <label for="leaseStartDateDay">Day</label>
+                  <input class="form-control" id="leaseStartDateDay" ng-model="data.startDateDay" ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="31" maxlength="2">
                 </div>
                 <div class="form-group form-group-month">
-                  <label for="startDateMonth">Month</label>
-                  <input class="form-control" id="startDateMonth" ng-model="data.startDateMonth"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="12" maxlength="2">
+                  <label for="leaseStartDateMonth">Month</label>
+                  <input class="form-control" id="leaseStartDateMonth" ng-model="data.startDateMonth"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" max="12" maxlength="2">
                 </div>
                 <div class="form-group form-group-year">
-                  <label for="startDateYear">Year</label>
-                  <input class="form-control" id="startDateYear" ng-model="data.startDateYear"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" maxlength="4">
+                  <label for="leaseStartDateYear">Year</label>
+                  <input class="form-control" id="leaseStartDateYear" ng-model="data.startDateYear"  ng-change="updateStartDate()" type="text" pattern="[0-9]*" min="0" maxlength="4">
                 </div>
               </div>
         </fieldset>
@@ -34,19 +34,19 @@
     <div class="form-group {{state.hasError('endDate')}}">
         <fieldset>
             <legend class="form-label">End Date as specified in lease</legend>
-            <span id="endDateErrMsg" class="error-notification">{{state.validationMessage('endDate')}}</span>
+            <span id="leaseEndDateErrMsg" class="error-notification">{{state.validationMessage('endDate')}}</span>
             <div class="form-date">
                 <div class="form-group form-group-day">
-                  <label for="endDateDay">Day</label>
-                  <input class="form-control" id="endDateDay" ng-model="data.endDateDay" ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="31" maxlength="2">
+                  <label for="leaseEndDateDay">Day</label>
+                  <input class="form-control" id="leaseEndDateDay" ng-model="data.endDateDay" ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="31" maxlength="2">
                 </div>
                 <div class="form-group form-group-month">
-                  <label for="endDateMonth">Month</label>
-                  <input class="form-control" id="endDateMonth" ng-model="data.endDateMonth"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="12" maxlength="2">
+                  <label for="leaseEndDateMonth">Month</label>
+                  <input class="form-control" id="leaseEndDateMonth" ng-model="data.endDateMonth"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" max="12" maxlength="2">
                 </div>
                 <div class="form-group form-group-year">
-                  <label for="endDateYear">Year</label>
-                  <input class="form-control" id="endDateYear" ng-model="data.endDateYear"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" maxlength="4">
+                  <label for="leaseEndDateYear">Year</label>
+                  <input class="form-control" id="leaseEndDateYear" ng-model="data.endDateYear"  ng-change="updateEndDate()" type="text" pattern="[0-9]*" min="0" maxlength="4">
                 </div>
               </div>
         </fieldset>
