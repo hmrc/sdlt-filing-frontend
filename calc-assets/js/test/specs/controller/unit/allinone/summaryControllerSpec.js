@@ -147,6 +147,376 @@
             });
         });
 
+        describe('LeaseTerm is 1 year', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : {
+                                years : 1
+                            },
+                            year1Rent : "1",
+                            year2Rent : "2",
+                            year3Rent : "3",
+                            year4Rent : "4",
+                            year5Rent : "5"
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            // on create
+            it('should make 1 call to dataService.getModel', function () {
+                expect(mockDataService.getModel.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to navigationService.logView', function () {
+                expect(mockNavigationService.logView.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to validationService.validate', function () {
+                expect(mockValidationService.validate.calls.count()).toEqual(1);
+            });
+
+            it('should set displayYearOneRent to true', function() {
+                expect(mockScope.displayYearOneRent).toEqual(true);
+            });
+
+            it('should compare highest to year1Rent when displayYearOneRent is true', function() {
+                expect(mockScope.data.year1Rent).toEqual("1");
+                expect(mockScope.data.highestRent).toEqual("1");
+            });
+        });
+
+        describe('LeaseTerm is 2 years', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : {
+                                years : 2
+                            },
+                            year1Rent : "1",
+                            year2Rent : "2",
+                            year3Rent : "3",
+                            year4Rent : "4",
+                            year5Rent : "5"
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            // on create
+            it('should make 1 call to dataService.getModel', function () {
+                expect(mockDataService.getModel.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to navigationService.logView', function () {
+                expect(mockNavigationService.logView.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to validationService.validate', function () {
+                expect(mockValidationService.validate.calls.count()).toEqual(1);
+            });
+
+            it('should set displayYearTwoRent to true', function() {
+                expect(mockScope.displayYearTwoRent).toEqual(true);
+            });
+
+            it('should compare highest to year2Rent when displayYearTwoRent is true', function() {
+                expect(mockScope.data.year2Rent).toEqual("2");
+                expect(mockScope.data.highestRent).toEqual("2");
+            });
+        });
+
+        describe('LeaseTerm is 3 years', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : {
+                                years : 3
+                            },
+                            year1Rent : "1",
+                            year2Rent : "2",
+                            year3Rent : "3",
+                            year4Rent : "4",
+                            year5Rent : "5"
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            // on create
+            it('should make 1 call to dataService.getModel', function () {
+                expect(mockDataService.getModel.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to navigationService.logView', function () {
+                expect(mockNavigationService.logView.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to validationService.validate', function () {
+                expect(mockValidationService.validate.calls.count()).toEqual(1);
+            });
+
+            it('should set displayYearThreeRent to true', function() {
+                expect(mockScope.displayYearThreeRent).toEqual(true);
+            });
+
+            it('should compare highest to year3Rent when displayYearThreeRent is true', function() {
+                expect(mockScope.data.year3Rent).toEqual("3");
+                expect(mockScope.data.highestRent).toEqual("3");
+            });
+        });
+
+        describe('LeaseTerm is 4 years', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : {
+                                years : 4
+                            },
+                            year1Rent : "1",
+                            year2Rent : "2",
+                            year3Rent : "3",
+                            year4Rent : "4",
+                            year5Rent : "5"
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            // on create
+            it('should make 1 call to dataService.getModel', function () {
+                expect(mockDataService.getModel.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to navigationService.logView', function () {
+                expect(mockNavigationService.logView.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to validationService.validate', function () {
+                expect(mockValidationService.validate.calls.count()).toEqual(1);
+            });
+
+            it('should set displayYearFourRent to true', function() {
+                expect(mockScope.displayYearFourRent).toEqual(true);
+            });
+
+            it('should compare highest to year4Rent when displayYearFourRent is true', function() {
+                expect(mockScope.data.year4Rent).toEqual("4");
+                expect(mockScope.data.highestRent).toEqual("4");
+            });
+        });
+
+        describe('LeaseTerm is 5 years', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            leaseTerm : {
+                                years : 5
+                            },
+                            year1Rent : "1",
+                            year2Rent : "2",
+                            year3Rent : "3",
+                            year4Rent : "4",
+                            year5Rent : "5"
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            // on create
+            it('should make 1 call to dataService.getModel', function () {
+                expect(mockDataService.getModel.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to navigationService.logView', function () {
+                expect(mockNavigationService.logView.calls.count()).toEqual(1);
+            });
+
+            it('should make 1 call to validationService.validate', function () {
+                expect(mockValidationService.validate.calls.count()).toEqual(1);
+            });
+
+            it('should set displayYearFiveRent to true', function() {
+                expect(mockScope.displayYearFiveRent).toEqual(true);
+            });
+
+            it('should compare highest to year5Rent when displayYearFiveRent is true', function() {
+                expect(mockScope.data.year5Rent).toEqual("5");
+                expect(mockScope.data.highestRent).toEqual("5");
+            });
+        });
+
     });
 
 }());
