@@ -228,6 +228,52 @@
                 expect(mockLocation.path()).toEqual('/result');
             });
         });
+
+        describe('calling startNow()', function() {
+            var mockLocation;
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+
+                service.startNow(mockLocation);
+            }));
+
+            it('should set the location path to /holding', function() {
+                expect(mockLocation.path()).toEqual('/holding');
+            });
+        });
+
+        describe('calling printView()', function() {
+            var mockLocation,
+                currentView = 'result',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+
+                service.printView(data,mockLocation);
+            }));
+
+            it('should set the location path to /print', function() {
+                expect(mockLocation.path()).toEqual('/print');
+            });
+        });
+
+        describe('calling viewDetails()', function() {
+            var mockLocation,
+                currentView = 'result',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+
+                service.viewDetails(data,mockLocation);
+            }));
+
+            it('should set the location path to /detail', function() {
+                expect(mockLocation.path()).toEqual('/detail');
+            });
+        });
         
     });
 }());
