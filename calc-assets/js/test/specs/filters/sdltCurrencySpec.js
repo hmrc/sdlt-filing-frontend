@@ -13,7 +13,7 @@
         }));
 
         it('should return - if sent an undefined value', function () {
-        	var amount = undefined, result;
+        	var amount, result;
 
         	result = filter('sdltCurrency')(amount, '£');
 
