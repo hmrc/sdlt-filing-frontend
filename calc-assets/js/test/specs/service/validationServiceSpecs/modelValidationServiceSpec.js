@@ -77,7 +77,7 @@
             var data = {
                 propertyType: "Residential",
                 premium : 15001,
-                holdingType : "Leasehold",
+                holdingType : "Leasehold"
             };
 
             var result = service.validate(data);
@@ -91,6 +91,39 @@
             expect(result.isEndDateValid).toEqual('form-field--error');
             expect(result.isPremiumValid).toEqual('');
             expect(result.isRelevantRentValid).toEqual(undefined);
-        });        
+        });
+
+        it('should return an empty string when holdingType is Freehold and premium has been defined', function() {
+
+            var data = {
+                propertyType: "Residential",
+                premium : 15001,
+                holdingType : "Freehold"
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('form-field--error');
+            expect(result.isPurchasePriceValid).toEqual('');
+        });
+
+        it('should return form-field--error when holdingType is Freehold and premium has not been defined', function() {
+
+            var data = {
+                propertyType: "Residential",
+                holdingType : "Freehold"
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('form-field--error');
+            expect(result.isPurchasePriceValid).toEqual('form-field--error');
+        });         
     });
 }());
