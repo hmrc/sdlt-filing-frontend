@@ -12,7 +12,7 @@
             expect(service).not.toBeUndefined();
         });
 
-        describe("Calling loggingService(...)", function() {
+        describe("Calling logEvent()", function() {
             
             var testPage = 'start',
                 gaCalls = [],
@@ -24,7 +24,7 @@
                     gaCalls.push(call);
                 };
 
-                log = service.logEvent('link','click','google.co.uk');
+                log = service.logEvent('link','click','example.com');
             });
 
             it('should call google analytics (GA) twice', function() {
@@ -52,10 +52,10 @@
                 var property = call[3];
                 expect(property).toEqual('click');
             });    
-            it('should call GA with the property "google.co.uk"', function() {
+            it('should call GA with the property "example.com"', function() {
                 var call = gaCalls[0];
                 var property = call[4];
-                expect(property).toEqual('google.co.uk');
+                expect(property).toEqual('example.com');
             });    
         });
     });
