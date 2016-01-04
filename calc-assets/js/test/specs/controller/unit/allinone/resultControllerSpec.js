@@ -283,7 +283,6 @@
 
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
-            //spyOn(mockCalculationService, 'calculateResidentialPremiumSlice');
             spyOn(mockDataService, 'updateModel');
             
             controller = $controller('resultController', {
@@ -390,7 +389,6 @@
 
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
-            //spyOn(mockCalculationService, 'calculateResidentialPremiumSlice');
             spyOn(mockDataService, 'updateModel');
             
             controller = $controller('resultController', {
@@ -497,7 +495,6 @@
 
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
-            //spyOn(mockCalculationService, 'calculateResidentialPremiumSlice');
             spyOn(mockDataService, 'updateModel');
             
             controller = $controller('resultController', {
@@ -605,7 +602,6 @@
 
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
-            //spyOn(mockCalculationService, 'calculateResidentialPremiumSlice');
             spyOn(mockDataService, 'updateModel');
             
             controller = $controller('resultController', {
