@@ -11,7 +11,7 @@
             service = _modelValidationService_;
         }));
 
-        it('it should return false when no data provided', function() {
+        it('should return false when no data provided', function() {
             var result = service.validate({});
 
             expect(result.isModelValid).toEqual(false);
@@ -31,8 +31,66 @@
             expect(result.isYear4RentValid).toEqual(undefined);
             expect(result.isYear5RentValid).toEqual(undefined);
             expect(result.isRelevantRentValid).toEqual(undefined);
-              
+                  
         });
 
+        it('should return an empty string if the fields are defined', function() {
+
+            var data = {
+                propertyType: "Non-residential",
+                premium : 1000,
+
+                holdingType : "Leasehold",
+                leaseTerm : {
+                    years : 5
+                },
+                year1Rent : "1",
+                year2Rent : "2",
+                year3Rent : "3",
+                year4Rent : "4",
+                year5Rent : "5",
+
+                relevantRent : "Banana"
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('form-field--error');
+            expect(result.isPurchasePriceValid).toEqual(undefined);    
+            expect(result.isStartDateValid).toEqual('form-field--error');
+            expect(result.isEndDateValid).toEqual('form-field--error');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isYear2RentValid).toEqual('');
+            expect(result.isYear3RentValid).toEqual('');
+            expect(result.isYear4RentValid).toEqual('');
+            expect(result.isYear5RentValid).toEqual('');
+            expect(result.isRelevantRentValid).toEqual('');
+        });
+
+        it('should not check relevant rent if property type is non-residential and premium is >15000', function() {
+
+            var data = {
+                propertyType: "Residential",
+                premium : 15001,
+                holdingType : "Leasehold",
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('form-field--error');
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+            expect(result.isStartDateValid).toEqual('form-field--error');
+            expect(result.isEndDateValid).toEqual('form-field--error');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isRelevantRentValid).toEqual(undefined);
+        });        
     });
 }());
