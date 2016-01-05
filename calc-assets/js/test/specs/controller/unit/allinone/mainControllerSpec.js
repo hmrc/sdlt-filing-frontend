@@ -13,6 +13,18 @@
 
         beforeEach(mocks.module('calc.controllers'));
         beforeEach(mocks.inject(function ($controller, $rootScope) {
+
+            jasmine.addMatchers({
+                toHaveFocus: function() {
+                    return {
+                        compare: function(actual) {
+                            return {
+                                pass: document.activeElement === actual[0]
+                            };
+                        }
+                    };
+                }
+            });
             
             mockScope = $rootScope.$new();
             mockLoggingService = { logEvent: function() {} };
@@ -69,6 +81,27 @@
                 mockScope.toggleHelp('helpId', 'some text');
                 expect(mockScope.optionalHelp.helpId).toEqual(false);
             });
+        });
+
+        describe('Calling jumpTo()', function () {
+
+            it('should set focus on the specified element', function(){
+                var element = $('<input id="apple"/>');
+                element.appendTo(document.body);
+                mockScope.jumpTo('apple');
+                expect(element).toHaveFocus();
+            });
+
+        });
+
+        describe('Calling displayHelp()', function () {
+
+            it('should call the optionalHelp function once', function(){
+                mockScope.optionalHelp.helpId = false;
+                var result = mockScope.displayHelp('helpId');
+                expect(result).toEqual(false);
+            });
+
         });
     });
 }());
