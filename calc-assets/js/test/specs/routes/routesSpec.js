@@ -210,5 +210,18 @@
             });
         });
 
+        describe('route changed successfully', function(){
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('intro.html')
+                        .respond(200);
+                }));
+            it('should change the title of the rootScope to the title of the current route', function() {
+                location.path('/intro');
+                rootScope.$digest();
+                rootScope.$broadcast('$routeChangeSuccess', route.current);
+                expect(rootScope.title).toBe('Calculate Stamp Duty Land Tax');
+            });
+        });
     });
 }());
