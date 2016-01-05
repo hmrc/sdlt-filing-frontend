@@ -11,7 +11,6 @@
         beforeEach(inject(function(_$location_, _$route_, _$rootScope_) {
             location = _$location_;
             route = _$route_;
-            route.current = { params: { title: 'test', templateUrl: 'test.html', controller: 'testController', reloadOnSearch: false } };
             rootScope = _$rootScope_;
         }));
 
