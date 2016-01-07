@@ -1,3 +1,8 @@
+
+<div class="form-group">
+    <a id="back-detail" href="javascript:history.back()">Back</a>
+</div>
+
 <h1>{{title}}</h1>
 
 <form name="detailForm" class="form">
@@ -47,8 +52,11 @@
       </div>
     </div>
 
+    <div class="form-group">
+        <p>You can <a ng-click="printView()" href="javascript:void(0)" onClick="ga('send', 'event', 'link', 'click', 'result.printView')">print your calculation</a>.</p>
+        <p>Go to the <a id="gov-home" href="https://www.gov.uk">GOV.UK</a> homepage.</p>
+    </div>
+
 </form>
 
-<div class="form-group">
-    <a id="back-detail" href="javascript:history.back()">Back</a>
-</div>
+
