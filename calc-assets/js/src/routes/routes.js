@@ -70,7 +70,7 @@
             })
 
             .when('/summary', {
-                title : 'Calculate Stamp Duty Land Tax',
+                title : 'Summary',
                 templateUrl : 'summary.html',
                 controller  : 'summaryController',
                 reloadOnSearch: false
