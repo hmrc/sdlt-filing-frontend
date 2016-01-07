@@ -1,3 +1,8 @@
+
+<div class="form-group">
+    <a id="back-relevantRent" href="javascript:history.back()">Back</a>
+</div>
+
 <h1>{{title}}</h1>
 
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
@@ -11,7 +16,6 @@
 
     <div class="form-group {{state.hasError('relevantRent')}}">
         <label for="relevantRent">
-            <span class="form-label">Relevant Rental Figure</span>
             <span id="relevantRentErrMsg" class="error-notification">{{state.validationMessage('relevantRent')}}</span>
         </label>            
         &pound; <input id="relevantRent" class="form-control form-control-1-8" ng-model="data.relevantRent" name="relevantRent" type="text" required>
@@ -22,8 +26,6 @@
             <button id="next-relevantRent" type="submit">Next</button>
         </a>
     </div>
-    <div class="form-group">
-        <a id="back-relevantRent" href="javascript:history.back()">Back</a>
-    </div>
+
 
 </form>
