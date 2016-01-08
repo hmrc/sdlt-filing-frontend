@@ -49,7 +49,7 @@
             })
 
             .when('/premium', {
-                title : 'Premium',
+                title : 'Lease premium',
                 templateUrl : 'premium.html',
                 controller  : 'premiumController',
                 reloadOnSearch: false
