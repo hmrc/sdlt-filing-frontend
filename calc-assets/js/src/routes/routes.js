@@ -28,7 +28,7 @@
             })
 
             .when('/date', {
-                title : 'Effective date of purchase / transaction',
+                title : 'Effective date of transaction',
                 templateUrl : 'date.html',
                 controller  : 'dateController',
                 reloadOnSearch: false
@@ -84,7 +84,7 @@
             })
 
             .when('/detail', {
-                title : 'Detailed Calculation',
+                title : 'Detailed calculation',
                 templateUrl : 'detail.html',
                 controller  : 'detailController',
                 reloadOnSearch: false
