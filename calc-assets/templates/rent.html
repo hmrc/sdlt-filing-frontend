@@ -12,6 +12,10 @@
 </div>
 
 <form name="rentForm" class="form">
+    <div class="form-group">
+        <span class="form-label" ng-show="displayYearFiveRent">Enter the annual rent due for the first 5 years.</span>
+        <span class="form-label" ng-hide="displayYearFiveRent">Enter the annual rent due.</span>
+    </div>   
 
     <div class="form-group {{state.hasError('year1Rent')}}" ng-show="displayYearOneRent">
         <label for="year1Rent">
@@ -55,7 +59,7 @@
 
     <div class="form-group">
         <a ng-click="submit()">
-            <button id="next-rent" type="submit">Next</button>
+            <button id="next-rent" type="submit">Continue</button>
         </a>
     </div>
     <div class="form-group">
