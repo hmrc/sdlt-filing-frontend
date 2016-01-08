@@ -11,7 +11,7 @@
 
     <div class="form-group {{state.hasError('holdingType')}}">
         <fieldset>
-            <legend id="holdingType" class="form-label">Is the property freehold or leasehold?</legend>
+            <legend id="holdingType" class="form-label">Is your transaction freehold or leasehold?</legend>
             <span id="holdingTypeErrMsg" class="error-notification">{{state.validationMessage('holdingType')}}</span>
             <div class="inline">
                 <label class="block-label" for="holding-free">
@@ -26,7 +26,7 @@
 
     <div class="form-group">
         <a ng-click="submit()">
-            <button id="next-holding" type="submit">Next</button>
+            <button id="next-holding" type="submit">Continue</button>
         </a>
     </div>
     <div class="form-group">

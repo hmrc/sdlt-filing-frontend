@@ -3,7 +3,7 @@
 <form name="detailForm" class="form">
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">This is a breakdown of how the total amount of SDLT was calculated based on SDLT rules from 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border">This is a breakdown of how the total amount of SDLT was calculated based on the rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -46,7 +46,12 @@
         </table>
       </div>
     </div>
-
+    <div class="form-group">
+       You can <a ng-click="printView()" href="javascript:void(0)" onClick="ga('send', 'event', 'link', 'click', 'detail.printView')">print your calculation</a>.
+    </div>
+    <div class="form-group">
+       Go to the <a href="https://www.gov.uk/" onClick="ga('send', 'event', 'link', 'click', 'detail.govuk')">GOV.UK</a> homepage.
+    </div>
 </form>
 
 <div class="form-group">
