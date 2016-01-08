@@ -67,6 +67,7 @@
                 location.path('/date');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('dateController');
+                expect(route.current.title).toBe('Effective date of transaction');
             });
         });
 
@@ -179,6 +180,7 @@
                 location.path('/detail');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('detailController');
+                expect(route.current.title).toBe('Detailed calculation');
             });
         });
 

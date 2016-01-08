@@ -56,6 +56,65 @@
 
     });
 
+        describe('Call to printView()', function () {
+
+            var controller,
+                mockScope,
+                mockDataService,
+                mockNavigationService,
+                mockModelValidationService,
+                mockCalculationService,
+                calledServiceGetModel = false;
+
+            beforeEach(mocks.module('calc.controllers'));
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+
+                mockScope = $rootScope.$new();
+
+                mockDataService = {
+                    getModel : function() {
+                        return {
+                            holdingType : "Freehold",
+                            propertyType : "Non-residential"
+                        };
+                    },
+                    updateModel : function() { }
+                };
+
+                mockNavigationService = {
+                    logView : function() {},
+                    printView : function() {}
+                };
+
+                mockModelValidationService = {
+                    validate : function() {
+                        return { isModelValid : true };
+                    }
+                };
+
+                mockCalculationService = {
+                    calculateNonResidentialPremiumSlab: function() {}
+                };
+
+                spyOn(mockNavigationService, 'printView');
+
+                controller = $controller('resultController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    navigationService : mockNavigationService,
+                    modelValidationService : mockModelValidationService,
+                    calculationService : mockCalculationService,
+                });
+
+                mockScope.printView({});
+            }));
+
+            it('should make 1 call to navigationService.printView', function() {
+                expect(mockNavigationService.printView.calls.count()).toEqual(1);
+            });
+        });
+
     describe('Detail Controller with invalid data', function () {
         
         var controller, 
