@@ -12,6 +12,10 @@
             $location.path('summary');
         }
 
+        $scope.printView = function() {
+            navigationService.printView($scope.data, $location);
+        };
+
     };
 
     app.controller('detailController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', detailController ]);
