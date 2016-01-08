@@ -49,7 +49,7 @@
             })
 
             .when('/premium', {
-                title : 'Premium',
+                title : 'Lease premium',
                 templateUrl : 'premium.html',
                 controller  : 'premiumController',
                 reloadOnSearch: false
@@ -63,7 +63,7 @@
             })
 
             .when('/relevant-rent', {
-                title : 'Relevant Rental Figure',
+                title : 'Relevant rental figure',
                 templateUrl : 'relevant-rent.html',
                 controller  : 'relevantRentController',
                 reloadOnSearch: false

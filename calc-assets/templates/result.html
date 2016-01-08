@@ -1,9 +1,12 @@
+
+
+
 <h1>{{title}}</h1>
 
 <form name="resultForm" class="form">
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'" id="divFreeholdResidentialNew">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -27,7 +30,7 @@
 
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'"  id="divFreeholdResidentialOld">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014.</h2>
       <label class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
       <div class = "form-group">
         <table>
@@ -70,7 +73,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'" id="divLeaseholdResidential">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
       <div class = "form-group">
         <table>
           <tbody>            
@@ -96,7 +99,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'" id="divLeaseholdNonResidential">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012.</h2>
       <div class = "form-group">
         <table>
           <tbody>            
@@ -122,14 +125,14 @@
     </div>
 
     <div class="form-group">
-        You can <a ng-click="printView()" href="javascript:void(0)" onClick="ga('send', 'event', 'link', 'click', 'result.printView')">print your calculation</a>.
+        <p>You can <a ng-click="printView()" href="javascript:void(0)" onClick="ga('send', 'event', 'link', 'click', 'result.printView')">print your calculation</a>.</p>
+        <p>Go to the <a id="gov-home" href="https://www.gov.uk" onClick="ga('send', 'event', 'link', 'click', 'detail.govuk')">GOV.UK</a> homepage.</p>
     </div>
+
     <div class="form-group">
-        Go to the <a href="https://www.gov.uk/" onClick="ga('send', 'event', 'link', 'click', 'result.govuk')">GOV.UK</a> homepage.
+        <a id="back-result" href="javascript:history.back()">Back</a>
     </div>
 
 </form>
 
-<div class="form-group">
-    <a id="back-result" href="javascript:history.back()">Back</a>
-</div>
+

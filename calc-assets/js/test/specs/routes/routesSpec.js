@@ -115,7 +115,7 @@
                 location.path('/premium');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('premiumController');
-                expect(route.current.title).toBe('Premium');
+                expect(route.current.title).toBe('Lease premium');
             });
         });
 
@@ -145,7 +145,7 @@
                 location.path('/relevant-rent');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('relevantRentController');
-                expect(route.current.title).toBe('Relevant Rental Figure');
+                expect(route.current.title).toBe('Relevant rental figure');
             });
         });
 
