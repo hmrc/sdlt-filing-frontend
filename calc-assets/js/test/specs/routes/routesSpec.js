@@ -25,6 +25,7 @@
                 location.path('/intro');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('introController');
+                expect(route.current.title).toBe('Calculate Stamp Duty Land Tax');                
             });
         });
 
@@ -39,6 +40,7 @@
                 location.path('/holding');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('holdingController');
+                expect(route.current.title).toBe('Freehold or leasehold');
             });
         });
 
@@ -53,6 +55,7 @@
                 location.path('/property');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('propertyController');
+                expect(route.current.title).toBe('Residential or non-residential');
             });
         });
 
@@ -82,6 +85,7 @@
                 location.path('/purchase-price');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('purchasePriceController');
+                expect(route.current.title).toBe('Purchase price');
             });
         });
 
@@ -96,6 +100,7 @@
                 location.path('/lease-dates');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('leaseDatesController');
+                expect(route.current.title).toBe('Lease Dates');
             });
         });
 
@@ -110,6 +115,7 @@
                 location.path('/premium');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('premiumController');
+                expect(route.current.title).toBe('Premium');
             });
         });
 
@@ -124,6 +130,7 @@
                 location.path('/rent');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('rentController');
+                expect(route.current.title).toBe('Rent');
             });
         });
 
@@ -138,6 +145,7 @@
                 location.path('/relevant-rent');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('relevantRentController');
+                expect(route.current.title).toBe('Relevant Rental Figure');
             });
         });
 
@@ -152,20 +160,22 @@
                 location.path('/summary');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('summaryController');
+                expect(route.current.title).toBe('Summary');
             });
         });
 
         describe('result route', function() {
             beforeEach(inject(
                 function($httpBackend) {
-                    $httpBackend.expectGET('summary.html')
+                    $httpBackend.expectGET('result.html')
                         .respond(200);
                 }));
 
-            it('should load the summary page on load of /result with no data', function() {
-                location.path('/summary');
+            it('should load the result page on load of /result', function() {
+                location.path('/result');
                 rootScope.$digest();
-                expect(route.current.controller).toBe('summaryController');
+                expect(route.current.controller).toBe('resultController');
+                expect(route.current.title).toBe('Result');
             });
         });
 
@@ -195,6 +205,7 @@
                 location.path('/print');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('printController');
+                expect(route.current.title).toBe('Result');
             });
         });
 
@@ -209,6 +220,7 @@
                 location.path('/test');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('introController');
+                expect(route.current.title).toBe('Calculate Stamp Duty Land Tax');
             });
         });
 
