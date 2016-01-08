@@ -115,7 +115,7 @@
                 location.path('/premium');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('premiumController');
-                expect(route.current.title).toBe('Premium');
+                expect(route.current.title).toBe('Lease premium');
             });
         });
 
