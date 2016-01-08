@@ -63,7 +63,7 @@
             })
 
             .when('/relevant-rent', {
-                title : 'Relevant Rental Figure',
+                title : 'Relevant rental figure',
                 templateUrl : 'relevant-rent.html',
                 controller  : 'relevantRentController',
                 reloadOnSearch: false
