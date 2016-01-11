@@ -42,7 +42,7 @@
             })
 
             .when('/lease-dates', {
-                title : 'Lease Dates',
+                title : 'Lease dates',
                 templateUrl : 'lease-dates.html',
                 controller  : 'leaseDatesController',
                 reloadOnSearch: false
