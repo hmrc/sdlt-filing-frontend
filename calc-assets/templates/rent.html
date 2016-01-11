@@ -13,13 +13,13 @@
 
 <form name="rentForm" class="form">
     <div class="form-group">
-        <span class="form-label" ng-show="displayYearFiveRent">Enter the annual rent due for the first 5 years.</span>
-        <span class="form-label" ng-hide="displayYearFiveRent">Enter the annual rent due.</span>
+        <span class="form-label-bold" ng-show="displayYearFiveRent">Enter the annual rent due for the first 5 years.</span>
+        <span class="form-label-bold" ng-hide="displayYearFiveRent">Enter the annual rent due.</span>
     </div>   
 
     <div class="form-group {{state.hasError('year1Rent')}}" ng-show="displayYearOneRent">
         <label for="year1Rent">
-            <span class="form-label">Year 1 rent</span>
+            <span class="form-label-bold">Year 1 rent</span>
             <span id="year1RentErrMsg" class="error-notification">{{state.validationMessage('year1Rent')}}</span>
         </label>            
         &pound; <input id="year1Rent" class="form-control form-control-1-8" ng-model="data.year1Rent" name="year1Rent" type="text" required>
@@ -27,7 +27,7 @@
 
     <div class="form-group {{state.hasError('year2Rent')}}" ng-show="displayYearTwoRent">
         <label for="year2Rent">
-            <span class="form-label">Year 2 rent</span>
+            <span class="form-label-bold">Year 2 rent</span>
             <span id="year2RentErrMsg" class="error-notification">{{state.validationMessage('year2Rent')}}</span>
         </label>            
         &pound; <input id="year2Rent" class="form-control form-control-1-8" ng-model="data.year2Rent" name="year2Rent" type="text" required>
@@ -35,7 +35,7 @@
 
     <div class="form-group {{state.hasError('year3Rent')}}" ng-show="displayYearThreeRent">
         <label for="year3Rent">
-            <span class="form-label">Year 3 rent</span>
+            <span class="form-label-bold">Year 3 rent</span>
             <span id="year3RentErrMsg" class="error-notification">{{state.validationMessage('year3Rent')}}</span>
         </label>            
         &pound; <input id="year3Rent" class="form-control form-control-1-8" ng-model="data.year3Rent" name="year3Rent" type="text" required>
@@ -43,7 +43,7 @@
 
     <div class="form-group {{state.hasError('year4Rent')}}" ng-show="displayYearFourRent">
         <label for="year4Rent">
-            <span class="form-label">Year 4 rent</span>
+            <span class="form-label-bold">Year 4 rent</span>
             <span id="year4RentErrMsg" class="error-notification">{{state.validationMessage('year4Rent')}}</span>
         </label>            
         &pound; <input id="year4Rent" class="form-control form-control-1-8" ng-model="data.year4Rent" name="year4Rent" type="text" required>
@@ -51,7 +51,7 @@
 
     <div class="form-group {{state.hasError('year5Rent')}}" ng-show="displayYearFiveRent">
         <label for="year5Rent">
-            <span class="form-label">Year 5 rent</span>
+            <span class="form-label-bold">Year 5 rent</span>
             <span id="year5RentErrMsg" class="error-notification">{{state.validationMessage('year5Rent')}}</span>
         </label>            
         &pound; <input id="year5Rent" class="form-control form-control-1-8" ng-model="data.year5Rent" name="year5Rent" type="text" required>
