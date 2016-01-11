@@ -11,8 +11,8 @@
 
     <div class="form-group {{state.hasError('premium')}}">
         <label for="purchasePrice">
-            <span class="form-label">Purchase price</span>
-            <span class="form-hint">a.k.a chargeable consideration</span>
+            <span class="form-label">Enter the price.</span>
+            <span class="form-hint">This is the chargeable consideration.</span>
             <span id="purchasePriceErrMsg" class="error-notification">{{state.validationMessage('premium')}}</span>
         </label>            
         &pound; <input id="purchasePrice" class="form-control form-control-1-8" ng-model="data.premium" name="premium" type="text" required>
@@ -20,7 +20,7 @@
 
     <div class="form-group">
         <a ng-click="submit()">
-            <button id="next-price" type="submit">Next</button>
+            <button id="next-price" type="submit">Continue</button>
         </a>
     </div>
     <div class="form-group">

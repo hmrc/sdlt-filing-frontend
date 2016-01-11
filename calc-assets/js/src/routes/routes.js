@@ -28,7 +28,7 @@
             })
 
             .when('/date', {
-                title : 'Effective date of purchase / transaction',
+                title : 'Effective date of transaction',
                 templateUrl : 'date.html',
                 controller  : 'dateController',
                 reloadOnSearch: false
@@ -49,7 +49,7 @@
             })
 
             .when('/premium', {
-                title : 'Premium',
+                title : 'Lease premium',
                 templateUrl : 'premium.html',
                 controller  : 'premiumController',
                 reloadOnSearch: false
@@ -63,14 +63,14 @@
             })
 
             .when('/relevant-rent', {
-                title : 'Relevant Rental Figure',
+                title : 'Relevant rental figure',
                 templateUrl : 'relevant-rent.html',
                 controller  : 'relevantRentController',
                 reloadOnSearch: false
             })
 
             .when('/summary', {
-                title : 'Calculate Stamp Duty Land Tax',
+                title : 'Summary',
                 templateUrl : 'summary.html',
                 controller  : 'summaryController',
                 reloadOnSearch: false
@@ -84,7 +84,7 @@
             })
 
             .when('/detail', {
-                title : 'Detailed Calculation',
+                title : 'Detailed calculation',
                 templateUrl : 'detail.html',
                 controller  : 'detailController',
                 reloadOnSearch: false
