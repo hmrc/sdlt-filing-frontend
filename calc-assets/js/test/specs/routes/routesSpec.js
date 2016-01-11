@@ -100,7 +100,7 @@
                 location.path('/lease-dates');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('leaseDatesController');
-                expect(route.current.title).toBe('Lease Dates');
+                expect(route.current.title).toBe('Lease dates');
             });
         });
 
