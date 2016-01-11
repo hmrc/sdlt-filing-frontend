@@ -91,7 +91,7 @@
             })
 
             .when('/print', {
-                title : 'Result',
+                title : 'Summary',
                 templateUrl : 'print.html',
                 controller  : 'printController',
                 reloadOnSearch: false
