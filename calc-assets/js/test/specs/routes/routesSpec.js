@@ -205,7 +205,7 @@
                 location.path('/print');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('printController');
-                expect(route.current.title).toBe('Result');
+                expect(route.current.title).toBe('Summary');
             });
         });
 

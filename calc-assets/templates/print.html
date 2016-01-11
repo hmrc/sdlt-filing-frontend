@@ -4,7 +4,6 @@
 
       <div class = "form-group">
           <article>
-              <h2>Summary</h2>
               <table>
                   <tbody>                      
                       <tr class="section">
@@ -12,7 +11,7 @@
                           <td>{{data.holdingType}}</td>                          
                       </tr>
                       <tr class="section">
-                          <td>Property Type</td>
+                          <td>Property type</td>
                           <td>{{data.propertyType}}</td>                          
                       </tr>
                       <tr class="section">
@@ -20,7 +19,7 @@
                           <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>                         
                       </tr>
                       <tr class="section" ng-show="data.holdingType === 'Freehold'">
-                          <td>Purchase Price</td>
+                          <td>Purchase price</td>
                           <td>{{data.premium | sdltCurrency:"£"}}</td>                        
                       </tr>   
                       <tr class="section" ng-show="data.holdingType === 'Leasehold'">
