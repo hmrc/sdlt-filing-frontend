@@ -73,7 +73,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -94,7 +94,7 @@
 
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014.</h2>
       <label class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
       <div class = "form-group">
         <table>
@@ -115,7 +115,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT</h2>
+      <h2 class="heading-medium blue-bottom-border">Results</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -137,7 +137,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
       <div class = "form-group">
         <table>
           <tbody>            
@@ -163,12 +163,12 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012.</h2>
       <div class = "form-group">
         <table>
           <tbody>            
             <tr class="section">
-              <td>Total amount of tax for this Transaction</td>
+              <td>Total amount of tax for this transaction</td>
               <td>{{data.result.leasehold.nonResidential.totalTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
@@ -176,11 +176,11 @@
               <td>{{data.result.leasehold.nonResidential.npv | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
-              <td>SDLT on Rent</td>
+              <td>SDLT on rent</td>
               <td>{{data.result.leasehold.nonResidential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
-              <td>SDLT on Premium</td>
+              <td>SDLT on premium</td>
               <td>{{data.result.leasehold.nonResidential.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
