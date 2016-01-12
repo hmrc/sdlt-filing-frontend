@@ -271,6 +271,11 @@
                         totalSDLT : 20
                     };
                 },
+                calculateResidentialPremiumSlab: function() {
+                    return {
+                        taxDue : 40
+                    };
+                },
                 calculateResidentialLeaseSlice: function() {
                     return {
                         totalSDLT : 30
@@ -315,12 +320,20 @@
             expect(mockScope.data.result.leasehold.residential.rentTax).toEqual(30);
         });
 
-        it('should set the result leasehold residential premiumTax to 20 (The value returned by stubbed calculateResidentialPremiumSlice)', function () {
-            expect(mockScope.data.result.leasehold.residential.premiumTax).toEqual(20);
+        it('should set the result leasehold before December residential premiumTax to 40 (The value returned by stubbed calculateResidentialPremiumSlab)', function () {
+            expect(mockScope.data.result.leasehold.residential.before.premiumTax).toEqual(40);
         });   
 
-        it('should set the result leasehold residential totalTax to the sum of the rentTax and premiumTax', function () {
-            expect(mockScope.data.result.leasehold.residential.totalTax).toEqual(50);
+        it('should set the result leasehold after December residential premiumTax to 20 (The value returned by stubbed calculateResidentialPremiumSlice)', function () {
+            expect(mockScope.data.result.leasehold.residential.from.premiumTax).toEqual(20);
+        });  
+
+        it('should set the result leasehold before December residential totalTax to the sum of the rentTax and premiumTax', function () {
+            expect(mockScope.data.result.leasehold.residential.before.totalTax).toEqual(70);
+        });      
+
+        it('should set the result leasehold after December residential totalTax to the sum of the rentTax and premiumTax', function () {
+            expect(mockScope.data.result.leasehold.residential.from.totalTax).toEqual(50);
         });      
     });
 
@@ -377,6 +390,11 @@
                         totalSDLT : 20
                     };
                 },
+                calculateResidentialPremiumSlab: function() {
+                    return {
+                        taxDue : 40
+                    };
+                },
                 calculateResidentialLeaseSlice: function() {
                     return {
                         totalSDLT : 30
@@ -421,12 +439,20 @@
             expect(mockScope.data.result.leasehold.residential.rentTax).toEqual(30);
         });
 
-        it('should set the result leasehold residential premiumTax to 20 (The value returned by stubbed calculateResidentialPremiumSlice)', function () {
-            expect(mockScope.data.result.leasehold.residential.premiumTax).toEqual(20);
+        it('should set the result leasehold residential before December premiumTax to 40 (The value returned by stubbed calculateResidentialPremiumSlab)', function () {
+            expect(mockScope.data.result.leasehold.residential.before.premiumTax).toEqual(40);
+        });  
+
+        it('should set the result leasehold residential after December premiumTax to 20 (The value returned by stubbed calculateResidentialPremiumSlice)', function () {
+            expect(mockScope.data.result.leasehold.residential.from.premiumTax).toEqual(20);
         });   
 
-        it('should set the result leasehold residential totalTax to the sum of the rentTax and premiumTax', function () {
-            expect(mockScope.data.result.leasehold.residential.totalTax).toEqual(50);
+        it('should set the result leasehold before December residential totalTax to the sum of the rentTax and premiumTax', function () {
+            expect(mockScope.data.result.leasehold.residential.before.totalTax).toEqual(70);
+        });      
+
+        it('should set the result leasehold after December residential totalTax to the sum of the rentTax and premiumTax', function () {
+            expect(mockScope.data.result.leasehold.residential.from.totalTax).toEqual(50);
         });      
     });
 
