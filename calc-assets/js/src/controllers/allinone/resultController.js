@@ -58,7 +58,9 @@
                 var rentsArray = [rent.displayYearOneRent ? $scope.data.year1Rent : 0, rent.displayYearTwoRent ? $scope.data.year2Rent : 0, rent.displayYearThreeRent ? $scope.data.year3Rent : 0, rent.displayYearFourRent ? $scope.data.year4Rent : 0, rent.displayYearFiveRent ? $scope.data.year5Rent : 0];
                 var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
                 if ($scope.data.propertyType === 'Residential') {
-                    premiumTax = calculationService.calculateResidentialPremiumSlice($scope.data.premium).totalSDLT;
+                    
+                    result.leasehold.residential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
+                    premiumTax = result.leasehold.residential.from.totalSDLT;
                     rentTax = calculationService.calculateResidentialLeaseSlice(npv).totalSDLT;
 
                     result.leasehold.residential.npv = npv;
