@@ -31,15 +31,6 @@
             locationService.path('detail');
         };
 
-        var checkMinRent = function(rentArray) {
-            for (var i = 0; i < rentArray.length; i++){
-                if(rentArray[i] < 2000){
-                    return true;
-                }
-            }
-            return false;
-        };
-
     	var gotoNextView = function(currentView, model, locationService) {
 
             if (currentView === 'holding') {
@@ -69,7 +60,7 @@
                 redirectToNext(locationService, 'rent');
             }
             else if (currentView === 'rent') {
-                if (model.propertyType === 'Non-residential' && model.premium < 150000 && checkMinRent([model.year1Rent, model.year2Rent, model.year3Rent, model.year4Rent, model.year5Rent])) {
+                if (model.propertyType === 'Non-residential' && model.premium < 150000 && (model.year1Rent < 2000 || model.year2Rent < 2000 || model.year3Rent < 2000 || model.year4Rent < 2000 || model.year5Rent < 2000)) {
                     redirectToNext(locationService, 'relevant-rent');
                 } 
                 else {
