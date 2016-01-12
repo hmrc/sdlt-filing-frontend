@@ -37,7 +37,7 @@
                         <td class="previous-question-title" id="td1EffectiveDate">
                             <p class="{{validatedModel.isEffectiveDateValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                Effective date
+                                Effective date of transaction
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2EffectiveDate">{{getDisplayValue(data.effectiveDate) | date:'d MMMM yyyy'}}</td>
@@ -59,7 +59,7 @@
                         <td class="previous-question-title" id="td1StartDate">
                             <p class="{{validatedModel.isStartDateValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                Start Date as specified in lease
+                                Start date as specified in lease
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2StartDate">{{getDisplayValue(data.startDate) | date:'d MMMM yyyy'}}</td>
@@ -70,7 +70,7 @@
                         <td class="previous-question-title" id="td1EndDate">
                             <p class="{{validatedModel.isEndDateValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                End Date as specified in lease
+                                End date as specified in lease
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2EndDate">{{getDisplayValue(data.endDate) | date:'d MMMM yyyy'}}</td>
@@ -80,7 +80,7 @@
                     <tr class="section" ng-show="data.holdingType === 'Leasehold'">
                         <td class="previous-question-title" id="td1LeaseTerm">
                             <p>
-                                Term of Lease
+                                Term of lease
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2LeaseTerm">{{getDisplayValue(data.leaseTerm.years) + ' years ' + getDisplayValue(data.leaseTerm.days) + " days"}}</td>
@@ -102,7 +102,7 @@
                         <td class="previous-question-title" id="td1Year1Rent">
                             <p class="{{validatedModel.isYear1RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                Year 1 Rent
+                                Year 1 rent
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year1Rent">{{data.year1Rent | sdltCurrency:"£"}}</td>
@@ -113,7 +113,7 @@
                         <td class="previous-question-title" id="td1Year2Rent">
                             <p class="{{validatedModel.isYear2RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                Year 2 Rent
+                                Year 2 rent
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year2Rent">{{data.year2Rent | sdltCurrency:"£"}}</td>
@@ -124,7 +124,7 @@
                         <td class="previous-question-title" id="td1Year3Rent">
                             <p class="{{validatedModel.isYear3RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                Year 3 Rent
+                                Year 3 rent
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year3Rent">{{data.year3Rent | sdltCurrency:"£"}}</td>
@@ -135,7 +135,7 @@
                         <td class="previous-question-title" id="td1Year4Rent">
                             <p class="{{validatedModel.isYear4RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                Year 4 Rent
+                                Year 4 rent
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year4Rent">{{data.year4Rent | sdltCurrency:"£"}}</td>
@@ -146,7 +146,7 @@
                         <td class="previous-question-title" id="td1Year5Rent">
                             <p class="{{validatedModel.isYear5RentValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                Year 5 Rent
+                                Year 5 rent
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year5Rent">{{data.year5Rent | sdltCurrency:"£"}}</td>
@@ -163,11 +163,11 @@
                         <td class="link-right" id="td3HighestRent">&nbsp;</td>
                     </tr>
                     <!-- Relevant Rental Figure -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000">
+                    <tr class="section" ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000 && (data.year1Rent < 2000 || data.year2Rent < 2000 || data.year3Rent < 2000 || data.year4Rent < 2000 || data.year5Rent < 2000 )">
                         <td class="previous-question-title" id="td1RelevantRent">
                             <p class="{{validatedModel.isRelevantRentValid}}">
                                 <span class="error-notification">You must answer this question</span>
-                                Relevant Rental Figure
+                                Relevant rental figure
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2RelevantRent">{{data.relevantRent | sdltCurrency:"£"}}</td>
