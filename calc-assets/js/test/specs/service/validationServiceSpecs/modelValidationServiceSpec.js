@@ -93,6 +93,101 @@
             expect(result.isRelevantRentValid).toEqual(undefined);
         });
 
+
+
+        it('should not check relevant rent if property type is non-residential and premium is < 150000 and rent >= 2000', function() {
+
+            var data = {
+                propertyType: "Non-residential",
+                leaseTerm : {
+                    years : 2
+                },
+                premium : 149999,
+                year1Rent : 2000,
+                holdingType : "Leasehold"
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('form-field--error');
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+
+            expect(result.isStartDateValid).toEqual('form-field--error');
+            expect(result.isEndDateValid).toEqual('form-field--error');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isRelevantRentValid).toEqual(undefined);
+        });
+
+
+
+        it('should check relevant rent if property type is non-residential and premium is < 150000 and rent < 2000', function() {
+
+            var data = {
+                propertyType: "Non-residential",
+                leaseTerm : {
+                    years : 2
+                },
+                premium : 149999,
+                year1Rent : 1999,
+                holdingType : "Leasehold"
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('form-field--error');
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+
+            expect(result.isStartDateValid).toEqual('form-field--error');
+            expect(result.isEndDateValid).toEqual('form-field--error');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isRelevantRentValid).toEqual('form-field--error');
+        });
+
+
+
+        it('should check relevant rent if property type is non-residential and premium is < 150000 and any rent < 2000', function() {
+
+            var data = {
+                propertyType: "Non-residential",
+                leaseTerm : {
+                    years : 5
+                },
+                premium : 149999,
+                year1Rent : 2000,
+                year2Rent : 2000,
+                year3Rent : 2000,
+                year4Rent : 2000,
+                year5Rent : 1999,
+                holdingType : "Leasehold"
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('form-field--error');
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+
+            expect(result.isStartDateValid).toEqual('form-field--error');
+            expect(result.isEndDateValid).toEqual('form-field--error');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isYear2RentValid).toEqual('');
+            expect(result.isYear3RentValid).toEqual('');
+            expect(result.isYear4RentValid).toEqual('');
+            expect(result.isYear5RentValid).toEqual('');
+            expect(result.isRelevantRentValid).toEqual('form-field--error');
+        });
+
         it('should return an empty string when holdingType is Freehold and premium has been defined', function() {
 
             var data = {
