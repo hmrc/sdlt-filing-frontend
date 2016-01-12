@@ -11,9 +11,9 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.relevantRent)) {
-                state.relevantRent = "You must complete this box. Enter your Relevant Rent";
+                state.relevantRent = "Please enter the rental figure";
             } else if (validator.isInvalidFloat(data.relevantRent)) {
-                state.relevantRent = "You have entered an incorrect Relevant Rent, check your entry and correct it";
+                state.relevantRent = "Enter the relevant rent again - don't use any letters or characters including £";
             }
 
             return buildState(state);

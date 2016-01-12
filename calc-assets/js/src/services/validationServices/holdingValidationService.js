@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.holdingType)) {
-                state.holdingType = "You must answer this question. Select 'Freehold' or 'Leasehold'";
+                state.holdingType = "Provide an answer to continue. Select 'Freehold' or 'Leasehold'";
             }
 
             return buildState(state);

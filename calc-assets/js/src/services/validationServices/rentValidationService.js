@@ -14,9 +14,9 @@
 
             var validateRent = function(data, state, field) {
                 if (validator.isNotPopulated(data[field])) {
-                    state[field] = "You must complete this box. Enter rent";
+                    state[field] = "Enter the annual rent for all the years";
                 } else if (validator.isInvalidFloat(data[field])) {
-                    state[field] = "You have entered an incorrect rent, check your entry and correct it";
+                    state[field] = "Enter the rent again - don't use any letters or characters including £";
                 }
             };
 

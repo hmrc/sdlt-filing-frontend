@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.propertyType)) {
-                state.propertyType = "You must answer this question. Select 'Residential' or 'Non-residential'";
+                state.propertyType = "Provide an answer to continue. Select 'Residential' or 'Non-residential'";
             }
 
             return buildState(state);

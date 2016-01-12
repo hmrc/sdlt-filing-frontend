@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('propertyType')).toEqual('form-field--error');
-            expect(state.validationMessage('propertyType')).toEqual("You must answer this question. Select 'Residential' or 'Non-residential'");
+            expect(state.validationMessage('propertyType')).toEqual("Provide an answer to continue. Select 'Residential' or 'Non-residential'");
         });
 
         it('propertyType.format should return no error when "Freehold" selected', function() {
