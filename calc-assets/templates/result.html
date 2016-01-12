@@ -79,7 +79,7 @@
           <tbody>            
             <tr class="section">
               <td>Total Amount of Tax for this Transaction</td>
-              <td id="lrTotalTax">{{data.result.leasehold.residential.totalTax | sdltCurrency:"£"}}</td>
+              <td id="lrTotalTax">{{data.result.leasehold.residential.from.totalTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Net Present value</td>
@@ -91,7 +91,7 @@
             </tr>
             <tr class="section">
               <td>Stamp Duty Land Tax on Premium</td>
-              <td id="lrPremiumTax">{{data.result.leasehold.residential.premiumTax | sdltCurrency:"£"}}</td>
+              <td id="lrPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
         </table>
@@ -102,6 +102,32 @@
     </div>
 
 
+    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'"  id="divLeaseholdResidentialOld">
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014.</h2>
+      <label class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
+      <div class = "form-group">
+        <table>
+          <tbody>            
+            <tr class="section">
+              <td>Total Amount of Tax for this Transaction</td>
+              <td id="lrTotalTax">{{data.result.leasehold.residential.before.totalTax | sdltCurrency:"£"}}</td>
+            </tr>
+            <tr class="section">
+              <td>Net Present value</td>
+              <td id="lrNPV">{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
+            </tr>
+            <tr class="section">
+              <td>Stamp Duty Land Tax on Rent</td>
+              <td id="lrRentTax">{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
+            </tr>
+            <tr class="section">
+              <td>Stamp Duty Land Tax on Premium</td>
+              <td id="lrPremiumTax">{{data.result.leasehold.residential.before.premiumTax | sdltCurrency:"£"}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'" id="divLeaseholdNonResidential">
       <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012.</h2>
