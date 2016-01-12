@@ -38,7 +38,7 @@
 
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You have entered an incorrect Purchase Price, check your entry and correct it");
+            expect(state.validationMessage('premium')).toEqual("Enter the purchase price again - don't use any letters or characters including £");
         });
 
         it('premium.format should return an error when not an integer', function() {
@@ -50,7 +50,7 @@
 
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You have entered an incorrect Purchase Price, check your entry and correct it");
+            expect(state.validationMessage('premium')).toEqual("Enter the purchase price again - don't use any letters or characters including £");
         });
 
 

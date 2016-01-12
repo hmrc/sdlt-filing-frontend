@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('relevantRent')).toEqual('form-field--error');
-            expect(state.validationMessage('relevantRent')).toEqual("You must complete this box. Enter your Relevant Rent");
+            expect(state.validationMessage('relevantRent')).toEqual("Please enter the rental figure");
         });
 
         it('relevantRent.mandatory should return an error when Relevant Rent is empty', function() {
@@ -26,7 +26,7 @@
             var state = service.validate(form);
             expect(state.isValid).toEqual(false);
             expect(state.hasError('relevantRent')).toEqual('form-field--error');
-            expect(state.validationMessage('relevantRent')).toEqual("You must complete this box. Enter your Relevant Rent");
+            expect(state.validationMessage('relevantRent')).toEqual("Please enter the rental figure");
         });
 
         it('relevantRent.format should return an error when NaN', function() {
@@ -38,7 +38,7 @@
 
             expect(state.isValid).toEqual(false);
             expect(state.hasError('relevantRent')).toEqual('form-field--error');
-            expect(state.validationMessage('relevantRent')).toEqual("You have entered an incorrect Relevant Rent, check your entry and correct it");
+            expect(state.validationMessage('relevantRent')).toEqual("Enter the relevant rent again - don't use any letters or characters including £");
         });
 
         it('relevantRent.format should return an error when not an integer', function() {
@@ -50,7 +50,7 @@
 
             expect(state.isValid).toEqual(false);
             expect(state.hasError('relevantRent')).toEqual('form-field--error');
-            expect(state.validationMessage('relevantRent')).toEqual("You have entered an incorrect Relevant Rent, check your entry and correct it");
+            expect(state.validationMessage('relevantRent')).toEqual("Enter the relevant rent again - don't use any letters or characters including £");
         });
 
 

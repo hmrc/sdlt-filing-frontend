@@ -13,7 +13,7 @@
             if (validator.isNotPopulated(data.premium)) {
                 state.premium = "You must complete this box. Enter your Purchase Price";
             } else if (validator.isInvalidFloat(data.premium)) {
-                state.premium = "You have entered an incorrect Purchase Price, check your entry and correct it";
+                state.premium = "Enter the purchase price again - don't use any letters or characters including £";
             }
 
             return buildState(state);

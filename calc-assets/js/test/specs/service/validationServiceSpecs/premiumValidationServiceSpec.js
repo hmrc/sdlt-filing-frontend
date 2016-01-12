@@ -38,7 +38,7 @@
 
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You have entered an incorrect Premium, check your entry and correct it");
+            expect(state.validationMessage('premium')).toEqual("Enter the premium again - don't use any letters or characters including £");
         });
 
         it('premium.format should return no errors when valid decimal', function() {
@@ -62,7 +62,7 @@
 
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You have entered an incorrect Premium, check your entry and correct it");
+            expect(state.validationMessage('premium')).toEqual("Enter the premium again - don't use any letters or characters including £");
         });
 
         it('premium.format should return an error when multiple decimals entered', function() {
@@ -74,7 +74,7 @@
 
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You have entered an incorrect Premium, check your entry and correct it");
+            expect(state.validationMessage('premium')).toEqual("Enter the premium again - don't use any letters or characters including £");
         });
 
         it('premium.format should return an error when multiple decimals entered', function() {
@@ -86,7 +86,7 @@
 
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You have entered an incorrect Premium, check your entry and correct it");
+            expect(state.validationMessage('premium')).toEqual("Enter the premium again - don't use any letters or characters including £");
         });
 
     });

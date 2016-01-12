@@ -13,7 +13,7 @@
             if (validator.isNotPopulated(data.premium)) {
                 state.premium = "You must complete this box. Enter your Premium";
             } else if (validator.isInvalidFloat(data.premium)) {
-                state.premium = "You have entered an incorrect Premium, check your entry and correct it";
+                state.premium = "Enter the premium again - don't use any letters or characters including £";
             }
 
             return buildState(state);
