@@ -76,25 +76,31 @@
       <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
       <div class = "form-group">
         <table>
-          <tbody>            
+          <tbody>
             <tr class="section">
-              <td>Total Amount of Tax for this Transaction</td>
+              <th colspan="2">Results</th>
+            </tr>
+            <tr class="section">
+              <td>Total amount of tax for this transaction</td>
               <td id="lrTotalTax">{{data.result.leasehold.residential.totalTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
-              <td>Net Present value</td>
+              <td>Net present value</td>
               <td id="lrNPV">{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
-              <td>Stamp Duty Land Tax on Rent</td>
+              <td>SDLT on Rent</td>
               <td id="lrRentTax">{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
-              <td>Stamp Duty Land Tax on Premium</td>
+              <td>SDLT on Premium</td>
               <td id="lrPremiumTax">{{data.result.leasehold.residential.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="form-group">
+          <a ng-click="viewDetails()" href="javascript:void(0)" id="detailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation')">Detailed calculation</a>
       </div>
     </div>
 
