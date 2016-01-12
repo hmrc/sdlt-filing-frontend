@@ -50,6 +50,51 @@
       </div>
     </div>
 
+    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
+      <h2 class="heading-medium blue-bottom-border">This is a breakdown of how the total amount of SDLT was calculated based on the rules from 4 December 2014</h2>
+      <div class = "form-group">
+        <table>
+          <tbody>
+            <tr class="section">
+              <th>Purchase price bands (£)</th>
+              <th>Percentage rate (%)</th>
+              <th>SDLT due (£)</th>
+            </tr>
+            <tr class="section">
+              <td>Up to {{data.result.leasehold.residential.from.slices[0].to | sdltCurrency}}</td>
+              <td id="band1Rate">{{data.result.leasehold.residential.from.slices[0].rate}}</td>
+              <td id="band1Tax">{{data.result.leasehold.residential.from.slices[0].taxDue | sdltCurrency}}</td>
+            </tr>
+            <tr class="section">
+              <td>Above {{data.result.leasehold.residential.from.slices[1].from | sdltCurrency}} and up to {{data.result.leasehold.residential.from.slices[1].to | sdltCurrency}}</td>
+              <td id="band2Rate">{{data.result.leasehold.residential.from.slices[1].rate}}</td>
+              <td id="band2Tax">{{data.result.leasehold.residential.from.slices[1].taxDue | sdltCurrency}}</td>
+            </tr>
+            <tr class="section">
+              <td>Above {{data.result.leasehold.residential.from.slices[2].from | sdltCurrency}} and up to {{data.result.leasehold.residential.from.slices[2].to | sdltCurrency}}</td>
+              <td id="band3Rate">{{data.result.leasehold.residential.from.slices[2].rate}}</td>
+              <td id="band3Tax">{{data.result.leasehold.residential.from.slices[2].taxDue | sdltCurrency}}</td>
+            </tr>
+            <tr class="section">
+              <td>Above {{data.result.leasehold.residential.from.slices[3].from | sdltCurrency}} and up to {{data.result.leasehold.residential.from.slices[3].to | sdltCurrency}}</td>
+              <td id="band4Rate">{{data.result.leasehold.residential.from.slices[3].rate}}</td>
+              <td id="band4Tax">{{data.result.leasehold.residential.from.slices[3].taxDue | sdltCurrency}}</td>
+            </tr>
+            <tr class="section">
+              <td>Above {{data.result.leasehold.residential.from.slices[4].from | sdltCurrency}}+</td>
+              <td id="band5Rate">{{data.result.leasehold.residential.from.slices[4].rate}}</td>
+              <td id="band5Tax">{{data.result.leasehold.residential.from.slices[4].taxDue | sdltCurrency}}</td>
+            </tr>
+            <tr class="section">
+              <td>&nbsp;</td>
+              <td>Total SDLT due</td>
+              <td id="totalSDLT">{{data.result.leasehold.residential.from.totalSDLT | sdltCurrency}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="form-group">
         <p>You can <a ng-click="printView()" href="javascript:void(0)" onClick="ga('send', 'event', 'link', 'click', 'result.printView')">print your calculation</a>.</p>
         <p>Go to the <a id="gov-home" href="https://www.gov.uk" onClick="ga('send', 'event', 'link', 'click', 'detail.govuk')">GOV.UK</a> homepage.</p>
