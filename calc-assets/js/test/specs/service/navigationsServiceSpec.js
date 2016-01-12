@@ -190,8 +190,32 @@
                 expect(mockLocation.path()).toEqual('/summary');
             });
 
-            it('should set the location path to /relevant-rent when propertyType is "Non-residential" and premium < "150000"', function() {
-                data = { propertyType : 'Non-residential' , premium : '149000' };
+            it('should set the location path to /summary when propertyType is "Residential"', function() {
+                data = { propertyType : 'Residential'};
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /summary when propertyType is "Non-residential" and premium = "150000" and any rent < "2000"', function() {
+                data = { propertyType : 'Non-residential' , premium : '150000', year1Rent: '1999' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /summary when propertyType is "Non-residential" and premium < "150000" and any rent = "2000"', function() {
+                data = { propertyType : 'Non-residential' , premium : '149999', year1Rent: '2000' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /relevant-rent when propertyType is "Non-residential" and premium < "150000" and any rent < "2000"', function() {
+                data = { propertyType : 'Non-residential' , premium : '149999', year1Rent: '1999' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/relevant-rent');
+            });
+
+            it('should set the location path to /relevant-rent when propertyType is "Non-residential" and premium < "150000" and any rent < "2000"', function() {
+                data = { propertyType : 'Non-residential' , premium : '149999', year1Rent: '2000' , year2Rent: '1999' , year3Rent: '2000' , year4Rent: '2000' , year5Rent: '2000' };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/relevant-rent');
             });
