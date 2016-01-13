@@ -1,4 +1,4 @@
-<h1>{{title}}</h1>
+<h1 id="print-heading">{{title}}</h1>
 
 <form name="resultForm" class="form">
 
@@ -73,7 +73,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
+      <h2 class="heading-medium blue-bottom-border" id="FR-subtitle-from">Results based on SDLT rules from 4 December 2014.</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -94,7 +94,7 @@
 
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014.</h2>
+      <h2 class="heading-medium blue-bottom-border" id="FR-subtitle-before">Results based on SDLT rules before 4 December 2014.</h2>
       <label class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
       <div class = "form-group">
         <table>
@@ -115,7 +115,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'">
-      <h2 class="heading-medium blue-bottom-border">Results</h2>
+      <h2 class="heading-medium blue-bottom-border" id="FN-subtitle">Results</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -137,7 +137,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
+      <h2 class="heading-medium blue-bottom-border" id="LR-subtitle-from">Results based on SDLT rules from 4 December 2014.</h2>
       <div class = "form-group">
         <table>
           <tbody>            
@@ -163,7 +163,7 @@
     </div>
     
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014.</h2>
+      <h2 class="heading-medium blue-bottom-border" id="LR-subtitle-before">Results based on SDLT rules before 4 December 2014.</h2>
       <div class = "form-group">
         <table>
           <tbody>            
@@ -190,7 +190,7 @@
 
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012.</h2>
+      <h2 class="heading-medium blue-bottom-border" id="LN-subtitle">Results based on SDLT rules from 22 March 2012.</h2>
       <div class = "form-group">
         <table>
           <tbody>            
