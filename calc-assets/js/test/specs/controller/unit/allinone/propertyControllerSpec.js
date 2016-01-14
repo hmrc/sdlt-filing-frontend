@@ -12,6 +12,7 @@
             mockDataService, 
             mockValidationService, 
             mockNavigationService,
+            mockLoggingService,
             calledServiceGetModel = false;
 
         beforeEach(mocks.module('calc.controllers'));
@@ -27,8 +28,13 @@
                 logView : function() {} 
             };
 
+            mockLoggingService = { 
+                logEvent : function() {} 
+            };
+
             spyOn(mockDataService, 'getModel');
             spyOn(mockNavigationService, 'logView');
+            spyOn(mockLoggingService, 'logEvent');
             
             mockValidationService = {};
 
@@ -37,7 +43,8 @@
                 $location : {},
                 dataService : mockDataService,
                 propertyValidationService : mockValidationService,
-                navigationService : mockNavigationService
+                navigationService : mockNavigationService,
+                loggingService : mockLoggingService
             });
         }));
 
@@ -75,6 +82,10 @@
                     }
                 };
 
+                mockLoggingService = { 
+                    logEvent : function() {} 
+                };
+
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
@@ -84,6 +95,7 @@
                     $location : {},
                     dataService : mockDataService,
                     propertyValidationService : mockValidationService,
+                    loggingService : mockLoggingService,
                     navigationService : mockNavigationService
                 });
 
@@ -125,17 +137,27 @@
                     }
                 };
 
+                mockLoggingService = { 
+                    logEvent : function() {} 
+                };
+
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockLoggingService, 'logEvent');
                 
                 controller = $controller('propertyController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
                     propertyValidationService : mockValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
+
+                mockScope.data = {
+                    holdingType : "residential"
+                };
 
                 mockScope.submit({});
             }));
@@ -150,6 +172,10 @@
 
             it('should call to navigationService.next once', function () {
                 expect(mockNavigationService.next.calls.count()).toEqual(1);
+            });
+
+            it('should call beforeUpdateModel', function () {
+                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
             });
         });
     });
