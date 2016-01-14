@@ -22,22 +22,32 @@
 
             if (rent.displayYearOneRent) {
                 validateRent(data, state, 'year1Rent');
+            } else {
+                data.year1Rent = undefined;
             }
 
             if (rent.displayYearTwoRent) {
                 validateRent(data, state, 'year2Rent');
+            } else {
+                data.year2Rent = undefined;
             }
 
             if (rent.displayYearThreeRent) {
                 validateRent(data, state, 'year3Rent');
+            } else {
+                data.year3Rent = undefined;
             }
 
             if (rent.displayYearFourRent) {
                 validateRent(data, state, 'year4Rent');
+            } else {
+                data.year4Rent = undefined;
             }
 
             if (rent.displayYearFiveRent) {
                 validateRent(data, state, 'year5Rent');
+            } else {
+                data.year5Rent = undefined;
             }
 
             return buildState(state);
