@@ -339,5 +339,30 @@
 
 
 
+
+
+
+
+        it('year5Rent should be undefined if lease term is no more than 4 years', function() {
+            var form = {
+                holdingType : "Leasehold",
+                leaseTerm : {
+                        years : 4,
+                        days : 0
+                },
+                year1Rent : 100,
+                year2Rent : 100,
+                year3Rent : 100,
+                year4Rent : 100
+            };
+
+            var state = service.validate(form);
+            expect(year5Rent).toEqual(null);
+            // expect(state.hasError('year4Rent')).toEqual('form-field--error');
+            // expect(state.validationMessage('year4Rent')).toEqual("Enter the annual rent for all the years");
+        });
+
+
+
     });
 }());
