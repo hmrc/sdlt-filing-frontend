@@ -77,7 +77,10 @@
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
                     var premiumTax = -1;
-                    var relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
+                    var relevantRent = 0; 
+                    if ($scope.data.premium < 150000 && ($scope.data.year1Rent < 2000 || $scope.data.year2Rent < 2000 || $scope.data.year3Rent < 2000 || $scope.data.year4Rent < 2000 || $scope.data.year5Rent < 2000)) {
+                        relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
+                    }
                     premiumTax = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, relevantRent).taxDue;
                     rentTax = calculationService.calculateNonResidentialLeaseSlice(npv).totalSDLT;
 
