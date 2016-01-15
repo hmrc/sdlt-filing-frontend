@@ -10,12 +10,12 @@
 <form name="priceForm" class="form">
 
     <div class="form-group {{state.hasError('premium')}}">
-        <label for="purchasePrice">
+        <label for="premium">
             <span class="form-label-bold">Enter the price.</span>
             <span class="form-hint">This is the chargeable consideration.</span>
             <span id="purchasePriceErrMsg" class="error-notification">{{state.validationMessage('premium')}}</span>
         </label>            
-        &pound; <input id="purchasePrice" class="form-control form-control-1-8" ng-model="data.premium" name="premium" type="text" required>
+        &pound; <input id="premium" class="form-control form-control-1-8" ng-model="data.premium" name="premium" type="text" required>
     </div>
 
     <div class="form-group">
