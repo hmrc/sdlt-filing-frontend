@@ -35,7 +35,6 @@
             scope.state = validationService.validate(scope.data);
 
             if (scope.state.isValid) {
-                // this really shouldn't be here, use dby leasedates controller
                 if (angular.isDefined(scope.beforeUpdateModel)) {       
                     scope.beforeUpdateModel();
                 }

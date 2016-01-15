@@ -12,12 +12,16 @@
             mockDataService, 
             mockValidationService, 
             mockNavigationService,
+            mockLoggingService,
             calledServiceGetModel = false;
 
         beforeEach(mocks.module('calc.controllers'));
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.data = {
+                holdingType : "freehold"
+            };
 
             mockDataService = { 
                 getModel : function() {}
@@ -27,8 +31,13 @@
                 logView : function() {} 
             };
 
+            mockLoggingService = { 
+                logEvent : function() {} 
+            };
+
             spyOn(mockDataService, 'getModel');
             spyOn(mockNavigationService, 'logView');
+            spyOn(mockLoggingService, 'logEvent');
             
             mockValidationService = {};
 
@@ -37,7 +46,8 @@
                 $location : {},
                 dataService : mockDataService,
                 holdingValidationService : mockValidationService,
-                navigationService : mockNavigationService
+                navigationService : mockNavigationService,
+                loggingService : mockLoggingService
             });
         }));
 
@@ -75,16 +85,22 @@
                     }
                 };
 
+                mockLoggingService = { 
+                    logEvent : function() {} 
+                };
+
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
-                
+                spyOn(mockLoggingService, 'logEvent');
+
                 controller = $controller('holdingController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
                     holdingValidationService : mockValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
 
                 mockScope.submit({});
@@ -96,6 +112,10 @@
 
             it('should not call dataService.updateModel', function () {
                 expect(mockDataService.updateModel.calls.count()).toEqual(0);
+            });
+
+            it('should not call loggingService.logEvent', function () {
+                expect(mockLoggingService.logEvent.calls.count()).toEqual(0);
             });
 
             it('should not call to navigationService.next', function () {
@@ -125,17 +145,27 @@
                     }
                 };
 
+                mockLoggingService = { 
+                    logEvent : function() {} 
+                };
+
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
-                
+                spyOn(mockLoggingService, 'logEvent');
+
                 controller = $controller('holdingController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
                     holdingValidationService : mockValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
+
+                mockScope.data = {
+                    holdingType : "freehold"
+                };
 
                 mockScope.submit({});
             }));
@@ -150,6 +180,10 @@
 
             it('should call to navigationService.next once', function () {
                 expect(mockNavigationService.next.calls.count()).toEqual(1);
+            });
+
+            it('should call loggingService.logEvent', function () {
+                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
             });
         });
     });
