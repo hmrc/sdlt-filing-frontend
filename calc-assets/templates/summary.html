@@ -74,7 +74,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2EndDate">{{getDisplayValue(data.endDate) | date:'d MMMM yyyy'}}</td>
-                        <td class="link-right" id="td3EndDate"><a href="#lease-dates" title="Change your response to the question &quot;End Date as specified in lease&quot;" onClick="ga('send', 'event', 'change', 'click', 'endDate')">Change</a></td>
+                        <td class="link-right" id="td3EndDate"><a href="#lease-dates" id="changeEndDate" title="Change your response to the question &quot;End Date as specified in lease&quot;" onClick="ga('send', 'event', 'change', 'click', 'endDate')">Change</a></td>
                     </tr>
                     <!-- Term of Lease -->
                     <tr class="section" ng-show="data.holdingType === 'Leasehold'">
