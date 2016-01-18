@@ -920,7 +920,7 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
+                logView : function() {}
             };
 
             mockModelValidationService = {
@@ -964,4 +964,218 @@
         });
 
     });
+
+
+    describe('calling effDateAfterCutoff and getHeading with date after cut-off date', function () {
+
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            mockLocation,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
+            
+            mockScope = $rootScope.$new();
+
+            mockLocation = $location;
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        leaseTerm : "banana",
+                        effectiveDate : new Date("December 6, 2014")
+                    };  
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : mockLocation,
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should return true for effectiveDateAfterCutOff() if Effective Date is 06/12/2014', function () {
+            expect(mockScope.effDateAfterCutOff()).toEqual(true);
+        });
+
+        it('should return correct text for getHeading() if Effective Date is 06/12/2014', function () {
+            expect(mockScope.getHeading()).toEqual("Results based on SDLT rules before 4 December 2014");
+        });
+    });
+
+    describe('calling effDateAfterCutoff and getHeading with date on cut-off date', function () {
+
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            mockLocation,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
+            
+            mockScope = $rootScope.$new();
+
+            mockLocation = $location;
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        leaseTerm : "banana",
+                        effectiveDate : new Date("December 4, 2014")
+                    };  
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : mockLocation,
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should return true for effectiveDateAfterCutOff() if Effective Date is 04/12/2014', function () {
+            expect(mockScope.effDateAfterCutOff()).toEqual(true);
+        });
+
+        it('should return correct text for getHeading() if Effective Date is 04/12/2014', function () {
+            expect(mockScope.getHeading()).toEqual("Results based on SDLT rules before 4 December 2014");
+        });
+    });
+
+
+    describe('calling effDateAfterCutoff and getHeading with date before cut-off date', function () {
+
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            mockLocation,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
+            
+            mockScope = $rootScope.$new();
+
+            mockLocation = $location;
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        propertyType : "Residential",
+                        leaseTerm : "banana",
+                        effectiveDate : new Date("December 3, 2014")
+                    };  
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : mockLocation,
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should return false for effectiveDateAfterCutOff() if Effective Date is 03/12/2014', function () {
+            expect(mockScope.effDateAfterCutOff()).toEqual(false);
+        });
+
+        it('should return correct text for getHeading() if Effective Date is 03/12/2014', function () {
+            expect(mockScope.getHeading()).toEqual("SDLT calculation");
+        });
+    });
+
 }());
