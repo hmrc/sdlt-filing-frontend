@@ -95,7 +95,7 @@
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border" id="FR-subtitle-before" >{{getHeading()}}</h2>
-      <label ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
+      <label ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</label>
       <div class = "form-group">
         <table>
           <tbody>
@@ -164,7 +164,7 @@
     
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border" id="LR-subtitle-before">{{getHeading()}}</h2>    
-      <label class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
+      <label  ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</label>
       <div class = "form-group">
         <table>
           <tbody>            
