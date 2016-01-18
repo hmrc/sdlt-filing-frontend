@@ -670,20 +670,6 @@
     });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     describe('Result Controller with valid data - Leasehold and Non-residential and relevantRent defined, but not required', function () {
         
         var controller, 
@@ -786,52 +772,6 @@
             expect(mockScope.data.result.leasehold.nonResidential.totalTax).toEqual(30);
         });      
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     describe('Call to viewDetails()', function () {

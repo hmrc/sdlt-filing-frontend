@@ -337,12 +337,6 @@
             expect(state.validationMessage('year5Rent')).toEqual("Enter the rent again - don't use any letters or characters including £");
         });
 
-
-
-
-
-
-
         it('year5Rent should be undefined if lease term is no more than 4 years', function() {
             var form = {
                 holdingType : "Leasehold",
