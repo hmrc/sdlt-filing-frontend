@@ -920,7 +920,7 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
+                logView : function() {}
             };
 
             mockModelValidationService = {
@@ -990,8 +990,9 @@
                         holdingType : "Freehold",
                         leaseTerm : "banana",
                         effectiveDate : new Date("December 6, 2014")
-                    }; 
-                }
+                    };  
+                },
+                updateModel : function() { }
             };
 
             mockNavigationService = { 
@@ -1000,12 +1001,16 @@
 
             mockModelValidationService = {
                 validate : function() {
-                    return { isModelValid : false };
+                    return { isModelValid : true };
                 }
             };
 
             mockCalculationService = {
-                calculateResidentialPremiumSlab: function() {}
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -1055,8 +1060,9 @@
                         holdingType : "Freehold",
                         leaseTerm : "banana",
                         effectiveDate : new Date("December 4, 2014")
-                    }; 
-                }
+                    };  
+                },
+                updateModel : function() { }
             };
 
             mockNavigationService = { 
@@ -1065,12 +1071,16 @@
 
             mockModelValidationService = {
                 validate : function() {
-                    return { isModelValid : false };
+                    return { isModelValid : true };
                 }
             };
 
             mockCalculationService = {
-                calculateResidentialPremiumSlab: function() {}
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -1119,10 +1129,12 @@
                 getModel : function() { 
                     return {
                         holdingType : "Freehold",
+                        propertyType : "Residential",
                         leaseTerm : "banana",
                         effectiveDate : new Date("December 3, 2014")
-                    }; 
-                }
+                    };  
+                },
+                updateModel : function() { }
             };
 
             mockNavigationService = { 
@@ -1131,12 +1143,16 @@
 
             mockModelValidationService = {
                 validate : function() {
-                    return { isModelValid : false };
+                    return { isModelValid : true };
                 }
             };
 
             mockCalculationService = {
-                calculateResidentialPremiumSlab: function() {}
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -1153,7 +1169,7 @@
             });
         }));
 
-        it('should return true for effectiveDateAfterCutOff() if Effective Date is 03/12/2014', function () {
+        it('should return false for effectiveDateAfterCutOff() if Effective Date is 03/12/2014', function () {
             expect(mockScope.effDateAfterCutOff()).toEqual(false);
         });
 
