@@ -39,20 +39,54 @@
             expect(state.validationMessage('effectiveDate')).toEqual("Enter the date in the correct format");
         });
 
-        it('effectiveDate should return an error when it is set to before 22 March 2012', function() {
-            var form = { effectiveDate : new Date(2012, 2, 21) };
-            var state = service.validate(form);
-            expect(state.isValid).toEqual(false);
-        });
-
         it('effectiveDate should return the correct minimum date message', function() {
-            var form = { effectiveDate : new Date(2012, 2, 21) };
+            var form = { effectiveDate : new Date(2012, 2, 21), propertyType: "Residential" };
             var state = service.validate(form);
             expect(state.validationMessage('effectiveDate')).toEqual("Date can't be earlier than 22/3/2012");
         });
 
         it('effectiveDate should not return an error when it is set to 22 Mar 2012', function() {
             var form = { effectiveDate : new Date(2012, 2, 22) };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(true);
+        });
+
+        it('expected date before 22 March 2012 should be invalid for Leasehold Residential', function() {
+            var form = {
+                effectiveDate: new Date(2012, 2, 21),
+                propertyType: "Residential",
+                holdingType: "Leasehold"
+            };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(false);
+        });
+
+        it('expected date on or before 22 March 2012 should be invalid for Freehold Residential', function() {
+            var form = {
+                effectiveDate: new Date(2012, 2, 21),
+                propertyType: "Residential",
+                holdingType: "Freehold"
+            };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(false);
+        });
+
+        it('expected date on or before 22 March 2012 should be valid for Leasehold Non-residential', function() {
+            var form = {
+                effectiveDate: new Date(2012, 2, 21),
+                propertyType: "Non-residential",
+                holdingType: "Leasehold"
+            };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(true);
+        });
+
+        it('expected date on or before 22 March 2012 should be valid for Freehold Non-residential', function() {
+            var form = {
+                effectiveDate: new Date(2012, 2, 21),
+                propertyType: "Non-residential",
+                holdingType: "Freehold"
+            };
             var state = service.validate(form);
             expect(state.isValid).toEqual(true);
         });
