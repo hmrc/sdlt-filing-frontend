@@ -350,16 +350,15 @@
                         years : 4,
                         days : 0
                 },
-                year1Rent : 100,
-                year2Rent : 100,
-                year3Rent : 100,
-                year4Rent : 100
+                year1Rent : "2000",
+                year2Rent : "2000",
+                year3Rent : "2000",
+                year4Rent : "2000",
+                year5Rent : "2000",
             };
 
             var state = service.validate(form);
-            expect(year5Rent).toEqual(null);
-            // expect(state.hasError('year4Rent')).toEqual('form-field--error');
-            // expect(state.validationMessage('year4Rent')).toEqual("Enter the annual rent for all the years");
+            expect(form.year5Rent).toEqual(undefined);
         });
 
 
