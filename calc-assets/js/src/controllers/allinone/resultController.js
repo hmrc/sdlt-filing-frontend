@@ -94,6 +94,20 @@
             $location.path('summary');
         }
 
+
+        $scope.effDateAfterCutOff = function(){
+            var cutOffDate = new Date("December 4, 2014");
+            return $scope.data.effectiveDate >= cutOffDate;
+        };
+
+        $scope.getHeading = function() {
+            if($scope.effDateAfterCutOff()) {
+                return "Results based on SDLT rules before 4 December 2014";
+            } else {
+                return "SDLT calculation";
+            }
+        };
+
     };
 
     app.controller('resultController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'calculationService', resultController ]);

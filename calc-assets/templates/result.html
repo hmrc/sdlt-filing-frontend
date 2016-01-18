@@ -2,8 +2,8 @@
 
 <form name="resultForm" class="form">
 
-    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'" id="divFreeholdResidentialNew">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
+    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divFreeholdResidentialNew">
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -27,8 +27,8 @@
 
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'"  id="divFreeholdResidentialOld">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014.</h2>
-      <label class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
+      <h2 class="heading-medium blue-bottom-border">{{getHeading()}}</h2>
+      <label ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
       <div class = "form-group">
         <table>
           <tbody>
@@ -69,8 +69,8 @@
       </div>
     </div>
 
-    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'" id="divLeaseholdResidentialNew">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014.</h2>
+    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divLeaseholdResidentialNew">
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>      
       <div class = "form-group">
         <table>
           <tbody>
@@ -103,7 +103,7 @@
 
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'"  id="divLeaseholdResidentialOld">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules before 4 December 2014.</h2>
+       <h2 class="heading-medium blue-bottom-border">{{getHeading()}}</h2>
       <label class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014. Find more on our GOV.UK pages.</label>
       <div class = "form-group">
         <table>
