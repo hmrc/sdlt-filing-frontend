@@ -295,5 +295,84 @@
                 expect(mockNavigationService.next.calls.count()).toEqual(1);
             });
         });
+
+    describe('our test', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                    
+                mockScope = $rootScope.$new();
+
+                mockDataService = { 
+                    getModel : function() {}
+                };
+
+                mockNavigationService = { 
+                    logView : function() {} 
+                };
+
+                spyOn(mockDataService, 'getModel');
+                spyOn(mockNavigationService, 'logView');
+                
+                mockValidationService = {};
+
+                controller = $controller('leaseDatesController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    leaseDatesValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            it('should set correct years to undefined when end date is updated', function () {
+
+                mockScope.data = {
+                    effectiveDate : new Date(2015, 2, 1),
+                    startDate : new Date(2015, 2, 1),
+                    endDate : new Date(2016, 7, 1),
+                    year1Rent : 2000,
+                    year2Rent : 2000,
+                    year3Rent : 2000,
+                    year4Rent : 2000,
+                    year5Rent : 2000,
+                    holdingType : 'Leasehold',
+                    leaseTerm : 'banana'
+                };
+
+                mockScope.beforeUpdateModel();
+
+                expect(mockScope.data.year1Rent).toEqual(2000);
+                expect(mockScope.data.year2Rent).toEqual(2000);
+                expect(mockScope.data.year3Rent).toEqual(undefined);
+                expect(mockScope.data.year4Rent).toEqual(undefined);
+                expect(mockScope.data.year5Rent).toEqual(undefined);
+            });
+
+            it('should leave all years the same when end date is not changed', function () {
+
+                mockScope.data = {
+                    effectiveDate : new Date(2015, 2, 1),
+                    startDate : new Date(2015, 2, 1),
+                    endDate : new Date(2019, 7, 1),
+                    year1Rent : 2000,
+                    year2Rent : 2001,
+                    year3Rent : 2002,
+                    year4Rent : 2003,
+                    year5Rent : 2004,
+                    holdingType : 'Leasehold',
+                    leaseTerm : 'banana'
+                };
+
+                mockScope.beforeUpdateModel();
+
+                expect(mockScope.data.year1Rent).toEqual(2000);
+                expect(mockScope.data.year2Rent).toEqual(2001);
+                expect(mockScope.data.year3Rent).toEqual(2002);
+                expect(mockScope.data.year4Rent).toEqual(2003);
+                expect(mockScope.data.year5Rent).toEqual(2004);
+            });
+
+        });
+        
     });
 }());

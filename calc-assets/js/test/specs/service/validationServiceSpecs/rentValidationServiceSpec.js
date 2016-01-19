@@ -337,46 +337,5 @@
             expect(state.validationMessage('year5Rent')).toEqual("Enter the rent again - don't use any letters or characters including £");
         });
 
-        it('year5Rent should be undefined if lease term is no more than 4 years', function() {
-            var form = {
-                holdingType : "Leasehold",
-                leaseTerm : {
-                        years : 4,
-                        days : 0
-                },
-                year1Rent : "2000",
-                year2Rent : "2000",
-                year3Rent : "2000",
-                year4Rent : "2000",
-                year5Rent : "2000",
-            };
-
-            var state = service.validate(form);
-            expect(form.year5Rent).toEqual(undefined);
-        });
-
-        it('all years rents should be undefined if lease term is 0 years 0 days', function() {
-            var form = {
-                holdingType : "Leasehold",
-                leaseTerm : {
-                        years : 0,
-                        days : 1
-                },
-                year1Rent : "2000",
-                year2Rent : "2000",
-                year3Rent : "2000",
-                year4Rent : "2000",
-                year5Rent : "2000",
-            };
-
-            var state = service.validate(form);
-            expect(form.year1Rent).toEqual('2000');
-            expect(form.year2Rent).toEqual(undefined);
-            expect(form.year3Rent).toEqual(undefined);
-            expect(form.year4Rent).toEqual(undefined);
-            expect(form.year5Rent).toEqual(undefined);
-        });
-
-
     });
 }());
