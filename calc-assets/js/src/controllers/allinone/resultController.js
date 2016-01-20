@@ -58,13 +58,11 @@
                 var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
                 if ($scope.data.propertyType === 'Residential') {
 
-                    var fromPremiumTax = -1;
-                    var beforePremiumTax = -1;
                     result.leasehold.residential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
-                    fromPremiumTax = result.leasehold.residential.from.totalSDLT;
+                    var fromPremiumTax = result.leasehold.residential.from.totalSDLT;
 
                     result.leasehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium); 
-                    beforePremiumTax = result.leasehold.residential.before.taxDue;
+                    var beforePremiumTax = result.leasehold.residential.before.taxDue;
 
                     rentTax = calculationService.calculateResidentialLeaseSlice(npv).totalSDLT;
 
@@ -81,11 +79,14 @@
                     if ($scope.data.premium < 150000 && ($scope.data.year1Rent < 2000 || $scope.data.year2Rent < 2000 || $scope.data.year3Rent < 2000 || $scope.data.year4Rent < 2000 || $scope.data.year5Rent < 2000)) {
                         relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
                     }
-                    premiumTax = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, relevantRent).taxDue;
+                    var premiumTaxBreakdown = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, relevantRent);
+                    premiumTax = premiumTaxBreakdown.taxDue;
+                    var premiumTaxRate = premiumTaxBreakdown.rate;
                     rentTax = calculationService.calculateNonResidentialLeaseSlice(npv).totalSDLT;
 
                     result.leasehold.nonResidential.npv = npv;
                     result.leasehold.nonResidential.rentTax = rentTax;
+                    result.leasehold.nonResidential.premiumTaxRate = premiumTaxRate;
                     result.leasehold.nonResidential.premiumTax = premiumTax;
                     result.leasehold.nonResidential.totalTax = rentTax + premiumTax;
                 }
