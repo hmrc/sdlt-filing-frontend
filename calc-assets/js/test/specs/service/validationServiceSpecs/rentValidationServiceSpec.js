@@ -337,14 +337,6 @@
             expect(state.validationMessage('year5Rent')).toEqual("Enter the rent again - don't use any letters or characters including £");
         });
 
-
-
-
-
-
-
-
-
         it('rent boxes for years 2 to 5 should not be validated if they are not shown', function() {
             var form = {
                 holdingType : "Leasehold",
@@ -366,11 +358,6 @@
             expect(form.year4Rent).toEqual('be');
             expect(form.year5Rent).toEqual('validated');
         });
-
-
-
-
-
 
         it('year 1 rent box should not be validated if it is not shown', function() {
             var form = {
