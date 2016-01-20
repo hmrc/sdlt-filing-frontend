@@ -85,5 +85,15 @@
             var state = service.validate(form);
             expect(state.isValid).toEqual(false);
         });  
+
+        it('lease dates should be valid', function() {
+            var form = { 
+                effectiveDate: new Date(2000, 1, 3), 
+                startDate: new Date(2000, 1, 1), 
+                endDate: new Date(2001, 1, 2)
+            };
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(true);
+        }); 
     });
 }());
