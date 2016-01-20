@@ -118,7 +118,7 @@
               <td id="lrOldRentTax">{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
-              <td>SDLT on premium</td>
+              <td id="lrOldPremiumTaxLabel">SDLT on premium ({{data.result.leasehold.residential.before.rate}}%)</td>
               <td id="lrOldPremiumTax">{{data.result.leasehold.residential.before.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
@@ -127,7 +127,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'" id="divLeaseholdNonResidential">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012.</h2>
+      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012</h2>
       <div class = "form-group">
         <table>
           <tbody>            
@@ -144,7 +144,7 @@
               <td id="lnRentTax">{{data.result.leasehold.nonResidential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
-              <td>SDLT on premium</td>
+              <td id="lnPremiumTaxLabel">SDLT on premium ({{data.result.leasehold.nonResidential.premiumTaxRate}}%)</td>
               <td id="lnPremiumTax">{{data.result.leasehold.nonResidential.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
