@@ -53,6 +53,17 @@
             expect(state.validationMessage('premium')).toEqual("Enter the purchase price again - don't use any letters or characters including £");
         });
 
+        it('premium should be valid', function() {
+            var form = {
+                premium : "250000"
+            };
+
+            var state = service.validate(form);
+
+            expect(state.isValid).toEqual(true);
+            expect(form.premium).toEqual("250000");
+        });
+
 
     });
 }());
