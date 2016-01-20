@@ -337,5 +337,40 @@
             expect(state.validationMessage('year5Rent')).toEqual("Enter the rent again - don't use any letters or characters including £");
         });
 
+        it('rent boxes for years 2 to 5 should not be validated if they are not shown', function() {
+            var form = {
+                holdingType : "Leasehold",
+                leaseTerm : {
+                        years : 0,
+                        days : 1
+                },
+                year1Rent : "1",
+                year2Rent : "this",
+                year3Rent : "shouldn't",
+                year4Rent : "be",
+                year5Rent : "validated"
+            };
+
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(true);
+            expect(form.year2Rent).toEqual('this');
+            expect(form.year3Rent).toEqual("shouldn't");
+            expect(form.year4Rent).toEqual('be');
+            expect(form.year5Rent).toEqual('validated');
+        });
+
+        it('year 1 rent box should not be validated if it is not shown', function() {
+            var form = {
+                holdingType : "Leasehold",
+                leaseTerm : undefined,
+                year1Rent : "invalid"
+            };
+
+            var state = service.validate(form);
+            expect(state.isValid).toEqual(true);
+            expect(form.year1Rent).toEqual("invalid");
+        });
+
+
     });
 }());

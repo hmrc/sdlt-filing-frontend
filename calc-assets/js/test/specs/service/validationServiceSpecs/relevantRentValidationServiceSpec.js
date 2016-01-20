@@ -53,6 +53,17 @@
             expect(state.validationMessage('relevantRent')).toEqual("Enter the relevant rent again - don't use any letters or characters including £");
         });
 
+        it('relevantRent should be valid', function() {
+            var form = {
+                relevantRent : "100"
+            };
+
+            var state = service.validate(form);
+
+            expect(state.isValid).toEqual(true);
+            expect(form.relevantRent).toEqual("100");
+        });
+
 
     });
 }());
