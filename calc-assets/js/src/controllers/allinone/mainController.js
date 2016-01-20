@@ -56,4 +56,12 @@
 
     // register the main controller
     app.controller('mainController', ['$scope', 'loggingService', mainController]);
+
+    app.directive('getHelpWithThisPage', function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: 'elements/get-help-with-this-page.html'
+        };
+    });
 }());
