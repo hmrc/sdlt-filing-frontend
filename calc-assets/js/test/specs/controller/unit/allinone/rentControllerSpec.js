@@ -19,7 +19,8 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
-
+            mockScope.getHelpSetup = function() {return true;};
+            
             mockDataService = { 
                 getModel : function() { 
                     return {
@@ -64,7 +65,8 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
-
+                mockScope.getHelpSetup = function() {return true;};
+                
                 mockDataService = { 
                     getModel : function() { 
                         return {
@@ -119,7 +121,8 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
-
+                mockScope.getHelpSetup = function() {return true;};
+                
                 mockDataService = { 
                     getModel : function() { 
                         return {
@@ -173,7 +176,8 @@
             beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
                 
                 mockScope = $rootScope.$new();
-                
+                mockScope.getHelpSetup = function() {return true;};
+                                
                 mockDataService = { 
                     getModel : function() { 
                         return {

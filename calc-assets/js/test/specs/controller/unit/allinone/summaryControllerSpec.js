@@ -18,6 +18,7 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -83,6 +84,7 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
 
                 mockDataService = { 
                     getModel : function() { 
@@ -152,6 +154,7 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
 
                 mockDataService = { 
                     getModel : function() { 
@@ -226,6 +229,7 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
 
                 mockDataService = { 
                     getModel : function() { 
@@ -300,6 +304,7 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
 
                 mockDataService = { 
                     getModel : function() { 
@@ -374,6 +379,7 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
 
                 mockDataService = { 
                     getModel : function() { 
@@ -448,7 +454,8 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
-
+                mockScope.getHelpSetup = function() {return true;};
+                
                 mockDataService = { 
                     getModel : function() { 
                         return {
