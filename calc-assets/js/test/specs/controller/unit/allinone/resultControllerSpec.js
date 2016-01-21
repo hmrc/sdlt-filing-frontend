@@ -19,6 +19,7 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -89,6 +90,7 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -166,6 +168,7 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -237,6 +240,7 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -351,6 +355,7 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -470,6 +475,7 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -576,6 +582,7 @@
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -1140,6 +1147,7 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -1244,7 +1252,8 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
-
+            mockScope.getHelpSetup = function() {return true;};
+            
             mockDataService = { 
                 getModel : function() { 
                     return {
@@ -1303,7 +1312,8 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         beforeEach(mocks.inject(function ($controller, $rootScope) {
             
             mockScope = $rootScope.$new();
-
+            mockScope.getHelpSetup = function() {return true;};
+            
             mockDataService = { 
                 getModel : function() { 
                     return {
@@ -1363,7 +1373,8 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
             
             mockScope = $rootScope.$new();
-
+            mockScope.getHelpSetup = function() {return true;};
+            
             mockLocation = $location;
 
             mockDataService = { 
@@ -1437,7 +1448,8 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
             
             mockScope = $rootScope.$new();
-
+            mockScope.getHelpSetup = function() {return true;};
+            
             mockLocation = $location;
 
             mockDataService = { 
@@ -1507,7 +1519,8 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
             
             mockScope = $rootScope.$new();
-
+            mockScope.getHelpSetup = function() {return true;};
+            
             mockLocation = $location;
 
             mockDataService = { 
@@ -1578,7 +1591,8 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
             
             mockScope = $rootScope.$new();
-
+            mockScope.getHelpSetup = function() {return true;};
+            
             mockLocation = $location;
 
             mockDataService = { 
