@@ -1,5 +1,6 @@
 (function() {
-    
+    "use strict";
+
     var app = require("../module");
 
     var propertyController = function($scope, $location, $anchorScroll, dataService, propertyValidationService, navigationService, loggingService) {
