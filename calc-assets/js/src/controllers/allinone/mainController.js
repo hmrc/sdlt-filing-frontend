@@ -57,7 +57,9 @@
 
         $scope.getHelpSetup = function(referrer) {
 
-              //var feedbackForms = require('./feedbackForms.js');
+            var gaReferrerSplit = angular.copy(referrer).split('/');
+            var gaReferrer = "/"+gaReferrerSplit[gaReferrerSplit.length-2]+"/"+gaReferrerSplit[gaReferrerSplit.length-1];
+
             var feedbackFormsSetup = function() {
                 
                 var $feedbackForms = $('.form--feedback');
@@ -74,6 +76,7 @@
                   'if you need technical help with this website.</p>';
                 reportErrorContainer().html(response);
                 enableSubmitButton();
+                loggingService.logEvent('get-help-with-page', 'unsuccessful-submission', gaReferrer);
               },
 
               reportErrorContainer = function() {
@@ -95,6 +98,7 @@
 
               showConfirmation = function(data) {
                 reportErrorContainer().html(data.message);
+                loggingService.logEvent('get-help-with-page', 'successful-submission', gaReferrer);
               },
 
               submit = function(form, url) {
@@ -139,8 +143,10 @@
                     // the form or the form's submission result is not there, load the HTML asynchronously using Ajax
                     // and replace the spinner with the form markup
                     load(decodeURIComponent(referrer));
+                    loggingService.logEvent('get-help-with-page', 'show-form', gaReferrer);
                   } else {
                     $errorContent.toggleClass('js-hidden');
+                    loggingService.logEvent('get-help-with-page', 'hide-form', gaReferrer);
                   }
 
                   // Preventing navigation ONLY if element has "href" attribute
