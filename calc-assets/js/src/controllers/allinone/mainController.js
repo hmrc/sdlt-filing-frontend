@@ -55,8 +55,7 @@
 
 
 
-        $scope.getHelpSetup = function(referrer) {
-
+        $scope.getHelpSetup = function(contactUrl, referrer) {
             var gaReferrerSplit = angular.copy(referrer).split('/');
             var gaReferrer = "/"+gaReferrerSplit[gaReferrerSplit.length-2]+"/"+gaReferrerSplit[gaReferrerSplit.length-1];
 
@@ -102,10 +101,25 @@
               },
 
               submit = function(form, url) {
+                var serializedForm = $(form).serialize();
+
+                var originalReferrer = "";
+                var newReferrer = "referrer="+encodeURIComponent(referrer);
+
+                var myStringArray = serializedForm.split('&');
+                var arrayLength = myStringArray.length;
+                for (var i = 0; i < arrayLength; i++) {
+                    if(myStringArray[i].startsWith('referrer')){
+                        originalReferrer = myStringArray[i];
+                    }
+                }
+
+                serializedForm = serializedForm.replace(originalReferrer, newReferrer);
+
                 $.ajax({
                   type: 'POST',
                   url: url,
-                  data: $(form).serialize(),
+                  data: serializedForm,
                   beforeSend: function(xhr) {
                     disableSubmitButton();
                     xhr.setRequestHeader('Csrf-Token', 'nocheck');
@@ -125,7 +139,7 @@
 
               load = function(url) {
                 var $formContainer = $('#report-error-partial-form');
-                $formContainer.load(referrer, function( response, status, xhr ) {
+                $formContainer.load(contactUrl, function( response, status, xhr ) {
                   setupFormValidation();
                   feedbackFormsSetup();
                 });
@@ -142,7 +156,7 @@
                     $errorContent.removeClass('js-hidden');
                     // the form or the form's submission result is not there, load the HTML asynchronously using Ajax
                     // and replace the spinner with the form markup
-                    load(decodeURIComponent(referrer));
+                    load(decodeURIComponent(contactUrl));
                     loggingService.logEvent('get-help-with-page', 'show-form', gaReferrer);
                   } else {
                     $errorContent.toggleClass('js-hidden');
