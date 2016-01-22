@@ -3,7 +3,7 @@
 <form name="resultForm" class="form">
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divFreeholdResidentialNew">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -26,7 +26,7 @@
 
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'"  id="divFreeholdResidentialOld">
-      <h2 class="heading-medium blue-bottom-border">{{getHeading()}}</h2>
+      <h2 class="heading-medium blue-bottom-border FR-subtitle-before">{{getHeading()}}</h2>
       <label ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</label>
       <div class = "form-group">
         <table>
@@ -47,7 +47,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'" id="divFreeholdNonResidential">
-      <h2 class="heading-medium blue-bottom-border">SDLT calculation</h2>
+      <h2 class="heading-medium blue-bottom-border FN-subtitle">SDLT calculation</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -69,7 +69,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divLeaseholdResidentialNew">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 4 December 2014</h2>      
+      <h2 class="heading-medium blue-bottom-border LR-subtitle-from">Results based on SDLT rules from 4 December 2014</h2>      
       <div class = "form-group">
         <table>
           <tbody>            
@@ -100,7 +100,7 @@
 
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'"  id="divLeaseholdResidentialOld">
-       <h2 class="heading-medium blue-bottom-border">{{getHeading()}}</h2>
+       <h2 class="heading-medium blue-bottom-border LR-subtitle-before">{{getHeading()}}</h2>
       <label  ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</label>
       <div class = "form-group">
         <table>
@@ -127,7 +127,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'" id="divLeaseholdNonResidential">
-      <h2 class="heading-medium blue-bottom-border">Results based on SDLT rules from 22 March 2012</h2>
+      <h2 class="heading-medium blue-bottom-border LN-subtitle">Results based on SDLT rules from 22 March 2012</h2>
       <div class = "form-group">
         <table>
           <tbody>            
@@ -159,4 +159,10 @@
 
 </form>
 
-
+<div class="report-error">
+    <a class="report-error__toggle js-visible" id="get-help-action" href="form-label">Get help with this page.</a>
+    <a class="report-error__toggle js-hidden" href="/contact/problem_reports_nonjs?service=TCC">Get help with this page.</a>
+    <div id="report-error-partial-form" class="report-error__content hidden">
+        <div class="report-error__loading"></div>
+    </div>
+</div>

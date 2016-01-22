@@ -19,7 +19,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2HoldingType">{{getDisplayValue(data.holdingType)}}</td>
-                        <td class="link-right" id="td3HoldingType"><a href="#holding" onClick="ga('send', 'event', 'change', 'click', 'holdingType')">Change <span class="visuallyhidden">your response to the question, Is the property freehold or leasehold?</span></a></td>
+                        <td class="link-right" id="td3HoldingType"><a id="changeHolding" href="#holding" onClick="ga('send', 'event', 'change', 'click', 'holdingType')">Change <span class="visuallyhidden">your response to the question, Is the property freehold or leasehold?</span></a></td>
                     </tr>
                     <!-- Property -->
                     <tr class="section">
@@ -30,7 +30,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2PropertyType">{{getDisplayValue(data.propertyType)}}</td>
-                        <td class="link-right" id="td3PropertyType"><a href="#property" onClick="ga('send', 'event', 'change', 'click', 'propertyType')">Change <span class="visuallyhidden">your response to the question, Is the property residential or non-residential?</span></a></td>
+                        <td class="link-right" id="td3PropertyType"><a id="changeProperty" href="#property" onClick="ga('send', 'event', 'change', 'click', 'propertyType')">Change <span class="visuallyhidden">your response to the question, Is the property residential or non-residential?</span></a></td>
                     </tr>
                     <!-- Effective Date -->
                     <tr class="section">
@@ -41,7 +41,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2EffectiveDate">{{getDisplayValue(data.effectiveDate) | date:'d MMMM yyyy'}}</td>
-                        <td class="link-right" id="td3EffectiveDate"><a href="#date" onClick="ga('send', 'event', 'change', 'click', 'effectiveDate')">Change <span class="visuallyhidden">your response to the question, Effective date of your transaction</span></a></td>
+                        <td class="link-right" id="td3EffectiveDate"><a id="changeEffectiveDate" href="#date" onClick="ga('send', 'event', 'change', 'click', 'effectiveDate')">Change <span class="visuallyhidden">your response to the question, Effective date of your transaction</span></a></td>
                     </tr>
                     <!-- Purchase Price -->
                     <tr class="section" ng-show="data.holdingType === 'Freehold'">
@@ -52,7 +52,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2PurchasePrice">{{data.premium | sdltCurrency:"£"}}</td>
-                        <td class="link-right" id="td3PurchasePrice"><a href="#purchase-price" onClick="ga('send', 'event', 'change', 'click', 'purchasePrice')">Change <span class="visuallyhidden">your response to the question, Purchase price</span></a></td>
+                        <td class="link-right" id="td3PurchasePrice"><a id="changePurchasePrice" href="#purchase-price" onClick="ga('send', 'event', 'change', 'click', 'purchasePrice')">Change <span class="visuallyhidden">your response to the question, Purchase price</span></a></td>
                     </tr>   
                     <!-- Start Date -->
                     <tr class="section" ng-show="data.holdingType === 'Leasehold'">
@@ -63,7 +63,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2StartDate">{{getDisplayValue(data.startDate) | date:'d MMMM yyyy'}}</td>
-                        <td class="link-right" id="td3StartDate"><a href="#lease-dates" onClick="ga('send', 'event', 'change', 'click', 'startDate')">Change <span class="visuallyhidden">your response to the question, Start Date as specified in lease</span></a></td>
+                        <td class="link-right" id="td3StartDate"><a id="changeLeaseStartDate" href="#lease-dates" onClick="ga('send', 'event', 'change', 'click', 'startDate')">Change <span class="visuallyhidden">your response to the question, Start Date as specified in lease</span></a></td>
                     </tr>    
                     <!-- End Date -->
                     <tr class="section" ng-show="data.holdingType === 'Leasehold'">
@@ -74,7 +74,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2EndDate">{{getDisplayValue(data.endDate) | date:'d MMMM yyyy'}}</td>
-                        <td class="link-right" id="td3EndDate"><a href="#lease-dates" id="changeEndDate" onClick="ga('send', 'event', 'change', 'click', 'endDate')">Change <span class="visuallyhidden">your response to the question, End Date as specified in lease</span></a></td>
+                        <td class="link-right" id="td3EndDate"><a id="changeLeaseEndDate" href="#lease-dates" onClick="ga('send', 'event', 'change', 'click', 'endDate')">Change <span class="visuallyhidden">your response to the question, End Date as specified in lease</span></a></td>
                     </tr>
                     <!-- Term of Lease -->
                     <tr class="section" ng-show="data.holdingType === 'Leasehold'">
@@ -95,7 +95,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Premium">{{data.premium | sdltCurrency:"£"}}</td>
-                        <td class="link-right" id="td3Premium"><a href="#premium" onClick="ga('send', 'event', 'change', 'click', 'premium')">Change <span class="visuallyhidden">your response to the question, Total premium payable</span></a></td>
+                        <td class="link-right" id="td3Premium"><a id="changePremium" href="#premium" onClick="ga('send', 'event', 'change', 'click', 'premium')">Change <span class="visuallyhidden">your response to the question, Total premium payable</span></a></td>
                     </tr>    
                     <!-- Year 1 Rent -->
                     <tr class="section" ng-show="displayYearOneRent">
@@ -106,7 +106,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year1Rent">{{data.year1Rent | sdltCurrency:"£"}}</td>
-                        <td class="link-right" id="td3Year1Rent"><a href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year1Rent')">Change <span class="visuallyhidden">your response to the question, Year 1 Rent</span></a></td>
+                        <td class="link-right" id="td3Year1Rent"><a id="changeYear1Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year1Rent')">Change <span class="visuallyhidden">your response to the question, Year 1 Rent</span></a></td>
                     </tr>                        
                     <!-- Year 2 Rent -->
                     <tr class="section" ng-show="displayYearTwoRent">
@@ -117,7 +117,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year2Rent">{{data.year2Rent | sdltCurrency:"£"}}</td>
-                        <td class="link-right" id="td3Year2Rent"><a href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year2Rent')">Change <span class="visuallyhidden">your response to the question, Year 2 Rent</span></a></td>
+                        <td class="link-right" id="td3Year2Rent"><a id="changeYear2Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year2Rent')">Change <span class="visuallyhidden">your response to the question, Year 2 Rent</span></a></td>
                     </tr>
                     <!-- Year 3 Rent -->
                     <tr class="section" ng-show="displayYearThreeRent">
@@ -128,7 +128,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year3Rent">{{data.year3Rent | sdltCurrency:"£"}}</td>
-                        <td class="link-right" id="td3Year3Rent"><a href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year3Rent')">Change <span class="visuallyhidden">your response to the question, Year 3 Rent</span></a></td>
+                        <td class="link-right" id="td3Year3Rent"><a id="changeYear3Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year3Rent')">Change <span class="visuallyhidden">your response to the question, Year 3 Rent</span></a></td>
                     </tr>
                     <!-- Year 4 Rent -->
                     <tr class="section" ng-show="displayYearFourRent">
@@ -139,7 +139,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year4Rent">{{data.year4Rent | sdltCurrency:"£"}}</td>
-                        <td class="link-right" id="td3Year4Rent"><a href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year4Rent')">Change <span class="visuallyhidden">your response to the question, Year 4 Rent</span></a></td>
+                        <td class="link-right" id="td3Year4Rent"><a id="changeYear4Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year4Rent')">Change <span class="visuallyhidden">your response to the question, Year 4 Rent</span></a></td>
                     </tr>    
                     <!-- Year 5 Rent -->
                     <tr class="section" ng-show="displayYearFiveRent">
@@ -150,7 +150,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2Year5Rent">{{data.year5Rent | sdltCurrency:"£"}}</td>
-                        <td class="link-right" id="td3Year5Rent"><a href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year5Rent')">Change <span class="visuallyhidden">your response to the question, Year 5 Rent</span></a></td>
+                        <td class="link-right" id="td3Year5Rent"><a id="changeYear5Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year5Rent')">Change <span class="visuallyhidden">your response to the question, Year 5 Rent</span></a></td>
                     </tr>
                     <!-- Highest 12 monthly rent -->
                     <tr class="section" ng-show="data.holdingType === 'Leasehold'">
@@ -171,7 +171,7 @@
                             </p>
                         </td>
                         <td class="previous-question-body" id="td2RelevantRent">{{data.relevantRent | sdltCurrency:"£"}}</td>
-                        <td class="link-right" id="td3RelevantRent"><a href="#relevant-rent" onClick="ga('send', 'event', 'change', 'click', 'relevantRent')">Change <span class="visuallyhidden">your response to the question, Relevant Rental Figure</span></a></td>
+                        <td class="link-right" id="td3RelevantRent"><a id="changeRelevantRent" href="#relevant-rent" onClick="ga('send', 'event', 'change', 'click', 'relevantRent')">Change <span class="visuallyhidden">your response to the question, Relevant Rental Figure</span></a></td>
                     </tr>   
                 </tbody>
             </table>
@@ -183,4 +183,12 @@
         Please fix any errors before continuing to calculation.
     </div>
     <button ng-click="submit()" class="button" id="calculate" type="submit">Calculate</button>
+</div>
+
+<div class="report-error">
+    <a class="report-error__toggle js-visible" id="get-help-action" href="form-label">Get help with this page.</a>
+    <a class="report-error__toggle js-hidden" href="/contact/problem_reports_nonjs?service=TCC">Get help with this page.</a>
+    <div id="report-error-partial-form" class="report-error__content hidden">
+        <div class="report-error__loading"></div>
+    </div>
 </div>

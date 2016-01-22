@@ -14,7 +14,7 @@
             <span class="form-label-bold">Relevant rental figure</span>
             <span id="relevantRentErrMsg" class="error-notification">{{state.validationMessage('relevantRent')}}</span>
         </label>            
-        &pound; <input id="relevantRent" class="form-control form-control-1-8" ng-model="data.relevantRent" name="relevantRent" type="text" required>
+        &pound; <input id="relevantRent" class="form-control form-control-1-4" ng-model="data.relevantRent" name="relevantRent" type="text" required>
     </div>
 
     <div class="form-group">
@@ -22,3 +22,11 @@
     </div>
 
 </form>
+
+<div class="report-error">
+    <a class="report-error__toggle js-visible" id="get-help-action" href="form-label">Get help with this page.</a>
+    <a class="report-error__toggle js-hidden" href="/contact/problem_reports_nonjs?service=TCC">Get help with this page.</a>
+    <div id="report-error-partial-form" class="report-error__content hidden">
+        <div class="report-error__loading"></div>
+    </div>
+</div>

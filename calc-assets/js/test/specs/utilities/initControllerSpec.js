@@ -27,6 +27,7 @@
   			});
 
   			mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
                 getModel : function() { 
@@ -68,6 +69,8 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService
             });
+
+            mockScope.getHelpSetup = function() {};
 		}));
 
     	it('should add a jumpTo method to the scope which will jump to the correct element', function () {

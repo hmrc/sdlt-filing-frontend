@@ -44,5 +44,8 @@
                 $('#pageErrors').show().focus();
             }
         };
+
+        //run Get help with this page javascript
+        scope.getHelpSetup("/contact/problem_reports_ajax?service=SDLTC", "https://tax.service.gov.uk/calculate-stamp-duty-land-tax/" + page);
     };
 }());
