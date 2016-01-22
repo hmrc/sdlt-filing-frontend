@@ -60,7 +60,7 @@
                 redirectToNext(locationService, 'rent');
             }
             else if (currentView === 'rent') {
-                if (model.propertyType === 'Non-residential' && model.premium < 150000 && (model.year1Rent < 2000 || model.year2Rent < 2000 || model.year3Rent < 2000 || model.year4Rent < 2000 || model.year5Rent < 2000)) {
+                if (model.propertyType === 'Non-residential' && model.premium < 150000 && (model.year1Rent < 2000 && model.year2Rent < 2000 && model.year3Rent < 2000 && model.year4Rent < 2000 && model.year5Rent < 2000)) {
                     redirectToNext(locationService, 'relevant-rent');
                 } 
                 else {
