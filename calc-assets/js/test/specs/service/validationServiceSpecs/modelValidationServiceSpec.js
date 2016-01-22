@@ -124,7 +124,7 @@
 
 
 
-        it('should check relevant rent if property type is non-residential and premium is < 150000 and rent < 2000', function() {
+        it('should check relevant rent if property type is non-residential and premium is < 150000 and rent < 2000 for 1 year lease', function() {
 
             var data = {
                 propertyType: "Non-residential",
@@ -153,7 +153,7 @@
 
 
 
-        it('should check relevant rent if property type is non-residential and premium is < 150000 and any rent < 2000', function() {
+        it('should check relevant rent if property type is non-residential and premium is < 150000 and all rents < 2000 for 5 year lease', function() {
 
             var data = {
                 propertyType: "Non-residential",
@@ -161,10 +161,10 @@
                     years : 5
                 },
                 premium : 149999,
-                year1Rent : 2000,
-                year2Rent : 2000,
-                year3Rent : 2000,
-                year4Rent : 2000,
+                year1Rent : 1999,
+                year2Rent : 1999,
+                year3Rent : 1999,
+                year4Rent : 1999,
                 year5Rent : 1999,
                 holdingType : "Leasehold"
             };
