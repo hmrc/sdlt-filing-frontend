@@ -76,7 +76,10 @@
                 else if ($scope.data.propertyType === 'Non-residential'){
                     var premiumTax = -1;
                     var relevantRent = 1000;
-                    if ($scope.data.premium < 150000 && !($scope.data.year1Rent >= 2000 || $scope.data.year2Rent >= 2000 || $scope.data.year3Rent >= 2000 || $scope.data.year4Rent >= 2000 || $scope.data.year5Rent >= 2000)) {
+                    var validator = require("../../utilities/validator")();
+                    var checkRelevant = validator.relevantRentCheck([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+                    //if ($scope.data.premium < 150000 && !($scope.data.year1Rent >= 2000 || $scope.data.year2Rent >= 2000 || $scope.data.year3Rent >= 2000 || $scope.data.year4Rent >= 2000 || $scope.data.year5Rent >= 2000)) {
+                    if ($scope.data.premium < 150000 && checkRelevant) {
                         relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
                     }
                     var premiumTaxBreakdown = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, relevantRent);
