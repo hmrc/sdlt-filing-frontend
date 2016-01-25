@@ -48,7 +48,7 @@
     </div>
 
     <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
-      <h2 class="heading-medium blue-bottom-border">This is a breakdown of how the total amount of SDLT was calculated based on the rules from 4 December 2014</h2>
+      <h2 class="heading-medium blue-bottom-border">This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -84,7 +84,7 @@
             </tr>
             <tr class="section">
               <td>&nbsp;</td>
-              <td>Total SDLT due</td>
+              <td>Total SDLT due on the premium</td>
               <td id="totalSDLT">{{data.result.leasehold.residential.from.totalSDLT | sdltCurrency}}</td>
             </tr>
           </tbody>
