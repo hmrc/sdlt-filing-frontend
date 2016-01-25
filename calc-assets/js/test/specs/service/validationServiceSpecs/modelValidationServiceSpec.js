@@ -72,11 +72,11 @@
             expect(result.isRelevantRentValid).toEqual('');
         });
 
-        it('should not check relevant rent if property type is non-residential and premium is >15000', function() {
+        it('should not check relevant rent if property type is non-residential and premium is >=150000', function() {
 
             var data = {
-                propertyType: "Residential",
-                premium : 15001,
+                propertyType: "Non-residential",
+                premium : 150000,
                 holdingType : "Leasehold"
             };
 
