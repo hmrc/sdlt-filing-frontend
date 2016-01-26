@@ -321,6 +321,14 @@
 
 
         // ********************* calculateNPV *********************
+        it(' calculateNPV should return 31020 for 18 years, 91/365 partial days, rents 500, 900, 1100, 2500, 2750 ', function() {
+            var fullYears = 18;
+            var partialDays = 91;
+            var daysInPartialYear = 365;
+            var rentsArray = [500, 900, 1100, 2500, 2750];
+            expect(service.calculateNPV(fullYears, partialDays, daysInPartialYear, rentsArray)).toEqual(31020);
+        });
+
         it(' calculateNPV should return 9661 for 1 full year, 0 partial days, rents 10000,0,0,0,0 ', function() {
             var fullYears = 1;
             var partialDays = 0;
