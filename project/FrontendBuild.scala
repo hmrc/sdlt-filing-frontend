@@ -38,7 +38,7 @@ private object AppDependencies {
     ws,
     "com.typesafe.play" %% "play" % PlayVersion.current,
     "uk.gov.hmrc" %% "play-filters" % "4.5.1",
-    "uk.gov.hmrc" %% "play-ui" % "4.5.0",
+    "uk.gov.hmrc" %% "play-ui" % "4.6.0",
     "uk.gov.hmrc" %% "play-graphite" % "2.0.0",
     "uk.gov.hmrc" %% "play-config" % "2.0.1",
     "uk.gov.hmrc" %% "play-health" % "1.1.0",
