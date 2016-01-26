@@ -13,7 +13,7 @@
                     { "threshold" : 500000,    "rate" : 4},
                     { "threshold" : 250000,    "rate" : 3},
                     { "threshold" : 125000,    "rate" : 1},
-                    { "threshold" : 0,         "rate" : 0}
+                    { "threshold" : -1,         "rate" : 0}
             ];
 
             var resultJSON = calculateTaxDueSlab(premium, slabsArray);
@@ -39,7 +39,7 @@
             var slabsArray = [
                     { "threshold" : 500000, "rate" : 4},
                     { "threshold" : 250000, "rate" : 3},
-                    { "threshold" : 0,      "rate" : 1}
+                    { "threshold" : -1,     "rate" : 1}
             ];
 
             if ( (premium <= 150000) && zeroRate) {
