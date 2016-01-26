@@ -221,76 +221,76 @@
         });
 
         // ********************* calculateNonResidentialPremiumSlab *********************
-        it(' calculateNonResidentialPremiumSlab should return 0 for premium of 150000, rent 999', function() {
+        it(' calculateNonResidentialPremiumSlab should return 0 for premium of 150000, relevant rent < 1000', function() {
             slabResults.rate = 0;
             slabResults.taxDue = 0;
-            expect(service.calculateNonResidentialPremiumSlab(150000, 999)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(150000, true)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 1500 for premium of 150000, rent 1000', function() {
+        it(' calculateNonResidentialPremiumSlab should return 1500 for premium of 150000, relevant rent >= 1000', function() {
             slabResults.rate = 1;
             slabResults.taxDue = 1500;
-            expect(service.calculateNonResidentialPremiumSlab(150000, 1000)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(150000, false)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 1500 for premium of 150001, rent 999', function() {
+        it(' calculateNonResidentialPremiumSlab should return 1500 for premium of 150001, relevant rent < 1000', function() {
             slabResults.rate = 1;
             slabResults.taxDue = 1500;
-            expect(service.calculateNonResidentialPremiumSlab(150001, 999)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(150001, true)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 1500 for premium of 150001, rent 1000', function() {
+        it(' calculateNonResidentialPremiumSlab should return 1500 for premium of 150001, relevant rent >= 1000', function() {
             slabResults.rate = 1;
             slabResults.taxDue = 1500;
-            expect(service.calculateNonResidentialPremiumSlab(150001, 1000)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(150001, false)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 2500 for premium of 250000, rent 999', function() {
+        it(' calculateNonResidentialPremiumSlab should return 2500 for premium of 250000, relevant rent < 1000', function() {
             slabResults.rate = 1;
             slabResults.taxDue = 2500;
-            expect(service.calculateNonResidentialPremiumSlab(250000, 999)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(250000, true)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 2500 for premium of 250000, rent 1000', function() {
+        it(' calculateNonResidentialPremiumSlab should return 2500 for premium of 250000, relevant rent >= 1000', function() {
             slabResults.rate = 1;
             slabResults.taxDue = 2500;
-            expect(service.calculateNonResidentialPremiumSlab(250000, 1000)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(250000, false)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 7500 for premium of 250001, rent 999', function() {
+        it(' calculateNonResidentialPremiumSlab should return 7500 for premium of 250001, relevant rent < 1000', function() {
             slabResults.rate = 3;
             slabResults.taxDue = 7500;
-            expect(service.calculateNonResidentialPremiumSlab(250001, 999)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(250001, true)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 7500 for premium of 250001, rent 1000', function() {
+        it(' calculateNonResidentialPremiumSlab should return 7500 for premium of 250001, relevant rent >= 1000', function() {
             slabResults.rate = 3;
             slabResults.taxDue = 7500;
-            expect(service.calculateNonResidentialPremiumSlab(250001, 1000)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(250001, false)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 15000 for premium of 500000, rent 999', function() {
+        it(' calculateNonResidentialPremiumSlab should return 15000 for premium of 500000, relevant rent < 1000', function() {
             slabResults.rate = 3;
             slabResults.taxDue = 15000;
-            expect(service.calculateNonResidentialPremiumSlab(500000, 999)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(500000, true)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 15000 for premium of 500000, rent 1000', function() {
+        it(' calculateNonResidentialPremiumSlab should return 15000 for premium of 500000, relevant rent >= 1000', function() {
             slabResults.rate = 3;
             slabResults.taxDue = 15000;
-            expect(service.calculateNonResidentialPremiumSlab(500000, 1000)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(500000, false)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 20000 for premium of 500001, rent 999', function() {
+        it(' calculateNonResidentialPremiumSlab should return 20000 for premium of 500001, relevant rent < 1000', function() {
             slabResults.rate = 4;
             slabResults.taxDue = 20000;
-            expect(service.calculateNonResidentialPremiumSlab(500001, 999)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(500001, true)).toEqual(slabResults);
         });
 
-        it(' calculateNonResidentialPremiumSlab should return 20000 for premium of 500001, rent 1000', function() {
+        it(' calculateNonResidentialPremiumSlab should return 20000 for premium of 500001, relevant rent >= 1000', function() {
             slabResults.rate = 4;
             slabResults.taxDue = 20000;
-            expect(service.calculateNonResidentialPremiumSlab(500001, 1000)).toEqual(slabResults);
+            expect(service.calculateNonResidentialPremiumSlab(500001, false)).toEqual(slabResults);
         });
 
         // ********************* calculateResidentialLeaseSlice *********************
