@@ -49,7 +49,7 @@
                     result.freehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);                    
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
-                    result.freehold.nonResidential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, 0); 
+                    result.freehold.nonResidential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, true); 
                 }
             }
             else if ($scope.data.holdingType === 'Leasehold') {
