@@ -49,7 +49,7 @@
                     result.freehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);                    
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
-                    result.freehold.nonResidential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, 0); 
+                    result.freehold.nonResidential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, true); 
                 }
             }
             else if ($scope.data.holdingType === 'Leasehold') {
@@ -75,11 +75,16 @@
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
                     var premiumTax = -1;
-                    var relevantRent = 0; 
-                    if ($scope.data.premium < 150000 && ($scope.data.year1Rent < 2000 || $scope.data.year2Rent < 2000 || $scope.data.year3Rent < 2000 || $scope.data.year4Rent < 2000 || $scope.data.year5Rent < 2000)) {
-                        relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
+                    var zeroRate = false;
+                    var validator = require("../../utilities/validator")();
+                    var checkRelevant = validator.relevantRentCheck([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+                    if ($scope.data.premium < 150000 && checkRelevant) {
+                        var relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
+                        if(relevantRent < 1000){
+                            zeroRate = true;
+                        }
                     }
-                    var premiumTaxBreakdown = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, relevantRent);
+                    var premiumTaxBreakdown = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, zeroRate);
                     premiumTax = premiumTaxBreakdown.taxDue;
                     var premiumTaxRate = premiumTaxBreakdown.rate;
                     rentTax = calculationService.calculateNonResidentialLeaseSlice(npv).totalSDLT;

@@ -34,7 +34,7 @@
             return resultJSON;
         };
 
-        var calculateNonResidentialPremiumSlab = function(premium, rent){
+        var calculateNonResidentialPremiumSlab = function(premium, zeroRate){
 
             var slabsArray = [
                     { "threshold" : 500000, "rate" : 4},
@@ -42,7 +42,7 @@
                     { "threshold" : 0,      "rate" : 1}
             ];
 
-            if ( (premium <= 150000) && (rent < 1000) ) {
+            if ( (premium <= 150000) && zeroRate) {
                 var noTaxResults = {
                     rate : 0,
                     taxDue : 0

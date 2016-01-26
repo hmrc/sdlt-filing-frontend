@@ -5,6 +5,8 @@
 
     var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
 
+        var validator = require("../../utilities/validator")();
+
         var init = require("../../utilities/initController");
         init($scope, $location, $anchorScroll, 'summary', dataService, navigationService);
 
@@ -30,6 +32,12 @@
         $scope.submit = function() {
             navigationService.next('result', $scope.data, $location);
         };
+
+
+        $scope.displayRelevantRent = function() {
+            return validator.relevantRentCheck([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+        };
+
 
         $scope.getDisplayValue = function(value) {
             if(value === undefined || value === 'undefined' || value === '') {

@@ -1188,7 +1188,7 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
 
             mockCalculationService = {
                 calculateNonResidentialPremiumSlab: function(scope, rr) {
-                    return { taxDue : rr };
+                    return { taxDue : 0 };
                 },
                 calculateNonResidentialLeaseSlice: function() {
                     return { totalSDLT : 30 };

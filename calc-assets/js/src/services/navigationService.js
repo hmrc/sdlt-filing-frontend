@@ -60,7 +60,9 @@
                 redirectToNext(locationService, 'rent');
             }
             else if (currentView === 'rent') {
-                if (model.propertyType === 'Non-residential' && model.premium < 150000 && (model.year1Rent < 2000 || model.year2Rent < 2000 || model.year3Rent < 2000 || model.year4Rent < 2000 || model.year5Rent < 2000)) {
+                var validator = require("../utilities/validator")();
+                var checkRelevant = validator.relevantRentCheck([model.year1Rent, model.year2Rent, model.year3Rent, model.year4Rent, model.year5Rent]);
+                if (model.propertyType === 'Non-residential' && model.premium < 150000 && checkRelevant) {
                     redirectToNext(locationService, 'relevant-rent');
                 } 
                 else {

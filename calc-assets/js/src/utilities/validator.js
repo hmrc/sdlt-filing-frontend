@@ -73,6 +73,15 @@
             return parseFloat(value) > parseFloat(float);
         };
 
+        var relevantRentCheck = function(rentArray) {
+            for(var i = 0; i < rentArray.length; i++){
+                if(rentArray[i] >= 2000){
+                    return false;
+                }
+            }
+            return true;
+        };
+
         return {
             isPopulated : isPopulated,
             isNotPopulated : isNotPopulated,
@@ -89,7 +98,8 @@
             isLessThanFloat : isLessThanFloat,
             isLessThanDate : isLessThanDate,
             isGreaterThanInteger : isGreaterThanInteger,
-            isGreaterThanFloat : isGreaterThanFloat
+            isGreaterThanFloat : isGreaterThanFloat,
+            relevantRentCheck : relevantRentCheck
         };
 
     };
