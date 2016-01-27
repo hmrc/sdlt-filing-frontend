@@ -112,8 +112,6 @@
         $scope.getHeading = function() {
             if($scope.effDateAfterCutOff()) {
                 return "Results based on SDLT rules before 4 December 2014";
-            } else {
-                return "SDLT calculation";
             }
         };
 
