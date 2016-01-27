@@ -1843,4 +1843,106 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         });      
     });
 
+
+
+    describe('Result Controller with relevant rent = 1000', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+            
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Leasehold",
+                        propertyType : "Non-residential",
+                        leaseTerm : {
+                            years : 1,
+                            days : 0,
+                            daysInPartialYear : 365
+                        },
+                        year1Rent : 1999,
+                        premium : 149999,
+                        result : {},
+                        relevantRent : 1000
+                    }; 
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculateNonResidentialPremiumSlab: function(scope, zr) {
+                    return { taxDue : 15 };
+                },
+                calculateNonResidentialLeaseSlice: function() {
+                    return { totalSDLT : 30 };
+                },
+                calculateNPV: function() {
+                    return 10;
+                }
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockDataService, 'updateModel');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should make 1 call to dataService.getModel', function () {
+            expect(mockDataService.getModel.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to navigationService.logView', function () {
+            expect(mockNavigationService.logView.calls.count()).toEqual(1);
+        });
+        
+        it('should make 1 call to dataService.updateModel', function () {
+            expect(mockDataService.updateModel.calls.count()).toEqual(1);
+        });
+
+        it('should set the result leasehold non-residential NPV to 10 (The value returned by stubbed calculateNPV)', function () {
+            expect(mockScope.data.result.leasehold.nonResidential.npv).toEqual(10);
+        });
+
+        it('should set the result leasehold non-residential rentTax to 30 (The value returned by stubbed calculateNonResidentialLeaseSlice)', function () {
+            expect(mockScope.data.result.leasehold.nonResidential.rentTax).toEqual(30);
+        });
+
+        it('should set the result leasehold non-residential premiumTax to 0 (The value of rr returned by stubbed calculateNonResidentialPremiumSlab)', function () {
+            expect(mockScope.data.result.leasehold.nonResidential.premiumTax).toEqual(15);
+        });   
+
+        it('should set the result leasehold non-residential totalTax to the sum of the rentTax and premiumTax', function () {
+            expect(mockScope.data.result.leasehold.nonResidential.totalTax).toEqual(45);
+        });      
+    });
+
 }());
