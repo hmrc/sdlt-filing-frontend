@@ -4,6 +4,8 @@
     // define the main controller
     var mainController = function($scope, loggingService) {
 
+        var expanded = false;
+
         $scope.jumpTo = function(id) {
             var selector = '#' + id;
             $(selector).focus();
@@ -21,6 +23,12 @@
 
         $scope.displayHelp = function(helpId) {
             return $scope.optionalHelp[helpId];
+        };
+
+        $scope.getHelpGA = function() {
+            var action = expanded ? "hide": "show";
+            loggingService.logEvent('getHelp', action, "/calculate-stamp-duty-land-tax/"+document.location.href.split('/').pop());
+            expanded = !expanded;
         };
 
         // re-apply radio/checkbox styling
