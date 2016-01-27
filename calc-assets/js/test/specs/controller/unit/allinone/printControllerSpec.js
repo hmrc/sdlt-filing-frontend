@@ -165,7 +165,7 @@
         });
 
         it('should return correct text for getHeading() if Effective Date is 03/12/2014', function () {
-            expect(mockScope.getHeading()).toEqual("SDLT calculation");
+            expect(mockScope.getHeading()).toEqual("Result");
         });
 
     });
