@@ -7,7 +7,7 @@
         $routeProvider
 
             .when('/intro', {
-                title : 'Calculate Stamp Duty Land Tax',
+                title : 'Calculate Stamp Duty Land Tax (SDLT)',
                 templateUrl : 'intro.html',
                 controller  : 'introController',
                 reloadOnSearch: false
