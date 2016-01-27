@@ -25,7 +25,7 @@
                 location.path('/intro');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('introController');
-                expect(route.current.title).toBe('Calculate Stamp Duty Land Tax');                
+                expect(route.current.title).toBe('Calculate Stamp Duty Land Tax (SDLT)');                
             });
         });
 
@@ -220,7 +220,7 @@
                 location.path('/test');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('introController');
-                expect(route.current.title).toBe('Calculate Stamp Duty Land Tax');
+                expect(route.current.title).toBe('Calculate Stamp Duty Land Tax (SDLT)');
             });
         });
 
@@ -234,7 +234,7 @@
                 location.path('/intro');
                 rootScope.$digest();
                 rootScope.$broadcast('$routeChangeSuccess', route.current);
-                expect(rootScope.title).toBe('Calculate Stamp Duty Land Tax');
+                expect(rootScope.title).toBe('Calculate Stamp Duty Land Tax (SDLT)');
             });
         });
     });
