@@ -99,6 +99,7 @@
 
   <style type="text/css">
     .link-back {
+    cursor: pointer;
     display: -moz-inline-stack;
     display: inline-block;
     position: relative;
@@ -204,31 +205,9 @@
         </div>        
       </div>
 
-       <!--[if IE]>
-            <div class="form-group">
-              <a class="link-back" id="link-back" onclick="history.go(); return false;">History go</a>
-            </div>
-       <![endif]-->
-       <!--[if IE]>
-            <div class="form-group">
-              <a class="link-back" id="link-back" onclick="history.go(-1); return false;">History go -1</a>
-            </div>
-       <![endif]-->
-       <!--[if IE]>
-            <div class="form-group">
-              <a class="link-back" id="link-back" onclick="location.href = document.referrer;">Document Referer</a>
-            </div>
-       <![endif]-->
-       <!--[if IE]>
-            <div class="form-group">
-              <a class="link-back" id="link-back" onclick="window.history.back();">Window history</a>
-            </div>
-       <![endif]-->
-        <!--[if !IE]> <!-- -->
-          <div class="form-group">
-            <a class="link-back" id="link-back" href="javascript:history.back()">Back</a>
-          </div>
-        <!-- <![endif]-->
+      <div class="form-group">
+        <a class="link-back" id="link-back" onclick="window.history.back();">Back</a>
+      </div>
 
       <div id="main">
         <div data-ng-view autoscroll="true">Loading...</div>
