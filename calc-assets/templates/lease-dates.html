@@ -3,8 +3,8 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-      <li ng-if="state.hasError('startDate')"><a id="leaseStartDatePageErrMsg" onclick="javascript:void(0)" data-ng-click="jumpTo('leaseStartDateDay')">{{state.validationMessage('startDate')}}</a></li>
-      <li ng-if="state.hasError('endDate')"><a id="leaseEndDatePageErrMsg" onclick="javascript:void(0)" data-ng-click="jumpTo('leaseEndDateDay')">{{state.validationMessage('endDate')}}</a></li>
+      <li ng-if="state.hasError('startDate')"><a id="leaseStartDatePageErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('leaseStartDateDay')">{{state.validationMessage('startDate')}}</a></li>
+      <li ng-if="state.hasError('endDate')"><a id="leaseEndDatePageErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('leaseEndDateDay')">{{state.validationMessage('endDate')}}</a></li>
     </ul>
 </div>
 
