@@ -7,6 +7,6 @@
 	window.name = "NG_DEFER_BOOTSTRAP!";
 
 	angular.element().ready(function () {
-	    angular.bootstrap(document, ['calc']);
+	    angular.bootstrap(document.documentElement, ['calc']);
 	});
 }());

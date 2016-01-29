@@ -99,7 +99,6 @@
 
   <style type="text/css">
     .link-back {
-    cursor: pointer;
     display: -moz-inline-stack;
     display: inline-block;
     position: relative;
@@ -141,12 +140,6 @@
   }
   </style>
 
-
-  <style type="text/css">
-  .error-link {
-    cursor: pointer;
-  }
-  </style>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta property="og:image" content="/template/assets/images/opengraph-image.png">
@@ -212,7 +205,7 @@
       </div>
 
       <div class="form-group">
-        <a class="link-back" id="link-back" onclick="window.history.back();">Back</a>
+        <a class="link-back" id="link-back" href="#" onclick="javascript:history.back(); return false;">Back</a>
       </div>
 
       <div id="main">
