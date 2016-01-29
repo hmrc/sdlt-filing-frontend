@@ -3,7 +3,7 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-      <li ng-if="state.hasError('premium')"><a id="premiumPageErrMsg" href="javascript:void(0)" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
+      <li ng-if="state.hasError('premium')"><a id="premiumPageErrMsg" class="error-link" onclick="javascript:void(0)" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
     </ul>
 </div>
 
