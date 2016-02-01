@@ -17,7 +17,7 @@
               <td id="frNewEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
               <td id="frNewPremium">{{data.premium | sdltCurrency}}</td>
               <td id="frNewTotalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
-              <td id="frNewDetailedCalc"><a ng-click="viewDetails()" href="javascript:void(0)" id="detailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation')">Detail</a></td>
+              <td id="frNewDetailedCalc"><a ng-click="viewDetails()" href="javascript:return false" id="detailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
             </tr>
           </tbody>
         </table>
@@ -90,7 +90,7 @@
             <tr class="section">
               <td>SDLT on premium</td>
               <td id="lrNewPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
-              <td id="lrDetailedCalc"><a ng-click="viewDetails()" href="javascript:void(0)" id="detailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation')">Detail</a></td>
+              <td id="lrDetailedCalc"><a ng-click="viewDetails()" href="javascript:return false" id="detailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
             </tr>
           </tbody>
         </table>
@@ -151,7 +151,7 @@
     </div>
 
     <div class="form-group">
-        <p>You can <a ng-click="printView()" id="print-calculation" href="javascript:void(0)" onClick="ga('send', 'event', 'link', 'click', 'result.printView')">print your calculation</a>.</p>
+        <p>You can <a ng-click="printView()" id="print-calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.printView'); return false;">print your calculation</a>.</p>
         <p>Or you can <a id="startAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'result.start-again')">start again</a>.</p>
         <p>Go to the <a id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax" title="opens in a new window" onClick="ga('send', 'event', 'link', 'click', 'result.govuk')" rel="external" target="_blank">GOV.UK</a> homepage for SDLT.</p>
     </div>
