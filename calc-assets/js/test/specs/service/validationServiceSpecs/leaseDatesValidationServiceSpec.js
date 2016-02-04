@@ -36,7 +36,7 @@
         it('startDate should return the correct invalid date message', function() {
             var form = { startDate : 'bad date' };
             var state = service.validate(form);
-            expect(state.validationMessage('startDate')).toEqual("Enter the date in the correct format");
+            expect(state.validationMessage('startDate')).toEqual("Enter a valid date");
         });
 
         it('endDate should return an error when no data provided', function() {
@@ -64,7 +64,7 @@
         it('endDate should return the correct invalid date message', function() {
             var form = { endDate : 'bad date' };
             var state = service.validate(form);
-            expect(state.validationMessage('endDate')).toEqual("Enter the date in the correct format");
+            expect(state.validationMessage('endDate')).toEqual("Enter a valid date");
         });
 
         it('endDate cannot be less that startDate when startDate is valid', function() {
