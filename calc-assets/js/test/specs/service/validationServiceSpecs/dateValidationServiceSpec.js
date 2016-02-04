@@ -36,7 +36,7 @@
         it('effectiveDate should return the correct invalid date message', function() {
             var form = { effectiveDate : 'bad date' };
             var state = service.validate(form);
-            expect(state.validationMessage('effectiveDate')).toEqual("Enter the date in the correct format");
+            expect(state.validationMessage('effectiveDate')).toEqual("Enter a valid date");
         });
 
         it('effectiveDate should return the correct minimum date message', function() {
