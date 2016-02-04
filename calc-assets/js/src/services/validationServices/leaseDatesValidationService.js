@@ -16,7 +16,7 @@
             if (validator.isNotPopulated(data.startDate)) {
                 state.startDate = 'Enter a start date';
             } else if (validator.isInvalidParsedDate(data.startDate)) {
-                state.startDate = 'Enter the date in the correct format';
+                state.startDate = 'Enter a valid date';
             } else {
                 startDateValid = true;
             }
@@ -24,7 +24,7 @@
             if (validator.isNotPopulated(data.endDate)) {
                 state.endDate = 'Enter an end date';
             } else if (validator.isInvalidParsedDate(data.endDate)) {
-                state.endDate = 'Enter the date in the correct format';
+                state.endDate = 'Enter a valid date';
             } else if (startDateValid && validator.isLessThanDate(data.endDate, data.startDate)) {
                 state.endDate = "End date can't be before the start date";
             } else if (data.effectiveDate && validator.isLessThanDate(data.endDate, data.effectiveDate)) {

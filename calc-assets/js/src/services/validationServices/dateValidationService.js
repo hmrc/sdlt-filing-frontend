@@ -13,7 +13,7 @@
             if (validator.isNotPopulated(data.effectiveDate)) {
                 state.effectiveDate = 'You must complete the effective date field';
             } else if (validator.isInvalidParsedDate(data.effectiveDate)) {
-                state.effectiveDate = 'Enter the date in the correct format';
+                state.effectiveDate = 'Enter a valid date';
             } else if (data.propertyType === 'Residential' && validator.isLessThanDate(data.effectiveDate, new Date(2012, 2, 22))) {
                 state.effectiveDate = "Date can't be earlier than 22/3/2012";
             }
