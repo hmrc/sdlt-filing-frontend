@@ -13,8 +13,8 @@
 
 <form name="rentForm" class="form">
     <div class="form-group">
-        <span class="form-label-bold" ng-if="displayYearFiveRent">Enter the annual rent due for the first 5 years.</span>
-        <span class="form-label-bold" ng-if="!displayYearFiveRent">Enter the annual rent due.</span>
+        <span class="form-label-bold" ng-show="displayYearFiveRent">Enter the annual rent due for the first 5 years.</span>
+        <span class="form-label-bold" ng-hide="displayYearFiveRent">Enter the annual rent due.</span>
     </div>   
 
     <div class="form-group {{state.hasError('year1Rent')}}" ng-if="displayYearOneRent">
