@@ -5,66 +5,66 @@
       <div class = "form-group">
           <article>
               <table>
-                  <tbody>                      
+                  <tbody>
                       <tr class="section">
                           <td>Freehold / leasehold</td>
-                          <td>{{data.holdingType}}</td>                          
+                          <td>{{data.holdingType}}</td>                       
                       </tr>
                       <tr class="section">
                           <td>Property type</td>
-                          <td>{{data.propertyType}}</td>                          
+                          <td>{{data.propertyType}}</td>
                       </tr>
                       <tr class="section">
                           <td>Effective date of transaction</td>
-                          <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>                         
+                          <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
                       </tr>
-                      <tr class="section" ng-show="data.holdingType === 'Freehold'">
+                      <tr class="section" ng-if="data.holdingType === 'Freehold'">
                           <td>Purchase price</td>
-                          <td>{{data.premium | sdltCurrency:"£"}}</td>                        
+                          <td>{{data.premium | sdltCurrency:"£"}}</td>
                       </tr>   
-                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                      <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                           <td>Start date as specified in lease</td>
-                          <td>{{data.startDate | date:'d MMMM yyyy'}}</td>                          
+                          <td>{{data.startDate | date:'d MMMM yyyy'}}</td>
                       </tr>    
-                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                      <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                           <td>End date as specified in lease</td>
                           <td>{{data.endDate | date:'d MMMM yyyy'}}</td>                         
                       </tr>
-                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                      <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                           <td>Term of lease</td>
                           <td>{{data.leaseTerm.years}} years {{data.leaseTerm.days}} days</td>
                       </tr>  
-                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                      <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                           <td>Total premium payable</td>
-                          <td>{{data.premium | sdltCurrency:"£"}}</td>                          
+                          <td>{{data.premium | sdltCurrency:"£"}}</td>
                       </tr>    
-                      <tr class="section" ng-show="displayYearOneRent">
+                      <tr class="section" ng-if="displayYearOneRent">
                           <td>Year 1 rent</td>
-                          <td>{{data.year1Rent | sdltCurrency:"£"}}</td>                          
+                          <td>{{data.year1Rent | sdltCurrency:"£"}}</td>
                       </tr>                                              
-                      <tr class="section" ng-show="displayYearTwoRent">
+                      <tr class="section" ng-if="displayYearTwoRent">
                           <td>Year 2 rent</td>
-                          <td>{{data.year2Rent | sdltCurrency:"£"}}</td>                          
+                          <td>{{data.year2Rent | sdltCurrency:"£"}}</td>
                       </tr>                      
-                      <tr class="section" ng-show="displayYearThreeRent">
+                      <tr class="section" ng-if="displayYearThreeRent">
                           <td>Year 3 rent</td>
-                          <td>{{data.year3Rent | sdltCurrency:"£"}}</td>                          
+                          <td>{{data.year3Rent | sdltCurrency:"£"}}</td>
                       </tr>
-                      <tr class="section" ng-show="displayYearFourRent">
+                      <tr class="section" ng-if="displayYearFourRent">
                           <td>Year 4 rent</td>
-                          <td>{{data.year4Rent | sdltCurrency:"£"}}</td>                          
+                          <td>{{data.year4Rent | sdltCurrency:"£"}}</td>
                       </tr>    
-                      <tr class="section" ng-show="displayYearFiveRent">
+                      <tr class="section" ng-if="displayYearFiveRent">
                           <td>Year 5 rent</td>
-                          <td>{{data.year5Rent | sdltCurrency:"£"}}</td>                          
+                          <td>{{data.year5Rent | sdltCurrency:"£"}}</td>
                       </tr>
-                      <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                      <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                           <td>Highest 12 monthly rent</td>
-                          <td>{{data.highestRent | sdltCurrency:"£"}}</td>                          
+                          <td>{{data.highestRent | sdltCurrency:"£"}}</td>
                       </tr>
-                      <tr class="section" ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000">
+                      <tr class="section" ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000">
                           <td>Relevant rental figure</td>
-                          <td>{{data.relevantRent | sdltCurrency:"£"}}</td>                          
+                          <td>{{data.relevantRent | sdltCurrency:"£"}}</td>
                       </tr>
                   </tbody>
               </table>
@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()">
+    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()">
       <h2 class="heading-medium blue-bottom-border" id="FR-subtitle-from">Results based on SDLT rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>
@@ -93,9 +93,9 @@
     </div>
 
 
-    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
+    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border" id="FR-subtitle-before" >{{getHeading()}}</h2>
-      <span ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
+      <span ng-if= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
       <div class = "form-group">
         <table>
           <tbody>
@@ -114,7 +114,7 @@
       </div>
     </div>
 
-    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'">
+    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'">
       <h2 class="heading-medium blue-bottom-border" id="FN-subtitle">Result</h2>
       <div class = "form-group">
         <table>
@@ -136,7 +136,7 @@
       </div>
     </div>
 
-    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()">
+    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()">
       <h2 class="heading-medium blue-bottom-border" id="LR-subtitle-from">Results based on SDLT rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>
@@ -162,9 +162,9 @@
       </div>
     </div>
     
-    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
+    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border" id="LR-subtitle-before">{{getHeading()}}</h2>    
-      <span  ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
+      <span  ng-if= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
       <div class = "form-group">
         <table>
           <tbody>            
@@ -190,7 +190,7 @@
     </div>
 
 
-    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'">
+    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'">
       <h2 class="heading-medium blue-bottom-border" id="LN-subtitle">Result</h2>
       <div class = "form-group">
         <table>

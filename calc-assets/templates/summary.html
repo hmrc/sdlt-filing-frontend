@@ -44,7 +44,7 @@
                         <td class="link-right" id="td3EffectiveDate"><a id="changeEffectiveDate" href="#date" onClick="ga('send', 'event', 'change', 'click', 'effectiveDate')">Change <span class="visuallyhidden">your response to the question, Effective date of your transaction</span></a></td>
                     </tr>
                     <!-- Purchase Price -->
-                    <tr class="section" ng-show="data.holdingType === 'Freehold'">
+                    <tr class="section" ng-if="data.holdingType === 'Freehold'">
                         <td class="previous-question-title" id="td1PurchasePrice">
                             <p class="{{validatedModel.isPurchasePriceValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -55,7 +55,7 @@
                         <td class="link-right" id="td3PurchasePrice"><a id="changePurchasePrice" href="#purchase-price" onClick="ga('send', 'event', 'change', 'click', 'purchasePrice')">Change <span class="visuallyhidden">your response to the question, Purchase price</span></a></td>
                     </tr>   
                     <!-- Start Date -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                         <td class="previous-question-title" id="td1StartDate">
                             <p class="{{validatedModel.isStartDateValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -66,7 +66,7 @@
                         <td class="link-right" id="td3StartDate"><a id="changeLeaseStartDate" href="#lease-dates" onClick="ga('send', 'event', 'change', 'click', 'startDate')">Change <span class="visuallyhidden">your response to the question, Start Date as specified in lease</span></a></td>
                     </tr>    
                     <!-- End Date -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                         <td class="previous-question-title" id="td1EndDate">
                             <p class="{{validatedModel.isEndDateValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -77,7 +77,7 @@
                         <td class="link-right" id="td3EndDate"><a id="changeLeaseEndDate" href="#lease-dates" onClick="ga('send', 'event', 'change', 'click', 'endDate')">Change <span class="visuallyhidden">your response to the question, End Date as specified in lease</span></a></td>
                     </tr>
                     <!-- Term of Lease -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                         <td class="previous-question-title" id="td1LeaseTerm">
                             <p>
                                 Term of lease
@@ -87,7 +87,7 @@
                         <td class="link-right" id="td3LeaseTerm">&nbsp;</td>
                     </tr>  
                     <!-- Premium -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                         <td class="previous-question-title" id="td1Premium">
                             <p class="{{validatedModel.isPremiumValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -98,7 +98,7 @@
                         <td class="link-right" id="td3Premium"><a id="changePremium" href="#premium" onClick="ga('send', 'event', 'change', 'click', 'premium')">Change <span class="visuallyhidden">your response to the question, Total premium payable</span></a></td>
                     </tr>    
                     <!-- Year 1 Rent -->
-                    <tr class="section" ng-show="displayYearOneRent">
+                    <tr class="section" ng-if="displayYearOneRent">
                         <td class="previous-question-title" id="td1Year1Rent">
                             <p class="{{validatedModel.isYear1RentValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -109,7 +109,7 @@
                         <td class="link-right" id="td3Year1Rent"><a id="changeYear1Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year1Rent')">Change <span class="visuallyhidden">your response to the question, Year 1 Rent</span></a></td>
                     </tr>                        
                     <!-- Year 2 Rent -->
-                    <tr class="section" ng-show="displayYearTwoRent">
+                    <tr class="section" ng-if="displayYearTwoRent">
                         <td class="previous-question-title" id="td1Year2Rent">
                             <p class="{{validatedModel.isYear2RentValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -120,7 +120,7 @@
                         <td class="link-right" id="td3Year2Rent"><a id="changeYear2Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year2Rent')">Change <span class="visuallyhidden">your response to the question, Year 2 Rent</span></a></td>
                     </tr>
                     <!-- Year 3 Rent -->
-                    <tr class="section" ng-show="displayYearThreeRent">
+                    <tr class="section" ng-if="displayYearThreeRent">
                         <td class="previous-question-title" id="td1Year3Rent">
                             <p class="{{validatedModel.isYear3RentValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -131,7 +131,7 @@
                         <td class="link-right" id="td3Year3Rent"><a id="changeYear3Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year3Rent')">Change <span class="visuallyhidden">your response to the question, Year 3 Rent</span></a></td>
                     </tr>
                     <!-- Year 4 Rent -->
-                    <tr class="section" ng-show="displayYearFourRent">
+                    <tr class="section" ng-if="displayYearFourRent">
                         <td class="previous-question-title" id="td1Year4Rent">
                             <p class="{{validatedModel.isYear4RentValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -142,7 +142,7 @@
                         <td class="link-right" id="td3Year4Rent"><a id="changeYear4Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year4Rent')">Change <span class="visuallyhidden">your response to the question, Year 4 Rent</span></a></td>
                     </tr>    
                     <!-- Year 5 Rent -->
-                    <tr class="section" ng-show="displayYearFiveRent">
+                    <tr class="section" ng-if="displayYearFiveRent">
                         <td class="previous-question-title" id="td1Year5Rent">
                             <p class="{{validatedModel.isYear5RentValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -153,7 +153,7 @@
                         <td class="link-right" id="td3Year5Rent"><a id="changeYear5Rent" href="#rent" onClick="ga('send', 'event', 'change', 'click', 'year5Rent')">Change <span class="visuallyhidden">your response to the question, Year 5 Rent</span></a></td>
                     </tr>
                     <!-- Highest 12 monthly rent -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold'">
+                    <tr class="section" ng-if="data.holdingType === 'Leasehold'">
                         <td class="previous-question-title" id="td1HighestRent">
                             <p>
                                 Highest 12 monthly rent
@@ -163,7 +163,7 @@
                         <td class="link-right" id="td3HighestRent">&nbsp;</td>
                     </tr>
                     <!-- Relevant Rental Figure -->
-                    <tr class="section" ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000 && displayRelevantRent()">
+                    <tr class="section" ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000 && displayRelevantRent()">
                         <td class="previous-question-title" id="td1RelevantRent">
                             <p class="{{validatedModel.isRelevantRentValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -179,7 +179,7 @@
     </div>
 </div>
 <div class="form-group">
-    <div ng-show="{{!validatedModel.isModelValid}}">
+    <div ng-if="{{!validatedModel.isModelValid}}">
         Please fix any errors before continuing to calculation.
     </div>
     <button ng-click="submit()" class="button" id="calculate" type="submit">Calculate</button>

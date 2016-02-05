@@ -2,7 +2,7 @@
 
 <form name="detailForm" class="form">
 
-    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
+    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border">This is a breakdown of how the total amount of SDLT was calculated based on the rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
+    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
       <h2 class="heading-medium blue-bottom-border">This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>

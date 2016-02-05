@@ -2,7 +2,7 @@
 
 <form name="resultForm" class="form">
 
-    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divFreeholdResidentialNew">
+    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divFreeholdResidentialNew">
       <h2 class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules from 4 December 2014</h2>
       <div class = "form-group">
         <table>
@@ -24,9 +24,9 @@
     </div>
 
 
-    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Residential'"  id="divFreeholdResidentialOld">
+    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential'"  id="divFreeholdResidentialOld">
       <h2 class="heading-medium blue-bottom-border FR-subtitle-before">{{getHeading()}}</h2>
-      <span ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
+      <span ng-if= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
       <div class = "form-group">
         <table>
           <tbody>
@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <div ng-show="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'" id="divFreeholdNonResidential">
+    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'" id="divFreeholdNonResidential">
       <div class = "form-group">
         <table>
           <tbody>
@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divLeaseholdResidentialNew">
+    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divLeaseholdResidentialNew">
       <h2 class="heading-medium blue-bottom-border LR-subtitle-from">Results based on SDLT rules from 4 December 2014</h2>      
       <div class = "form-group">
         <table>
@@ -97,9 +97,9 @@
     </div>
 
 
-    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'"  id="divLeaseholdResidentialOld">
+    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'"  id="divLeaseholdResidentialOld">
        <h2 class="heading-medium blue-bottom-border LR-subtitle-before">{{getHeading()}}</h2>
-      <span  ng-show= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
+      <span  ng-if= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
       <div class = "form-group">
         <table>
           <tbody>                  
@@ -124,7 +124,7 @@
       </div>
     </div>
 
-    <div ng-show="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'" id="divLeaseholdNonResidential">
+    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'" id="divLeaseholdNonResidential">
       <div class = "form-group">
         <table>
           <tbody>            
