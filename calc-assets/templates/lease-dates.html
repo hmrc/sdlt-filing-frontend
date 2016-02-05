@@ -13,8 +13,8 @@
     <div class="form-group {{state.hasError('startDate')}}">
         <fieldset>
             <legend class="form-label-bold">Start date shown in your lease.</legend>
-            <label class="form-hint">This is the date your term starts.</label>
-            <label class="form-hint">For example, 31 3 2014.</label>
+            <span class="form-hint">This is the date your term starts.</span>
+            <span class="form-hint">For example, 31 3 2014.</span>
             <span id="leaseStartDateErrMsg" class="error-notification">{{state.validationMessage('startDate')}}</span>
             <div class="form-date">
                 <div class="form-group form-group-day">
@@ -36,8 +36,8 @@
     <div class="form-group {{state.hasError('endDate')}}">
         <fieldset>
             <legend class="form-label-bold">End date shown in your lease.</legend>
-            <label class="form-hint">This is the date your term ends.</label>
-            <label class="form-hint">For example, 31 3 2017.</label>
+            <span class="form-hint">This is the date your term ends.</span>
+            <span class="form-hint">For example, 31 3 2017.</span>
             <span id="leaseEndDateErrMsg" class="error-notification">{{state.validationMessage('endDate')}}</span>
             <div class="form-date">
                 <div class="form-group form-group-day">
