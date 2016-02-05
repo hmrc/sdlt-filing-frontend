@@ -3,7 +3,6 @@
 
 [![Build Status](https://ci-dev.tax.service.gov.uk/buildStatus/icon?job=sdltc-frontend)](https://ci-dev.tax.service.gov.uk/job/sdltc-frontend/)
 
-
 ## Release Notes
 ### Change javascript version number for every release, update below files with next version number (in snippet below its version 1):  
 
