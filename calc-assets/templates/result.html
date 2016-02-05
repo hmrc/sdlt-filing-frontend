@@ -16,7 +16,7 @@
               <td id="frNewEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
               <td id="frNewPremium">{{data.premium | sdltCurrency}}</td>
               <td id="frNewTotalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
-              <td id="frNewDetailedCalc"><a ng-click="viewDetails()" href="javascript:return false" id="detailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
+              <td id="frNewDetailedCalc"><a ng-click="viewDetails()" title="view detailed calculation" href="javascript:return false" id="detailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
             </tr>
           </tbody>
         </table>
@@ -26,7 +26,7 @@
 
     <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential'"  id="divFreeholdResidentialOld">
       <h2 class="heading-medium blue-bottom-border FR-subtitle-before">{{getHeading()}}</h2>
-      <label ng-if= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</label>
+      <span ng-if= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
       <div class = "form-group">
         <table>
           <tbody>
@@ -89,7 +89,7 @@
             <tr class="section">
               <td>SDLT on premium</td>
               <td id="lrNewPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
-              <td id="lrDetailedCalc"><a ng-click="viewDetails()" href="javascript:return false" id="lrDetailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
+              <td id="lrDetailedCalc"><a ng-click="viewDetails()" href="javascript:return false" title="view detailed calculation" id="lrDetailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
             </tr>
           </tbody>
         </table>
@@ -99,7 +99,7 @@
 
     <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'"  id="divLeaseholdResidentialOld">
        <h2 class="heading-medium blue-bottom-border LR-subtitle-before">{{getHeading()}}</h2>
-      <label  ng-if= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</label>
+      <span  ng-if= "effDateAfterCutOff()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 4 December 2014.</span>
       <div class = "form-group">
         <table>
           <tbody>                  
