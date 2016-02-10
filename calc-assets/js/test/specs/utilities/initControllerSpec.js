@@ -13,7 +13,7 @@
             mockLocation,
             calledServiceGetModel = false;
 
-    	beforeEach(mocks.inject(function ($rootScope,$controller) {
+    	beforeEach(mocks.inject(function ($rootScope,$controller, $location) {
   			jasmine.addMatchers({
     			toHaveFocus: function() {
       				return {
@@ -52,7 +52,7 @@
 
             mockLocation = {
             	hash : function (id) {
-            		return id;
+            		return (id === undefined) ? 'banana' : id;
             	}
             };
 
@@ -63,7 +63,7 @@
 
             controller = $controller(InitController,{
                 scope : mockScope,
-                location : mockLocation,
+                location : $location,
                 scrollToHash : function() {},
                 page : 'doc.html',
                 dataService : mockDataService,
@@ -78,7 +78,17 @@
         	element.appendTo(document.body);
     		mockScope.jumpTo('banana');
     		expect(element).toHaveFocus();
+            $('#banana').blur();
+            mockScope.jumpTo('banana');
+            expect(element).toHaveFocus();
     	});
+
+        // it('should add a jumpTo method to the scope which will jump to the correct element part 2', function () {
+        //     var element2 = $('<input id="apple"/>');
+        //     element2.appendTo(document.body);
+        //     mockScope.jumpTo('apple');
+        //     expect(element2).toHaveFocus();
+        // });
 
         it('should add a submit method to the scope which will call the navigation service', function () {
             mockScope.submit();
