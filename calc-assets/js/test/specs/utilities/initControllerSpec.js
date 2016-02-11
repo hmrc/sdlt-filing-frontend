@@ -83,13 +83,6 @@
             expect(element).toHaveFocus();
     	});
 
-        // it('should add a jumpTo method to the scope which will jump to the correct element part 2', function () {
-        //     var element2 = $('<input id="apple"/>');
-        //     element2.appendTo(document.body);
-        //     mockScope.jumpTo('apple');
-        //     expect(element2).toHaveFocus();
-        // });
-
         it('should add a submit method to the scope which will call the navigation service', function () {
             mockScope.submit();
             expect(mockNavigationService.next.calls.count()).toEqual(1);
