@@ -76,6 +76,21 @@
             return resultJSON;
         };
 
+        var calculate201604SecondHomeSlice = function(premium){
+            var slicesArray = [
+                    { "from": 0,       "to" : 125000,   "rate" : 3,  "taxDue" : -1},
+                    { "from": 125000,  "to" : 250000,   "rate" : 5,  "taxDue" : -1},
+                    { "from": 250000,  "to" : 925000,   "rate" : 8,  "taxDue" : -1},
+                    { "from": 925000,  "to" : 1500000,  "rate" : 13, "taxDue" : -1},
+                    { "from": 1500000, "to" : -1,       "rate" : 15, "taxDue" : -1}
+            ];
+
+            if (premium < 40000) {
+                premium = 0;
+            }
+            var resultJSON = calculateTaxDueSlice(premium, slicesArray);
+            return resultJSON;
+        };
 
         var calculateTaxDueSlab = function(amount, slabs) {
 
@@ -179,6 +194,7 @@
             calculateNonResidentialPremiumSlab : calculateNonResidentialPremiumSlab,
             calculateResidentialLeaseSlice : calculateResidentialLeaseSlice,
             calculateNonResidentialLeaseSlice : calculateNonResidentialLeaseSlice,
+            calculate201604SecondHomeSlice : calculate201604SecondHomeSlice,
             calculateNPV : calculateNPV
         };
     });
