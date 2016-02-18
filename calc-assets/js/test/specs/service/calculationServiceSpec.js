@@ -458,10 +458,17 @@
 
         // ********************* calculate201604SecondHomeSlice *********************
 
-        it(' calculateResidentialPremiumSlice should return 1 for purchase price of 34', function() {
-            res201604SecondHomeResults.totalSDLT = 1;
-            res201604SecondHomeResults.slices[0].taxDue = 1;
-            expect(service.calculate201604SecondHomeSlice(34)).toEqual(res201604SecondHomeResults);
+        it(' calculateResidentialPremiumSlice should return 0 for purchase price of 39,999.99', function() {
+            res201604SecondHomeResults.totalSDLT = 0;
+            expect(service.calculate201604SecondHomeSlice(39999.99)).toEqual(res201604SecondHomeResults);
+        });
+
+        it(' calculateResidentialPremiumSlice should return 1200 for purchase price of 40000', function() {
+            res201604SecondHomeResults.totalSDLT = 1200;
+            res201604SecondHomeResults.slices[0].taxDue = 1200;
+            expect(service.calculate201604SecondHomeSlice(40000
+
+                )).toEqual(res201604SecondHomeResults);
         });
 
         it(' calculateResidentialPremiumSlice should return 3750 for purchase price of 125000', function() {

@@ -85,6 +85,9 @@
                     { "from": 1500000, "to" : -1,       "rate" : 15, "taxDue" : -1}
             ];
 
+            if (premium < 40000) {
+                premium = 0;
+            }
             var resultJSON = calculateTaxDueSlice(premium, slicesArray);
             return resultJSON;
         };
