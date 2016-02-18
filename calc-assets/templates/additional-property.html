@@ -1,0 +1,49 @@
+<h1>{{title}}</h1>
+
+<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
+    <ul class="error-summary-list">
+        <li ng-if="state.hasError('twoOrMoreProperties')"><a id="twoOrMorePropertiesPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('twoOrMoreProperties')">{{state.validationMessage('twoOrMoreProperties')}}</a></li>
+        <li ng-if="state.hasError('replaceMainResidence')"><a id="replaceMainResidencePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('replaceMainResidence')">{{state.validationMessage('replaceMainResidence')}}</a></li>
+    </ul>
+</div>
+
+<form name="additionalPropertyForm" class="form">
+
+    <div class="form-group {{state.hasError('twoOrMoreProperties')}}">
+        <fieldset>
+            <legend id="twoOrMoreProperties" class="form-label-bold">Will the purchase of the property result in owning two or more properties?</legend>
+            <span id="twoOrMorePropertiesErrMsg" class="error-notification">{{state.validationMessage('twoOrMoreProperties')}}</span>
+            <div class="inline">
+                <label class="block-label" for="twoOrMoreYes">
+                    <input id="twoOrMoreYes" ng-model="data.twoOrMoreProperties" name="twoOrMoreProperties" value="yes" type="radio" required>Yes
+                </label>
+                <label class="block-label" for="twoOrMoreNo">
+                    <input id="twoOrMoreNo" ng-model="data.twoOrMoreProperties" name="twoOrMoreProperties" value="no" type="radio" required>No
+                </label>
+            </div>
+        </fieldset>
+    </div>
+
+    <div ng-show="data.twoOrMoreProperties === 'yes'" class="panel-indent">
+      <div class="form-group {{state.hasError('replaceMainResidence')}}">
+          <fieldset>
+              <legend id="replaceMainResidence" class="form-label-bold">Is the property being purchased replacing a main residence?</legend>
+              <span id="replaceMainResidenceErrMsg" class="error-notification">{{state.validationMessage('replaceMainResidence')}}</span>
+              <div class="inline">
+                  <label class="block-label" for="mainResidenceYes">
+                      <input id="mainResidenceYes" ng-model="data.replaceMainResidence" name="replaceMainResidence" value="yes" type="radio" required>Yes
+                  </label>
+                  <label class="block-label" for="mainResidenceNo">
+                      <input id="mainResidenceNo" ng-model="data.replaceMainResidence" name="replaceMainResidence" value="no" type="radio" required>No
+                  </label>
+              </div>
+          </fieldset>
+      </div>
+    </div>
+
+    <div class="form-group">
+        <button ng-click="submit()" class="button" id="next-additional-property" type="submit">Continue</button>
+    </div>    
+
+</form>
