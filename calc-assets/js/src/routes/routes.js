@@ -34,6 +34,13 @@
                 reloadOnSearch: false
             })
 
+            .when('/additional-property', {
+                title : 'Additional property',
+                templateUrl : 'additional-property.html',
+                controller  : 'additionalPropertyController',
+                reloadOnSearch: false
+            })
+
             .when('/purchase-price', {
                 title : 'Purchase price',
                 templateUrl : 'purchase-price.html',
