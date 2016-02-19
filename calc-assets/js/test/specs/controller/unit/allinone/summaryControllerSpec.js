@@ -590,6 +590,73 @@
             });
         });
 
+        describe('test for displayAdditionalProperty', function () {
+            
+
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
+                
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            propertyType : "Non-residential",
+                            leaseTerm : {
+                                years : 5
+                            },
+                            premium : "149999",
+                            year1Rent : "1",
+                            year2Rent : "2",
+                            year3Rent : "3",
+                            year4Rent : "4",
+                            year5Rent : "5",
+                            effectiveDate : new Date(2016, 3, 1)
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            // on create
+            it('displayAdditionalProperty should be true when date is 01/04/2016', function () {
+                expect(mockScope.displayAdditionalProperty()).toEqual(true);
+            });
+
+            it('displayAdditionalProperty should be false when date is 31/03/2016', function () {
+                mockScope.data.effectiveDate = new Date(2016, 2, 31);
+                expect(mockScope.displayAdditionalProperty()).toEqual(false);
+            });
+        });
+
     });
 
 }());
