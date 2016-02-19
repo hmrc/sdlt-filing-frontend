@@ -9,7 +9,15 @@
         init($scope, $location, $anchorScroll, 'additional-property', dataService, additionalPropertyValidationService, navigationService);
 
         $scope.beforeUpdateModel = function() {
-            loggingService.logEvent('decision', 'submit', "Two or more properties: "+$scope.data.twoOrMoreProperties);
+            if($scope.data.twoOrMoreProperties === "No") {
+                loggingService.logEvent('decision', 'submit', "AdditonalProperty.SingleProperty");
+            } else {
+                if($scope.data.replaceMainResidence === "Yes") {
+                    loggingService.logEvent('decision', 'submit', "AdditonalProperty.MultiplePoperties.MainResidence");
+                } else {
+                    loggingService.logEvent('decision', 'submit', "AdditonalProperty.MultiplePoperties.NotMainResidence");
+                }
+            }
         };
 
     };
