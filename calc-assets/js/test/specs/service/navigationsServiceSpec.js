@@ -113,8 +113,11 @@
                 spyOn(mockLocation, 'path').and.callThrough();
             }));
 
-            it('should set the location path to /summary when holdingType has not been answered', function() {
-                service.next(currentView, {}, mockLocation);
+            it('should set the location path to /summary when holdingType has not been answered nd effective date is 31/03/2016', function() {
+                data = { effectiveDateDay   : "31",
+                         effectiveDateMonth : "03",
+                         effectiveDateYear  : "2016"};
+                service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/summary');
             });
 
