@@ -7,7 +7,8 @@
 	require("./allinone/introController");
 	require("./allinone/leaseDatesController");
 	require("./allinone/premiumController");
-	require("./allinone/propertyController");		
+	require("./allinone/propertyController");
+	require("./allinone/additionalPropertyController");		
 	require("./allinone/purchasePriceController");
 	require("./allinone/relevantRentController");
 	require("./allinone/rentController");
