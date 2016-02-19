@@ -375,6 +375,42 @@
             expect(result.isYear5RentValid).toEqual('');
         });
 
+        it('should return false for a Leasehold Residential when rent data not entered', function() {
+
+            var data = {
+                holdingType : "Leasehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2015, 4, 1),
+
+                startDate : new Date(2015, 1, 1),
+                endDate : new Date(2019, 12, 31),
+                premium : 200000,
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isStartDateValid).toEqual('');
+            expect(result.isEndDateValid).toEqual('');
+            expect(result.isPremiumValid).toEqual('');
+
+            expect(result.isYear1RentValid).toEqual('form-field--error');
+
+            // the following are n/a in this scenario
+            expect(result.isTwoOrMorePropertiesValid).toEqual(undefined);
+            expect(result.isReplaceMainResidenceValid).toEqual(undefined);
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+            expect(result.isRelevantRentValid).toEqual(undefined);
+            expect(result.isYear2RentValid).toEqual(undefined);
+            expect(result.isYear3RentValid).toEqual(undefined);
+            expect(result.isYear4RentValid).toEqual(undefined);
+            expect(result.isYear5RentValid).toEqual(undefined);
+        });
+
         it('should return false for a Leasehold Residential >= 1/4/2016 AND 2nd property Yes BUT Replace Main Res not supplied', function() {
 
             var data = {
@@ -661,7 +697,7 @@
             expect(result.isPurchasePriceValid).toEqual(undefined);
         });
 
-        it('should return false for a valid Leasehold Non-residential with 5 years rent when relevant rent expected but missing', function() {
+        it('should return false for a Leasehold Non-residential with 5 years rent when relevant rent expected but missing', function() {
 
             var data = {
                 holdingType : "Leasehold",

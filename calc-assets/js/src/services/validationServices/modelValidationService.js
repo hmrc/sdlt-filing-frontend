@@ -48,7 +48,7 @@
                 result.isEndDateValid = hasError('endDate');
                 result.isPremiumValid = hasError('premium');
 
-                if (rent.displayYearOneRent) result.isYear1RentValid = hasError('year1Rent');
+                result.isYear1RentValid = hasError('year1Rent');
                 if (rent.displayYearTwoRent) result.isYear2RentValid = hasError('year2Rent');
                 if (rent.displayYearThreeRent) result.isYear3RentValid = hasError('year3Rent');
                 if (rent.displayYearFourRent) result.isYear4RentValid = hasError('year4Rent');
