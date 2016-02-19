@@ -5,6 +5,7 @@
 
 	var navigationService = function() {
 
+        var validator = require("../utilities/validator")();
 		var logView = function(pageName) {
     		ga('set', 'page', '/calculate-stamp-duty-land-tax/' + pageName);
     		ga('send', 'pageview', { 'anonymizeIp': true });
@@ -40,6 +41,26 @@
                 redirectToNext(locationService, 'date');
             }
             else if (currentView === 'date') {
+                var dateHelper = require("../utilities/dateHelper");
+                var effectiveDate = dateHelper.parseUIDate(model.effectiveDateYear, model.effectiveDateMonth, model.effectiveDateDay);
+                console.log("************************************************************");
+                console.log("Effective Date :"+effectiveDate);
+                console.log("************************************************************");
+                if(validator.isLessThanDate(effectiveDate, new Date(2016, 3, 1))) {
+                    if (model.holdingType === 'Freehold') {
+                        redirectToNext(locationService, 'purchase-price');
+                    } 
+                    else if (model.holdingType === 'Leasehold') {
+                        redirectToNext(locationService, 'lease-dates');
+                    } 
+                    else {
+                        redirectToSummary(locationService);
+                    }
+                } else {
+                    redirectToNext(locationService, 'additional-property');
+                }
+            }
+            else if (currentView === "additional-property") {
                 if (model.holdingType === 'Freehold') {
                     redirectToNext(locationService, 'purchase-price');
                 } 
@@ -48,7 +69,7 @@
                 } 
                 else {
                     redirectToSummary(locationService);
-                }               
+                }
             }
             else if (currentView === 'purchase-price') {
                 redirectToNext(locationService, 'summary');
@@ -60,7 +81,6 @@
                 redirectToNext(locationService, 'rent');
             }
             else if (currentView === 'rent') {
-                var validator = require("../utilities/validator")();
                 var checkRelevant = validator.relevantRentCheck([model.year1Rent, model.year2Rent, model.year3Rent, model.year4Rent, model.year5Rent]);
                 if (model.propertyType === 'Non-residential' && model.premium < 150000 && checkRelevant) {
                     redirectToNext(locationService, 'relevant-rent');
