@@ -118,13 +118,66 @@
                 expect(mockLocation.path()).toEqual('/summary');
             });
 
-            it('should set the location path to /purchse-price when holdingType is "freehold"', function() {
+            it('should set the location path to /additional-property when holdingType is "Leasehold" and effective date is 01/04/2016', function() {
+                data = { holdingType        : 'Leasehold',
+                         effectiveDateDay   : "01",
+                         effectiveDateMonth : "04",
+                         effectiveDateYear  : "2016"};
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/additional-property');
+            });
+
+            it('should set the location path to /additional-property when holdingType is "Freehold" and effective date is 01/04/2016', function() {
+                data = { holdingType        : 'Freehold',
+                         effectiveDateDay   : "01",
+                         effectiveDateMonth : "04",
+                         effectiveDateYear  : "2016"};
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/additional-property');
+            });
+
+            it('should set the location path to /lease-dates when holdingType is "Leasehold" and effective date is 31/03/2016', function() {
+                data = { holdingType        : 'Leasehold',
+                         effectiveDateDay   : "31",
+                         effectiveDateMonth : "03",
+                         effectiveDateYear  : "2016"};
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/lease-dates');
+            });
+
+            it('should set the location path to /purchase-price when holdingType is "Freehold" and effective date is 31/03/2016', function() {
+                data = { holdingType        : 'Freehold',
+                         effectiveDateDay   : "31",
+                         effectiveDateMonth : "03",
+                         effectiveDateYear  : "2016"};
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+        });
+
+
+
+        describe('Calling .next() from the additional-property view', function() {
+            var mockLocation,
+                currentView = 'additional-property';
+                
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                spyOn(mockLocation, 'path').and.callThrough();
+            }));
+
+            it('should set the location path to /summary when holdingType has not been answered', function() {
+                service.next(currentView, {}, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /purchase-price when holdingType is "Freehold"', function() {
                 data = { holdingType : 'Freehold' };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/purchase-price');
             });
 
-            it('should set the location path to /summary when holdingType is "no"', function() {
+            it('should set the location path to /lease-dates when holdingType is "Leasehold"', function() {
                 data = { holdingType : 'Leasehold' };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/lease-dates');
