@@ -41,35 +41,18 @@
                 redirectToNext(locationService, 'date');
             }
             else if (currentView === 'date') {
+                
                 var dateHelper = require("../utilities/dateHelper");
                 var effectiveDate = dateHelper.parseUIDate(model.effectiveDateYear, model.effectiveDateMonth, model.effectiveDateDay);
-                console.log("************************************************************");
-                console.log("Effective Date :"+effectiveDate);
-                console.log("************************************************************");
+
                 if(validator.isLessThanDate(effectiveDate, new Date(2016, 3, 1))) {
-                    if (model.holdingType === 'Freehold') {
-                        redirectToNext(locationService, 'purchase-price');
-                    } 
-                    else if (model.holdingType === 'Leasehold') {
-                        redirectToNext(locationService, 'lease-dates');
-                    } 
-                    else {
-                        redirectToSummary(locationService);
-                    }
+                    redirectBasedOnHoldingType(model, locationService);
                 } else {
                     redirectToNext(locationService, 'additional-property');
                 }
             }
             else if (currentView === "additional-property") {
-                if (model.holdingType === 'Freehold') {
-                    redirectToNext(locationService, 'purchase-price');
-                } 
-                else if (model.holdingType === 'Leasehold') {
-                    redirectToNext(locationService, 'lease-dates');
-                } 
-                else {
-                    redirectToSummary(locationService);
-                }
+                redirectBasedOnHoldingType(model, locationService);
             }
             else if (currentView === 'purchase-price') {
                 redirectToNext(locationService, 'summary');
@@ -96,6 +79,18 @@
                 redirectToNext(locationService, 'result');
             }
     	};
+
+        function redirectBasedOnHoldingType(model, locationService) {
+            if (model.holdingType === 'Freehold') {
+                redirectToNext(locationService, 'purchase-price');
+            } 
+            else if (model.holdingType === 'Leasehold') {
+                redirectToNext(locationService, 'lease-dates');
+            } 
+            else {
+                redirectToSummary(locationService);
+            }
+        }
 
 	    return {
 	    	logView : logView,
