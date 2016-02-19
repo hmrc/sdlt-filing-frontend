@@ -19,10 +19,9 @@
     </div>
 
     <details>
-        <summary ng-click="toggleHelp('chargeableConsideration','Is your chargeable consideration less than £40,000?')"><span class="summary">Is your chargeable consideration less than £40,000?</span></summary>
-        <div class="panel-indent" ng-show="displayHelp('chargeableConsideration')">
-            <p>If the purchase price is £40,000 or under, then no SDLT is</p>
-            <p>due and a return does not have to be filed.</p>
+        <summary ng-click="toggleHelp('chargeableConsideration','purchasePrice.chargeableConsideration')"><span class="summary">Is your chargeable consideration less than £40,000?</span></summary>
+        <div class="panel-indent" ng-if="displayHelp('chargeableConsideration')">
+            <p>If the purchase price is £40,000 or under, then no SDLT is due and a return does not have to be filed.</p>
         </div>
     </details>
 
