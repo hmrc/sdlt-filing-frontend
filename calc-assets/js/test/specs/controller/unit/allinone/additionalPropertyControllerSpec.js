@@ -117,7 +117,7 @@
             });
         });
 
-        describe('Calling .submit() on the Additional Property Controller with valid data', function () {
+        describe('Calling .submit() on the Additional Property Controller with valid Yes Yes data', function () {
             
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
@@ -161,6 +161,137 @@
                 mockScope.data = {
                     twoOrMoreProperties : "Yes",
                     replaceMainResidence : "Yes"
+                };
+
+                mockScope.submit({});
+            }));
+
+            it('should call the validation service once', function () {
+                expect(mockValidationService.validate.calls.count()).toEqual(1);
+            });
+
+            it('should call dataService.updateModel once', function () {
+                expect(mockDataService.updateModel.calls.count()).toEqual(1);
+            });
+
+            it('should call to navigationService.next once', function () {
+                expect(mockNavigationService.next.calls.count()).toEqual(1);
+            });
+
+            it('should call beforeUpdateModel', function () {
+                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
+            });
+        });
+
+        describe('Calling .submit() on the Additional Property Controller with valid No data', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
+                
+                mockDataService = { 
+                    getModel : function() {},
+                    updateModel : function() {}
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                mockLoggingService = { 
+                    logEvent : function() {} 
+                };
+
+                spyOn(mockDataService, 'updateModel');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockLoggingService, 'logEvent');
+                
+                controller = $controller('additionalPropertyController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    additionalPropertyValidationService : mockValidationService,
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
+                });
+
+                mockScope.data = {
+                    twoOrMoreProperties : "No"
+                };
+
+                mockScope.submit({});
+            }));
+
+            it('should call the validation service once', function () {
+                expect(mockValidationService.validate.calls.count()).toEqual(1);
+            });
+
+            it('should call dataService.updateModel once', function () {
+                expect(mockDataService.updateModel.calls.count()).toEqual(1);
+            });
+
+            it('should call to navigationService.next once', function () {
+                expect(mockNavigationService.next.calls.count()).toEqual(1);
+            });
+
+            it('should call beforeUpdateModel', function () {
+                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
+            });
+        });
+
+        describe('Calling .submit() on the Additional Property Controller with valid Yes No data', function () {
+            
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
+                
+                mockDataService = { 
+                    getModel : function() {},
+                    updateModel : function() {}
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                mockLoggingService = { 
+                    logEvent : function() {} 
+                };
+
+                spyOn(mockDataService, 'updateModel');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockLoggingService, 'logEvent');
+                
+                controller = $controller('additionalPropertyController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    additionalPropertyValidationService : mockValidationService,
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
+                });
+
+                mockScope.data = {
+                    twoOrMoreProperties : "Yes",
+                    replaceMainResidence : "No"
                 };
 
                 mockScope.submit({});
