@@ -65,6 +65,10 @@
             return new Date(value) < new Date(date);
         };
 
+        var isGreaterThanOrEqualToDate = function(value, date) {
+            return new Date(value) >= new Date(date);
+        };
+
         var isGreaterThanInteger = function(value, integer) {
             return parseInt(value) > parseInt(integer);
         };
@@ -97,6 +101,7 @@
             isLessThanInteger : isLessThanInteger,
             isLessThanFloat : isLessThanFloat,
             isLessThanDate : isLessThanDate,
+            isGreaterThanOrEqualToDate : isGreaterThanOrEqualToDate,
             isGreaterThanInteger : isGreaterThanInteger,
             isGreaterThanFloat : isGreaterThanFloat,
             relevantRentCheck : relevantRentCheck
