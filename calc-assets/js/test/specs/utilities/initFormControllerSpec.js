@@ -1,11 +1,11 @@
 (function() {
-	'use strict';
+    'use strict';
 
-    var mocks = require("angular-mocks-wrapper");			
+    var mocks = require("angular-mocks-wrapper");           
 
     describe('Initial Form Controller', function () {
-    	var InitFormController = require("../../../src/utilities/initFormController.js");
-    	var controller, 
+        var InitFormController = require("../../../src/utilities/initFormController.js");
+        var controller, 
             mockScope, 
             mockDataService, 
             mockNavigationService,
@@ -13,20 +13,20 @@
             mockLocation,
             calledServiceGetModel = false;
 
-    	beforeEach(mocks.inject(function ($rootScope,$controller) {
-  			jasmine.addMatchers({
-    			toHaveFocus: function() {
-      				return {
-        				compare: function(actual) {
-          					return {
-            					pass: document.activeElement === actual[0]
-          					};
-        				}
-      				};
-    			}
-  			});
+        beforeEach(mocks.inject(function ($rootScope, $controller, $location) {
+            jasmine.addMatchers({
+                toHaveFocus: function() {
+                    return {
+                        compare: function(actual) {
+                            return {
+                                pass: document.activeElement === actual[0]
+                            };
+                        }
+                    };
+                }
+            });
 
-  			mockScope = $rootScope.$new();
+            mockScope = $rootScope.$new();
             mockScope.getHelpSetup = function() {return true;};
 
             mockDataService = { 
@@ -50,9 +50,9 @@
             };
 
             mockLocation = {
-            	hash : function (id) {
-            		return id;
-            	}
+                hash : function (id) {
+                    return id;
+                }
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -61,7 +61,7 @@
 
             controller = $controller(InitFormController,{
                 scope : mockScope,
-                location : mockLocation,
+                location : $location,
                 scrollToHash : function() {},
                 page : 'doc.html',
                 dataService : mockDataService,
@@ -69,15 +69,18 @@
                 navigationService : mockNavigationService
             });
 
-		}));
+        }));
 
-    	it('should add a jumpTo method to the scope which will jump to the correct element', function () {
-    		var element = $('<input id="hello"/>');
-        	element.appendTo(document.body);
-    		mockScope.jumpTo('hello');
-    		expect(element).toHaveFocus();
-    	});
+        it('should add a jumpTo method to the scope which will jump to the correct element', function () {
+            var element = $('<input id="hello"/>');
+            element.appendTo(document.body);
+            mockScope.jumpTo('hello');
+            expect(element).toHaveFocus();
+            $('#hello').blur();
+            mockScope.jumpTo('hello');
+            expect(element).toHaveFocus();
+        });
 
 
-   	});
+    });
 }());

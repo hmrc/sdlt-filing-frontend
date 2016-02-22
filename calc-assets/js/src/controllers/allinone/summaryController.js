@@ -38,6 +38,10 @@
             return validator.relevantRentCheck([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
         };
 
+        $scope.displayAdditionalProperty = function() {
+            return !validator.isLessThanDate($scope.data.effectiveDate, new Date(2016, 3, 1));
+        };
+
 
         $scope.getDisplayValue = function(value) {
             if(value === undefined || value === 'undefined' || value === '') {

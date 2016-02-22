@@ -74,6 +74,21 @@
             });
         });
 
+        describe('additional property route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('additional-property.html')
+                        .respond(200);
+                }));
+
+            it('should load the additional property page on successful load of /additional-property', function() {
+                location.path('/additional-property');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('additionalPropertyController');
+                expect(route.current.title).toBe('Additional property');
+            });
+        });
+
         describe('purchase-price route', function() {
             beforeEach(inject(
                 function($httpBackend) {

@@ -12,6 +12,7 @@
     <div class="form-group {{state.hasError('holdingType')}}">
         <fieldset>
             <legend id="holdingType" class="form-label-bold">Is your transaction freehold or leasehold?</legend>
+            <span class="form-hint text">If your purchase is an assignment of an existing lease please select freehold, only use leasehold on the grant of a new lease.</span>
             <span id="holdingTypeErrMsg" class="error-notification">{{state.validationMessage('holdingType')}}</span>
             <div class="inline">
                 <label class="block-label" for="holding-free">
