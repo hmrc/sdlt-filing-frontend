@@ -34,8 +34,8 @@
                 result.isPurchasePriceValid = hasError('premium');
             }
 
-            // if Residential & >= 1/4/2016 then additional property question(s) required
-            if(data.propertyType === 'Residential' && data.effectiveDate >= new Date(2016, 4, 1)) {
+            // if Residential & >= 01/04/2016 then additional property question(s) required
+            if(data.propertyType === 'Residential' && data.effectiveDate >= new Date(2016, 3, 1)) {
                 result.isTwoOrMorePropertiesValid = hasError('twoOrMoreProperties');
                 if (data.twoOrMoreProperties === 'Yes') {
                     result.isReplaceMainResidenceValid = hasError('replaceMainResidence');
