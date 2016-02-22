@@ -6,10 +6,6 @@
 
         var expanded = false;
 
-        $scope.isExpanded = function() {
-            return expanded;
-        };
-
         $scope.jumpTo = function(id) {
             var selector = '#' + id;
             $(selector).focus();
