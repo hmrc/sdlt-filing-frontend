@@ -41,14 +41,17 @@
                 redirectToNext(locationService, 'date');
             }
             else if (currentView === 'date') {
-                
-                var dateHelper = require("../utilities/dateHelper");
-                var effectiveDate = dateHelper.parseUIDate(model.effectiveDateYear, model.effectiveDateMonth, model.effectiveDateDay);
+                if(model.propertyType === "Residential") {
+                    var dateHelper = require("../utilities/dateHelper");
+                    var effectiveDate = dateHelper.parseUIDate(model.effectiveDateYear, model.effectiveDateMonth, model.effectiveDateDay);
 
-                if(validator.isLessThanDate(effectiveDate, new Date(2016, 3, 1))) {
-                    redirectBasedOnHoldingType(model, locationService);
+                    if(validator.isLessThanDate(effectiveDate, new Date(2016, 3, 1))) {
+                        redirectBasedOnHoldingType(model, locationService);
+                    } else {
+                        redirectToNext(locationService, 'additional-property');
+                    }
                 } else {
-                    redirectToNext(locationService, 'additional-property');
+                    redirectBasedOnHoldingType(model, locationService);
                 }
             }
             else if (currentView === "additional-property") {

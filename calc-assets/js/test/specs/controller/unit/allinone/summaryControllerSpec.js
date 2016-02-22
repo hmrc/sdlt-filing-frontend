@@ -637,54 +637,54 @@
                 });
             }));
 
-            it('displayAdditionalProperty should be false when Freehold Residential and no date specified', function () {
-                mockScope.data.holdingType = "Freehold";
-                mockScope.data.propertyType = "Residential";
+            it('displayAdditionalProperty should be false when no data supplied', function () {
+                mockScope.data.holdingType = undefined;
+                mockScope.data.propertyType = undefined;
+                mockScope.data.effectiveDate = undefined;
                 expect(mockScope.displayAdditionalProperty()).toEqual(false);
             });
 
-            it('displayAdditionalProperty should be false when Freehold Residential and date is 31/03/2016', function () {
+            it('displayAdditionalProperty should be false for Freehold Residential when date is 31/03/2016', function () {
                 mockScope.data.holdingType = "Freehold";
                 mockScope.data.propertyType = "Residential";
-                mockScope.data.effectiveDate = new Date(2016, 2, 31);
+                mockScope.data.effectiveDate = new Date(2016,2,31);
                 expect(mockScope.displayAdditionalProperty()).toEqual(false);
             });
 
-            it('displayAdditionalProperty should be true when Freehold Residential and date is 01/04/2016', function () {
+            it('displayAdditionalProperty should be true for Freehold Residential when date is 01/04/2016', function () {
                 mockScope.data.holdingType = "Freehold";
                 mockScope.data.propertyType = "Residential";
-                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                mockScope.data.effectiveDate = new Date(2016,3,1);
                 expect(mockScope.displayAdditionalProperty()).toEqual(true);
             });
 
-            it('displayAdditionalProperty should be false when Freehold Non-residential and date is 01/04/2016', function () {
+            it('displayAdditionalProperty should be false for Freehold Non-residential when date is 01/04/2016', function () {
                 mockScope.data.holdingType = "Freehold";
                 mockScope.data.propertyType = "Non-residential";
-                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                mockScope.data.effectiveDate = new Date(2016,3,1);
                 expect(mockScope.displayAdditionalProperty()).toEqual(false);
             });
 
-            it('displayAdditionalProperty should be false when Leasehold Residential and date is 31/03/2016', function () {
+            it('displayAdditionalProperty should be false for Leasehold Residential when date is 31/03/2016', function () {
                 mockScope.data.holdingType = "Leasehold";
                 mockScope.data.propertyType = "Residential";
-                mockScope.data.effectiveDate = new Date(2016, 2, 31);
+                mockScope.data.effectiveDate = new Date(2016,2,31);
                 expect(mockScope.displayAdditionalProperty()).toEqual(false);
             });
 
-            it('displayAdditionalProperty should be true when Leasehold Residential and date is 01/04/2016', function () {
+            it('displayAdditionalProperty should be true for Leasehold Residential when date is 01/04/2016', function () {
                 mockScope.data.holdingType = "Leasehold";
                 mockScope.data.propertyType = "Residential";
-                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                mockScope.data.effectiveDate = new Date(2016,3,1);
                 expect(mockScope.displayAdditionalProperty()).toEqual(true);
             });
 
-            it('displayAdditionalProperty should be false when Leasehold Non-residential and date is 01/04/2016', function () {
+            it('displayAdditionalProperty should be false for Leasehold Non-residential when date is 01/04/2016', function () {
                 mockScope.data.holdingType = "Leasehold";
                 mockScope.data.propertyType = "Non-residential";
-                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                mockScope.data.effectiveDate = new Date(2016,3,1);
                 expect(mockScope.displayAdditionalProperty()).toEqual(false);
             });
-
 
         });
 
