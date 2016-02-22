@@ -104,7 +104,31 @@
 
         });
 
-describe('Checking focus and clicking a radio button', function () {
+        describe('Calling getHelpGA()', function () {
+
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockLoggingService = { logEvent: function() {} };
+                spyOn(mockLoggingService, 'logEvent');
+
+                controller = $controller(
+                    'mainController', 
+                    {
+                        $scope: mockScope,
+                        loggingService: mockLoggingService
+                    });
+            }));
+
+            it('should call the getHelpGA function once', function () {
+                expect(mockScope.isExpanded()).toEqual(false);
+                mockScope.getHelpGA();
+                // Needs assertions, but 
+            });
+
+        });
+
+        describe('Checking focus and clicking a radio button', function () {
             beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
 
                 jasmine.addMatchers({
@@ -244,6 +268,6 @@ describe('Checking focus and clicking a radio button', function () {
             });
 
         });
-        
+
     });
 }());
