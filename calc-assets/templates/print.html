@@ -7,64 +7,64 @@
               <table>
                   <tbody>
                       <tr class="section">
-                          <td>Freehold / leasehold</td>
-                          <td>{{data.holdingType}}</td>                       
+                          <td id="td1HoldingType">Freehold / leasehold</td>
+                          <td id="td2HoldingType">{{data.holdingType}}</td>                       
                       </tr>
                       <tr class="section">
-                          <td>Property type</td>
-                          <td>{{data.propertyType}}</td>
+                          <td id="td1PropertyType">Property type</td>
+                          <td id="td2PropertyType">{{data.propertyType}}</td>
                       </tr>
                       <tr class="section">
-                          <td>Effective date of transaction</td>
-                          <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
+                          <td id="td1EffectiveDate">Effective date of transaction</td>
+                          <td id="td2EffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
                       </tr>
                       <tr class="section" ng-if="data.holdingType === 'Freehold'">
-                          <td>Purchase price</td>
-                          <td>{{data.premium | sdltCurrency:"£"}}</td>
+                          <td id="td1PurchasePrice">Purchase price</td>
+                          <td id="td2PurchasePrice">{{data.premium | sdltCurrency:"£"}}</td>
                       </tr>   
                       <tr class="section" ng-if="data.holdingType === 'Leasehold'">
-                          <td>Start date as specified in lease</td>
-                          <td>{{data.startDate | date:'d MMMM yyyy'}}</td>
+                          <td id="td1StartDate">Start date as specified in lease</td>
+                          <td id="td2StartDate">{{data.startDate | date:'d MMMM yyyy'}}</td>
                       </tr>    
                       <tr class="section" ng-if="data.holdingType === 'Leasehold'">
-                          <td>End date as specified in lease</td>
-                          <td>{{data.endDate | date:'d MMMM yyyy'}}</td>                         
+                          <td id="td1EndDate">End date as specified in lease</td>
+                          <td id="td2EndDate">{{data.endDate | date:'d MMMM yyyy'}}</td>                         
                       </tr>
                       <tr class="section" ng-if="data.holdingType === 'Leasehold'">
-                          <td>Term of lease</td>
-                          <td>{{data.leaseTerm.years}} years {{data.leaseTerm.days}} days</td>
+                          <td id="td1LeaseTerm">Term of lease</td>
+                          <td id="td2LeaseTerm">{{data.leaseTerm.years}} years {{data.leaseTerm.days}} days</td>
                       </tr>  
                       <tr class="section" ng-if="data.holdingType === 'Leasehold'">
-                          <td>Total premium payable</td>
-                          <td>{{data.premium | sdltCurrency:"£"}}</td>
+                          <td id="td1Premium">Total premium payable</td>
+                          <td id="td2Premium">{{data.premium | sdltCurrency:"£"}}</td>
                       </tr>    
                       <tr class="section" ng-if="displayYearOneRent">
-                          <td>Year 1 rent</td>
-                          <td>{{data.year1Rent | sdltCurrency:"£"}}</td>
+                          <td id="td1Year1Rent">Year 1 rent</td>
+                          <td id="td2Year1Rent">{{data.year1Rent | sdltCurrency:"£"}}</td>
                       </tr>                                              
                       <tr class="section" ng-if="displayYearTwoRent">
-                          <td>Year 2 rent</td>
-                          <td>{{data.year2Rent | sdltCurrency:"£"}}</td>
+                          <td id="td1Year2Rent">Year 2 rent</td>
+                          <td id="td2Year2Rent">{{data.year2Rent | sdltCurrency:"£"}}</td>
                       </tr>                      
                       <tr class="section" ng-if="displayYearThreeRent">
-                          <td>Year 3 rent</td>
-                          <td>{{data.year3Rent | sdltCurrency:"£"}}</td>
+                          <td id="td1Year3Rent">Year 3 rent</td>
+                          <td id="td2Year3Rent">{{data.year3Rent | sdltCurrency:"£"}}</td>
                       </tr>
                       <tr class="section" ng-if="displayYearFourRent">
-                          <td>Year 4 rent</td>
-                          <td>{{data.year4Rent | sdltCurrency:"£"}}</td>
+                          <td id="td1Year4Rent">Year 4 rent</td>
+                          <td id="td2Year4Rent">{{data.year4Rent | sdltCurrency:"£"}}</td>
                       </tr>    
                       <tr class="section" ng-if="displayYearFiveRent">
-                          <td>Year 5 rent</td>
-                          <td>{{data.year5Rent | sdltCurrency:"£"}}</td>
+                          <td id="td1Year5Rent">Year 5 rent</td>
+                          <td id="td2Year5Rent">{{data.year5Rent | sdltCurrency:"£"}}</td>
                       </tr>
                       <tr class="section" ng-if="data.holdingType === 'Leasehold'">
-                          <td>Highest 12 monthly rent</td>
-                          <td>{{data.highestRent | sdltCurrency:"£"}}</td>
+                          <td id="td1HighestRent">Highest 12 monthly rent</td>
+                          <td id="td2HighestRent">{{data.highestRent | sdltCurrency:"£"}}</td>
                       </tr>
                       <tr class="section" ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000">
-                          <td>Relevant rental figure</td>
-                          <td>{{data.relevantRent | sdltCurrency:"£"}}</td>
+                          <td id="td1RelevantRent">Relevant rental figure</td>
+                          <td id="td2RelevantRent">{{data.relevantRent | sdltCurrency:"£"}}</td>
                       </tr>
                   </tbody>
               </table>
@@ -83,9 +83,9 @@
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
-              <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-              <td>{{data.premium | sdltCurrency}}</td>
-              <td>{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
+              <td id="frNewEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
+              <td id="frNewPremium">{{data.premium | sdltCurrency}}</td>
+              <td id="frNewTotalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
             </tr>
           </tbody>
         </table>
@@ -105,9 +105,9 @@
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
-              <td>{{data.premium | sdltCurrency}}</td>
-              <td>{{data.result.freehold.residential.before.rate}}</td>
-              <td>{{data.result.freehold.residential.before.taxDue | sdltCurrency}}</td>
+              <td id="frOldPremium">{{data.premium | sdltCurrency}}</td>
+              <td id="frOldRate">{{data.result.freehold.residential.before.rate}}</td>
+              <td id="frOldTaxDue">{{data.result.freehold.residential.before.taxDue | sdltCurrency}}</td>
             </tr>
           </tbody>
         </table>
@@ -126,10 +126,10 @@
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
-              <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-              <td>{{data.premium | sdltCurrency}}</td>
-              <td>{{data.result.freehold.nonResidential.rate}}</td>
-              <td>{{data.result.freehold.nonResidential.taxDue | sdltCurrency}}</td>
+              <td id="fnEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
+              <td id="fnPremium">{{data.premium | sdltCurrency}}</td>
+              <td id="fnRate">{{data.result.freehold.nonResidential.rate}}</td>
+              <td id="fnTaxDue">{{data.result.freehold.nonResidential.taxDue | sdltCurrency}}</td>
             </tr>
           </tbody>
         </table>
@@ -143,19 +143,19 @@
           <tbody>            
             <tr class="section">
               <td>Total amount of tax for this transaction</td>
-              <td>{{data.result.leasehold.residential.from.totalTax | sdltCurrency:"£"}}</td>
+              <td id="lrNewTotalTax">{{data.result.leasehold.residential.from.totalTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Net present value</td>
-              <td>{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
+              <td id="lrNewNPV">{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>SDLT on rent</td>
-              <td>{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
+              <td id="lrNewRentTax">{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>SDLT on premium</td>
-              <td>{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
+              <td id="lrNewPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
         </table>
@@ -170,19 +170,19 @@
           <tbody>            
             <tr class="section">
               <td>Total amount of tax for this transaction</td>
-              <td>{{data.result.leasehold.residential.before.totalTax | sdltCurrency:"£"}}</td>
+              <td id="lrOldTotalTax">{{data.result.leasehold.residential.before.totalTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Net present value</td>
-              <td>{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
+              <td id="lrOldNPV">{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>SDLT on rent</td>
-              <td>{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
+              <td id="lrOldRentTax">{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td id="lrOldPremiumTaxLabel">SDLT on premium ({{data.result.leasehold.residential.before.rate}}%)</td>
-              <td>{{data.result.leasehold.residential.before.premiumTax | sdltCurrency:"£"}}</td>
+              <td id ="lrOldPremiumTax">{{data.result.leasehold.residential.before.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
         </table>
@@ -197,19 +197,19 @@
           <tbody>            
             <tr class="section">
               <td>Total amount of tax for this transaction</td>
-              <td>{{data.result.leasehold.nonResidential.totalTax | sdltCurrency:"£"}}</td>
+              <td id="lnTotalTax">{{data.result.leasehold.nonResidential.totalTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>Net present value</td>
-              <td>{{data.result.leasehold.nonResidential.npv | sdltCurrency:"£"}}</td>
+              <td id="lnNPV">{{data.result.leasehold.nonResidential.npv | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td>SDLT on rent</td>
-              <td>{{data.result.leasehold.nonResidential.rentTax | sdltCurrency:"£"}}</td>
+              <td id="lnRentTax">{{data.result.leasehold.nonResidential.rentTax | sdltCurrency:"£"}}</td>
             </tr>
             <tr class="section">
               <td id="lnPremiumTaxLabel">SDLT on premium ({{data.result.leasehold.nonResidential.premiumTaxRate}}%)</td>
-              <td>{{data.result.leasehold.nonResidential.premiumTax | sdltCurrency:"£"}}</td>
+              <td id="lnPremiumTax">{{data.result.leasehold.nonResidential.premiumTax | sdltCurrency:"£"}}</td>
             </tr>
           </tbody>
         </table>
