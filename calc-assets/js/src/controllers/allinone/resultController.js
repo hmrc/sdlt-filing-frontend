@@ -24,7 +24,8 @@
                 freehold  : {
                     residential : {
                         from : {},
-                        before : {}
+                        before : {},
+                        addProp : {}
                     },
                     nonResidential : {}
                 },
@@ -46,7 +47,8 @@
             if ($scope.data.holdingType === 'Freehold') {
                 if ($scope.data.propertyType === 'Residential') {
                     result.freehold.residential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
-                    result.freehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);                    
+                    result.freehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);
+                    result.freehold.residential.addProp = calculationService.calculate201604SecondHomeSlice($scope.data.premium);
                 }
                 else if ($scope.data.propertyType === 'Non-residential'){
                     result.freehold.nonResidential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, true); 
@@ -107,6 +109,15 @@
         $scope.effDateAfterCutOff = function(){
             var cutOffDate = new Date("December 4, 2014");
             return $scope.data.effectiveDate >= cutOffDate;
+        };
+
+        $scope.effDateAfterAprilCutOff = function(){
+            var cutOffDate = new Date("April 1, 2016");
+            return $scope.data.effectiveDate >= cutOffDate;
+        };
+
+        $scope.isAdditionalProperty = function(){
+            return $scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No' 
         };
 
         $scope.getHeading = function() {
