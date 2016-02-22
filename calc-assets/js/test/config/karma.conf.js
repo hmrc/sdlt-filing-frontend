@@ -76,7 +76,15 @@ module.exports = function (config)
 
         coverageReporter: {
             type: "html",
-            dir: "../../target/coverage-reports/"
+            dir: "../../target/coverage-reports/",
+            check: {
+                global: {
+                    statements: 99,
+                    functions: 99,
+                    branches: 99,
+                    lines: 99
+                }
+            }
         },
 
         customLaunchers: {

@@ -29,18 +29,26 @@
             result.isPropertyValid = hasError('propertyType');
             result.isEffectiveDateValid = hasError('effectiveDate');
             
-            // must have freehold
+            // if Freehold then must have premium
             if(data.holdingType === 'Freehold') {
                 result.isPurchasePriceValid = hasError('premium');
             }
 
-            // must have leasehold
+            // if Residential & >= 1/4/2016 then additional property question(s) required
+            if(data.propertyType === 'Residential' && data.effectiveDate >= new Date(2016, 4, 1)) {
+                result.isTwoOrMorePropertiesValid = hasError('twoOrMoreProperties');
+                if (data.twoOrMoreProperties === 'Yes') {
+                    result.isReplaceMainResidenceValid = hasError('replaceMainResidence');
+                }
+            }
+
+            // if Leasehold must have lease dates and appropriate number of rents
             if(data.holdingType === 'Leasehold') {
                 result.isStartDateValid = hasError('startDate');
                 result.isEndDateValid = hasError('endDate');
                 result.isPremiumValid = hasError('premium');
 
-                if (rent.displayYearOneRent) result.isYear1RentValid = hasError('year1Rent');
+                result.isYear1RentValid = hasError('year1Rent');
                 if (rent.displayYearTwoRent) result.isYear2RentValid = hasError('year2Rent');
                 if (rent.displayYearThreeRent) result.isYear3RentValid = hasError('year3Rent');
                 if (rent.displayYearFourRent) result.isYear4RentValid = hasError('year4Rent');

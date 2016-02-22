@@ -103,5 +103,147 @@
             });
 
         });
+
+        describe('Checking focus and clicking a radio button', function () {
+            beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
+
+                jasmine.addMatchers({
+                    toHaveFocus: function() {
+                        return {
+                            compare: function(actual) {
+                                return {
+                                    pass: document.activeElement === actual[0]
+                                };
+                            }
+                        };
+                    },
+                    toHaveClass: function() {
+                        return {
+                            compare: function(actual, className) {
+                                return {
+                                    pass: $(actual).hasClass(className)
+                                }; 
+                            }
+                        };
+                    },
+                    toNotHaveClass: function() {
+                        return {
+                            compare: function(actual, className) {
+                                return {
+                                    pass: !($(actual).hasClass(className))
+                                }; 
+                            }
+                        };
+                    }
+                });
+
+                mockScope = $rootScope.$new();
+                mockLoggingService = { logEvent: function() {} };
+                spyOn(mockLoggingService, 'logEvent');
+
+                controller = $controller(
+                    'mainController', 
+                    {
+                        $scope: mockScope,
+                        loggingService: mockLoggingService,
+                    });
+            }));
+
+            it("should have class 'add-focus selected' when focused", function () {
+                var element = $('<div id="main">' +
+                    '<label class="block-label" for="partner-no">' +
+                        '<input id="partner-no" ng-model="data.havePartner" name="partner" value="no" type="radio" required>No' +
+                    '</label>' +
+                    '<label class="block-label" for="partner-no">' +
+                        '<input id="partner-yes" ng-model="data.havePartner" name="partner" value="no" type="checkbox" required>Yes' +
+                    '</label>' +
+                '</div>');
+                element.appendTo(document.body);
+                $('#main').on(
+                    'focus click', 
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.addFocusToLabel
+                ).on(
+                    'change',
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.toggleFocus
+                ).on(
+                    'blur',
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.removeFocusFromLabel
+                );
+                $('#partner-no').focus();
+                expect($('#partner-no').closest('label')[0]).toHaveClass('add-focus selected');
+            });
+
+            it("should remove class 'add-focus selected' when blurred", function () {
+                var element = $('<div id="main">' +
+                    '<label class="block-label" for="partner-no">' +
+                        '<input id="partner-no" ng-model="data.havePartner" name="partner" value="no" type="radio" required>No' +
+                    '</label>' +
+                    '<label class="block-label" for="partner-no">' +
+                        '<input id="partner-yes" ng-model="data.havePartner" name="partner" value="no" type="checkbox" required>Yes' +
+                    '</label>' +
+                '</div>');
+                element.appendTo(document.body);
+                $('#main').on(
+                    'focus click', 
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.addFocusToLabel
+                ).on(
+                    'change',
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.toggleFocus
+                ).on(
+                    'blur',
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.removeFocusFromLabel
+                );
+                $('#partner-no').focus();
+                expect($('#partner-no').closest('label')[0]).toHaveClass('add-focus selected');
+                $('#partner-no').blur();
+                expect($('#partner-no').closest('label')[0]).toNotHaveClass('add-focus selected');
+                $('#partner-yes').focus();
+                expect($('#partner-yes').closest('label')[0]).toHaveClass('add-focus selected');
+                $('#partner-yes').click();
+                $('#partner-yes').blur();
+                expect($('#partner-yes').closest('label')[0]).toNotHaveClass('add-focus selected');
+            });
+
+            it("should toggle class 'add-focus selected' on change", function () {
+                var element = $('<div id="main">' +
+                    '<label class="block-label" for="partner-no">' +
+                        '<input id="partner-no" ng-model="data.havePartner" name="partner" value="no" type="radio" required>No' +
+                    '</label>' +
+                    '<label class="block-label" for="partner-no">' +
+                        '<input id="partner-yes" ng-model="data.havePartner" name="partner" value="no" type="checkbox" required>Yes' +
+                    '</label>' +
+                '</div>');
+                element.appendTo(document.body);
+                $('#main').on(
+                    'focus click', 
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.addFocusToLabel
+                ).on(
+                    'change',
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.toggleFocus
+                ).on(
+                    'blur',
+                    'label.block-label input[type=radio], label.block-label input[type=checkbox]',
+                    mockScope.removeFocusFromLabel
+                );
+                $('#partner-no').focus();
+                expect($('#partner-no').closest('label')[0]).toHaveClass('add-focus selected');
+                $('#partner-no').change();
+                expect($('#partner-no').closest('label')[0]).toNotHaveClass('add-focus selected');
+                $('#partner-yes').focus();
+                expect($('#partner-yes').closest('label')[0]).toHaveClass('add-focus selected');
+                $('#partner-yes').change();
+                expect($('#partner-no').closest('label')[0]).toNotHaveClass('add-focus selected');
+            });
+
+        });
+
     });
 }());
