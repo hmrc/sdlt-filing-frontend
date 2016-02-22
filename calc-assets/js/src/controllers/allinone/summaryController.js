@@ -39,7 +39,7 @@
         };
 
         $scope.displayAdditionalProperty = function() {
-            return !validator.isLessThanDate($scope.data.effectiveDate, new Date(2016, 3, 1));
+            return $scope.data.propertyType === "Residential" && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 3, 1)); // = 01/04/2016 !
         };
 
 

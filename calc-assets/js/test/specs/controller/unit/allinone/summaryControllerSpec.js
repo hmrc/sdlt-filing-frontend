@@ -601,18 +601,9 @@
                 mockDataService = { 
                     getModel : function() { 
                         return {
-                            holdingType : "Leasehold",
-                            propertyType : "Non-residential",
-                            leaseTerm : {
-                                years : 5
-                            },
-                            premium : "149999",
-                            year1Rent : "1",
-                            year2Rent : "2",
-                            year3Rent : "3",
-                            year4Rent : "4",
-                            year5Rent : "5",
-                            effectiveDate : new Date(2016, 3, 1)
+                            holdingType : "",
+                            propertyType : "",
+                            effectiveDate : undefined
                         }; 
                     },
                     updateModel : function(data) {
@@ -646,15 +637,55 @@
                 });
             }));
 
-            // on create
-            it('displayAdditionalProperty should be true when date is 01/04/2016', function () {
-                expect(mockScope.displayAdditionalProperty()).toEqual(true);
+            it('displayAdditionalProperty should be false when Freehold Residential and no date specified', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Residential";
+                expect(mockScope.displayAdditionalProperty()).toEqual(false);
             });
 
-            it('displayAdditionalProperty should be false when date is 31/03/2016', function () {
+            it('displayAdditionalProperty should be false when Freehold Residential and date is 31/03/2016', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Residential";
                 mockScope.data.effectiveDate = new Date(2016, 2, 31);
                 expect(mockScope.displayAdditionalProperty()).toEqual(false);
             });
+
+            it('displayAdditionalProperty should be true when Freehold Residential and date is 01/04/2016', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                expect(mockScope.displayAdditionalProperty()).toEqual(true);
+            });
+
+            it('displayAdditionalProperty should be false when Freehold Non-residential and date is 01/04/2016', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Non-residential";
+                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                expect(mockScope.displayAdditionalProperty()).toEqual(false);
+            });
+
+            it('displayAdditionalProperty should be false when Leasehold Residential and date is 31/03/2016', function () {
+                mockScope.data.holdingType = "Leasehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016, 2, 31);
+                expect(mockScope.displayAdditionalProperty()).toEqual(false);
+            });
+
+            it('displayAdditionalProperty should be true when Leasehold Residential and date is 01/04/2016', function () {
+                mockScope.data.holdingType = "Leasehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                expect(mockScope.displayAdditionalProperty()).toEqual(true);
+            });
+
+            it('displayAdditionalProperty should be false when Leasehold Non-residential and date is 01/04/2016', function () {
+                mockScope.data.holdingType = "Leasehold";
+                mockScope.data.propertyType = "Non-residential";
+                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                expect(mockScope.displayAdditionalProperty()).toEqual(false);
+            });
+
+
         });
 
     });
