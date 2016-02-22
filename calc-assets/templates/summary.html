@@ -45,7 +45,7 @@
                     </tr>
 
                     <!-- two or more properties -->
-                    <tr class="section" ng-if="new Date(data.effectiveDate) >= new Date('01/04/2016')">
+                    <tr class="section" ng-if="displayAdditionalProperty()">
                         <td class="previous-question-title" id="td1TwoOrMoreProperties">
                             <p class="{{validatedModel.isTwoOrMorePropertiesValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -57,7 +57,7 @@
                     </tr>
 
                     <!-- replacing main residence -->
-                    <tr class="section" ng-if="(new Date(data.effectiveDate) >= new Date(2016, 04, 01) && data.twoOrMoreProperties === 'Yes')">
+                    <tr class="section" ng-if="displayAdditionalProperty() && data.twoOrMoreProperties === 'Yes'">
                         <td class="previous-question-title" id="td1ReplaceMainResidence">
                             <p class="{{validatedModel.isReplaceMainResidenceValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>

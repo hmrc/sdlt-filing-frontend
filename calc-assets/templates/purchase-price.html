@@ -21,12 +21,12 @@
     <details>
         <summary ng-click="toggleHelp('chargeableConsideration','purchasePrice.chargeableConsideration')"><span class="summary">Is your chargeable consideration less than £40,000?</span></summary>
         <div class="panel-indent" ng-if="displayHelp('chargeableConsideration')">
-            <p>If the purchase price is £40,000 or under, then no SDLT is due and a return does not have to be filed.</p>
+            <p>If the purchase price is less than £40,000, then no SDLT is due and a return does not have to be filed.</p>
         </div>
     </details>
 
     <div class="form-group">
-        <button ng-click="submit()" class="button" id="next-price" type="submit">Continue</button>
+        <button ng-click="submit()" class="button" id="continue-button" type="submit">Continue</button>
     </div>
 
 </form>
