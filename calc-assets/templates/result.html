@@ -15,7 +15,7 @@
             <tr class="section">
               <td id="frAPEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
               <td id="frAPPremium">{{data.premium | sdltCurrency}}</td>
-              <td id="frAPTotalSDLT">{{data.result.freehold.residential.addProp.totalSDLT | sdltCurrency}}</td>
+              <td id="frAPTotalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
               <td id="frAPDetailedCalc"><a ng-click="viewDetails()" title="view detailed calculation" href="javascript:return false" id="frApDetailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
             </tr>
           </tbody>
@@ -25,6 +25,7 @@
 
     <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divFreeholdResidentialNew">
       <h2 ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>
+      <span ng-if="isAdditionalProperty()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2016.</span>
       <div class = "form-group">
         <table>
           <tbody>
@@ -36,7 +37,8 @@
             <tr class="section">
               <td id="frNewEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
               <td id="frNewPremium">{{data.premium | sdltCurrency}}</td>
-              <td id="frNewTotalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
+              <td ng-if="!isAdditionalProperty()" id="frNewTotalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
+              <td ng-if="isAdditionalProperty()" id="frNewTotalSDLT">{{data.result.freehold.residential.before.totalSDLT | sdltCurrency}}</td>
               <td id="frNewDetailedCalc"><a ng-click="viewDetails()" title="view detailed calculation" href="javascript:return false" id="frNewDetailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
             </tr>
           </tbody>
@@ -117,13 +119,15 @@
     </div>
 
     <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divLeaseholdResidentialNew"> 
-      <h2 ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>    
+      <h2 ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>  
+      <span ng-if="isAdditionalProperty()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2016.</span>  
       <div class = "form-group">
         <table>
           <tbody>            
             <tr class="section">
               <td>Total amount of tax for this transaction</td>
-              <td id="lrNewTotalTax">{{data.result.leasehold.residential.from.totalTax | sdltCurrency:"£"}}</td>
+              <td ng-if="!isAdditionalProperty()" id="lrNewTotalTax">{{data.result.leasehold.residential.from.totalTax | sdltCurrency:"£"}}</td>
+              <td ng-if="isAdditionalProperty()" id="lrNewTotalTax">{{data.result.leasehold.residential.before.totalTax | sdltCurrency:"£"}}</td>
               <td></td>
             </tr>
             <tr class="section">
@@ -138,7 +142,8 @@
             </tr>
             <tr class="section">
               <td>SDLT on premium</td>
-              <td id="lrNewPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
+              <td ng-if="!isAdditionalProperty()" id="lrNewPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
+              <td ng-if="isAdditionalProperty()" id="lrNewPremiumTax">{{data.result.leasehold.residential.before.premiumTax | sdltCurrency:"£"}}</td>
               <td id="lrDetailedCalc"><a ng-click="viewDetails()" href="javascript:return false" title="view detailed calculation" id="lrNewDetailedCalculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
             </tr>
           </tbody>
