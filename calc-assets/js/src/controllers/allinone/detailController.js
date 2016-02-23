@@ -5,6 +5,8 @@
 
     var detailController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
 
+        var validator = require("../../utilities/validator")();
+
         var init = require("../../utilities/initController");
         init($scope, $location, $anchorScroll, 'detail', dataService, navigationService);
 
