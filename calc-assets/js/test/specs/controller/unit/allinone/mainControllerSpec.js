@@ -104,6 +104,36 @@
 
         });
 
+        describe('Calling getHelpGA()', function () {
+
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockLoggingService = { logEvent: function() {} };
+                spyOn(mockLoggingService, 'logEvent');
+
+                controller = $controller(
+                    'mainController', 
+                    {
+                        $scope: mockScope,
+                        loggingService: mockLoggingService
+                    });
+            }));
+
+            it('should call the getHelpGA function when expanding the "get help" section', function () {
+                mockScope.getHelpGA();
+                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
+            });
+
+            it('should call the getHelpGA function when colapsing the "get help" section', function () {
+                // User expanded "get help" then colapsed it.
+                mockScope.getHelpGA();
+                mockScope.getHelpGA();
+                expect(mockLoggingService.logEvent.calls.count()).toEqual(2);
+            });
+
+        });
+
         describe('Checking focus and clicking a radio button', function () {
             beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
 
