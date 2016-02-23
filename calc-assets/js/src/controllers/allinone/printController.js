@@ -21,6 +21,15 @@
             return $scope.data.effectiveDate >= cutOffDate;
         };
 
+        $scope.effDateAfterAprilCutOff = function(){
+            var cutOffDate = new Date("April 1, 2016");
+            return $scope.data.effectiveDate >= cutOffDate;
+        };
+
+        $scope.isAdditionalProperty = function(){
+            return ($scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No') && $scope.effDateAfterAprilCutOff();
+        };
+
         $scope.getHeading = function() {
             if($scope.effDateAfterCutOff()) {
                 return "Results based on SDLT rules before 4 December 2014";
