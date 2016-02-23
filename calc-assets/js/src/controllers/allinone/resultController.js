@@ -70,7 +70,7 @@
             }
             else if ($scope.data.holdingType === 'Leasehold') {
                 var rentTax = -1;
-                var rentsArray = [rent.displayYearOneRent ? parseFloat($scope.data.year1Rent) : 0, rent.displayYearTwoRent ? parseFloat($scope.data.year2Rent) : 0, rent.displayYearThreeRent ? parseFloat($scope.data.year3Rent) : 0, rent.displayYearFourRent ? parseFloat($scope.data.year4Rent) : 0, rent.displayYearFiveRent ? parseFloat($scope.data.year5Rent) : 0];
+                var rentsArray = [parseFloat($scope.data.year1Rent), rent.displayYearTwoRent ? parseFloat($scope.data.year2Rent) : 0, rent.displayYearThreeRent ? parseFloat($scope.data.year3Rent) : 0, rent.displayYearFourRent ? parseFloat($scope.data.year4Rent) : 0, rent.displayYearFiveRent ? parseFloat($scope.data.year5Rent) : 0];
                 var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
                 
 

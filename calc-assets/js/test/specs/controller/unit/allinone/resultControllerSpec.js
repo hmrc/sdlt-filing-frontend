@@ -883,14 +883,6 @@
     });
 
 
-
-
-
-
-
-
-
-
 describe('Result Controller with valid data - Leasehold and Non-residential and relevantRent defined - looks for year2Rent<2000', function () {
         
         var controller, 
@@ -1000,13 +992,6 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
     });
 
 
-
-
-
-
-
-
-
 describe('Result Controller with valid data - Leasehold and Non-residential and relevantRent defined - looks for year3Rent<2000', function () {
         
         var controller, 
@@ -1114,9 +1099,6 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
             expect(mockScope.data.result.leasehold.nonResidential.totalTax).toEqual(50);
         });      
     });
-
-
-
 
 
 describe('Result Controller with valid data - Leasehold and Non-residential and relevantRent defined - looks for year4Rent<2000', function () {
