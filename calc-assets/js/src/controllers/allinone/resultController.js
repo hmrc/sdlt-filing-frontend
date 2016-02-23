@@ -18,8 +18,13 @@
             navigationService.printView($scope.data, $location);
         };
 
+        $scope.effDateAfterAprilCutOff = function(){
+            var cutOffDate = new Date("April 1, 2016");
+            return $scope.data.effectiveDate >= cutOffDate;
+        };
+
         $scope.isAdditionalProperty = function(){
-            return $scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No';
+            return ($scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No') && $scope.effDateAfterAprilCutOff();
         };
 
         var rent = require("../../utilities/displayLeasedYearRentFields");
@@ -133,10 +138,6 @@
             return $scope.data.effectiveDate >= cutOffDate;
         };
 
-        $scope.effDateAfterAprilCutOff = function(){
-            var cutOffDate = new Date("April 1, 2016");
-            return $scope.data.effectiveDate >= cutOffDate;
-        };
 
         $scope.getHeading = function() {
             if($scope.effDateAfterCutOff()) {
