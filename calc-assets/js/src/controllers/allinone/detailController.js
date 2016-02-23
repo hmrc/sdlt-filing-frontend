@@ -19,10 +19,10 @@
         };
 
         $scope.isAdditionalProperty = function() {
-            return $scope.data.propertyType === "Residential"
-                && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 3, 1)) // = 01/04/2016 !
-                && $scope.data.twoOrMoreProperties == "Yes"
-                && $scope.data.replaceMainResidence == "No";
+            return $scope.data.propertyType === "Residential" &&
+                validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 3, 1)) && // = 01/04/2016 !
+                $scope.data.twoOrMoreProperties == "Yes" &&
+                $scope.data.replaceMainResidence == "No";
         };
     };
 
