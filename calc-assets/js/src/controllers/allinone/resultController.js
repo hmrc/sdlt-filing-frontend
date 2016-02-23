@@ -10,6 +10,7 @@
 
         $scope.viewDetails = function(latestOrPrevious) {
             $scope.data.latestOrPrevious = latestOrPrevious;
+            dataService.updateModel($scope.data);
             navigationService.viewDetails($scope.data, $location);
         };
 
