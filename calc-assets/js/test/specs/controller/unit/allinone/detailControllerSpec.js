@@ -117,6 +117,80 @@
         });
     });
 
+    describe('Calling isAdditionalProperty()', function () {
+
+        var controller,
+            mockScope,
+            mockDataService,
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+            
+            mockDataService = {
+                getModel : function() {
+                    return {
+                        holdingType : "",
+                        propertyType : "",
+                        effectiveDate : undefined,
+                        twoOrMoreProperties : "",
+                        replaceMainResidence : ""
+                    };
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = {
+                logView : function() {},
+                printView : function() {}
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculateNonResidentialPremiumSlab: function() {}
+            };
+
+            spyOn(mockNavigationService, 'printView');
+
+            controller = $controller('detailController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+
+            mockScope.printView({});
+        }));
+
+        it('should return true for Res, > 1/4/2016, 2orMore is Yes, replMainRes is No', function() {
+            mockScope.data.propertyType = "Residential";
+            mockScope.data.effectiveDate = new Date(2016,3,1);
+            mockScope.data.twoOrMoreProperties = "Yes";
+            mockScope.data.replaceMainResidence = "No";
+            expect(mockScope.isAdditionalProperty()).toEqual(true);
+        });
+
+        it('should return false for Res, > 1/4/2016, 2orMore is Yes, replMainRes is Yes', function() {
+            mockScope.data.propertyType = "Residential";
+            mockScope.data.effectiveDate = new Date(2016,3,1);
+            mockScope.data.twoOrMoreProperties = "Yes";
+            mockScope.data.replaceMainResidence = "Yes";
+            expect(mockScope.isAdditionalProperty()).toEqual(false);
+        });
+    });
+
     describe('Detail Controller with invalid data', function () {
         
         var controller, 
