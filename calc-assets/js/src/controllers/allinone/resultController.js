@@ -77,8 +77,8 @@
                         result.leasehold.residential.from = calculationService.calculate201604SecondHomeSlice($scope.data.premium);
                         fromPremiumTax = result.leasehold.residential.from.totalSDLT;
 
-                        result.leasehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium); 
-                        beforePremiumTax = result.leasehold.residential.before.taxDue;
+                        result.leasehold.residential.before = calculationService.calculateResidentialPremiumSlice($scope.data.premium); 
+                        beforePremiumTax = result.leasehold.residential.before.totalSDLT;
                     } else {
                         result.leasehold.residential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
                         fromPremiumTax = result.leasehold.residential.from.totalSDLT;
