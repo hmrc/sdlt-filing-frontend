@@ -175,6 +175,7 @@
                     return {
                         holdingType : "Freehold",
                         propertyType : "Residential",
+                        effectiveDate : new Date(2016, 3, 1),
                         twoOrMoreProperties : "Yes",
                         replaceMainResidence : "No"
                     }; 
@@ -444,6 +445,7 @@
                     return {
                         holdingType : "Leasehold",
                         propertyType : "Residential",
+                        effectiveDate : new Date(2016, 3, 1),
                         twoOrMoreProperties : "Yes",
                         replaceMainResidence : "No",
                         leaseTerm : {
@@ -528,8 +530,8 @@
             expect(mockScope.data.result.leasehold.residential.rentTax).toEqual(30);
         });
 
-        it('should set the result leasehold before April residential premiumTax to 40 (The value returned by stubbed calculateResidentialPremiumSlab)', function () {
-            expect(mockScope.data.result.leasehold.residential.before.premiumTax).toEqual(40);
+        it('should set the result leasehold before April residential premiumTax to 20 (The value returned by stubbed calculateResidentialPremiumSlab)', function () {
+            expect(mockScope.data.result.leasehold.residential.before.premiumTax).toEqual(20);
         });   
 
         it('should set the result leasehold after April residential premiumTax to 60 (The value returned by stubbed calculate201604SecondHomeSlice)', function () {
@@ -537,7 +539,7 @@
         });  
 
         it('should set the result leasehold before April residential totalTax to the sum of the rentTax and premiumTax', function () {
-            expect(mockScope.data.result.leasehold.residential.before.totalTax).toEqual(70);
+            expect(mockScope.data.result.leasehold.residential.before.totalTax).toEqual(50);
         });      
 
         it('should set the result leasehold after April residential totalTax to the sum of the rentTax and premiumTax', function () {
