@@ -154,6 +154,88 @@
         });
     });
 
+    describe('Result Controller with valid data - Freehold and Residential - Additional property', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        propertyType : "Residential",
+                        twoOrMoreProperties : "Yes",
+                        replaceMainResidence : "No"
+                    }; 
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculateResidentialPremiumSlice: function() {},
+                calculate201604SecondHomeSlice: function() {},
+                calculateResidentialPremiumSlab: function() {}
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlice');
+            spyOn(mockCalculationService, 'calculate201604SecondHomeSlice');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
+            spyOn(mockDataService, 'updateModel');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should make 1 call to dataService.getModel', function () {
+            expect(mockDataService.getModel.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to navigationService.logView', function () {
+            expect(mockNavigationService.logView.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to calculationService.calculateResidentialPremiumSlice', function () {
+            expect(mockCalculationService.calculateResidentialPremiumSlice.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to calculationService.calculate201604SecondHomeSlice', function () {
+            expect(mockCalculationService.calculate201604SecondHomeSlice.calls.count()).toEqual(1);
+        });
+        
+        it('should make 1 call to dataService.updateModel', function () {
+            expect(mockDataService.updateModel.calls.count()).toEqual(1);
+        });
+    });
+
     describe('Result Controller with valid data - Freehold and Non-residential', function () {
         
         var controller, 
@@ -338,6 +420,128 @@
 
         it('should set the result leasehold after December residential totalTax to the sum of the rentTax and premiumTax', function () {
             expect(mockScope.data.result.leasehold.residential.from.totalTax).toEqual(50);
+        });      
+    });
+
+    describe('Result Controller with valid data - Leasehold and Residential with years set as 1 - Additional property', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Leasehold",
+                        propertyType : "Residential",
+                        twoOrMoreProperties : "Yes",
+                        replaceMainResidence : "No",
+                        leaseTerm : {
+                            years : 1,
+                            days : 0,
+                            daysInPartialYear : 0
+                        },
+                        premium : 10,
+                        result : {}
+                    }; 
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculate201604SecondHomeSlice: function() {
+                    return {
+                        totalSDLT: 60
+                    };
+                },
+                calculateResidentialPremiumSlice: function() {
+                    return {
+                        totalSDLT : 20
+                    };
+                },
+                calculateResidentialPremiumSlab: function() {
+                    return {
+                        taxDue : 40
+                    };
+                },
+                calculateResidentialLeaseSlice: function() {
+                    return {
+                        totalSDLT : 30
+                    };
+                },
+                calculateNPV: function() {
+                    return 10;
+                }
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockDataService, 'updateModel');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should make 1 call to dataService.getModel', function () {
+            expect(mockDataService.getModel.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to navigationService.logView', function () {
+            expect(mockNavigationService.logView.calls.count()).toEqual(1);
+        });
+        
+        it('should make 1 call to dataService.updateModel', function () {
+            expect(mockDataService.updateModel.calls.count()).toEqual(1);
+        });
+
+        it('should set the result leasehold residential NPV to 10 (The value returned by stubbed calculateNPV)', function () {
+            expect(mockScope.data.result.leasehold.residential.npv).toEqual(10);
+        });
+
+        it('should set the result leasehold residential rentTax to 30 (The value returned by stubbed calculateResidentialLeaseSlice)', function () {
+            expect(mockScope.data.result.leasehold.residential.rentTax).toEqual(30);
+        });
+
+        it('should set the result leasehold before April residential premiumTax to 40 (The value returned by stubbed calculateResidentialPremiumSlab)', function () {
+            expect(mockScope.data.result.leasehold.residential.before.premiumTax).toEqual(40);
+        });   
+
+        it('should set the result leasehold after April residential premiumTax to 60 (The value returned by stubbed calculate201604SecondHomeSlice)', function () {
+            expect(mockScope.data.result.leasehold.residential.from.premiumTax).toEqual(60);
+        });  
+
+        it('should set the result leasehold before April residential totalTax to the sum of the rentTax and premiumTax', function () {
+            expect(mockScope.data.result.leasehold.residential.before.totalTax).toEqual(70);
+        });      
+
+        it('should set the result leasehold after April residential totalTax to the sum of the rentTax and premiumTax', function () {
+            expect(mockScope.data.result.leasehold.residential.from.totalTax).toEqual(90);
         });      
     });
 
@@ -1508,6 +1712,76 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         });
     });
 
+    describe('calling effDateAfterAprilCutoff with date after April cut-off date', function () {
+
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            mockLocation,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+            
+            mockLocation = $location;
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        leaseTerm : "banana",
+                        effectiveDate : new Date("April 4, 2016")
+                    };  
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : mockLocation,
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should return true for effectiveDateAfterCutOff() if Effective Date is 04/04/2016', function () {
+            expect(mockScope.effDateAfterAprilCutOff()).toEqual(true);
+        });
+
+    });
+
+
+
     describe('calling effDateAfterCutoff and getHeading with date on cut-off date', function () {
 
         var controller, 
@@ -1577,6 +1851,75 @@ describe('Result Controller with valid data - Leasehold and Non-residential and 
         it('should return correct text for getHeading() if Effective Date is 04/12/2014', function () {
             expect(mockScope.getHeading()).toEqual("Results based on SDLT rules before 4 December 2014");
         });
+    });
+
+
+    describe('calling effDateAfterCutoff with date on April cut-off date', function () {
+
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            mockLocation,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope, $location) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+            
+            mockLocation = $location;
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        leaseTerm : "banana",
+                        effectiveDate : new Date("April 1, 2016")
+                    };  
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calculateResidentialPremiumSlice: function() {},
+                calculateResidentialPremiumSlab: function() {},
+                calculateNonResidentialPremiumSlab: function() {},
+                calculateResidentialLeaseSlice: function() {},
+                calculateNonResidentialLeaseSlice: function() {}
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockCalculationService, 'calculateResidentialPremiumSlab');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : mockLocation,
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should return true for effectiveDateAfterCutOff() if Effective Date is 01/04/2016', function () {
+            expect(mockScope.effDateAfterCutOff()).toEqual(true);
+        });
+
     });
 
 
