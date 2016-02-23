@@ -225,6 +225,63 @@
     });
 
 
+    describe('calling effDateAfterCutoff with date on April cut-off date', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+            
+            mockDataService = { 
+                getModel : function() { return {
+                    effectiveDate : new Date("April 1, 2016"),
+                    twoOrMoreProperties : "Yes",
+                    replaceMainResidence : "No"
+                }; }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+                        
+            controller = $controller('printController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+            });
+        }));
+
+        it('should return true for effectiveDateAfterCutOff() if Effective Date is 01/04/2016', function () {
+            expect(mockScope.effDateAfterAprilCutOff()).toEqual(true);
+        });
+
+        it('should return true for isAdditionalProperty() if Yes No', function() {
+            expect(mockScope.isAdditionalProperty()).toEqual(true);
+        });
+
+    });
+
+
     describe('calling effDateAfterCutoff and getHeading with date after cut-off date', function () {
         
         var controller, 
