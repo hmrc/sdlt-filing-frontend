@@ -18,7 +18,7 @@
                           <td id="td1EffectiveDate">Effective date of transaction</td>
                           <td id="td2EffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
                       </tr>
-                      <tr class="section" ng-if="effDateAfterAprilCutOff()">
+                      <tr class="section" ng-if="effDateAfterAprilCutOff() && data.propertyType === 'Residential'">
                           <td id="td1TwoOrMoreProperties">Additional residential property</td>
                           <td id="td2TwoOrMoreProperties">{{data.twoOrMoreProperties}}</td>
                       </tr>
@@ -81,7 +81,7 @@
     </div>
 
     <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterAprilCutOff() && isAdditionalProperty()" id="divFreeholdResidentialAP">
-      <h2 class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules from 1 April 2016</h2>
+      <h2 id="frAPHeading" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules from 1 April 2016</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -101,8 +101,8 @@
     </div>
 
     <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divFreeholdResidentialNew">
-      <h2 ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
-      <h2 ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>
+      <h2 id="frNewHeading" ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
+      <h2 id="frNewHeading" ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>
       <span ng-if="isAdditionalProperty()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.</span>
       <div class = "form-group">
         <table>
@@ -125,7 +125,7 @@
 
 
     <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && !effDateAfterCutOff()"  id="divFreeholdResidentialOld">
-      <h2 class="heading-medium blue-bottom-border FR-subtitle-before">{{getHeading()}}</h2>
+      <h2 id="frOldHeading" class="heading-medium blue-bottom-border FR-subtitle-before">{{getHeading()}}</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -145,7 +145,7 @@
     </div>
 
     <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'" id="divFreeholdNonResidential">
-      <h2 class="heading-medium blue-bottom-border FR-subtitle-before">{{getHeading()}}</h2>
+      <h2 id="fnHeading" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
       <div class = "form-group">
         <table>
           <tbody>
@@ -167,7 +167,7 @@
     </div>
 
     <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff() && isAdditionalProperty()" id="divLeaseholdResidentialAP"> 
-      <h2 ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules from 1 April 2016</h2>    
+      <h2 id="lrAPHeading" ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules from 1 April 2016</h2>    
       <div class = "form-group">
         <table>
           <tbody>            
@@ -197,8 +197,8 @@
     </div>
 
     <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divLeaseholdResidentialNew"> 
-      <h2 ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
-      <h2 ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>  
+      <h2 id="lrNewHeading" ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
+      <h2 id="lrNewHeading" ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>  
       <span ng-if="isAdditionalProperty()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.</span>  
       <div class = "form-group">
         <table>
@@ -232,7 +232,7 @@
 
 
     <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && !effDateAfterCutOff()"  id="divLeaseholdResidentialOld">
-       <h2 class="heading-medium blue-bottom-border LR-subtitle-before">{{getHeading()}}</h2>
+      <h2 id="lrOldHeading" class="heading-medium blue-bottom-border LR-subtitle-before">{{getHeading()}}</h2>
       <div class = "form-group">
         <table>
           <tbody>                  
@@ -258,7 +258,7 @@
     </div>
 
     <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'" id="divLeaseholdNonResidential">
-      <h2 class="heading-medium blue-bottom-border LR-subtitle-before">{{getHeading()}}</h2>
+      <h2 id="lnHeading" class="heading-medium blue-bottom-border LR-subtitle-before">Result</h2>
       <div class = "form-group">
         <table>
           <tbody>            
