@@ -35,7 +35,7 @@
             })
 
             .when('/additional-property', {
-                title : 'Additional property',
+                title : 'Additional residential properties',
                 templateUrl : 'additional-property.html',
                 controller  : 'additionalPropertyController',
                 reloadOnSearch: false
