@@ -85,7 +85,7 @@
                 location.path('/additional-property');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('additionalPropertyController');
-                expect(route.current.title).toBe('Additional property');
+                expect(route.current.title).toBe('Additional residential properties');
             });
         });
 
