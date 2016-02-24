@@ -53,11 +53,13 @@
         <table>
           <tbody>
             <tr class="section">
+              <th>Effective Date</th>
               <th>Purchase price (&pound;)</th>
               <th>Percentage rate (%)</th>
               <th>Total SDLT due (&pound;)</th>
             </tr>
             <tr class="section">
+              <td id="frOldEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
               <td id="frOldPremium">{{data.premium | sdltCurrency}}</td>
               <td id="frOldRate">{{data.result.freehold.residential.before.rate}}</td>
               <td id="frOldTaxDue">{{data.result.freehold.residential.before.taxDue | sdltCurrency}}</td>
