@@ -101,6 +101,7 @@
     </div>
 
     <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divFreeholdResidentialNew">
+      <h2 ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
       <h2 ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>
       <span ng-if="isAdditionalProperty()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.</span>
       <div class = "form-group">
@@ -188,6 +189,7 @@
             <tr class="section">
               <td>SDLT on premium</td>
               <td id="lrAPPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
+              <td></td>
             </tr>
           </tbody>
         </table>
@@ -195,6 +197,7 @@
     </div>
 
     <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divLeaseholdResidentialNew"> 
+      <h2 ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
       <h2 ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>  
       <span ng-if="isAdditionalProperty()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.</span>  
       <div class = "form-group">
@@ -220,6 +223,7 @@
               <td>SDLT on premium</td>
               <td ng-if="!isAdditionalProperty()" id="lrNewPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
               <td ng-if="isAdditionalProperty()" id="lrNewPremiumTax">{{data.result.leasehold.residential.before.premiumTax | sdltCurrency:"£"}}</td>
+              <td></td>
             </tr>
           </tbody>
         </table>
