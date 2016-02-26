@@ -40,7 +40,9 @@
               </div>
           </fieldset>
       </div>
+    </div>
 
+    <div ng-show="data.twoOrMoreProperties === 'Yes'">
       <details>
           <summary ng-click="toggleHelp('sellCurrentResidence', 'AdditionalProperty.SellCurrentResidence')"<span class="summary">Do you intend to sell your current main residence?</span></summary>
           <div class="panel-indent" ng-show="displayHelp('sellCurrentResidence')">
