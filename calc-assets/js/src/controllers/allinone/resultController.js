@@ -9,11 +9,8 @@
         init($scope, $location, $anchorScroll, 'result', dataService, navigationService);
 
 
-
-
-
-
-        $scope.data.resultTest = [{
+        $scope.data.resultTest = [
+            {
                 resultHeading : "Results based on SDLT rules from 1 April 2016",
                 resultHint : undefined,
                 totalTax : 6000,
@@ -29,10 +26,29 @@
                         {"from": 925000, "to": 1500000, "rate": 13, "taxDue": 0},
                         {"from": 1500000, "to": -1, "rate": 15, "taxDue": 0}
                     ]
-
                 },
                 rentTax : undefined
-            }];
+            },
+            {
+                resultHeading : "Results based on SDLT rules before 1 April 2016",
+                resultHint : "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.",
+                totalTax : 3000,
+                npv : undefined,
+                premiumTax : {
+                    calcType : "slice",
+                    detailHeading : "This is a breakdown of how the amount of SDLT was calculated based on the rules before 1 April 2016",
+                    taxDue : 3000,
+                    slices : [
+                        {"from": 0, "to": 125000, "rate": 0, "taxDue": 0},
+                        {"from": 125000, "to": 250000, "rate": 2, "taxDue": 1000},
+                        {"from": 250000, "to": 925000, "rate": 5, "taxDue": 2000},
+                        {"from": 925000, "to": 1500000, "rate": 10, "taxDue": 0},
+                        {"from": 1500000, "to": -1, "rate": 12, "taxDue": 0}
+                    ]
+                },
+                rentTax : undefined
+            }
+        ];
 
 
 
