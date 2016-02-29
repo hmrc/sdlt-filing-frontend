@@ -8,8 +8,9 @@
         var init = require("../../utilities/initController");
         init($scope, $location, $anchorScroll, 'result', dataService, navigationService);
 
-        $scope.viewDetails = function(latestOrPrevious) {
-            $scope.data.latestOrPrevious = latestOrPrevious;
+        $scope.viewDetails = function(resultIndex, taxCalcIndex) {
+            $scope.data.resultIndex = resultIndex;
+            $scope.data.taxCalcIndex = taxCalcIndex;
             dataService.updateModel($scope.data);
             navigationService.viewDetails($scope.data, $location);
         };
