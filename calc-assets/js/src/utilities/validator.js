@@ -77,7 +77,7 @@
             return parseFloat(value) > parseFloat(float);
         };
 
-        var relevantRentCheck = function(rentArray) {
+        var checkForRentAbove2000 = function(rentArray) {
             for(var i = 0; i < rentArray.length; i++){
                 if(rentArray[i] >= 2000){
                     return false;
@@ -104,7 +104,7 @@
             isGreaterThanOrEqualToDate : isGreaterThanOrEqualToDate,
             isGreaterThanInteger : isGreaterThanInteger,
             isGreaterThanFloat : isGreaterThanFloat,
-            relevantRentCheck : relevantRentCheck
+            checkForRentAbove2000 : checkForRentAbove2000
         };
 
     };
