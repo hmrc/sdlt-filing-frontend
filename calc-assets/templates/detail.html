@@ -1,36 +1,31 @@
 <h1>{{title}}</h1>
-
-<form name="detailForm" class="form">
-    <div>
-        {{data.detailType === 'premiumTax' ? taxDetail = data.result[data.detailIndex].premiumTax : taxDetail =  data.result[data.detailIndex].rentTax;"" }}
-      <h2 id="detailHeading" class="heading-medium blue-bottom-border">
-        {{taxDetail.detailHeading}}
-      </h2>
-      <table>
-          <tbody>
-            <tr class="section">
-              <th>Purchase price bands (£)</th>
-              <th>Percentage rate (%)</th>
-              <th>SDLT due (£)</th>
-            </tr>
-            <tr class="section" ng-repeat="slice in taxDetail.slices">
-              <td id="{{'band'+($index+1)+'Range'}}" ng-if="$first">Up to {{slice.to | sdltCurrency}}</td>
-              <td id="{{'band'+($index+1)+'Range'}}" ng-if="$middle">Above {{slice.from | sdltCurrency}} and up to {{slice.to | sdltCurrency}}</td>
-              <td id="{{'band'+($index+1)+'Range'}}" ng-if="$last">Above {{slice.from | sdltCurrency}}</td>
-              <td id="{{'band'+($index+1)+'Rate'}}">{{slice.rate}}</td>
-              <td id="{{'band'+($index+1)+'Tax'}}">{{slice.taxDue | sdltCurrency}}</td>
-            </tr>
-            <tr class="section">
-              <td>&nbsp;</td>
-              <td>Total SDLT due</td>
-              <td id="totalSDLT">{{taxDetail.totalTax | sdltCurrency}}</td>
-            </tr>
-          </tbody>
-        </table>
-    </div>
-
-    <div class="form-group">
-        <p>You can <a ng-click="printView()" id="print-calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'detail.printView'); return false;">print your calculation</a>.</p>
-        <p>Go to the <a id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax" title="opens in a new window" onClick="ga('send', 'event', 'link', 'click', 'detail.govuk')" rel="external" target="_blank">GOV.UK</a> homepage for SDLT.</p>
-    </div>
-</form>
+<div>
+  <h2 id="detailHeading" class="heading-medium blue-bottom-border">
+    {{data.result[data.detailIndex].taxCalcs[data.taxCalcIndex].detailHeading}}
+  </h2>
+  <table>
+      <tbody>
+        <tr class="section">
+          <th>{{data.result[data.detailIndex].taxCalcs[data.taxCalcIndex].bandHeading}} (&pound;)</th>
+          <th>Percentage rate (%)</th>
+          <th>SDLT due (&pound;)</th>
+        </tr>
+        <tr class="section" ng-repeat="slice in data.result[data.detailIndex].taxCalcs[data.taxCalcIndex].slices">
+          <td id="{{'band'+($index+1)+'Range'}}" ng-if="$first">Up to {{slice.to | sdltCurrency}}</td>
+          <td id="{{'band'+($index+1)+'Range'}}" ng-if="$middle">Above {{slice.from | sdltCurrency}} and up to {{slice.to | sdltCurrency}}</td>
+          <td id="{{'band'+($index+1)+'Range'}}" ng-if="$last">Above {{slice.from | sdltCurrency}}+</td>
+          <td id="{{'band'+($index+1)+'Rate'}}">{{slice.rate}}</td>
+          <td id="{{'band'+($index+1)+'Tax'}}">{{slice.taxDue | sdltCurrency}}</td>
+        </tr>
+        <tr class="section">
+          <td>&nbsp;</td>
+          <td>Total SDLT due</td>
+          <td id="totalSDLT">{{data.result[data.detailIndex].taxCalcs[data.taxCalcIndex].totalTax | sdltCurrency}}</td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+<div>
+    <p>You can <a ng-click="printView()" id="print-calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'detail.printView'); return false;">print your calculation</a>.</p>
+    <p>Go to the <a id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax" title="opens in a new window" onClick="ga('send', 'event', 'link', 'click', 'detail.govuk')" rel="external" target="_blank">GOV.UK</a> homepage for SDLT.</p>
+</div>
