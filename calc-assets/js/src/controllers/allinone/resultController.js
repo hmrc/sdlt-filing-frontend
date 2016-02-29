@@ -6,7 +6,7 @@
     var resultController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, calculationService) {
 
         var init = require("../../utilities/initController");
-        init($scope, $location, $anchorScroll, 'result', dataService, navigationService);        
+        init($scope, $location, $anchorScroll, 'result', dataService, navigationService);
 
         $scope.viewDetails = function(resultIndex, taxCalcIndex) {
             $scope.data.resultIndex = resultIndex;
