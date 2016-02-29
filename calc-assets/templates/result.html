@@ -2,60 +2,58 @@
 
 <form name="resultForm" class="form">
 
-<div ng-if="data.holdingType === 'Freehold'">
-  <div ng-repeat="result in data.resultTest">
-    <h2>{{result.resultHeading}}</h2>
-    <span class="form-hint">{{result.resultHint}}</span>
-    <div class="form-group">
-      <table>
-        <tbody>
-          <tr class="section">
-            <th>Effective date</th>
-            <th>Purchase price (&pound;)</th>
-            <th colspan="2">Total SDLT due (&pound;)</th>
-          </tr>
-          <tr class="setion">
-            <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-            <td>{{data.premium | sdltCurrency}}</td>
-            <td>{{result.totalTax | sdltCurrency}}</td>
-            <td><a ng-click="viewDetails('latest')" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<div ng-if="data.holdingType === 'Leasehold'">
-  <div ng-repeat="result in data.resultTest">
-    <h2>{{result.resultHeading}}</h2>
-    <span class="form-hint">{{result.resultHint}}</span>
-    <div class="form-group">
-      <table>
-        <tbody>
-          <tr class="section">
-            <td>Total amount of tax for this transaction</td>
-            <td>{{result.totalTax | sdltCurrency:"£"}}</td>
-            <td></td>
-          </tr>
-          <tr class="section">
-            <td>Net present value</td>
-            <td id="lrAPNPV">{{result.npv | sdltCurrency:"£"}}</td>
-            <td></td>
-          </tr>
-          <tr class="section">
-            <td>SDLT on rent</td>
-            <td>{{result.rentTax | sdltCurrency:"£"}}</td>
-            <td></td>
-          </tr>
-          <tr class="section">
-            <td>SDLT on premium</td>
-            <td>{{result.premiumTax | sdltCurrency:"£"}}</td>
-            <td><a ng-click="viewDetails('latest')" href="javascript:return false" title="view detailed calculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<div ng-repeat="result in data.resultTest">
+  <h2>{{result.resultHeading}}</h2>
+  <span class="form-hint">{{result.resultHint}}</span>
+  <div class="form-group">
+    <table ng-if="data.holdingType === 'Freehold'">
+      <tbody ng-if="result.taxCalcs[0].calcType === 'slice'">
+        <tr class="section">
+          <th>Effective date</th>
+          <th>Purchase price (&pound;)</th>
+          <th colspan="2">Total SDLT due (&pound;)</th>
+        </tr>
+        <tr class="setion">
+          <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
+          <td>{{data.premium | sdltCurrency}}</td>
+          <td>{{result.totalTax | sdltCurrency}}</td>
+          <td><a ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
+        </tr>
+      </tbody>
+      <tbody ng-if="result.taxCalcs[0].calcType === 'slab'">
+        <tr class="section">
+          <th>Effective date</th>
+          <th>Purchase price (&pound;)</th>
+          <th>Percentage rate (%)</th>
+          <th>Total SDLT due (&pound;)</th>
+        </tr>
+        <tr class="setion">
+          <td>{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
+          <td>{{data.premium | sdltCurrency}}</td>
+          <td>{{result.premiumTax.rate | sdltCurrency}}</td>
+          <td>{{result.totalTax | sdltCurrency}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <table ng-if="data.holdingType === 'Leasehold'">
+      <tbody>
+        <tr class="section">
+          <td>Total amount of tax for this transaction</td>
+          <td>{{result.totalTax | sdltCurrency:"£"}}</td>
+          <td></td>
+        </tr>
+        <tr class="section">
+          <td>Net present value</td>
+          <td>{{result.npv | sdltCurrency:"£"}}</td>
+          <td></td>
+        </tr>
+        <tr ng-repeat="tax in result.taxCalcs" class="section">
+          <td>SDLT on {{tax.taxFor}} <span ng-if="tax.calcType === 'slab'">({{tax.rate}}%)</span></td>
+          <td>{{result.rentTax | sdltCurrency:"£"}}</td>
+          <td><a ng-if="tax.calcType === 'slice'" ng-click="viewDetails($parent.$index, $index)" href="javascript:return false" title="view detailed calculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
