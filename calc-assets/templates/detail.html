@@ -1,16 +1,16 @@
 <h1>{{title}}</h1>
 <div>
   <h2 id="detailHeading" class="heading-medium blue-bottom-border">
-    {{data.result[data.detailIndex][data.detailType].detailHeading}}
+    {{data.result[data.detailIndex].taxCalcs[data.taxCalcIndex].detailHeading}}
   </h2>
   <table>
       <tbody>
         <tr class="section">
-          <th>{{data.result[data.detailIndex][data.detailType].bandHeading}} (&pound;)</th>
+          <th>{{data.result[data.detailIndex].taxCalcs[data.taxCalcIndex].bandHeading}} (&pound;)</th>
           <th>Percentage rate (%)</th>
           <th>SDLT due (&pound;)</th>
         </tr>
-        <tr class="section" ng-repeat="slice in data.result[data.detailIndex][data.detailType].slices">
+        <tr class="section" ng-repeat="slice in data.result[data.detailIndex].taxCalcs[data.taxCalcIndex].slices">
           <td id="{{'band'+($index+1)+'Range'}}" ng-if="$first">Up to {{slice.to | sdltCurrency}}</td>
           <td id="{{'band'+($index+1)+'Range'}}" ng-if="$middle">Above {{slice.from | sdltCurrency}} and up to {{slice.to | sdltCurrency}}</td>
           <td id="{{'band'+($index+1)+'Range'}}" ng-if="$last">Above {{slice.from | sdltCurrency}}+</td>
@@ -20,7 +20,7 @@
         <tr class="section">
           <td>&nbsp;</td>
           <td>Total SDLT due</td>
-          <td id="totalSDLT">{{data.result[data.detailIndex][data.detailType].totalTax | sdltCurrency}}</td>
+          <td id="totalSDLT">{{data.result[data.detailIndex].taxCalcs[data.taxCalcIndex].totalTax | sdltCurrency}}</td>
         </tr>
       </tbody>
     </table>
