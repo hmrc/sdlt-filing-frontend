@@ -19,7 +19,7 @@
         </tr>
         <tr class="section">
           <td>&nbsp;</td>
-          <td>Total SDLT due</td>
+          <td>{{data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].detailFooter}}</td>
           <td id="totalSDLT">{{data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].taxDue | sdltCurrency}}</td>
         </tr>
       </tbody>

@@ -27,6 +27,7 @@
         var BAND_HEADING_PURCHASE_PRICE = 'Purchase price bands (£)';
         var BAND_HEADING_RENT           = 'Rent bands (£)';
 
+        var DETAIL_FOOTER_TOTAL          = 'Total SDLT due';
         var DETAIL_FOOTER_PREM           = 'SDLT due on the premium';
         var DETAIL_FOOTER_PURCHASE_PRICE = 'SDLT due on the purchase price';
         var DETAIL_FOOTER_RENT           = 'SDLT due on the rent';
@@ -74,7 +75,7 @@
             var premCalc = {taxType : 'premium', calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
             premCalc.detailHeading = DETAIL_HEADING_TOTAL_SDLT;
             premCalc.bandHeading = BAND_HEADING_PURCHASE_PRICE;
-            premCalc.detailFooter = DETAIL_FOOTER_PURCHASE_PRICE;
+            premCalc.detailFooter = DETAIL_FOOTER_TOTAL;
             premCalc.taxDue = premResult.taxDue;
             premCalc.slices = premResult.slices;
 
@@ -109,7 +110,7 @@
             var premCalc = {taxType : 'premium', calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
             premCalc.detailHeading = DETAIL_HEADING_TOTAL_SDLT + BASED_ON_THE_RULES_FROM + DATE_01_04_2016;
             premCalc.bandHeading = BAND_HEADING_PURCHASE_PRICE;
-            premCalc.detailFooter = DETAIL_FOOTER_PURCHASE_PRICE;
+            premCalc.detailFooter = DETAIL_FOOTER_TOTAL;
             premCalc.taxDue = premResult.taxDue;
             premCalc.slices = premResult.slices;
 
