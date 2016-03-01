@@ -29,7 +29,6 @@
 
         var rent = require("../../utilities/displayLeasedYearRentFields");
         rent = rent().getFunctions($scope.data);
-
         if (modelValidationService.validate($scope.data).isModelValid) {
             var result = {};
 
@@ -49,7 +48,8 @@
                 var rentTax = -1;
                 var rentsArray = [parseFloat($scope.data.year1Rent), rent.displayYearTwoRent ? parseFloat($scope.data.year2Rent) : 0, rent.displayYearThreeRent ? parseFloat($scope.data.year3Rent) : 0, rent.displayYearFourRent ? parseFloat($scope.data.year4Rent) : 0, rent.displayYearFiveRent ? parseFloat($scope.data.year5Rent) : 0];
                 var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
-                
+                $scope.data.npv = npv;
+
                 if ($scope.data.propertyType === 'Residential') {
                     if ($scope.effDateOnOrAfter(new Date("April 1, 2016")) && $scope.isAdditionalProperty()) {
                         result = calculationService.calcLeaseResPremAndRentAddProp_201604_Undef($scope.data.premium, $scope.data.npv);

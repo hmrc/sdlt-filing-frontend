@@ -7,7 +7,32 @@
 
     app.service('calculationService', function(){
 
+        var DATE_04_12_2014             = '4 December 2014';
+        var DATE_01_04_2016             = '1 April 2016';
+        var DATE_26_11_2015             = '26 November 2015';
+
+        var RESULT_HEADING_BEFORE       = 'Results based on SDLT rules before ';
+        var RESULT_HEADING_FROM         = 'Results based on SDLT rules from ';
+
+        var RESULT_HINT_EXCHANGE_BEFORE = 'You may be entitled to pay SDLT using the old rules if you exchanged contracts before ';
+
+        var DETAIL_HEADING_TOTAL_SDLT   = 'This is a breakdown of how the total amount of SDLT was calculated';
+        var DETAIL_HEADING_SDLT_ON_RENT = 'This is a breakdown of how the amount of SDLT on the rent was calculated';
+        var DETAIL_HEADING_SDLT_ON_PREM = 'This is a breakdown of how the amount of SDLT on the premium was calculated';
+
+        var BASED_ON_THE_RULES_FROM     = ' based on the rules from ';
+        var BASED_ON_THE_RULES_BEFORE   = ' based on the rules before ';
+
+        var BAND_HEADING_PREMIUM        = 'Premium bands (£)';
+        var BAND_HEADING_PURCHASE_PRICE = 'Purchase price bands (£)';
+        var BAND_HEADING_RENT           = 'Rent bands (£)';
+
+        var DETAIL_FOOTER_PREMIUM        = 'SDLT due on the premium';
+        var DETAIL_FOOTER_PURCHASE_PRICE = 'SDLT due on the purchase price';
+        var DETAIL_FOOTER_RENT           = 'SDLT due on the rent';
+
         var calcFreeResPrem_201203_201412 = function(premium){
+
 
             var slabsArray = [
                     { threshold : 2000000,   rate : 7},
@@ -44,16 +69,19 @@
                     { from: 1500000, to : -1,       rate : 12, taxDue : -1}
             ];
 
-            var calcResult = calculateTaxDueSlice(premium, slicesArray);
+            var premResult = calculateTaxDueSlice(premium, slicesArray);
 
-            var taxCalc = {taxType : 'premium', calcType : 'slice', taxDue : 0, slices : []};
-            taxCalc.taxDue = calcResult.taxDue;
-            taxCalc.slices = calcResult.slices;
+            var premCalc = {taxType : 'premium', calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            premCalc.detailHeading = DETAIL_HEADING_TOTAL_SDLT;
+            premCalc.bandHeading = BAND_HEADING_PURCHASE_PRICE;
+            premCalc.detailFooter = DETAIL_FOOTER_PURCHASE_PRICE;
+            premCalc.taxDue = premResult.taxDue;
+            premCalc.slices = premResult.slices;
 
-            var taxCalcs = [taxCalc];
+            var taxCalcs = [premCalc];
 
             var result = {};
-            result.totalTax = calcResult.taxDue; 
+            result.totalTax = premResult.taxDue; 
             result.taxCalcs = taxCalcs;
 
             return [result];
@@ -76,26 +104,28 @@
             if (premium < 40000) {
                 premium = 0;
             }
-            var calcResult = calculateTaxDueSlice(premium, slicesArray);
+            var premResult = calculateTaxDueSlice(premium, slicesArray);
 
-            var taxCalc = {taxType : "premium", calcType : 'slice', detailHeading : '', taxDue : 0, slices : []};
-            taxCalc.detailHeading = 'This is a breakdown of how the amount of SDLT was calculated based on the rules from 1 April 2016';
-            taxCalc.taxDue = calcResult.taxDue;
-            taxCalc.slices = calcResult.slices;
+            var premCalc = {taxType : 'premium', calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            premCalc.detailHeading = DETAIL_HEADING_TOTAL_SDLT + BASED_ON_THE_RULES_FROM + DATE_01_04_2016;
+            premCalc.bandHeading = BAND_HEADING_PURCHASE_PRICE;
+            premCalc.detailFooter = DETAIL_FOOTER_PURCHASE_PRICE;
+            premCalc.taxDue = premResult.taxDue;
+            premCalc.slices = premResult.slices;
 
-            var taxCalcs = [taxCalc];
+            var taxCalcs = [premCalc];
 
             var result = {};
-            result.resultHeading = "Results based on SDLT rules from 1 April 2016";
-            result.totalTax = calcResult.taxDue; 
+            result.resultHeading = RESULT_HEADING_FROM + DATE_01_04_2016;
+            result.totalTax = premResult.taxDue; 
             result.taxCalcs = taxCalcs;
 
             // calculation for previous rate. Uses rates from 201412 onwards but needs headings/hints adding
             var prevRatesArray = calcFreeResPrem_201412_Undef(premium);
             var prevRatesResult = prevRatesArray[0];
-            prevRatesResult.resultHeading = "Results based on SDLT rules before 1 April 2016";
-            prevRatesResult.resultHint = "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.";
-            prevRatesResult.taxCalcs[0].detailHeading = "This is a breakdown of how the amount of SDLT was calculated based on the rules before 1 April 2016";
+            prevRatesResult.resultHeading = RESULT_HEADING_BEFORE + DATE_01_04_2016;
+            prevRatesResult.resultHint = RESULT_HINT_EXCHANGE_BEFORE + DATE_26_11_2015 + ".";
+            prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_TOTAL_SDLT + BASED_ON_THE_RULES_BEFORE + DATE_01_04_2016;
 
             return [result, prevRatesResult];
         };
