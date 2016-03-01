@@ -23,11 +23,11 @@
         var BASED_ON_THE_RULES_FROM     = ' based on the rules from ';
         var BASED_ON_THE_RULES_BEFORE   = ' based on the rules before ';
 
-        var BAND_HEADING_PREMIUM        = 'Premium bands (£)';
+        var BAND_HEADING_PREM           = 'Premium bands (£)';
         var BAND_HEADING_PURCHASE_PRICE = 'Purchase price bands (£)';
         var BAND_HEADING_RENT           = 'Rent bands (£)';
 
-        var DETAIL_FOOTER_PREMIUM        = 'SDLT due on the premium';
+        var DETAIL_FOOTER_PREM           = 'SDLT due on the premium';
         var DETAIL_FOOTER_PURCHASE_PRICE = 'SDLT due on the purchase price';
         var DETAIL_FOOTER_RENT           = 'SDLT due on the rent';
 
@@ -162,7 +162,10 @@
             ];
 
             var rentResult = calculateTaxDueSlice(npv, rentSlicesArray);
-            var rentCalc = {taxType : "rent", calcType : 'slice', taxDue : 0, slices : []};
+            var rentCalc = {taxType : "rent", calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            rentCalc.detailHeading = DETAIL_HEADING_SDLT_ON_RENT;
+            rentCalc.bandHeading = BAND_HEADING_RENT;
+            rentCalc.detailFooter = DETAIL_FOOTER_RENT;
             rentCalc.taxDue = rentResult.taxDue;
             rentCalc.slices = rentResult.slices;
 
@@ -172,18 +175,18 @@
                     { threshold : 500000,    rate : 4},
                     { threshold : 250000,    rate : 3},
                     { threshold : 125000,    rate : 1},
-                    { threshold : -1,         rate : 0}
+                    { threshold : -1,        rate : 0}
             ];
 
             var premResult = calculateTaxDueSlab(premium, premSlabsArray);
-            var premiumCalc = {taxType : "premium", calcType : 'slab', taxDue : 0, rate : 0};
-            premiumCalc.taxDue = premResult.taxDue;
-            premiumCalc.rate = premResult.rate;
+            var premCalc = {taxType : "premium", calcType : 'slab', taxDue : 0, rate : 0};
+            premCalc.taxDue = premResult.taxDue;
+            premCalc.rate = premResult.rate;
 
-            var taxCalcs = [rentCalc, premiumCalc];
+            var taxCalcs = [rentCalc, premCalc];
 
             var result = {};
-            result.totalTax = rentCalc.taxDue + premiumCalc.taxDue; 
+            result.totalTax = rentCalc.taxDue + premCalc.taxDue; 
             result.npv = npv;
             result.taxCalcs = taxCalcs;
 
@@ -198,7 +201,11 @@
             ];
 
             var rentResult = calculateTaxDueSlice(npv, rentSlicesArray);
-            var rentCalc = {taxType : "rent", calcType : 'slice', taxDue : 0, slices : []};
+            var rentCalc = {taxType : "rent", calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            rentCalc.detailHeading = DETAIL_HEADING_SDLT_ON_RENT;
+            rentCalc.bandHeading = BAND_HEADING_RENT;
+            rentCalc.detailFooter = DETAIL_FOOTER_RENT;
+
             rentCalc.taxDue = rentResult.taxDue;
             rentCalc.slices = rentResult.slices;
 
@@ -211,14 +218,17 @@
             ];
 
             var premResult = calculateTaxDueSlice(premium, premSlicesArray);
-            var premiumCalc = {taxType : "premium", calcType : 'slice', taxDue : 0, slices : []};
-            premiumCalc.taxDue = premResult.taxDue;
-            premiumCalc.slices = premResult.slices;
+            var premCalc = {taxType : "premium", calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            premCalc.detailHeading = DETAIL_HEADING_SDLT_ON_PREM;
+            premCalc.bandHeading = BAND_HEADING_PREM;
+            premCalc.detailFooter = DETAIL_FOOTER_PREM;
+            premCalc.taxDue = premResult.taxDue;
+            premCalc.slices = premResult.slices;
 
-            var taxCalcs = [rentCalc, premiumCalc];
+            var taxCalcs = [rentCalc, premCalc];
 
             var result = {};
-            result.totalTax = rentCalc.taxDue + premiumCalc.taxDue; 
+            result.totalTax = rentCalc.taxDue + premCalc.taxDue; 
             result.npv = npv;
             result.taxCalcs = taxCalcs;
 
@@ -235,8 +245,10 @@
             ];
 
             var rentResult = calculateTaxDueSlice(npv, rentSlicesArray);
-            var rentCalc = {taxType : 'rent', calcType : 'slice', detailHeading : '', taxDue : 0, slices : []};
-            rentCalc.detailHeading = "This is a breakdown of how the amount of SDLT on rent was calculated based on the rules from 1 April 2016";
+            var rentCalc = {taxType : 'rent', calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            rentCalc.detailHeading = DETAIL_HEADING_SDLT_ON_RENT + BASED_ON_THE_RULES_FROM + DATE_01_04_2016;
+            rentCalc.bandHeading = BAND_HEADING_RENT;
+            rentCalc.detailFooter = DETAIL_FOOTER_RENT;
             rentCalc.taxDue = rentResult.taxDue;
             rentCalc.slices = rentResult.slices;
 
@@ -254,26 +266,28 @@
             }
             var calcResult = calculateTaxDueSlice(premium, premSlicesArray);
 
-            var premiumCalc = {taxType : 'premium', calcType : 'slice', detailHeading : '', taxDue : 0, slices : []};
-            premiumCalc.detailHeading = 'This is a breakdown of how the amount of SDLT on premium was calculated based on the rules from 1 April 2016';
-            premiumCalc.taxDue = calcResult.taxDue;
-            premiumCalc.slices = calcResult.slices;
+            var premCalc = {taxType : 'premium', calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            premCalc.detailHeading = DETAIL_HEADING_SDLT_ON_PREM + BASED_ON_THE_RULES_FROM + DATE_01_04_2016;
+            premCalc.bandHeading = BAND_HEADING_PREM;
+            premCalc.detailFooter = DETAIL_FOOTER_PREM;
+            premCalc.taxDue = calcResult.taxDue;
+            premCalc.slices = calcResult.slices;
 
-            var taxCalcs = [rentCalc, premiumCalc];
+            var taxCalcs = [rentCalc, premCalc];
 
             var result = {};
-            result.resultHeading = "Results based on SDLT rules from 1 April 2016";
-            result.totalTax = rentCalc.taxDue + premiumCalc.taxDue;
+            result.resultHeading = RESULT_HEADING_FROM + DATE_01_04_2016;
+            result.totalTax = rentCalc.taxDue + premCalc.taxDue;
             result.npv = npv;
             result.taxCalcs = taxCalcs;
 
-            // calculation for previous rate. Uses rates from 201412 onwards but needs headings/hints adding
+            // calculation for previous rates. Uses rates from 201412 onwards but needs headings/hints adding
             var prevRatesArray = calcLeaseResPremAndRent_201412_Undef(premium, npv);
             var prevRatesResult = prevRatesArray[0];
-            prevRatesResult.resultHeading = "Results based on SDLT rules before 1 April 2016";
-            prevRatesResult.resultHint = "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.";
-            prevRatesResult.taxCalcs[0].detailHeading = "This is a breakdown of how the amount of SDLT on rent was calculated based on the rules before 1 April 2016";
-            prevRatesResult.taxCalcs[1].detailHeading = "This is a breakdown of how the amount of SDLT on premium was calculated based on the rules before 1 April 2016";
+            prevRatesResult.resultHeading = RESULT_HEADING_BEFORE + DATE_01_04_2016;
+            prevRatesResult.resultHint =  RESULT_HINT_EXCHANGE_BEFORE + DATE_26_11_2015 + ".";
+            prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_SDLT_ON_RENT + BASED_ON_THE_RULES_BEFORE + DATE_01_04_2016;
+            prevRatesResult.taxCalcs[1].detailHeading = DETAIL_HEADING_SDLT_ON_PREM + BASED_ON_THE_RULES_BEFORE + DATE_01_04_2016;
 
             return [result, prevRatesResult];
         };
@@ -286,7 +300,10 @@
             ];
 
             var rentResult = calculateTaxDueSlice(npv, rentSlicesArray);
-            var rentCalc = {taxType : "rent", calcType : 'slice', taxDue : 0, slices : []};
+            var rentCalc = {taxType : "rent", calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            rentCalc.detailHeading = DETAIL_HEADING_SDLT_ON_RENT;
+            rentCalc.bandHeading = BAND_HEADING_RENT;
+            rentCalc.detailFooter = DETAIL_FOOTER_RENT;
             rentCalc.taxDue = rentResult.taxDue;
             rentCalc.slices = rentResult.slices;
 
@@ -296,109 +313,20 @@
                     { threshold : -1,     rate : 1}
             ];
 
-            var premiumCalc = {taxType : "premium", calcType : 'slab', taxDue : 0, rate : 0};
+            var premCalc = {taxType : "premium", calcType : 'slab', taxDue : 0, rate : 0};
             if ( !zeroRate ) {
                 var premResult = calculateTaxDueSlab(premium, premSlabsArray);
-                premiumCalc.taxDue = premResult.taxDue;
-                premiumCalc.rate = premResult.rate;
+                premCalc.taxDue = premResult.taxDue;
+                premCalc.rate = premResult.rate;
             }
-            var taxCalcs = [rentCalc, premiumCalc];
+            var taxCalcs = [rentCalc, premCalc];
 
             var result = {};
-            result.totalTax = rentCalc.taxDue + premiumCalc.taxDue; 
+            result.totalTax = rentCalc.taxDue + premCalc.taxDue; 
             result.npv = npv;
             result.taxCalcs = taxCalcs;
 
             return [result];
-        };
-
-
-
-        var calculateResidentialPremiumSlab = function(premium){
-
-            var slabsArray = [
-                    { threshold : 2000000,   rate : 7},
-                    { threshold : 1000000,   rate : 5},
-                    { threshold : 500000,    rate : 4},
-                    { threshold : 250000,    rate : 3},
-                    { threshold : 125000,    rate : 1},
-                    { threshold : -1,         rate : 0}
-            ];
-
-            var resultJSON = calculateTaxDueSlab(premium, slabsArray);
-            return resultJSON;
-
-        };
-
-        var calculateResidentialPremiumSlice = function(premium){
-            var slicesArray = [
-                    { from: 0,       to : 125000,   rate : 0,  taxDue : -1},
-                    { from: 125000,  to : 250000,   rate : 2,  taxDue : -1},
-                    { from: 250000,  to : 925000,   rate : 5,  taxDue : -1},
-                    { from: 925000,  to : 1500000,  rate : 10, taxDue : -1},
-                    { from: 1500000, to : -1,       rate : 12, taxDue : -1}
-            ];
-
-            var resultJSON = calculateTaxDueSliceOLD(premium, slicesArray);
-            return resultJSON;
-        };
-
-        var calculateNonResidentialPremiumSlab = function(premium, zeroRate){
-
-            var slabsArray = [
-                    { threshold : 500000, rate : 4},
-                    { threshold : 250000, rate : 3},
-                    { threshold : -1,     rate : 1}
-            ];
-
-            if ( (premium <= 150000) && zeroRate) {
-                var noTaxResults = {
-                    rate : 0,
-                    taxDue : 0
-                };
-                return noTaxResults;
-            } else {
-                var resultJSON = calculateTaxDueSlab(premium, slabsArray);
-                return resultJSON;
-            }
-        };
-
-        var calculateResidentialLeaseSlice = function(npv){
-
-            var slicesArray = [
-                    { from: 0,       to : 125000,   rate : 0,  taxDue : -1},
-                    { from: 125000,  to : -1    ,   rate : 1,  taxDue : -1}
-            ];
-
-            var resultJSON = calculateTaxDueSliceOLD(npv, slicesArray);
-            return resultJSON;
-        };
-
-        var calculateNonResidentialLeaseSlice = function(npv){
-
-            var slicesArray = [
-                    { from: 0,       to : 150000,   rate : 0,  taxDue : -1},
-                    { from: 150000,  to : -1    ,   rate : 1,  taxDue : -1}
-            ];
-
-            var resultJSON = calculateTaxDueSliceOLD(npv, slicesArray);
-            return resultJSON;
-        };
-
-        var calculate201604SecondHomeSlice = function(premium){
-            var slicesArray = [
-                    { from: 0,       to : 125000,   rate : 3,  taxDue : -1},
-                    { from: 125000,  to : 250000,   rate : 5,  taxDue : -1},
-                    { from: 250000,  to : 925000,   rate : 8,  taxDue : -1},
-                    { from: 925000,  to : 1500000,  rate : 13, taxDue : -1},
-                    { from: 1500000, to : -1,       rate : 15, taxDue : -1}
-            ];
-
-            if (premium < 40000) {
-                premium = 0;
-            }
-            var resultJSON = calculateTaxDueSliceOLD(premium, slicesArray);
-            return resultJSON;
         };
 
         var calculateTaxDueSlab = function(amount, slabs) {
@@ -421,43 +349,6 @@
             };
 
             return slabResults;
-        };
-
-        var calculateTaxDueSliceOLD = function(amount, slices) {
-
-            var sliceAmount = -1;
-            var sliceTaxDue = -1;
-            var totalTaxDue = 0;
-
-            for (var i = 0; i < slices.length; i++) {
-                if (slices[i].to == -1) {
-                    if (amount > slices[i].from) {
-                        sliceAmount = amount - slices[i].from;
-                        sliceTaxDue = calcTax(sliceAmount, slices[i].rate);
-                        slices[i].taxDue = sliceTaxDue;
-                        totalTaxDue += sliceTaxDue;
-                    } else {
-                        slices[i].taxDue = 0;
-                    }
-                } else if (amount > slices[i].to) {   
-                    sliceAmount = slices[i].to - slices[i].from;
-                    sliceTaxDue = calcTax(sliceAmount, slices[i].rate);
-                    slices[i].taxDue = sliceTaxDue;
-                    totalTaxDue += sliceTaxDue;
-                } else if (amount <= slices[i].from) {    
-                    slices[i].taxDue = 0;
-                } else { 
-                    sliceAmount = amount - slices[i].from;
-                    sliceTaxDue = calcTax(sliceAmount, slices[i].rate);
-                    slices[i].taxDue = sliceTaxDue;
-                    totalTaxDue += sliceTaxDue;
-                }
-            }
-
-            var resultJSON = { totalSDLT : totalTaxDue, 
-                               slices : slices
-            };
-            return resultJSON;
         };
 
         var calculateTaxDueSlice = function(amount, slices) {
@@ -535,12 +426,6 @@
         }
 
         return {
-            calculateResidentialPremiumSlab : calculateResidentialPremiumSlab,
-            calculateResidentialPremiumSlice : calculateResidentialPremiumSlice,
-            calculateNonResidentialPremiumSlab : calculateNonResidentialPremiumSlab,
-            calculateResidentialLeaseSlice : calculateResidentialLeaseSlice,
-            calculateNonResidentialLeaseSlice : calculateNonResidentialLeaseSlice,
-            calculate201604SecondHomeSlice : calculate201604SecondHomeSlice,
             calculateNPV : calculateNPV,
             calcFreeResPrem_201203_201412 : calcFreeResPrem_201203_201412,
             calcFreeResPrem_201412_Undef : calcFreeResPrem_201412_Undef,
