@@ -54,8 +54,8 @@
                 if (rent.displayYearFourRent) result.isYear4RentValid = hasError('year4Rent');
                 if (rent.displayYearFiveRent) result.isYear5RentValid = hasError('year5Rent');
 
-                var checkRelevant = validator.relevantRentCheck([data.year1Rent, data.year2Rent, data.year3Rent, data.year4Rent, data.year5Rent]);
-                if(data.propertyType === 'Non-residential' && data.premium < 150000 && checkRelevant){
+                var anyRentAbove2000 = validator.checkForRentAbove2000([data.year1Rent, data.year2Rent, data.year3Rent, data.year4Rent, data.year5Rent]);
+                if(data.propertyType === 'Non-residential' && data.premium < 150000 && anyRentAbove2000){
                     result.isRelevantRentValid = hasError('relevantRent');
                 }
             }
