@@ -3,8 +3,8 @@
 <form name="resultForm" class="form">
 
   <div ng-repeat="res in data.result">
-    <h2 ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
-    <span class="form-hint">{{res.resultHint}}</span>
+    <h2 id="resHeading{{$index}}" ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
+    <span id="resHint{{$index}}" class="form-hint">{{res.resultHint}}</span>
     <div class="form-group">
       <table ng-if="data.holdingType === 'Freehold'">
         <tbody ng-if="res.taxCalcs[0].calcType === 'slice'">
@@ -48,8 +48,8 @@
             <td></td>
           </tr>
           <tr ng-repeat="taxCalc in res.taxCalcs" class="section">
-            <td>SDLT on {{taxCalc.taxType}} <span ng-if="tax.calcType === 'slab'">({{taxCalc.rate}}%)</span></td>
-            <td id="taxDue{{$index}}">{{taxCalc.taxDue | sdltCurrency:"£"}}</td>
+            <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}} <span ng-if="tax.calcType === 'slab'">({{taxCalc.rate}}%)</span></td>
+            <td id="taxDue{{$parent.$parent.$index+''+$index}}">{{taxCalc.taxDue | sdltCurrency:"£"}}</td>
             <td><a id="detailCalc{{$index}}" ng-if="taxCalc.calcType === 'slice'" ng-click="viewDetails($parent.$parent.$index, $index)" href="javascript:return false" title="view detailed calculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
           </tr>
         </tbody>

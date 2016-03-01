@@ -42,10 +42,10 @@
                     } else {
                         result = calculationService.calcFreeResPrem_201203_201412($scope.data.premium);
                     }
-                } else if ($scope.data.propertyType === 'Non-residential') {
+                } else  { // propertyType === 'Non-residential') {
                     result = calculationService.calcFreeNonResPrem_201203_Undef($scope.data.premium);
                 }
-            } else if ($scope.data.holdingType === 'Leasehold') {
+            } else { // holdingType === 'Leasehold'
                 var rentTax = -1;
                 var rentsArray = [parseFloat($scope.data.year1Rent), rent.displayYearTwoRent ? parseFloat($scope.data.year2Rent) : 0, rent.displayYearThreeRent ? parseFloat($scope.data.year3Rent) : 0, rent.displayYearFourRent ? parseFloat($scope.data.year4Rent) : 0, rent.displayYearFiveRent ? parseFloat($scope.data.year5Rent) : 0];
                 var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
@@ -58,15 +58,12 @@
                     } else {
                         result = calculationService.calcLeaseResPremAndRent_201203_201412($scope.data.premium, $scope.data.npv);
                     }
-                } else if ($scope.data.propertyType === 'Non-residential'){
+                } else { // propertyType === 'Non-residential'
                     var zeroRate = false;
                     var validator = require("../../utilities/validator")();
-                    var anyRentAbove2000 = validator.checkForRentAbove2000([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
-                    if ($scope.data.premium < 150000 && anyRentAbove2000) {
-                        var relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
-                        if(relevantRent < 1000){
-                            zeroRate = true;
-                        }
+                    var allRentsBelow2000 = validator.checkAllRentsBelow2000([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+                    if ($scope.data.premium < 150000 && allRentsBelow2000 && $scope.data.relevantRent < 1000) {
+                        zeroRate = true;
                     }
                     result = calculationService.calcLeaseNonResPremAndRent_201203_Undef($scope.data.premium, $scope.data.npv, zeroRate);
                 }
