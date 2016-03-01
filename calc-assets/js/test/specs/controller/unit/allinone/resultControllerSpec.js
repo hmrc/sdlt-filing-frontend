@@ -472,7 +472,7 @@
             expect(mockNavigationService.logView.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to calculationService.calcFreeResPrem_201412_Undef', function () {
+        it('should make 1 call to calculationService.calcFreeResPremAddProp_201604_Undef', function () {
             expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(1);
@@ -568,7 +568,7 @@
             expect(mockNavigationService.logView.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to calculationService.calcFreeResPrem_201412_Undef', function () {
+        it('should make 1 call to calculationService.calcFreeNonResPrem_201203_Undef', function () {
             expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(0);
@@ -682,7 +682,7 @@
             expect(mockCalculationService.calculateNPV.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to calculationService.calcFreeResPrem_201412_Undef', function () {
+        it('should make 1 call to calculationService.calcLeaseResPremAndRent_201203_201412', function () {
             expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(0);
@@ -1159,7 +1159,7 @@
             expect(mockCalculationService.calculateNPV.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to calculationService.calcLeaseResPremAndRent_201412_Undef', function () {
+        it('should make 1 call to calculationService.calcLeaseResPremAndRentAddProp_201604_Undef', function () {
             expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(0);
@@ -1607,4 +1607,125 @@
 
     });
 
+    describe('Call to viewDetails()', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+            
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        propertyType : "Residential",
+                        effectiveDate : new Date(2014, 0, 1)
+                    }; 
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {},
+                viewDetails : function() {}
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calcFreeResPrem_201203_201412: function() {}
+            };
+            
+            spyOn(mockNavigationService, 'viewDetails');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+
+            mockScope.viewDetails(0, 0);
+        }));
+
+        it('should make 1 call to navigationService.viewDetails', function() {
+            expect(mockNavigationService.viewDetails.calls.count()).toEqual(1);
+        });
+    });
+
+    describe('Call to printView()', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+            
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        propertyType : "Residential",
+                        effectiveDate : new Date(2014, 0, 1)
+                    }; 
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {},
+                printView : function() {}
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calcFreeResPrem_201203_201412: function() {}
+            };
+
+            spyOn(mockNavigationService, 'printView');
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+
+            mockScope.printView({});
+        }));
+
+        it('should make 1 call to navigationService.printView', function() {
+            expect(mockNavigationService.printView.calls.count()).toEqual(1);
+        });
+    });
 }());
