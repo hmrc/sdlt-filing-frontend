@@ -631,6 +631,9 @@
             taxCalcs : [{
                 taxType : "premium",
                 calcType : "slice",
+                detailHeading : 'This is a breakdown of how the total amount of SDLT was calculated',
+                bandHeading : 'Purchase price bands (£)',
+                detailFooter : 'SDLT due on the purchase price',
                 taxDue : 0,
                 slices : [
                     { from: 0,       to : 125000,  rate : 0,  taxDue : 0},
@@ -720,7 +723,9 @@
                     {
                         taxType : "premium",
                         calcType : "slice",
-                        detailHeading : "This is a breakdown of how the amount of SDLT was calculated based on the rules from 1 April 2016",
+                        detailHeading : "This is a breakdown of how the total amount of SDLT was calculated based on the rules from 1 April 2016",
+                        bandHeading : 'Purchase price bands (£)',
+                        detailFooter : 'SDLT due on the purchase price',
                         taxDue : 0,
                         slices : [
                             { from: 0,       to : 125000,  rate : 3,  taxDue : 0},
@@ -733,14 +738,14 @@
                 ]
             },
             {
-                resultHeading : "Results based on SDLT rules before 1 April 2016",
-                resultHint : "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.",
                 totalTax : 0,
                 taxCalcs : [
                     {
                         taxType : "premium",
                         calcType : "slice",
-                        detailHeading : "This is a breakdown of how the amount of SDLT was calculated based on the rules before 1 April 2016",
+                        detailHeading : "This is a breakdown of how the total amount of SDLT was calculated based on the rules before 1 April 2016",
+                        bandHeading : 'Purchase price bands (£)',
+                        detailFooter : 'SDLT due on the purchase price',
                         taxDue : 0,
                         slices : [
                             { from: 0,       to : 125000,  rate : 0,  taxDue : 0},
@@ -750,7 +755,9 @@
                             { from: 1500000, to : -1,      rate : 12, taxDue : 0}
                         ]
                     }
-                ]
+                ],
+                resultHeading : "Results based on SDLT rules before 1 April 2016",
+                resultHint : "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015."
             }    
         ];
 
