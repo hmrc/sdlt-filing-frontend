@@ -103,13 +103,13 @@
     <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential'">
 
       <h2 ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border">
-        This is a breakdown of how the amount of SDLT was calculated based on the rules from 4 December 2014
+        This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 4 December 2014
       </h2>
       <h2 ng-if="isAdditionalProperty() && data.latestOrPrevious === 'latest'" class="heading-medium blue-bottom-border">
-        This is a breakdown of how the amount of SDLT was calculated based on the rules from 1 April 2016
+        This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 1 April 2016
       </h2>
       <h2 ng-if="isAdditionalProperty() && data.latestOrPrevious === 'previous'" class="heading-medium blue-bottom-border">
-        This is a breakdown of how the amount of SDLT was calculated based on the rules before 1 April 2016
+        This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules before 1 April 2016
       </h2>
 
       <div ng-if="(!isAdditionalProperty()) || (isAdditionalProperty() && data.latestOrPrevious === 'latest')" class = "form-group">
