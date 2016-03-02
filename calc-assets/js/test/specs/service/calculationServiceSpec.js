@@ -215,7 +215,7 @@
                 calcType : "slice",
                 detailHeading : 'This is a breakdown of how the total amount of SDLT was calculated',
                 bandHeading : 'Purchase price bands (£)',
-                detailFooter : 'SDLT due on the purchase price',
+                detailFooter : 'Total SDLT due',
                 taxDue : 0,
                 slices : [
                     { from: 0,       to : 125000,  rate : 0,  taxDue : 0},
@@ -307,7 +307,7 @@
                         calcType : "slice",
                         detailHeading : "This is a breakdown of how the total amount of SDLT was calculated based on the rules from 1 April 2016",
                         bandHeading : 'Purchase price bands (£)',
-                        detailFooter : 'SDLT due on the purchase price',
+                        detailFooter : 'Total SDLT due',
                         taxDue : 0,
                         slices : [
                             { from: 0,       to : 125000,  rate : 3,  taxDue : 0},
@@ -327,7 +327,7 @@
                         calcType : "slice",
                         detailHeading : "This is a breakdown of how the total amount of SDLT was calculated based on the rules before 1 April 2016",
                         bandHeading : 'Purchase price bands (£)',
-                        detailFooter : 'SDLT due on the purchase price',
+                        detailFooter : 'Total SDLT due',
                         taxDue : 0,
                         slices : [
                             { from: 0,       to : 125000,  rate : 0,  taxDue : 0},
