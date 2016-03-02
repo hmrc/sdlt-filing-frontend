@@ -22,7 +22,7 @@
                           <td id="td1TwoOrMoreProperties">Additional residential property</td>
                           <td id="td2TwoOrMoreProperties">{{data.twoOrMoreProperties}}</td>
                       </tr>
-                      <tr class="section" ng-if="effDateAfterAprilCutOff() && data.replaceMainResidence !== undefined && data.twoOrMoreProperties === 'Yes'">
+                      <tr class="section" ng-if="effDateAfterAprilCutOff() && data.propertyType === 'Residential' && data.replaceMainResidence !== undefined && data.twoOrMoreProperties === 'Yes'">
                           <td id="td1ReplaceMainResidence">Replacing main residence</td>
                           <td id="td2ReplaceMainResidence">{{data.replaceMainResidence}}</td>
                       </tr>
