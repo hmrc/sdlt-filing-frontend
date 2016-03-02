@@ -6,7 +6,7 @@
   <table>
       <tbody>
         <tr class="section">
-          <th>{{data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].bandHeading}}</th>
+          <th id="bandHeading">{{data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].bandHeading}}</th>
           <th>Percentage rate (%)</th>
           <th>SDLT due (&pound;)</th>
         </tr>
@@ -19,7 +19,7 @@
         </tr>
         <tr class="section">
           <td>&nbsp;</td>
-          <td>{{data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].detailFooter}}</td>
+          <td id="detailFooter">{{data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].detailFooter}}</td>
           <td id="totalSDLT">{{data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].taxDue | sdltCurrency}}</td>
         </tr>
       </tbody>
