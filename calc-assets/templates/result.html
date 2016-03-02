@@ -1,6 +1,5 @@
 <h1>{{title}}</h1>
 
-<form name="resultForm" class="form">
 
   <div ng-repeat="res in data.result">
     <h2 id="resultHeading{{$index}}" ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
@@ -65,4 +64,3 @@
     <p>Go to the <a id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax" title="opens in a new window" onClick="ga('send', 'event', 'link', 'click', 'result.govuk')" rel="external" target="_blank">GOV.UK</a> homepage for SDLT.</p>
   </div>
 
-</form>
