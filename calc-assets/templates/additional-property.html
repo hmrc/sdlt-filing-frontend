@@ -29,6 +29,7 @@
       <div class="form-group {{state.hasError('replaceMainResidence')}}">
           <fieldset>
               <legend id="replaceMainResidence" class="form-label-bold">Is the property being purchased replacing your main residence?</legend>
+              <span class="form-hint text">Choose 'No' if your previous main residence hasn't been sold yet. You'll pay a higher SDLT rate, but you'll get a refund if you sell your residence within 18 months.</span>
               <span id="replaceMainResidenceErrMsg" class="error-notification">{{state.validationMessage('replaceMainResidence')}}</span>
               <div class="inline">
                   <label class="block-label" for="mainResidenceYes">
@@ -40,15 +41,6 @@
               </div>
           </fieldset>
       </div>
-    </div>
-
-    <div ng-show="data.twoOrMoreProperties === 'Yes'">
-      <details>
-          <summary ng-click="toggleHelp('sellCurrentResidence', 'AdditionalProperty.SellCurrentResidence')"<span class="summary">Do you intend to sell your current main residence?</span></summary>
-          <div class="panel-indent" ng-show="displayHelp('sellCurrentResidence')">
-              <p>If your previous main residence has not yet been sold choose No. A refund will be available if the previous main residence is sold within 18 months.</p>
-          </div>
-      </details>
     </div>
 
     <div class="form-group">
