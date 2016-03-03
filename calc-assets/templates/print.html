@@ -81,8 +81,8 @@
   <h2 ng-if="data.result[0].resultHeading === undefined">Results</h2>
 
   <div ng-repeat="res in data.result">
-    <h2 id="resHeading{{$index}}" ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
-    <span id="resHint{{$index}}" class="form-hint">{{res.resultHint}}</span>
+    <h2 id="resultHeading{{$index}}" ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
+    <span id="resultHint{{$index}}" class="form-hint">{{res.resultHint}}</span>
     <div class="form-group">
       <table ng-if="data.holdingType === 'Freehold'">
         <tbody ng-if="res.taxCalcs[0].calcType === 'slice'">
