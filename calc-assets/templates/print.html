@@ -16,11 +16,11 @@
                           <td id="td1EffectiveDate">Effective date of transaction</td>
                           <td id="td2EffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
                       </tr>
-                      <tr class="section" ng-if="data.propertyType === 'Residential' && data.twoOrMoreProperties !== undefined">
+                      <tr class="section" ng-if="effDateAfterAprilCutOff() && data.propertyType === 'Residential'">
                           <td id="td1TwoOrMoreProperties">Additional residential property</td>
                           <td id="td2TwoOrMoreProperties">{{data.twoOrMoreProperties}}</td>
                       </tr>
-                      <tr class="section" ng-if="data.replaceMainResidence !== undefined && data.twoOrMoreProperties === 'Yes'">
+                      <tr class="section" ng-if="effDateAfterAprilCutOff() && data.propertyType === 'Residential' && data.replaceMainResidence !== undefined && data.twoOrMoreProperties === 'Yes'">
                           <td id="td1ReplaceMainResidence">Replacing main residence</td>
                           <td id="td2ReplaceMainResidence">{{data.replaceMainResidence}}</td>
                       </tr>
