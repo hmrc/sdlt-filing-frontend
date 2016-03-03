@@ -1,6 +1,4 @@
-<h1 id="print-heading">{{title}}</h1>
-
-<form name="resultForm" class="form">
+<h1>{{title}}</h1>
 
       <div class = "form-group">
           <article>
@@ -80,210 +78,63 @@
       </div>
     </div>
 
-    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterAprilCutOff() && isAdditionalProperty()" id="divFreeholdResidentialAP">
-      <h2 id="frAPHeading" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules from 1 April 2016</h2>
-      <div class = "form-group">
-        <table>
-          <tbody>
-            <tr class="section">
-              <th>Effective date</th>
-              <th>Purchase price (&pound;)</th>
-              <th colspan="2">Total SDLT due (&pound;)</th>
-            </tr>
-            <tr class="section">
-              <td id="frAPEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-              <td id="frAPPremium">{{data.premium | sdltCurrency}}</td>
-              <td id="frAPTotalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <h2 ng-if="data.result[0].resultHeading === undefined">Results</h2>
+
+  <div ng-repeat="res in data.result">
+    <h2 id="resHeading{{$index}}" ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
+    <span id="resHint{{$index}}" class="form-hint">{{res.resultHint}}</span>
+    <div class="form-group">
+      <table ng-if="data.holdingType === 'Freehold'">
+        <tbody ng-if="res.taxCalcs[0].calcType === 'slice'">
+          <tr class="section">
+            <th>Effective date</th>
+            <th>Purchase price (&pound;)</th>
+            <th colspan="2">Total SDLT due (&pound;)</th>
+          </tr>
+          <tr class="setion">
+            <td id="effDate{{$index}}">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
+            <td id="premium{{$index}}">{{data.premium | sdltCurrency}}</td>
+            <td id="totalTax{{$index}}">{{res.totalTax | sdltCurrency}}</td>
+            <td></td>
+          </tr>
+        </tbody>
+        <tbody ng-if="res.taxCalcs[0].calcType === 'slab'">
+          <tr class="section">
+            <th>Effective date</th>
+            <th>Purchase price (&pound;)</th>
+            <th>Percentage rate (%)</th>
+            <th>Total SDLT due (&pound;)</th>
+          </tr>
+          <tr class="setion">
+            <td id="effDate{{$index}}">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
+            <td id="premium{{$index}}">{{data.premium | sdltCurrency}}</td>
+            <td id="taxRate{{$index}}">{{res.taxCalcs[0].rate | sdltCurrency}}</td>
+            <td id="totalTax{{$index}}">{{res.totalTax | sdltCurrency}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table ng-if="data.holdingType === 'Leasehold'">
+        <tbody>
+          <tr class="section">
+            <td>Total amount of tax for this transaction</td>
+            <td id="totalTax{{$index}}">{{res.totalTax | sdltCurrency:"£"}}</td>
+            <td></td>
+          </tr>
+          <tr class="section">
+            <td>Net present value</td>
+            <td id="npv{{$index}}">{{res.npv | sdltCurrency:"£"}}</td>
+            <td></td>
+          </tr>
+          <tr ng-repeat="taxCalc in res.taxCalcs" class="section">
+            <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}} <span ng-if="tax.calcType === 'slab'">({{taxCalc.rate}}%)</span></td>
+            <td id="taxDue{{$parent.$parent.$index+''+$index}}">{{taxCalc.taxDue | sdltCurrency:"£"}}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 
-    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divFreeholdResidentialNew">
-      <h2 id="frNewHeading" ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
-      <h2 id="frNewHeading" ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>
-      <span ng-if="isAdditionalProperty()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.</span>
-      <div class = "form-group">
-        <table>
-          <tbody>
-            <tr class="section">
-              <th>Effective date</th>
-              <th>Purchase price (&pound;)</th>
-              <th colspan="2">Total SDLT due (&pound;)</th>
-            </tr>
-            <tr class="section">
-              <td id="frNewEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-              <td id="frNewPremium">{{data.premium | sdltCurrency}}</td>
-              <td ng-if="!isAdditionalProperty()" id="frNewTotalSDLT">{{data.result.freehold.residential.from.totalSDLT | sdltCurrency}}</td>
-              <td ng-if="isAdditionalProperty()" id="frNewTotalSDLT">{{data.result.freehold.residential.before.totalSDLT | sdltCurrency}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-
-    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Residential' && !effDateAfterCutOff()"  id="divFreeholdResidentialOld">
-      <h2 id="frOldHeading" class="heading-medium blue-bottom-border FR-subtitle-before">{{getHeading()}}</h2>
-      <div class = "form-group">
-        <table>
-          <tbody>
-            <tr class="section">
-              <th>Purchase price (&pound;)</th>
-              <th>Percentage rate (%)</th>
-              <th>Total SDLT due (&pound;)</th>
-            </tr>
-            <tr class="section">
-              <td id="frOldPremium">{{data.premium | sdltCurrency}}</td>
-              <td id="frOldRate">{{data.result.freehold.residential.before.rate}}</td>
-              <td id="frOldTaxDue">{{data.result.freehold.residential.before.taxDue | sdltCurrency}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div ng-if="data.holdingType === 'Freehold' && data.propertyType === 'Non-residential'" id="divFreeholdNonResidential">
-      <h2 id="fnHeading" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
-      <div class = "form-group">
-        <table>
-          <tbody>
-            <tr class="section">
-              <th>Effective date</th>
-              <th>Purchase Price (&pound;)</th>
-              <th>Percentage rate (%)</th>
-              <th>Total SDLT due (&pound;)</th>
-            </tr>
-            <tr class="section">
-              <td id="fnEffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-              <td id="fnPremium">{{data.premium | sdltCurrency}}</td>
-              <td id="fnRate">{{data.result.freehold.nonResidential.rate}}</td>
-              <td id="fnTaxDue">{{data.result.freehold.nonResidential.taxDue | sdltCurrency}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff() && isAdditionalProperty()" id="divLeaseholdResidentialAP"> 
-      <h2 id="lrAPHeading" ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules from 1 April 2016</h2>    
-      <div class = "form-group">
-        <table>
-          <tbody>            
-            <tr class="section">
-              <td>Total amount of tax for this transaction</td>
-              <td id="lrAPTotalTax">{{data.result.leasehold.residential.from.totalTax | sdltCurrency:"£"}}</td>
-              <td></td>
-            </tr>
-            <tr class="section">
-              <td>Net present value</td>
-              <td id="lrAPNPV">{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
-              <td></td>
-            </tr>
-            <tr class="section">
-              <td>SDLT on rent</td>
-              <td id="lrAPRentTax">{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
-              <td></td>
-            </tr>
-            <tr class="section">
-              <td>SDLT on premium</td>
-              <td id="lrAPPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && effDateAfterCutOff()" id="divLeaseholdResidentialNew"> 
-      <h2 id="lrNewHeading" ng-if="!isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-before">Result</h2>
-      <h2 id="lrNewHeading" ng-if="isAdditionalProperty()" class="heading-medium blue-bottom-border FR-subtitle-from">Results based on SDLT rules before 1 April 2016</h2>  
-      <span ng-if="isAdditionalProperty()" class="form-hint">You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.</span>  
-      <div class = "form-group">
-        <table>
-          <tbody>            
-            <tr class="section">
-              <td>Total amount of tax for this transaction</td>
-              <td ng-if="!isAdditionalProperty()" id="lrNewTotalTax">{{data.result.leasehold.residential.from.totalTax | sdltCurrency:"£"}}</td>
-              <td ng-if="isAdditionalProperty()" id="lrNewTotalTax">{{data.result.leasehold.residential.before.totalTax | sdltCurrency:"£"}}</td>
-              <td></td>
-            </tr>
-            <tr class="section">
-              <td>Net present value</td>
-              <td id="lrNewNPV">{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
-              <td></td>
-            </tr>
-            <tr class="section">
-              <td>SDLT on rent</td>
-              <td id="lrNewRentTax">{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
-              <td></td>
-            </tr>
-            <tr class="section">
-              <td>SDLT on premium</td>
-              <td ng-if="!isAdditionalProperty()" id="lrNewPremiumTax">{{data.result.leasehold.residential.from.premiumTax | sdltCurrency:"£"}}</td>
-              <td ng-if="isAdditionalProperty()" id="lrNewPremiumTax">{{data.result.leasehold.residential.before.premiumTax | sdltCurrency:"£"}}</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-
-    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Residential' && !effDateAfterCutOff()"  id="divLeaseholdResidentialOld">
-      <h2 id="lrOldHeading" class="heading-medium blue-bottom-border LR-subtitle-before">{{getHeading()}}</h2>
-      <div class = "form-group">
-        <table>
-          <tbody>                  
-            <tr class="section">
-              <td>Total amount of tax for this transaction</td>
-              <td id="lrOldTotalTax">{{data.result.leasehold.residential.before.totalTax | sdltCurrency:"£"}}</td>
-            </tr>
-            <tr class="section">
-              <td>Net present value</td>
-              <td id="lrOldNPV">{{data.result.leasehold.residential.npv | sdltCurrency:"£"}}</td>
-            </tr>
-            <tr class="section">
-              <td>SDLT on rent</td>
-              <td id="lrOldRentTax">{{data.result.leasehold.residential.rentTax | sdltCurrency:"£"}}</td>
-            </tr>
-            <tr class="section">
-              <td id="lrOldPremiumTaxLabel">SDLT on premium ({{data.result.leasehold.residential.before.rate}}%)</td>
-              <td id="lrOldPremiumTax">{{data.result.leasehold.residential.before.premiumTax | sdltCurrency:"£"}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential'" id="divLeaseholdNonResidential">
-      <h2 id="lnHeading" class="heading-medium blue-bottom-border LR-subtitle-before">Result</h2>
-      <div class = "form-group">
-        <table>
-          <tbody>            
-            <tr class="section">
-              <td>Total amount of tax for this transaction</td>
-              <td id="lnTotalTax">{{data.result.leasehold.nonResidential.totalTax | sdltCurrency:"£"}}</td>
-            </tr>
-            <tr class="section">
-              <td>Net present value</td>
-              <td id="lnNPV">{{data.result.leasehold.nonResidential.npv | sdltCurrency:"£"}}</td>
-            </tr>
-            <tr class="section">
-              <td>SDLT on rent</td>
-              <td id="lnRentTax">{{data.result.leasehold.nonResidential.rentTax | sdltCurrency:"£"}}</td>
-            </tr>
-            <tr class="section">
-              <td id="lnPremiumTaxLabel">SDLT on premium ({{data.result.leasehold.nonResidential.premiumTaxRate}}%)</td>
-              <td id="lnPremiumTax">{{data.result.leasehold.nonResidential.premiumTax | sdltCurrency:"£"}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-</form>
 
 <div class="form-group">
   <button class ="button" onCLick="javascript:window.print();ga('send', 'event', 'button', 'click', 'print')">Print</button>

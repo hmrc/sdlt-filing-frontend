@@ -35,7 +35,7 @@
 
 
         $scope.displayRelevantRent = function() {
-            return validator.relevantRentCheck([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+            return validator.checkAllRentsBelow2000([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
         };
 
         $scope.displayAdditionalProperty = function() {

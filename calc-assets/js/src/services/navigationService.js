@@ -67,8 +67,8 @@
                 redirectToNext(locationService, 'rent');
             }
             else if (currentView === 'rent') {
-                var checkRelevant = validator.relevantRentCheck([model.year1Rent, model.year2Rent, model.year3Rent, model.year4Rent, model.year5Rent]);
-                if (model.propertyType === 'Non-residential' && model.premium < 150000 && checkRelevant) {
+                var allRentsBelow2000 = validator.checkAllRentsBelow2000([model.year1Rent, model.year2Rent, model.year3Rent, model.year4Rent, model.year5Rent]);
+                if (model.propertyType === 'Non-residential' && model.premium < 150000 && allRentsBelow2000) {
                     redirectToNext(locationService, 'relevant-rent');
                 } 
                 else {

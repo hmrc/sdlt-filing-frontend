@@ -8,8 +8,9 @@
         var init = require("../../utilities/initController");
         init($scope, $location, $anchorScroll, 'result', dataService, navigationService);
 
-        $scope.viewDetails = function(latestOrPrevious) {
-            $scope.data.latestOrPrevious = latestOrPrevious;
+        $scope.viewDetails = function(resultIndex, taxCalcIndex) {
+            $scope.data.resultIndex = resultIndex;
+            $scope.data.taxCalcIndex = taxCalcIndex;
             dataService.updateModel($scope.data);
             navigationService.viewDetails($scope.data, $location);
         };
@@ -18,111 +19,53 @@
             navigationService.printView($scope.data, $location);
         };
 
-        $scope.effDateAfterAprilCutOff = function(){
-            var cutOffDate = new Date("April 1, 2016");
-            return $scope.data.effectiveDate >= cutOffDate;
+        $scope.effDateOnOrAfter = function(compDate){
+            return $scope.data.effectiveDate >= compDate;
         };
 
         $scope.isAdditionalProperty = function(){
-            return ($scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No') && $scope.effDateAfterAprilCutOff();
+            return ($scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No');
         };
 
         var rent = require("../../utilities/displayLeasedYearRentFields");
         rent = rent().getFunctions($scope.data);
-
         if (modelValidationService.validate($scope.data).isModelValid) {
-            var result = {
-                freehold  : {
-                    residential : {
-                        from : {},
-                        before : {}
-                    },
-                    nonResidential : {}
-                },
-                leasehold  : {
-                    residential : {
-                        totalTax : -1,
-                        npv : -1,
-                        rentTax : -1,
-                        premiumTax : -1
-                    },
-                    nonResidential : {
-                        totalTax : -1,
-                        npv : -1,
-                        rentTax : -1,
-                        premiumTax : -1
-                    }
-                }
-            };
+            var result = {};
+
             if ($scope.data.holdingType === 'Freehold') {
                 if ($scope.data.propertyType === 'Residential') {
-                    if($scope.isAdditionalProperty()) {
-                        result.freehold.residential.from = calculationService.calculate201604SecondHomeSlice($scope.data.premium);
-                        result.freehold.residential.before = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
+                    if ($scope.effDateOnOrAfter(new Date(2016, 3, 1)) && $scope.isAdditionalProperty()) {
+                        result = calculationService.calcFreeResPremAddProp_201604_Undef($scope.data.premium);
+                    } else if ($scope.effDateOnOrAfter(new Date(2014, 11, 4))) {
+                        result = calculationService.calcFreeResPrem_201412_Undef($scope.data.premium);
                     } else {
-                        result.freehold.residential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
-                        result.freehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium);
+                        result = calculationService.calcFreeResPrem_201203_201412($scope.data.premium);
                     }
+                } else  { // propertyType === 'Non-residential') {
+                    result = calculationService.calcFreeNonResPrem_201203_Undef($scope.data.premium);
                 }
-                else if ($scope.data.propertyType === 'Non-residential'){
-                    result.freehold.nonResidential = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, true); 
-                }
-            }
-            else if ($scope.data.holdingType === 'Leasehold') {
+            } else { // holdingType === 'Leasehold'
                 var rentTax = -1;
                 var rentsArray = [parseFloat($scope.data.year1Rent), rent.displayYearTwoRent ? parseFloat($scope.data.year2Rent) : 0, rent.displayYearThreeRent ? parseFloat($scope.data.year3Rent) : 0, rent.displayYearFourRent ? parseFloat($scope.data.year4Rent) : 0, rent.displayYearFiveRent ? parseFloat($scope.data.year5Rent) : 0];
                 var npv = calculationService.calculateNPV($scope.data.leaseTerm.years, $scope.data.leaseTerm.days, $scope.data.leaseTerm.daysInPartialYear, rentsArray);
-                
+                $scope.data.npv = npv;
 
                 if ($scope.data.propertyType === 'Residential') {
-                    var fromPremiumTax;
-                    var beforePremiumTax;
-
-                    if($scope.isAdditionalProperty()) {
-                        result.leasehold.residential.from = calculationService.calculate201604SecondHomeSlice($scope.data.premium);
-                        fromPremiumTax = result.leasehold.residential.from.totalSDLT;
-
-                        result.leasehold.residential.before = calculationService.calculateResidentialPremiumSlice($scope.data.premium); 
-                        beforePremiumTax = result.leasehold.residential.before.totalSDLT;
+                    if ($scope.effDateOnOrAfter(new Date("April 1, 2016")) && $scope.isAdditionalProperty()) {
+                        result = calculationService.calcLeaseResPremAndRentAddProp_201604_Undef($scope.data.premium, $scope.data.npv);
+                    } else if ($scope.effDateOnOrAfter(new Date("December 4, 2014"))) {
+                        result = calculationService.calcLeaseResPremAndRent_201412_Undef($scope.data.premium, $scope.data.npv);
                     } else {
-                        result.leasehold.residential.from = calculationService.calculateResidentialPremiumSlice($scope.data.premium);
-                        fromPremiumTax = result.leasehold.residential.from.totalSDLT;
-
-                        result.leasehold.residential.before = calculationService.calculateResidentialPremiumSlab($scope.data.premium); 
-                        beforePremiumTax = result.leasehold.residential.before.taxDue;
+                        result = calculationService.calcLeaseResPremAndRent_201203_201412($scope.data.premium, $scope.data.npv);
                     }
-
-                    
-                    rentTax = calculationService.calculateResidentialLeaseSlice(npv).totalSDLT;
-
-                    result.leasehold.residential.npv = npv;
-                    result.leasehold.residential.rentTax = rentTax;
-                    result.leasehold.residential.from.premiumTax = fromPremiumTax;
-                    result.leasehold.residential.from.totalTax = rentTax + fromPremiumTax;
-                    result.leasehold.residential.before.premiumTax = beforePremiumTax;
-                    result.leasehold.residential.before.totalTax = rentTax + beforePremiumTax;
-                }
-                else if ($scope.data.propertyType === 'Non-residential'){
-                    var premiumTax = -1;
+                } else { // propertyType === 'Non-residential'
                     var zeroRate = false;
                     var validator = require("../../utilities/validator")();
-                    var checkRelevant = validator.relevantRentCheck([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
-                    if ($scope.data.premium < 150000 && checkRelevant) {
-                        var relevantRent = ($scope.data.relevantRent === undefined) ? 0 : $scope.data.relevantRent;
-                        if(relevantRent < 1000){
-                            zeroRate = true;
-                        }
+                    var allRentsBelow2000 = validator.checkAllRentsBelow2000([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+                    if ($scope.data.premium < 150000 && allRentsBelow2000 && $scope.data.relevantRent < 1000) {
+                        zeroRate = true;
                     }
-                    var premiumTaxBreakdown = calculationService.calculateNonResidentialPremiumSlab($scope.data.premium, zeroRate);
-                    premiumTax = premiumTaxBreakdown.taxDue;
-                    var premiumTaxRate = premiumTaxBreakdown.rate;
-                    rentTax = calculationService.calculateNonResidentialLeaseSlice(npv).totalSDLT;
-
-                    result.leasehold.nonResidential.npv = npv;
-                    result.leasehold.nonResidential.rentTax = rentTax;
-                    result.leasehold.nonResidential.premiumTaxRate = premiumTaxRate;
-                    result.leasehold.nonResidential.premiumTax = premiumTax;
-                    result.leasehold.nonResidential.totalTax = rentTax + premiumTax;
+                    result = calculationService.calcLeaseNonResPremAndRent_201203_Undef($scope.data.premium, $scope.data.npv, zeroRate);
                 }
             }
             $scope.data.result = result;
@@ -131,20 +74,6 @@
         else {
             $location.path('summary');
         }
-
-
-        $scope.effDateAfterCutOff = function(){
-            var cutOffDate = new Date("December 4, 2014");
-            return $scope.data.effectiveDate >= cutOffDate;
-        };
-
-
-        $scope.getHeading = function() {
-            if($scope.effDateAfterCutOff()) {
-                return "Results based on SDLT rules before 4 December 2014";
-            }
-        };
-
     };
 
     app.controller('resultController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'calculationService', resultController ]);
