@@ -42,7 +42,7 @@
                         result = calculationService.calcFreeResPrem_201203_201412($scope.data.premium);
                     }
                 } else  { // propertyType === 'Non-residential') {
-                    result = calculationService.calcFreeNonResPrem_201203_Undef($scope.data.premium);
+                    result = calculationService.calcFreeNonResPrem_201203_201603($scope.data.premium);
                 }
             } else { // holdingType === 'Leasehold'
                 var rentTax = -1;

@@ -475,8 +475,8 @@
         });
 
 
-        // ********************* calcFreeNonResPrem_201203_Undef *********************
-        calcFreeNonResPrem_201203_Undef_Results = [{
+        // ********************* calcFreeNonResPrem_201203_201603 *********************
+        calcFreeNonResPrem_201203_201603_Results = [{
             totalTax : 0,
             taxCalcs : [{
                 taxType : "premium",
@@ -485,47 +485,141 @@
                 rate : 0
             }]
         }];
-        it(' calcFreeNonResPrem_201203_Undef should return 0 for purchase price of 150000', function() {
-            calcFreeNonResPrem_201203_Undef_Results[0].totalTax = 0;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].taxDue = 0;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].rate = 0;
-            expect(service.calcFreeNonResPrem_201203_Undef(150000)).toEqual(calcFreeNonResPrem_201203_Undef_Results);
+        it(' calcFreeNonResPrem_201203_201603 should return 0 for purchase price of 150000', function() {
+            calcFreeNonResPrem_201203_201603_Results[0].totalTax = 0;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].taxDue = 0;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].rate = 0;
+            expect(service.calcFreeNonResPrem_201203_201603(150000)).toEqual(calcFreeNonResPrem_201203_201603_Results);
         });
 
-        it(' calcFreeNonResPrem_201203_Undef should return 1500 for purchase price of 150001', function() {
-            calcFreeNonResPrem_201203_Undef_Results[0].totalTax = 1500;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].taxDue = 1500;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].rate = 1;
-            expect(service.calcFreeNonResPrem_201203_Undef(150001)).toEqual(calcFreeNonResPrem_201203_Undef_Results);
+        it(' calcFreeNonResPrem_201203_201603 should return 1500 for purchase price of 150001', function() {
+            calcFreeNonResPrem_201203_201603_Results[0].totalTax = 1500;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].taxDue = 1500;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].rate = 1;
+            expect(service.calcFreeNonResPrem_201203_201603(150001)).toEqual(calcFreeNonResPrem_201203_201603_Results);
         });
 
-        it(' calcFreeNonResPrem_201203_Undef should return 2500 for purchase price of 250000', function() {
-            calcFreeNonResPrem_201203_Undef_Results[0].totalTax = 2500;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].taxDue = 2500;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].rate = 1;
-            expect(service.calcFreeNonResPrem_201203_Undef(250000)).toEqual(calcFreeNonResPrem_201203_Undef_Results);
+        it(' calcFreeNonResPrem_201203_201603 should return 2500 for purchase price of 250000', function() {
+            calcFreeNonResPrem_201203_201603_Results[0].totalTax = 2500;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].taxDue = 2500;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].rate = 1;
+            expect(service.calcFreeNonResPrem_201203_201603(250000)).toEqual(calcFreeNonResPrem_201203_201603_Results);
         });
 
-        it(' calcFreeNonResPrem_201203_Undef should return 7500 for purchase price of 250001', function() {
-            calcFreeNonResPrem_201203_Undef_Results[0].totalTax = 7500;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].taxDue = 7500;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].rate = 3;
-            expect(service.calcFreeNonResPrem_201203_Undef(250001)).toEqual(calcFreeNonResPrem_201203_Undef_Results);
+        it(' calcFreeNonResPrem_201203_201603 should return 7500 for purchase price of 250001', function() {
+            calcFreeNonResPrem_201203_201603_Results[0].totalTax = 7500;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].taxDue = 7500;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].rate = 3;
+            expect(service.calcFreeNonResPrem_201203_201603(250001)).toEqual(calcFreeNonResPrem_201203_201603_Results);
         });
 
-        it(' calcFreeNonResPrem_201203_Undef should return 15000 for purchase price of 500000', function() {
-            calcFreeNonResPrem_201203_Undef_Results[0].totalTax = 15000;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].taxDue = 15000;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].rate = 3;
-            expect(service.calcFreeNonResPrem_201203_Undef(500000)).toEqual(calcFreeNonResPrem_201203_Undef_Results);
+        it(' calcFreeNonResPrem_201203_201603 should return 15000 for purchase price of 500000', function() {
+            calcFreeNonResPrem_201203_201603_Results[0].totalTax = 15000;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].taxDue = 15000;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].rate = 3;
+            expect(service.calcFreeNonResPrem_201203_201603(500000)).toEqual(calcFreeNonResPrem_201203_201603_Results);
         });
 
-        it(' calcFreeNonResPrem_201203_Undef should return 20000 for purchase price of 500001', function() {
-            calcFreeNonResPrem_201203_Undef_Results[0].totalTax = 20000;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].taxDue = 20000;
-            calcFreeNonResPrem_201203_Undef_Results[0].taxCalcs[0].rate = 4;
-            expect(service.calcFreeNonResPrem_201203_Undef(500001)).toEqual(calcFreeNonResPrem_201203_Undef_Results);
+        it(' calcFreeNonResPrem_201203_201603 should return 20000 for purchase price of 500001', function() {
+            calcFreeNonResPrem_201203_201603_Results[0].totalTax = 20000;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].taxDue = 20000;
+            calcFreeNonResPrem_201203_201603_Results[0].taxCalcs[0].rate = 4;
+            expect(service.calcFreeNonResPrem_201203_201603(500001)).toEqual(calcFreeNonResPrem_201203_201603_Results);
         });
+
+        // ********************* calcFreeNonResPrem_201603_Undef *********************
+        calcFreeNonResPrem_201603_Undef_Results = [
+            {
+                resultHeading : "Results based on SDLT rules from 17 March 2016",
+                totalTax : 0,
+                taxCalcs : [
+                    {
+                        taxType : "premium",
+                        calcType : "slice",
+                        detailHeading : "This is a breakdown of how the total amount of SDLT was calculated based on the rules from 17 March 2016",
+                        bandHeading : 'Purchase price bands (£)',
+                        detailFooter : 'Total SDLT due',
+                        taxDue : 0,
+                        slices : [
+                            { from: 0,       to : 150000,  rate : 0,  taxDue : 0},
+                            { from: 150000,  to : 250000,  rate : 2,  taxDue : 0},
+                            { from: 250000,  to : -1,      rate : 5,  taxDue : 0}
+                        ]
+                    }
+                ]
+            },
+            {
+                totalTax : 0,
+                taxCalcs : [
+                    {
+                        taxType : "premium",
+                        calcType : "slab",
+                        taxDue : 0,
+                        rate : 0
+                    }
+                ],
+                resultHeading : "Results based on SDLT rules before 17 March 2016",
+                resultHint : "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 17 March 2016."
+            }    
+        ];
+
+        it(' calcFreeNonResPrem_201603_Undef should return 0, 0 for purchase price of 150000', function() {
+            expect(service.calcFreeNonResPrem_201603_Undef(150000)).toEqual(calcFreeNonResPrem_201603_Undef_Results);
+        });
+
+        it(' calcFreeNonResPrem_201603_Undef should return 2, 1501 for purchase price of 150100', function() {
+            calcFreeNonResPrem_201603_Undef_Results[0].totalTax = 2;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].taxDue = 2;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 2;
+            calcFreeNonResPrem_201603_Undef_Results[1].totalTax = 1501;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].taxDue = 1501;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].rate = 1;
+            expect(service.calcFreeNonResPrem_201603_Undef(150100)).toEqual(calcFreeNonResPrem_201603_Undef_Results);
+        });
+
+        it(' calcFreeNonResPrem_201603_Undef should return 2000, 2500 for purchase price of 250000', function() {
+            calcFreeNonResPrem_201603_Undef_Results[0].totalTax = 2000;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].taxDue = 2000;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 2000;
+            calcFreeNonResPrem_201603_Undef_Results[1].totalTax = 2500;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].taxDue = 2500;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].rate = 1;
+            expect(service.calcFreeNonResPrem_201603_Undef(250000)).toEqual(calcFreeNonResPrem_201603_Undef_Results);
+        });
+
+        it(' calcFreeNonResPrem_201603_Undef should return 2005, 7503 for purchase price of 250100', function() {
+            calcFreeNonResPrem_201603_Undef_Results[0].totalTax = 2005;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].taxDue = 2005;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 2000;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].slices[2].taxDue = 5;
+            calcFreeNonResPrem_201603_Undef_Results[1].totalTax = 7503;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].taxDue = 7503;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].rate = 3;
+            expect(service.calcFreeNonResPrem_201603_Undef(250100)).toEqual(calcFreeNonResPrem_201603_Undef_Results);
+        });
+
+        it(' calcFreeNonResPrem_201603_Undef should return 14500, 15000 for purchase price of 500000', function() {
+            calcFreeNonResPrem_201603_Undef_Results[0].totalTax = 14500;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].taxDue = 14500;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 2000;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].slices[2].taxDue = 12500;
+            calcFreeNonResPrem_201603_Undef_Results[1].totalTax = 15000;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].taxDue = 15000;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].rate = 3;
+            expect(service.calcFreeNonResPrem_201603_Undef(500000)).toEqual(calcFreeNonResPrem_201603_Undef_Results);
+        });
+
+        it(' calcFreeNonResPrem_201603_Undef should return 14505, 20004 for purchase price of 500100', function() {
+            calcFreeNonResPrem_201603_Undef_Results[0].totalTax = 14505;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].taxDue = 14505;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 2000;
+            calcFreeNonResPrem_201603_Undef_Results[0].taxCalcs[0].slices[2].taxDue = 12505;
+            calcFreeNonResPrem_201603_Undef_Results[1].totalTax = 20004;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].taxDue = 20004;
+            calcFreeNonResPrem_201603_Undef_Results[1].taxCalcs[0].rate = 4;
+            expect(service.calcFreeNonResPrem_201603_Undef(500100)).toEqual(calcFreeNonResPrem_201603_Undef_Results);
+        });
+
 
         // ********************* calcLeaseResPremAndRent_201203_201412 *********************
         calcLeaseResPremAndRent_201203_201412_Results = [{
@@ -965,5 +1059,6 @@
             calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[1].rate = 4;
             expect(service.calcLeaseNonResPremAndRent_201203_Undef(500001, 150100, false)).toEqual(calcLeaseNonResPremAndRent_201203_Undef_Results);
         });
+
   });
 }());
