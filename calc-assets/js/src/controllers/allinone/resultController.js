@@ -69,7 +69,7 @@
                     if ($scope.data.premium < 150000 && allRentsBelow2000 && $scope.data.relevantRent < 1000) {
                         zeroRate = true;
                     }
-                    result = calculationService.calcLeaseNonResPremAndRent_201203_Undef($scope.data.premium, $scope.data.npv, zeroRate);
+                    result = calculationService.calcLeaseNonResPremAndRent_201203_201603($scope.data.premium, $scope.data.npv, zeroRate);
                 }
             }
             $scope.data.result = result;

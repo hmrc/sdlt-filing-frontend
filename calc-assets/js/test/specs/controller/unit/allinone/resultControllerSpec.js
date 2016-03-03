@@ -51,7 +51,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {}
+                calcLeaseNonResPremAndRent_201203_201603 : function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -66,7 +66,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             
             controller = $controller('resultController', {
                 $scope : mockScope,
@@ -95,7 +95,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -149,7 +149,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {}
+                calcLeaseNonResPremAndRent_201203_201603 : function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -164,7 +164,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
 
             
             controller = $controller('resultController', {
@@ -194,7 +194,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -248,7 +248,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {}
+                calcLeaseNonResPremAndRent_201203_201603 : function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -263,7 +263,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
 
             
             controller = $controller('resultController', {
@@ -293,7 +293,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -349,7 +349,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {}
+                calcLeaseNonResPremAndRent_201203_201603 : function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -364,7 +364,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
 
             
             controller = $controller('resultController', {
@@ -394,7 +394,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -450,7 +450,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {}
+                calcLeaseNonResPremAndRent_201203_201603 : function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -465,7 +465,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
 
             
             controller = $controller('resultController', {
@@ -495,7 +495,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -549,7 +549,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {}
+                calcLeaseNonResPremAndRent_201203_201603 : function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -564,7 +564,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
 
             
             controller = $controller('resultController', {
@@ -594,7 +594,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -648,7 +648,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {}
+                calcLeaseNonResPremAndRent_201203_201603 : function() {}
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
@@ -663,7 +663,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
 
             
             controller = $controller('resultController', {
@@ -693,7 +693,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -756,7 +756,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
                 calculateNPV: function() {
                     return 1;
                 }
@@ -775,7 +775,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             spyOn(mockCalculationService, 'calculateNPV');
 
             
@@ -810,7 +810,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(1);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -877,7 +877,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
                 calculateNPV: function() {
                     return 1;
                 }
@@ -896,7 +896,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             spyOn(mockCalculationService, 'calculateNPV');
 
             
@@ -931,7 +931,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(1);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -999,7 +999,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
                 calculateNPV: function() {
                     return 1;
                 }
@@ -1018,7 +1018,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             spyOn(mockCalculationService, 'calculateNPV');
 
             
@@ -1053,7 +1053,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(1);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -1122,7 +1122,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
                 calculateNPV: function() {
                     return 1;
                 }
@@ -1141,7 +1141,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             spyOn(mockCalculationService, 'calculateNPV');
 
             
@@ -1176,7 +1176,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(1);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -1245,7 +1245,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
                 calculateNPV: function() {
                     return 1;
                 }
@@ -1264,7 +1264,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             spyOn(mockCalculationService, 'calculateNPV');
 
             
@@ -1299,7 +1299,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(1);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -1367,7 +1367,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
                 calculateNPV: function() {
                     return 1;
                 }
@@ -1386,7 +1386,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             spyOn(mockCalculationService, 'calculateNPV');
 
             
@@ -1412,7 +1412,7 @@
             expect(mockCalculationService.calculateNPV.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to calculationService.calcLeaseNonResPremAndRent_201203_Undef', function () {
+        it('should make 1 call to calculationService.calcLeaseNonResPremAndRent_201203_201603', function () {
             expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(0);
@@ -1421,7 +1421,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(1);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(1);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -1489,7 +1489,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
                 calculateNPV: function() {
                     return 1;
                 }
@@ -1508,7 +1508,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             spyOn(mockCalculationService, 'calculateNPV');
 
             
@@ -1534,7 +1534,7 @@
             expect(mockCalculationService.calculateNPV.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to calculationService.calcLeaseNonResPremAndRent_201203_Undef', function () {
+        it('should make 1 call to calculationService.calcLeaseNonResPremAndRent_201203_201603', function () {
             expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(0);
@@ -1543,7 +1543,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(1);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(1);
         });
 
         it('should make 1 call to dataService.updateModel', function () {
@@ -1611,7 +1611,7 @@
                 calcLeaseResPremAndRent_201203_201412 : function() {},
                 calcLeaseResPremAndRent_201412_Undef : function() {},
                 calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
-                calcLeaseNonResPremAndRent_201203_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
                 calculateNPV: function() {
                     return 1;
                 }
@@ -1630,7 +1630,7 @@
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
             spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
-            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
             spyOn(mockCalculationService, 'calculateNPV');
 
             
@@ -1656,7 +1656,7 @@
             expect(mockCalculationService.calculateNPV.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to calculationService.calcLeaseNonResPremAndRent_201203_Undef', function () {
+        it('should make 1 call to calculationService.calcLeaseNonResPremAndRent_201203_201603', function () {
             expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(0);
@@ -1665,7 +1665,7 @@
             expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
             expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
-            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_Undef.calls.count()).toEqual(1);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(1);
         });
 
         it('should make 1 call to dataService.updateModel', function () {

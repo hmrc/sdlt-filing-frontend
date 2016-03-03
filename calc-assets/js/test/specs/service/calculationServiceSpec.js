@@ -1001,8 +1001,8 @@
             expect(service.calcLeaseResPremAndRentAddProp_201604_Undef(1500100, 250000)).toEqual(calcLeaseResPremAndRentAddProp_201604_Undef_Results);
         });
 
-        // ********************* calcLeaseNonResPremAndRent_201203_Undef *********************
-        calcLeaseNonResPremAndRent_201203_Undef_Results = [
+        // ********************* calcLeaseNonResPremAndRent_201203_201603 *********************
+        calcLeaseNonResPremAndRent_201203_201603_Results = [
             {
                 totalTax : 0,
                 npv : 0,
@@ -1029,35 +1029,120 @@
                 ]
             }
         ];
-        it(' calcLeaseNonResPremAndRent_201203_Undef should return 0, 0 for purchase price of 150000, npv of 150000 and zeroRate is TRUE', function() {
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].totalTax = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].npv = 150000;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].taxDue = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[1].taxDue = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[1].rate = 0;
-            expect(service.calcLeaseNonResPremAndRent_201203_Undef(150000, 150000, true)).toEqual(calcLeaseNonResPremAndRent_201203_Undef_Results);
+        it(' calcLeaseNonResPremAndRent_201203_201603 should return 0, 0 for purchase price of 150000, npv of 150000 and zeroRate is TRUE', function() {
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].totalTax = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].npv = 150000;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].taxDue = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].slices[0].taxDue = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].slices[1].taxDue = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[1].taxDue = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[1].rate = 0;
+            expect(service.calcLeaseNonResPremAndRent_201203_201603(150000, 150000, true)).toEqual(calcLeaseNonResPremAndRent_201203_201603_Results);
         });
-        it(' calcLeaseNonResPremAndRent_201203_Undef should return 1500, 0 for purchase price of 150000, npv of 150000 and zeroRate is FALSE', function() {
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].totalTax = 1500;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].npv = 150000;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].taxDue = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[1].taxDue = 1500;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[1].rate = 1;
-            expect(service.calcLeaseNonResPremAndRent_201203_Undef(150000, 150000, false)).toEqual(calcLeaseNonResPremAndRent_201203_Undef_Results);
+        it(' calcLeaseNonResPremAndRent_201203_201603 should return 1500, 0 for purchase price of 150000, npv of 150000 and zeroRate is FALSE', function() {
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].totalTax = 1500;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].npv = 150000;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].taxDue = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].slices[0].taxDue = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].slices[1].taxDue = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[1].taxDue = 1500;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[1].rate = 1;
+            expect(service.calcLeaseNonResPremAndRent_201203_201603(150000, 150000, false)).toEqual(calcLeaseNonResPremAndRent_201203_201603_Results);
         });
-        it(' calcLeaseNonResPremAndRent_201203_Undef should return 20000, 1 for purchase price of 500001, npv of 150100 and zeroRate is FALSE', function() {
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].totalTax = 20001;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].npv = 150100;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].taxDue = 1;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 0;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 1;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[1].taxDue = 20000;
-            calcLeaseNonResPremAndRent_201203_Undef_Results[0].taxCalcs[1].rate = 4;
-            expect(service.calcLeaseNonResPremAndRent_201203_Undef(500001, 150100, false)).toEqual(calcLeaseNonResPremAndRent_201203_Undef_Results);
+        it(' calcLeaseNonResPremAndRent_201203_201603 should return 20000, 1 for purchase price of 500001, npv of 150100 and zeroRate is FALSE', function() {
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].totalTax = 20001;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].npv = 150100;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].taxDue = 1;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].slices[0].taxDue = 0;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[0].slices[1].taxDue = 1;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[1].taxDue = 20000;
+            calcLeaseNonResPremAndRent_201203_201603_Results[0].taxCalcs[1].rate = 4;
+            expect(service.calcLeaseNonResPremAndRent_201203_201603(500001, 150100, false)).toEqual(calcLeaseNonResPremAndRent_201203_201603_Results);
+        });
+
+        // ********************* calcLeaseNonResPremAndRent_201603_Undef *********************
+        calcLeaseNonResPremAndRent_201603_Undef_Results = [
+            {
+                resultHeading : "Results based on SDLT rules from 17 March 2016",
+                totalTax : 0,
+                npv : 0,
+                taxCalcs : [
+                    {
+                        taxType : "rent",
+                        calcType : "slice",
+                        detailHeading : "This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules from 17 March 2016",
+                        bandHeading: 'Rent bands (£)', 
+                        detailFooter: 'SDLT due on the rent',
+                        taxDue : 0,
+                        slices : [
+                            { from: 0,       to : 150000,   rate : 0,  taxDue : 0},
+                            { from: 150000,  to : 2000000,  rate : 1,  taxDue : 0},
+                            { from: 2000000, to : 5000000,  rate : 2,  taxDue : 0},
+                            { from: 5000000, to : -1,       rate : 3,  taxDue : 0}
+                        ]
+                    },
+                    {
+                        taxType : "premium",
+                        calcType : "slice",
+                        detailHeading : "This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 17 March 2016",
+                        bandHeading: 'Premium bands (£)', 
+                        detailFooter: 'SDLT due on the premium',
+                        taxDue : 0,
+                        slices : [
+                            { from: 0,       to : 150000,   rate : 0,  taxDue : 0},
+                            { from: 150000,  to : 250000,   rate : 2,  taxDue : 0},
+                            { from: 250000,  to : -1,       rate : 5,  taxDue : 0}
+                        ]
+                    }
+                ]
+            },
+            {
+                totalTax : 0,
+                npv : 0,
+                taxCalcs : [
+                    {
+                        taxType : "rent",
+                        calcType : "slice",
+                        detailHeading : "This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules before 17 March 2016",
+                        bandHeading: 'Rent bands (£)', 
+                        detailFooter: 'SDLT due on the rent',
+                        taxDue : 0,
+                        slices : [
+                            { from: 0,       to : 150000,   rate : 0,  taxDue : 0},
+                            { from: 150000,  to : -1    ,   rate : 1,  taxDue : 0}
+                        ]
+                    },
+                    {
+                        taxType : "premium",
+                        calcType : "slab",
+                        taxDue : 0,
+                        rate : 0
+                    }
+                ],
+                resultHeading : "Results based on SDLT rules before 17 March 2016",
+                resultHint : "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 17 March 2016."
+            }
+        ];
+        it(' calcLeaseNonResPremAndRent_201603_Undef should return 93008, 23505 for premium of 500,100, npv of 5,000,100 and zeroRate is FALSE', function() {
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].totalTax = 93008;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].npv = 5000100;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[0].taxDue = 78503;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 0;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 18500;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[0].slices[2].taxDue = 60000;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[0].slices[3].taxDue = 3;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[1].taxDue = 14505;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[1].slices[0].taxDue = 0;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[1].slices[1].taxDue = 2000;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[0].taxCalcs[1].slices[2].taxDue = 12505;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[1].totalTax = 68505;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[1].npv = 5000100;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[1].taxCalcs[0].taxDue = 48501;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[1].taxCalcs[0].slices[0].taxDue = 0;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[1].taxCalcs[0].slices[1].taxDue = 48501;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[1].taxCalcs[1].taxDue = 20004;
+            calcLeaseNonResPremAndRent_201603_Undef_Results[1].taxCalcs[1].rate = 4;
+            expect(service.calcLeaseNonResPremAndRent_201603_Undef(500100, 5000100, false)).toEqual(calcLeaseNonResPremAndRent_201603_Undef_Results);
         });
 
   });
