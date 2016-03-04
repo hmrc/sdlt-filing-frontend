@@ -393,9 +393,8 @@
 
             var rentSlicesArray = [
                     { from: 0,       to : 150000 ,   rate : 0,  taxDue : -1},
-                    { from: 150000,  to : 2000000,   rate : 1,  taxDue : -1},
-                    { from: 2000000, to : 5000000,   rate : 2,  taxDue : -1},
-                    { from: 5000000, to : -1,        rate : 3,  taxDue : -1}
+                    { from: 150000,  to : 5000000,   rate : 1,  taxDue : -1},
+                    { from: 5000000, to : -1,        rate : 2,  taxDue : -1}
             ];
 
             var rentResult = calculateTaxDueSlice(npv, rentSlicesArray);
