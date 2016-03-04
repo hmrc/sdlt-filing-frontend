@@ -42,6 +42,10 @@
             return $scope.data.propertyType === "Residential" && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 3, 1)); // = 01/04/2016 !
         };
 
+        $scope.displayExchangeContracts = function() {
+            return $scope.data.holdingType === "Leasehold" && $scope.data.propertyType === "Non-residential" && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 2, 17)); // = 17/03/2016 !
+        };
+
 
         $scope.getDisplayValue = function(value) {
             if(value === undefined || value === 'undefined' || value === '') {

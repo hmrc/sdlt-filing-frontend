@@ -688,6 +688,104 @@
 
         });
 
+    describe('test for displayExchangeContracts', function () {
+            
+
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
+                
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "",
+                            propertyType : "",
+                            effectiveDate : undefined
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            it('displayExchangeContracts should be false when no data supplied', function () {
+                mockScope.data.holdingType = undefined;
+                mockScope.data.propertyType = undefined;
+                mockScope.data.effectiveDate = undefined;
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Freehold Residential when date is 16/03/2016', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016,2,16);
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Freehold Residential when date is 17/03/2016', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016,2,17);
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Freehold Non-residential when date is 017/03/2016', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Non-residential";
+                mockScope.data.effectiveDate = new Date(2016,2,17);
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Leasehold Residential when date is 17/03/2016', function () {
+                mockScope.data.holdingType = "Leasehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016,2,17);
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Leasehold Non-residential when date is 16/03/2016', function () {
+                mockScope.data.holdingType = "Leasehold";
+                mockScope.data.propertyType = "Non-residential";
+                mockScope.data.effectiveDate = new Date(2016,2,16);
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be true for Leasehold Non-residential when date is 17/03/2016', function () {
+                mockScope.data.holdingType = "Leasehold";
+                mockScope.data.propertyType = "Non-residential";
+                mockScope.data.effectiveDate = new Date(2016,2,17);
+                expect(mockScope.displayExchangeContracts()).toEqual(true);
+            });
+
+        });
+
     });
 
 }());
