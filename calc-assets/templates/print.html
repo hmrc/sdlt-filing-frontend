@@ -126,7 +126,7 @@
             <td></td>
           </tr>
           <tr ng-repeat="taxCalc in res.taxCalcs" class="section">
-            <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}} <span ng-if="tax.calcType === 'slab'">({{taxCalc.rate}}%)</span></td>
+            <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}} <span id="taxRate{{$index}}" ng-if="tax.calcType === 'slab'">({{taxCalc.rate}}%)</span></td>
             <td id="taxDue{{$parent.$parent.$index+''+$index}}">{{taxCalc.taxDue | sdltCurrency:"£"}}</td>
             <td></td>
           </tr>
