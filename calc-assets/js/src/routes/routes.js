@@ -69,6 +69,13 @@
                 reloadOnSearch: false
             })
 
+            .when('/exchange-contracts', {
+                title : 'Exchange of contracts',
+                templateUrl : 'exchange-contracts.html',
+                controller : 'exchangeContractsController',
+                reloadOnSearch : false
+            })
+
             .when('/relevant-rent', {
                 title : 'Relevant rental figure',
                 templateUrl : 'relevant-rent.html',

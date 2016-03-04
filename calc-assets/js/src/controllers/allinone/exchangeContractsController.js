@@ -6,16 +6,16 @@
     var exchangeContractsController = function($scope, $location, $anchorScroll, dataService, exchangeContractsValidationService, navigationService, loggingService) {
         
         var init = require("../../utilities/initFormController");
-        init($scope, $location, $anchorScroll, 'contracts-exchanged', dataService, exchangeContractsValidationService, navigationService);
+        init($scope, $location, $anchorScroll, 'exchange-contracts', dataService, exchangeContractsValidationService, navigationService);
 
         $scope.beforeUpdateModel = function() {
             if($scope.data.contractPre201603 === "No") {
-                loggingService.logEvent('decision', 'submit', "ContractsExchanged.Post20160316");
+                loggingService.logEvent('decision', 'submit', "ExchangeContracts.Post20160316");
             } else {
                 if($scope.data.contractVariedPost201603 === "Yes") {
-                    loggingService.logEvent('decision', 'submit', "ContractsExchanged.Pre20160317.VariedAfter");
+                    loggingService.logEvent('decision', 'submit', "ExchangeContracts.Pre20160317.VariedAfter");
                 } else {
-                    loggingService.logEvent('decision', 'submit', "ContractsExchanged.Pre20160317.NotVariedAfter");
+                    loggingService.logEvent('decision', 'submit', "ExchangeContracts.Pre20160317.NotVariedAfter");
                 }
             }
         };

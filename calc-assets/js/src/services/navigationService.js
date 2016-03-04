@@ -69,11 +69,22 @@
             else if (currentView === 'rent') {
                 var allRentsBelow2000 = validator.checkAllRentsBelow2000([model.year1Rent, model.year2Rent, model.year3Rent, model.year4Rent, model.year5Rent]);
                 if (model.propertyType === 'Non-residential' && model.premium < 150000 && allRentsBelow2000) {
-                    redirectToNext(locationService, 'relevant-rent');
+                    if(model.effectiveDate > new Date(2016, 2, 16)) {
+                        redirectToNext(locationService, 'exchange-contracts');
+                    } else {
+                        redirectToNext(locationService, 'relevant-rent');
+                    }
                 } 
                 else {
                     redirectToNext(locationService, 'summary');
                 } 
+            }
+            else if(currentView === 'exchange-contracts') {
+                if(model.contractPre201603 === 'Yes' && model.contractVariedPost201603 === 'No') {
+                    redirectToNext(locationService, 'relevant-rent');
+                } else {
+                    redirectToNext(locationService, 'summary');
+                }
             }
             else if (currentView === 'relevant-rent') {
                 redirectToNext(locationService, 'summary');
