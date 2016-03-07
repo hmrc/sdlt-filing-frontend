@@ -26,6 +26,11 @@
             return $scope.data.effectiveDate >= cutOffDate;
         };
 
+        $scope.effDateAfterMarchCutOff = function(){
+            var cutOffDate = new Date("March 17, 2016");
+            return $scope.data.effectiveDate >= cutOffDate;
+        };
+
         $scope.isAdditionalProperty = function(){
             return ($scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No') && $scope.effDateAfterAprilCutOff();
         };

@@ -54,7 +54,7 @@
                 if (rent.displayYearFourRent) result.isYear4RentValid = hasError('year4Rent');
                 if (rent.displayYearFiveRent) result.isYear5RentValid = hasError('year5Rent');
 
-                var allRentsBelow2000 = validator.checkAllRentsBelow2000([data.year1Rent, data.year2Rent, data.year3Rent, data.year4Rent, data.year5Rent]);
+                var allRentsBelow2000 = validator.checkAllRentsBelow2000(data);
                 if(data.propertyType === 'Non-residential' && data.premium < 150000 && allRentsBelow2000){
                     if (data.effectiveDate > new Date('March 16, 2016')) {
                         result.isContractPre201603Valid = hasError('contractPre201603');

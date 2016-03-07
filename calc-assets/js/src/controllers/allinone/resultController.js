@@ -65,7 +65,7 @@
                 } else { // propertyType === 'Non-residential'
                     var zeroRate = false;
                     var validator = require("../../utilities/validator")();
-                    var allRentsBelow2000 = validator.checkAllRentsBelow2000([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+                    var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
                     if ($scope.data.premium < 150000 && allRentsBelow2000 && $scope.data.relevantRent < 1000) {
                         zeroRate = true;
                     }

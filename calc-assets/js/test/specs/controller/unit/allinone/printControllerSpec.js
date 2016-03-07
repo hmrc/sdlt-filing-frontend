@@ -224,6 +224,57 @@
 
     });
 
+    describe('calling effDateAfterCutoff with date on March 2016 cut-off date', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+            
+            mockDataService = { 
+                getModel : function() { return {
+                    effectiveDate : new Date("March 17, 2016"),
+                }; }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+                        
+            controller = $controller('printController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+            });
+        }));
+
+        it('should return true for effectiveDateAfterCutOff() if Effective Date is 17/03/2016', function () {
+            expect(mockScope.effDateAfterMarchCutOff()).toEqual(true);
+        });
+
+
+    });
+
 
     describe('calling effDateAfterCutoff with date on April cut-off date', function () {
         

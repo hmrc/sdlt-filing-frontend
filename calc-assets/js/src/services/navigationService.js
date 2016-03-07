@@ -67,7 +67,7 @@
                 redirectToNext(locationService, 'rent');
             }
             else if (currentView === 'rent') {
-                var allRentsBelow2000 = validator.checkAllRentsBelow2000([model.year1Rent, model.year2Rent, model.year3Rent, model.year4Rent, model.year5Rent]);
+                var allRentsBelow2000 = validator.checkAllRentsBelow2000(model);
                 if (model.propertyType === 'Non-residential' && model.premium < 150000 && allRentsBelow2000) {
                     if(model.effectiveDate > new Date(2016, 2, 16)) {
                         redirectToNext(locationService, 'exchange-contracts');

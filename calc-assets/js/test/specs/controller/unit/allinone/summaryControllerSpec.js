@@ -537,15 +537,18 @@
                         return {
                             holdingType : "Leasehold",
                             propertyType : "Non-residential",
+                            effectiveDate : new Date(2016, 2, 16),
+                            premium : 149000,
                             leaseTerm : {
                                 years : 5
                             },
-                            premium : "149999",
                             year1Rent : "1",
                             year2Rent : "2",
                             year3Rent : "3",
                             year4Rent : "4",
-                            year5Rent : "5"
+                            year5Rent : "5",
+                            contractPre201603 : undefined,
+                            contractVariedPost201603 : undefined
                         }; 
                     },
                     updateModel : function(data) {
@@ -580,12 +583,42 @@
             }));
 
             // on create
-            it('displayRelevantRent should be true when all rents < 2000', function () {
+            it('displayRelevantRent should be true when common checks true and eff date < 17/3/16', function () {
                 expect(mockScope.displayRelevantRent()).toEqual(true);
             });
 
-            it('displayRelevantRent should be false when any rent >= 2000', function () {
-                mockScope.data.year5Rent = "2000";
+            it('displayRelevantRent should be true when common checks true, eff date = 17/3/16, contract date pre 17/3/16 and contract not varied', function () {
+                mockScope.data.effectiveDate = new Date(2016, 2, 17);
+                mockScope.data.contractPre201603 = 'Yes';
+                mockScope.data.contractVariedPost201603 = 'No';
+                expect(mockScope.displayRelevantRent()).toEqual(true);
+            });
+
+            it('displayRelevantRent should be false when Freehold', function () {
+                mockScope.data.holdingType = "Freehold";
+                expect(mockScope.displayRelevantRent()).toEqual(false);
+            });
+            it('displayRelevantRent should be false when Residential', function () {
+                mockScope.data.propertyType = "Residential";
+                expect(mockScope.displayRelevantRent()).toEqual(false);
+            });
+            it('displayRelevantRent should be false when Premium 150K', function () {
+                mockScope.data.premium = 150000;
+                expect(mockScope.displayRelevantRent()).toEqual(false);
+            });
+            it('displayRelevantRent should be false when Rent 2K', function () {
+                mockScope.data.year1Rent = 2000;
+                expect(mockScope.displayRelevantRent()).toEqual(false);
+            });
+            it('displayRelevantRent should be false when Eff date 17/3/16 and Contract pre 17/03/16', function () {
+                mockScope.data.effectiveDate = new Date(2016, 2, 17);
+                mockScope.data.contractPre201603 = 'No';
+                expect(mockScope.displayRelevantRent()).toEqual(false);
+            });
+            it('displayRelevantRent should be false when Eff date 17/3/16 and Contract pre 17/03/16', function () {
+                mockScope.data.effectiveDate = new Date(2016, 2, 17);
+                mockScope.data.contractPre201603 = 'Yes';
+                mockScope.data.contractVariedPost201603 = 'Yes';
                 expect(mockScope.displayRelevantRent()).toEqual(false);
             });
         });
@@ -684,6 +717,182 @@
                 mockScope.data.propertyType = "Non-residential";
                 mockScope.data.effectiveDate = new Date(2016,3,1);
                 expect(mockScope.displayAdditionalProperty()).toEqual(false);
+            });
+
+        });
+
+    describe('test for displayExchangeContracts', function () {
+            
+
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
+                
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            propertyType : "Non-residential",
+                            effectiveDate : new Date(2016, 2, 17),
+                            premium : 149000,
+                            year1Rent : 1999,
+                            year2Rent : 1999,
+                            year3Rent : 1999,
+                            year4Rent : 1999,
+                            year5Rent : 1999
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            it('displayExchangeContracts should be true for Leasehold, Non-residential, Premium 149000, Eff date17/03/2016 and all rents < 2000', function () {
+                expect(mockScope.displayExchangeContracts()).toEqual(true);
+            });
+
+
+            it('displayExchangeContracts should be false when no data supplied', function () {
+                mockScope.data.holdingType = undefined;
+                mockScope.data.propertyType = undefined;
+                mockScope.data.effectiveDate = undefined;
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Freehold', function () {
+                mockScope.data.holdingType = "Freehold";
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Residential', function () {
+                mockScope.data.propertyType = "Residential";
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Eff date < 17/03/2016', function () {
+                mockScope.data.effectiveDate = new Date(2016,2,16);
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for Premium 150k', function () {
+                mockScope.data.premium = 150000;
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for rent 1 £2k', function () {
+                mockScope.data.year1Rent = 2000;
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for rent 2 £2k', function () {
+                mockScope.data.year2Rent = 2000;
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for rent 3 £2k', function () {
+                mockScope.data.year3Rent = 2000;
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for rent 4 £2k', function () {
+                mockScope.data.year4Rent = 2000;
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+            it('displayExchangeContracts should be false for rent 5 £2k', function () {
+                mockScope.data.year5Rent = 2000;
+                expect(mockScope.displayExchangeContracts()).toEqual(false);
+            });
+
+        });
+    
+    describe('test for displayContractVaried', function () {
+
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
+                
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "Leasehold",
+                            propertyType : "Non-residential",
+                            effectiveDate : new Date(2016, 2, 17),
+                            premium : 149000,
+                            year1Rent : 1999,
+                            year2Rent : 1999,
+                            year3Rent : 1999,
+                            year4Rent : 1999,
+                            year5Rent : 1999,
+                            contractPre201603 : 'Yes'
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockValidationService = {
+                    validate : function() {
+                        return { isValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            it('displayContractVaried should be true for Leasehold, Non-residential, Premium 149000, Eff date17/03/2016, all rents < 2000 and contract date Pre-201603', function () {
+                expect(mockScope.displayContractVaried()).toEqual(true);
+            });
+
+            it('displayContractVaried should be false for Leasehold, Non-residential, Premium 149000, Eff date17/03/2016, all rents < 2000 and contract date Post-201603', function () {
+                mockScope.data.contractPre201603 = 'No';
+                expect(mockScope.displayContractVaried()).toEqual(false);
             });
 
         });
