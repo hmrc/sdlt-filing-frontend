@@ -33,9 +33,19 @@
             navigationService.next('result', $scope.data, $location);
         };
 
+        $scope.displayExchangeContracts = function() {
+            var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
+            return (data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000 && allRentsBelow2000 && data.effectiveDate >= new Date(2016, 2, 17));
+        };
+
+        $scope.displayVariedContract = function() {
+            var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
+            return (displayExchangeContracts && data.contractPre201603 === 'Yes'); // DJ TODO
+        };
 
         $scope.displayRelevantRent = function() {
-            return validator.checkAllRentsBelow2000([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+             var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
+             return (data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000 && allRentsBelow2000);
         };
 
         $scope.displayAdditionalProperty = function() {

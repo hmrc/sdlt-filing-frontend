@@ -187,8 +187,12 @@
                         <td class="previous-question-body" id="td2HighestRent">{{data.highestRent | sdltCurrency:"£"}}</td>
                         <td class="link-right" id="td3HighestRent">&nbsp;</td>
                     </tr>
+
+
+
+                    
                     <!-- Relevant Rental Figure -->
-                    <tr class="section" ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000 && displayRelevantRent()">
+                    <tr class="section" ng-if="displayRelevantRent()">
                         <td class="previous-question-title" id="td1RelevantRent">
                             <p class="{{validatedModel.isRelevantRentValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
