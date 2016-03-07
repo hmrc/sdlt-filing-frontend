@@ -51,7 +51,7 @@
                 $location : {},
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
-                modelValidationService : mockModelValidationService,
+                modelValidationService : mockModelValidationService
             });
         }));
 
@@ -103,9 +103,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -113,13 +113,13 @@
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
 
@@ -136,7 +136,7 @@
             });
 
             it('should make 1 call to validationService.validate', function () {
-                expect(mockValidationService.validate.calls.count()).toEqual(1);
+                expect(mockModelValidationService.validate.calls.count()).toEqual(1);
             });
 
             // on submit
@@ -180,9 +180,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -190,13 +190,13 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));
@@ -211,7 +211,7 @@
             });
 
             it('should make 1 call to validationService.validate', function () {
-                expect(mockValidationService.validate.calls.count()).toEqual(1);
+                expect(mockModelValidationService.validate.calls.count()).toEqual(1);
             });
 
             it('should set displayYearOneRent to true', function() {
@@ -255,9 +255,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -265,13 +265,13 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));
@@ -286,7 +286,7 @@
             });
 
             it('should make 1 call to validationService.validate', function () {
-                expect(mockValidationService.validate.calls.count()).toEqual(1);
+                expect(mockModelValidationService.validate.calls.count()).toEqual(1);
             });
 
             it('should set displayYearTwoRent to true', function() {
@@ -330,9 +330,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -340,13 +340,13 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));
@@ -361,7 +361,7 @@
             });
 
             it('should make 1 call to validationService.validate', function () {
-                expect(mockValidationService.validate.calls.count()).toEqual(1);
+                expect(mockModelValidationService.validate.calls.count()).toEqual(1);
             });
 
             it('should set displayYearThreeRent to true', function() {
@@ -405,9 +405,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -415,13 +415,13 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));
@@ -436,7 +436,7 @@
             });
 
             it('should make 1 call to validationService.validate', function () {
-                expect(mockValidationService.validate.calls.count()).toEqual(1);
+                expect(mockModelValidationService.validate.calls.count()).toEqual(1);
             });
 
             it('should set displayYearFourRent to true', function() {
@@ -480,9 +480,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -490,13 +490,13 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));
@@ -511,7 +511,7 @@
             });
 
             it('should make 1 call to validationService.validate', function () {
-                expect(mockValidationService.validate.calls.count()).toEqual(1);
+                expect(mockModelValidationService.validate.calls.count()).toEqual(1);
             });
 
             it('should set displayYearFiveRent to true', function() {
@@ -525,7 +525,6 @@
         });
 
         describe('test for displayRelevantRent', function () {
-            
 
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
@@ -561,9 +560,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -571,18 +570,17 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));
 
-            // on create
             it('displayRelevantRent should be true when common checks true and eff date < 17/3/16', function () {
                 expect(mockScope.displayRelevantRent()).toEqual(true);
             });
@@ -649,9 +647,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -659,13 +657,13 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));
@@ -721,7 +719,103 @@
 
         });
 
-    describe('test for displayExchangeContracts', function () {
+        describe('test for displayReplaceMainResidence', function () {
+
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+                
+                mockScope = $rootScope.$new();
+                mockScope.getHelpSetup = function() {return true;};
+                
+                mockDataService = { 
+                    getModel : function() { 
+                        return {
+                            holdingType : "",
+                            propertyType : "",
+                            effectiveDate : undefined,
+                            twoOrMoreProperties : undefined,
+                            replaceMainResidence : undefined
+                        }; 
+                    },
+                    updateModel : function(data) {
+                        return {};
+                    }                
+                };
+
+                mockNavigationService = { 
+                    logView : function() {},
+                    next : function() {}
+                };
+
+                mockModelValidationService = {
+                    validate : function() {
+                        return { isModelValid : true };
+                    }
+                };
+
+                spyOn(mockDataService, 'getModel').and.callThrough();
+                spyOn(mockDataService, 'updateModel').and.callThrough();
+                spyOn(mockNavigationService, 'logView');
+                spyOn(mockNavigationService, 'next');
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
+                
+                controller = $controller('summaryController', {
+                    $scope : mockScope,
+                    $location : {},
+                    dataService : mockDataService,
+                    modelValidationService : mockModelValidationService,
+                    navigationService : mockNavigationService
+                });
+            }));
+
+            it('displayReplaceMainResidence should be false when no data supplied', function () {
+                mockScope.data.holdingType = undefined;
+                mockScope.data.propertyType = undefined;
+                mockScope.data.effectiveDate = undefined;
+                expect(mockScope.displayReplaceMainResidence()).toEqual(false);
+            });
+
+            it('displayReplaceMainResidence should be false when before 1/4/16', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016, 2, 31);
+                expect(mockScope.displayReplaceMainResidence()).toEqual(false);
+            });
+
+            it('displayReplaceMainResidence should be false when not 2nd property (FH)', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                mockScope.data.twoOrMoreProperties = "No";
+                expect(mockScope.displayReplaceMainResidence()).toEqual(false);
+            });
+
+            it('displayReplaceMainResidence should be false when not 2nd property (LH)', function () {
+                mockScope.data.holdingType = "Leasehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                mockScope.data.twoOrMoreProperties = "No";
+                expect(mockScope.displayReplaceMainResidence()).toEqual(false);
+            });
+
+            it('displayReplaceMainResidence should be true when 2nd property (FH)', function () {
+                mockScope.data.holdingType = "Freehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                mockScope.data.twoOrMoreProperties = "Yes";
+                expect(mockScope.displayReplaceMainResidence()).toEqual(true);
+            });
+
+            it('displayReplaceMainResidence should be true when 2nd property (LH)', function () {
+                mockScope.data.holdingType = "Leasehold";
+                mockScope.data.propertyType = "Residential";
+                mockScope.data.effectiveDate = new Date(2016, 3, 1);
+                mockScope.data.twoOrMoreProperties = "Yes";
+                expect(mockScope.displayReplaceMainResidence()).toEqual(true);
+            });
+
+        });
+
+        describe('test for displayExchangeContracts', function () {
             
 
             beforeEach(mocks.inject(function ($controller, $rootScope) {
@@ -753,9 +847,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -763,13 +857,13 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));
@@ -865,9 +959,9 @@
                     next : function() {}
                 };
 
-                mockValidationService = {
+                mockModelValidationService = {
                     validate : function() {
-                        return { isValid : true };
+                        return { isModelValid : true };
                     }
                 };
 
@@ -875,13 +969,13 @@
                 spyOn(mockDataService, 'updateModel').and.callThrough();
                 spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
-                spyOn(mockValidationService, 'validate').and.callThrough();
+                spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
                 controller = $controller('summaryController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    modelValidationService : mockValidationService,
+                    modelValidationService : mockModelValidationService,
                     navigationService : mockNavigationService
                 });
             }));

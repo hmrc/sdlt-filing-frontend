@@ -5,6 +5,8 @@
 
     var printController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
 
+        var validator = require("../../utilities/validator")();
+
         var init = require("../../utilities/initController");
         init($scope, $location, $anchorScroll, 'print', dataService, navigationService);
 
@@ -16,32 +18,47 @@
         else {
             $location.path('summary');
         } 
-        $scope.effDateAfterCutOff = function(){
-            var cutOffDate = new Date("December 4, 2014");
-            return $scope.data.effectiveDate >= cutOffDate;
+
+        $scope.displayExchangeContracts = function() {
+            var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
+            return ($scope.data.holdingType === 'Leasehold' && 
+                $scope.data.propertyType === 'Non-residential' && 
+                $scope.data.premium < 150000 && 
+                allRentsBelow2000 && 
+                validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 2, 17)));
         };
 
-        $scope.effDateAfterAprilCutOff = function(){
-            var cutOffDate = new Date("April 1, 2016");
-            return $scope.data.effectiveDate >= cutOffDate;
+        $scope.displayContractVaried = function() {
+            return ($scope.displayExchangeContracts() && $scope.data.contractPre201603 === 'Yes');
         };
 
-        $scope.effDateAfterMarchCutOff = function(){
-            var cutOffDate = new Date("March 17, 2016");
-            return $scope.data.effectiveDate >= cutOffDate;
-        };
+        $scope.displayRelevantRent = function() {
+            var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
+            var commonChecks = ($scope.data.holdingType === 'Leasehold' && $scope.data.propertyType === 'Non-residential' && $scope.data.premium < 150000 && allRentsBelow2000);
 
-        $scope.isAdditionalProperty = function(){
-            return ($scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No') && $scope.effDateAfterAprilCutOff();
-        };
-
-        $scope.getHeading = function() {
-            if($scope.effDateAfterCutOff()) {
-                return "Results based on SDLT rules before 4 December 2014";
-            } else {
-                return "Result";
+            if (commonChecks && validator.isLessThanDate($scope.data.effectiveDate, new Date(2016, 2, 17))) {
+                return true;
+            } else if (commonChecks && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 2, 17)) && $scope.data.contractPre201603 === 'Yes' && $scope.data.contractVariedPost201603 === 'No') {
+                return true;
             }
+            return false;
         };
+
+        $scope.displayAdditionalProperty = function() {
+            return $scope.data.propertyType === "Residential" && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 3, 1));
+        };
+
+        $scope.displayReplaceMainResidence = function() {
+            return ($scope.displayAdditionalProperty() && $scope.data.twoOrMoreProperties === 'Yes');
+        };
+
+        // $scope.getHeading = function() {
+        //     if($scope.effDateAfterCutOff()) {
+        //         return "Results based on SDLT rules before 4 December 2014";
+        //     } else {
+        //         return "Result";
+        //     }
+        // };
           
     };
 

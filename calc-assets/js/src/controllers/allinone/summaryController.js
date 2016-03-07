@@ -62,6 +62,10 @@
             return $scope.data.propertyType === "Residential" && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 3, 1));
         };
 
+        $scope.displayReplaceMainResidence = function() {
+            return ($scope.displayAdditionalProperty() && $scope.data.twoOrMoreProperties === 'Yes');
+        };
+
         $scope.getDisplayValue = function(value) {
             if(value === undefined || value === 'undefined' || value === '') {
                 return '-';
