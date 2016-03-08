@@ -27,6 +27,10 @@
             return ($scope.data.twoOrMoreProperties === 'Yes' && $scope.data.replaceMainResidence === 'No');
         };
 
+        var validator = require("../../utilities/validator")();
+        var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
+        var prevCalcReqd = false;
+
         var rent = require("../../utilities/displayLeasedYearRentFields");
         rent = rent().getFunctions($scope.data);
         if (modelValidationService.validate($scope.data).isModelValid) {
@@ -64,13 +68,14 @@
                     }
                 } else { // propertyType === 'Non-residential'
                     var zeroRate = false;
-                    var validator = require("../../utilities/validator")();
-                    var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
                     if ($scope.data.premium < 150000 && allRentsBelow2000 && $scope.data.relevantRent < 1000) {
                         zeroRate = true;
                     }
                     if ($scope.effDateOnOrAfter(new Date("March 17, 2016"))) {
-                        result = calculationService.calcLeaseNonResPremAndRent_201603_Undef($scope.data.premium, $scope.data.npv, zeroRate);
+                        if ( (!allRentsBelow2000) || (allRentsBelow2000 && $scope.data.contractPre201603 === 'Yes' && $scope.data.contractVariedPost201603 === 'No') ) {
+                            prevCalcReqd = true;
+                        }
+                        result = calculationService.calcLeaseNonResPremAndRent_201603_Undef($scope.data.premium, $scope.data.npv, zeroRate, prevCalcReqd);
                     } else {
                         result = calculationService.calcLeaseNonResPremAndRent_201203_201603($scope.data.premium, $scope.data.npv, zeroRate);
                     }
