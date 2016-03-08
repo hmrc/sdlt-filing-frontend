@@ -321,7 +321,48 @@
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/relevant-rent');
             });
+
+            it('should set the location path to /relevant-rent when propertyType is "Non-residential" and premium < "150000" and all rents < "2000"', function() {
+                var effectiveDate = new Date(2016,2,17);
+                data = { propertyType : 'Non-residential' , premium : '149999', year1Rent: '1999' , year2Rent: '1999' , year3Rent: '1999' , year4Rent: '1999' , year5Rent: '1999', effectiveDate : effectiveDate };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/exchange-contracts');
+            });
             
+        });
+
+        describe('Calling .next() from the exchange-contracts view', function() {
+            var mockLocation,
+                currentView = 'exchange-contracts',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
+           it('should set the location path to /summary', function() {
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /summary when contractPre201603 = No', function() {
+                data = { contractPre201603 : 'No'};
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /relevant-rent when contractPre201603 = Yes, contractVariedPost201603 = No', function() {
+                data = { contractPre201603 : 'Yes', contractVariedPost201603 : 'No'};
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/relevant-rent');
+            });
+
+            it('should set the location path to /summary when contractPre201603 = Yes, contractVariedPost201603 = Yes', function() {
+                data = { contractPre201603 : 'Yes', contractVariedPost201603 : 'Yes'};
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
         });
 
         describe('Calling .next() from the relevant-rent view', function() {

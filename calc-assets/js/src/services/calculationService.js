@@ -35,6 +35,11 @@
         var DETAIL_HEADING_SDLT_ON_PREM = 'This is a breakdown of how the amount of SDLT on the premium was calculated';
 
         var DETAIL_HEADING_TOTAL_SDLT_FROM_MAR_2016   = DETAIL_HEADING_TOTAL_SDLT + _BASED_ON_THE_RULES_FROM_ + _DATE_17_03_2016;
+        var DETAIL_HEADING_SDLT_ON_RENT_FROM_MAR_2016 = DETAIL_HEADING_SDLT_ON_RENT + _BASED_ON_THE_RULES_FROM_ + _DATE_17_03_2016;
+        var DETAIL_HEADING_SDLT_ON_PREM_FROM_MAR_2016 = DETAIL_HEADING_SDLT_ON_PREM + _BASED_ON_THE_RULES_FROM_ + _DATE_17_03_2016;
+
+        var DETAIL_HEADING_SDLT_ON_RENT_BEFORE_MAR_2016 = DETAIL_HEADING_SDLT_ON_RENT + _BASED_ON_THE_RULES_BEFORE_ + _DATE_17_03_2016;
+        var DETAIL_HEADING_SDLT_ON_PREM_BEFORE_MAR_2016 = DETAIL_HEADING_SDLT_ON_PREM + _BASED_ON_THE_RULES_BEFORE_ + _DATE_17_03_2016;
 
         var DETAIL_HEADING_TOTAL_SDLT_FROM_APR_2016   = DETAIL_HEADING_TOTAL_SDLT + _BASED_ON_THE_RULES_FROM_ + _DATE_01_04_2016;
         var DETAIL_HEADING_SDLT_ON_RENT_FROM_APR_2016 = DETAIL_HEADING_SDLT_ON_RENT + _BASED_ON_THE_RULES_FROM_ + _DATE_01_04_2016;
@@ -347,7 +352,7 @@
             return [result, prevRatesResult];
         };
 
-        var calcLeaseNonResPremAndRent_201203_Undef = function(premium, npv, zeroRate){
+        var calcLeaseNonResPremAndRent_201203_201603 = function(premium, npv, zeroRate){
 
             var rentSlicesArray = [
                     { from: 0,       to : 150000,   rate : 0,  taxDue : -1},
@@ -383,6 +388,55 @@
 
             return [result];
         };
+
+        var calcLeaseNonResPremAndRent_201603_Undef = function(premium, npv, zeroRate){
+
+            var rentSlicesArray = [
+                    { from: 0,       to : 150000 ,   rate : 0,  taxDue : -1},
+                    { from: 150000,  to : 5000000,   rate : 1,  taxDue : -1},
+                    { from: 5000000, to : -1,        rate : 2,  taxDue : -1}
+            ];
+
+            var rentResult = calculateTaxDueSlice(npv, rentSlicesArray);
+            var rentCalc = {taxType : "rent", calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            rentCalc.detailHeading = DETAIL_HEADING_SDLT_ON_RENT_FROM_MAR_2016;
+            rentCalc.bandHeading = DETAIL_COL_HEADER_RENT;
+            rentCalc.detailFooter = DETAIL_FOOTER_RENT;
+            rentCalc.taxDue = rentResult.taxDue;
+            rentCalc.slices = rentResult.slices;
+
+            var premSlicesArray = [
+                    { from: 0,       to : 150000,   rate : 0,  taxDue : -1},
+                    { from: 150000,  to : 250000,   rate : 2,  taxDue : -1},
+                    { from: 250000,  to : -1,       rate : 5,  taxDue : -1}
+            ];
+
+            var premResult = calculateTaxDueSlice(premium, premSlicesArray);
+            var premCalc = {taxType : "premium", calcType : 'slice', detailHeading : '', bandHeading : '', detailFooter : '', taxDue : 0, slices : []};
+            premCalc.detailHeading = DETAIL_HEADING_SDLT_ON_PREM_FROM_MAR_2016;
+            premCalc.bandHeading = DETAIL_COL_HEADER_PREM;
+            premCalc.detailFooter = DETAIL_FOOTER_PREM;
+            premCalc.taxDue = premResult.taxDue;
+            premCalc.slices = premResult.slices;
+
+            var taxCalcs = [rentCalc, premCalc];
+
+            var result = {};
+            result.resultHeading = RESULT_HEADING_FROM_MAR_2016;
+            result.totalTax = rentCalc.taxDue + premCalc.taxDue; 
+            result.npv = npv;
+            result.taxCalcs = taxCalcs;
+
+            // calculation for previous rates. Uses rates from 201412 onwards but needs headings/hints adding
+            var prevRatesArray = calcLeaseNonResPremAndRent_201203_201603(premium, npv, zeroRate);
+            var prevRatesResult = prevRatesArray[0];
+            prevRatesResult.resultHeading = RESULT_HEADING_BEFORE_MAR_2016;
+            prevRatesResult.resultHint =  RESULT_HINT_EXCHANGE_BEFORE_MAR_2016;
+            prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_SDLT_ON_RENT_BEFORE_MAR_2016;
+
+            return [result, prevRatesResult];
+        };
+
 
         var calculateTaxDueSlab = function(amount, slabs) {
 
@@ -486,11 +540,13 @@
             calcFreeResPrem_201412_Undef : calcFreeResPrem_201412_Undef,
             calcFreeResPremAddProp_201604_Undef : calcFreeResPremAddProp_201604_Undef,
             calcFreeNonResPrem_201203_201603 : calcFreeNonResPrem_201203_201603,
+            calcFreeNonResPrem_201603_Undef : calcFreeNonResPrem_201603_Undef,
             calcLeaseResPremAndRent_201203_201412 : calcLeaseResPremAndRent_201203_201412,
             calcLeaseResPremAndRent_201412_Undef : calcLeaseResPremAndRent_201412_Undef,
             calcLeaseResPremAndRentAddProp_201604_Undef : calcLeaseResPremAndRentAddProp_201604_Undef,
-            calcLeaseNonResPremAndRent_201203_Undef : calcLeaseNonResPremAndRent_201203_Undef,
-            calcFreeNonResPrem_201603_Undef : calcFreeNonResPrem_201603_Undef
+            calcLeaseNonResPremAndRent_201203_201603 : calcLeaseNonResPremAndRent_201203_201603,
+            calcLeaseNonResPremAndRent_201603_Undef: calcLeaseNonResPremAndRent_201603_Undef
+
         };
     });
 })();

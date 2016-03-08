@@ -65,11 +65,15 @@
                 } else { // propertyType === 'Non-residential'
                     var zeroRate = false;
                     var validator = require("../../utilities/validator")();
-                    var allRentsBelow2000 = validator.checkAllRentsBelow2000([$scope.data.year1Rent, $scope.data.year2Rent, $scope.data.year3Rent, $scope.data.year4Rent, $scope.data.year5Rent]);
+                    var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
                     if ($scope.data.premium < 150000 && allRentsBelow2000 && $scope.data.relevantRent < 1000) {
                         zeroRate = true;
                     }
-                    result = calculationService.calcLeaseNonResPremAndRent_201203_Undef($scope.data.premium, $scope.data.npv, zeroRate);
+                    if ($scope.effDateOnOrAfter(new Date("March 17, 2016"))) {
+                        result = calculationService.calcLeaseNonResPremAndRent_201603_Undef($scope.data.premium, $scope.data.npv, zeroRate);
+                    } else {
+                        result = calculationService.calcLeaseNonResPremAndRent_201203_201603($scope.data.premium, $scope.data.npv, zeroRate);
+                    }
                 }
             }
             $scope.data.result = result;

@@ -2,13 +2,14 @@
     'use strict';
 
 	require("./allinone/mainController");
+	require("./allinone/additionalPropertyController");		
+	require("./allinone/exchangeContractsController");		
 	require("./allinone/dateController");
 	require("./allinone/holdingController");
 	require("./allinone/introController");
 	require("./allinone/leaseDatesController");
 	require("./allinone/premiumController");
 	require("./allinone/propertyController");
-	require("./allinone/additionalPropertyController");		
 	require("./allinone/purchasePriceController");
 	require("./allinone/relevantRentController");
 	require("./allinone/rentController");

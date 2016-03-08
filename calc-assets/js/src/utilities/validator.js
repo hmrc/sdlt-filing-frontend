@@ -77,12 +77,17 @@
             return parseFloat(value) > parseFloat(float);
         };
 
-        var checkAllRentsBelow2000 = function(rentArray) {
-            for(var i = 0; i < rentArray.length; i++){
-                if(rentArray[i] >= 2000){
-                    return false;
-                }
-            }
+        var checkAllRentsBelow2000 = function(rentData) {
+            // for(var i = 0; i < rentArray.length; i++){
+            //     if(rentArray[i] >= 2000){
+            //         return false;
+            //     }
+            // }
+            if (rentData.year1Rent  >= 2000) return false;
+            if (rentData.year2Rent  >= 2000) return false;
+            if (rentData.year3Rent  >= 2000) return false;
+            if (rentData.year4Rent  >= 2000) return false;
+            if (rentData.year5Rent  >= 2000) return false;
             return true;
         };
 

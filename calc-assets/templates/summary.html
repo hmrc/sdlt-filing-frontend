@@ -57,7 +57,7 @@
                     </tr>
 
                     <!-- replacing main residence -->
-                    <tr class="section" ng-if="displayAdditionalProperty() && data.twoOrMoreProperties === 'Yes'">
+                    <tr class="section" ng-if="displayReplaceMainResidence()">
                         <td class="previous-question-title" id="td1ReplaceMainResidence">
                             <p class="{{validatedModel.isReplaceMainResidenceValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
@@ -187,8 +187,33 @@
                         <td class="previous-question-body" id="td2HighestRent">{{data.highestRent | sdltCurrency:"£"}}</td>
                         <td class="link-right" id="td3HighestRent">&nbsp;</td>
                     </tr>
+
+                    <!-- Exchange contracts -->
+                    <tr class="section" ng-if="displayExchangeContracts()">
+                        <td class="previous-question-title" id="td1ContractPre201603">
+                            <p class="{{validatedModel.isTwoOrMorePropertiesValid}}">
+                                <span class="error-notification">Provide an answer to continue</span>
+                                Exchange of contracts before 17 March 2016
+                            </p>
+                        </td>
+                        <td class="previous-question-body" id="td2ContractPre201603">{{data.contractPre201603}}</td>
+                        <td class="link-right" id="td3ContractPre201603"><a id="changeContractPre201603" href="#exchange-contracts" onClick="ga('send', 'event', 'change', 'click', 'contractPre201603')">Change <span class="visuallyhidden">your response to the question, will you own two or more properties</span></a></td>
+                    </tr>
+
+                    <!-- Contracts varied -->
+                    <tr class="section" ng-if="displayContractVaried()">
+                        <td class="previous-question-title" id="td1ContractVariedPost201603">
+                            <p class="{{validatedModel.isReplaceMainResidenceValid}}">
+                                <span class="error-notification">Provide an answer to continue</span>
+                                Contract changed on or after 17 March 2016
+                            </p>
+                        </td>
+                        <td class="previous-question-body" id="td2ContractVariedPost201603">{{data.contractVariedPost201603}}</td>
+                        <td class="link-right" id="td3ContractVariedPost201603"><a id="changeContractVariedPost201603" href="#exchange-contracts" onClick="ga('send', 'event', 'change', 'click', 'contractVariedPost201603')">Change <span class="visuallyhidden">your response to the question, are you replacing a main residence</span></a></td>
+                    </tr>
+
                     <!-- Relevant Rental Figure -->
-                    <tr class="section" ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000 && displayRelevantRent()">
+                    <tr class="section" ng-if="displayRelevantRent()">
                         <td class="previous-question-title" id="td1RelevantRent">
                             <p class="{{validatedModel.isRelevantRentValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
