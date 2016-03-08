@@ -389,7 +389,7 @@
             return [result];
         };
 
-        var calcLeaseNonResPremAndRent_201603_Undef = function(premium, npv, zeroRate){
+        var calcLeaseNonResPremAndRent_201603_Undef = function(premium, npv, zeroRate, prevCalcReqd){
 
             var rentSlicesArray = [
                     { from: 0,       to : 150000 ,   rate : 0,  taxDue : -1},
@@ -427,14 +427,17 @@
             result.npv = npv;
             result.taxCalcs = taxCalcs;
 
-            // calculation for previous rates. Uses rates from 201412 onwards but needs headings/hints adding
-            var prevRatesArray = calcLeaseNonResPremAndRent_201203_201603(premium, npv, zeroRate);
-            var prevRatesResult = prevRatesArray[0];
-            prevRatesResult.resultHeading = RESULT_HEADING_BEFORE_MAR_2016;
-            prevRatesResult.resultHint =  RESULT_HINT_EXCHANGE_BEFORE_MAR_2016;
-            prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_SDLT_ON_RENT_BEFORE_MAR_2016;
+            if (prevCalcReqd) {
+                // calculation for previous rates. Uses rates from 201412 onwards but needs headings/hints adding
+                var prevRatesArray = calcLeaseNonResPremAndRent_201203_201603(premium, npv, zeroRate);
+                var prevRatesResult = prevRatesArray[0];
+                prevRatesResult.resultHeading = RESULT_HEADING_BEFORE_MAR_2016;
+                prevRatesResult.resultHint =  RESULT_HINT_EXCHANGE_BEFORE_MAR_2016;
+                prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_SDLT_ON_RENT_BEFORE_MAR_2016;
 
-            return [result, prevRatesResult];
+                return [result, prevRatesResult];
+            }
+            return [result];
         };
 
 

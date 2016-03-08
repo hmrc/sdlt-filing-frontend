@@ -25,7 +25,7 @@
       </fieldset>
     </div>
 
-    <div ng-show="data.contractPre201603 === 'Yes'">
+    <div ng-if="data.contractPre201603 === 'Yes'">
       <div class="form-group {{state.hasError('contractVariedPost201603')}}">
         <fieldset>
             <legend id="contractVariedPost201603" class="form-label-bold">Has your contract been changed on or after 17 March 2016?</legend>

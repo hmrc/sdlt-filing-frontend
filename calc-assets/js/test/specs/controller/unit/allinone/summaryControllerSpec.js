@@ -927,7 +927,7 @@
 
         });
     
-    describe('test for displayContractVaried', function () {
+        describe('test for displayContractVaried', function () {
 
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
