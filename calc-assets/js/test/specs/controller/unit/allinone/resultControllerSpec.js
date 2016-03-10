@@ -1718,6 +1718,133 @@
         });
     });
 
+    describe('Result Controller - Leasehold, Non-residential, premium > 150000, rents < 2000, AFTER 16 March 2016', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Leasehold",
+                        propertyType : "Non-residential",
+                        effectiveDate : new Date(2016, 2, 17),
+                        premium : 150500,
+                        startDate : new Date(2014, 0, 1),
+                        endDate : new Date(2018, 11, 31),
+                         leaseTerm : {
+                             years : 5,
+                             days : 0,
+                             daysInPartialYear : 0
+                         },
+                         year1Rent : 1999,
+                         year2Rent : 1999,
+                         year3Rent : 1999,
+                         year4Rent : 1999,
+                         year5Rent : 1999
+                    }; 
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calcFreeResPrem_201203_201412 : function() {},
+                calcFreeResPrem_201412_Undef : function() {},
+                calcFreeResPremAddProp_201604_Undef : function() {},
+                calcFreeNonResPrem_201203_201603 : function() {},
+                calcFreeNonResPrem_201603_Undef : function() {},
+                calcLeaseResPremAndRent_201203_201412 : function() {},
+                calcLeaseResPremAndRent_201412_Undef : function() {},
+                calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
+                calcLeaseNonResPremAndRent_201603_Undef : function(premium, prevCalcReqd) {
+                    return prevCalcReqd;
+                },
+                calculateNPV: function() {
+                    return 1;
+                }
+
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockDataService, 'updateModel');
+
+            spyOn(mockCalculationService, 'calcFreeResPrem_201203_201412');
+            spyOn(mockCalculationService, 'calcFreeResPrem_201412_Undef');
+            spyOn(mockCalculationService, 'calcFreeResPremAddProp_201604_Undef');
+            spyOn(mockCalculationService, 'calcFreeNonResPrem_201203_201603');
+            spyOn(mockCalculationService, 'calcFreeNonResPrem_201603_Undef');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201603_Undef');
+            spyOn(mockCalculationService, 'calculateNPV').and.callThrough();
+
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should make 1 call to dataService.getModel', function () {
+            expect(mockDataService.getModel.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to navigationService.logView', function () {
+            expect(mockNavigationService.logView.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to calculationService.calculateNPV', function () {
+            expect(mockCalculationService.calculateNPV.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to calculationService.calcLeaseNonResPremAndRent_201203_201603', function () {
+            expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeNonResPrem_201203_201603.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeNonResPrem_201603_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201603_Undef.calls.count()).toEqual(1);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201603_Undef).toHaveBeenCalledWith(150500, 1, false, true);
+        });
+
+        it('should make 1 call to dataService.updateModel', function () {
+            expect(mockDataService.updateModel.calls.count()).toEqual(1);
+        });
+    });
+
     describe('Result Controller - Leasehold, Non-residential, npv < 150k, RR < 1K, one rent > 2000, AFTER 16 March 2016', function () {
         
         var controller, 

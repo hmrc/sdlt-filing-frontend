@@ -72,7 +72,7 @@
                         zeroRate = true;
                     }
                     if ($scope.effDateOnOrAfter(new Date("March 17, 2016"))) {
-                        if ( (!allRentsBelow2000) || (allRentsBelow2000 && $scope.data.contractPre201603 === 'Yes' && $scope.data.contractVariedPost201603 === 'No') ) {
+                        if ( ($scope.data.premium >= 150000) || (!allRentsBelow2000) || (allRentsBelow2000 && $scope.data.contractPre201603 === 'Yes' && $scope.data.contractVariedPost201603 === 'No') ) {
                             prevCalcReqd = true;
                         }
                         result = calculationService.calcLeaseNonResPremAndRent_201603_Undef($scope.data.premium, $scope.data.npv, zeroRate, prevCalcReqd);
