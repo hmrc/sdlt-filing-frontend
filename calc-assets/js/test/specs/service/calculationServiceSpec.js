@@ -394,7 +394,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 1200, 0 for purchase price of 40000', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £1,200";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £1,200.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 1200;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 1200;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 1200;
@@ -402,7 +402,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 3750, 0 for purchase price of 125000', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £3,750";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £3,750.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 3750;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 3750;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -410,7 +410,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 3755, 2 for purchase price of 125100', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £3,753";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £3,753.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 3755;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 3755;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -422,7 +422,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 10000, 2500 for purchase price of 250000', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £7,500";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £7,500.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 10000;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 10000;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -434,7 +434,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 10008, 2505 for purchase price of 250100', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £7,503";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £7,503.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 10008;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 10008;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -448,7 +448,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 64000, 36250 for purchase price of 925000', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £27,750";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £27,750.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 64000;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 64000;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -462,7 +462,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 64000, 36250 for purchase price of 925100', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £27,753";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £27,753.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 64013;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 64013;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -478,7 +478,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 138750, 93750 for purchase price of 1500000', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £45,000";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £45,000.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 138750;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 138750;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -494,7 +494,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 138765, 93762 for purchase price of 1500100', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £45,003";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £45,003.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 138765;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 138765;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -512,7 +512,7 @@
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 11163750, 8913750 for purchase price of 75000000', function() {
-            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £2,250,000";
+            calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £2,250,000.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 11163750;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 11163750;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
@@ -1030,7 +1030,7 @@
         });
 
         it(' calcLeaseResPremAndRentAddProp_201604_Undef should return 1250, 138765, 1250, 93762 for purchase price of 1500100, npv of 250000', function() {
-            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £45,003";
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £45,003.";
             calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].totalTax = 140015;
             calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].npv = 250000;
             calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 1250;

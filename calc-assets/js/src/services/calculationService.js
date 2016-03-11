@@ -153,7 +153,7 @@
             var result = {};
             result.resultHeading = RESULT_HEADING_FROM_APR_2016;
             if (premCalc.taxDue > prevRatesResult.taxCalcs[0].taxDue) {
-               result.resultHint = RESULT_HINT_ADDNL_PROP_REFUND_ + (premCalc.taxDue - prevRatesResult.taxCalcs[0].taxDue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+               result.resultHint = RESULT_HINT_ADDNL_PROP_REFUND_ + (premCalc.taxDue - prevRatesResult.taxCalcs[0].taxDue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +".";
             }
             result.totalTax = premResult.taxDue; 
             result.taxCalcs = taxCalcs;
@@ -351,7 +351,7 @@
             var result = {};
             result.resultHeading = RESULT_HEADING_FROM_APR_2016;
             if (premCalc.taxDue > prevRatesResult.taxCalcs[1].taxDue) {
-                result.resultHint = RESULT_HINT_ADDNL_PROP_REFUND_ + (premCalc.taxDue - prevRatesResult.taxCalcs[1].taxDue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                result.resultHint = RESULT_HINT_ADDNL_PROP_REFUND_ + (premCalc.taxDue - prevRatesResult.taxCalcs[1].taxDue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +".";
             }
             result.totalTax = rentCalc.taxDue + premCalc.taxDue;
             result.npv = npv;
