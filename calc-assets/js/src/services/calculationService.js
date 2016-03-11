@@ -14,7 +14,8 @@
         var RESULT_HEADING_BEFORE_       = 'Results based on SDLT rules before ';
         var RESULT_HEADING_FROM_         = 'Results based on SDLT rules from ';
 
-        var RESULT_HINT_EXCHANGE_BEFORE_ = 'You may be entitled to pay SDLT using the old rules if you exchanged contracts before ';
+        var RESULT_HINT_ADDNL_PROP_REFUND_ = 'If you dispose of your previous main residence within 3 years you may be eligible for a refund of £';
+        var RESULT_HINT_EXCHANGE_BEFORE_   = 'You may be entitled to pay SDLT using the old rules if you exchanged contracts before ';
 
         var _BASED_ON_THE_RULES_FROM_     = ' based on the rules from ';
         var _BASED_ON_THE_RULES_BEFORE_   = ' based on the rules before ';
@@ -118,6 +119,14 @@
         // There is a transitional period for exchanged contracts < 25/11/2015 so we also calculate using the old rates
         var calcFreeResPremAddProp_201604_Undef = function(premium){
 
+            // calculation for previous rate. Uses rates from 201412 onwards but needs headings/hints adding
+            var prevRatesArray = calcFreeResPrem_201412_Undef(premium);
+            var prevRatesResult = prevRatesArray[0];
+            prevRatesResult.resultHeading = RESULT_HEADING_BEFORE_APR_2016;
+            prevRatesResult.resultHint = RESULT_HINT_EXCHANGE_BEFORE_NOV_2015;
+            prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_TOTAL_SDLT_BEFORE_APR_2016;
+
+            // calculation for current rate
             var slicesArray = [
                     { from: 0,       to : 125000,   rate : 3,  taxDue : -1},
                     { from: 125000,  to : 250000,   rate : 5,  taxDue : -1},
@@ -143,15 +152,11 @@
 
             var result = {};
             result.resultHeading = RESULT_HEADING_FROM_APR_2016;
+            if (premCalc.taxDue > prevRatesResult.taxCalcs[0].taxDue) {
+               result.resultHint = RESULT_HINT_ADDNL_PROP_REFUND_ + (premCalc.taxDue - prevRatesResult.taxCalcs[0].taxDue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
             result.totalTax = premResult.taxDue; 
             result.taxCalcs = taxCalcs;
-
-            // calculation for previous rate. Uses rates from 201412 onwards but needs headings/hints adding
-            var prevRatesArray = calcFreeResPrem_201412_Undef(premium);
-            var prevRatesResult = prevRatesArray[0];
-            prevRatesResult.resultHeading = RESULT_HEADING_BEFORE_APR_2016;
-            prevRatesResult.resultHint = RESULT_HINT_EXCHANGE_BEFORE_NOV_2015;
-            prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_TOTAL_SDLT_BEFORE_APR_2016;
 
             return [result, prevRatesResult];
         };
@@ -299,6 +304,14 @@
         // There is a transitional period for exchanged contracts < 16/03/2016 so we also calculate using the old rates
         var calcLeaseResPremAndRentAddProp_201604_Undef = function(premium, npv){
 
+            // calculation for previous rates. Uses rates from 201412 onwards but needs headings/hints adding
+            var prevRatesArray = calcLeaseResPremAndRent_201412_Undef(premium, npv);
+            var prevRatesResult = prevRatesArray[0];
+            prevRatesResult.resultHeading = RESULT_HEADING_BEFORE_APR_2016;
+            prevRatesResult.resultHint =  RESULT_HINT_EXCHANGE_BEFORE_NOV_2015;
+            prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_SDLT_ON_RENT_BEFORE_APR_2016;
+            prevRatesResult.taxCalcs[1].detailHeading = DETAIL_HEADING_SDLT_ON_PREM_BEFORE_APR_2016;
+
             var rentSlicesArray = [
                     { from: 0,       to : 125000,   rate : 0,  taxDue : -1},
                     { from: 125000,  to : -1    ,   rate : 1,  taxDue : -1}
@@ -337,17 +350,12 @@
 
             var result = {};
             result.resultHeading = RESULT_HEADING_FROM_APR_2016;
+            if (premCalc.taxDue > prevRatesResult.taxCalcs[1].taxDue) {
+                result.resultHint = RESULT_HINT_ADDNL_PROP_REFUND_ + (premCalc.taxDue - prevRatesResult.taxCalcs[1].taxDue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
             result.totalTax = rentCalc.taxDue + premCalc.taxDue;
             result.npv = npv;
             result.taxCalcs = taxCalcs;
-
-            // calculation for previous rates. Uses rates from 201412 onwards but needs headings/hints adding
-            var prevRatesArray = calcLeaseResPremAndRent_201412_Undef(premium, npv);
-            var prevRatesResult = prevRatesArray[0];
-            prevRatesResult.resultHeading = RESULT_HEADING_BEFORE_APR_2016;
-            prevRatesResult.resultHint =  RESULT_HINT_EXCHANGE_BEFORE_NOV_2015;
-            prevRatesResult.taxCalcs[0].detailHeading = DETAIL_HEADING_SDLT_ON_RENT_BEFORE_APR_2016;
-            prevRatesResult.taxCalcs[1].detailHeading = DETAIL_HEADING_SDLT_ON_PREM_BEFORE_APR_2016;
 
             return [result, prevRatesResult];
         };
