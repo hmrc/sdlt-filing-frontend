@@ -738,6 +738,236 @@
             expect(result.isPurchasePriceValid).toEqual(undefined);
         });
 
+        it('should return false for a Leasehold Non-residential, ContractPre201603 & contractVariedPost201603 not present', function() {
+
+            var data = {
+                holdingType : "Leasehold",
+                propertyType: "Non-residential",
+                effectiveDate : new Date(2016, 2, 17),
+                startDate : new Date(2015, 1, 1),
+                endDate : new Date(2019, 12, 31),
+                premium : 149999,
+                leaseTerm : {
+                    years : 5
+                },
+                year1Rent : 1999,
+                year2Rent : 1999,
+                year3Rent : 1999,
+                year4Rent : 1999,
+                year5Rent : 1999
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isStartDateValid).toEqual('');
+            expect(result.isEndDateValid).toEqual('');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isYear2RentValid).toEqual('');
+            expect(result.isYear3RentValid).toEqual('');
+            expect(result.isYear4RentValid).toEqual('');
+            expect(result.isYear5RentValid).toEqual('');
+
+            expect(result.isContractPre201603Valid).toEqual('form-field--error');
+            expect(result.isRelevantRentValid).toEqual(undefined);
+
+            expect(result.isTwoOrMorePropertiesValid).toEqual(undefined);
+            expect(result.isReplaceMainResidenceValid).toEqual(undefined);
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+        });
+
+        it('should return false for a Leasehold Non-residential, ContractPre201603 = Yes, contractVariedPost201603 not present', function() {
+
+            var data = {
+                holdingType : "Leasehold",
+                propertyType: "Non-residential",
+                effectiveDate : new Date(2016, 2, 17),
+                startDate : new Date(2015, 1, 1),
+                endDate : new Date(2019, 12, 31),
+                premium : 149999,
+                leaseTerm : {
+                    years : 5
+                },
+                year1Rent : 1999,
+                year2Rent : 1999,
+                year3Rent : 1999,
+                year4Rent : 1999,
+                year5Rent : 1999,
+                contractPre201603 : 'Yes'
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isStartDateValid).toEqual('');
+            expect(result.isEndDateValid).toEqual('');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isYear2RentValid).toEqual('');
+            expect(result.isYear3RentValid).toEqual('');
+            expect(result.isYear4RentValid).toEqual('');
+            expect(result.isYear5RentValid).toEqual('');
+
+            expect(result.isContractPre201603Valid).toEqual('');
+            expect(result.isContractVariedPost201603Valid).toEqual('form-field--error');
+            expect(result.isRelevantRentValid).toEqual(undefined);
+
+            expect(result.isTwoOrMorePropertiesValid).toEqual(undefined);
+            expect(result.isReplaceMainResidenceValid).toEqual(undefined);
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+        });
+
+        it('should return true for a Leasehold Non-residential, ContractPre201603 = No & contractVariedPost201603 not present', function() {
+
+            var data = {
+                holdingType : "Leasehold",
+                propertyType: "Non-residential",
+                effectiveDate : new Date(2016, 2, 17),
+                startDate : new Date(2015, 1, 1),
+                endDate : new Date(2019, 12, 31),
+                premium : 149999,
+                leaseTerm : {
+                    years : 5
+                },
+                year1Rent : 1999,
+                year2Rent : 1999,
+                year3Rent : 1999,
+                year4Rent : 1999,
+                year5Rent : 1999,
+                contractPre201603 : 'No'
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isStartDateValid).toEqual('');
+            expect(result.isEndDateValid).toEqual('');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isYear2RentValid).toEqual('');
+            expect(result.isYear3RentValid).toEqual('');
+            expect(result.isYear4RentValid).toEqual('');
+            expect(result.isYear5RentValid).toEqual('');
+
+            expect(result.isContractPre201603Valid).toEqual('');
+            expect(result.isContractVariedPost201603Valid).toEqual(undefined);
+            expect(result.isRelevantRentValid).toEqual(undefined);
+
+            expect(result.isTwoOrMorePropertiesValid).toEqual(undefined);
+            expect(result.isReplaceMainResidenceValid).toEqual(undefined);
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+        });
+
+        it('should return true for a Leasehold Non-residential, ContractPre201603 = Yes, contractVariedPost201603 = No', function() {
+
+            var data = {
+                holdingType : "Leasehold",
+                propertyType: "Non-residential",
+                effectiveDate : new Date(2016, 2, 17),
+                startDate : new Date(2015, 1, 1),
+                endDate : new Date(2019, 12, 31),
+                premium : 149999,
+                leaseTerm : {
+                    years : 5
+                },
+                year1Rent : 1999,
+                year2Rent : 1999,
+                year3Rent : 1999,
+                year4Rent : 1999,
+                year5Rent : 1999,
+                contractPre201603 : 'Yes',
+                contractVariedPost201603 : 'No',
+                relevantRent : 999
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isStartDateValid).toEqual('');
+            expect(result.isEndDateValid).toEqual('');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isYear2RentValid).toEqual('');
+            expect(result.isYear3RentValid).toEqual('');
+            expect(result.isYear4RentValid).toEqual('');
+            expect(result.isYear5RentValid).toEqual('');
+
+            expect(result.isContractPre201603Valid).toEqual('');
+            expect(result.isContractVariedPost201603Valid).toEqual('');
+            expect(result.isRelevantRentValid).toEqual('');
+
+            expect(result.isTwoOrMorePropertiesValid).toEqual(undefined);
+            expect(result.isReplaceMainResidenceValid).toEqual(undefined);
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+        });
+
+        it('should return false for a Leasehold Non-residential, ContractPre201603 = Yes, contractVariedPost201603 = No but NO relevant rent present', function() {
+
+            var data = {
+                holdingType : "Leasehold",
+                propertyType: "Non-residential",
+                effectiveDate : new Date(2016, 2, 17),
+                startDate : new Date(2015, 1, 1),
+                endDate : new Date(2019, 12, 31),
+                premium : 149999,
+                leaseTerm : {
+                    years : 5
+                },
+                year1Rent : 1999,
+                year2Rent : 1999,
+                year3Rent : 1999,
+                year4Rent : 1999,
+                year5Rent : 1999,
+                contractPre201603 : 'Yes',
+                contractVariedPost201603 : 'No'
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isStartDateValid).toEqual('');
+            expect(result.isEndDateValid).toEqual('');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isYear2RentValid).toEqual('');
+            expect(result.isYear3RentValid).toEqual('');
+            expect(result.isYear4RentValid).toEqual('');
+            expect(result.isYear5RentValid).toEqual('');
+
+            expect(result.isContractPre201603Valid).toEqual('');
+            expect(result.isContractVariedPost201603Valid).toEqual('');
+            expect(result.isRelevantRentValid).toEqual('form-field--error');
+
+            expect(result.isTwoOrMorePropertiesValid).toEqual(undefined);
+            expect(result.isReplaceMainResidenceValid).toEqual(undefined);
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+        });
+
+
+
+
 
     });
+
 }());

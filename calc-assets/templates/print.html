@@ -16,11 +16,11 @@
                           <td id="td1EffectiveDate">Effective date of transaction</td>
                           <td id="td2EffectiveDate">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
                       </tr>
-                      <tr class="section" ng-if="effDateAfterAprilCutOff() && data.propertyType === 'Residential'">
+                      <tr class="section" ng-if="displayAdditionalProperty()">
                           <td id="td1TwoOrMoreProperties">Additional residential property</td>
                           <td id="td2TwoOrMoreProperties">{{data.twoOrMoreProperties}}</td>
                       </tr>
-                      <tr class="section" ng-if="effDateAfterAprilCutOff() && data.propertyType === 'Residential' && data.replaceMainResidence !== undefined && data.twoOrMoreProperties === 'Yes'">
+                      <tr class="section" ng-if="displayReplaceMainResidence()">
                           <td id="td1ReplaceMainResidence">Replacing main residence</td>
                           <td id="td2ReplaceMainResidence">{{data.replaceMainResidence}}</td>
                       </tr>
@@ -68,7 +68,15 @@
                           <td id="td1HighestRent">Highest 12 monthly rent</td>
                           <td id="td2HighestRent">{{data.highestRent | sdltCurrency:"£"}}</td>
                       </tr>
-                      <tr class="section" ng-if="data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000">
+                      <tr class="section" ng-if="displayExchangeContracts()">
+                          <td id="td1ContractPre201603">Exchange of contracts before 17 March 2016</td>
+                          <td id="td2ContractPre201603">{{data.contractPre201603}}</td>
+                      </tr>
+                      <tr class="section" ng-if="displayContractVaried()">
+                          <td id="td1ContractVariedPost201603">Contract changed on or after 17 March 2016</td>
+                          <td id="td2ContractVariedPost201603">{{data.contractVariedPost201603}}</td>
+                      </tr>
+                      <tr class="section" ng-if="displayRelevantRent()">
                           <td id="td1RelevantRent">Relevant rental figure</td>
                           <td id="td2RelevantRent">{{data.relevantRent | sdltCurrency:"£"}}</td>
                       </tr>
