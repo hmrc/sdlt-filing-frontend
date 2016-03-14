@@ -174,7 +174,7 @@
                 expect(result.length).toEqual(13);
             });
 
-            it('should return 10 elements with date 1/4/2016 and 1 year 0 days lease term', function(){
+            it('should return 10 elements with Non-residential property, date 1/4/2016 and 1 year 0 days lease term', function(){
                 scope.data.propertyType = "Non-residential";
                 scope.data.effectiveDate = new Date(2016,3,1);
                 scope.data.leaseStartDate = new Date(2016,3,1);
@@ -187,7 +187,7 @@
                 expect(result.length).toEqual(10);
             });
 
-            it('should return 11 elements with date 1/4/2016 and 1 year 0 days lease term', function(){
+            it('should return 11 elements with Non-residential property, date 1/4/2016 and 1 year 0 days lease term', function(){
                 scope.data.propertyType = "Non-residential";
                 scope.data.effectiveDate = new Date(2016,3,1);
                 scope.data.leaseStartDate = new Date(2016,3,1);
@@ -199,6 +199,50 @@
                 scope.displayYearOneRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(11);
+            });
+
+            it('should return 16 elements with Non-residential property, date 1/4/2016 and 5 years and 1 day lease term', function() {
+                scope.data.propertyType = "Non-residential";
+                scope.data.effectiveDate = new Date(2016,3,1);
+                scope.data.leaseStartDate = new Date(2016,3,1);
+                scope.data.leaseEndDate = new Date(2021,3,1);
+                scope.data.year2Rent = 1999;
+                scope.data.year3Rent = 1999;
+                scope.data.year4Rent = 1999;
+                scope.data.year5Rent = 1999;
+                scope.data.contractPre201603 = "Yes";
+                scope.data.contractVariedPost201603 = "No";
+                scope.data.leaseTerm.years = 5;
+                scope.data.leaseTerm.days = 1;
+                scope.data.relevantRent = 100;
+                scope.displayYearOneRent = function() {return true;};
+                scope.displayYearTwoRent = function() {return true;};
+                scope.displayYearThreeRent = function() {return true;};
+                scope.displayYearFourRent = function() {return true;};
+                scope.displayYearFiveRent = function() {return true;};
+                var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
+                expect(result.length).toEqual(16);
+            });
+            
+            it('should return 14 elements with Non-residential property, date 16/3/2016 and 5 years and 1 day lease term', function() {
+                scope.data.propertyType = "Non-residential";
+                scope.data.effectiveDate = new Date(2016,2,16);
+                scope.data.leaseStartDate = new Date(2016,2,16);
+                scope.data.leaseEndDate = new Date(2021,2,16);
+                scope.data.year2Rent = 1999;
+                scope.data.year3Rent = 1999;
+                scope.data.year4Rent = 1999;
+                scope.data.year5Rent = 1999;
+                scope.data.leaseTerm.years = 5;
+                scope.data.leaseTerm.days = 1;
+                scope.data.relevantRent = 100;
+                scope.displayYearOneRent = function() {return true;};
+                scope.displayYearTwoRent = function() {return true;};
+                scope.displayYearThreeRent = function() {return true;};
+                scope.displayYearFourRent = function() {return true;};
+                scope.displayYearFiveRent = function() {return true;};
+                var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
+                expect(result.length).toEqual(14);
             });
         });
 
