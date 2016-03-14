@@ -1,11 +1,9 @@
 (function() {
     "use strict";
 
-    var validator = require("validator.js");
+    var Validator = require("./validator.js");
 
-    var rent = require("displayLeasedYearRentFields.js");
-    rent = rent();
-    rent.addFunctionsToScope($scope);
+    var validator = new Validator();
 
     var displayExchangeContracts = function(data) {
         var allRentsBelow2000 = validator.checkAllRentsBelow2000(data);
@@ -17,7 +15,7 @@
     };
 
     var displayContractVaried = function(data) {
-        return (displayExchangeContracts() && data.contractPre201603 === 'Yes');
+        return (displayExchangeContracts(data) && data.contractPre201603 === 'Yes');
     };
 
     var displayRelevantRent = function(data) {
@@ -37,7 +35,7 @@
     };
 
     var displayReplaceMainResidence = function(data) {
-        return (displayAdditionalProperty() && data.twoOrMoreProperties === 'Yes');
+        return (displayAdditionalProperty(data) && data.twoOrMoreProperties === 'Yes');
     };
 
     var getDisplayValue = function(value) {
@@ -49,165 +47,167 @@
         }
     };
 
-    var summaryHelper = function(data, modelValidationService) {
+    var summaryHelper = function(scope, modelValidationService) {
         var template = [
             {
                 question   : "Freehold / leasehold",
-                answer     : data.holdingType,
+                answer     : getDisplayValue(scope.data.holdingType),
                 link       : "#holding",
-                id         : "HoldingType",
+                id         : "holdingType",
                 isValid    : modelValidationService.isHoldingValid,
                 hiddenText : "Is property freehold or leasehold?"
             },
             {
-                question : "Property type",
-                answer   : data.propertyType,
-                link     : "#property",
-                id       : "PropertyType",
-                isValid  : modelValidationService.isPropertyValid,
+                question   : "Property type",
+                answer     : getDisplayValue(scope.data.propertyType),
+                link       : "#property",
+                id         : "propertyType",
+                isValid    : modelValidationService.isPropertyValid,
                 hiddenText : "Is property residential or non-residential?"
             },
             {
-                question : "Effective date of transaction",
-                answer   : data.effectiveDate,
-                link     : "#effective-date",
-                id       : "EffectiveDate",
-                isValid  : modelValidationService.isEffectiveDateValid,
+                question   : "Effective date of transaction",
+                answer     : getDisplayValue(scope.data.effectiveDate),
+                link       : "#effective-date",
+                id         : "effectiveDate",
+                isValid    : modelValidationService.isEffectiveDateValid,
                 hiddenText : "Effective date of your transaction?"
             },
             {
-                question : "Additional residential property",
-                answer   : displayAdditionalProperty(data) ? data.twoOrMoreProperties : undefined,
-                link     : "#additional-property",
-                id       : "TwoOrMoreProperties",
-                isValid  : modelValidationService.isTwoOrMorePropertiesValid,
+                question   : displayAdditionalProperty(scope.data) ? "Additional residential property" : undefined,
+                answer     : scope.data.twoOrMoreProperties,
+                link       : "#additional-property",
+                id         : "twoOrMoreProperties",
+                isValid    : modelValidationService.isTwoOrMorePropertiesValid,
                 hiddenText : "Will you own two or more properties?"
             },
             {
-                question : "Replacing main residence",
-                answer   : displayReplaceMainResidence(data) ? data.replaceMainResidence : undefined,
-                link     : "#additional-property",
-                id       : "ReplaceMainResidence",
-                isValid  : modelValidationService.isReplaceMainResidenceValid,
+                question   : displayReplaceMainResidence(scope.data) ? "Replacing main residence" : undefined,
+                answer     : scope.data.replaceMainResidence,
+                link       : "#additional-property",
+                id         : "replaceMainResidence",
+                isValid    : modelValidationService.isReplaceMainResidenceValid,
                 hiddenText : "Are you replacing a main residence?"
             },
             {
-                question : "Purchase price",
-                answer   : (data.propertyType === "Freehold") ? data.premium : undefined,
-                link     : "#purchase-price",
-                id       : "PurchasePrice",
-                isValid  : modelValidationService.isPurchasePriceValid,
+                question   : (scope.data.holdingType === "Freehold") ? "Purchase price" : undefined,
+                answer     : scope.data.premium,
+                link       : "#purchase-price",
+                id         : "purchasePrice",
+                isValid    : modelValidationService.isPurchasePriceValid,
                 hiddenText : "Purchase price?"
             },
             {
-                question : "Start date as specified in lease",
-                answer   : (data.propertyType === "Leasehold") ? data.startDate : undefined,
-                link     : "#lease-dates",
-                id       : "LeaseStartDate",
-                isValid  : modelValidationService.isStartDateValid,
+                question   : (scope.data.holdingType === "Leasehold") ? "Start date as specified in lease" : undefined,
+                answer     : (scope.data.holdingType === "Leasehold") ? scope.data.startDate : undefined,
+                link       : "#lease-dates",
+                id         : "leaseStartDate",
+                isValid    : modelValidationService.isStartDateValid,
                 hiddenText : "Start date as specified in lease?"
             },
             {
-                question : "End date as specified in lease",
-                answer   : (data.propertyType === "Leasehold") ? data.endDate : undefined,
-                link     : "#lease-dates",
-                id       : "LeaseEndDate",
-                isValid  : modelValidationService.isEndDateValid,
+                question   : (scope.data.holdingType === "Leasehold") ? "End date as specified in lease" : undefined,
+                answer     : (scope.data.holdingType === "Leasehold") ? scope.data.endDate : undefined,
+                link       : "#lease-dates",
+                id         : "leaseEndDate",
+                isValid    : modelValidationService.isEndDateValid,
                 hiddenText : "End date as specified in lease?"
             },
             {
-                question : "Term of lease",
-                answer   : (data.propertyType === "Leasehold") ? data.leaseTerm.years + " years " + data.leaseTerm.days + " days" : undefined,
-                link     : undefined,
-                id       : "LeaseTerm",
-                isValid  : "",
+                question   : (scope.data.holdingType === "Leasehold") ? "Term of lease" : undefined,
+                answer     : (scope.data.holdingType === "Leasehold") ? getDisplayValue(scope.data.leaseTerm.years) + " years " + getDisplayValue(scope.data.leaseTerm.days) + " days" : undefined,
+                link       : undefined,
+                id         : "leaseTerm",
+                isValid    : "",
                 hiddenText : undefined
             },
             {
-                question : "Total premium payable",
-                answer   : (data.propertyType === "Leasehold") ? data.premium : undefined,
-                link     : "#premium",
-                id       : "Premium",
-                isValid  : modelValidationService.isPremiumValid,
+                question   : (scope.data.holdingType === "Leasehold") ? "Total premium payable" : undefined,
+                answer     : scope.data.premium,
+                link       : "#premium",
+                id         : "premium",
+                isValid    : modelValidationService.isPremiumValid,
                 hiddenText : "Total premium payable?"
             },
             {
-                question : "Year 1 rent",
-                answer   : data.year1Rent,
-                link     : "#rent",
-                id       : "Year1Rent",
-                isValid  : modelValidationService.isYear1RentValid,
+                question   : (scope.displayYearOneRent) ? "Year 1 rent" : undefined,
+                answer     : (scope.displayYearOneRent) ? scope.data.year1Rent : undefined,
+                link       : "#rent",
+                id         : "year1Rent",
+                isValid    : modelValidationService.isYear1RentValid,
                 hiddenText : "Year 1 rent?"
             },
             {
-                question : "Year 2 rent",
-                answer   : data.year2Rent,
-                link     : "#rent",
-                id       : "Year2Rent",
-                isValid  : modelValidationService.isYear2RentValid,
+                question   : (scope.displayYearTwoRent) ? "Year 2 rent" : undefined,
+                answer     : (scope.displayYearTwoRent) ? scope.data.year2Rent : undefined,
+                link       : "#rent",
+                id         : "year2Rent",
+                isValid    : modelValidationService.isYear2RentValid,
                 hiddenText : "Year 2 rent?"
             },
             {
-                question : "Year 3 rent",
-                answer   : data.year3Rent,
-                link     : "#rent",
-                id       : "Year3Rent",
-                isValid  : modelValidationService.isYear3RentValid,
+                question   : (scope.displayYearThreeRent) ? "Year 3 rent" : undefined,
+                answer     : (scope.displayYearThreeRent) ? scope.data.year3Rent : undefined,
+                link       : "#rent",
+                id         : "year3Rent",
+                isValid    : modelValidationService.isYear3RentValid,
                 hiddenText : "Year 3 rent?"
             },
             {
-                question : "Year 4 rent",
-                answer   : data.year4Rent,
-                link     : "#rent",
-                id       : "Year4Rent",
-                isValid  : modelValidationService.isYear4RentValid,
+                question   : (scope.displayYearFourRent) ? "Year 4 rent" : undefined,
+                answer     : (scope.displayYearFourRent) ? scope.data.year4Rent : undefined,
+                link       : "#rent",
+                id         : "year4Rent",
+                isValid    : modelValidationService.isYear4RentValid,
                 hiddenText : "Year 4 rent?"
             },
             {
-                question : "Year 5 rent",
-                answer   : data.year5Rent,
-                link     : "#rent",
-                id       : "Year5Rent",
-                isValid  : modelValidationService.isYear5RentValid,
+                question   : (scope.displayYearFiveRent) ? "Year 5 rent" : undefined,
+                answer     : (scope.displayYearFiveRent) ? scope.data.year5Rent : undefined,
+                link       : "#rent",
+                id         : "year5Rent",
+                isValid    : modelValidationService.isYear5RentValid,
                 hiddenText : "Year 5 rent?"
             },
             {
-                question : "Highest 12 monthly rent",
-                answer   : data.highestRent,
-                link     : undefined,
-                id       : "HighestRent",
-                isValid  : "",
+                question   : (scope.data.holdingType === "Leasehold") ? "Highest 12 monthly rent" : undefined,
+                answer     : (scope.data.holdingType === "Leasehold") ? scope.data.highestRent : undefined,
+                link       : undefined,
+                id         : "highestRent",
+                isValid    : "",
                 hiddenText : undefined
             },
             {
-                question : "Exchange of contracts before 17 March 2016",
-                answer   : data.contractPre201603,
-                link     : "#exchange-contracts",
-                id       : "ContractPre201603",
-                isValid  : modelValidationService.isContractPre201603Valid,
+                question   : (displayExchangeContracts(scope.data)) ? "Exchange of contracts before 17 March 2016" : undefined,
+                answer     : scope.data.contractPre201603,
+                link       : "#exchange-contracts",
+                id         : "contractPre201603",
+                isValid    : modelValidationService.isContractPre201603Valid,
                 hiddenText : "Exchange of contracts before 17 March 2016?"
             },
             {
-                question : "Contract changed on or after 17 March 2016",
-                answer   : data.contractVariedPost201603,
-                link     : "#exchange-contracts",
-                id       : "ContractVariedPost201603",
-                isValid  : modelValidationService.isContractVariedPost201603Valid,
+                question   : (displayContractVaried(scope.data)) ? "Contract changed on or after 17 March 2016" : undefined,
+                answer     : scope.data.contractVariedPost201603,
+                link       : "#exchange-contracts",
+                id         : "contractVariedPost201603",
+                isValid    : modelValidationService.isContractVariedPost201603Valid,
                 hiddenText : "Contract changed on or after 17 March 2016?"
             },
             {
-                question : "Relevant rental figure",
-                answer   : data.relevantRent,
-                link     : "#relevant-rent",
-                id       : "RelevantRent",
-                isValid  : modelValidationService.isRelevantRentValid,
+                question   : (displayRelevantRent(scope.data)) ? "Relevant rental figure" : undefined,
+                answer     : scope.data.relevantRent,
+                link       : "#relevant-rent",
+                id         : "relevantRent",
+                isValid    : modelValidationService.isRelevantRentValid,
                 hiddenText : "Relevant rental figure?"
             }
         ];
-
         return template.filter(function(item) {
-            return item.answer !== undefined || item.answer !== "";
+            return item.question !== undefined;
         });
     };
-
+    
+    module.exports = {
+        summaryHelper : summaryHelper
+    };
 }());
