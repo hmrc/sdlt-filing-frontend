@@ -208,6 +208,6 @@
         return template.filter(function(item) {
             return item.answer !== undefined || item.answer !== "";
         });
-    }
+    };
 
 }());
