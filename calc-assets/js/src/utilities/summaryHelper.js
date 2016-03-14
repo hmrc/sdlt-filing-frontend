@@ -68,10 +68,11 @@
             {
                 question   : "Effective date of transaction",
                 answer     : getDisplayValue(scope.data.effectiveDate),
-                link       : "#effective-date",
+                link       : "#date",
                 id         : "effectiveDate",
                 isValid    : modelValidationService.isEffectiveDateValid,
-                hiddenText : "Effective date of your transaction?"
+                hiddenText : "Effective date of your transaction?",
+                type       : "Date"
             },
             {
                 question   : displayAdditionalProperty(scope.data) ? "Additional residential property" : undefined,
@@ -95,7 +96,8 @@
                 link       : "#purchase-price",
                 id         : "purchasePrice",
                 isValid    : modelValidationService.isPurchasePriceValid,
-                hiddenText : "Purchase price?"
+                hiddenText : "Purchase price?",
+                type       : "Currency"
             },
             {
                 question   : (scope.data.holdingType === "Leasehold") ? "Start date as specified in lease" : undefined,
@@ -103,7 +105,8 @@
                 link       : "#lease-dates",
                 id         : "leaseStartDate",
                 isValid    : modelValidationService.isStartDateValid,
-                hiddenText : "Start date as specified in lease?"
+                hiddenText : "Start date as specified in lease?",
+                type       : "Date"
             },
             {
                 question   : (scope.data.holdingType === "Leasehold") ? "End date as specified in lease" : undefined,
@@ -111,7 +114,8 @@
                 link       : "#lease-dates",
                 id         : "leaseEndDate",
                 isValid    : modelValidationService.isEndDateValid,
-                hiddenText : "End date as specified in lease?"
+                hiddenText : "End date as specified in lease?",
+                type       : "Date"
             },
             {
                 question   : (scope.data.holdingType === "Leasehold") ? "Term of lease" : undefined,
@@ -127,7 +131,8 @@
                 link       : "#premium",
                 id         : "premium",
                 isValid    : modelValidationService.isPremiumValid,
-                hiddenText : "Total premium payable?"
+                hiddenText : "Total premium payable?",
+                type       : "Currency"
             },
             {
                 question   : (scope.displayYearOneRent) ? "Year 1 rent" : undefined,
@@ -135,7 +140,8 @@
                 link       : "#rent",
                 id         : "year1Rent",
                 isValid    : modelValidationService.isYear1RentValid,
-                hiddenText : "Year 1 rent?"
+                hiddenText : "Year 1 rent?",
+                type       : "Currency"
             },
             {
                 question   : (scope.displayYearTwoRent) ? "Year 2 rent" : undefined,
@@ -143,7 +149,8 @@
                 link       : "#rent",
                 id         : "year2Rent",
                 isValid    : modelValidationService.isYear2RentValid,
-                hiddenText : "Year 2 rent?"
+                hiddenText : "Year 2 rent?",
+                type       : "Currency"
             },
             {
                 question   : (scope.displayYearThreeRent) ? "Year 3 rent" : undefined,
@@ -151,7 +158,8 @@
                 link       : "#rent",
                 id         : "year3Rent",
                 isValid    : modelValidationService.isYear3RentValid,
-                hiddenText : "Year 3 rent?"
+                hiddenText : "Year 3 rent?",
+                type       : "Currency"
             },
             {
                 question   : (scope.displayYearFourRent) ? "Year 4 rent" : undefined,
@@ -159,7 +167,8 @@
                 link       : "#rent",
                 id         : "year4Rent",
                 isValid    : modelValidationService.isYear4RentValid,
-                hiddenText : "Year 4 rent?"
+                hiddenText : "Year 4 rent?",
+                type       : "Currency"
             },
             {
                 question   : (scope.displayYearFiveRent) ? "Year 5 rent" : undefined,
@@ -167,7 +176,8 @@
                 link       : "#rent",
                 id         : "year5Rent",
                 isValid    : modelValidationService.isYear5RentValid,
-                hiddenText : "Year 5 rent?"
+                hiddenText : "Year 5 rent?",
+                type       : "Currency"
             },
             {
                 question   : (scope.data.holdingType === "Leasehold") ? "Highest 12 monthly rent" : undefined,
@@ -175,7 +185,8 @@
                 link       : undefined,
                 id         : "highestRent",
                 isValid    : "",
-                hiddenText : undefined
+                hiddenText : undefined,
+                type       : "Currency"
             },
             {
                 question   : (displayExchangeContracts(scope.data)) ? "Exchange of contracts before 17 March 2016" : undefined,
@@ -199,7 +210,8 @@
                 link       : "#relevant-rent",
                 id         : "relevantRent",
                 isValid    : modelValidationService.isRelevantRentValid,
-                hiddenText : "Relevant rental figure?"
+                hiddenText : "Relevant rental figure?",
+                type       : "Currency"
             }
         ];
         return template.filter(function(item) {
