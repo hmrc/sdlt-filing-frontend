@@ -47,14 +47,14 @@
         }
     };
 
-    var summaryHelper = function(scope, modelValidationService) {
+    var summaryHelper = function(scope, validatedModel) {
         var template = [
             {
                 question   : "Freehold / leasehold",
                 answer     : getDisplayValue(scope.data.holdingType),
                 link       : "#holding",
                 id         : "holdingType",
-                isValid    : modelValidationService.isHoldingValid,
+                isValid    : validatedModel.isHoldingValid,
                 hiddenText : "Is property freehold or leasehold?"
             },
             {
@@ -62,7 +62,7 @@
                 answer     : getDisplayValue(scope.data.propertyType),
                 link       : "#property",
                 id         : "propertyType",
-                isValid    : modelValidationService.isPropertyValid,
+                isValid    : validatedModel.isPropertyValid,
                 hiddenText : "Is property residential or non-residential?"
             },
             {
@@ -70,7 +70,7 @@
                 answer     : getDisplayValue(scope.data.effectiveDate),
                 link       : "#date",
                 id         : "effectiveDate",
-                isValid    : modelValidationService.isEffectiveDateValid,
+                isValid    : validatedModel.isEffectiveDateValid,
                 hiddenText : "Effective date of your transaction?",
                 type       : "Date"
             },
@@ -79,7 +79,7 @@
                 answer     : scope.data.twoOrMoreProperties,
                 link       : "#additional-property",
                 id         : "twoOrMoreProperties",
-                isValid    : modelValidationService.isTwoOrMorePropertiesValid,
+                isValid    : validatedModel.isTwoOrMorePropertiesValid,
                 hiddenText : "Will you own two or more properties?"
             },
             {
@@ -87,7 +87,7 @@
                 answer     : scope.data.replaceMainResidence,
                 link       : "#additional-property",
                 id         : "replaceMainResidence",
-                isValid    : modelValidationService.isReplaceMainResidenceValid,
+                isValid    : validatedModel.isReplaceMainResidenceValid,
                 hiddenText : "Are you replacing a main residence?"
             },
             {
@@ -95,7 +95,7 @@
                 answer     : scope.data.premium,
                 link       : "#purchase-price",
                 id         : "purchasePrice",
-                isValid    : modelValidationService.isPurchasePriceValid,
+                isValid    : validatedModel.isPurchasePriceValid,
                 hiddenText : "Purchase price?",
                 type       : "Currency"
             },
@@ -104,7 +104,7 @@
                 answer     : (scope.data.holdingType === "Leasehold") ? scope.data.startDate : undefined,
                 link       : "#lease-dates",
                 id         : "leaseStartDate",
-                isValid    : modelValidationService.isStartDateValid,
+                isValid    : validatedModel.isStartDateValid,
                 hiddenText : "Start date as specified in lease?",
                 type       : "Date"
             },
@@ -113,7 +113,7 @@
                 answer     : (scope.data.holdingType === "Leasehold") ? scope.data.endDate : undefined,
                 link       : "#lease-dates",
                 id         : "leaseEndDate",
-                isValid    : modelValidationService.isEndDateValid,
+                isValid    : validatedModel.isEndDateValid,
                 hiddenText : "End date as specified in lease?",
                 type       : "Date"
             },
@@ -130,7 +130,7 @@
                 answer     : scope.data.premium,
                 link       : "#premium",
                 id         : "premium",
-                isValid    : modelValidationService.isPremiumValid,
+                isValid    : validatedModel.isPremiumValid,
                 hiddenText : "Total premium payable?",
                 type       : "Currency"
             },
@@ -139,7 +139,7 @@
                 answer     : (scope.displayYearOneRent) ? scope.data.year1Rent : undefined,
                 link       : "#rent",
                 id         : "year1Rent",
-                isValid    : modelValidationService.isYear1RentValid,
+                isValid    : validatedModel.isYear1RentValid,
                 hiddenText : "Year 1 rent?",
                 type       : "Currency"
             },
@@ -148,7 +148,7 @@
                 answer     : (scope.displayYearTwoRent) ? scope.data.year2Rent : undefined,
                 link       : "#rent",
                 id         : "year2Rent",
-                isValid    : modelValidationService.isYear2RentValid,
+                isValid    : validatedModel.isYear2RentValid,
                 hiddenText : "Year 2 rent?",
                 type       : "Currency"
             },
@@ -157,7 +157,7 @@
                 answer     : (scope.displayYearThreeRent) ? scope.data.year3Rent : undefined,
                 link       : "#rent",
                 id         : "year3Rent",
-                isValid    : modelValidationService.isYear3RentValid,
+                isValid    : validatedModel.isYear3RentValid,
                 hiddenText : "Year 3 rent?",
                 type       : "Currency"
             },
@@ -166,7 +166,7 @@
                 answer     : (scope.displayYearFourRent) ? scope.data.year4Rent : undefined,
                 link       : "#rent",
                 id         : "year4Rent",
-                isValid    : modelValidationService.isYear4RentValid,
+                isValid    : validatedModel.isYear4RentValid,
                 hiddenText : "Year 4 rent?",
                 type       : "Currency"
             },
@@ -175,7 +175,7 @@
                 answer     : (scope.displayYearFiveRent) ? scope.data.year5Rent : undefined,
                 link       : "#rent",
                 id         : "year5Rent",
-                isValid    : modelValidationService.isYear5RentValid,
+                isValid    : validatedModel.isYear5RentValid,
                 hiddenText : "Year 5 rent?",
                 type       : "Currency"
             },
@@ -193,7 +193,7 @@
                 answer     : scope.data.contractPre201603,
                 link       : "#exchange-contracts",
                 id         : "contractPre201603",
-                isValid    : modelValidationService.isContractPre201603Valid,
+                isValid    : validatedModel.isContractPre201603Valid,
                 hiddenText : "Exchange of contracts before 17 March 2016?"
             },
             {
@@ -201,7 +201,7 @@
                 answer     : scope.data.contractVariedPost201603,
                 link       : "#exchange-contracts",
                 id         : "contractVariedPost201603",
-                isValid    : modelValidationService.isContractVariedPost201603Valid,
+                isValid    : validatedModel.isContractVariedPost201603Valid,
                 hiddenText : "Contract changed on or after 17 March 2016?"
             },
             {
@@ -209,7 +209,7 @@
                 answer     : scope.data.relevantRent,
                 link       : "#relevant-rent",
                 id         : "relevantRent",
-                isValid    : modelValidationService.isRelevantRentValid,
+                isValid    : validatedModel.isRelevantRentValid,
                 hiddenText : "Relevant rental figure?",
                 type       : "Currency"
             }

@@ -30,7 +30,7 @@
         $scope.validatedModel = modelValidationService.validate($scope.data);
 
         var summaryHelper = require('../../utilities/summaryHelper.js');
-        $scope.data.summary = summaryHelper.summaryHelper($scope, modelValidationService);
+        $scope.data.summary = summaryHelper.summaryHelper($scope, $scope.validatedModel);
 
         $scope.submit = function() {
             navigationService.next('result', $scope.data, $location);
