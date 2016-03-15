@@ -234,9 +234,14 @@
                 type       : "Currency"
             }
         ];
-        return template.filter(function(item) {
-            return item.question !== undefined;
-        });
+        var result = [];
+        for(var i = 0; i < template.length; i++) {
+            if(template[i].question !== undefined) {
+                result.push(template[i]);
+            }
+        }
+        
+        return result;
     };
     
     module.exports = {
