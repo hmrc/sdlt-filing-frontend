@@ -297,6 +297,17 @@
                 expect(result.length).toEqual(7);
             });
 
+            it('should return 1 error messages if FR flow ignores Additional Property page', function(){
+                scope.data.holdingType = "Freehold";
+                scope.data.effectiveDate = new Date(2016,3,1);
+                scope.data.premium = 180000;
+                var validatedModel = {};
+                validatedModel.isTwoOrMorePropertiesValid = 'form-field--error';
+                var result = summaryHelper.summaryHelper(scope, validatedModel);
+                expect(result[3].isValid).toEqual('form-field--error'); // Additional properties has error
+                expect(result.length).toEqual(5);
+            });
+
         });
 
     });
