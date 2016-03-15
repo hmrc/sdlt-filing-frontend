@@ -11,6 +11,7 @@
             mockScope, 
             mockDataService, 
             mockNavigationService,
+            mockLoggingService,
             mockModelValidationService,
             calledServiceGetModel = false;
 
@@ -42,6 +43,10 @@
                 }
             };
 
+            mockLoggingService = {
+                logEvent : function() {}
+            };
+
             spyOn(mockDataService, 'updateModel');
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
@@ -51,6 +56,7 @@
                 $location : {},
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
+                loggingService : mockLoggingService,
                 modelValidationService : mockModelValidationService
             });
         }));
@@ -104,7 +110,8 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
 
                 mockScope.submit({});
@@ -181,7 +188,8 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
             }));
 
@@ -256,7 +264,8 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
             }));
 
@@ -331,7 +340,8 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
             }));
 
@@ -406,7 +416,8 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
             }));
 
@@ -481,7 +492,8 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService
+                    navigationService : mockNavigationService,
+                    loggingService : mockLoggingService
                 });
             }));
 

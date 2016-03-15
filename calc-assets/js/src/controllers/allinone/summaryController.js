@@ -3,7 +3,7 @@
 
     var app = require("../module");
 
-    var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
+    var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, loggingService) {
 
         var validator = require("../../utilities/validator")();
 
@@ -36,7 +36,9 @@
             navigationService.next('result', $scope.data, $location);
         };
 
+        $scope.logEvent = loggingService.logEvent;
+
     };
 
-    app.controller('summaryController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', summaryController]);
+    app.controller('summaryController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'loggingService', summaryController]);
 }());
