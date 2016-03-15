@@ -23,14 +23,11 @@
         if ($scope.displayYearFiveRent && highest < parseFloat($scope.data.year5Rent)) highest = $scope.data.year5Rent;
         $scope.data.highestRent = highest;
 
-        // update data service with highest rent
-        dataService.updateModel($scope.data);
-
-
         $scope.validatedModel = modelValidationService.validate($scope.data);
 
         var summaryHelper = require('../../utilities/summaryHelper.js');
         $scope.data.summary = summaryHelper.summaryHelper($scope, $scope.validatedModel);
+        dataService.updateModel($scope.data);
 
         $scope.submit = function() {
             navigationService.next('result', $scope.data, $location);

@@ -20,10 +20,7 @@
                         <td class="previous-question-body" id="td2_{{item.id}}" ng-if="item.type === undefined">{{item.answer}}</td>
                         <td class="previous-question-body" id="td2_{{item.id}}" ng-if="item.type === 'Date'">{{item.answer | date: 'd MMMM yyyy'}}</td>
                         <td class="previous-question-body" id="td2_{{item.id}}" ng-if="item.type === 'Currency'">{{item.answer | sdltCurrency: '£'}}</td>
-
-
                         <td class="link-right" id="td3_{{item.id}}"><a ng-if="item.link !== undefined" id="change_{{item.id}}" href="{{item.link}}" ng-click="logEvent('change', 'click', item.id)">Change <span class="visuallyhidden">{{item.hiddenText}}</span></a></td>
-
                     </tr>
                 </tbody>
             </table>
