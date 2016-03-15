@@ -84,7 +84,7 @@
             })
 
             .when('/summary', {
-                title : 'Summary',
+                title : 'Check your answers',
                 templateUrl : 'summary.html',
                 controller  : 'summaryController',
                 reloadOnSearch: false

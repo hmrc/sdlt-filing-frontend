@@ -175,7 +175,7 @@
                 location.path('/summary');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('summaryController');
-                expect(route.current.title).toBe('Summary');
+                expect(route.current.title).toBe('Check your answers');
             });
         });
 
