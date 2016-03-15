@@ -5,7 +5,23 @@
 
     var validator = new Validator();
 
+    var displayFreehold = function(data) {
+        if(data === undefined) return false;
+        return data.holdingType === "Freehold";
+    };
+
+    var displayLeasehold = function(data) {
+        if(data === undefined) return false;
+        return data.holdingType === "Leasehold";
+    };
+
+    var displayTermOfLease = function(data) {
+        if(data === undefined) return false;
+        return displayLeasehold(data) && data.leaseTerm !== undefined;
+    };
+
     var displayExchangeContracts = function(data) {
+        if(data === undefined) return false;
         var allRentsBelow2000 = validator.checkAllRentsBelow2000(data);
         return (data.holdingType === 'Leasehold' && 
             data.propertyType === 'Non-residential' && 
@@ -15,10 +31,12 @@
     };
 
     var displayContractVaried = function(data) {
+        if(data === undefined) return false;
         return (displayExchangeContracts(data) && data.contractPre201603 === 'Yes');
     };
 
     var displayRelevantRent = function(data) {
+        if(data === undefined) return false;
         var allRentsBelow2000 = validator.checkAllRentsBelow2000(data);
         var commonChecks = (data.holdingType === 'Leasehold' && data.propertyType === 'Non-residential' && data.premium < 150000 && allRentsBelow2000);
 
@@ -31,10 +49,12 @@
     };
 
     var displayAdditionalProperty = function(data) {
+        if(data === undefined) return false;
         return data.propertyType === "Residential" && validator.isGreaterThanOrEqualToDate(data.effectiveDate, new Date(2016, 3, 1));
     };
 
     var displayReplaceMainResidence = function(data) {
+        if(data === undefined) return false;
         return (displayAdditionalProperty(data) && data.twoOrMoreProperties === 'Yes');
     };
 
@@ -51,7 +71,7 @@
         var template = [
             {
                 question   : "Freehold / leasehold",
-                answer     : getDisplayValue(scope.data.holdingType),
+                answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.holdingType) : undefined,
                 link       : "#holding",
                 id         : "holdingType",
                 isValid    : validatedModel.isHoldingValid,
@@ -59,7 +79,7 @@
             },
             {
                 question   : "Property type",
-                answer     : getDisplayValue(scope.data.propertyType),
+                answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.propertyType) : undefined,
                 link       : "#property",
                 id         : "propertyType",
                 isValid    : validatedModel.isPropertyValid,
@@ -67,7 +87,7 @@
             },
             {
                 question   : "Effective date of transaction",
-                answer     : getDisplayValue(scope.data.effectiveDate),
+                answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.effectiveDate) : undefined,
                 link       : "#date",
                 id         : "effectiveDate",
                 isValid    : validatedModel.isEffectiveDateValid,
@@ -76,7 +96,7 @@
             },
             {
                 question   : displayAdditionalProperty(scope.data) ? "Additional residential property" : undefined,
-                answer     : scope.data.twoOrMoreProperties,
+                answer     : (scope.data !== undefined) ? scope.data.twoOrMoreProperties : undefined,
                 link       : "#additional-property",
                 id         : "twoOrMoreProperties",
                 isValid    : validatedModel.isTwoOrMorePropertiesValid,
@@ -84,15 +104,15 @@
             },
             {
                 question   : displayReplaceMainResidence(scope.data) ? "Replacing main residence" : undefined,
-                answer     : scope.data.replaceMainResidence,
+                answer     : (scope.data !== undefined) ? scope.data.replaceMainResidence : undefined,
                 link       : "#additional-property",
                 id         : "replaceMainResidence",
                 isValid    : validatedModel.isReplaceMainResidenceValid,
                 hiddenText : "Are you replacing a main residence?"
             },
             {
-                question   : (scope.data.holdingType === "Freehold") ? "Purchase price" : undefined,
-                answer     : scope.data.premium,
+                question   : displayFreehold(scope.data) ? "Purchase price" : undefined,
+                answer     : displayFreehold(scope.data) ? scope.data.premium : undefined,
                 link       : "#purchase-price",
                 id         : "purchasePrice",
                 isValid    : validatedModel.isPurchasePriceValid,
@@ -100,8 +120,8 @@
                 type       : "Currency"
             },
             {
-                question   : (scope.data.holdingType === "Leasehold") ? "Start date as specified in lease" : undefined,
-                answer     : (scope.data.holdingType === "Leasehold") ? scope.data.startDate : undefined,
+                question   : displayLeasehold(scope.data) ? "Start date as specified in lease" : undefined,
+                answer     : displayLeasehold(scope.data) ? scope.data.startDate : undefined,
                 link       : "#lease-dates",
                 id         : "leaseStartDate",
                 isValid    : validatedModel.isStartDateValid,
@@ -109,8 +129,8 @@
                 type       : "Date"
             },
             {
-                question   : (scope.data.holdingType === "Leasehold") ? "End date as specified in lease" : undefined,
-                answer     : (scope.data.holdingType === "Leasehold") ? scope.data.endDate : undefined,
+                question   : displayLeasehold(scope.data) ? "End date as specified in lease" : undefined,
+                answer     : displayLeasehold(scope.data) ? scope.data.endDate : undefined,
                 link       : "#lease-dates",
                 id         : "leaseEndDate",
                 isValid    : validatedModel.isEndDateValid,
@@ -118,16 +138,16 @@
                 type       : "Date"
             },
             {
-                question   : (scope.data.holdingType === "Leasehold") ? "Term of lease" : undefined,
-                answer     : (scope.data.holdingType === "Leasehold") ? getDisplayValue(scope.data.leaseTerm.years) + " years " + getDisplayValue(scope.data.leaseTerm.days) + " days" : undefined,
+                question   : displayTermOfLease(scope.data) ? "Term of lease" : undefined,
+                answer     : displayTermOfLease(scope.data) ? getDisplayValue(scope.data.leaseTerm.years) + " years " + getDisplayValue(scope.data.leaseTerm.days) + " days" : undefined,
                 link       : undefined,
                 id         : "leaseTerm",
                 isValid    : "",
                 hiddenText : undefined
             },
             {
-                question   : (scope.data.holdingType === "Leasehold") ? "Total premium payable" : undefined,
-                answer     : scope.data.premium,
+                question   : displayLeasehold(scope.data) ? "Total premium payable" : undefined,
+                answer     : displayLeasehold(scope.data) ? scope.data.premium : undefined,
                 link       : "#premium",
                 id         : "premium",
                 isValid    : validatedModel.isPremiumValid,
@@ -180,8 +200,8 @@
                 type       : "Currency"
             },
             {
-                question   : (scope.data.holdingType === "Leasehold") ? "Highest 12 monthly rent" : undefined,
-                answer     : (scope.data.holdingType === "Leasehold") ? scope.data.highestRent : undefined,
+                question   : displayLeasehold(scope.data) ? "Highest 12 monthly rent" : undefined,
+                answer     : displayLeasehold(scope.data) ? scope.data.highestRent : undefined,
                 link       : undefined,
                 id         : "highestRent",
                 isValid    : "",
@@ -190,7 +210,7 @@
             },
             {
                 question   : (displayExchangeContracts(scope.data)) ? "Exchange of contracts before 17 March 2016" : undefined,
-                answer     : scope.data.contractPre201603,
+                answer     : (displayExchangeContracts(scope.data)) ? scope.data.contractPre201603 : undefined,
                 link       : "#exchange-contracts",
                 id         : "contractPre201603",
                 isValid    : validatedModel.isContractPre201603Valid,
@@ -198,7 +218,7 @@
             },
             {
                 question   : (displayContractVaried(scope.data)) ? "Contract changed on or after 17 March 2016" : undefined,
-                answer     : scope.data.contractVariedPost201603,
+                answer     : (displayContractVaried(scope.data)) ? scope.data.contractVariedPost201603 : undefined,
                 link       : "#exchange-contracts",
                 id         : "contractVariedPost201603",
                 isValid    : validatedModel.isContractVariedPost201603Valid,
@@ -206,7 +226,7 @@
             },
             {
                 question   : (displayRelevantRent(scope.data)) ? "Relevant rental figure" : undefined,
-                answer     : scope.data.relevantRent,
+                answer     : (displayRelevantRent(scope.data)) ? scope.data.relevantRent : undefined,
                 link       : "#relevant-rent",
                 id         : "relevantRent",
                 isValid    : validatedModel.isRelevantRentValid,

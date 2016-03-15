@@ -24,11 +24,6 @@
                     data : data
                 };
 
-                mockModelValidationService = {
-                    validate : function() {
-                        return { isModelValid : true };
-                    }
-                };
             });
 
             it('should return 4 elements with date 16/3/2016', function(){
@@ -92,11 +87,6 @@
                     data : data
                 };
 
-                mockModelValidationService = {
-                    validate : function() {
-                        return { isModelValid : true };
-                    }
-                };
             });
 
             it('should return 9 elements with date 16/3/2016 and 1 year 0 days lease term', function(){
@@ -244,6 +234,69 @@
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(14);
             });
+
+        });
+
+        describe('Summary page with errors', function(){
+
+            var data = {};
+            var scope = {};
+            var mockModelValidationService = {};
+
+            beforeEach(function(){
+                data = {
+                    holdingType              : "Leasehold",
+                    propertyType             : "Residential",
+                    effectiveDate            : undefined,
+                    leaseStartDate           : undefined,
+                    leaseEndDate             : undefined,
+                    leaseTerm                : undefined,
+                    premium                  : undefined,
+                    twoOrMoreProperties      : undefined,
+                    replaceMainResidence     : undefined,
+                    year1Rent                : undefined,
+                    year2Rent                : undefined,
+                    year3Rent                : undefined,
+                    year4Rent                : undefined,
+                    year5Rent                : undefined,
+                    highestRent              : undefined,
+                    relevantRent             : undefined,
+                    contractPre201603        : undefined,
+                    contractVariedPost201603 : undefined
+                };
+                scope = {
+                    data : data
+                };
+
+            });
+
+            it('should return 3 default error messages if scope.data is undefined', function(){
+                scope.data = undefined;
+                var validatedModel = {};
+                validatedModel.isHoldingValid = 'form-field--error';
+                validatedModel.isPropertyValid = 'form-field--error';
+                validatedModel.isEffectiveDateValid = 'form-field--error';
+                var result = summaryHelper.summaryHelper(scope, validatedModel);
+                expect(result[0].isValid).toEqual('form-field--error');
+                expect(result.length).toEqual(3);
+            });
+
+            it('should return 7 error messages if LN and only relevant rent defined', function(){
+                var validatedModel = {};
+                scope.data.propertyType = "Non-residential";
+                scope.data.relevantRent = 1;
+                validatedModel.isEffectiveDateValid = 'form-field--error';
+                validatedModel.isStartDateValid = 'form-field--error';
+                validatedModel.isEndDateValid = 'form-field--error';
+                validatedModel.isPremiumValid = 'form-field--error';
+                var result = summaryHelper.summaryHelper(scope, validatedModel);
+                expect(result[2].isValid).toEqual('form-field--error'); // Effective has error
+                expect(result[3].isValid).toEqual('form-field--error'); // Start date has error
+                expect(result[4].isValid).toEqual('form-field--error'); // End date has error
+                expect(result[5].isValid).toEqual('form-field--error'); // Premium has eror
+                expect(result.length).toEqual(7);
+            });
+
         });
 
     });
