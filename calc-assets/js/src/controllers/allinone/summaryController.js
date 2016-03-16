@@ -3,7 +3,7 @@
 
     var app = require("../module");
 
-    var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
+    var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, loggingService) {
 
         var validator = require("../../utilities/validator")();
 
@@ -23,59 +23,19 @@
         if ($scope.displayYearFiveRent && highest < parseFloat($scope.data.year5Rent)) highest = $scope.data.year5Rent;
         $scope.data.highestRent = highest;
 
-        // update data service with highest rent
-        dataService.updateModel($scope.data);
-
-
         $scope.validatedModel = modelValidationService.validate($scope.data);
+
+        var summaryHelper = require('../../utilities/summaryHelper.js');
+        $scope.data.summary = summaryHelper.summaryHelper($scope, $scope.validatedModel);
+        dataService.updateModel($scope.data);
 
         $scope.submit = function() {
             navigationService.next('result', $scope.data, $location);
         };
 
-        $scope.displayExchangeContracts = function() {
-            var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
-            return ($scope.data.holdingType === 'Leasehold' && 
-                $scope.data.propertyType === 'Non-residential' && 
-                $scope.data.premium < 150000 && 
-                allRentsBelow2000 && 
-                validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 2, 17)));
-        };
-
-        $scope.displayContractVaried = function() {
-            return ($scope.displayExchangeContracts() && $scope.data.contractPre201603 === 'Yes');
-        };
-
-        $scope.displayRelevantRent = function() {
-            var allRentsBelow2000 = validator.checkAllRentsBelow2000($scope.data);
-            var commonChecks = ($scope.data.holdingType === 'Leasehold' && $scope.data.propertyType === 'Non-residential' && $scope.data.premium < 150000 && allRentsBelow2000);
-
-            if (commonChecks && validator.isLessThanDate($scope.data.effectiveDate, new Date(2016, 2, 17))) {
-                return true;
-            } else if (commonChecks && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 2, 17)) && $scope.data.contractPre201603 === 'Yes' && $scope.data.contractVariedPost201603 === 'No') {
-                return true;
-            }
-            return false;
-        };
-
-        $scope.displayAdditionalProperty = function() {
-            return $scope.data.propertyType === "Residential" && validator.isGreaterThanOrEqualToDate($scope.data.effectiveDate, new Date(2016, 3, 1));
-        };
-
-        $scope.displayReplaceMainResidence = function() {
-            return ($scope.displayAdditionalProperty() && $scope.data.twoOrMoreProperties === 'Yes');
-        };
-
-        $scope.getDisplayValue = function(value) {
-            if(value === undefined || value === 'undefined' || value === '') {
-                return '-';
-            }
-            else {
-                return value;
-            }
-        };
+        $scope.logEvent = loggingService.logEvent;
 
     };
 
-    app.controller('summaryController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', summaryController]);
+    app.controller('summaryController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'loggingService', summaryController]);
 }());
