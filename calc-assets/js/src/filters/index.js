@@ -1,6 +1,6 @@
 (function() {
     "use strict";
 
-	require("./sdltCurrency.js");
+	require("./calcCurrency.js");
 	
 }());

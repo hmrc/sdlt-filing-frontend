@@ -3,7 +3,7 @@
 
     var app = require("./module");
 
-    app.filter('sdltCurrency', ['$filter', function($filter) {
+    app.filter('calcCurrency', ['$filter', function($filter) {
       return function(input, currency) {
 
         if(input === undefined || input === 'undefined' || input === '') {
