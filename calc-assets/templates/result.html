@@ -14,8 +14,8 @@
           </tr>
           <tr class="setion">
             <td id="effDate{{$index}}">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-            <td id="premium{{$index}}">{{data.premium | sdltCurrency}}</td>
-            <td id="totalTax{{$index}}">{{res.totalTax | sdltCurrency}}</td>
+            <td id="premium{{$index}}">{{data.premium | calcCurrency}}</td>
+            <td id="totalTax{{$index}}">{{res.totalTax | calcCurrency}}</td>
             <td><a id="detailCalc{{$index}}" ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
           </tr>
         </tbody>
@@ -28,9 +28,9 @@
           </tr>
           <tr class="setion">
             <td id="effDate{{$index}}">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-            <td id="premium{{$index}}">{{data.premium | sdltCurrency}}</td>
-            <td id="taxRate{{$index}}">{{res.taxCalcs[0].rate | sdltCurrency}}</td>
-            <td id="totalTax{{$index}}">{{res.totalTax | sdltCurrency}}</td>
+            <td id="premium{{$index}}">{{data.premium | calcCurrency}}</td>
+            <td id="taxRate{{$index}}">{{res.taxCalcs[0].rate | calcCurrency}}</td>
+            <td id="totalTax{{$index}}">{{res.totalTax | calcCurrency}}</td>
           </tr>
         </tbody>
       </table>
@@ -38,17 +38,17 @@
         <tbody>
           <tr class="section">
             <td>Total amount of tax for this transaction</td>
-            <td id="totalTax{{$index}}">{{res.totalTax | sdltCurrency:"£"}}</td>
+            <td id="totalTax{{$index}}">{{res.totalTax | calcCurrency:"£"}}</td>
             <td></td>
           </tr>
           <tr class="section">
             <td>Net present value</td>
-            <td id="npv{{$index}}">{{res.npv | sdltCurrency:"£"}}</td>
+            <td id="npv{{$index}}">{{res.npv | calcCurrency:"£"}}</td>
             <td></td>
           </tr>
           <tr ng-repeat="taxCalc in res.taxCalcs" class="section">
             <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}}<span id="taxRate{{$index}}" ng-if="taxCalc.calcType === 'slab'"> ({{taxCalc.rate}}%)</span></td>
-            <td id="taxDue{{$parent.$parent.$index+''+$index}}">{{taxCalc.taxDue | sdltCurrency:"£"}}</td>
+            <td id="taxDue{{$parent.$parent.$index+''+$index}}">{{taxCalc.taxDue | calcCurrency:"£"}}</td>
             <td><a id="detailCalc{{$parent.$parent.$index+''+$index}}" ng-if="taxCalc.calcType === 'slice'" ng-click="viewDetails($parent.$parent.$index, $index)" href="javascript:return false" title="view detailed calculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
           </tr>
         </tbody>
