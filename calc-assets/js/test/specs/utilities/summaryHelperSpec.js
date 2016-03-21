@@ -30,6 +30,7 @@
                 scope.data.effectiveDate = new Date(2016,2,16);
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(4);
+                expect(result[2].answer).toEqual(scope.data.effectiveDate);
             });
 
             it('should return 6 elements with date 1/4/2016 - twoOrMoreProperties : "Yes", replaceMainResidence : "No"', function(){
@@ -38,6 +39,8 @@
                 scope.data.replaceMainResidence = "No";
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(6);
+                expect(result[3].answer).toEqual('Yes');
+                expect(result[4].answer).toEqual('No');
             });
 
             it('should return 5 elements with date 1/4/2016 - twoOrMoreProperties : "No", replaceMainResidence : undefined', function(){
@@ -51,6 +54,7 @@
                 scope.data.propertyType = "Non-residential";
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(4);
+                expect(result[1].answer).toEqual('Non-residential');
             });
         });
 
@@ -64,8 +68,8 @@
                     holdingType              : "Leasehold",
                     propertyType             : "Residential",
                     effectiveDate            : undefined,
-                    leaseStartDate           : undefined,
-                    leaseEndDate             : undefined,
+                    startDate           : undefined,
+                    endDate             : undefined,
                     leaseTerm                : {
                         years : 0,
                         days : 1
@@ -91,19 +95,23 @@
 
             it('should return 9 elements with date 16/3/2016 and 1 year 0 days lease term', function(){
                 scope.data.effectiveDate = new Date(2016,2,16);
-                scope.data.leaseStartDate = new Date(2016,2,16);
-                scope.data.leaseEndDate = new Date(2017,2,15);
+                scope.data.startDate = new Date(2016,2,16);
+                scope.data.endDate = new Date(2017,2,15);
                 scope.data.leaseTerm.years = 1;
                 scope.data.leaseTerm.days = 0;
                 scope.displayYearOneRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(9);
+                expect(result[3].answer).toEqual(new Date(2016,2,16));
+                expect(result[4].answer).toEqual(new Date(2017,2,15));
+                expect(result[5].answer).toEqual('1 years 0 days');
+                expect(result[7].answer).toEqual(1999);
             });
 
             it('should return 10 elements with date 16/3/2016 and 2 years 0 days lease term', function(){
                 scope.data.effectiveDate = new Date(2016,2,16);
-                scope.data.leaseStartDate = new Date(2016,2,16);
-                scope.data.leaseEndDate = new Date(2018,2,15);
+                scope.data.startDate = new Date(2016,2,16);
+                scope.data.endDate = new Date(2018,2,15);
                 scope.data.year2Rent = 1999;
                 scope.data.leaseTerm.years = 2;
                 scope.data.leaseTerm.days = 0;
@@ -111,12 +119,14 @@
                 scope.displayYearTwoRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(10);
+                expect(result[5].answer).toEqual('2 years 0 days');
+                expect(result[8].answer).toEqual(1999);
             });
 
             it('should return 11 elements with date 16/3/2016 and 3 years 0 days lease term', function(){
                 scope.data.effectiveDate = new Date(2016,2,16);
-                scope.data.leaseStartDate = new Date(2016,2,16);
-                scope.data.leaseEndDate = new Date(2019,2,15);
+                scope.data.startDate = new Date(2016,2,16);
+                scope.data.endDate = new Date(2019,2,15);
                 scope.data.year2Rent = 1999;
                 scope.data.year3Rent = 1999;
                 scope.data.leaseTerm.years = 3;
@@ -126,12 +136,14 @@
                 scope.displayYearThreeRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(11);
+                expect(result[5].answer).toEqual('3 years 0 days');
+                expect(result[9].answer).toEqual(1999);
             });
 
             it('should return 12 elements with date 16/3/2016 and 4 years 0 days lease term', function(){
                 scope.data.effectiveDate = new Date(2016,2,16);
-                scope.data.leaseStartDate = new Date(2016,2,16);
-                scope.data.leaseEndDate = new Date(2020,2,15);
+                scope.data.startDate = new Date(2016,2,16);
+                scope.data.endDate = new Date(2020,2,15);
                 scope.data.year2Rent = 1999;
                 scope.data.year3Rent = 1999;
                 scope.data.year4Rent = 1999;
@@ -143,12 +155,14 @@
                 scope.displayYearFourRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(12);
+                expect(result[5].answer).toEqual('4 years 0 days');
+                expect(result[10].answer).toEqual(1999);
             });
 
             it('should return 13 elements with date 16/3/2016 and 5 years 0 days lease term', function(){
                 scope.data.effectiveDate = new Date(2016,2,16);
-                scope.data.leaseStartDate = new Date(2016,2,16);
-                scope.data.leaseEndDate = new Date(2021,2,15);
+                scope.data.startDate = new Date(2016,2,16);
+                scope.data.endDate = new Date(2021,2,15);
                 scope.data.year2Rent = 1999;
                 scope.data.year3Rent = 1999;
                 scope.data.year4Rent = 1999;
@@ -162,26 +176,29 @@
                 scope.displayYearFiveRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(13);
+                expect(result[5].answer).toEqual('5 years 0 days');
+                expect(result[11].answer).toEqual(1999);
             });
 
             it('should return 10 elements with Non-residential property, date 1/4/2016 and 1 year 0 days lease term', function(){
                 scope.data.propertyType = "Non-residential";
                 scope.data.effectiveDate = new Date(2016,3,1);
-                scope.data.leaseStartDate = new Date(2016,3,1);
-                scope.data.leaseEndDate = new Date(2017,2,31);
+                scope.data.startDate = new Date(2016,3,1);
+                scope.data.endDate = new Date(2017,2,31);
                 scope.data.contractPre201603 = "No";
                 scope.data.leaseTerm.years = 1;
                 scope.data.leaseTerm.days = 0;
                 scope.displayYearOneRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(10);
+                expect(result[9].answer).toEqual('No');
             });
 
             it('should return 11 elements with Non-residential property, date 1/4/2016 and 1 year 0 days lease term', function(){
                 scope.data.propertyType = "Non-residential";
                 scope.data.effectiveDate = new Date(2016,3,1);
-                scope.data.leaseStartDate = new Date(2016,3,1);
-                scope.data.leaseEndDate = new Date(2017,2,31);
+                scope.data.startDate = new Date(2016,3,1);
+                scope.data.endDate = new Date(2017,2,31);
                 scope.data.contractPre201603 = "Yes";
                 scope.data.contractVariedPost201603 = "Yes";
                 scope.data.leaseTerm.years = 1;
@@ -189,13 +206,15 @@
                 scope.displayYearOneRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(11);
+                expect(result[9].answer).toEqual('Yes');
+                expect(result[10].answer).toEqual('Yes');
             });
 
             it('should return 16 elements with Non-residential property, date 1/4/2016 and 5 years and 1 day lease term', function() {
                 scope.data.propertyType = "Non-residential";
                 scope.data.effectiveDate = new Date(2016,3,1);
-                scope.data.leaseStartDate = new Date(2016,3,1);
-                scope.data.leaseEndDate = new Date(2021,3,1);
+                scope.data.startDate = new Date(2016,3,1);
+                scope.data.endDate = new Date(2021,3,1);
                 scope.data.year2Rent = 1999;
                 scope.data.year3Rent = 1999;
                 scope.data.year4Rent = 1999;
@@ -212,13 +231,15 @@
                 scope.displayYearFiveRent = function() {return true;};
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
                 expect(result.length).toEqual(16);
+                expect(result[13].answer).toEqual('Yes');
+                expect(result[14].answer).toEqual('No');
             });
             
             it('should return 14 elements with Non-residential property, date 16/3/2016 and 5 years and 1 day lease term', function() {
                 scope.data.propertyType = "Non-residential";
                 scope.data.effectiveDate = new Date(2016,2,16);
-                scope.data.leaseStartDate = new Date(2016,2,16);
-                scope.data.leaseEndDate = new Date(2021,2,16);
+                scope.data.startDate = new Date(2016,2,16);
+                scope.data.endDate = new Date(2021,2,16);
                 scope.data.year2Rent = 1999;
                 scope.data.year3Rent = 1999;
                 scope.data.year4Rent = 1999;
@@ -248,8 +269,8 @@
                     holdingType              : "Leasehold",
                     propertyType             : "Residential",
                     effectiveDate            : undefined,
-                    leaseStartDate           : undefined,
-                    leaseEndDate             : undefined,
+                    startDate                : undefined,
+                    endDate                  : undefined,
                     leaseTerm                : undefined,
                     premium                  : undefined,
                     twoOrMoreProperties      : undefined,
