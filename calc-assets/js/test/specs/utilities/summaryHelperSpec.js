@@ -16,6 +16,7 @@
                     holdingType    : "Freehold",
                     propertyType   : "Residential",
                     effectiveDate  : undefined,
+                    individual     : undefined,
                     premium        : 1000000,
                     twoOrMoreProperties : undefined,
                     replaceMainResidence : undefined
@@ -33,21 +34,24 @@
                 expect(result[2].answer).toEqual(scope.data.effectiveDate);
             });
 
-            it('should return 6 elements with date 1/4/2016 - twoOrMoreProperties : "Yes", replaceMainResidence : "No"', function(){
+            it('should return 7 elements with date 1/4/2016 - twoOrMoreProperties : "Yes", replaceMainResidence : "No"', function(){
                 scope.data.effectiveDate = new Date(2016,3,1);
+                scope.data.individual = "Yes";
                 scope.data.twoOrMoreProperties = "Yes";
                 scope.data.replaceMainResidence = "No";
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
-                expect(result.length).toEqual(6);
+                expect(result.length).toEqual(7);
                 expect(result[3].answer).toEqual('Yes');
-                expect(result[4].answer).toEqual('No');
+                expect(result[4].answer).toEqual('Yes');
+                expect(result[5].answer).toEqual('No');
             });
 
-            it('should return 5 elements with date 1/4/2016 - twoOrMoreProperties : "No", replaceMainResidence : undefined', function(){
+            it('should return 6 elements with date 1/4/2016 - twoOrMoreProperties : "No", replaceMainResidence : undefined', function(){
                 scope.data.effectiveDate = new Date(2016,3,1);
+                scope.data.individual = "Yes";
                 scope.data.twoOrMoreProperties = "No";
                 var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
-                expect(result.length).toEqual(5);
+                expect(result.length).toEqual(6);
             });
 
             it('should return 4 elements with holding type as Non-residential', function() {
@@ -318,17 +322,28 @@
                 expect(result.length).toEqual(7);
             });
 
-            it('should return 1 error messages if FR flow ignores Additional Property page', function(){
+            it('should return 1 error messages if FR flow ignores Purchaser page', function(){
                 scope.data.holdingType = "Freehold";
                 scope.data.effectiveDate = new Date(2016,3,1);
                 scope.data.premium = 180000;
                 var validatedModel = {};
-                validatedModel.isTwoOrMorePropertiesValid = 'form-field--error';
+                validatedModel.isIndividualValid = 'form-field--error';
                 var result = summaryHelper.summaryHelper(scope, validatedModel);
-                expect(result[3].isValid).toEqual('form-field--error'); // Additional properties has error
+                expect(result[3].isValid).toEqual('form-field--error'); // Individual has error
                 expect(result.length).toEqual(5);
             });
 
+            it('should return 1 error messages if FR flow ignores Additional Property page', function(){
+                scope.data.holdingType = "Freehold";
+                scope.data.effectiveDate = new Date(2016,3,1);
+                scope.data.individual = "Yes";
+                scope.data.premium = 180000;
+                var validatedModel = {};
+                validatedModel.isTwoOrMorePropertiesValid = 'form-field--error';
+                var result = summaryHelper.summaryHelper(scope, validatedModel);
+                expect(result[4].isValid).toEqual('form-field--error'); // Additional properties has error
+                expect(result.length).toEqual(6);
+            });
         });
 
     });
