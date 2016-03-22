@@ -208,7 +208,7 @@
         });
     });
 
-    describe('Result Controller - Freehold, Residential, from 1 April 2016, NOT additional property rates', function () {
+    describe('Result Controller - Freehold, Residential, from 1 April 2016, individual, NOT additional property rates', function () {
         
         var controller, 
             mockScope, 
@@ -229,7 +229,8 @@
                     return {
                         holdingType : "Freehold",
                         propertyType : "Residential",
-                        effectiveDate : new Date(2016, 3, 1)
+                        effectiveDate : new Date(2016, 3, 1),
+                        individual : 'Yes'
                     }; 
                 },
                 updateModel : function() { }
@@ -310,7 +311,7 @@
         });
     });
 
-    describe('Result Controller - Freehold, Residential, from 1 April 2016, is 2nd prop but NOT additional property rates', function () {
+    describe('Result Controller - Freehold, Residential, from 1 April 2016, individual, is 2nd prop but NOT additional property rates', function () {
         
         var controller, 
             mockScope, 
@@ -332,6 +333,7 @@
                         holdingType : "Freehold",
                         propertyType : "Residential",
                         effectiveDate : new Date(2016, 3, 1),
+                        individual : 'Yes',
                         twoOrMoreProperties : "Yes",
                         replaceMainResidence : "Yes"
                     }; 
@@ -414,7 +416,7 @@
         });
     });
 
-    describe('Result Controller - Freehold, Residential, from 1 April 2016, IS additional property rates', function () {
+    describe('Result Controller - Freehold, Residential, from 1 April 2016, individual, IS additional property rates', function () {
         
         var controller, 
             mockScope, 
@@ -436,8 +438,112 @@
                         holdingType : "Freehold",
                         propertyType : "Residential",
                         effectiveDate : new Date(2016, 3, 1),
+                        individual : 'Yes',
                         twoOrMoreProperties : "Yes",
                         replaceMainResidence : "No"
+                    }; 
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calcFreeResPrem_201203_201412 : function() {},
+                calcFreeResPrem_201412_Undef : function() {},
+                calcFreeResPremAddProp_201604_Undef : function() {},
+                calcFreeNonResPrem_201203_201603 : function() {},
+                calcFreeNonResPrem_201603_Undef : function() {},
+                calcLeaseResPremAndRent_201203_201412 : function() {},
+                calcLeaseResPremAndRent_201412_Undef : function() {},
+                calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
+                calcLeaseNonResPremAndRent_201603_Undef : function() {}
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockDataService, 'updateModel');
+
+            spyOn(mockCalculationService, 'calcFreeResPrem_201203_201412');
+            spyOn(mockCalculationService, 'calcFreeResPrem_201412_Undef');
+            spyOn(mockCalculationService, 'calcFreeResPremAddProp_201604_Undef');
+            spyOn(mockCalculationService, 'calcFreeNonResPrem_201203_201603');
+            spyOn(mockCalculationService, 'calcFreeNonResPrem_201603_Undef');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201603_Undef');
+
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should make 1 call to dataService.getModel', function () {
+            expect(mockDataService.getModel.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to navigationService.logView', function () {
+            expect(mockNavigationService.logView.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to calculationService.calcFreeResPremAddProp_201604_Undef', function () {
+            expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(1);
+            expect(mockCalculationService.calcFreeNonResPrem_201203_201603.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeNonResPrem_201603_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201603_Undef.calls.count()).toEqual(0);
+        });
+
+        it('should make 1 call to dataService.updateModel', function () {
+            expect(mockDataService.updateModel.calls.count()).toEqual(1);
+        });
+    });
+
+    describe('Result Controller - Freehold, Residential, from 1 April 2016, NOT individual, IS additional property rates', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Freehold",
+                        propertyType : "Residential",
+                        effectiveDate : new Date(2016, 3, 1),
+                        individual : 'No'
                     }; 
                 },
                 updateModel : function() { }
@@ -988,6 +1094,7 @@
                         holdingType : "Leasehold",
                         propertyType : "Residential",
                         effectiveDate : new Date(2016, 3, 1),
+                        individual : 'Yes',
                         twoOrMoreProperties : "No",
                         startDate : new Date(2014, 0, 1),
                         endDate : new Date(2018, 11, 31),
@@ -1113,6 +1220,7 @@
                         holdingType : "Leasehold",
                         propertyType : "Residential",
                         effectiveDate : new Date(2016, 3, 1),
+                        individual : 'Yes',
                         twoOrMoreProperties : "Yes",
                         replaceMainResidence : "Yes",
                         startDate : new Date(2014, 0, 1),
@@ -1217,7 +1325,7 @@
         });
     });
 
-    describe('Result Controller - Leasehold, Residential, from 1 April 2016, IS additional property rates', function () {
+    describe('Result Controller - Leasehold, Residential, from 1 April 2016, individual, IS additional property rates', function () {
         
         var controller, 
             mockScope, 
@@ -1239,8 +1347,134 @@
                         holdingType : "Leasehold",
                         propertyType : "Residential",
                         effectiveDate : new Date(2016, 3, 1),
+                        individual : 'Yes',
                         twoOrMoreProperties : "Yes",
                         replaceMainResidence : "No",
+                        startDate : new Date(2014, 0, 1),
+                        endDate : new Date(2018, 11, 31),
+                         leaseTerm : {
+                             years : 5,
+                             days : 0,
+                             daysInPartialYear : 0
+                         },
+                         year1Rent : 1000,
+                         year2Rent : 1000,
+                         year3Rent : 1000,
+                         year4Rent : 1000,
+                         year5Rent : 1000,
+                         premium : 100000
+                    }; 
+                },
+                updateModel : function() { }
+            };
+
+            mockNavigationService = { 
+                logView : function() {} 
+            };
+
+            mockModelValidationService = {
+                validate : function() {
+                    return { isModelValid : true };
+                }
+            };
+
+            mockCalculationService = {
+                calcFreeResPrem_201203_201412 : function() {},
+                calcFreeResPrem_201412_Undef : function() {},
+                calcFreeResPremAddProp_201604_Undef : function() {},
+                calcFreeNonResPrem_201203_201603 : function() {},
+                calcFreeNonResPrem_201603_Undef : function() {},
+                calcLeaseResPremAndRent_201203_201412 : function() {},
+                calcLeaseResPremAndRent_201412_Undef : function() {},
+                calcLeaseResPremAndRentAddProp_201604_Undef : function() {},
+                calcLeaseNonResPremAndRent_201203_201603 : function() {},
+                calcLeaseNonResPremAndRent_201603_Undef : function() {},
+                calculateNPV: function() {
+                    return 1;
+                }
+
+            };
+
+            spyOn(mockDataService, 'getModel').and.callThrough();
+            spyOn(mockNavigationService, 'logView');
+            spyOn(mockDataService, 'updateModel');
+
+            spyOn(mockCalculationService, 'calcFreeResPrem_201203_201412');
+            spyOn(mockCalculationService, 'calcFreeResPrem_201412_Undef');
+            spyOn(mockCalculationService, 'calcFreeResPremAddProp_201604_Undef');
+            spyOn(mockCalculationService, 'calcFreeNonResPrem_201203_201603');
+            spyOn(mockCalculationService, 'calcFreeNonResPrem_201603_Undef');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201203_201412');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRent_201412_Undef');
+            spyOn(mockCalculationService, 'calcLeaseResPremAndRentAddProp_201604_Undef');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201203_201603');
+            spyOn(mockCalculationService, 'calcLeaseNonResPremAndRent_201603_Undef');
+            spyOn(mockCalculationService, 'calculateNPV');
+
+            
+            controller = $controller('resultController', {
+                $scope : mockScope,
+                $location : {},
+                dataService : mockDataService,
+                navigationService : mockNavigationService,
+                modelValidationService : mockModelValidationService,
+                calculationService : mockCalculationService,
+            });
+        }));
+
+        it('should make 1 call to dataService.getModel', function () {
+            expect(mockDataService.getModel.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to navigationService.logView', function () {
+            expect(mockNavigationService.logView.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to calculationService.calculateNPV', function () {
+            expect(mockCalculationService.calculateNPV.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to calculationService.calcLeaseResPremAndRentAddProp_201604_Undef', function () {
+            expect(mockCalculationService.calcFreeResPrem_201203_201412.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeResPrem_201412_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeResPremAddProp_201604_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeNonResPrem_201203_201603.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcFreeNonResPrem_201603_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRent_201203_201412.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRent_201412_Undef.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseResPremAndRentAddProp_201604_Undef.calls.count()).toEqual(1);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201203_201603.calls.count()).toEqual(0);
+            expect(mockCalculationService.calcLeaseNonResPremAndRent_201603_Undef.calls.count()).toEqual(0);
+        });
+
+        it('should make 1 call to dataService.updateModel', function () {
+            expect(mockDataService.updateModel.calls.count()).toEqual(1);
+        });
+    });
+
+    describe('Result Controller - Leasehold, Residential, from 1 April 2016, NOT individual, IS additional property rates', function () {
+        
+        var controller, 
+            mockScope, 
+            mockDataService, 
+            mockNavigationService,
+            mockModelValidationService,
+            mockCalculationService,
+            calledServiceGetModel = false;
+
+        beforeEach(mocks.module('calc.controllers'));
+        beforeEach(mocks.inject(function ($controller, $rootScope) {
+            
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup = function() {return true;};
+
+            mockDataService = { 
+                getModel : function() { 
+                    return {
+                        holdingType : "Leasehold",
+                        propertyType : "Residential",
+                        effectiveDate : new Date(2016, 3, 1),
+                        individual : 'No',
                         startDate : new Date(2014, 0, 1),
                         endDate : new Date(2018, 11, 31),
                          leaseTerm : {
