@@ -34,17 +34,24 @@
                 reloadOnSearch: false
             })
 
-            .when('/additional-property', {
-                title : 'Additional residential properties',
-                templateUrl : 'additional-property.html',
-                controller  : 'additionalPropertyController',
-                reloadOnSearch: false
-            })
-
             .when('/purchase-price', {
                 title : 'Purchase price',
                 templateUrl : 'purchase-price.html',
                 controller  : 'purchasePriceController',
+                reloadOnSearch: false
+            })
+
+            .when('/purchaser', {
+                title : 'Individual or corporate entity',
+                templateUrl : 'purchaser.html',
+                controller  : 'purchaserController',
+                reloadOnSearch: false
+            })
+
+            .when('/additional-property', {
+                title : 'Additional residential properties',
+                templateUrl : 'additional-property.html',
+                controller  : 'additionalPropertyController',
                 reloadOnSearch: false
             })
 

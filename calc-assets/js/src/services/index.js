@@ -13,6 +13,7 @@
 	require("./validationServices/premiumValidationService.js");
 	require("./validationServices/propertyValidationService.js");
 	require("./validationServices/purchasePriceValidationService.js");
+	require("./validationServices/purchaserValidationService.js");
 	require("./validationServices/relevantRentValidationService.js");
 	require("./validationServices/rentValidationService.js");
 
