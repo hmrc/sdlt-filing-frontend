@@ -74,6 +74,21 @@
             });
         });
 
+        describe('purchaser route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('purchaser.html')
+                        .respond(200);
+                }));
+
+            it('should load the date page on successful load of /date', function() {
+                location.path('/purchaser');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('purchaserController');
+                expect(route.current.title).toBe('Individual or corporate entity');
+            });
+        });
+
         describe('additional property route', function() {
             beforeEach(inject(
                 function($httpBackend) {

@@ -34,11 +34,15 @@
                 result.isPurchasePriceValid = hasError('premium');
             }
 
-            // if Residential & >= 01/04/2016 then additional property question(s) required
+            // if Residential & >= 01/04/2016 then individual question required
             if(data.propertyType === 'Residential' && data.effectiveDate >= new Date(2016, 3, 1)) {
-                result.isTwoOrMorePropertiesValid = hasError('twoOrMoreProperties');
-                if (data.twoOrMoreProperties === 'Yes') {
-                    result.isReplaceMainResidenceValid = hasError('replaceMainResidence');
+                result.isIndividualValid = hasError('individual');
+                // individual = Yes then additional property question(s) required
+                if (data.individual === 'Yes') {
+                    result.isTwoOrMorePropertiesValid = hasError('twoOrMoreProperties');
+                     if (data.twoOrMoreProperties === 'Yes') {
+                         result.isReplaceMainResidenceValid = hasError('replaceMainResidence');
+                    }
                 }
             }
 

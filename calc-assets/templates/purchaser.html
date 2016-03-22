@@ -1,0 +1,32 @@
+<h1>{{title}}</h1>
+
+<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
+    <ul class="error-summary-list">
+      <li ng-if="state.hasError('individual')"><a id="individualPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('individual')">{{state.validationMessage('individual')}}</a></li>
+    </ul>
+</div>
+
+<form name="purchaserForm" class="form">
+
+    <div class="form-group {{state.hasError('individual')}}">
+        <fieldset>
+            <legend id="individual" class="form-label-bold">Are you purchasing the property as an individual?</legend>
+            <span class="form-hint text">If you are a married couple or in a civil partnership choose ‘Yes.’ If you are purchasing as a corporate entity choose ‘No’.</span>
+            <span id="individualErrMsg" class="error-notification">{{state.validationMessage('individual')}}</span>
+            <div class="inline">
+                <label class="block-label" for="individual-yes">
+                    <input id="individual-yes" ng-model="data.individual" name="individual" value="Yes" type="radio" required>Yes
+                </label>
+                <label class="block-label" for="individual-no">
+                    <input id="individual-no" ng-model="data.individual" name="individual" value="No" type="radio" required>No
+                </label>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="form-group">
+        <button ng-click="submit()" class="button" id="continue-button" type="submit">Continue</button>
+    </div>
+
+</form>

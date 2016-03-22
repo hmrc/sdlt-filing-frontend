@@ -48,9 +48,14 @@
         return false;
     };
 
-    var displayAdditionalProperty = function(data) {
+    var displayIndividual = function(data) {
         if(data === undefined) return false;
         return data.propertyType === "Residential" && validator.isGreaterThanOrEqualToDate(data.effectiveDate, new Date(2016, 3, 1));
+    };
+
+    var displayAdditionalProperty = function(data) {
+        if(data === undefined) return false;
+        return (displayIndividual(data) && data.individual === "Yes");
     };
 
     var displayReplaceMainResidence = function(data) {
@@ -93,6 +98,14 @@
                 isValid    : validatedModel.isEffectiveDateValid,
                 hiddenText : "Effective date of your transaction?",
                 type       : "Date"
+            },
+            {
+                question   : displayIndividual(scope.data) ? "Are you an individual?" : undefined,
+                answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.individual) : undefined,
+                link       : "#purchaser",
+                id         : "individual",
+                isValid    : validatedModel.isIndividualValid,
+                hiddenText : "Are you purchasing the property as an individual?"
             },
             {
                 question   : displayAdditionalProperty(scope.data) ? "Additional residential property" : undefined,

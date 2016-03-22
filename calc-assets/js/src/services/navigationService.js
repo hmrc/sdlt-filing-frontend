@@ -48,17 +48,24 @@
                     if(validator.isLessThanDate(effectiveDate, new Date(2016, 3, 1))) {
                         redirectBasedOnHoldingType(model, locationService);
                     } else {
-                        redirectToNext(locationService, 'additional-property');
+                        redirectToNext(locationService, 'purchaser');
                     }
+                } else {
+                    redirectBasedOnHoldingType(model, locationService);
+                }
+            }
+            else if (currentView === 'purchase-price') {
+                redirectToNext(locationService, 'summary');
+            }
+            else if (currentView === 'purchaser') {
+                if (model.individual === "Yes") {
+                    redirectToNext(locationService, 'additional-property');
                 } else {
                     redirectBasedOnHoldingType(model, locationService);
                 }
             }
             else if (currentView === "additional-property") {
                 redirectBasedOnHoldingType(model, locationService);
-            }
-            else if (currentView === 'purchase-price') {
-                redirectToNext(locationService, 'summary');
             }
             else if (currentView === 'lease-dates') {
                 redirectToNext(locationService, 'premium');
