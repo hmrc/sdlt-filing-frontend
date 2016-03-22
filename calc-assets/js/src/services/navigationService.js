@@ -57,16 +57,13 @@
             else if (currentView === 'purchase-price') {
                 redirectToNext(locationService, 'summary');
             }
-
-
             else if (currentView === 'purchaser') {
-                if (model.individual === "Yes") {}
-                redirectToNext(locationService, 'summary');
+                if (model.individual === "Yes") {
+                    redirectToNext(locationService, 'additional-property');
+                } else {
+                    redirectBasedOnHoldingType(model, locationService);
+                }
             }
-
-
-
-
             else if (currentView === "additional-property") {
                 redirectBasedOnHoldingType(model, locationService);
             }
