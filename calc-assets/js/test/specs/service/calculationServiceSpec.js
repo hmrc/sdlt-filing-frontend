@@ -390,7 +390,7 @@
         ];
 
         it(' calcFreeResPremAddProp_201604_Undef should return 0, 0 for purchase price of 39999.99', function() {
-            expect(service.calcFreeResPremAddProp_201604_Undef(39999.99)).toEqual(calcFreeResPremAddProp_201604_Undef_Results_No_Hint);
+            expect(service.calcFreeResPremAddProp_201604_Undef(39999.99, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results_No_Hint);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 1200, 0 for purchase price of 40000', function() {
@@ -398,7 +398,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 1200;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 1200;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 1200;
-            expect(service.calcFreeResPremAddProp_201604_Undef(40000)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(40000, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 3750, 0 for purchase price of 125000', function() {
@@ -406,7 +406,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 3750;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 3750;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 3750;
-            expect(service.calcFreeResPremAddProp_201604_Undef(125000)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(125000, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 3755, 2 for purchase price of 125100', function() {
@@ -418,7 +418,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[1].totalTax = 2;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].taxDue = 2;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[1].taxDue = 2;
-            expect(service.calcFreeResPremAddProp_201604_Undef(125100)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(125100, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 10000, 2500 for purchase price of 250000', function() {
@@ -430,7 +430,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[1].totalTax = 2500;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].taxDue = 2500;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[1].taxDue = 2500;
-            expect(service.calcFreeResPremAddProp_201604_Undef(250000)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(250000, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 10008, 2505 for purchase price of 250100', function() {
@@ -444,7 +444,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].taxDue = 2505;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[1].taxDue = 2500;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[2].taxDue = 5;
-            expect(service.calcFreeResPremAddProp_201604_Undef(250100)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(250100, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 64000, 36250 for purchase price of 925000', function() {
@@ -458,7 +458,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].taxDue = 36250;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[1].taxDue = 2500;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[2].taxDue = 33750;
-            expect(service.calcFreeResPremAddProp_201604_Undef(925000)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(925000, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 64000, 36250 for purchase price of 925100', function() {
@@ -474,7 +474,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[1].taxDue = 2500;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[2].taxDue = 33750;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[3].taxDue = 10;
-            expect(service.calcFreeResPremAddProp_201604_Undef(925100)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(925100, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 138750, 93750 for purchase price of 1500000', function() {
@@ -490,7 +490,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[1].taxDue = 2500;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[2].taxDue = 33750;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[3].taxDue = 57500;
-            expect(service.calcFreeResPremAddProp_201604_Undef(1500000)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(1500000, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 138765, 93762 for purchase price of 1500100', function() {
@@ -508,7 +508,7 @@
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[2].taxDue = 33750;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[3].taxDue = 57500;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[4].taxDue = 12;
-            expect(service.calcFreeResPremAddProp_201604_Undef(1500100)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(1500100, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
         it(' calcFreeResPremAddProp_201604_Undef should return 11163750, 8913750 for purchase price of 75000000', function() {
@@ -527,9 +527,26 @@
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[2].taxDue = 33750;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[3].taxDue = 57500;
             calcFreeResPremAddProp_201604_Undef_Results[1].taxCalcs[0].slices[4].taxDue = 8820000;
-            expect(service.calcFreeResPremAddProp_201604_Undef(75000000)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
+            expect(service.calcFreeResPremAddProp_201604_Undef(75000000, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
+        it(' calcFreeResPremAddProp_201604_Undef should return 11163750, 8913750 for purchase price of 75000000 - but no refund for company', function() {
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[0].totalTax = 11163750;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[0].taxCalcs[0].taxDue = 11163750;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[0].taxCalcs[0].slices[0].taxDue = 3750;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[0].taxCalcs[0].slices[1].taxDue = 6250;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[0].taxCalcs[0].slices[2].taxDue = 54000;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[0].taxCalcs[0].slices[3].taxDue = 74750;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[0].taxCalcs[0].slices[4].taxDue = 11025000;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[1].totalTax = 8913750;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[1].taxCalcs[0].taxDue = 8913750;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[1].taxCalcs[0].slices[0].taxDue = 0;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[1].taxCalcs[0].slices[1].taxDue = 2500;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[1].taxCalcs[0].slices[2].taxDue = 33750;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[1].taxCalcs[0].slices[3].taxDue = 57500;
+            calcFreeResPremAddProp_201604_Undef_Results_No_Hint[1].taxCalcs[0].slices[4].taxDue = 8820000;
+            expect(service.calcFreeResPremAddProp_201604_Undef(75000000, false)).toEqual(calcFreeResPremAddProp_201604_Undef_Results_No_Hint);
+        });
 
         // ********************* calcFreeNonResPrem_201203_201603 *********************
         calcFreeNonResPrem_201203_201603_Results = [{
@@ -1027,6 +1044,34 @@
             calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].npv = 125000;
             calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].npv = 125000;
             expect(service.calcLeaseResPremAndRentAddProp_201604_Undef(39999.99, 125000, true)).toEqual(calcLeaseResPremAndRentAddProp_201604_Undef_Results);
+        });
+
+        it(' calcLeaseResPremAndRentAddProp_201604_Undef should return 1250, 138765, 1250, 93762 for purchase price of 1500100, npv of 250000 - but no refund for company', function() {
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].totalTax = 140015;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].npv = 250000;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 1250;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[0].slices[0].taxDue = 0;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 1250;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[1].taxDue = 138765;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[1].slices[0].taxDue = 3750;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[1].slices[1].taxDue = 6250;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[1].slices[2].taxDue = 54000;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[1].slices[3].taxDue = 74750;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[0].taxCalcs[1].slices[4].taxDue = 15;
+
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].totalTax = 95012;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].npv = 250000;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[0].taxDue = 1250;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[0].slices[0].taxDue = 0;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[0].slices[1].taxDue = 1250;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[1].taxDue = 93762;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[1].slices[0].taxDue = 0;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[1].slices[1].taxDue = 2500;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[1].slices[2].taxDue = 33750;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[1].slices[3].taxDue = 57500;
+            calcLeaseResPremAndRentAddProp_201604_Undef_Results[1].taxCalcs[1].slices[4].taxDue = 12;
+
+            expect(service.calcLeaseResPremAndRentAddProp_201604_Undef(1500100, 250000, false)).toEqual(calcLeaseResPremAndRentAddProp_201604_Undef_Results);
         });
 
         it(' calcLeaseResPremAndRentAddProp_201604_Undef should return 1250, 138765, 1250, 93762 for purchase price of 1500100, npv of 250000', function() {
