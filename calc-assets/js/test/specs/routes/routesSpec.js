@@ -85,7 +85,7 @@
                 location.path('/purchaser');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('purchaserController');
-                expect(route.current.title).toBe('Individual or corporate entity');
+                expect(route.current.title).toBe('Status of purchaser');
             });
         });
 

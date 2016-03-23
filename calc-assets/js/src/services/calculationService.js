@@ -117,7 +117,7 @@
 
         // from 201604 Additional properties are charged at higher rate.
         // There is a transitional period for exchanged contracts < 25/11/2015 so we also calculate using the old rates
-        var calcFreeResPremAddProp_201604_Undef = function(premium){
+        var calcFreeResPremAddProp_201604_Undef = function(premium, isIndividual){
 
             // calculation for previous rate. Uses rates from 201412 onwards but needs headings/hints adding
             var prevRatesArray = calcFreeResPrem_201412_Undef(premium);
@@ -152,7 +152,7 @@
 
             var result = {};
             result.resultHeading = RESULT_HEADING_FROM_APR_2016;
-            if (premCalc.taxDue > prevRatesResult.taxCalcs[0].taxDue) {
+            if (isIndividual && (premCalc.taxDue > prevRatesResult.taxCalcs[0].taxDue)) {
                result.resultHint = RESULT_HINT_ADDNL_PROP_REFUND_ + (premCalc.taxDue - prevRatesResult.taxCalcs[0].taxDue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +".";
             }
             result.totalTax = premResult.taxDue; 
@@ -302,7 +302,7 @@
 
         // from 201604 Additional properties are charged at higher rate.
         // There is a transitional period for exchanged contracts < 16/03/2016 so we also calculate using the old rates
-        var calcLeaseResPremAndRentAddProp_201604_Undef = function(premium, npv){
+        var calcLeaseResPremAndRentAddProp_201604_Undef = function(premium, npv, isIndividual){
 
             // calculation for previous rates. Uses rates from 201412 onwards but needs headings/hints adding
             var prevRatesArray = calcLeaseResPremAndRent_201412_Undef(premium, npv);
@@ -350,7 +350,7 @@
 
             var result = {};
             result.resultHeading = RESULT_HEADING_FROM_APR_2016;
-            if (premCalc.taxDue > prevRatesResult.taxCalcs[1].taxDue) {
+            if (isIndividual && (premCalc.taxDue > prevRatesResult.taxCalcs[1].taxDue)) {
                 result.resultHint = RESULT_HINT_ADDNL_PROP_REFUND_ + (premCalc.taxDue - prevRatesResult.taxCalcs[1].taxDue).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +".";
             }
             result.totalTax = rentCalc.taxDue + premCalc.taxDue;

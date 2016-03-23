@@ -42,7 +42,7 @@
             })
 
             .when('/purchaser', {
-                title : 'Individual or corporate entity',
+                title : 'Status of purchaser',
                 templateUrl : 'purchaser.html',
                 controller  : 'purchaserController',
                 reloadOnSearch: false
