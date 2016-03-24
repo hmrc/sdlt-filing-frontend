@@ -39,9 +39,9 @@
             if ($scope.data.holdingType === 'Freehold') {
                 if ($scope.data.propertyType === 'Residential') {
                     if ($scope.effDateOnOrAfter(new Date(2016, 3, 1)) && $scope.data.individual === 'Yes' && $scope.isAdditionalProperty()) {
-                        result = calculationService.calcFreeResPremAddProp_201604_Undef($scope.data.premium);
+                        result = calculationService.calcFreeResPremAddProp_201604_Undef($scope.data.premium, true);
                     } else if ($scope.effDateOnOrAfter(new Date(2016, 3, 1)) && $scope.data.individual === 'No') {
-                        result = calculationService.calcFreeResPremAddProp_201604_Undef($scope.data.premium);
+                        result = calculationService.calcFreeResPremAddProp_201604_Undef($scope.data.premium, false);
                     } else if ($scope.effDateOnOrAfter(new Date(2014, 11, 4))) {
                         result = calculationService.calcFreeResPrem_201412_Undef($scope.data.premium);
                     } else {
@@ -62,9 +62,9 @@
 
                 if ($scope.data.propertyType === 'Residential') {
                     if ($scope.effDateOnOrAfter(new Date("April 1, 2016")) && $scope.data.individual === 'Yes' && $scope.isAdditionalProperty()) {
-                        result = calculationService.calcLeaseResPremAndRentAddProp_201604_Undef($scope.data.premium, $scope.data.npv);
+                        result = calculationService.calcLeaseResPremAndRentAddProp_201604_Undef($scope.data.premium, $scope.data.npv, true);
                     } else if ($scope.effDateOnOrAfter(new Date("April 1, 2016")) && $scope.data.individual === 'No') {
-                        result = calculationService.calcLeaseResPremAndRentAddProp_201604_Undef($scope.data.premium, $scope.data.npv);
+                        result = calculationService.calcLeaseResPremAndRentAddProp_201604_Undef($scope.data.premium, $scope.data.npv, false);
                     } else if ($scope.effDateOnOrAfter(new Date("December 4, 2014"))) {
                         result = calculationService.calcLeaseResPremAndRent_201412_Undef($scope.data.premium, $scope.data.npv);
                     } else {
