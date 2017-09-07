@@ -9,10 +9,10 @@ resolvers ++= Seq("hmrc-snapshots" at hmrcRepoHost + "/content/repositories/hmrc
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "0.8.3")
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.8")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.12")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-settings" % "3.2.0")
 
 addSbtPlugin("uk.gov.hmrc" % "hmrc-resolvers" % "0.4.0")
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "0.10.0")
+addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "1.0.0")
