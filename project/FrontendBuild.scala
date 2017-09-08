@@ -37,14 +37,14 @@ private object AppDependencies {
     filters,
     ws,
     "com.typesafe.play" %% "play" % PlayVersion.current,
-    "uk.gov.hmrc" %% "play-filters" % "4.6.0",
-    "uk.gov.hmrc" %% "play-ui" % "5.3.0",
-    "uk.gov.hmrc" %% "play-graphite" % "3.1.0",
-    "uk.gov.hmrc" %% "play-config" % "3.0.0",
-    "uk.gov.hmrc" %% "play-health" % "2.0.0",
+    "uk.gov.hmrc" %% "play-filters" % "5.10.0",
+    "uk.gov.hmrc" %% "play-ui" % "7.0.0",
+    "uk.gov.hmrc" %% "play-graphite" % "3.2.0",
+    "uk.gov.hmrc" %% "play-config" % "4.3.0",
+    "uk.gov.hmrc" %% "play-health" % "2.1.0",
     "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
     "uk.gov.hmrc" %% "govuk-template" % "5.0.0",
-    "com.kenshoo" %% "metrics-play" % "2.3.0_0.1.8",
+    "com.kenshoo" %% "metrics-play" % "3.2.0",
     "com.codahale.metrics" % "metrics-graphite" % "3.0.2"
   )
 
