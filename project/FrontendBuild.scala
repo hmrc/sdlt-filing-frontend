@@ -1,25 +1,23 @@
 import sbt._
+import play.sbt.PlayImport._
+
 
 object FrontendBuild extends Build with MicroService {
   import scala.util.Properties.envOrElse
-  import play.sbt.PlayImport._
-  import sbt.Keys._
+
   import com.typesafe.sbt.web.SbtWeb
   import com.typesafe.sbt.web.SbtWeb.autoImport._
+  import sbt.Keys._
 
   val appName = "sdltc-frontend"
   val appVersion = envOrElse("SDLTC_FRONTEND_VERSION", "999-SNAPSHOT")
 
   override lazy val appDependencies: Seq[ModuleID] = AppDependencies()
 
-  override lazy val plugins : Seq[Plugins] = Seq(play.PlayScala, SbtWeb)
+  override lazy val plugins : Seq[Plugins] = Seq(play.sbt.PlayScala, SbtWeb)
 
   override lazy val playSettings : Seq[Setting[_]] = Seq(
-        // Turn off play's internal less compiler
-        lessEntryPoints := Nil,
-        // Turn off play's internal javascript compiler
-        javascriptEntryPoints := Nil,
-        // Add the views to the dist
+
         unmanagedResourceDirectories in Assets += baseDirectory.value / "app" / "assets",
         // Dont include the source assets in the dist package (public folder)
         excludeFilter in Assets := "js*" || "sass*",
@@ -30,13 +28,12 @@ object FrontendBuild extends Build with MicroService {
 }
 
 private object AppDependencies {
-  import play.PlayImport._
   import play.core.PlayVersion
+
 
   val compile = Seq(
     filters,
     ws,
-    "com.typesafe.play" %% "play" % PlayVersion.current,
     "uk.gov.hmrc" %% "play-filters" % "5.10.0",
     "uk.gov.hmrc" %% "play-ui" % "7.0.0",
     "uk.gov.hmrc" %% "play-graphite" % "3.2.0",

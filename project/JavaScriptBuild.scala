@@ -1,13 +1,14 @@
 import sbt._
 import sbt.Keys._
 import com.typesafe.sbt.packager.Keys._
+import play.sbt.PlayImport.PlayKeys
 
 /**
  * Build of UI in JavaScript
  */
 object JavaScriptBuild {
 
-  import play.PlayImport.PlayKeys._
+
 
   val uiDirectory = SettingKey[File]("ui-directory")
 
@@ -53,15 +54,9 @@ object JavaScriptBuild {
 
     (test in Test) <<= (test in Test) dependsOn gulpTest,
 
-    // Turn off play's internal less compiler
-    lessEntryPoints := Nil,
-
-    // Turn off play's internal JavaScript and CoffeeScript compiler
-    javascriptEntryPoints := Nil,
-    coffeescriptEntryPoints := Nil,
 
     // integrate JavaScript build into play build
-    playRunHooks <+= uiDirectory.map(ui => Gulp(ui))
+    PlayKeys.playRunHooks <+= uiDirectory.map(ui => Gulp(ui))
   )
 
   def npmCommand(base: File) = Command.args("npm", "<npm-command>") { (state, args) =>
