@@ -53,7 +53,7 @@ sudo nano /etc/nginx/sites-enabled/default
     }
 
     location /template {
-            proxy_pass      http://localhost:9090/template;
+            proxy_pass      http://localhost:9953/template;
     }
 
     location /contact {
@@ -61,7 +61,7 @@ sudo nano /etc/nginx/sites-enabled/default
     }
 
     location /calculate-stamp-duty-land-tax {
-        proxy_pass      http://localhost:9090/calculate-stamp-duty-land-tax;
+        proxy_pass      http://localhost:9953/calculate-stamp-duty-land-tax;
 	}
 
 Restart nginx  
