@@ -35,13 +35,13 @@ private object AppDependencies {
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "play-filters" % "5.10.0",
-    "uk.gov.hmrc" %% "play-ui" % "7.0.0",
-    "uk.gov.hmrc" %% "play-graphite" % "3.2.0",
+    "uk.gov.hmrc" %% "play-filters" % "5.18.0",
+    "uk.gov.hmrc" %% "play-ui" % "7.6.0",
+    "uk.gov.hmrc" %% "play-graphite" % "3.5.0",
     "uk.gov.hmrc" %% "play-config" % "4.3.0",
     "uk.gov.hmrc" %% "play-health" % "2.1.0",
     "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
-    "uk.gov.hmrc" %% "govuk-template" % "5.0.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.10.0",
     "com.kenshoo" %% "metrics-play" % "2.4.0_0.4.1",
     "com.codahale.metrics" % "metrics-graphite" % "3.0.2"
   )
@@ -54,7 +54,7 @@ private object AppDependencies {
   object Test {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
-        "org.scalatest" %% "scalatest" % "2.2.6" % scope,
+        "org.scalatest" %% "scalatest" % "3.0.0" % scope,
         "org.pegdown" % "pegdown" % "1.6.0" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
       )
