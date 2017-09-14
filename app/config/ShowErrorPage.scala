@@ -1,11 +1,15 @@
 package config
-
+import play.api.i18n.Messages.Implicits._
+import play.api.Play._
 import play.api._
 import play.api.i18n.Messages
 import play.api.mvc.Results._
 import play.api.mvc.{Result, _}
 import play.twirl.api.Html
+
 import scala.concurrent.Future
+
+
 
 trait ShowErrorPage extends GlobalSettings {
 
