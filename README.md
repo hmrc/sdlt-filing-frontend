@@ -50,19 +50,19 @@ sudo nano /etc/nginx/sites-enabled/default
 
     location /assets {  
             proxy_pass      http://localhost:9032/assets;
-    	}
+    }
 
-    	location /template {
+    location /template {
             proxy_pass      http://localhost:9953/template;
-    	}
+    }
 
-    	location /contact {  
+    location /contact {
             proxy_pass      http://localhost:9250/contact;
-    	}
+    }
 
-    	location /calculate-stamp-duty-land-tax {
-       	proxy_pass      http://localhost:9953/calculate-stamp-duty-land-tax;
-    	}
+    location /calculate-stamp-duty-land-tax {
+        proxy_pass      http://localhost:9953/calculate-stamp-duty-land-tax;
+	}
 
 Restart nginx  
 ```  
