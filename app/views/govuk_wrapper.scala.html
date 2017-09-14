@@ -1,3 +1,6 @@
+@import play.api.Play.current
+@import play.api.i18n.Messages.Implicits._
+
 @(appConfig: config.AppConfig,
   title: String,
   mainClass: Option[String] = None,
@@ -15,14 +18,13 @@
 
 @head = {
     @uiLayouts.head(
-      assetsPrefix = appConfig.assetsPrefix,
       linkElem = None,
       headScripts = None)
     <meta name="format-detection" content="telephone=no" />
 }
 
 @headerNavLinks = {
-  
+
 }
 
 @insideHeader = {
@@ -47,7 +49,6 @@
     @uiLayouts.footer(
       analyticsToken = Some(appConfig.analyticsToken),
       analyticsHost = appConfig.analyticsHost,
-      assetsPrefix = appConfig.assetsPrefix,
       ssoUrl = None,
       scriptElem = scriptElem,
       gaCalls = None)

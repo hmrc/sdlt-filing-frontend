@@ -14,18 +14,20 @@ import uk.gov.hmrc.play.filters.{RecoveryFilter, CacheControlFilter}
 import uk.gov.hmrc.play.filters.frontend.HeadersFilter
 import uk.gov.hmrc.play.graphite.GraphiteConfig
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
+import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
+
 
 
 object FrontendGlobal
   extends GlobalSettings
   with GraphiteConfig
   with ShowErrorPage
-  with RunMode {
+  with RunMode
+  with MicroserviceFilterSupport{
 
   lazy val appName = Play.current.configuration.getString("appName").getOrElse("APP NAME NOT SET")
 
-  protected lazy val defaultFrontendFilters: Seq[EssentialFilter] = Seq(
-    MetricsFilter,
+ protected lazy val defaultFrontendFilters: Seq[EssentialFilter] = Seq(
     HeadersFilter,
     LoggingFilter,
     CacheControlFilter.fromConfig("caching.allowedContentTypes"),
@@ -46,10 +48,6 @@ object FrontendGlobal
     Filters(super.doFilter(a), frontendFilters: _* )
 
 
-  override def onLoadConfig(config: Configuration, path: File, classloader: ClassLoader, mode: Mode): Configuration = {
-    super.onLoadConfig(config, path, classloader, mode)
-  }
-
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
     views.html.error_template(pageTitle, heading, message)
 
@@ -60,6 +58,6 @@ object ControllerConfiguration extends ControllerConfig {
   lazy val controllerConfigs = Play.current.configuration.underlying.as[Config]("controllers")
 }
 
-object LoggingFilter extends FrontendLoggingFilter {
+object LoggingFilter extends FrontendLoggingFilter with MicroserviceFilterSupport {
   override def controllerNeedsLogging(controllerName: String) = ControllerConfiguration.paramsForController(controllerName).needsLogging
 }

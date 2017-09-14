@@ -28,6 +28,7 @@ object FrontendBuild extends Build with MicroService {
 }
 
 private object AppDependencies {
+
   import play.core.PlayVersion
 
 
@@ -41,7 +42,7 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "play-health" % "2.1.0",
     "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
     "uk.gov.hmrc" %% "govuk-template" % "5.0.0",
-    "com.kenshoo" %% "metrics-play" % "3.2.0",
+    "com.kenshoo" %% "metrics-play" % "2.4.0_0.4.1",
     "com.codahale.metrics" % "metrics-graphite" % "3.0.2"
   )
 
