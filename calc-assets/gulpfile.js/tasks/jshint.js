@@ -15,7 +15,6 @@ gulp.task("jshint", function ()
             config.filesMasks.allJsSource,
             "!js/bower_components/**/*",
             "!js/libs/**/*",
-            "!js/node_modules/**/*",
             "!js/test/specs/helpers/jasmine-beforeAll.js",
             "!js/test/specs/helpers/jasmine-matchers.js",
             "!js/Gruntfile.js"
