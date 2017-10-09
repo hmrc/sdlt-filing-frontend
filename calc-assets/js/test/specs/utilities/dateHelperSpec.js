@@ -5,7 +5,7 @@
 
         var dateHelper = require("../../../src/utilities/dateHelper.js");
 
-        termOfLeaseResults = {
+        var termOfLeaseResults = {
             years : 0,
             days : 0,
             daysInPartialYear : 0
@@ -68,14 +68,14 @@
             });
         });
 
-            
+
         // ********************* calculateTermOfLease *********************
         describe('Calling calculateTermOfLease', function () {
 
             it('should return 0 yr 364 Days for effective 01/01/2014, lease 01/01/2015 to 30/12/2015', function() {
-                effectiveDate = new Date(2014, 0, 1);
-                leaseStartDate = new Date(2015, 0, 1);
-                leaseEndDate = new Date(2015, 11, 30);
+                var effectiveDate = new Date(2014, 0, 1);
+                var leaseStartDate = new Date(2015, 0, 1);
+                var leaseEndDate = new Date(2015, 11, 30);
                 termOfLeaseResults.years = 0;
                 termOfLeaseResults.days = 364;
                 termOfLeaseResults.daysInPartialYear = 365;
@@ -83,9 +83,9 @@
             });
 
             it('should return 0 yr 364 Days for effective 01/01/2015, lease 01/01/2014 to 30/12/2015', function() {
-                effectiveDate = new Date(2015, 0, 1);
-                leaseStartDate = new Date(2014, 0, 1);
-                leaseEndDate = new Date(2015, 11, 30);
+                var effectiveDate = new Date(2015, 0, 1);
+                var leaseStartDate = new Date(2014, 0, 1);
+                var leaseEndDate = new Date(2015, 11, 30);
                 termOfLeaseResults.years = 0;
                 termOfLeaseResults.days = 364;
                 termOfLeaseResults.daysInPartialYear = 365;
@@ -93,9 +93,9 @@
             });
 
             it('should return 1 yr 0 Days for effective 01/01/2014, lease 01/01/2015 to 31/12/2015', function() {
-                effectiveDate = new Date(2014, 0, 1);
-                leaseStartDate = new Date(2015, 0, 1);
-                leaseEndDate = new Date(2015, 11, 31);
+                var effectiveDate = new Date(2014, 0, 1);
+                var leaseStartDate = new Date(2015, 0, 1);
+                var leaseEndDate = new Date(2015, 11, 31);
                 termOfLeaseResults.years = 1;
                 termOfLeaseResults.days = 0;
                 termOfLeaseResults.daysInPartialYear = 0;
@@ -103,9 +103,9 @@
             });
 
             it('should return 1 yr 0 Days for effective 01/01/2015, lease 01/01/2014 to 31/12/2015', function() {
-                effectiveDate = new Date(2015, 0, 1);
-                leaseStartDate = new Date(2014, 0, 1);
-                leaseEndDate = new Date(2015, 11, 31);
+                var effectiveDate = new Date(2015, 0, 1);
+                var leaseStartDate = new Date(2014, 0, 1);
+                var leaseEndDate = new Date(2015, 11, 31);
                 termOfLeaseResults.years = 1;
                 termOfLeaseResults.days = 0;
                 termOfLeaseResults.daysInPartialYear = 0;
@@ -113,9 +113,9 @@
             });
 
             it('should return 1 yr 1 Days for effective 01/01/2014, lease 01/01/2015 to 01/01/2016', function() {
-                effectiveDate = new Date(2014, 0, 1);
-                leaseStartDate = new Date(2015, 0, 1);
-                leaseEndDate = new Date(2016, 0, 1);
+                var effectiveDate = new Date(2014, 0, 1);
+                var leaseStartDate = new Date(2015, 0, 1);
+                var leaseEndDate = new Date(2016, 0, 1);
                 termOfLeaseResults.years = 1;
                 termOfLeaseResults.days = 1;
                 termOfLeaseResults.daysInPartialYear = 366;
@@ -123,9 +123,9 @@
             });
 
             it('should return 1 yr 1 Days for effective 01/01/2015, lease 01/01/2014 to 01/01/2016', function() {
-                effectiveDate = new Date(2015, 0, 1);
-                leaseStartDate = new Date(2014, 0, 1);
-                leaseEndDate = new Date(2016, 0, 1);
+                var effectiveDate = new Date(2015, 0, 1);
+                var leaseStartDate = new Date(2014, 0, 1);
+                var leaseEndDate = new Date(2016, 0, 1);
                 termOfLeaseResults.years = 1;
                 termOfLeaseResults.days = 1;
                 termOfLeaseResults.daysInPartialYear = 366;
@@ -133,9 +133,9 @@
             });
 
             it('should return 1 yr 0 Days for effective 01/03/2014, lease 01/03/2015 to 29/02/2016', function() {
-                effectiveDate = new Date(2014, 2, 1);
-                leaseStartDate = new Date(2015, 2, 1);
-                leaseEndDate = new Date(2016, 1, 29);
+                var effectiveDate = new Date(2014, 2, 1);
+                var leaseStartDate = new Date(2015, 2, 1);
+                var leaseEndDate = new Date(2016, 1, 29);
                 termOfLeaseResults.years = 1;
                 termOfLeaseResults.days = 0;
                 termOfLeaseResults.daysInPartialYear = 0;
@@ -143,9 +143,9 @@
             });
 
             it('should return 1 yr 0 Days for effective 01/03/2015, lease 01/03/2014 to 29/02/2016', function() {
-                effectiveDate = new Date(2015, 2, 1);
-                leaseStartDate = new Date(2014, 2, 1);
-                leaseEndDate = new Date(2016, 1, 29);
+                var effectiveDate = new Date(2015, 2, 1);
+                var leaseStartDate = new Date(2014, 2, 1);
+                var leaseEndDate = new Date(2016, 1, 29);
                 termOfLeaseResults.years = 1;
                 termOfLeaseResults.days = 0;
                 termOfLeaseResults.daysInPartialYear = 0;
@@ -153,9 +153,9 @@
             });
 
             it('should return 5 yr 0 Days for effective 01/03/2014, lease 01/03/2015 to 29/02/2020', function() {
-                effectiveDate = new Date(2014, 2, 1);
-                leaseStartDate = new Date(2015, 2, 1);
-                leaseEndDate = new Date(2020, 1, 29);
+                var effectiveDate = new Date(2014, 2, 1);
+                var leaseStartDate = new Date(2015, 2, 1);
+                var leaseEndDate = new Date(2020, 1, 29);
                 termOfLeaseResults.years = 5;
                 termOfLeaseResults.days = 0;
                 termOfLeaseResults.daysInPartialYear = 0;
@@ -163,9 +163,9 @@
             });
 
             it('should return 5 yr 0 Days for effective 01/03/2015, lease 01/03/2014 to 29/02/2020', function() {
-                effectiveDate = new Date(2015, 2, 1);
-                leaseStartDate = new Date(2014, 2, 1);
-                leaseEndDate = new Date(2020, 1, 29);
+                var effectiveDate = new Date(2015, 2, 1);
+                var leaseStartDate = new Date(2014, 2, 1);
+                var leaseEndDate = new Date(2020, 1, 29);
                 termOfLeaseResults.years = 5;
                 termOfLeaseResults.days = 0;
                 termOfLeaseResults.daysInPartialYear = 0;
