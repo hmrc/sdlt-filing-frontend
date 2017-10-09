@@ -1,21 +1,13 @@
 package config
 
-import java.io.File
-
-import com.kenshoo.play.metrics.MetricsFilter
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
-import play.api.Mode.Mode
 import play.api._
 import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.config.{ControllerConfig, RunMode}
-import uk.gov.hmrc.play.filters.{RecoveryFilter, CacheControlFilter}
-import uk.gov.hmrc.play.filters.frontend.HeadersFilter
 import uk.gov.hmrc.play.graphite.GraphiteConfig
-import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
-import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
-
+import uk.gov.hmrc.play.frontend.filters._
 
 
 object FrontendGlobal

@@ -25,7 +25,7 @@ trait MicroService {
     .enablePlugins(plugins : _*)
     .settings(playSettings : _*)
     .settings(version := appVersion)
-    .settings(scalaVersion := "2.11.7")
+    .settings(scalaVersion := "2.11.11")
     .settings(scalaSettings: _*)
     .settings(publishingSettings: _*)
     .settings(defaultSettings(): _*)
