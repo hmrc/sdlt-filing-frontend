@@ -23,7 +23,7 @@ script src="javascript/v```1```-calc-templates.js"
 ### Running the SDLTC Frontend
 Run SDLTC Frontend App from the console at /sdltc-frontend level with:  
 ```
-sbt "run 9090"
+sbt "run 9953"
 ```
    
     

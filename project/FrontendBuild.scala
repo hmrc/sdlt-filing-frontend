@@ -35,13 +35,7 @@ private object AppDependencies {
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "play-filters" % "5.18.0",
-    "uk.gov.hmrc" %% "play-ui" % "7.6.0",
-    "uk.gov.hmrc" %% "play-graphite" % "3.5.0",
-    "uk.gov.hmrc" %% "play-config" % "4.3.0",
-    "uk.gov.hmrc" %% "play-health" % "2.1.0",
-    "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
-    "uk.gov.hmrc" %% "govuk-template" % "5.10.0",
+    "uk.gov.hmrc" %% "frontend-bootstrap" % "8.7.0",
     "com.kenshoo" %% "metrics-play" % "2.4.0_0.4.1",
     "com.codahale.metrics" % "metrics-graphite" % "3.0.2"
   )

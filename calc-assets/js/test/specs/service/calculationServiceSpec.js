@@ -137,7 +137,7 @@
         });
 
         // ********************* calcFreeResPrem_201203_201412 *********************
-        calcFreeResPrem_201203_201412_Results = [{
+        var calcFreeResPrem_201203_201412_Results = [{
             totalTax : 0,
             taxCalcs : [{
                 taxType : "premium",
@@ -208,7 +208,7 @@
         });
 
         // ********************* calcFreeResPrem_201412_Undef *********************
-        calcFreeResPrem_201412_Undef_Results = [{
+        var calcFreeResPrem_201412_Undef_Results = [{
             totalTax : 0,
             taxCalcs : [{
                 taxType : "premium",
@@ -297,7 +297,7 @@
         });       
 
         // ********************* calcFreeResPremAddProp_201604_Undef *********************
-        calcFreeResPremAddProp_201604_Undef_Results_No_Hint = [
+        var calcFreeResPremAddProp_201604_Undef_Results_No_Hint = [
             {
                 resultHeading : "Results based on SDLT rules from 1 April 2016",
                 totalTax : 0,
@@ -342,7 +342,7 @@
                 resultHint : "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015."
             }    
         ];
-        calcFreeResPremAddProp_201604_Undef_Results = [
+        var calcFreeResPremAddProp_201604_Undef_Results = [
             {
                 resultHeading : "Results based on SDLT rules from 1 April 2016",
                 resultHint : "",
@@ -549,7 +549,7 @@
         });
 
         // ********************* calcFreeNonResPrem_201203_201603 *********************
-        calcFreeNonResPrem_201203_201603_Results = [{
+        var calcFreeNonResPrem_201203_201603_Results = [{
             totalTax : 0,
             taxCalcs : [{
                 taxType : "premium",
@@ -601,7 +601,7 @@
         });
 
         // ********************* calcFreeNonResPrem_201603_Undef *********************
-        calcFreeNonResPrem_201603_Undef_Results = [
+        var calcFreeNonResPrem_201603_Undef_Results = [
             {
                 resultHeading : "Results based on SDLT rules from 17 March 2016",
                 totalTax : 0,
@@ -695,7 +695,7 @@
 
 
         // ********************* calcLeaseResPremAndRent_201203_201412 *********************
-        calcLeaseResPremAndRent_201203_201412_Results = [{
+        var calcLeaseResPremAndRent_201203_201412_Results = [{
             totalTax : 0,
             npv : 0,
             taxCalcs : [
@@ -832,7 +832,7 @@
         });
 
         // ********************* calcLeaseResPremAndRent_201412_Undef *********************
-        calcLeaseResPremAndRent_201412_Undef_Results = [
+        var calcLeaseResPremAndRent_201412_Undef_Results = [
             {
                 totalTax : 0,
                 npv : 0,
@@ -966,7 +966,7 @@
         });
 
         // ********************* calcLeaseResPremAndRentAddProp_201604_Undef *********************
-        calcLeaseResPremAndRentAddProp_201604_Undef_Results = [
+        var calcLeaseResPremAndRentAddProp_201604_Undef_Results = [
             {
                 resultHeading : "Results based on SDLT rules from 1 April 2016",
                 totalTax : 0,
@@ -1104,7 +1104,7 @@
         });
 
         // ********************* calcLeaseNonResPremAndRent_201203_201603 *********************
-        calcLeaseNonResPremAndRent_201203_201603_Results = [
+        var calcLeaseNonResPremAndRent_201203_201603_Results = [
             {
                 totalTax : 0,
                 npv : 0,
@@ -1163,7 +1163,7 @@
         });
 
         // ********************* calcLeaseNonResPremAndRent_201603_Undef *********************
-        calcLeaseNonResPremAndRent_201603_Undef_Results = [
+        var calcLeaseNonResPremAndRent_201603_Undef_Results = [
             {
                 resultHeading : "Results based on SDLT rules from 17 March 2016",
                 totalTax : 0,
