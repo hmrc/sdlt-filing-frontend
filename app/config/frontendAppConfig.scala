@@ -1,17 +1,16 @@
 package config
 
 import play.api.Play.{configuration, current}
-import uk.gov.hmrc.play.config.ServicesConfig
-
+import uk.gov.hmrc.play.config.{ServicesConfig, AssetsConfig}
 
 trait AppConfig {
-  val assetsPrefix: String
   val analyticsToken: String
   val analyticsHost: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
+  val assetsConfig: AssetsConfig
 }
 
 object FrontendAppConfig extends AppConfig with ServicesConfig {
@@ -21,7 +20,12 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   private val contactHost = configuration.getString(s"$env.contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "SDLTC"
 
-  override lazy val assetsPrefix = loadConfig(s"$env.assets.url") + loadConfig(s"$env.assets.version")
+  override implicit lazy val assetsConfig =  new AssetsConfig {
+    override lazy val assetsUrl = loadConfig(s"$env.assets.url")
+    override lazy val assetsVersion = loadConfig(s"$env.assets.version")
+    override lazy val assetsPrefix = loadConfig(s"$env.assets.url") + loadConfig(s"$env.assets.version")
+  }
+
   override lazy val analyticsToken = loadConfig(s"$env.google-analytics.token")
   override lazy val analyticsHost = loadConfig(s"$env.google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"

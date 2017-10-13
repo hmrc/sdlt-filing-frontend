@@ -1,5 +1,4 @@
 # microservice specific routes
 
-GET         /                                       controllers.Assets.at(path="/public", file="index.html")
+GET         /                                      controllers.Assets.at(path="/public", file="index.html")
 GET         /javascript/*file                      controllers.Assets.at(path="/public/javascript", file)
-
