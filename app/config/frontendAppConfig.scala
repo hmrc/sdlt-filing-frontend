@@ -1,10 +1,7 @@
 package config
 
-import config.FrontendAppConfig.env
 import play.api.Play.{configuration, current}
-import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.config.AssetsConfig
-
+import uk.gov.hmrc.play.config.{ServicesConfig, AssetsConfig}
 
 trait AppConfig {
   val analyticsToken: String
