@@ -1,6 +1,6 @@
 package calculation.enums
 
-import play.api.libs.json.{JsString, JsSuccess, Json}
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class TaxAndCalcTypesSpec extends UnitSpec {

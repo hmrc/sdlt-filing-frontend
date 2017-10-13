@@ -1,6 +1,6 @@
 package calculation.enums
 
-import play.api.libs.json.Writes
+import play.api.libs.json._
 
 object TaxTypes extends Enumeration {
   val rent = Value
