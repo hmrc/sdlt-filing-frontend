@@ -1,17 +1,17 @@
 package calculation.enums
 
-import play.api.libs.json.{Format, Reads, Writes}
+import play.api.libs.json.Writes
 
 object TaxTypes extends Enumeration {
   val rent = Value
   val premium = Value
 
-  implicit val format = Format(Reads.enumNameReads(TaxTypes), Writes.enumNameWrites)
+  implicit val writes = Writes.enumNameWrites
 }
 
 object CalcTypes extends Enumeration {
   val slice = Value
   val slab = Value
 
-  implicit val format = Format(Reads.enumNameReads(CalcTypes), Writes.enumNameWrites)
+  implicit val writes = Writes.enumNameWrites
 }

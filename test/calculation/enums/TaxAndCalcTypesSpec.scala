@@ -12,12 +12,6 @@ class TaxAndCalcTypesSpec extends UnitSpec {
     "write 'premium' to Json" in {
       Json.toJson(TaxTypes.premium) shouldBe JsString("premium")
     }
-    "read 'rent' from Json" in {
-      Json.fromJson[TaxTypes.Value](JsString("rent")) shouldBe JsSuccess(TaxTypes.rent)
-    }
-    "read 'premium' from Json" in {
-      Json.fromJson[TaxTypes.Value](JsString("premium")) shouldBe JsSuccess(TaxTypes.premium)
-    }
   }
 
   "CalcTypes" should {
@@ -26,12 +20,6 @@ class TaxAndCalcTypesSpec extends UnitSpec {
     }
     "write 'slab' to Json" in {
       Json.toJson(CalcTypes.slab) shouldBe JsString("slab")
-    }
-    "read 'slice' from Json" in {
-      Json.fromJson[CalcTypes.Value](JsString("slice")) shouldBe JsSuccess(CalcTypes.slice)
-    }
-    "read 'slab' from Json" in {
-      Json.fromJson[CalcTypes.Value](JsString("slab")) shouldBe JsSuccess(CalcTypes.slab)
     }
   }
 }
