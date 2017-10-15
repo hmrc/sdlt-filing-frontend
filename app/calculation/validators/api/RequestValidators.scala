@@ -27,4 +27,13 @@ object RequestValidators {
     (__ \ s"${prefix}Year").read[Int]
   )((day: Int, month: Int, year: Int) => (day, month, year))
 
+  val yesNoToBooleanReads: Reads[Boolean] = new Reads[Boolean] {
+    override def reads(json: JsValue): JsResult[Boolean] = json.validate[String] match {
+      case JsSuccess("Yes", JsPath(_)) => JsSuccess(true)
+      case JsSuccess("No", JsPath(_))  => JsSuccess(false)
+      case JsSuccess(str, JsPath(_)) => JsError(s"'$str' could not be converted to Boolean")
+      case err @JsError(_) => err
+    }
+  }
 }
+

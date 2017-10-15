@@ -6,9 +6,8 @@ import calculation.enums.{HoldingTypes, PropertyTypes}
 import calculation.validators.api.RequestValidators
 import play.api.libs.json.Json
 import play.api.libs.functional.syntax._
-import play.api.libs.json._
-
-import RequestValidators.multiFieldDateReads
+import play.api.libs.json.__
+import RequestValidators.{multiFieldDateReads, yesNoToBooleanReads}
 
 object LeaseTerm {
   implicit val reads = Json.reads[LeaseTerm]
@@ -25,6 +24,26 @@ object LeaseDetails {
     (__ \ "year4Rent").read[BigDecimal] and
     (__ \ "year5Rent").read[BigDecimal]
   )(LeaseDetails.apply _)
+}
+
+object PropertyDetails {
+  implicit val reads = (
+    (__ \ "individual").read[Boolean](yesNoToBooleanReads) and
+    (__ \ "twoOrMoreProperties").readNullable[Boolean](yesNoToBooleanReads) and
+    (__ \ "replaceMainResidence").readNullable[Boolean](yesNoToBooleanReads)
+  )(PropertyDetails.apply _)
+}
+
+object Request {
+  implicit val reads = (
+    (__ \ "holdingType").read[HoldingTypes.Value] and
+    (__ \ "propertyType").read[PropertyTypes.Value] and
+     __.read[LocalDate](multiFieldDateReads("effectiveDate")) and
+    (__ \ "premium").read[BigDecimal] and
+    (__ \ "highestRent").read[BigDecimal] and
+    (__ \ "propertyDetails").readNullable[PropertyDetails] and
+    (__ \ "leaseDetails").readNullable[LeaseDetails]
+  )(Request.apply _)
 }
 
 case class Request(
