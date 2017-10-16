@@ -23,45 +23,84 @@ class RequestSpec extends UnitSpec {
   }
 
   "LeaseDetails" should {
-    "read from Json" in {
-      val testJson = Json.parse(
-        """
-          |{
-          |  "startDateDay": 15,
-          |  "startDateMonth": 1,
-          |  "startDateYear": 1949,
-          |  "endDateDay": 31,
-          |  "endDateMonth": 12,
-          |  "endDateYear": 2049,
-          |  "leaseTerm":  {
-          |    "years": 33,
-          |    "days": 0,
-          |    "daysInPartialYear": 0
-          |   },
-          |  "year1Rent": 10000,
-          |  "year2Rent": 20000,
-          |  "year3Rent": 30000,
-          |  "year4Rent": 40000,
-          |  "year5Rent": 50000
-          |}
-        """.stripMargin)
+    "read from Json" when {
+      "all fields are defined" in  {
+        val testJson = Json.parse(
+          """
+            |{
+            |  "startDateDay": 15,
+            |  "startDateMonth": 1,
+            |  "startDateYear": 1949,
+            |  "endDateDay": 31,
+            |  "endDateMonth": 12,
+            |  "endDateYear": 2049,
+            |  "leaseTerm":  {
+            |    "years": 33,
+            |    "days": 0,
+            |    "daysInPartialYear": 0
+            |   },
+            |  "year1Rent": 10000,
+            |  "year2Rent": 20000,
+            |  "year3Rent": 30000,
+            |  "year4Rent": 40000,
+            |  "year5Rent": 50000
+            |}
+          """.stripMargin)
 
-      val model = LeaseDetails(
-        startDate = LocalDate.of(1949, 1, 15),
-        endDate = LocalDate.of(2049, 12,  31),
-        leaseTerm = LeaseTerm(
-          years = 33,
-          days = 0,
-          daysInPartialYear = 0
-        ),
-        year1Rent = 10000,
-        year2Rent = 20000,
-        year3Rent = 30000,
-        year4Rent = 40000,
-        year5Rent = 50000
-      )
+        val model = LeaseDetails(
+          startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12,  31),
+          leaseTerm = LeaseTerm(
+            years = 33,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 10000,
+          year2Rent = Some(20000),
+          year3Rent = Some(30000),
+          year4Rent = Some(40000),
+          year5Rent = Some(50000)
+        )
 
-      Json.fromJson[LeaseDetails](testJson) shouldBe JsSuccess(model)
+        Json.fromJson[LeaseDetails](testJson) shouldBe JsSuccess(model)
+      }
+
+      "only one rent field is defined" in  {
+        val testJson = Json.parse(
+          """
+            |{
+            |  "startDateDay": 15,
+            |  "startDateMonth": 1,
+            |  "startDateYear": 1949,
+            |  "endDateDay": 31,
+            |  "endDateMonth": 12,
+            |  "endDateYear": 2049,
+            |  "leaseTerm":  {
+            |    "years": 33,
+            |    "days": 0,
+            |    "daysInPartialYear": 0
+            |   },
+            |  "year1Rent": 10000
+            |}
+          """.stripMargin)
+
+        val model = LeaseDetails(
+          startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12,  31),
+          leaseTerm = LeaseTerm(
+            years = 33,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 10000,
+          year2Rent = None,
+          year3Rent = None,
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        Json.fromJson[LeaseDetails](testJson) shouldBe JsSuccess(model)
+      }
     }
   }
 
@@ -162,10 +201,10 @@ class RequestSpec extends UnitSpec {
             daysInPartialYear = 0
           ),
           year1Rent = 10000,
-          year2Rent = 20000,
-          year3Rent = 30000,
-          year4Rent = 40000,
-          year5Rent = 50000
+          year2Rent = Some(20000),
+          year3Rent = Some(30000),
+          year4Rent = Some(40000),
+          year5Rent = Some(50000)
         ))
       )
 

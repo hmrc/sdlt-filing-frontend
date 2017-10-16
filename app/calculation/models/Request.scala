@@ -19,10 +19,10 @@ object LeaseDetails {
      __.read[LocalDate](multiFieldDateReads("endDate")) and
     (__ \ "leaseTerm").read[LeaseTerm] and
     (__ \ "year1Rent").read[BigDecimal] and
-    (__ \ "year2Rent").read[BigDecimal] and
-    (__ \ "year3Rent").read[BigDecimal] and
-    (__ \ "year4Rent").read[BigDecimal] and
-    (__ \ "year5Rent").read[BigDecimal]
+    (__ \ "year2Rent").readNullable[BigDecimal] and
+    (__ \ "year3Rent").readNullable[BigDecimal] and
+    (__ \ "year4Rent").readNullable[BigDecimal] and
+    (__ \ "year5Rent").readNullable[BigDecimal]
   )(LeaseDetails.apply _)
 }
 
@@ -67,10 +67,10 @@ case class LeaseDetails(
                          endDate: LocalDate,
                          leaseTerm: LeaseTerm,
                          year1Rent: BigDecimal,
-                         year2Rent: BigDecimal,
-                         year3Rent: BigDecimal,
-                         year4Rent: BigDecimal,
-                         year5Rent: BigDecimal
+                         year2Rent: Option[BigDecimal],
+                         year3Rent: Option[BigDecimal],
+                         year4Rent: Option[BigDecimal],
+                         year5Rent: Option[BigDecimal]
                        )
 
   case class LeaseTerm(
