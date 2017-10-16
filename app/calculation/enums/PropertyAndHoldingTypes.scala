@@ -10,7 +10,7 @@ object HoldingTypes extends Enumeration {
   val leasehold = Value
   val freehold = Value
 
-  private def lowerCaseReads = new Reads[HoldingTypes.Value] {
+  private val lowerCaseReads = new Reads[HoldingTypes.Value] {
     def reads(json: JsValue) = json match {
       case JsString(str) =>
         HoldingTypes.values
@@ -30,7 +30,7 @@ object PropertyTypes extends Enumeration {
   val residential = Value
   val nonResidential = Value
 
-  private def propertyReads: Reads[PropertyTypes.Value] = new Reads[PropertyTypes.Value] {
+  private val propertyReads: Reads[PropertyTypes.Value] = new Reads[PropertyTypes.Value] {
     override def reads(json: JsValue): JsResult[PropertyTypes.Value] = json match {
       case JsString("Residential")     => JsSuccess(PropertyTypes.residential)
       case JsString("Non-residential") => JsSuccess(PropertyTypes.nonResidential)
