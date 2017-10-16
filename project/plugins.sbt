@@ -17,3 +17,5 @@ addSbtPlugin("uk.gov.hmrc" % "hmrc-resolvers" % "0.4.0")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "1.0.0")
 
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")
+

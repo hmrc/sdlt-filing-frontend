@@ -1,6 +1,6 @@
 import sbt.Keys._
-import sbt.Tests.{SubProcess, Group}
-import sbt._
+import sbt.Tests.{Group, SubProcess}
+import sbt.{Def, _}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import play.routes.compiler.StaticRoutesGenerator
 import play.sbt.routes.RoutesKeys.routesGenerator
@@ -21,9 +21,21 @@ trait MicroService {
   lazy val plugins : Seq[Plugins] = Seq(play.sbt.PlayScala)
   lazy val playSettings : Seq[Setting[_]] = Seq.empty
 
+  lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean]] = {
+    // Semicolon-separated list of regexs matching classes to exclude
+    import scoverage.ScoverageKeys
+    Seq(
+      ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;models/.data/..*;view.*;config.*;.*(BuildInfo|Routes).*",
+      ScoverageKeys.coverageMinimum := 80,
+      ScoverageKeys.coverageFailOnMinimum := false,
+      ScoverageKeys.coverageHighlighting := true
+    )
+  }
+
   lazy val microservice = Project(appName, file("."))
     .enablePlugins(plugins : _*)
     .settings(playSettings : _*)
+    .settings(playSettings ++ scoverageSettings : _*)
     .settings(version := appVersion)
     .settings(scalaVersion := "2.11.11")
     .settings(scalaSettings: _*)
