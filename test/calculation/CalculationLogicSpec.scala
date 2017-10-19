@@ -1,12 +1,7 @@
 package calculation
 
-/**
-  * Created by udaniel on 17/10/17.
-  */
-
-import calculation.models.calculationtables.{Slab, SlabResult, Slice}
+import calculation.models.calculationtables.{Slab, SlabResult}
 import uk.gov.hmrc.play.test.UnitSpec
-import exceptions.CalculationException
 
 class CalculationLogicSpec extends UnitSpec {
   "calculateTaxDueSlab" should {
@@ -64,39 +59,6 @@ class CalculationLogicSpec extends UnitSpec {
 
         calculate.taxDue shouldBe slabResult.taxDue
         calculate.rate shouldBe slabResult.rate
-      }
-    }
-
-
-    "calculateTaxDueSLice" should {
-      "return a totalTaxDue of 0" when {
-        "there is no Slice.to and the given Amount is greater than Slice.from" in {
-
-        }
-      }
-
-      "return a valid totalTaxDue" when {
-        "there is no slice.to and the given Amount is less than Slice.from" in {
-
-        }
-      }
-
-      "return a valid totalTaxDue" when {
-        "there is a Slice.to and it's less than the given Amount" in {
-
-        }
-      }
-
-      "return a totalTaxDue of 0" when {
-        "there is a Slice.to that's less than the Amount AND the Amount is less than or equal to Slice.from" in {
-
-        }
-      }
-
-      "return a valid totalTaxDue" when {
-        "there is a Slice.to that's less than the Amount AND the Amount is greater than or equal to Slice.from" in {
-
-        }
       }
     }
   }
