@@ -7,7 +7,6 @@ import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class RequestSpec extends UnitSpec {
-
   "LeaseTerm" should {
     "read from Json" in {
       val testJson = Json.parse(
