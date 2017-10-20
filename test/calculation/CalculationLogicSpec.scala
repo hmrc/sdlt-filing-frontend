@@ -4,7 +4,8 @@ package calculation
   * Created by udaniel on 17/10/17.
   */
 
-import calculation.models.calculationtables.{Slab, SlabResult, Slice}
+import calculation.models.SliceDetails
+import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class CalculationLogicSpec extends UnitSpec {
@@ -68,9 +69,23 @@ class CalculationLogicSpec extends UnitSpec {
 
 
     "calculateTaxDueSLice" should {
-      "return a totalTaxDue of 0" when {
-        "there is no Slice.to and the given Amount is greater than Slice.from" in {
+      val sliceArray = Seq(
+        Slice( from= 0,       to = Some(125000),  rate = 0),
+        Slice( from= 125000,  to = Some(250000),  rate = 2),
+        Slice( from= 250000,  to = Some(925000),  rate = 5),
+        Slice( from= 925000,  to = Some(1500000), rate = 10),
+        Slice( from= 1500000, to = None,   rate = 12))
 
+      "return a totalTaxDue of 0" when {
+        "there is no Slice.to and the given Amount is greater than Slice.from// PURCHASE OF 125000" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 250020, slices = sliceArray)
+
+          val placeholder = Seq(SliceDetails(0, Some(10), 2, 55))
+
+          val sliceResult = SliceResult(taxDue = 0, slices = placeholder)
+
+          calculate.taxDue shouldBe sliceResult.taxDue
+          calculate.slices shouldBe sliceResult.slices
         }
       }
 

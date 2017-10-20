@@ -1,7 +1,7 @@
 package calculation
 
 import calculation.models.SliceDetails
-import calculation.models.calculationtables.{Slab, SlabResult, Slice}
+import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
 import play.api.Logger
 
 
@@ -18,10 +18,12 @@ object CalculationLogic {
     Math.floor(Math.floor(amount.toDouble) * rate.toDouble / 100)
   }
 
-  //  def calculateTaxDueSlice(amount: BigDecimal, slices: Seq[Slice]): SliceResult ={
-  //
-  //
-  //  }
+    def calculateTaxDueSlice(amount: BigDecimal, slices: Seq[Slice]): SliceResult = {
+      val sliceDetails = slices.map(slice => convertSliceToSliceDetails(amount, slice))
+      val totalTaxDue = sliceDetails.foldLeft(0)(_ + _.taxDue)
+      SliceResult(taxDue = totalTaxDue, slices = sliceDetails)
+    }
+
 
   def convertSliceToSliceDetails(amount: BigDecimal, slice: Slice): SliceDetails = {
     if(slice.to.isDefined) {
