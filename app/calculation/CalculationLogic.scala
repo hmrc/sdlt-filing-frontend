@@ -43,7 +43,4 @@ object CalculationLogic {
       SliceDetails(from = slice.from.toInt, to = None, rate = slice.rate.toInt, taxDue = 0)
     }
   }
-
-
-
 }

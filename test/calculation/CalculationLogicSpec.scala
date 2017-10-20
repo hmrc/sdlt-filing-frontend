@@ -1,9 +1,5 @@
 package calculation
 
-/**
-  * Created by udaniel on 17/10/17.
-  */
-
 import calculation.models.SliceDetails
 import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
 import uk.gov.hmrc.play.test.UnitSpec
@@ -67,8 +63,7 @@ class CalculationLogicSpec extends UnitSpec {
       }
     }
 
-
-    "calculateTaxDueSLice" should {
+    "calculateTaxDueSlice" should {
       val sliceArray = Seq(
         Slice( from= 0,       to = Some(125000),  rate = 0),
         Slice( from= 125000,  to = Some(250000),  rate = 2),
@@ -77,39 +72,147 @@ class CalculationLogicSpec extends UnitSpec {
         Slice( from= 1500000, to = None,   rate = 12))
 
       "return a totalTaxDue of 0" when {
-        "there is no Slice.to and the given Amount is greater than Slice.from// PURCHASE OF 125000" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 250020, slices = sliceArray)
+        "the purchase amount is -1" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = -1, slices = sliceArray)
 
-          val placeholder = Seq(SliceDetails(0, Some(10), 2, 55))
+          val result = Seq(
+            SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
+            SliceDetails( from= 125000,  to = Some(250000),  rate = 2, taxDue = 0),
+            SliceDetails( from= 250000,  to = Some(925000),  rate = 5, taxDue = 0),
+            SliceDetails( from= 925000,  to = Some(1500000), rate = 10, taxDue = 0),
+            SliceDetails( from= 1500000, to = None, rate = 12, taxDue = 0))
 
-          val sliceResult = SliceResult(taxDue = 0, slices = placeholder)
+          val sliceResult = SliceResult(taxDue = 0, slices = result)
 
           calculate.taxDue shouldBe sliceResult.taxDue
           calculate.slices shouldBe sliceResult.slices
         }
       }
 
-      "return a valid totalTaxDue" when {
-        "there is no slice.to and the given Amount is less than Slice.from" in {
+      "return a totalTaxDue of 0" when {
+        "the purchase amount is 0" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 0, slices = sliceArray)
 
-        }
-      }
+          val result = Seq(
+            SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
+            SliceDetails( from= 125000,  to = Some(250000),  rate = 2, taxDue = 0),
+            SliceDetails( from= 250000,  to = Some(925000),  rate = 5, taxDue = 0),
+            SliceDetails( from= 925000,  to = Some(1500000), rate = 10, taxDue = 0),
+            SliceDetails( from= 1500000, to = None, rate = 12, taxDue = 0))
 
-      "return a valid totalTaxDue" when {
-        "there is a Slice.to and it's less than the given Amount" in {
+          val sliceResult = SliceResult(taxDue = 0, slices = result)
 
+          calculate.taxDue shouldBe sliceResult.taxDue
+          calculate.slices shouldBe sliceResult.slices
         }
       }
 
       "return a totalTaxDue of 0" when {
-        "there is a Slice.to that's less than the Amount AND the Amount is less than or equal to Slice.from" in {
+        "the purchase amount is 125000" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 125000, slices = sliceArray)
 
+          val result = Seq(
+            SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
+            SliceDetails( from= 125000,  to = Some(250000),  rate = 2, taxDue = 0),
+            SliceDetails( from= 250000,  to = Some(925000),  rate = 5, taxDue = 0),
+            SliceDetails( from= 925000,  to = Some(1500000), rate = 10, taxDue = 0),
+            SliceDetails( from= 1500000, to = None, rate = 12, taxDue = 0))
+
+          val sliceResult = SliceResult(taxDue = 0, slices = result)
+
+          calculate.taxDue shouldBe sliceResult.taxDue
+          calculate.slices shouldBe sliceResult.slices
         }
       }
 
-      "return a valid totalTaxDue" when {
-        "there is a Slice.to that's less than the Amount AND the Amount is greater than or equal to Slice.from" in {
+      "return a totalTaxDue of 1" when {
+        "the purchase amount is 125050" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 125050, slices = sliceArray)
 
+          val result = Seq(
+            SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
+            SliceDetails( from= 125000,  to = Some(250000),  rate = 2, taxDue = 1),
+            SliceDetails( from= 250000,  to = Some(925000),  rate = 5, taxDue = 0),
+            SliceDetails( from= 925000,  to = Some(1500000), rate = 10, taxDue = 0),
+            SliceDetails( from= 1500000, to = None, rate = 12, taxDue = 0))
+
+          val sliceResult = SliceResult(taxDue = 1, slices = result)
+
+          calculate.taxDue shouldBe sliceResult.taxDue
+          calculate.slices shouldBe sliceResult.slices
+        }
+      }
+
+      "return a totalTaxDue of 2500" when {
+        "the purchase amount is 250000" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 250000, slices = sliceArray)
+
+          val result = Seq(
+            SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
+            SliceDetails( from= 125000,  to = Some(250000),  rate = 2, taxDue = 2500),
+            SliceDetails( from= 250000,  to = Some(925000),  rate = 5, taxDue = 0),
+            SliceDetails( from= 925000,  to = Some(1500000), rate = 10, taxDue = 0),
+            SliceDetails( from= 1500000, to = None, rate = 12, taxDue = 0))
+
+          val sliceResult = SliceResult(taxDue = 2500, slices = result)
+
+          calculate.taxDue shouldBe sliceResult.taxDue
+          calculate.slices shouldBe sliceResult.slices
+        }
+      }
+
+
+      "return a totalTaxDue of 2501" when {
+        "the purchase amount is 250020" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 250020, slices = sliceArray)
+
+          val result = Seq(
+            SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
+            SliceDetails( from= 125000,  to = Some(250000),  rate = 2, taxDue = 2500),
+            SliceDetails( from= 250000,  to = Some(925000),  rate = 5, taxDue = 1),
+            SliceDetails( from= 925000,  to = Some(1500000), rate = 10, taxDue = 0),
+            SliceDetails( from= 1500000, to = None, rate = 12, taxDue = 0))
+
+          val sliceResult = SliceResult(taxDue = 2501, slices = result)
+
+          calculate.taxDue shouldBe sliceResult.taxDue
+          calculate.slices shouldBe sliceResult.slices
+        }
+      }
+
+      "return a totalTaxDue of 93750" when {
+        "the purchase amount is 1500000" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 1500000, slices = sliceArray)
+
+          val result = Seq(
+            SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
+            SliceDetails( from= 125000,  to = Some(250000),  rate = 2, taxDue = 2500),
+            SliceDetails( from= 250000,  to = Some(925000),  rate = 5, taxDue = 33750),
+            SliceDetails( from= 925000,  to = Some(1500000), rate = 10, taxDue = 57500),
+            SliceDetails( from= 1500000, to = None, rate = 12, taxDue = 0))
+
+          val sliceResult = SliceResult(taxDue = 93750, slices = result)
+
+          calculate.taxDue shouldBe sliceResult.taxDue
+          calculate.slices shouldBe sliceResult.slices
+        }
+      }
+
+      "return a totalTaxDue of 93751" when {
+        "the purchase amount is 1500009" in {
+          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 1500009, slices = sliceArray)
+
+          val result = Seq(
+            SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
+            SliceDetails( from= 125000,  to = Some(250000),  rate = 2, taxDue = 2500),
+            SliceDetails( from= 250000,  to = Some(925000),  rate = 5, taxDue = 33750),
+            SliceDetails( from= 925000,  to = Some(1500000), rate = 10, taxDue = 57500),
+            SliceDetails( from= 1500000, to = None, rate = 12, taxDue = 1))
+
+          val sliceResult = SliceResult(taxDue = 93751, slices = result)
+
+          calculate.taxDue shouldBe sliceResult.taxDue
+          calculate.slices shouldBe sliceResult.slices
         }
       }
     }
