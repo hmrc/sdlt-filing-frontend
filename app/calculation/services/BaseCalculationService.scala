@@ -2,16 +2,16 @@ package calculation.services
 
 import calculation.models.SliceDetails
 import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
-import play.api.Logger
 
 
 object BaseCalculationService {
+
   def calculateTaxDueSlab(amount: BigDecimal, slabs: Seq[Slab]): SlabResult = {
     slabs.find(amount > _.threshold).map { firstSlabAboveAmount =>
       SlabResult(firstSlabAboveAmount.rate, calcTax(amount, firstSlabAboveAmount.rate))
-    }.getOrElse{
-      Logger.warn("[CalculationLogic.calculateTaxDueSlab]: Amount["+amount+"] was less than minimum threshold["+slabs.last.threshold+"]")
-      SlabResult(rate = 0, taxDue = 0)}
+    }.getOrElse(
+      SlabResult(rate = 0, taxDue = 0)
+    )
   }
 
   def calculateTaxDueSlice(amount: BigDecimal, slices: Seq[Slice]): SliceResult = {
