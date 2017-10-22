@@ -1,11 +1,11 @@
-package calculation
+package calculation.services
 
 import calculation.models.SliceDetails
 import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
 import play.api.Logger
 
 
-object CalculationLogic {
+object BaseCalculationService {
   def calculateTaxDueSlab(amount: BigDecimal, slabs: Seq[Slab]): SlabResult = {
     slabs.find(amount > _.threshold).map { firstSlabAboveAmount =>
       SlabResult(firstSlabAboveAmount.rate, calcTax(amount, firstSlabAboveAmount.rate))
