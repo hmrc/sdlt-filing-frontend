@@ -1,10 +1,10 @@
-package calculation
+package calculation.services
 
 import calculation.models.SliceDetails
 import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class CalculationLogicSpec extends UnitSpec {
+class BaseCalculationServiceSpec extends UnitSpec {
   "calculateTaxDueSlab" should {
     val slabsArray = Seq(
       Slab(threshold = 2000000, rate = 7),
@@ -15,7 +15,7 @@ class CalculationLogicSpec extends UnitSpec {
 
     "return a slab result with a taxDue & rate of 0" when {
       "amount is less than the minimum[125000] threshold" in {
-        val calculate = CalculationLogic.calculateTaxDueSlab(amount = 1000, slabs = slabsArray)
+        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 1000, slabs = slabsArray)
         val slabResult = SlabResult(rate = 0, taxDue = 0)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -23,7 +23,7 @@ class CalculationLogicSpec extends UnitSpec {
       }
 
       "amount is equal to the minimum[125000] threshold" in {
-        val calculate = CalculationLogic.calculateTaxDueSlab(amount = 125000, slabs = slabsArray)
+        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 125000, slabs = slabsArray)
         val slabResult = SlabResult(rate = 0, taxDue = 0)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -33,7 +33,7 @@ class CalculationLogicSpec extends UnitSpec {
 
     "return a slab result with a taxDue of 1250 & rate of 1" when {
       "amount is greater than the minimum[125000] threshold and less than 250000" in {
-        val calculate = CalculationLogic.calculateTaxDueSlab(amount = 125001, slabs = slabsArray)
+        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 125001, slabs = slabsArray)
         val slabResult = SlabResult(rate = 1, taxDue = 1250)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -43,7 +43,7 @@ class CalculationLogicSpec extends UnitSpec {
 
     "return a slab result with a taxDue of 100000 & rate of 5" when {
       "amount is equal to the highest[2000000] threshold" in {
-        val calculate = CalculationLogic.calculateTaxDueSlab(amount = 2000000, slabs = slabsArray)
+        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 2000000, slabs = slabsArray)
         val slabResult = SlabResult(rate = 5, taxDue = 100000)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -53,7 +53,7 @@ class CalculationLogicSpec extends UnitSpec {
 
     "return a slab result with a taxDue of 140000 & rate of 7" when {
       "amount is greater than the highest[2000000] threshold" in {
-        val calculate = CalculationLogic.calculateTaxDueSlab(amount = 2000001, slabs = slabsArray)
+        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 2000001, slabs = slabsArray)
         val slabResult = SlabResult(rate = 7, taxDue = 140000)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -71,7 +71,7 @@ class CalculationLogicSpec extends UnitSpec {
 
       "return a totalTaxDue of 0" when {
         "the purchase amount is -1" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = -1, slices = sliceArray)
+          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = -1, slices = sliceArray)
 
           val result = Seq(
             SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
@@ -87,7 +87,7 @@ class CalculationLogicSpec extends UnitSpec {
         }
 
         "the purchase amount is 0" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 0, slices = sliceArray)
+          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 0, slices = sliceArray)
 
           val result = Seq(
             SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
@@ -103,7 +103,7 @@ class CalculationLogicSpec extends UnitSpec {
         }
         
         "the purchase amount is 125000" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 125000, slices = sliceArray)
+          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 125000, slices = sliceArray)
 
           val result = Seq(
             SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
@@ -121,7 +121,7 @@ class CalculationLogicSpec extends UnitSpec {
 
       "return a totalTaxDue of 1" when {
         "the purchase amount is 125050" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 125050, slices = sliceArray)
+          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 125050, slices = sliceArray)
 
           val result = Seq(
             SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
@@ -139,7 +139,7 @@ class CalculationLogicSpec extends UnitSpec {
 
       "return a totalTaxDue of 2500" when {
         "the purchase amount is 250000" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 250000, slices = sliceArray)
+          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 250000, slices = sliceArray)
 
           val result = Seq(
             SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
@@ -158,7 +158,7 @@ class CalculationLogicSpec extends UnitSpec {
 
       "return a totalTaxDue of 2501" when {
         "the purchase amount is 250020" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 250020, slices = sliceArray)
+          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 250020, slices = sliceArray)
 
           val result = Seq(
             SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
@@ -176,7 +176,7 @@ class CalculationLogicSpec extends UnitSpec {
 
       "return a totalTaxDue of 93750" when {
         "the purchase amount is 1500000" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 1500000, slices = sliceArray)
+          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 1500000, slices = sliceArray)
 
           val result = Seq(
             SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
@@ -194,7 +194,7 @@ class CalculationLogicSpec extends UnitSpec {
 
       "return a totalTaxDue of 93751" when {
         "the purchase amount is 1500009" in {
-          val calculate = CalculationLogic.calculateTaxDueSlice(amount = 1500009, slices = sliceArray)
+          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 1500009, slices = sliceArray)
 
           val result = Seq(
             SliceDetails( from= 0,       to = Some(125000),  rate = 0, taxDue = 0),
