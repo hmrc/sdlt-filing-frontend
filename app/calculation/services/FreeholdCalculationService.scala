@@ -1,6 +1,6 @@
 package calculation.services
 
-import calculation.data.SliceRatesTables
+import calculation.data.{SlabRatesTables, SliceRatesTables}
 import calculation.models.{Request, Result}
 import calculation.factories.ResultFactory
 
@@ -17,7 +17,14 @@ object FreeholdCalculationService {
     ResultFactory.freeholdResidentialDec14OnwardsResult(premiumResult)
   }
 
-  def freeholdResidentialMar12toDec14(request: Request): Result = ???
+  def freeholdResidentialMar12toDec14(request: Request): Result = {
+    val premiumResult = BaseCalculationService.calculateTaxDueSlab(
+      request.premium,
+      SlabRatesTables.freeholdResidentialMar12toDec14Rates.slabs
+    )
+
+    ResultFactory.freeholdResidentialMar12toDec14Result(premiumResult)
+  }
 
   def freeholdNonResidentialMar16Onwards(request: Request): Result = ???
 

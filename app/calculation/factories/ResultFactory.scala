@@ -3,7 +3,7 @@ package calculation.factories
 import calculation.data.ResultText._
 import calculation.enums.{CalcTypes, TaxTypes}
 import calculation.models.{CalculationDetails, Result}
-import calculation.models.calculationtables.SliceResult
+import calculation.models.calculationtables.{SlabResult, SliceResult}
 
 object ResultFactory {
 
@@ -23,6 +23,27 @@ object ResultFactory {
           detailFooter = Some(DETAIL_FOOTER_TOTAL),
           taxDue = sliceResult.taxDue.toInt,
           slices = Some(sliceResult.slices)
+        )
+      )
+    )
+  }
+
+  def freeholdResidentialMar12toDec14Result(slabResult: SlabResult): Result = {
+    Result(
+      totalTax = slabResult.taxDue.toInt,
+      resultHeading = None,
+      resultHint = None,
+      npv = None,
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          taxDue = slabResult.taxDue.toInt,
+          rate = Some(slabResult.rate.toInt),
+          slices = None
         )
       )
     )

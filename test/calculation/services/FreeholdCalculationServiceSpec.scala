@@ -143,7 +143,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       res shouldBe baseResult(93750, baseCalculationDetails(93750, resSlices))
     }
 
-    "93751 for purchase price of 1500009" in {
+    "return 93751 for purchase price of 1500009" in {
       val resSlices = Seq(
         SliceDetails(from = 0,       to = Some(125000),  rate = 0,  taxDue = 0),
         SliceDetails(from = 125000,  to = Some(250000),  rate = 2,  taxDue = 2500),
@@ -155,6 +155,89 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(1500009))
       res shouldBe baseResult(93751, baseCalculationDetails(93751, resSlices))
 
+    }
+  }
+
+  "calculating freeholdResidentialMar12toDec14" should {
+
+    def baseCalculationDetails(taxDue: Int, rate: Int) = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slab,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = taxDue,
+      rate = Some(rate),
+      slices = None
+    )
+
+    def baseResult(taxDue: Int, calcDeets: CalculationDetails) = Result(
+      totalTax = taxDue,
+      resultHeading = None,
+      resultHint = None,
+      npv = None,
+      taxCalcs = Seq(calcDeets)
+    )
+
+    def baseRequest(premium: BigDecimal) = Request(
+      holdingType = HoldingTypes.freehold,
+      propertyType = PropertyTypes.residential,
+      effectiveDate = LocalDate.of(2012, 4, 1),
+      premium = premium,
+      highestRent = 0,
+      leaseDetails = None,
+      propertyDetails = None
+    )
+
+    "return 0 for purchase price of 125000" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(125000))
+      res shouldBe baseResult(0, baseCalculationDetails(0, 0))
+    }
+
+    "return 1250 for purchase price of 125001" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(125001))
+      res shouldBe baseResult(1250, baseCalculationDetails(1250, 1))
+    }
+
+    "return 2500 for purchase price of 250000" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(250000))
+      res shouldBe baseResult(2500, baseCalculationDetails(2500, 1))
+    }
+
+    "return 7500 for purchase price of 250001" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(250001))
+      res shouldBe baseResult(7500, baseCalculationDetails(7500, 3))
+    }
+
+    "return 15000 for purchase price of 500000" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(500000))
+      res shouldBe baseResult(15000, baseCalculationDetails(15000, 3))
+
+    }
+
+    "return 20000 for purchase price of 500001" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(500001))
+      res shouldBe baseResult(20000, baseCalculationDetails(20000, 4))
+    }
+
+    "return 40000 for purchase price of 1000000" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(1000000))
+      res shouldBe baseResult(40000, baseCalculationDetails(40000, 4))
+    }
+
+    "return 50000 for purchase price of 1000001" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(1000001))
+      res shouldBe baseResult(50000, baseCalculationDetails(50000, 5))
+    }
+
+    "return 100000 for purchase price of 2000000" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(2000000))
+      res shouldBe baseResult(100000, baseCalculationDetails(100000, 5))
+    }
+
+    "return 140000 for purchase price of 2000001" in {
+      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(2000001))
+      res shouldBe baseResult(140000, baseCalculationDetails(140000, 7))
     }
   }
 }
