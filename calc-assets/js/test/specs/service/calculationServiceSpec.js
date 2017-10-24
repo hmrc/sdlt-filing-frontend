@@ -286,7 +286,7 @@
             expect(service.calcFreeResPrem_201412_Undef(1500000)).toEqual(calcFreeResPrem_201412_Undef_Results);
         });       
 
-        it(' calcFreeResPrem_201412_Undef should return 93751 for purchase price osf 1500009', function() {
+        it(' calcFreeResPrem_201412_Undef should return 93751 for purchase price of 1500009', function() {
             calcFreeResPrem_201412_Undef_Results[0].totalTax = 93751;
             calcFreeResPrem_201412_Undef_Results[0].taxCalcs[0].taxDue = 93751;
             calcFreeResPrem_201412_Undef_Results[0].taxCalcs[0].slices[1].taxDue = 2500;
