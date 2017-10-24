@@ -461,7 +461,7 @@
             expect(service.calcFreeResPremAddProp_201604_Undef(925000, true)).toEqual(calcFreeResPremAddProp_201604_Undef_Results);
         });
 
-        it(' calcFreeResPremAddProp_201604_Undef should return 64000, 36250 for purchase price of 925100', function() {
+        it(' calcFreeResPremAddProp_201604_Undef should return 64013, 36260 for purchase price of 925100', function() {
             calcFreeResPremAddProp_201604_Undef_Results[0].resultHint = "If you dispose of your previous main residence within 3 years you may be eligible for a refund of £27,753.";
             calcFreeResPremAddProp_201604_Undef_Results[0].totalTax = 64013;
             calcFreeResPremAddProp_201604_Undef_Results[0].taxCalcs[0].taxDue = 64013;
