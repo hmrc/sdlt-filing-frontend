@@ -42,7 +42,10 @@ object ModelValidation {
        lease.year4Rent,
        lease.year5Rent).flatten
 
-     if(lease.leaseTerm.years == rentsList.size || lease.leaseTerm.years > 5 && rentsList.size == 5){
+     val fullYears = lease.leaseTerm.years
+     val yearsRequired = if(fullYears < 5 && lease.leaseTerm.daysInPartialYear > 0) fullYears + 1 else fullYears
+
+     if(yearsRequired == rentsList.size || yearsRequired > 5 && rentsList.size == 5){
        ValidationSuccess
      }else{
        ValidationFailure(s"Lease term: ${lease.leaseTerm.years} does not match amount of lease year rents: ${rentsList.size}")
