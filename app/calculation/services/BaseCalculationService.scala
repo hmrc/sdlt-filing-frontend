@@ -3,6 +3,8 @@ package calculation.services
 import calculation.models.{LeaseDetails, SliceDetails}
 import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
 
+import scala.math.BigDecimal.RoundingMode
+
 
 object BaseCalculationService {
 
@@ -20,46 +22,49 @@ object BaseCalculationService {
     SliceResult(taxDue = totalTaxDue, slices = sliceDetails)
   }
 
-  def calculateNPV(leaseDetails: LeaseDetails): Double ={
+  def calculateNPV(leaseDetails: LeaseDetails): BigDecimal ={
     val rentsList = Seq(Some(leaseDetails.year1Rent),
                              leaseDetails.year2Rent,
                              leaseDetails.year3Rent,
                              leaseDetails.year4Rent,
                              leaseDetails.year5Rent).flatten
 
+
     val fullYears = leaseDetails.leaseTerm.years
     val partialDays = leaseDetails.leaseTerm.days
     val daysInYear = leaseDetails.leaseTerm.daysInPartialYear
+    val highestRent = rentsList.max
 
-    val (baseDivisor,baseNPV) = rentsList.foldLeft(BigDecimal(1),0.0){(sum,element) =>
-      val divisor = calcDivisorRate(sum._1)
-      (divisor , sum._2 + (Math.floor(element.toDouble * 1000 / divisor.toDouble) / 1000))
+    val fullNPVYears = if(fullYears < 5 && partialDays > 0) fullYears + 1 else fullYears
+
+    val (fullYearsNPV, lastFullYearDivisor) = (0 until fullNPVYears).foldLeft(BigDecimal(0), BigDecimal(1)) {
+      (rolling, year) =>
+        val (npv, divisor) = rolling
+        val updatedDivisor = calcDivisorRate(divisor)
+        val updatedNPV = rentsList.lift(year).map {
+          rent => npv + npvIncrease(rent, updatedDivisor)
+        }.getOrElse {
+          npv + npvIncrease(highestRent, updatedDivisor)
+        }
+        (updatedNPV, updatedDivisor)
     }
 
-     Math.floor(if((fullYears >= 5) && (partialDays > 0)) {
-      val rentPartialYear = rentsList.max * partialDays / daysInYear
-      val (divisor, totalNPV) = if(fullYears == 5) (baseDivisor,baseNPV) else calcNPVAbove5Years(baseNPV, 6,  fullYears, rentsList.max)
-       totalNPV + Math.floor(rentPartialYear.toDouble / calcDivisorRate(divisor).toDouble)
-    }
-    else if(fullYears > 5) {
-       calcNPVAbove5Years(baseNPV, 6,  fullYears, rentsList.max)._2}
-    else baseNPV)
+    val partialYearNPVIncrease = if(fullYears >= 5 && partialDays > 0) {
+      val rentPartialYear = highestRent * partialDays / daysInYear
+      (rentPartialYear / calcDivisorRate(lastFullYearDivisor)).setScale(0, RoundingMode.FLOOR)
+    } else BigDecimal(0)
+
+    val unroundedNPV = fullYearsNPV + partialYearNPVIncrease
+    unroundedNPV.setScale(0, RoundingMode.FLOOR)
   }
 
-  private def calcDivisorRateScaling(incrementAmount: Int): BigDecimal ={
-    val test = List.fill(incrementAmount)(1.035)
-    test.foldLeft(1.0)((x,y) => x * y)
+  private def npvIncrease(annualRent: BigDecimal, divisor: BigDecimal): BigDecimal = {
+    (annualRent * 1000 / divisor).setScale(0, RoundingMode.FLOOR) / 1000
   }
 
   private def calcDivisorRate(currentDivisor: BigDecimal): BigDecimal ={
     currentDivisor * 1.035
   }
-
-  def calcNPVAbove5Years(totalNPV: Double, currYear: Int, yearMax: Int, highestRent: BigDecimal): (BigDecimal, Double) ={
-    val currNPV = totalNPV + (Math.floor(highestRent.toDouble * 1000 / calcDivisorRateScaling(currYear).toDouble) / 1000)
-    if(currYear >= yearMax) (calcDivisorRateScaling(currYear).toDouble,currNPV)  else calcNPVAbove5Years(currNPV, currYear+1, yearMax,highestRent)
-  }
-
 
   private def convertSliceToSliceDetails(amount: BigDecimal, slice: Slice): SliceDetails = {
     val taxDue = if(amount > slice.from) {
