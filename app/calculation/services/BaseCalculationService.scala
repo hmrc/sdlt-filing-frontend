@@ -34,12 +34,13 @@ object BaseCalculationService {
     val partialDays = leaseDetails.leaseTerm.days
     val daysInYear = leaseDetails.leaseTerm.daysInPartialYear
     val highestRent = rentsList.max
-
     val fullNPVYears = if(fullYears < 5 && partialDays > 0) fullYears + 1 else fullYears
 
-    val (fullYearsNPV, lastFullYearDivisor) = (0 until fullNPVYears).foldLeft(BigDecimal(0), BigDecimal(1)) {
-      (rolling, year) =>
-        val (npv, divisor) = rolling
+    val initialNPV = BigDecimal(0)
+    val initialDivisor = BigDecimal(1)
+    
+    val (fullYearsNPV, lastFullYearDivisor) = (0 until fullNPVYears).foldLeft(initialNPV, initialDivisor) {
+      case ((npv, divisor), year) =>
         val updatedDivisor = calcDivisorRate(divisor)
         val updatedNPV = rentsList.lift(year).map {
           rent => npv + npvIncrease(rent, updatedDivisor)
@@ -59,7 +60,7 @@ object BaseCalculationService {
   }
 
   private def npvIncrease(annualRent: BigDecimal, divisor: BigDecimal): BigDecimal = {
-    (annualRent * 1000 / divisor).setScale(0, RoundingMode.FLOOR) / 1000
+    (annualRent / divisor).setScale(3, RoundingMode.FLOOR)
   }
 
   private def calcDivisorRate(currentDivisor: BigDecimal): BigDecimal ={

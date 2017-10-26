@@ -19,7 +19,7 @@ object ModelValidation {
     ).filterNot(_ == ValidationSuccess)
   }
 
-  private def validLeaseDetails(request: Request): ValidationResult = {
+  private[validators] def validLeaseDetails(request: Request): ValidationResult = {
     request.holdingType match {
       case HoldingTypes.freehold  => ValidationSuccess
       case HoldingTypes.leasehold =>
@@ -34,9 +34,9 @@ object ModelValidation {
     }
   }
 
-  private def validLeaseTerm(request: Request): ValidationResult = {
-   request.leaseDetails.map { lease =>
-     val rentsList = Seq(Some(lease.year1Rent),
+   private[validators] def validLeaseTerm(request: Request): ValidationResult = {
+     request.leaseDetails.map { lease =>
+      val rentsList = Seq(Some(lease.year1Rent),
        lease.year2Rent,
        lease.year3Rent,
        lease.year4Rent,
@@ -48,7 +48,7 @@ object ModelValidation {
      if(yearsRequired == rentsList.size || yearsRequired > 5 && rentsList.size == 5){
        ValidationSuccess
      }else{
-       ValidationFailure(s"Lease term: ${lease.leaseTerm.years} does not match amount of lease year rents: ${rentsList.size}")
+       ValidationFailure(s"Lease term: ${lease.leaseTerm.years} does not match amount of lease year rents: ${rentsList.size} and ${lease.leaseTerm.daysInPartialYear} partial days")
      }
    }.getOrElse(ValidationSuccess)
   }

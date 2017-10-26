@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 import calculation.enums.{HoldingTypes, PropertyTypes}
 import calculation.models.{LeaseDetails, LeaseTerm, PropertyDetails, Request}
+import calculation.services.BaseCalculationService
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ModelValidationSpec extends UnitSpec {
@@ -27,7 +28,7 @@ class ModelValidationSpec extends UnitSpec {
     replaceMainResidence = None
   )
 
-  private val validLeaseDetails = LeaseDetails(
+  private val validTestLeaseDetails = LeaseDetails(
     startDate = LocalDate.of(2000, 1, 30),
     endDate = LocalDate.of(2099, 12, 31),
     leaseTerm = LeaseTerm(
@@ -43,6 +44,454 @@ class ModelValidationSpec extends UnitSpec {
   )
 
   import ModelValidation._
+
+  "validLeaseDetails" should{
+    "return a ValidationSuccess" when{
+      "the Holding Type is Freehold" in{
+        val model = Request(
+          holdingType = HoldingTypes.freehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = None
+        )
+        validLeaseDetails(model) shouldBe ValidationSuccess
+      }
+
+      "the Holding Type is leasehold & only the year1Rent has been applied" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 1,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = None,
+          year3Rent = None,
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseDetails(model) shouldBe ValidationSuccess
+      }
+
+      "the Holding Type is leasehold & only the year[1-5]Rent has been applied" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 5,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(5000),
+          year3Rent = Some(5000),
+          year4Rent = Some(5000),
+          year5Rent = Some(5000)
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseDetails(model) shouldBe ValidationSuccess
+      }
+
+      "the Holding Type is leasehold & only the year[1-4]Rent has been applied" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 4,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(5000),
+          year3Rent = Some(5000),
+          year4Rent = Some(5000),
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseDetails(model) shouldBe ValidationSuccess
+      }
+
+      "the Holding Type is leasehold & only the year[1-3]Rent has been applied" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 3,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(5000),
+          year3Rent = Some(5000),
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseDetails(model) shouldBe ValidationSuccess
+      }
+
+      "the Holding Type is leasehold & only the year[1-2]Rent has been applied" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 2,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(5000),
+          year3Rent = None,
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseDetails(model) shouldBe ValidationSuccess
+      }
+    }
+
+    "return a ValidationFailure" when{
+      "the Holding Type is leasehold & only the year1Rent and year3Rent has been applied" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 2,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = None,
+          year3Rent = Some(5000),
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
+      }
+
+      "the Holding Type is leasehold & only the year[1-2]Rent and year4Rent has been applied" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 3,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(5000),
+          year3Rent = None,
+          year4Rent = Some(5000),
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
+      }
+
+      "the Holding Type is leasehold & only the year[1-3]Rent and year5Rent has been applied" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 4,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(5000),
+          year3Rent = Some(5000),
+          year4Rent = None,
+          year5Rent = Some(5000)
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
+      }
+    }
+  }
+
+  "validLeaseTerm" should{
+    "return a ValidationSuccess" when{
+      "only the year1Rent has been applied and it is equal to the leaseTerm years" in{
+         val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 1,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = None,
+          year3Rent = None,
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+
+        validLeaseTerm(model) shouldBe ValidationSuccess
+      }
+
+      "the year[1-2]Rent has been applied and it is equal to the leaseTerm years" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 2,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(5000),
+          year3Rent = None,
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseTerm(model) shouldBe ValidationSuccess
+      }
+
+    "the year[1-5]Rent has been applied and the number of leaseTerm years is greater than 5" in{
+      val tempLeaseDetails = LeaseDetails(
+        startDate = LocalDate.of(2000, 1, 30),
+        endDate = LocalDate.of(2099, 12, 31),
+        leaseTerm = LeaseTerm(
+          years = 7,
+          days = 0,
+          daysInPartialYear = 0
+        ),
+        year1Rent = 5000,
+        year2Rent = Some(5000),
+        year3Rent = Some(5000),
+        year4Rent = Some(5000),
+        year5Rent = Some(5000)
+      )
+
+      val model = Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = LocalDate.of(2014, 3, 20),
+        premium = 500000,
+        highestRent = 0,
+        propertyDetails = None,
+        leaseDetails = Some(tempLeaseDetails)
+      )
+      validLeaseTerm(model) shouldBe ValidationSuccess
+    }
+
+      "the year[1-5]Rent has been applied and the number of leaseTerm years is 4 and the leaseTerm partial days is 1" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2000, 1, 30),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 4,
+            days = 0,
+            daysInPartialYear = 1
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(5000),
+          year3Rent = Some(5000),
+          year4Rent = Some(5000),
+          year5Rent = Some(5000)
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 3, 20),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails)
+        )
+        validLeaseTerm(model) shouldBe ValidationSuccess
+      }
+    }
+
+
+  "return a ValidationFailure" when{
+    "only the year1Rent has been applied and it is NOT equal to the leaseTerm years" in{
+      val tempLeaseDetails = LeaseDetails(
+        startDate = LocalDate.of(2000, 1, 30),
+        endDate = LocalDate.of(2099, 12, 31),
+        leaseTerm = LeaseTerm(
+          years = 2,
+          days = 0,
+          daysInPartialYear = 0
+        ),
+        year1Rent = 5000,
+        year2Rent = None,
+        year3Rent = None,
+        year4Rent = None,
+        year5Rent = None
+      )
+
+      val model = Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = LocalDate.of(2014, 3, 20),
+        premium = 500000,
+        highestRent = 0,
+        propertyDetails = None,
+        leaseDetails = Some(tempLeaseDetails)
+      )
+
+      validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 2 does not match amount of lease year rents: 1 and 0 partial days")
+    }
+
+    "the year[1-4]Rent has been applied and the number of leaseTerm years is greater than 5" in{
+      val tempLeaseDetails = LeaseDetails(
+        startDate = LocalDate.of(2000, 1, 30),
+        endDate = LocalDate.of(2099, 12, 31),
+        leaseTerm = LeaseTerm(
+          years = 7,
+          days = 0,
+          daysInPartialYear = 0
+        ),
+        year1Rent = 5000,
+        year2Rent = Some(5000),
+        year3Rent = Some(5000),
+        year4Rent = Some(5000),
+        year5Rent = None
+      )
+
+      val model = Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = LocalDate.of(2014, 3, 20),
+        premium = 500000,
+        highestRent = 0,
+        propertyDetails = None,
+        leaseDetails = Some(tempLeaseDetails)
+      )
+      validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 7 does not match amount of lease year rents: 4 and 0 partial days")
+    }
+
+    "the year[1-4]Rent has been applied and the number of leaseTerm years is 4 and the leaseTerm partial days is 1" in{
+      val tempLeaseDetails = LeaseDetails(
+        startDate = LocalDate.of(2000, 1, 30),
+        endDate = LocalDate.of(2099, 12, 31),
+        leaseTerm = LeaseTerm(
+          years = 4,
+          days = 0,
+          daysInPartialYear = 1
+        ),
+        year1Rent = 5000,
+        year2Rent = Some(5000),
+        year3Rent = Some(5000),
+        year4Rent = Some(5000),
+        year5Rent = None
+      )
+
+      val model = Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = LocalDate.of(2014, 3, 20),
+        premium = 500000,
+        highestRent = 0,
+        propertyDetails = None,
+        leaseDetails = Some(tempLeaseDetails)
+      )
+      validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 4 does not match amount of lease year rents: 4 and 1 partial days")
+    }
+   }
+  }
 
   "validPropertyDetailsStructure" should {
     "Return a ValidationSuccess for a PropertyDetailsModel" when {
@@ -111,7 +560,7 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(validLeaseDetails)
+          leaseDetails = Some(validTestLeaseDetails)
         )
 
         listValidationErrors(model) shouldBe Seq.empty
@@ -139,7 +588,7 @@ class ModelValidationSpec extends UnitSpec {
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
-            leaseDetails = Some(validLeaseDetails)
+            leaseDetails = Some(validTestLeaseDetails)
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -153,7 +602,7 @@ class ModelValidationSpec extends UnitSpec {
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
-            leaseDetails = Some(validLeaseDetails)
+            leaseDetails = Some(validTestLeaseDetails)
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -181,7 +630,7 @@ class ModelValidationSpec extends UnitSpec {
             premium = 500000,
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
-            leaseDetails = Some(validLeaseDetails)
+            leaseDetails = Some(validTestLeaseDetails)
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -247,7 +696,7 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(validLeaseDetails)
+          leaseDetails = Some(validTestLeaseDetails)
         )
 
         listValidationErrors(model) shouldBe Seq(

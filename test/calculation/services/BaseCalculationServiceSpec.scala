@@ -249,9 +249,9 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
     "return a result of 30753" when {
       "given 3 years, 0 partial days with rents [10000,11000,12000,None,None]" in {
-        val leaseT = LeaseTerm(years = 3,days = 0, daysInPartialYear = 0)
+        val leaseT = LeaseTerm(years = 3, days = 0, daysInPartialYear = 0)
         val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
-          endDate = LocalDate.of(2049, 12,  31),
+          endDate = LocalDate.of(2049, 12, 31),
           leaseTerm = leaseT,
           year1Rent = 10000,
           year2Rent = Some(11000),
@@ -261,120 +261,184 @@ class BaseCalculationServiceSpec extends UnitSpec {
         )
         BaseCalculationService.calculateNPV(leaseDetails) shouldBe 30753
       }
-
-      "return a result of 42082" when {
-        "given 4 years, 0 partial days with rents [10000,11000,12000,13000,None]" in {
-          val leaseT = LeaseTerm(years = 4, days = 0, daysInPartialYear = 0)
-          val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
-            endDate = LocalDate.of(2049, 12, 31),
-            leaseTerm = leaseT,
-            year1Rent = 10000,
-            year2Rent = Some(11000),
-            year3Rent = Some(12000),
-            year4Rent = Some(13000),
-            year5Rent = None
-          )
-          BaseCalculationService.calculateNPV(leaseDetails) shouldBe 42082
-        }
-      }
-
-      "return a result of 53870" when {
-        "given 5 years, 0 partial days with rents [10000,11000,12000,13000,14000]" in {
-          val leaseT = LeaseTerm(years = 5, days = 0, daysInPartialYear = 0)
-          val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
-            endDate = LocalDate.of(2049, 12, 31),
-            leaseTerm = leaseT,
-            year1Rent = 10000,
-            year2Rent = Some(11000),
-            year3Rent = Some(12000),
-            year4Rent = Some(13000),
-            year5Rent = Some(14000)
-          )
-          BaseCalculationService.calculateNPV(leaseDetails) shouldBe 53870
-        }
-      }
-
-      "return a result of 65259" when {
-        "given 6 years, 0 partial days with rents [10000,11000,12000,13000,14000]" in {
-          val leaseT = LeaseTerm(years = 6, days = 0, daysInPartialYear = 0)
-          val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
-            endDate = LocalDate.of(2049, 12, 31),
-            leaseTerm = leaseT,
-            year1Rent = 10000,
-            year2Rent = Some(11000),
-            year3Rent = Some(12000),
-            year4Rent = Some(13000),
-            year5Rent = Some(14000)
-          )
-          BaseCalculationService.calculateNPV(leaseDetails) shouldBe 65259
-        }
-      }
-
-      "return a result of 377,835" when {
-        "given 100 years, 0 partial days with rents [10000,11000,12000,13000,14000]" in {
-          val leaseT = LeaseTerm(years = 100, days = 0, daysInPartialYear = 0)
-          val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
-            endDate = LocalDate.of(2049, 12, 31),
-            leaseTerm = leaseT,
-            year1Rent = 10000,
-            year2Rent = Some(11000),
-            year3Rent = Some(12000),
-            year4Rent = Some(13000),
-            year5Rent = Some(14000)
-          )
-          BaseCalculationService.calculateNPV(leaseDetails) shouldBe 377835
-        }
-      }
-
-      "return a result of 54834" when {
-        "given 5 years, 31 partial days and 366 daysInPartialYear with rents [10000,11000,12000,13000,14000]" in {
-          val leaseT = LeaseTerm(years = 5, days = 31, daysInPartialYear = 366)
-          val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
-            endDate = LocalDate.of(2049, 12, 31),
-            leaseTerm = leaseT,
-            year1Rent = 10000,
-            year2Rent = Some(11000),
-            year3Rent = Some(12000),
-            year4Rent = Some(13000),
-            year5Rent = Some(14000)
-          )
-          BaseCalculationService.calculateNPV(leaseDetails) shouldBe 54834
-        }
-      }
-
-      "return a result of 272680" when {
-        "given 35 years, 181 partial days and 365 daysInPartialYear with rents [10000,11000,12000,13000,14000]" in {
-          val leaseT = LeaseTerm(years = 35, days = 181, daysInPartialYear = 365)
-          val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
-            endDate = LocalDate.of(2049, 12, 31),
-            leaseTerm = leaseT,
-            year1Rent = 10000,
-            year2Rent = Some(11000),
-            year3Rent = Some(12000),
-            year4Rent = Some(13000),
-            year5Rent = Some(14000)
-          )
-          BaseCalculationService.calculateNPV(leaseDetails) shouldBe 272680
-        }
-      }
-
-      "return a result of 237461" when {
-        "given 1 year, 1 partial day and 365 daysInPartialYear with rents [125000, 125000,None,None,None]" in {
-          val leaseT = LeaseTerm(years = 1, days = 1, daysInPartialYear = 365)
-          val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
-            endDate = LocalDate.of(2049, 12, 31),
-            leaseTerm = leaseT,
-            year1Rent = 125000,
-            year2Rent = Some(125000),
-            year3Rent = None,
-            year4Rent = None,
-            year5Rent = None
-          )
-          BaseCalculationService.calculateNPV(leaseDetails) shouldBe 237461
-        }
-      }
-
     }
+
+    "return a result of 42082" when {
+      "given 4 years, 0 partial days with rents [10000,11000,12000,13000,None]" in {
+        val leaseT = LeaseTerm(years = 4, days = 0, daysInPartialYear = 0)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 10000,
+          year2Rent = Some(11000),
+          year3Rent = Some(12000),
+          year4Rent = Some(13000),
+          year5Rent = None
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 42082
+      }
+    }
+
+    "return a result of 53870" when {
+      "given 5 years, 0 partial days with rents [10000,11000,12000,13000,14000]" in {
+        val leaseT = LeaseTerm(years = 5, days = 0, daysInPartialYear = 0)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 10000,
+          year2Rent = Some(11000),
+          year3Rent = Some(12000),
+          year4Rent = Some(13000),
+          year5Rent = Some(14000)
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 53870
+      }
+    }
+
+    "return a result of 65259" when {
+      "given 6 years, 0 partial days with rents [10000,11000,12000,13000,14000]" in {
+        val leaseT = LeaseTerm(years = 6, days = 0, daysInPartialYear = 0)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 10000,
+          year2Rent = Some(11000),
+          year3Rent = Some(12000),
+          year4Rent = Some(13000),
+          year5Rent = Some(14000)
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 65259
+      }
+    }
+
+    "return a result of 377,835" when {
+      "given 100 years, 0 partial days with rents [10000,11000,12000,13000,14000]" in {
+        val leaseT = LeaseTerm(years = 100, days = 0, daysInPartialYear = 0)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 10000,
+          year2Rent = Some(11000),
+          year3Rent = Some(12000),
+          year4Rent = Some(13000),
+          year5Rent = Some(14000)
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 377835
+      }
+    }
+
+    "return a result of 54834" when {
+      "given 5 years, 31 partial days and 366 daysInPartialYear with rents [10000,11000,12000,13000,14000]" in {
+        val leaseT = LeaseTerm(years = 5, days = 31, daysInPartialYear = 366)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 10000,
+          year2Rent = Some(11000),
+          year3Rent = Some(12000),
+          year4Rent = Some(13000),
+          year5Rent = Some(14000)
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 54834
+      }
+    }
+
+    "return a result of 272680" when {
+      "given 35 years, 181 partial days and 365 daysInPartialYear with rents [10000,11000,12000,13000,14000]" in {
+        val leaseT = LeaseTerm(years = 35, days = 181, daysInPartialYear = 365)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 10000,
+          year2Rent = Some(11000),
+          year3Rent = Some(12000),
+          year4Rent = Some(13000),
+          year5Rent = Some(14000)
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 272680
+      }
+    }
+
+    "return a result of 237461" when {
+      "given 1 year, 1 partial day and 365 daysInPartialYear with rents [125000, 125000,None,None,None]" in {
+        val leaseT = LeaseTerm(years = 1, days = 1, daysInPartialYear = 365)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 125000,
+          year2Rent = Some(125000),
+          year3Rent = None,
+          year4Rent = None,
+          year5Rent = None
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 237461
+      }
+    }
+
+    "return a result of 1471" when {
+      "given 4 years, 0 partial days and 365 daysInPartialYear with rents [100, 1000, 200, 300, None]" in {
+        val leaseT = LeaseTerm(years = 4, days = 0, daysInPartialYear = 365)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 100,
+          year2Rent = Some(1000),
+          year3Rent = Some(200),
+          year4Rent = Some(300),
+          year5Rent = None
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 1471
+      }
+    }
+
+    "return a result of 9024802" when {
+      "given 4 years, 0 partial days and 365 daysInPartialYear with rents [1000000, 2000000, 3000000, 4000000, None]" in {
+        val leaseT = LeaseTerm(years = 4, days = 0, daysInPartialYear = 365)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 1000000,
+          year2Rent = Some(2000000),
+          year3Rent = Some(3000000),
+          year4Rent = Some(4000000),
+          year5Rent = None
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 9024802
+      }
+    }
+
+    "return a result of 1836539" when {
+      "given 4 years, 0 partial days and 365 daysInPartialYear with rents [500000, 500000, 500000, 500000, None]" in {
+        val leaseT = LeaseTerm(years = 4, days = 0, daysInPartialYear = 365)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 500000,
+          year2Rent = Some(500000),
+          year3Rent = Some(500000),
+          year4Rent = Some(500000),
+          year5Rent = None
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 1836539
+      }
+    }
+
+    "return a result of 27655" when {
+      "given 100 years, 0 partial days and 365 daysInPartialYear with rents [1000, 1000, 1000, 1000, 1000]" in {
+        val leaseT = LeaseTerm(years = 100, days = 0, daysInPartialYear = 365)
+        val leaseDetails = LeaseDetails(startDate = LocalDate.of(1949, 1, 15),
+          endDate = LocalDate.of(2049, 12, 31),
+          leaseTerm = leaseT,
+          year1Rent = 1000,
+          year2Rent = Some(1000),
+          year3Rent = Some(1000),
+          year4Rent = Some(1000),
+          year5Rent = Some(1000)
+        )
+        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 27655
+      }
+    }
+
   }
 }
 
