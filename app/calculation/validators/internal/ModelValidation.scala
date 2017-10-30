@@ -1,7 +1,7 @@
 package calculation.validators.internal
 
 import calculation.enums.{HoldingTypes, PropertyTypes}
-import calculation.models.{PropertyDetails, Request}
+import calculation.models.{LeaseDetails, PropertyDetails, Request}
 import calculation.data.Dates._
 
 sealed trait ValidationResult
@@ -14,17 +14,43 @@ object ModelValidation {
     Seq(
       validLeaseDetails(request),
       validEffectiveDate(request),
-      validPropertyDetails(request)
+      validPropertyDetails(request),
+      validLeaseTerm(request)
     ).filterNot(_ == ValidationSuccess)
   }
 
-  private def validLeaseDetails(request: Request): ValidationResult = {
+  private[validators] def validLeaseDetails(request: Request): ValidationResult = {
     request.holdingType match {
       case HoldingTypes.freehold  => ValidationSuccess
-      case HoldingTypes.leasehold => request.leaseDetails.map {
-        _ => ValidationSuccess
+      case HoldingTypes.leasehold =>
+        request.leaseDetails.map {
+            case LeaseDetails(_, _, _, _, Some(_), Some(_), Some(_), _) => ValidationSuccess
+            case LeaseDetails(_, _, _, _, Some(_), Some(_), None, None) => ValidationSuccess
+            case LeaseDetails(_, _, _, _, Some(_), None, None, None) => ValidationSuccess
+            case LeaseDetails(_, _, _, _, None, None, None, None) => ValidationSuccess
+            case _ => ValidationFailure("Lease details have been input incorrectly")
+
       }.getOrElse(ValidationFailure("No lease details provided for leasehold property"))
     }
+  }
+
+   private[validators] def validLeaseTerm(request: Request): ValidationResult = {
+     request.leaseDetails.map { lease =>
+      val rentsList = Seq(Some(lease.year1Rent),
+       lease.year2Rent,
+       lease.year3Rent,
+       lease.year4Rent,
+       lease.year5Rent).flatten
+
+     val fullYears = lease.leaseTerm.years
+     val yearsRequired = if(fullYears < 5 && lease.leaseTerm.daysInPartialYear > 0) fullYears + 1 else fullYears
+
+     if(yearsRequired == rentsList.size || yearsRequired > 5 && rentsList.size == 5){
+       ValidationSuccess
+     }else{
+       ValidationFailure(s"Lease term: ${lease.leaseTerm.years} does not match amount of lease year rents: ${rentsList.size} and ${lease.leaseTerm.daysInPartialYear} partial days")
+     }
+   }.getOrElse(ValidationSuccess)
   }
 
   private def validEffectiveDate(request: Request): ValidationResult = {
