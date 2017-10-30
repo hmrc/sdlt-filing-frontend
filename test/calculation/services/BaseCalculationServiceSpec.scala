@@ -7,6 +7,9 @@ import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResul
 import uk.gov.hmrc.play.test.UnitSpec
 
 class BaseCalculationServiceSpec extends UnitSpec {
+
+  val testBaseCalcService = new BaseCalculationService
+
   "calculateTaxDueSlab" should {
     val slabsArray = Seq(
       Slab(threshold = 2000000, rate = 7),
@@ -17,7 +20,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
     "return a slab result with a taxDue & rate of 0" when {
       "amount is less than the minimum[125000] threshold" in {
-        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 1000, slabs = slabsArray)
+        val calculate = testBaseCalcService.calculateTaxDueSlab(amount = 1000, slabs = slabsArray)
         val slabResult = SlabResult(rate = 0, taxDue = 0)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -25,7 +28,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
       }
 
       "amount is equal to the minimum[125000] threshold" in {
-        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 125000, slabs = slabsArray)
+        val calculate = testBaseCalcService.calculateTaxDueSlab(amount = 125000, slabs = slabsArray)
         val slabResult = SlabResult(rate = 0, taxDue = 0)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -35,7 +38,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
     "return a slab result with a taxDue of 1250 & rate of 1" when {
       "amount is greater than the minimum[125000] threshold and less than 250000" in {
-        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 125001, slabs = slabsArray)
+        val calculate = testBaseCalcService.calculateTaxDueSlab(amount = 125001, slabs = slabsArray)
         val slabResult = SlabResult(rate = 1, taxDue = 1250)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -45,7 +48,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
     "return a slab result with a taxDue of 100000 & rate of 5" when {
       "amount is equal to the highest[2000000] threshold" in {
-        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 2000000, slabs = slabsArray)
+        val calculate = testBaseCalcService.calculateTaxDueSlab(amount = 2000000, slabs = slabsArray)
         val slabResult = SlabResult(rate = 5, taxDue = 100000)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -55,7 +58,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
     "return a slab result with a taxDue of 140000 & rate of 7" when {
       "amount is greater than the highest[2000000] threshold" in {
-        val calculate = BaseCalculationService.calculateTaxDueSlab(amount = 2000001, slabs = slabsArray)
+        val calculate = testBaseCalcService.calculateTaxDueSlab(amount = 2000001, slabs = slabsArray)
         val slabResult = SlabResult(rate = 7, taxDue = 140000)
 
         calculate.taxDue shouldBe slabResult.taxDue
@@ -73,7 +76,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
       "return a totalTaxDue of 0" when {
         "the purchase amount is -1" in {
-          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = -1, slices = sliceArray)
+          val calculate = testBaseCalcService.calculateTaxDueSlice(amount = -1, slices = sliceArray)
 
           val result = Seq(
             SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
@@ -89,7 +92,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
         }
 
         "the purchase amount is 0" in {
-          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 0, slices = sliceArray)
+          val calculate = testBaseCalcService.calculateTaxDueSlice(amount = 0, slices = sliceArray)
 
           val result = Seq(
             SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
@@ -105,7 +108,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
         }
 
         "the purchase amount is 125000" in {
-          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 125000, slices = sliceArray)
+          val calculate = testBaseCalcService.calculateTaxDueSlice(amount = 125000, slices = sliceArray)
 
           val result = Seq(
             SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
@@ -123,7 +126,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
       "return a totalTaxDue of 1" when {
         "the purchase amount is 125050" in {
-          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 125050, slices = sliceArray)
+          val calculate = testBaseCalcService.calculateTaxDueSlice(amount = 125050, slices = sliceArray)
 
           val result = Seq(
             SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
@@ -141,7 +144,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
       "return a totalTaxDue of 2500" when {
         "the purchase amount is 250000" in {
-          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 250000, slices = sliceArray)
+          val calculate = testBaseCalcService.calculateTaxDueSlice(amount = 250000, slices = sliceArray)
 
           val result = Seq(
             SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
@@ -160,7 +163,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
       "return a totalTaxDue of 2501" when {
         "the purchase amount is 250020" in {
-          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 250020, slices = sliceArray)
+          val calculate = testBaseCalcService.calculateTaxDueSlice(amount = 250020, slices = sliceArray)
 
           val result = Seq(
             SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
@@ -178,7 +181,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
       "return a totalTaxDue of 93750" when {
         "the purchase amount is 1500000" in {
-          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 1500000, slices = sliceArray)
+          val calculate = testBaseCalcService.calculateTaxDueSlice(amount = 1500000, slices = sliceArray)
 
           val result = Seq(
             SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
@@ -196,7 +199,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
 
       "return a totalTaxDue of 93751" when {
         "the purchase amount is 1500009" in {
-          val calculate = BaseCalculationService.calculateTaxDueSlice(amount = 1500009, slices = sliceArray)
+          val calculate = testBaseCalcService.calculateTaxDueSlice(amount = 1500009, slices = sliceArray)
 
           val result = Seq(
             SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
@@ -227,7 +230,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = None,
           year5Rent = None
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 9661
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 9661
       }
     }
 
@@ -243,7 +246,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = None,
           year5Rent = None
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 19930
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 19930
       }
     }
 
@@ -259,7 +262,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = None,
           year5Rent = None
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 30753
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 30753
       }
     }
 
@@ -275,7 +278,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(13000),
           year5Rent = None
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 42082
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 42082
       }
     }
 
@@ -291,7 +294,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(13000),
           year5Rent = Some(14000)
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 53870
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 53870
       }
     }
 
@@ -307,7 +310,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(13000),
           year5Rent = Some(14000)
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 65259
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 65259
       }
     }
 
@@ -323,7 +326,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(13000),
           year5Rent = Some(14000)
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 377835
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 377835
       }
     }
 
@@ -339,7 +342,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(13000),
           year5Rent = Some(14000)
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 54834
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 54834
       }
     }
 
@@ -355,7 +358,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(13000),
           year5Rent = Some(14000)
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 272680
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 272680
       }
     }
 
@@ -371,7 +374,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = None,
           year5Rent = None
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 237461
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 237461
       }
     }
 
@@ -387,7 +390,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(300),
           year5Rent = None
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 1471
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 1471
       }
     }
 
@@ -403,7 +406,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(4000000),
           year5Rent = None
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 9024802
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 9024802
       }
     }
 
@@ -419,7 +422,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(500000),
           year5Rent = None
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 1836539
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 1836539
       }
     }
 
@@ -435,7 +438,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
           year4Rent = Some(1000),
           year5Rent = Some(1000)
         )
-        BaseCalculationService.calculateNPV(leaseDetails) shouldBe 27655
+        testBaseCalcService.calculateNPV(leaseDetails) shouldBe 27655
       }
     }
 

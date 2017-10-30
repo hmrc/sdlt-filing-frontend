@@ -1,12 +1,16 @@
 package calculation.services
 
+import javax.inject.Singleton
+
 import calculation.models.{LeaseDetails, SliceDetails}
 import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
 
 import scala.math.BigDecimal.RoundingMode
 
+@Singleton
+class BaseCalculationService extends BaseCalculationSrv
 
-object BaseCalculationService {
+trait BaseCalculationSrv {
 
   def calculateTaxDueSlab(amount: BigDecimal, slabs: Seq[Slab]): SlabResult = {
     slabs.find(amount > _.threshold).map { firstSlabAboveAmount =>
