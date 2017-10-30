@@ -9,6 +9,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class FreeholdCalculationServiceSpec extends UnitSpec {
 
+  val testFreeholdCalcService = new FreeholdCalculationService(new BaseCalculationService)
+
   "calculating freeholdResidentialDec14Onwards" should {
 
     def baseCalculationDetails(taxDue: Int, slices: Seq[SliceDetails]) = CalculationDetails(
@@ -49,7 +51,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(125000))
+      val res = testFreeholdCalcService.freeholdResidentialDec14Onwards(baseRequest(125000))
       res shouldBe baseResult(0, baseCalculationDetails(0, resSlices))
     }
 
@@ -63,7 +65,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(125050))
+      val res = testFreeholdCalcService.freeholdResidentialDec14Onwards(baseRequest(125050))
       res shouldBe baseResult(1, baseCalculationDetails(1, resSlices))
     }
 
@@ -76,7 +78,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(250000))
+      val res = testFreeholdCalcService.freeholdResidentialDec14Onwards(baseRequest(250000))
       res shouldBe baseResult(2500, baseCalculationDetails(2500, resSlices))
     }
 
@@ -89,7 +91,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(250020))
+      val res = testFreeholdCalcService.freeholdResidentialDec14Onwards(baseRequest(250020))
       res shouldBe baseResult(2501, baseCalculationDetails(2501, resSlices))
     }
 
@@ -102,7 +104,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(925000))
+      val res = testFreeholdCalcService.freeholdResidentialDec14Onwards(baseRequest(925000))
       res shouldBe baseResult(36250, baseCalculationDetails(36250, resSlices))
     }
 
@@ -115,7 +117,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(925010))
+      val res = testFreeholdCalcService.freeholdResidentialDec14Onwards(baseRequest(925010))
       res shouldBe baseResult(36251, baseCalculationDetails(36251, resSlices))
     }
 
@@ -128,7 +130,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(1500000))
+      val res = testFreeholdCalcService.freeholdResidentialDec14Onwards(baseRequest(1500000))
       res shouldBe baseResult(93750, baseCalculationDetails(93750, resSlices))
     }
 
@@ -141,7 +143,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 1)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialDec14Onwards(baseRequest(1500009))
+      val res = testFreeholdCalcService.freeholdResidentialDec14Onwards(baseRequest(1500009))
       res shouldBe baseResult(93751, baseCalculationDetails(93751, resSlices))
 
     }
@@ -179,53 +181,53 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     )
 
     "return 0 for purchase price of 125000" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(125000))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(125000))
       res shouldBe baseResult(0, baseCalculationDetails(0, 0))
     }
 
     "return 1250 for purchase price of 125001" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(125001))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(125001))
       res shouldBe baseResult(1250, baseCalculationDetails(1250, 1))
     }
 
     "return 2500 for purchase price of 250000" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(250000))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(250000))
       res shouldBe baseResult(2500, baseCalculationDetails(2500, 1))
     }
 
     "return 7500 for purchase price of 250001" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(250001))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(250001))
       res shouldBe baseResult(7500, baseCalculationDetails(7500, 3))
     }
 
     "return 15000 for purchase price of 500000" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(500000))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(500000))
       res shouldBe baseResult(15000, baseCalculationDetails(15000, 3))
 
     }
 
     "return 20000 for purchase price of 500001" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(500001))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(500001))
       res shouldBe baseResult(20000, baseCalculationDetails(20000, 4))
     }
 
     "return 40000 for purchase price of 1000000" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(1000000))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(1000000))
       res shouldBe baseResult(40000, baseCalculationDetails(40000, 4))
     }
 
     "return 50000 for purchase price of 1000001" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(1000001))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(1000001))
       res shouldBe baseResult(50000, baseCalculationDetails(50000, 5))
     }
 
     "return 100000 for purchase price of 2000000" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(2000000))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(2000000))
       res shouldBe baseResult(100000, baseCalculationDetails(100000, 5))
     }
 
     "return 140000 for purchase price of 2000001" in {
-      val res = FreeholdCalculationService.freeholdResidentialMar12toDec14(baseRequest(2000001))
+      val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequest(2000001))
       res shouldBe baseResult(140000, baseCalculationDetails(140000, 7))
     }
   }
@@ -289,7 +291,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 250000, to = None,         rate = 5, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdNonResidentialMar16Onwards(baseRequest(150000))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar16Onwards(baseRequest(150000))
       res shouldBe Seq(
         baseResult(0, baseSliceCalculationDetails(0, slices)),
         basePrevResult(0, baseSlabCalculationDetails(0, 0))
@@ -303,7 +305,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 250000, to = None,         rate = 5, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdNonResidentialMar16Onwards(baseRequest(150100))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar16Onwards(baseRequest(150100))
       res shouldBe Seq(
         baseResult(2, baseSliceCalculationDetails(2, slices)),
         basePrevResult(1501, baseSlabCalculationDetails(1501, 1))
@@ -317,7 +319,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 250000, to = None,         rate = 5, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdNonResidentialMar16Onwards(baseRequest(250000))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar16Onwards(baseRequest(250000))
       res shouldBe Seq(
         baseResult(2000, baseSliceCalculationDetails(2000, slices)),
         basePrevResult(2500, baseSlabCalculationDetails(2500, 1))
@@ -331,7 +333,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 250000, to = None,         rate = 5, taxDue = 5)
       )
 
-      val res = FreeholdCalculationService.freeholdNonResidentialMar16Onwards(baseRequest(250100))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar16Onwards(baseRequest(250100))
       res shouldBe Seq(
         baseResult(2005, baseSliceCalculationDetails(2005, slices)),
         basePrevResult(7503, baseSlabCalculationDetails(7503, 3))
@@ -345,7 +347,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 250000, to = None,         rate = 5, taxDue = 12500)
       )
 
-      val res = FreeholdCalculationService.freeholdNonResidentialMar16Onwards(baseRequest(500000))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar16Onwards(baseRequest(500000))
       res shouldBe Seq(
         baseResult(14500, baseSliceCalculationDetails(14500, slices)),
         basePrevResult(15000, baseSlabCalculationDetails(15000, 3))
@@ -359,7 +361,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 250000, to = None,         rate = 5, taxDue = 12505)
       )
 
-      val res = FreeholdCalculationService.freeholdNonResidentialMar16Onwards(baseRequest(500100))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar16Onwards(baseRequest(500100))
       res shouldBe Seq(
         baseResult(14505, baseSliceCalculationDetails(14505, slices)),
         basePrevResult(20004, baseSlabCalculationDetails(20004, 4))
@@ -399,32 +401,32 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     )
 
     "return 0 for purchase price of 150000" in {
-      val res = FreeholdCalculationService.freeholdNonResidentialMar12toMar16(baseRequest(150000))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequest(150000))
       res shouldBe baseResult(0, baseCalculationDetails(0, 0))
     }
 
     "return 1500 for purchase price of 150001" in {
-      val res = FreeholdCalculationService.freeholdNonResidentialMar12toMar16(baseRequest(150001))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequest(150001))
       res shouldBe baseResult(1500, baseCalculationDetails(1500, 1))
     }
 
     "return 2500 for purchase price of 250000" in {
-      val res = FreeholdCalculationService.freeholdNonResidentialMar12toMar16(baseRequest(250000))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequest(250000))
       res shouldBe baseResult(2500, baseCalculationDetails(2500, 1))
     }
 
     "return 7500 for purchase price of 250001" in {
-      val res = FreeholdCalculationService.freeholdNonResidentialMar12toMar16(baseRequest(250001))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequest(250001))
       res shouldBe baseResult(7500, baseCalculationDetails(7500, 3))
     }
 
     "return 15000 for purchase price of 500000" in {
-      val res = FreeholdCalculationService.freeholdNonResidentialMar12toMar16(baseRequest(500000))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequest(500000))
       res shouldBe baseResult(15000, baseCalculationDetails(15000, 3))
     }
 
     "return 20000 for purchase price of 500001" in {
-      val res = FreeholdCalculationService.freeholdNonResidentialMar12toMar16(baseRequest(500001))
+      val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequest(500001))
       res shouldBe baseResult(20000, baseCalculationDetails(20000, 4))
     }
   }
@@ -509,7 +511,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(39999.99))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(39999.99))
       res shouldBe Seq(
         baseResult(0, baseSliceCalculationDetails(0, currentSlices)),
         basePrevResult(0, prevSliceCalculationDetails(0, prevSlices))
@@ -533,7 +535,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(40000))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(40000))
       res shouldBe Seq(
         baseResult(1200, baseSliceCalculationDetails(1200, currentSlices), Some(hint("£1,200"))),
         basePrevResult(0, prevSliceCalculationDetails(0, prevSlices))
@@ -557,7 +559,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(125000))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(125000))
       res shouldBe Seq(
         baseResult(3750, baseSliceCalculationDetails(3750, currentSlices), Some(hint("£3,750"))),
         basePrevResult(0, prevSliceCalculationDetails(0, prevSlices))
@@ -581,7 +583,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(125100))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(125100))
       res shouldBe Seq(
         baseResult(3755, baseSliceCalculationDetails(3755, currentSlices), Some(hint("£3,753"))),
         basePrevResult(2, prevSliceCalculationDetails(2, prevSlices))
@@ -605,7 +607,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(250000))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(250000))
       res shouldBe Seq(
         baseResult(10000, baseSliceCalculationDetails(10000, currentSlices), Some(hint("£7,500"))),
         basePrevResult(2500, prevSliceCalculationDetails(2500, prevSlices))
@@ -629,7 +631,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(250100))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(250100))
       res shouldBe Seq(
         baseResult(10008, baseSliceCalculationDetails(10008, currentSlices), Some(hint("£7,503"))),
         basePrevResult(2505, prevSliceCalculationDetails(2505, prevSlices))
@@ -653,7 +655,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(925000))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(925000))
       res shouldBe Seq(
         baseResult(64000, baseSliceCalculationDetails(64000, currentSlices), Some(hint("£27,750"))),
         basePrevResult(36250, prevSliceCalculationDetails(36250, prevSlices))
@@ -677,7 +679,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(925100))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(925100))
       res shouldBe Seq(
         baseResult(64013, baseSliceCalculationDetails(64013, currentSlices), Some(hint("£27,753"))),
         basePrevResult(36260, prevSliceCalculationDetails(36260, prevSlices))
@@ -701,7 +703,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(1500000))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(1500000))
       res shouldBe Seq(
         baseResult(138750, baseSliceCalculationDetails(138750, currentSlices), Some(hint("£45,000"))),
         basePrevResult(93750, prevSliceCalculationDetails(93750, prevSlices))
@@ -725,7 +727,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 12)
       )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(1500100))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(1500100))
       res shouldBe Seq(
         baseResult(138765, baseSliceCalculationDetails(138765, currentSlices), Some(hint("£45,003"))),
         basePrevResult(93762, prevSliceCalculationDetails(93762, prevSlices))
@@ -749,7 +751,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 8820000)
         )
 
-      val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(baseRequest(75000000))
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequest(75000000))
       res shouldBe Seq(
         baseResult(11163750, baseSliceCalculationDetails(11163750, currentSlices), Some(hint("£2,250,000"))),
         basePrevResult(8913750, prevSliceCalculationDetails(8913750, prevSlices))
@@ -790,7 +792,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
           SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
         )
 
-        val res = FreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(req)
+        val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(req)
         res shouldBe Seq(
           baseResult(3755, baseSliceCalculationDetails(3755, currentSlices), None),
           basePrevResult(2, prevSliceCalculationDetails(2, prevSlices))
@@ -806,7 +808,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         twoOrMoreProperties = Some(true),
         replaceMainResidence = Some(false))
       )
-      FreeholdCalculationService.individualWithAdditionalProperty(propertyDetails) shouldBe true
+      testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails) shouldBe true
     }
     "return true for a non-individual" in {
       val propertyDetails = Some(PropertyDetails(
@@ -814,7 +816,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         twoOrMoreProperties = None,
         replaceMainResidence = None)
       )
-      FreeholdCalculationService.individualWithAdditionalProperty(propertyDetails) shouldBe false
+      testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails) shouldBe false
     }
     "throw the correct exception when twoOrMoreProperties is required but undefined" in {
       val propertyDetails = Some(PropertyDetails(
@@ -823,7 +825,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         replaceMainResidence = Some(false))
       )
       the[RequiredValueNotDefinedException]
-         .thrownBy(FreeholdCalculationService.individualWithAdditionalProperty(propertyDetails))
+         .thrownBy(testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails))
             .should(have message "[FreeholdCalculationService] [additionalProperty]" +
               s" - twoOrMoreProperties: None, replaceMainResidence: Some(false)")
     }
@@ -834,14 +836,14 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         replaceMainResidence = None)
       )
       the[RequiredValueNotDefinedException]
-        .thrownBy(FreeholdCalculationService.individualWithAdditionalProperty(propertyDetails))
+        .thrownBy(testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails))
         .should(have message "[FreeholdCalculationService] [additionalProperty]" +
           s" - twoOrMoreProperties: Some(true), replaceMainResidence: None")
     }
     "throw the correct exception when propertyDetails is undefined" in {
       val propertyDetails = None
       the[RequiredValueNotDefinedException]
-        .thrownBy(FreeholdCalculationService.individualWithAdditionalProperty(propertyDetails))
+        .thrownBy(testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails))
         .should(have message "[FreeholdCalculationService] [individualWithAdditionalProperty]" +
           " - property details not defined in freehold residential additional property calculation")
     }

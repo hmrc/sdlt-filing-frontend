@@ -1,16 +1,25 @@
 package calculation.services
 
+import javax.inject.{Inject, Singleton}
+
 import calculation.data.{SlabRatesTables, SliceRatesTables}
 import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.models.{PropertyDetails, Request, Result}
 import calculation.factories.ResultFactory
 
-object FreeholdCalculationService {
+@Singleton
+class FreeholdCalculationService @Inject()(
+  val baseCalculationService: BaseCalculationService
+) extends FreeholdCalculationSrv
+
+trait FreeholdCalculationSrv {
+
+  val baseCalculationService: BaseCalculationSrv
 
   def freeholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
     val prevResult = freeholdResidentialDec14Onwards(request, asPreviousResult = true)
 
-    val currentPremiumResult = BaseCalculationService.calculateTaxDueSlice(
+    val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
       if(request.premium < 40000) 0 else request.premium,
       SliceRatesTables.freeholdResidentialAddPropApr16OnwardsRates.slices
     )
@@ -27,7 +36,7 @@ object FreeholdCalculationService {
   }
 
   def freeholdResidentialDec14Onwards(request: Request, asPreviousResult: Boolean = false): Result = {
-    val premiumResult = BaseCalculationService.calculateTaxDueSlice(
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
       SliceRatesTables.freeholdResidentialDec14OnwardsRates.slices
     )
@@ -36,7 +45,7 @@ object FreeholdCalculationService {
   }
 
   def freeholdResidentialMar12toDec14(request: Request): Result = {
-    val premiumResult = BaseCalculationService.calculateTaxDueSlab(
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
       SlabRatesTables.freeholdResidentialMar12toDec14Rates.slabs
     )
@@ -45,7 +54,7 @@ object FreeholdCalculationService {
   }
 
   def freeholdNonResidentialMar16Onwards(request: Request): Seq[Result] = {
-    val premiumResult = BaseCalculationService.calculateTaxDueSlice(
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
       SliceRatesTables.freeholdNonResidentialMar16OnwardsRates.slices
     )
@@ -57,7 +66,7 @@ object FreeholdCalculationService {
   }
 
   def freeholdNonResidentialMar12toMar16(request: Request, asPrevResult: Boolean = false): Result = {
-    val premiumResult = BaseCalculationService.calculateTaxDueSlab(
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
       SlabRatesTables.freeholdNonResidentialMar12toMar16Rates.slabs
     )
