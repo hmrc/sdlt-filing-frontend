@@ -23,4 +23,20 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     )
   )
 
+  def leaseholdResidentialMar12toDec14Request(premium: BigDecimal) = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = LocalDate.of(2013, 2, 14),
+    premium = premium,
+    highestRent = 1000,
+    leaseDetails = Some(testLeaseDetails),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = None
+      )
+    )
+  )
+
 }

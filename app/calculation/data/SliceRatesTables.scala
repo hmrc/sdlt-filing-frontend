@@ -49,4 +49,11 @@ object SliceRatesTables {
     )
   )
 
+  val leaseholdResidentialMar12toDec14LeaseRates = SliceTable(
+    slices = Seq(
+      Slice(from = 0,      to = Some(125000), rate = 0),
+      Slice(from = 125000, to = None,         rate = 1)
+    )
+  )
+
 }
