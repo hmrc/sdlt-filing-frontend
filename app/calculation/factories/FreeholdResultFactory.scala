@@ -6,7 +6,7 @@ import calculation.models.{CalculationDetails, Result}
 import calculation.models.calculationtables.{SlabResult, SliceResult}
 import calculation.utils.StringUtils
 
-object ResultFactory {
+object FreeholdResultFactory {
 
   def freeholdResidentialAddPropApr16OnwardsResult(sliceResult: SliceResult, refundEntitlement: Option[Int]): Result = {
 

@@ -18,6 +18,14 @@ object ResultText {
   val DETAIL_COL_HEADER_PURCHASE_PRICE = "Purchase price bands (£)"
   val DETAIL_FOOTER_TOTAL              = "Total SDLT due"
 
+  val DETAIL_HEADING_SDLT_ON_RENT = "This is a breakdown of how the amount of SDLT on the rent was calculated"
+  val DETAIL_COL_HEADER_RENT      = "Rent bands (£)"
+  val DETAIL_FOOTER_RENT          = "SDLT due on the rent"
+
+  val DETAIL_HEADING_SDLT_ON_PREM = "This is a breakdown of how the amount of SDLT on the premium was calculated"
+  val DETAIL_COL_HEADER_PREM      = "Premium bands (£)"
+  val DETAIL_FOOTER_PREM          = "SDLT due on the premium"
+
   val DETAIL_HEADING_TOTAL_SDLT_FROM_MAR_2016 = s"$DETAIL_HEADING_TOTAL_SDLT $BASED_ON_THE_RULES_FROM $DATE_17_03_2016"
   val DETAIL_HEADING_TOTAL_SDLT_BEFORE_APR_2016 = s"$DETAIL_HEADING_TOTAL_SDLT $BASED_ON_THE_RULES_BEFORE $DATE_01_04_2016"
   val DETAIL_HEADING_TOTAL_SDLT_FROM_APR_2016 = s"$DETAIL_HEADING_TOTAL_SDLT $BASED_ON_THE_RULES_FROM $DATE_01_04_2016"

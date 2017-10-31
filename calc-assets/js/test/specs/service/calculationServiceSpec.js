@@ -950,7 +950,7 @@
             calcLeaseResPremAndRent_201412_Undef_Results[0].taxCalcs[1].slices[3].taxDue = 57500;
             expect(service.calcLeaseResPremAndRent_201412_Undef(1500000, 125100)).toEqual(calcLeaseResPremAndRent_201412_Undef_Results);
         });
-        it(' calcLeaseResPremAndRent_201412_Undef should return 0, 0 for purchase price of 1500100, npv of 250000', function() {
+        it(' calcLeaseResPremAndRent_201412_Undef should return return 93762, 1 for purchase price of 1500100, npv of 250000', function() {
             calcLeaseResPremAndRent_201412_Undef_Results[0].totalTax = 95012;
             calcLeaseResPremAndRent_201412_Undef_Results[0].npv = 250000;
             calcLeaseResPremAndRent_201412_Undef_Results[0].taxCalcs[0].taxDue = 1250;
