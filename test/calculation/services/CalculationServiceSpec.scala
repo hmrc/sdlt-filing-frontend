@@ -29,7 +29,6 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
   )
 
   "selectCalculationFunction" should {
-
     val calcDetails = CalculationDetails(
       taxType = TaxTypes.premium,
       calcType = CalcTypes.slab,
@@ -41,54 +40,26 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       slices = None
     )
 
-    val freeholdNonResAfter2016Result = Seq(
+    val resultInSeq = Seq(
       Result(
         totalTax = 0,
-        resultHeading = Some("Freehold Non-Resident after March 17 2016"),
+        resultHeading = Some("Some text"),
         resultHint = None,
         npv = None,
         taxCalcs = Seq(calcDetails)
       )
     )
 
-    val freeholdNonResBefore2016Result = Result(
+    val result = Result(
         totalTax = 0,
-        resultHeading = Some("Freehold Non-Resident before March 17 2016"),
+        resultHeading = Some("Some text"),
         resultHint = None,
         npv = None,
         taxCalcs = Seq(calcDetails)
-      )
-
-    val freeholdResAfter2016Result = Seq(
-      Result(
-        totalTax = 0,
-        resultHeading = Some("Freehold Resident after April 17 2016"),
-        resultHint = None,
-        npv = None,
-        taxCalcs = Seq(calcDetails)
-      )
     )
-
-    val freeholdResAfter2014Result = Result(
-        totalTax = 0,
-        resultHeading = Some("Freehold Resident after December 4 2014"),
-        resultHint = None,
-        npv = None,
-        taxCalcs = Seq(calcDetails)
-      )
-
-    val freeholdResAfter2012Result = Result(
-      totalTax = 0,
-      resultHeading = Some("Freehold Resident after March 22 2012"),
-      resultHint = None,
-      npv = None,
-      taxCalcs = Seq(calcDetails)
-    )
-
 
     "select the freeholdNonResidential function for March2016 onwards" when {
       "given a request with an effective date of 1/1/2017" in {
-
         val testRequest = Request(
           holdingType = HoldingTypes.freehold,
           propertyType = PropertyTypes.nonResidential,
@@ -99,18 +70,14 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           leaseDetails = None
         )
 
-
         (mockFreeholdCalculationService.freeholdNonResidentialMar16Onwards _)
           .expects(testRequest)
-          .returns(freeholdNonResAfter2016Result)
+          .returns(resultInSeq)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(freeholdNonResAfter2016Result)
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
       }
 
       "given a request with an effective date of 17/3/2016" in {
-
         val testRequest = Request(
           holdingType = HoldingTypes.freehold,
           propertyType = PropertyTypes.nonResidential,
@@ -123,18 +90,15 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdNonResidentialMar16Onwards _)
           .expects(testRequest)
-          .returns(freeholdNonResAfter2016Result)
+          .returns(resultInSeq)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(freeholdNonResAfter2016Result)
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
       }
     }
 
 
     "select the freeholdNonResidential function for March2012 to March2016" when {
       "given a request with an effective date of 16/3/2016" in {
-
         val testRequest = Request(
           holdingType = HoldingTypes.freehold,
           propertyType = PropertyTypes.nonResidential,
@@ -147,14 +111,12 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16 _)
           .expects(testRequest, false)
-          .returns(freeholdNonResBefore2016Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdNonResBefore2016Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
-      "given a request with an effective date of 2/1/2015" in {
 
+      "given a request with an effective date of 2/1/2015" in {
         val testRequest = Request(
           holdingType = HoldingTypes.freehold,
           propertyType = PropertyTypes.nonResidential,
@@ -167,15 +129,12 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16 _)
           .expects(testRequest, false)
-          .returns(freeholdNonResBefore2016Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdNonResBefore2016Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
       "given a request with an effective date of 4/3/2011" in {
-
         val testRequest = Request(
           holdingType = HoldingTypes.freehold,
           propertyType = PropertyTypes.nonResidential,
@@ -188,11 +147,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16 _)
           .expects(testRequest, false)
-          .returns(freeholdNonResBefore2016Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdNonResBefore2016Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
     }
 
@@ -210,11 +167,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards _)
           .expects(testRequest)
-          .returns(freeholdResAfter2016Result)
+          .returns(resultInSeq)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(freeholdResAfter2016Result)
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
       }
 
       "given a request with an effective date of 2/4/2016" in{
@@ -230,11 +185,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards _)
           .expects(testRequest)
-          .returns(freeholdResAfter2016Result)
+          .returns(resultInSeq)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(freeholdResAfter2016Result)
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
       }
 
       "given a request with an effective date of 1/4/2016" in{
@@ -250,11 +203,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards _)
           .expects(testRequest)
-          .returns(freeholdResAfter2016Result)
+          .returns(resultInSeq)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(freeholdResAfter2016Result)
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
       }
     }
 
@@ -272,11 +223,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialDec14Onwards _)
           .expects(testRequest, false)
-          .returns(freeholdResAfter2014Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdResAfter2014Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
       "given a request with an effective date of 5/12/2014" in{
@@ -292,11 +241,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialDec14Onwards _)
           .expects(testRequest, false)
-          .returns(freeholdResAfter2014Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdResAfter2014Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
       "given a request with an effective date of 4/12/2014" in{
@@ -312,11 +259,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialDec14Onwards _)
           .expects(testRequest, false)
-          .returns(freeholdResAfter2014Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdResAfter2014Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
     }
 
@@ -334,11 +279,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialMar12toDec14 _)
           .expects(testRequest)
-          .returns(freeholdResAfter2012Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdResAfter2012Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
       "given a request with an effective date of 16/8/2013" in{
@@ -354,11 +297,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialMar12toDec14 _)
           .expects(testRequest)
-          .returns(freeholdResAfter2012Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdResAfter2012Result))
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
       "given a request with an effective date of 23/3/2012" in{
@@ -374,11 +315,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialMar12toDec14 _)
           .expects(testRequest)
-          .returns(freeholdResAfter2012Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdResAfter2012Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
       "given a request with an effective date of 22/3/2012" in{
@@ -394,11 +333,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         (mockFreeholdCalculationService.freeholdResidentialMar12toDec14 _)
           .expects(testRequest)
-          .returns(freeholdResAfter2012Result)
+          .returns(result)
 
-        val selectRequest = testCalculationService.selectCalculationFunction(testRequest)
-
-        selectRequest shouldBe CalculationResponse(Seq(freeholdResAfter2012Result))
+         testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
       }
     }
 
@@ -413,10 +350,309 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           propertyDetails = None,
           leaseDetails = None
         )
-        
+
         the [RequiredValueNotDefinedException] thrownBy testCalculationService.selectCalculationFunction(testRequest) should have message s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
       }
-
     }
+
+///////////////////////////////////////////////////////////////////////
+
+    "select the leaseholdNonResidential function for March2016 onwards" when {
+      "given a request with an effective date of 1/1/2017" in {
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2017, 1, 1),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdNonResidentialMar16Onwards _)
+          .expects(testRequest)
+          .returns(resultInSeq)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
+      }
+
+      "given a request with an effective date of 17/3/2016" in {
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2016, 3, 17),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdNonResidentialMar16Onwards _)
+          .expects(testRequest)
+          .returns(resultInSeq)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
+      }
+    }
+
+
+    "select the leaseholdNonResidential function for March2012 to March2016" when {
+      "given a request with an effective date of 16/3/2016" in {
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2016, 3, 16),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdNonResidentialMar12toMar16 _)
+          .expects(testRequest, false)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 2/1/2015" in {
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2015, 1, 2),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdNonResidentialMar12toMar16 _)
+          .expects(testRequest, false)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 4/3/2011" in {
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2011, 3, 4),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdNonResidentialMar12toMar16 _)
+          .expects(testRequest, false)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+    }
+
+    "select the leaseholdResidential function for April2016 onwards" when {
+      "given a request with an effective date of 6/5/2017" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2017, 5, 6),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialAddPropApr16Onwards _)
+          .expects(testRequest)
+          .returns(resultInSeq)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
+      }
+
+      "given a request with an effective date of 2/4/2016" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2016, 4, 2),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialAddPropApr16Onwards _)
+          .expects(testRequest)
+          .returns(resultInSeq)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
+      }
+
+      "given a request with an effective date of 1/4/2016" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2016, 4, 1),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialAddPropApr16Onwards _)
+          .expects(testRequest)
+          .returns(resultInSeq)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(resultInSeq)
+      }
+    }
+
+    "select the leaseholdResidential function for December2014 to April2016" when {
+      "given a request with an effective date of 31/3/2016" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2016, 3, 31),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards _)
+          .expects(testRequest, false)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 5/12/2014" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 12, 5),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards _)
+          .expects(testRequest, false)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 4/12/2014" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 12, 4),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards _)
+          .expects(testRequest, false)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+    }
+
+    "select the leaseholdResidential function for March2012 to December2014" when {
+      "given a request with an effective date of 3/12/2014" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2014, 12, 3),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialMar12toDec14 _)
+          .expects(testRequest)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 16/8/2013" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2013, 8, 16),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialMar12toDec14 _)
+          .expects(testRequest)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 23/3/2012" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2012, 3, 23),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialMar12toDec14 _)
+          .expects(testRequest)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 22/3/2012" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2012, 3, 22),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        (mockLeaseholdCalculationService.leaseholdResidentialMar12toDec14 _)
+          .expects(testRequest)
+          .returns(result)
+
+        testCalculationService.selectCalculationFunction(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+    }
+
+    "throw an exception for leasehold residential" when {
+      "given a request with an effective date of 21/3/2012" in{
+        val testRequest = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2012, 3, 21),
+          premium = BigDecimal(0),
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = None
+        )
+
+        the [RequiredValueNotDefinedException] thrownBy testCalculationService.selectCalculationFunction(testRequest) should have message s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
+      }
+    }
+
   }
 }
