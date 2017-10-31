@@ -10,13 +10,16 @@ case class   ValidationFailure(err: String) extends ValidationResult
 
 object ModelValidation {
 
-  def listValidationErrors(request: Request): Seq[ValidationResult] = {
+  def listValidationErrors(request: Request): Seq[ValidationFailure] = {
     Seq(
       validLeaseDetails(request),
       validEffectiveDate(request),
       validPropertyDetails(request),
       validLeaseTerm(request)
-    ).filterNot(_ == ValidationSuccess)
+    ).flatMap {
+      case err :ValidationFailure => Some(err)
+      case _ => None
+    }
   }
 
   private[validators] def validLeaseDetails(request: Request): ValidationResult = {
