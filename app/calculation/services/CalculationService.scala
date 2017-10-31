@@ -37,15 +37,15 @@ trait CalculationSrv{
 
   def freeholdResidential (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.isAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>  CalculationResponse(freeCalculationService.freeholdResidentialAddPropApr16Onwards(request))
-      case date if date.isAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialDec14Onwards(request)))
-      case date if date.isAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(freeCalculationService.freeholdResidentialMar12toDec14(request)))
+      case date if compareDates(date, Dates.APRIL2016_RESIDENTIAL_DATE) =>  CalculationResponse(freeCalculationService.freeholdResidentialAddPropApr16Onwards(request))
+      case date if compareDates(date, Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialDec14Onwards(request)))
+      case date if compareDates(date, Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(freeCalculationService.freeholdResidentialMar12toDec14(request)))
       case _ => throw new RequiredValueNotDefinedException(s"Date of ${request.effectiveDate} is invalid or before 22/3/2012")
     }
   }
 
   def freeholdNonResidential (request: Request): CalculationResponse = {
-    if(request.effectiveDate.isAfter(LocalDate.of(2016, 3, 17))){
+    if(compareDates(request.effectiveDate, Dates.MARCH2016_NON_RESIDENTIAL_DATE)){
       CalculationResponse(freeCalculationService.freeholdNonResidentialMar16Onwards(request))
     }else{
       CalculationResponse(Seq(freeCalculationService.freeholdNonResidentialMar12toMar16(request)))
@@ -54,4 +54,8 @@ trait CalculationSrv{
 
   def leaseholdResidential (request: Request): CalculationResponse = ???
   def leaseholdNonResidential (request: Request): CalculationResponse= ???
+
+  def compareDates(effectiveDate: LocalDate, lawDate: LocalDate): Boolean ={
+    if(effectiveDate.isAfter(lawDate) || effectiveDate.isEqual(lawDate)) true else false
+  }
 }

@@ -8,5 +8,6 @@ object Dates {
   val END_OF_MARCH_2016: LocalDate = LocalDate.of(2016, 3, 31)
   val DECEMBER2014_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2014, 12, 4)
   val APRIL2016_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2016, 4, 1)
+  val MARCH2016_NON_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2016, 3, 17)
 
 }
