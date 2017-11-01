@@ -3,7 +3,7 @@ package calculation.validators.internal
 import java.time.LocalDate
 
 import calculation.enums.{HoldingTypes, PropertyTypes}
-import calculation.models.{LeaseDetails, LeaseTerm, PropertyDetails, Request}
+import calculation.models._
 import calculation.services.BaseCalculationService
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -43,6 +43,21 @@ class ModelValidationSpec extends UnitSpec {
     year5Rent = Some(10000)
   )
 
+  private val validTestLeaseDetailsAllLessTan2000 = LeaseDetails(
+    startDate = LocalDate.of(2000, 1, 30),
+    endDate = LocalDate.of(2099, 12, 31),
+    leaseTerm = LeaseTerm(
+      years = 83,
+      days = 200,
+      daysInPartialYear = 0
+    ),
+    year1Rent = 500,
+    year2Rent = Some(1000),
+    year3Rent = Some(1000),
+    year4Rent = Some(1000),
+    year5Rent = Some(1000)
+  )
+
   import ModelValidation._
 
   "validLeaseDetails" should{
@@ -55,7 +70,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = None
+          leaseDetails = None,
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -83,7 +99,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -111,7 +128,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -139,7 +157,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -167,7 +186,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -195,7 +215,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -225,7 +246,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -253,7 +275,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -281,7 +304,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -313,7 +337,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
 
         validLeaseTerm(model) shouldBe ValidationSuccess
@@ -342,7 +367,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseTerm(model) shouldBe ValidationSuccess
       }
@@ -370,7 +396,8 @@ class ModelValidationSpec extends UnitSpec {
         premium = 500000,
         highestRent = 0,
         propertyDetails = None,
-        leaseDetails = Some(tempLeaseDetails)
+        leaseDetails = Some(tempLeaseDetails),
+        relevantRentDetails = None
       )
       validLeaseTerm(model) shouldBe ValidationSuccess
     }
@@ -398,7 +425,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(tempLeaseDetails)
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None
         )
         validLeaseTerm(model) shouldBe ValidationSuccess
       }
@@ -429,7 +457,8 @@ class ModelValidationSpec extends UnitSpec {
         premium = 500000,
         highestRent = 0,
         propertyDetails = None,
-        leaseDetails = Some(tempLeaseDetails)
+        leaseDetails = Some(tempLeaseDetails),
+        relevantRentDetails = None
       )
 
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 2 does not match amount of lease year rents: 1 and 0 partial days")
@@ -458,7 +487,8 @@ class ModelValidationSpec extends UnitSpec {
         premium = 500000,
         highestRent = 0,
         propertyDetails = None,
-        leaseDetails = Some(tempLeaseDetails)
+        leaseDetails = Some(tempLeaseDetails),
+        relevantRentDetails = None
       )
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 7 does not match amount of lease year rents: 4 and 0 partial days")
     }
@@ -486,7 +516,8 @@ class ModelValidationSpec extends UnitSpec {
         premium = 500000,
         highestRent = 0,
         propertyDetails = None,
-        leaseDetails = Some(tempLeaseDetails)
+        leaseDetails = Some(tempLeaseDetails),
+        relevantRentDetails = None
       )
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 4 does not match amount of lease year rents: 4 and 1 partial days")
     }
@@ -537,6 +568,212 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
+  "allRentsBelow2000" should {
+    def details(year2Rent: BigDecimal) = LeaseDetails(
+      startDate = LocalDate.of(2000, 1, 31),
+      endDate = LocalDate.of(2050, 1, 31),
+      leaseTerm = LeaseTerm(
+        years = 30, days = 0, daysInPartialYear = 365
+      ),
+      year1Rent = 1000,
+      year2Rent = Some(year2Rent),
+      year3Rent = Some(1999.99),
+      year4Rent = Some(3),
+      year5Rent = Some(200)
+    )
+    "return true when all rents are <2000" in {
+      allRentsBelow2000(details(1999)) shouldBe true
+    }
+
+    "return false when there is a rent of 2000" in {
+      allRentsBelow2000(details(2000)) shouldBe false
+    }
+
+    "return false when there is a rent of >2000" in {
+      allRentsBelow2000(details(2001)) shouldBe false
+    }
+  }
+
+  "validRelevantRentDetails" should {
+
+    def validLeaseDetails(year2Rent: BigDecimal) = LeaseDetails(
+      startDate = LocalDate.of(2000, 12, 31),
+      endDate = LocalDate.of(2020, 12, 31),
+      leaseTerm = LeaseTerm(
+        years = 3, days = 0, daysInPartialYear = 365
+      ),
+      year1Rent = 1000,
+      year2Rent = Some(year2Rent),
+      year3Rent = Some(800),
+      year4Rent = None,
+      year5Rent = None
+    )
+    val testRelevantRentDetails = RelevantRentDetails(
+      exchangedContractsBeforeMar16 = false,
+      contractChangedSinceMar16 = None,
+      relevantRent = None
+    )
+
+    "return a ValidationSuccess" when {
+      "relevant rent details are not defined" when {
+        "holding type is freehold" in {
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 1, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = None,
+            leaseDetails = None,
+            relevantRentDetails = None
+          )
+          validRelevantRentDetails(request) shouldBe ValidationSuccess
+        }
+
+        "property type is residential" in {
+          val request = Request(
+            holdingType = HoldingTypes.leasehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 1, 31),
+            premium = 140000,
+            highestRent = 1000,
+            propertyDetails = None,
+            leaseDetails = Some(validLeaseDetails(800)),
+            relevantRentDetails = None
+          )
+          validRelevantRentDetails(request) shouldBe ValidationSuccess
+        }
+
+        "premium is >=£150000" in {
+          val request = Request(
+            holdingType = HoldingTypes.leasehold,
+            propertyType = PropertyTypes.nonResidential,
+            effectiveDate = LocalDate.of(2017, 1, 31),
+            premium = 150000,
+            highestRent = 2000,
+            propertyDetails = None,
+            leaseDetails = Some(validLeaseDetails(800)),
+            relevantRentDetails = None
+          )
+          validRelevantRentDetails(request) shouldBe ValidationSuccess
+        }
+
+        "there is a rent >= £2000" in {
+          val request = Request(
+            holdingType = HoldingTypes.leasehold,
+            propertyType = PropertyTypes.nonResidential,
+            effectiveDate = LocalDate.of(2017, 1, 31),
+            premium = 140000,
+            highestRent = 2000,
+            propertyDetails = None,
+            leaseDetails = Some(validLeaseDetails(2000)),
+            relevantRentDetails = None
+          )
+          validRelevantRentDetails(request) shouldBe ValidationSuccess
+        }
+      }
+      "leasehold, non-residential, premium is <£150000, all rents are <£2000 and relevant rent is defined" in {
+        val request = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2017, 1, 31),
+          premium = 140000,
+          highestRent = 1000,
+          propertyDetails = None,
+          leaseDetails = Some(validLeaseDetails(800)),
+          relevantRentDetails = Some(testRelevantRentDetails)
+        )
+        validRelevantRentDetails(request) shouldBe ValidationSuccess
+      }
+    }
+    "return the correct validation failure response" when {
+      "lease details are not defined" in {
+        val request = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2017, 1, 31),
+          premium = 140000,
+          highestRent = 1000,
+          propertyDetails = None,
+          leaseDetails = None,
+          relevantRentDetails = Some(testRelevantRentDetails)
+        )
+        validRelevantRentDetails(request) shouldBe ValidationFailure("No lease details provided for leasehold property")
+      }
+      "relevant rent is not defined" in {
+        val request = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2017, 1, 31),
+          premium = 140000,
+          highestRent = 1000,
+          propertyDetails = None,
+          leaseDetails = Some(validLeaseDetails(800)),
+          relevantRentDetails = None
+        )
+        validRelevantRentDetails(request) shouldBe ValidationFailure(
+          "Relevant rent details not provided when premium: 140000, " +
+            "holding type: leasehold, property type: non-residential and all rents <£2000"
+        )
+      }
+    }
+  }
+
+  "validRelevantRentDetailsStructure" should {
+    "return a ValidationSuccess" when {
+      "contractPre201603 is false" in {
+        val testDetails = RelevantRentDetails(
+          exchangedContractsBeforeMar16 = false,
+          contractChangedSinceMar16 = None,
+          relevantRent = None
+        )
+        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationSuccess
+      }
+      "contractPre201603 is true and contractVariedPost201603 is true" in {
+        val testDetails = RelevantRentDetails(
+          exchangedContractsBeforeMar16 = true,
+          contractChangedSinceMar16 = Some(true),
+          relevantRent = None
+        )
+        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationSuccess
+      }
+      "contractPre201603 is true and contractVariedPost201603 is false and relevant rent is defined" in {
+        val testDetails = RelevantRentDetails(
+          exchangedContractsBeforeMar16 = true,
+          contractChangedSinceMar16 = Some(false),
+          relevantRent = Some(1000)
+        )
+        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationSuccess
+      }
+    }
+    "return the correct validation failure response" when {
+      "contractPre201603 is true and contractVariedPost201603 is false and relevant rent is not defined" in {
+        val testDetails = RelevantRentDetails(
+          exchangedContractsBeforeMar16 = true,
+          contractChangedSinceMar16 = Some(false),
+          relevantRent = None
+        )
+        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationFailure(
+          "Relevant Rent details failed validation with 'exchangedContractsBeforeMar16': true, " +
+            "'contractChangedSinceMar16': Some(false), " +
+            "'relevantRent': None"
+        )
+      }
+      "contractPre201603 is true and contractVariedPost201603 is not defined" in {
+        val testDetails = RelevantRentDetails(
+          exchangedContractsBeforeMar16 = true,
+          contractChangedSinceMar16 = None,
+          relevantRent = Some(12)
+        )
+        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationFailure(
+          "Relevant Rent details failed validation with 'exchangedContractsBeforeMar16': true, " +
+            "'contractChangedSinceMar16': None, " +
+            "'relevantRent': Some(12)"
+        )
+      }
+    }
+  }
+
   "listValidationErrors" should {
     "have no errors" when {
       "holding type is freehold, non-residential and there are no lease details" in {
@@ -547,7 +784,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = None
+          leaseDetails = None,
+          relevantRentDetails = None
         )
 
         listValidationErrors(model) shouldBe Seq.empty
@@ -560,7 +798,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(validTestLeaseDetails)
+          leaseDetails = Some(validTestLeaseDetails),
+          relevantRentDetails = None
         )
 
         listValidationErrors(model) shouldBe Seq.empty
@@ -574,7 +813,8 @@ class ModelValidationSpec extends UnitSpec {
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
-            leaseDetails = None
+            leaseDetails = None,
+            relevantRentDetails = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -588,7 +828,8 @@ class ModelValidationSpec extends UnitSpec {
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
-            leaseDetails = Some(validTestLeaseDetails)
+            leaseDetails = Some(validTestLeaseDetails),
+            relevantRentDetails = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -602,7 +843,8 @@ class ModelValidationSpec extends UnitSpec {
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
-            leaseDetails = Some(validTestLeaseDetails)
+            leaseDetails = Some(validTestLeaseDetails),
+            relevantRentDetails = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -617,7 +859,8 @@ class ModelValidationSpec extends UnitSpec {
             premium = 500000,
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
-            leaseDetails = None
+            leaseDetails = None,
+            relevantRentDetails = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -630,7 +873,8 @@ class ModelValidationSpec extends UnitSpec {
             premium = 500000,
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
-            leaseDetails = Some(validTestLeaseDetails)
+            leaseDetails = Some(validTestLeaseDetails),
+            relevantRentDetails = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -648,7 +892,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = None
+          leaseDetails = None,
+          relevantRentDetails = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -664,7 +909,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = None
+          leaseDetails = None,
+          relevantRentDetails = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -680,7 +926,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = None
+          leaseDetails = None,
+          relevantRentDetails = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -696,11 +943,30 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = Some(validTestLeaseDetails)
+          leaseDetails = Some(validTestLeaseDetails),
+          relevantRentDetails = None
         )
 
         listValidationErrors(model) shouldBe Seq(
           ValidationFailure("No property details for 'leasehold' residential property with effective date of '2016-04-01'")
+        )
+      }
+      "leasehold, non-residential, premium is <£150000, all rents are <£2000 and relevant rent is not defined" in {
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2017, 1, 31),
+          premium = 140000,
+          highestRent = 1000,
+          propertyDetails = None,
+          leaseDetails = Some(validTestLeaseDetailsAllLessTan2000),
+          relevantRentDetails = None
+        )
+        listValidationErrors(model) shouldBe Seq(
+          ValidationFailure(
+            "Relevant rent details not provided when premium: 140000, " +
+              "holding type: leasehold, property type: non-residential and all rents <£2000"
+          )
         )
       }
 
@@ -712,7 +978,8 @@ class ModelValidationSpec extends UnitSpec {
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
-          leaseDetails = None
+          leaseDetails = None,
+          relevantRentDetails = None
         )
 
         listValidationErrors(model) shouldBe Seq(

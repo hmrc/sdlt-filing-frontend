@@ -9,6 +9,14 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.__
 import RequestValidators.{multiFieldDateReads, yesNoToBooleanReads}
 
+object RelevantRentDetails {
+  implicit val reads = (
+    (__ \ "contractPre201603").read[Boolean](yesNoToBooleanReads) and
+    (__ \ "contractVariedPost201603").readNullable[Boolean](yesNoToBooleanReads) and
+    (__ \ "relevantRent").readNullable[BigDecimal]
+  )(RelevantRentDetails.apply _)
+}
+
 object LeaseTerm {
   implicit val reads = Json.reads[LeaseTerm]
 }
@@ -42,7 +50,8 @@ object Request {
     (__ \ "premium").read[BigDecimal] and
     (__ \ "highestRent").read[BigDecimal] and
     (__ \ "propertyDetails").readNullable[PropertyDetails] and
-    (__ \ "leaseDetails").readNullable[LeaseDetails]
+    (__ \ "leaseDetails").readNullable[LeaseDetails] and
+    (__ \ "relevantRentDetails").readNullable[RelevantRentDetails]
   )(Request.apply _)
 }
 
@@ -53,7 +62,8 @@ case class Request(
                   premium: BigDecimal,
                   highestRent: BigDecimal,
                   propertyDetails: Option[PropertyDetails],
-                  leaseDetails: Option[LeaseDetails]
+                  leaseDetails: Option[LeaseDetails],
+                  relevantRentDetails: Option[RelevantRentDetails]
                   )
 
 case class PropertyDetails(
@@ -73,8 +83,14 @@ case class LeaseDetails(
                          year5Rent: Option[BigDecimal]
                        )
 
-  case class LeaseTerm(
-                      years: Int,
-                      days: Int,
-                      daysInPartialYear: Int
-                      )
+case class LeaseTerm(
+                    years: Int,
+                    days: Int,
+                    daysInPartialYear: Int
+                    )
+
+case class RelevantRentDetails(
+                              exchangedContractsBeforeMar16: Boolean,
+                              contractChangedSinceMar16: Option[Boolean],
+                              relevantRent: Option[BigDecimal]
+                              )

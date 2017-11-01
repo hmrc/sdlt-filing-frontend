@@ -20,7 +20,8 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         twoOrMoreProperties = Some(false),
         replaceMainResidence = None
       )
-    )
+    ),
+    relevantRentDetails = None
   )
 
   def leaseholdResidentialMar12toDec14Request(premium: BigDecimal) = Request(
@@ -36,7 +37,8 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         twoOrMoreProperties = Some(false),
         replaceMainResidence = None
       )
-    )
+    ),
+    relevantRentDetails = None
   )
 
 }
