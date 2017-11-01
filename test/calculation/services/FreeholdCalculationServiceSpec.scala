@@ -38,7 +38,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       premium = premium,
       highestRent = 0,
       leaseDetails = None,
-      propertyDetails = None
+      propertyDetails = None,
+      relevantRentDetails = None
     )
 
     "return 0 for purchase price of 125000" in {
@@ -177,7 +178,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       premium = premium,
       highestRent = 0,
       leaseDetails = None,
-      propertyDetails = None
+      propertyDetails = None,
+      relevantRentDetails = None
     )
 
     "return 0 for purchase price of 125000" in {
@@ -281,7 +283,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       premium = premium,
       highestRent = 0,
       leaseDetails = None,
-      propertyDetails = None
+      propertyDetails = None,
+      relevantRentDetails = None
     )
 
     "return current: 0, prev: 0 for purchase price of 150000" in {
@@ -397,7 +400,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       premium = premium,
       highestRent = 0,
       leaseDetails = None,
-      propertyDetails = None
+      propertyDetails = None,
+      relevantRentDetails = None
     )
 
     "return 0 for purchase price of 150000" in {
@@ -488,7 +492,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
           twoOrMoreProperties = Some(true),
           replaceMainResidence = Some(false)
         )
-      )
+      ),
+      relevantRentDetails = None
     )
 
     def hint(amount: String) = "If you dispose of your previous main residence within 3 years " +
@@ -774,7 +779,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
               twoOrMoreProperties = None,
               replaceMainResidence = None
             )
-          )
+          ),
+          relevantRentDetails = None
         )
 
         val currentSlices = Seq(

@@ -2,7 +2,10 @@ package calculation.services
 
 import javax.inject.{Inject, Singleton}
 
-import calculation.models.{Request, Result}
+import calculation.data.{SlabRatesTables, SliceRatesTables}
+import calculation.exceptions.RequiredValueNotDefinedException
+import calculation.factories.LeaseholdResultFactory
+import calculation.models.{LeaseDetails, Request, Result}
 
 @Singleton
 class LeaseholdCalculationService @Inject()(
@@ -15,11 +18,31 @@ trait LeaseholdCalculationSrv {
 
   def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = ???
 
-  def leaseholdResidentialDec14Onwards(request: Request, asPreviousResult: Boolean = false): Result = ???
+  def leaseholdResidentialDec14Onwards(request: Request, asPreviousResult: Boolean = false): Result = {
+    val npv = getNPV("leaseholdResidentialDec14Onwards", request.leaseDetails)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialDec14OnwardsLeaseRates.slices)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialDec14OnwardsPremiumRates.slices)
 
-  def leaseholdResidentialMar12toDec14(request: Request): Result = ???
+    LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(leaseResult, premiumResult, npv)
+  }
+
+  def leaseholdResidentialMar12toDec14(request: Request): Result = {
+    val npv = getNPV("leaseholdResidentialMar12toDec14", request.leaseDetails)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialMar12toDec14LeaseRates.slices)
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(request.premium, SlabRatesTables.leaseholdResidentialMar12toDec14PremiumRates.slabs)
+
+    LeaseholdResultFactory.leaseholdResidentialMar12toDec14Result(leaseResult, premiumResult, npv)
+  }
 
   def leaseholdNonResidentialMar16Onwards(request: Request): Seq[Result] = ???
 
   def leaseholdNonResidentialMar12toMar16(request: Request, asPrevResult: Boolean = false): Result = ???
+
+  private[services] def getNPV(func: String, oLeaseDetails: Option[LeaseDetails]): BigDecimal = {
+    baseCalculationService.calculateNPV(
+      oLeaseDetails.getOrElse{throw new RequiredValueNotDefinedException(
+        s"[LeaseholdCalculationService] [$func] Lease details not defined when required"
+      )}
+    )
+  }
 }

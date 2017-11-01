@@ -142,6 +142,44 @@ class RequestSpec extends UnitSpec {
     }
   }
 
+  "RelevantRentDetails" should {
+    "read from Json with full details" in {
+      val testJson = Json.parse(
+        """
+          |{
+          |  "contractPre201603": "Yes",
+          |  "contractVariedPost201603": "No",
+          |  "relevantRent": 15438
+          |}
+        """.stripMargin)
+
+      val model = RelevantRentDetails(
+        exchangedContractsBeforeMar16 = true,
+        contractChangedSinceMar16 = Some(false),
+        relevantRent = Some(15438)
+      )
+
+      Json.fromJson[RelevantRentDetails](testJson) shouldBe JsSuccess(model)
+    }
+
+    "read from Json with partial details" in {
+      val testJson = Json.parse(
+        """
+          |{
+          |  "contractPre201603": "No"
+          |}
+        """.stripMargin)
+
+      val model = RelevantRentDetails(
+        exchangedContractsBeforeMar16 = false,
+        contractChangedSinceMar16 = None,
+        relevantRent = None
+      )
+
+      Json.fromJson[RelevantRentDetails](testJson) shouldBe JsSuccess(model)
+    }
+  }
+
 
   "Request" should {
     "read from full Json" in {
@@ -177,6 +215,11 @@ class RequestSpec extends UnitSpec {
           |    "year3Rent": 30000,
           |    "year4Rent": 40000,
           |    "year5Rent": 50000
+          |  },
+          |  "relevantRentDetails": {
+          |    "contractPre201603": "Yes",
+          |    "contractVariedPost201603": "No",
+          |    "relevantRent": 1000
           |  }
           |}
         """.stripMargin)
@@ -205,13 +248,18 @@ class RequestSpec extends UnitSpec {
           year3Rent = Some(30000),
           year4Rent = Some(40000),
           year5Rent = Some(50000)
+        )),
+        relevantRentDetails = Some(RelevantRentDetails(
+          exchangedContractsBeforeMar16 = true,
+          contractChangedSinceMar16 = Some(false),
+          relevantRent = Some(1000)
         ))
       )
 
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
     }
 
-    "read from Json with no lease details" in {
+    "read from Json with no lease details or relevant rent details" in {
       val testJson = Json.parse(
         """
           |{
@@ -241,7 +289,8 @@ class RequestSpec extends UnitSpec {
           twoOrMoreProperties = Some(true),
           replaceMainResidence = Some(true)
         )),
-        leaseDetails = None
+        leaseDetails = None,
+        relevantRentDetails = None
       )
 
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
@@ -268,7 +317,8 @@ class RequestSpec extends UnitSpec {
         premium = 500000,
         highestRent = 50000,
         propertyDetails = None,
-        leaseDetails = None
+        leaseDetails = None,
+        relevantRentDetails = None
       )
 
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)

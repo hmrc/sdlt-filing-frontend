@@ -1,7 +1,7 @@
 package calculation.validators.internal
 
 import calculation.enums.{HoldingTypes, PropertyTypes}
-import calculation.models.{LeaseDetails, PropertyDetails, Request}
+import calculation.models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
 import calculation.data.Dates._
 
 sealed trait ValidationResult
@@ -10,13 +10,17 @@ case class   ValidationFailure(err: String) extends ValidationResult
 
 object ModelValidation {
 
-  def listValidationErrors(request: Request): Seq[ValidationResult] = {
+  def listValidationErrors(request: Request): Seq[ValidationFailure] = {
     Seq(
       validLeaseDetails(request),
       validEffectiveDate(request),
       validPropertyDetails(request),
-      validLeaseTerm(request)
-    ).filterNot(_ == ValidationSuccess)
+      validLeaseTerm(request),
+      validRelevantRentDetails(request)
+    ).flatMap {
+      case err :ValidationFailure => Some(err)
+      case _ => None
+    }.distinct
   }
 
   private[validators] def validLeaseDetails(request: Request): ValidationResult = {
@@ -91,6 +95,53 @@ object ModelValidation {
           s"Property details failed validation with 'individual': true, " +
             s"'twoOrMoreProperties': $twoOrMoreProperties, " +
             s"'replaceMainResidence': $replaceMainResidence")
+    }
+  }
+
+  private [validators] def validRelevantRentDetails(request: Request): ValidationResult = {
+    request.holdingType match {
+      case HoldingTypes.freehold => ValidationSuccess
+      case HoldingTypes.leasehold => request.propertyType match {
+        case PropertyTypes.residential => ValidationSuccess
+        case PropertyTypes.nonResidential =>
+          if(request.premium >= 150000)
+            ValidationSuccess
+          else
+            request.leaseDetails.map { leaseDetails =>
+              if(allRentsBelow2000(leaseDetails))
+                request.relevantRentDetails.map(validRelevantRentDetailsStructure).getOrElse(
+                  ValidationFailure(s"Relevant rent details not provided when premium: ${request.premium}, " +
+                    s"holding type: leasehold, property type: non-residential and all rents <£2000")
+                )
+              else
+                ValidationSuccess
+            }.getOrElse {
+              ValidationFailure("No lease details provided for leasehold property")
+            }
+      }
+    }
+  }
+
+  private [validators] def allRentsBelow2000(leaseDetails: LeaseDetails): Boolean = {
+    !Seq(
+      Some(leaseDetails.year1Rent),
+      leaseDetails.year2Rent,
+      leaseDetails.year3Rent,
+      leaseDetails.year4Rent,
+      leaseDetails.year5Rent
+    ).flatten.exists(_ >= 2000)
+  }
+
+  private[validators] def validRelevantRentDetailsStructure(relRentDetails: RelevantRentDetails): ValidationResult = {
+    relRentDetails match {
+        case RelevantRentDetails(false, _, _)                => ValidationSuccess
+        case RelevantRentDetails(true, Some(true), _)        => ValidationSuccess
+        case RelevantRentDetails(true, Some(false), Some(_)) => ValidationSuccess
+        case RelevantRentDetails(true, contractChanged, relRent) =>
+          ValidationFailure(
+            s"Relevant Rent details failed validation with 'exchangedContractsBeforeMar16': true, " +
+              s"'contractChangedSinceMar16': $contractChanged, " +
+              s"'relevantRent': $relRent")
     }
   }
 }

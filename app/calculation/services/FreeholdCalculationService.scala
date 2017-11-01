@@ -5,7 +5,7 @@ import javax.inject.{Inject, Singleton}
 import calculation.data.{SlabRatesTables, SliceRatesTables}
 import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.models.{PropertyDetails, Request, Result}
-import calculation.factories.ResultFactory
+import calculation.factories.FreeholdResultFactory
 
 @Singleton
 class FreeholdCalculationService @Inject()(
@@ -30,7 +30,7 @@ trait FreeholdCalculationSrv {
     ) Some(currentPremiumResult.taxDue.toInt - prevResult.totalTax) else None
 
     Seq(
-      ResultFactory.freeholdResidentialAddPropApr16OnwardsResult(currentPremiumResult, refundEntitlement),
+      FreeholdResultFactory.freeholdResidentialAddPropApr16OnwardsResult(currentPremiumResult, refundEntitlement),
       prevResult
     )
   }
@@ -41,7 +41,7 @@ trait FreeholdCalculationSrv {
       SliceRatesTables.freeholdResidentialDec14OnwardsRates.slices
     )
 
-    ResultFactory.freeholdResidentialDec14OnwardsResult(premiumResult, asPreviousResult)
+    FreeholdResultFactory.freeholdResidentialDec14OnwardsResult(premiumResult, asPreviousResult)
   }
 
   def freeholdResidentialMar12toDec14(request: Request): Result = {
@@ -50,7 +50,7 @@ trait FreeholdCalculationSrv {
       SlabRatesTables.freeholdResidentialMar12toDec14Rates.slabs
     )
 
-    ResultFactory.freeholdResidentialMar12toDec14Result(premiumResult)
+    FreeholdResultFactory.freeholdResidentialMar12toDec14Result(premiumResult)
   }
 
   def freeholdNonResidentialMar16Onwards(request: Request): Seq[Result] = {
@@ -60,7 +60,7 @@ trait FreeholdCalculationSrv {
     )
 
     Seq(
-      ResultFactory.freeholdNonResidentialMar16OnwardsResult(premiumResult),
+      FreeholdResultFactory.freeholdNonResidentialMar16OnwardsResult(premiumResult),
       freeholdNonResidentialMar12toMar16(request, asPrevResult = true)
     )
   }
@@ -71,7 +71,7 @@ trait FreeholdCalculationSrv {
       SlabRatesTables.freeholdNonResidentialMar12toMar16Rates.slabs
     )
 
-    ResultFactory.freeholdNonResidentialMar12toMar16Result(premiumResult, asPrevResult)
+    FreeholdResultFactory.freeholdNonResidentialMar12toMar16Result(premiumResult, asPrevResult)
   }
 
   private [services] def individualWithAdditionalProperty(oPropertyDetails: Option[PropertyDetails]): Boolean = {

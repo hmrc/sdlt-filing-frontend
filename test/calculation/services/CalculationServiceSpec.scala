@@ -7,16 +7,15 @@ import calculation.exceptions.InvalidDateException
 import calculation.models.{CalculationDetails, CalculationResponse, Request, Result}
 import uk.gov.hmrc.play.test.UnitSpec
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.BeforeAndAfterEach
 
-class CalculationServiceSpec extends UnitSpec with MockFactory{
+class CalculationServiceSpec extends UnitSpec with MockFactory {
 
-    val mockLeaseholdCalculationService = mock[LeaseholdCalculationService]
-    val mockFreeholdCalculationService = mock[FreeholdCalculationService]
-    val testCalculationService = new CalculationService(
-      mockLeaseholdCalculationService,
-      mockFreeholdCalculationService
-    )
+  val mockLeaseholdCalculationService = mock[LeaseholdCalculationService]
+  val mockFreeholdCalculationService = mock[FreeholdCalculationService]
+  val testCalculationService = new CalculationService(
+    mockLeaseholdCalculationService,
+    mockFreeholdCalculationService
+  )
 
   "CalculateTax" should {
     val calcDetails = CalculationDetails(
@@ -49,7 +48,8 @@ class CalculationServiceSpec extends UnitSpec with MockFactory{
       premium = BigDecimal(0),
       highestRent = BigDecimal(0),
       propertyDetails = None,
-      leaseDetails = None
+      leaseDetails = None,
+      relevantRentDetails = None
     )
 
     "select the freeholdNonResidential function for March2016 onwards" when {
