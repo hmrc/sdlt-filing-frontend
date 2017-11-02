@@ -38,15 +38,15 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
   )
 
   "CalculateSDLTC" should{
-    "Throw a BadRequest(400)" when{
-      "No Json data has been received" in{
+    "throw a BadRequest(400)" when{
+      "no Json data has been received" in{
         val fakeRequest = FakeRequest("GET", "/calculate")
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe BAD_REQUEST
         bodyOf(await(result))(materializer) shouldBe "No json data received."
       }
 
-      "There wasn't enough json data for it to match the request model" in {
+      "there wasn't enough json data for it to match the request model" in {
         val incompleteJsonRequest: JsValue = Json.parse(
           """
                                          {
@@ -55,19 +55,18 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
                                          "effectiveDateDay": 13,
                                          "effectiveDateMonth": 7,
                                          "effectiveDateYear": 2011,
-                                         "premium": 500000,
-                                         "highestRent": 50000
+                                         "premium": 500000
                                          }
                                         """)
 
         val fakeRequest = FakeRequest("GET", "/calculate").withJsonBody(incompleteJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe BAD_REQUEST
-        bodyOf(await(result))(materializer) shouldBe "Validation error: List(ValidationFailure(No lease details provided for leasehold property), ValidationFailure(Effective date of '2011-07-13' is before 22 March, 2012))"
+        bodyOf(await(result))(materializer) shouldBe "Json format does not match model: JsError(List((/highestRent,List(ValidationError(List(error.path.missing),WrappedArray())))))"
       }
 
 
-      "Model in invalid and contains errors" in{
+      "model is invalid and contains errors" in{
         val jsonRequest: JsValue = Json.parse("""
                                                 |{
                                                 |  "holdingType": "Leasehold",
@@ -115,7 +114,7 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
       }
     }
 
-    "Return a 200" when{
+    "return a 200" when{
       val completeJsonRequest: JsValue = Json.parse("""
                                               |{
                                               |  "holdingType": "Leasehold",

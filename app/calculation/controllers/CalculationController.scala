@@ -2,12 +2,10 @@ package calculation.controllers
 
 import javax.inject.{Inject, Singleton}
 
-import calculation.exceptions.ConversionFailureException
-import calculation.models.{CalculationResponse, Request, Result}
+import calculation.models.Request
 import calculation.services._
 import calculation.validators.internal.ModelValidation
 import play.api.Logger
-import play.api.libs.json
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -37,15 +35,15 @@ trait CalculationCtr extends FrontendController{
               val result = Json.toJson(calculationService.CalculateTax(success.value))
                 Ok(result)
             }else{
-              Logger.warn("**placeholder text: Level 3 -> Json converted to model but model validation made")
+              Logger.warn("[CalculationController] - Json model contains errors.")
               BadRequest("Validation error: "+ModelValidation.listValidationErrors(success.value))
             }
           case error: JsError =>
-            Logger.warn("**placeholder text: Level 2 -> Json data found but does not match model")
+            Logger.warn("[CalculationController] - Json data found but data does not match model.")
             BadRequest("Json format does not match model: "+error)
       }
       case None =>
-        Logger.warn("**placeholder text: Level 1 -> No Json data")
+        Logger.warn("[CalculationController] - No json data received.")
         BadRequest("No json data received.")
     }
   }
