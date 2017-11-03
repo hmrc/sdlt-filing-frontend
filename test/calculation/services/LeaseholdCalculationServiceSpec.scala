@@ -12,7 +12,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     val service = new LeaseholdCalculationService(
       new BaseCalculationService{
         override def calculateNPV(leaseDetails: LeaseDetails): BigDecimal = predefinedNPV
-      }
+      },
+     new RefundEntitlementService
     )
   }
 
@@ -24,6 +25,42 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       the[RequiredValueNotDefinedException] thrownBy
         service.getNPV("getNPVTestFunction", None) should have message
         "[LeaseholdCalculationService] [getNPVTestFunction] Lease details not defined when required"
+    }
+  }
+
+  "leaseholdResidentialAddPropApr16Onwards" should{
+    "return 0, 0 for purchase price of 39,999.99, npv of 125000" in new PredefinedNPVSetup(125000){
+      val leaseTaxDue, premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(125000), rate = 0, taxDue = 0),
+        SliceDetails(from = 125000, to = None,         rate = 1, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 3,  taxDue = 0),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 0),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
+      )
+
+      val prevSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 0,  taxDue = 0),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 2,  taxDue = 0),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 5,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
+      )
+
+      val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequest(39999.99)
+      val prevResult = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, prevSliceDetails, npv, true)
+      val refundEntitlementValue = service.refundEntitlementService.calculateRefundEntitlement(premTaxDue,prevResult.totalTax, leaseRequest.propertyDetails)
+
+      val refundEntitlementMessage = if(refundEntitlementValue.isDefined) Some(s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$refundEntitlementValue.")
+      else None
+
+      val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = refundEntitlementMessage)
+
+      service.leaseholdResidentialAddPropApr16Onwards(leaseRequest) shouldBe Seq(result,prevResult)
     }
   }
 
