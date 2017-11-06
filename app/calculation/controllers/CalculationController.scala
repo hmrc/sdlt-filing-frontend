@@ -16,13 +16,6 @@ class CalculationController @Inject()(
                                        val calculationService :  CalculationService
                                      ) extends CalculationCtr
 
-object CalculationController extends CalculationController(
-  new CalculationService(
-    new LeaseholdCalculationService(new BaseCalculationService),
-    new FreeholdCalculationService(new BaseCalculationService)
-  )
-)
-
 trait CalculationCtr extends FrontendController{
 
   val calculationService :  CalculationSrv
@@ -35,16 +28,16 @@ trait CalculationCtr extends FrontendController{
               val result = Json.toJson(calculationService.CalculateTax(success.value))
                 Ok(result)
             }else{
-              Logger.warn("[CalculationController] - Json model contains errors.")
-              BadRequest("Validation error: "+ModelValidation.listValidationErrors(success.value))
+              Logger.warn("[CalculationController] - Json request body fails model validation.")
+              BadRequest(Json.toJson("Validation error: "+ModelValidation.listValidationErrors(success.value)))
             }
           case error: JsError =>
-            Logger.warn("[CalculationController] - Json data found but data does not match model.")
-            BadRequest("Json format does not match model: "+error)
+            Logger.warn("[CalculationController] - Incorrect Json request body format supplied.")
+            BadRequest(Json.toJson("Incorrect Json request body format supplied: "+error))
       }
       case None =>
         Logger.warn("[CalculationController] - No json data received.")
-        BadRequest("No json data received.")
+        BadRequest(Json.toJson("No json data received."))
     }
   }
 

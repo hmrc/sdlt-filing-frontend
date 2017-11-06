@@ -40,10 +40,10 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
   "CalculateSDLTC" should{
     "throw a BadRequest(400)" when{
       "no Json data has been received" in{
-        val fakeRequest = FakeRequest("GET", "/calculate")
+        val fakeRequest = FakeRequest()
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe BAD_REQUEST
-        bodyOf(await(result))(materializer) shouldBe "No json data received."
+        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("No json data received.")
       }
 
       "there wasn't enough json data for it to match the request model" in {
@@ -59,10 +59,10 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
                                          }
                                         """)
 
-        val fakeRequest = FakeRequest("GET", "/calculate").withJsonBody(incompleteJsonRequest)
+        val fakeRequest = FakeRequest().withJsonBody(incompleteJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe BAD_REQUEST
-        bodyOf(await(result))(materializer) shouldBe "Json format does not match model: JsError(List((/highestRent,List(ValidationError(List(error.path.missing),WrappedArray())))))"
+        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("Incorrect Json request body format supplied: JsError(List((/highestRent,List(ValidationError(List(error.path.missing),WrappedArray())))))")
       }
 
 
@@ -107,10 +107,10 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
                                                 |}
                                                       """.stripMargin)
 
-        val fakeRequest = FakeRequest("GET", "/calculate").withJsonBody(jsonRequest)
+        val fakeRequest = FakeRequest().withJsonBody(jsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe BAD_REQUEST
-        bodyOf(await(result))(materializer) shouldBe "Validation error: List(ValidationFailure(Effective date of '2011-07-13' is before 22 March, 2012))"
+        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("Validation error: List(ValidationFailure(Effective date of '2011-07-13' is before 22 March, 2012))")
       }
     }
 

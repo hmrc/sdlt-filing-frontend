@@ -2,7 +2,7 @@ import sbt.Keys._
 import sbt.Tests.{Group, SubProcess}
 import sbt.{Def, _}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-import play.routes.compiler.StaticRoutesGenerator
+import play.routes.compiler.InjectedRoutesGenerator
 import play.sbt.routes.RoutesKeys.routesGenerator
 
 
@@ -48,7 +48,7 @@ trait MicroService {
       parallelExecution in Test := false,
       fork in Test := false,
       retrieveManaged := true,
-      routesGenerator := StaticRoutesGenerator
+      routesGenerator := InjectedRoutesGenerator
     )
     .settings(Repositories.playPublishingSettings : _*)
     .configs(IntegrationTest)
