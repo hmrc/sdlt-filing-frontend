@@ -2,3 +2,6 @@
 
 GET         /                                      controllers.Assets.at(path="/public", file="index.html")
 GET         /javascript/*file                      controllers.Assets.at(path="/public/javascript", file)
+
+#Calculation Routes
+POST        /calculate                             calculation.controllers.CalculationController.calculateSDLTC

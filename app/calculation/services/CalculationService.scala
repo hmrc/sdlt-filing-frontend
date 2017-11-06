@@ -4,7 +4,7 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 import calculation.enums.{HoldingTypes, PropertyTypes}
-import calculation.exceptions.{InvalidDateException, RequiredValueNotDefinedException}
+import calculation.exceptions.InvalidDateException
 import calculation.models.{CalculationResponse, Request}
 import calculation.data.Dates
 
