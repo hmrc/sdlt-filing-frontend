@@ -163,7 +163,7 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
           .returns(response)
           .noMoreThanOnce()
 
-        val fakeRequest = FakeRequest("GET", "/calculate").withJsonBody(completeJsonRequest)
+        val fakeRequest = FakeRequest().withJsonBody(completeJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe OK
         jsonBodyOf(await(result))(materializer) shouldBe Json.toJson(response)
