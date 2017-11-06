@@ -72,4 +72,37 @@ object LeaseholdResultFactory {
     )
   }
 
+  def leaseholdNonResidentialMar12toMar16Result(leaseResult: SliceResult, premiumResult: SlabResult, npv: BigDecimal): Result = {
+    val leaseCalcDetails = CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT),
+      bandHeading = Some(DETAIL_COL_HEADER_RENT),
+      detailFooter = Some(DETAIL_FOOTER_RENT),
+      taxDue = leaseResult.taxDue.toInt,
+      slices = Some(leaseResult.slices)
+    )
+    val premiumCalcDetails = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slab,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = premiumResult.taxDue.toInt,
+      slices = None,
+      rate = Some(premiumResult.rate.toInt)
+    )
+
+    Result(
+      totalTax = leaseCalcDetails.taxDue + premiumCalcDetails.taxDue,
+      resultHeading = None,
+      resultHint = None,
+      npv = Some(npv.toInt),
+      taxCalcs = Seq(
+        leaseCalcDetails,
+        premiumCalcDetails
+      )
+    )
+  }
+
 }

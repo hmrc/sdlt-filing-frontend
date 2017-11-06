@@ -609,7 +609,7 @@ class ModelValidationSpec extends UnitSpec {
       year5Rent = None
     )
     val testRelevantRentDetails = RelevantRentDetails(
-      exchangedContractsBeforeMar16 = false,
+      exchangedContractsBeforeMar16 = Some(false),
       contractChangedSinceMar16 = None,
       relevantRent = None
     )
@@ -720,56 +720,99 @@ class ModelValidationSpec extends UnitSpec {
   }
 
   "validRelevantRentDetailsStructure" should {
+    val postMar2016Date = LocalDate.of(2016, 3, 17)
+    val preMar2016Date  = LocalDate.of(2016, 3, 16)
     "return a ValidationSuccess" when {
-      "contractPre201603 is false" in {
-        val testDetails = RelevantRentDetails(
-          exchangedContractsBeforeMar16 = false,
-          contractChangedSinceMar16 = None,
-          relevantRent = None
-        )
-        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationSuccess
+      "effective date is on or after 17/03/2016" when {
+        "contractPre201603 is false" in {
+          val testDetails = RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(false),
+            contractChangedSinceMar16 = None,
+            relevantRent = None
+          )
+          validRelevantRentDetailsStructure(testDetails, postMar2016Date) shouldBe ValidationSuccess
+        }
+        "contractPre201603 is true and contractVariedPost201603 is true" in {
+          val testDetails = RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(true),
+            contractChangedSinceMar16 = Some(true),
+            relevantRent = None
+          )
+          validRelevantRentDetailsStructure(testDetails, postMar2016Date) shouldBe ValidationSuccess
+        }
+        "contractPre201603 is true and contractVariedPost201603 is false and relevant rent is defined" in {
+          val testDetails = RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(true),
+            contractChangedSinceMar16 = Some(false),
+            relevantRent = Some(1000)
+          )
+          validRelevantRentDetailsStructure(testDetails, postMar2016Date) shouldBe ValidationSuccess
+        }
       }
-      "contractPre201603 is true and contractVariedPost201603 is true" in {
-        val testDetails = RelevantRentDetails(
-          exchangedContractsBeforeMar16 = true,
-          contractChangedSinceMar16 = Some(true),
-          relevantRent = None
-        )
-        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationSuccess
-      }
-      "contractPre201603 is true and contractVariedPost201603 is false and relevant rent is defined" in {
-        val testDetails = RelevantRentDetails(
-          exchangedContractsBeforeMar16 = true,
-          contractChangedSinceMar16 = Some(false),
-          relevantRent = Some(1000)
-        )
-        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationSuccess
+      "effective date is before 17/03/2016" when {
+        "relevant rent is defined" in {
+          val testDetails = RelevantRentDetails(
+            exchangedContractsBeforeMar16 = None,
+            contractChangedSinceMar16 = None,
+            relevantRent = Some(1000)
+          )
+          validRelevantRentDetailsStructure(testDetails, preMar2016Date) shouldBe ValidationSuccess
+        }
       }
     }
     "return the correct validation failure response" when {
-      "contractPre201603 is true and contractVariedPost201603 is false and relevant rent is not defined" in {
-        val testDetails = RelevantRentDetails(
-          exchangedContractsBeforeMar16 = true,
-          contractChangedSinceMar16 = Some(false),
-          relevantRent = None
-        )
-        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationFailure(
-          "Relevant Rent details failed validation with 'exchangedContractsBeforeMar16': true, " +
-            "'contractChangedSinceMar16': Some(false), " +
-            "'relevantRent': None"
-        )
+      "effective date is on or after 17/03/2016" when {
+        "contractPre201603 is true and contractVariedPost201603 is false and relevant rent is not defined" in {
+          val testDetails = RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(true),
+            contractChangedSinceMar16 = Some(false),
+            relevantRent = None
+          )
+          validRelevantRentDetailsStructure(testDetails, postMar2016Date) shouldBe ValidationFailure(
+            "Relevant Rent details failed validation with " +
+              "'exchangedContractsBeforeMar16': Some(true), " +
+              "'contractChangedSinceMar16': Some(false), " +
+              "'relevantRent': None"
+          )
+        }
+        "contractPre201603 is true and contractVariedPost201603 is not defined" in {
+          val testDetails = RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(true),
+            contractChangedSinceMar16 = None,
+            relevantRent = Some(12)
+          )
+          validRelevantRentDetailsStructure(testDetails, postMar2016Date) shouldBe ValidationFailure(
+            "Relevant Rent details failed validation with " +
+              "'exchangedContractsBeforeMar16': Some(true), " +
+              "'contractChangedSinceMar16': None, " +
+              "'relevantRent': Some(12)"
+          )
+        }
+        "exchangedContractsBeforeMar16 is not defined" in {
+          val testDetails = RelevantRentDetails(
+            exchangedContractsBeforeMar16 = None,
+            contractChangedSinceMar16 = Some(false),
+            relevantRent = Some(12)
+          )
+          validRelevantRentDetailsStructure(testDetails, postMar2016Date) shouldBe ValidationFailure(
+            "Relevant Rent details failed validation with " +
+              "'exchangedContractsBeforeMar16': None, " +
+              "'contractChangedSinceMar16': Some(false), " +
+              "'relevantRent': Some(12)"
+          )
+        }
       }
-      "contractPre201603 is true and contractVariedPost201603 is not defined" in {
-        val testDetails = RelevantRentDetails(
-          exchangedContractsBeforeMar16 = true,
-          contractChangedSinceMar16 = None,
-          relevantRent = Some(12)
-        )
-        validRelevantRentDetailsStructure(testDetails) shouldBe ValidationFailure(
-          "Relevant Rent details failed validation with 'exchangedContractsBeforeMar16': true, " +
-            "'contractChangedSinceMar16': None, " +
-            "'relevantRent': Some(12)"
-        )
+      "effective date is before 17/03/2016" when {
+        "relevant rent is not defined" in {
+          val testDetails = RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(false),
+            contractChangedSinceMar16 = None,
+            relevantRent = None
+          )
+          validRelevantRentDetailsStructure(testDetails, preMar2016Date) shouldBe ValidationFailure(
+            "No relevant rent amount provided"
+          )
+        }
       }
     }
   }

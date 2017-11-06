@@ -154,7 +154,7 @@ class RequestSpec extends UnitSpec {
         """.stripMargin)
 
       val model = RelevantRentDetails(
-        exchangedContractsBeforeMar16 = true,
+        exchangedContractsBeforeMar16 = Some(true),
         contractChangedSinceMar16 = Some(false),
         relevantRent = Some(15438)
       )
@@ -171,7 +171,7 @@ class RequestSpec extends UnitSpec {
         """.stripMargin)
 
       val model = RelevantRentDetails(
-        exchangedContractsBeforeMar16 = false,
+        exchangedContractsBeforeMar16 = Some(false),
         contractChangedSinceMar16 = None,
         relevantRent = None
       )
@@ -250,7 +250,7 @@ class RequestSpec extends UnitSpec {
           year5Rent = Some(50000)
         )),
         relevantRentDetails = Some(RelevantRentDetails(
-          exchangedContractsBeforeMar16 = true,
+          exchangedContractsBeforeMar16 = Some(true),
           contractChangedSinceMar16 = Some(false),
           relevantRent = Some(1000)
         ))

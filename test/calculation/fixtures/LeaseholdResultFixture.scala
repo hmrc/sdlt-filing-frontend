@@ -15,15 +15,7 @@ trait LeaseholdResultFixture {
       resultHint = None,
       npv = Some(npv),
       taxCalcs = Seq(
-        CalculationDetails(
-          taxType = TaxTypes.rent,
-          calcType = CalcTypes.slice,
-          detailHeading = Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
-          bandHeading = Some("Rent bands (£)"),
-          detailFooter = Some("SDLT due on the rent"),
-          taxDue = leaseTaxDue,
-          slices = Some(leaseSliceDetails)
-        ),
+        baseLeaseSliceDetails(leaseTaxDue, leaseSliceDetails),
         CalculationDetails(
           taxType = TaxTypes.premium,
           calcType = CalcTypes.slice,
@@ -46,26 +38,48 @@ trait LeaseholdResultFixture {
       resultHint = None,
       npv = Some(npv),
       taxCalcs = Seq(
-        CalculationDetails(
-          taxType = TaxTypes.rent,
-          calcType = CalcTypes.slice,
-          detailHeading = Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
-          bandHeading = Some("Rent bands (£)"),
-          detailFooter = Some("SDLT due on the rent"),
-          taxDue = leaseTaxDue,
-          slices = Some(leaseSliceDetails)
-        ),
-        CalculationDetails(
-          taxType = TaxTypes.premium,
-          calcType = CalcTypes.slab,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          taxDue = premTaxDue,
-          slices = None,
-          rate = Some(premRate)
-        )
+        baseLeaseSliceDetails(leaseTaxDue, leaseSliceDetails),
+        basePremSlabDetails(premTaxDue, premRate)
       )
+    )
+
+  def leaseholdNonResidentialMar12toMar16Result(
+                                                 leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
+                                                 premTaxDue:  Int, premRate: Int,
+                                                 npv: Int) =
+    Result(
+      totalTax = leaseTaxDue + premTaxDue,
+      resultHeading = None,
+      resultHint = None,
+      npv = Some(npv),
+      taxCalcs = Seq(
+        baseLeaseSliceDetails(leaseTaxDue, leaseSliceDetails),
+        basePremSlabDetails(premTaxDue, premRate)
+      )
+    )
+
+
+  private def baseLeaseSliceDetails(leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails]) =
+    CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slice,
+      detailHeading = Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
+      bandHeading = Some("Rent bands (£)"),
+      detailFooter = Some("SDLT due on the rent"),
+      taxDue = leaseTaxDue,
+      slices = Some(leaseSliceDetails)
+    )
+
+  private def basePremSlabDetails(premTaxDue: Int, premRate: Int) =
+    CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slab,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = premTaxDue,
+      slices = None,
+      rate = Some(premRate)
     )
 
 }
