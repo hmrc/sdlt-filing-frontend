@@ -11,9 +11,14 @@ class RefundEntitlementService extends RefundEntitlementSrv
 trait RefundEntitlementSrv {
 
   def calculateRefundEntitlement(premiumResultTaxDue: BigDecimal, prevResultTax: Int, reqPropertyDetails: Option[PropertyDetails]): Option[Int] ={
-    if(premiumResultTaxDue.toInt > prevResultTax &&
-        individualWithAdditionalProperty(reqPropertyDetails)
-    ) Some(premiumResultTaxDue.toInt - prevResultTax) else None
+    if(eligibleForRefund(premiumResultTaxDue.toInt, prevResultTax, reqPropertyDetails))
+      Some(premiumResultTaxDue.toInt - prevResultTax)
+    else
+      None
+  }
+
+  private def eligibleForRefund(currentTaxDue: Int, prevTaxDue: Int, oPropertyDetails: Option[PropertyDetails]): Boolean = {
+    currentTaxDue > prevTaxDue && individualWithAdditionalProperty(oPropertyDetails)
   }
 
   private [services] def individualWithAdditionalProperty(oPropertyDetails: Option[PropertyDetails]): Boolean = {
@@ -23,7 +28,7 @@ trait RefundEntitlementSrv {
       } else false
     }.getOrElse{
       throw new RequiredValueNotDefinedException(
-        "[FreeholdCalculationService] [individualWithAdditionalProperty]" +
+        "[RefundEntitlementService] [individualWithAdditionalProperty]" +
           " - property details not defined in freehold residential additional property calculation"
       )}
   }
@@ -33,7 +38,7 @@ trait RefundEntitlementSrv {
       case (Some(twoOrMore), Some(replace)) => twoOrMore && !replace
       case (oTwoOrMore, oReplace) =>
         throw new RequiredValueNotDefinedException(
-          "[FreeholdCalculationService] [additionalProperty]" +
+          "[RefundEntitlementService] [additionalProperty]" +
             s" - twoOrMoreProperties: $oTwoOrMore, replaceMainResidence: $oReplace"
         )
     }

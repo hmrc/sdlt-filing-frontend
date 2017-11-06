@@ -14,7 +14,7 @@ trait LeaseholdResultFixture {
       Result(
       totalTax = leaseTaxDue + premTaxDue,
       resultHeading = Some("Results based on SDLT rules from 1 April 2016" ),
-      resultHint = resHintAmount,
+      resultHint = resHintAmount.map(value => s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value."),
       npv = Some(npv),
         taxCalcs = Seq(
           CalculationDetails(

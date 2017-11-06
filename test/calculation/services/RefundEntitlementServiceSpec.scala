@@ -33,7 +33,7 @@ class RefundEntitlementServiceSpec extends UnitSpec {
       )
       the[RequiredValueNotDefinedException]
         .thrownBy(refundService.individualWithAdditionalProperty(propertyDetails))
-        .should(have message "[FreeholdCalculationService] [additionalProperty]" +
+        .should(have message "[RefundEntitlementService] [additionalProperty]" +
           s" - twoOrMoreProperties: None, replaceMainResidence: Some(false)")
     }
     "throw the correct exception when replaceMainResidence is required but undefined" in {
@@ -44,14 +44,14 @@ class RefundEntitlementServiceSpec extends UnitSpec {
       )
       the[RequiredValueNotDefinedException]
         .thrownBy(refundService.individualWithAdditionalProperty(propertyDetails))
-        .should(have message "[FreeholdCalculationService] [additionalProperty]" +
+        .should(have message "[RefundEntitlementService] [additionalProperty]" +
           s" - twoOrMoreProperties: Some(true), replaceMainResidence: None")
     }
     "throw the correct exception when propertyDetails is undefined" in {
       val propertyDetails = None
       the[RequiredValueNotDefinedException]
         .thrownBy(refundService.individualWithAdditionalProperty(propertyDetails))
-        .should(have message "[FreeholdCalculationService] [individualWithAdditionalProperty]" +
+        .should(have message "[RefundEntitlementService] [individualWithAdditionalProperty]" +
           " - property details not defined in freehold residential additional property calculation")
     }
   }
