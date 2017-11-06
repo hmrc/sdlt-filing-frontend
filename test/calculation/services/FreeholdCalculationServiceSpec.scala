@@ -9,7 +9,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class FreeholdCalculationServiceSpec extends UnitSpec {
 
-  val testFreeholdCalcService = new FreeholdCalculationService(new BaseCalculationService)
+  val testFreeholdCalcService = new FreeholdCalculationService(new BaseCalculationService, new RefundEntitlementService)
 
   "calculating freeholdResidentialDec14Onwards" should {
 
@@ -804,54 +804,6 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
           basePrevResult(2, prevSliceCalculationDetails(2, prevSlices))
         )
       }
-    }
-  }
-
-  "Additional property check" should {
-    "return true for an individual with additional property and not replacing main residence" in {
-      val propertyDetails = Some(PropertyDetails(
-        individual = true,
-        twoOrMoreProperties = Some(true),
-        replaceMainResidence = Some(false))
-      )
-      testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails) shouldBe true
-    }
-    "return true for a non-individual" in {
-      val propertyDetails = Some(PropertyDetails(
-        individual = false,
-        twoOrMoreProperties = None,
-        replaceMainResidence = None)
-      )
-      testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails) shouldBe false
-    }
-    "throw the correct exception when twoOrMoreProperties is required but undefined" in {
-      val propertyDetails = Some(PropertyDetails(
-        individual = true,
-        twoOrMoreProperties = None,
-        replaceMainResidence = Some(false))
-      )
-      the[RequiredValueNotDefinedException]
-         .thrownBy(testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails))
-            .should(have message "[FreeholdCalculationService] [additionalProperty]" +
-              s" - twoOrMoreProperties: None, replaceMainResidence: Some(false)")
-    }
-    "throw the correct exception when replaceMainResidence is required but undefined" in {
-      val propertyDetails = Some(PropertyDetails(
-        individual = true,
-        twoOrMoreProperties = Some(true),
-        replaceMainResidence = None)
-      )
-      the[RequiredValueNotDefinedException]
-        .thrownBy(testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails))
-        .should(have message "[FreeholdCalculationService] [additionalProperty]" +
-          s" - twoOrMoreProperties: Some(true), replaceMainResidence: None")
-    }
-    "throw the correct exception when propertyDetails is undefined" in {
-      val propertyDetails = None
-      the[RequiredValueNotDefinedException]
-        .thrownBy(testFreeholdCalcService.individualWithAdditionalProperty(propertyDetails))
-        .should(have message "[FreeholdCalculationService] [individualWithAdditionalProperty]" +
-          " - property details not defined in freehold residential additional property calculation")
     }
   }
 }

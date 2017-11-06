@@ -3,6 +3,7 @@ package calculation.services
 import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.fixtures.{LeaseholdRequestFeature, LeaseholdResultFixture}
 import calculation.models._
+import calculation.utils.StringUtils
 import uk.gov.hmrc.play.test.UnitSpec
 
 class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeature with LeaseholdResultFixture {
@@ -51,13 +52,88 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequest(39999.99)
+      val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(39999.99)
       val prevResult = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, prevSliceDetails, npv, true)
-      val refundEntitlementValue = service.refundEntitlementService.calculateRefundEntitlement(premTaxDue,prevResult.totalTax, leaseRequest.propertyDetails)
+      val refundEntitlementValue = service.refundEntitlementService.calculateRefundEntitlement(premTaxDue,prevResult.totalTax, leaseRequest.propertyDetails).map { amount =>
+        s"${StringUtils.intToMonetaryString(amount)}"
+      }
+      val refundEntitlementMessage = refundEntitlementValue.map(value => s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value.")
+      val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = refundEntitlementMessage)
 
-      val refundEntitlementMessage = if(refundEntitlementValue.isDefined) Some(s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$refundEntitlementValue.")
-      else None
+      service.leaseholdResidentialAddPropApr16Onwards(leaseRequest) shouldBe Seq(result,prevResult)
+    }
 
+    "return [1250, 138765, 1250, 93762] for purchase price of 1500100, npv of 250000 and is not an individual." in new PredefinedNPVSetup(250000){
+      val leaseTaxDue = 1250
+      val premTaxDue = 138765
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(125000), rate = 0, taxDue = 0),
+        SliceDetails(from = 125000, to = None,         rate = 1, taxDue = 1250)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 3,  taxDue = 3750),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 54000),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 13, taxDue = 74750),
+        SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 15)
+      )
+
+      val prevLeaseTaxDue = 1250
+      val prevPremTaxDue = 93762
+      val prevSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 0,  taxDue = 0),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 5,  taxDue = 33750),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 10, taxDue = 57500),
+        SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 12)
+      )
+
+      val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(1500100)
+      val prevResult = leaseholdResidentialDec14OnwardsResult(prevLeaseTaxDue, leaseSliceDetails, prevPremTaxDue, prevSliceDetails, npv, true)
+      val refundEntitlementValue = service.refundEntitlementService.calculateRefundEntitlement(premTaxDue,prevResult.totalTax, leaseRequest.propertyDetails).map { amount =>
+        s"${StringUtils.intToMonetaryString(amount)}"
+      }
+
+      //This message will be none as they are not an individual and are therefore ineligible for the refund.
+      val refundEntitlementMessage = refundEntitlementValue.map(value => s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value.")
+      val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = refundEntitlementMessage)
+
+      service.leaseholdResidentialAddPropApr16Onwards(leaseRequest) shouldBe Seq(result,prevResult)
+    }
+
+
+    "return [1250, 138765, 1250, 93762] for purchase price of 1500100, npv of 250000 and is an individual." in new PredefinedNPVSetup(250000){
+      val leaseTaxDue = 1250
+      val premTaxDue = 138765
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(125000), rate = 0, taxDue = 0),
+        SliceDetails(from = 125000, to = None,         rate = 1, taxDue = 1250)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 3,  taxDue = 3750),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 54000),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 13, taxDue = 74750),
+        SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 15)
+      )
+
+      val prevLeaseTaxDue = 1250
+      val prevPremTaxDue = 93762
+      val prevSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 0,  taxDue = 0),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 5,  taxDue = 33750),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 10, taxDue = 57500),
+        SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 12)
+      )
+
+      val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500100)
+      val prevResult = leaseholdResidentialDec14OnwardsResult(prevLeaseTaxDue, leaseSliceDetails, prevPremTaxDue, prevSliceDetails, npv, true)
+      val refundEntitlementValue = service.refundEntitlementService.calculateRefundEntitlement(premTaxDue,prevResult.totalTax, leaseRequest.propertyDetails).map { amount =>
+        s"${StringUtils.intToMonetaryString(amount)}"
+      }
+
+      val refundEntitlementMessage = refundEntitlementValue.map(value => s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value.")
       val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = refundEntitlementMessage)
 
       service.leaseholdResidentialAddPropApr16Onwards(leaseRequest) shouldBe Seq(result,prevResult)
