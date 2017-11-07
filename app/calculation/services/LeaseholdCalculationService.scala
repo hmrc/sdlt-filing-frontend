@@ -22,14 +22,13 @@ trait LeaseholdCalculationSrv {
   val refundEntitlementService: RefundEntitlementSrv
 
   def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
-    val prevResult = leaseholdResidentialDec14Onwards(request, asPreviousResult = true)
-
     val npv = getNPV("leaseholdResidentialAddPropApr16Onwards", request.leaseDetails)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialAddPropApr16OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       if(request.premium < 40000) 0 else request.premium,
       SliceRatesTables.leaseholdResidentialAddPropApr16OnwardsPremiumRates.slices
     )
+    val prevResult = leaseholdResidentialDec14Onwards(request, asPreviousResult = true, Some(npv))
 
     val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(premiumResult.taxDue, prevResult.totalTax, request.propertyDetails)
     val currResult = LeaseholdResultFactory.leaseholdResidentialAddPropApr16Onwards(leaseResult, premiumResult, npv, refundEntitlement)
@@ -37,8 +36,8 @@ trait LeaseholdCalculationSrv {
     Seq(currResult, prevResult)
   }
 
-  def leaseholdResidentialDec14Onwards(request: Request, asPreviousResult: Boolean = false): Result = {
-    val npv = getNPV("leaseholdResidentialDec14Onwards", request.leaseDetails)
+  def leaseholdResidentialDec14Onwards(request: Request, asPreviousResult: Boolean = false, preCalculatedNPV: Option[BigDecimal] = None): Result = {
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialDec14Onwards", request.leaseDetails))
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialDec14OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialDec14OnwardsPremiumRates.slices)
 
@@ -61,14 +60,14 @@ trait LeaseholdCalculationSrv {
     if(nonResPrevCalcRequired(request))
       Seq(
         LeaseholdResultFactory.leaseholdNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv),
-        leaseholdNonResidentialMar12toMar16(request, asPrevResult = true)
+        leaseholdNonResidentialMar12toMar16(request, asPrevResult = true, preCalculatedNPV = Some(npv))
       )
     else
       Seq(LeaseholdResultFactory.leaseholdNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv))
   }
 
-  def leaseholdNonResidentialMar12toMar16(request: Request, asPrevResult: Boolean = false): Result = {
-    val npv = getNPV("leaseholdNonResidentialMar12toMar16", request.leaseDetails)
+  def leaseholdNonResidentialMar12toMar16(request: Request, asPrevResult: Boolean = false, preCalculatedNPV: Option[BigDecimal] = None): Result = {
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdNonResidentialMar12toMar16", request.leaseDetails))
 
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdNonResidentialMar12toMar16LeaseRates.slices)
     val premiumResult = if(eligibleForZeroRate(request)) {
@@ -93,7 +92,7 @@ trait LeaseholdCalculationSrv {
       details => details.relevantRent match {
         case Some(relRent) => relRent < RELEVANT_RENT_ZERO_RATE_LIMIT
         case None => throw new RequiredValueNotDefinedException(
-          "[LeaseholdCalculationService] [eligibleForZeroRate] - lease details not defined when premium less than £150,000"
+          "[LeaseholdCalculationService] [eligibleForZeroRate] - relevant rent amount not defined"
         )
       }
     }
@@ -117,7 +116,7 @@ trait LeaseholdCalculationSrv {
         case Some(true)  => request.relevantRentDetails.map{ details =>
           condition(details)
         }.getOrElse(
-          throw new RequiredValueNotDefinedException(s"[LeaseholdCalculationService] [$callingFunction] - relevant rent not defined")
+          throw new RequiredValueNotDefinedException(s"[LeaseholdCalculationService] [$callingFunction] - relevant rent details not defined")
         )
         case None =>
           throw new RequiredValueNotDefinedException(
