@@ -226,7 +226,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val result = createResult("leaseholdNonResidential, March2012 to March2016")
 
         (mockLeaseholdCalculationService.leaseholdNonResidentialMar12toMar16 _)
-          .expects(testRequest, false)
+          .expects(testRequest, false, None)
           .returns(result)
           .noMoreThanOnce()
 
@@ -238,7 +238,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val result = createResult("leaseholdNonResidential, March2012 to March2016")
 
         (mockLeaseholdCalculationService.leaseholdNonResidentialMar12toMar16 _)
-          .expects(testRequest, false)
+          .expects(testRequest, false, None)
           .returns(result)
           .noMoreThanOnce()
 
@@ -278,7 +278,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val result = createResult("leaseholdResidential, December2014 to April2016")
 
         (mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards _)
-          .expects(testRequest, false)
+          .expects(testRequest, false, None)
           .returns(result)
           .noMoreThanOnce()
 
@@ -290,7 +290,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val result = createResult("leaseholdResidential, December2014 to April2016")
 
         (mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards _)
-          .expects(testRequest, false)
+          .expects(testRequest, false, None)
           .returns(result)
           .noMoreThanOnce()
 
