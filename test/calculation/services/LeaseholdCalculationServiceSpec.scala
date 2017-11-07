@@ -671,7 +671,17 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         private val request = testRequest(premium = 149999).copy(relevantRentDetails = None)
         the[RequiredValueNotDefinedException] thrownBy
           service.eligibleForZeroRate(request) should
-          have message "[LeaseholdCalculationService] [eligibleForZeroRate] - relevant rent not defined"
+          have message "[LeaseholdCalculationService] [eligibleForZeroRate] - relevant rent details not defined"
+      }
+      "premium is under £150,000, all rents are below £2,000 but there is no relevant rent in the relevant rent details" in new Setup {
+        private val request = testRequest(premium = 149999).copy(relevantRentDetails = Some(RelevantRentDetails(
+          exchangedContractsBeforeMar16 = Some(true),
+          contractChangedSinceMar16 = Some(false),
+          relevantRent = None
+        )))
+        the[RequiredValueNotDefinedException] thrownBy
+          service.eligibleForZeroRate(request) should
+          have message "[LeaseholdCalculationService] [eligibleForZeroRate] - relevant rent amount not defined"
       }
     }
   }
@@ -750,7 +760,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         private val request = testRequest(premium = 149999).copy(relevantRentDetails = None)
         the[RequiredValueNotDefinedException] thrownBy
           service.nonResPrevCalcRequired(request) should
-          have message "[LeaseholdCalculationService] [nonResPrevCalcRequired] - relevant rent not defined"
+          have message "[LeaseholdCalculationService] [nonResPrevCalcRequired] - relevant rent details not defined"
       }
     }
   }

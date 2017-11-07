@@ -92,7 +92,7 @@ trait LeaseholdCalculationSrv {
       details => details.relevantRent match {
         case Some(relRent) => relRent < RELEVANT_RENT_ZERO_RATE_LIMIT
         case None => throw new RequiredValueNotDefinedException(
-          "[LeaseholdCalculationService] [eligibleForZeroRate] - lease details not defined when premium less than £150,000"
+          "[LeaseholdCalculationService] [eligibleForZeroRate] - relevant rent amount not defined"
         )
       }
     }
@@ -116,7 +116,7 @@ trait LeaseholdCalculationSrv {
         case Some(true)  => request.relevantRentDetails.map{ details =>
           condition(details)
         }.getOrElse(
-          throw new RequiredValueNotDefinedException(s"[LeaseholdCalculationService] [$callingFunction] - relevant rent not defined")
+          throw new RequiredValueNotDefinedException(s"[LeaseholdCalculationService] [$callingFunction] - relevant rent details not defined")
         )
         case None =>
           throw new RequiredValueNotDefinedException(
