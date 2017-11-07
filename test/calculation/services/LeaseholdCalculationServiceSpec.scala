@@ -671,7 +671,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         private val request = testRequest(premium = 149999).copy(relevantRentDetails = None)
         the[RequiredValueNotDefinedException] thrownBy
           service.eligibleForZeroRate(request) should
-          have message "[LeaseholdCalculationService] [extractRelevantRent] - relevant rent not defined"
+          have message "[LeaseholdCalculationService] [eligibleForZeroRate] - relevant rent not defined"
       }
     }
   }

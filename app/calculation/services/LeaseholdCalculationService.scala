@@ -7,7 +7,7 @@ import calculation.data.SignificantAmounts._
 import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.factories.LeaseholdResultFactory
 import calculation.models.calculationtables.SlabResult
-import calculation.models.{LeaseDetails, Request, Result}
+import calculation.models.{LeaseDetails, RelevantRentDetails, Request, Result}
 import calculation.validators.internal.ModelValidation
 
 @Singleton
@@ -89,42 +89,39 @@ trait LeaseholdCalculationSrv {
   }
 
   private[services] def eligibleForZeroRate(request: Request): Boolean = {
-    if(request.premium >= RELEVANT_RENT_PREMIUM_THRESHOLD)
-      false
-    else
-      request.leaseDetails.map(ModelValidation.allRentsBelow2000) match {
-        case Some(false) => false
-        case Some(true)  => extractRelevantRent(request) < RELEVANT_RENT_ZERO_RATE_LIMIT
-        case None =>
-          throw new RequiredValueNotDefinedException(
+    filterToRelevantRentCondition("eligibleForZeroRate", request, filterOutcome = false) {
+      details => details.relevantRent match {
+        case Some(relRent) => relRent < RELEVANT_RENT_ZERO_RATE_LIMIT
+        case None => throw new RequiredValueNotDefinedException(
           "[LeaseholdCalculationService] [eligibleForZeroRate] - lease details not defined when premium less than £150,000"
         )
       }
-  }
-
-  private def extractRelevantRent(request: Request): BigDecimal = {
-    request.relevantRentDetails.flatMap(_.relevantRent).getOrElse{
-      throw new RequiredValueNotDefinedException("[LeaseholdCalculationService] [extractRelevantRent] - relevant rent not defined")
     }
   }
 
   private[services] def nonResPrevCalcRequired(request: Request): Boolean = {
+    filterToRelevantRentCondition("nonResPrevCalcRequired", request, filterOutcome = true) {
+      details => (details.exchangedContractsBeforeMar16, details.contractChangedSinceMar16) match {
+        case (Some(true), Some(false)) => true
+        case _ => false
+      }
+    }
+  }
+
+  private def filterToRelevantRentCondition(callingFunction: String, request: Request, filterOutcome: Boolean)(condition: RelevantRentDetails => Boolean): Boolean = {
     if(request.premium >= RELEVANT_RENT_PREMIUM_THRESHOLD)
-      true
+      filterOutcome
     else
       request.leaseDetails.map(ModelValidation.allRentsBelow2000) match {
-        case Some(false) => true
+        case Some(false) => filterOutcome
         case Some(true)  => request.relevantRentDetails.map{ details =>
-          (details.exchangedContractsBeforeMar16, details.contractChangedSinceMar16) match {
-            case (Some(true), Some(false)) => true
-            case _ => false
-          }
+          condition(details)
         }.getOrElse(
-          throw new RequiredValueNotDefinedException("[LeaseholdCalculationService] [nonResPrevCalcRequired] - relevant rent not defined")
+          throw new RequiredValueNotDefinedException(s"[LeaseholdCalculationService] [$callingFunction] - relevant rent not defined")
         )
         case None =>
           throw new RequiredValueNotDefinedException(
-            "[LeaseholdCalculationService] [nonResPrevCalcRequired] - lease details not defined when premium less than £150,000"
+            s"[LeaseholdCalculationService] [$callingFunction] - lease details not defined when premium less than £150,000"
           )
       }
   }
