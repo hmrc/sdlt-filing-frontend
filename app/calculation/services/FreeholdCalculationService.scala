@@ -9,12 +9,14 @@ import calculation.factories.FreeholdResultFactory
 
 @Singleton
 class FreeholdCalculationService @Inject()(
-  val baseCalculationService: BaseCalculationService
+  val baseCalculationService: BaseCalculationService,
+  val refundEntitlementService: RefundEntitlementService
 ) extends FreeholdCalculationSrv
 
 trait FreeholdCalculationSrv {
 
   val baseCalculationService: BaseCalculationSrv
+  val refundEntitlementService: RefundEntitlementSrv
 
   def freeholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
     val prevResult = freeholdResidentialDec14Onwards(request, asPreviousResult = true)
@@ -24,10 +26,7 @@ trait FreeholdCalculationSrv {
       SliceRatesTables.freeholdResidentialAddPropApr16OnwardsRates.slices
     )
 
-    val refundEntitlement = if(
-      currentPremiumResult.taxDue.toInt > prevResult.totalTax &&
-        individualWithAdditionalProperty(request.propertyDetails)
-    ) Some(currentPremiumResult.taxDue.toInt - prevResult.totalTax) else None
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(currentPremiumResult.taxDue, prevResult.totalTax, request.propertyDetails)
 
     Seq(
       FreeholdResultFactory.freeholdResidentialAddPropApr16OnwardsResult(currentPremiumResult, refundEntitlement),
@@ -73,28 +72,4 @@ trait FreeholdCalculationSrv {
 
     FreeholdResultFactory.freeholdNonResidentialMar12toMar16Result(premiumResult, asPrevResult)
   }
-
-  private [services] def individualWithAdditionalProperty(oPropertyDetails: Option[PropertyDetails]): Boolean = {
-    oPropertyDetails.map {propertyDetails =>
-      if(propertyDetails.individual) {
-        additionalProperty(propertyDetails.twoOrMoreProperties, propertyDetails.replaceMainResidence)
-      } else false
-    }.getOrElse{
-      throw new RequiredValueNotDefinedException(
-        "[FreeholdCalculationService] [individualWithAdditionalProperty]" +
-          " - property details not defined in freehold residential additional property calculation"
-      )}
-  }
-
-  private def additionalProperty(twoOrMoreProperties: Option[Boolean], replaceMainResidence: Option[Boolean]): Boolean = {
-    (twoOrMoreProperties, replaceMainResidence) match {
-      case (Some(twoOrMore), Some(replace)) => twoOrMore && !replace
-      case (oTwoOrMore, oReplace) =>
-        throw new RequiredValueNotDefinedException(
-          "[FreeholdCalculationService] [additionalProperty]" +
-            s" - twoOrMoreProperties: $oTwoOrMore, replaceMainResidence: $oReplace"
-        )
-    }
-  }
-
 }
