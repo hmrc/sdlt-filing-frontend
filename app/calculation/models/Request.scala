@@ -11,7 +11,7 @@ import RequestValidators.{multiFieldDateReads, yesNoToBooleanReads}
 
 object RelevantRentDetails {
   implicit val reads = (
-    (__ \ "contractPre201603").read[Boolean](yesNoToBooleanReads) and
+    (__ \ "contractPre201603").readNullable[Boolean](yesNoToBooleanReads) and
     (__ \ "contractVariedPost201603").readNullable[Boolean](yesNoToBooleanReads) and
     (__ \ "relevantRent").readNullable[BigDecimal]
   )(RelevantRentDetails.apply _)
@@ -90,7 +90,7 @@ case class LeaseTerm(
                     )
 
 case class RelevantRentDetails(
-                              exchangedContractsBeforeMar16: Boolean,
+                              exchangedContractsBeforeMar16: Option[Boolean],
                               contractChangedSinceMar16: Option[Boolean],
                               relevantRent: Option[BigDecimal]
                               )

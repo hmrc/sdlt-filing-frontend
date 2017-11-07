@@ -3,9 +3,12 @@ package calculation.services
 import javax.inject.{Inject, Singleton}
 
 import calculation.data.{SlabRatesTables, SliceRatesTables}
+import calculation.data.SignificantAmounts._
 import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.factories.LeaseholdResultFactory
-import calculation.models.{LeaseDetails, Request, Result}
+import calculation.models.calculationtables.SlabResult
+import calculation.models.{LeaseDetails, RelevantRentDetails, Request, Result}
+import calculation.validators.internal.ModelValidation
 
 @Singleton
 class LeaseholdCalculationService @Inject()(
@@ -50,9 +53,32 @@ trait LeaseholdCalculationSrv {
     LeaseholdResultFactory.leaseholdResidentialMar12toDec14Result(leaseResult, premiumResult, npv)
   }
 
-  def leaseholdNonResidentialMar16Onwards(request: Request): Seq[Result] = ???
+  def leaseholdNonResidentialMar16Onwards(request: Request): Seq[Result] = {
+    val npv = getNPV("leaseholdNonResidentialMar16Onwards", request.leaseDetails)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdNonResidentialMar16OnwardsLeaseRates.slices)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdNonResidentialMar16OnwardsPremiumRates.slices)
 
-  def leaseholdNonResidentialMar12toMar16(request: Request, asPrevResult: Boolean = false): Result = ???
+    if(nonResPrevCalcRequired(request))
+      Seq(
+        LeaseholdResultFactory.leaseholdNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv),
+        leaseholdNonResidentialMar12toMar16(request, asPrevResult = true)
+      )
+    else
+      Seq(LeaseholdResultFactory.leaseholdNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv))
+  }
+
+  def leaseholdNonResidentialMar12toMar16(request: Request, asPrevResult: Boolean = false): Result = {
+    val npv = getNPV("leaseholdNonResidentialMar12toMar16", request.leaseDetails)
+
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdNonResidentialMar12toMar16LeaseRates.slices)
+    val premiumResult = if(eligibleForZeroRate(request)) {
+      SlabResult(rate = 0, taxDue = 0)
+    } else {
+      baseCalculationService.calculateTaxDueSlab(request.premium, SlabRatesTables.leaseholdNonResidentialMar12toMar16PremiumRates.slabs)
+    }
+
+    LeaseholdResultFactory.leaseholdNonResidentialMar12toMar16Result(leaseResult, premiumResult, npv, asPrevResult)
+  }
 
   private[services] def getNPV(func: String, oLeaseDetails: Option[LeaseDetails]): BigDecimal = {
     baseCalculationService.calculateNPV(
@@ -61,4 +87,43 @@ trait LeaseholdCalculationSrv {
       )}
     )
   }
+
+  private[services] def eligibleForZeroRate(request: Request): Boolean = {
+    filterToRelevantRentCondition("eligibleForZeroRate", request, filterOutcome = false) {
+      details => details.relevantRent match {
+        case Some(relRent) => relRent < RELEVANT_RENT_ZERO_RATE_LIMIT
+        case None => throw new RequiredValueNotDefinedException(
+          "[LeaseholdCalculationService] [eligibleForZeroRate] - lease details not defined when premium less than £150,000"
+        )
+      }
+    }
+  }
+
+  private[services] def nonResPrevCalcRequired(request: Request): Boolean = {
+    filterToRelevantRentCondition("nonResPrevCalcRequired", request, filterOutcome = true) {
+      details => (details.exchangedContractsBeforeMar16, details.contractChangedSinceMar16) match {
+        case (Some(true), Some(false)) => true
+        case _ => false
+      }
+    }
+  }
+
+  private def filterToRelevantRentCondition(callingFunction: String, request: Request, filterOutcome: Boolean)(condition: RelevantRentDetails => Boolean): Boolean = {
+    if(request.premium >= RELEVANT_RENT_PREMIUM_THRESHOLD)
+      filterOutcome
+    else
+      request.leaseDetails.map(ModelValidation.allRentsBelow2000) match {
+        case Some(false) => filterOutcome
+        case Some(true)  => request.relevantRentDetails.map{ details =>
+          condition(details)
+        }.getOrElse(
+          throw new RequiredValueNotDefinedException(s"[LeaseholdCalculationService] [$callingFunction] - relevant rent not defined")
+        )
+        case None =>
+          throw new RequiredValueNotDefinedException(
+            s"[LeaseholdCalculationService] [$callingFunction] - lease details not defined when premium less than £150,000"
+          )
+      }
+  }
+
 }

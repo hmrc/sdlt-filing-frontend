@@ -1,8 +1,11 @@
 package calculation.validators.internal
 
+import java.time.LocalDate
+
 import calculation.enums.{HoldingTypes, PropertyTypes}
 import calculation.models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
 import calculation.data.Dates._
+import calculation.data.SignificantAmounts.RELEVANT_RENT_PREMIUM_THRESHOLD
 
 sealed trait ValidationResult
 case object  ValidationSuccess              extends ValidationResult
@@ -104,12 +107,12 @@ object ModelValidation {
       case HoldingTypes.leasehold => request.propertyType match {
         case PropertyTypes.residential => ValidationSuccess
         case PropertyTypes.nonResidential =>
-          if(request.premium >= 150000)
+          if(request.premium >= RELEVANT_RENT_PREMIUM_THRESHOLD)
             ValidationSuccess
           else
             request.leaseDetails.map { leaseDetails =>
               if(allRentsBelow2000(leaseDetails))
-                request.relevantRentDetails.map(validRelevantRentDetailsStructure).getOrElse(
+                request.relevantRentDetails.map(validRelevantRentDetailsStructure(_, request.effectiveDate)).getOrElse(
                   ValidationFailure(s"Relevant rent details not provided when premium: ${request.premium}, " +
                     s"holding type: leasehold, property type: non-residential and all rents <£2000")
                 )
@@ -122,7 +125,7 @@ object ModelValidation {
     }
   }
 
-  private [validators] def allRentsBelow2000(leaseDetails: LeaseDetails): Boolean = {
+  def allRentsBelow2000(leaseDetails: LeaseDetails): Boolean = {
     !Seq(
       Some(leaseDetails.year1Rent),
       leaseDetails.year2Rent,
@@ -132,16 +135,21 @@ object ModelValidation {
     ).flatten.exists(_ >= 2000)
   }
 
-  private[validators] def validRelevantRentDetailsStructure(relRentDetails: RelevantRentDetails): ValidationResult = {
-    relRentDetails match {
-        case RelevantRentDetails(false, _, _)                => ValidationSuccess
-        case RelevantRentDetails(true, Some(true), _)        => ValidationSuccess
-        case RelevantRentDetails(true, Some(false), Some(_)) => ValidationSuccess
-        case RelevantRentDetails(true, contractChanged, relRent) =>
-          ValidationFailure(
-            s"Relevant Rent details failed validation with 'exchangedContractsBeforeMar16': true, " +
-              s"'contractChangedSinceMar16': $contractChanged, " +
-              s"'relevantRent': $relRent")
-    }
+  private[validators] def validRelevantRentDetailsStructure(relRentDetails: RelevantRentDetails, effectiveDate: LocalDate): ValidationResult = {
+    if(effectiveDate.isBefore(MARCH2016_NON_RESIDENTIAL_DATE))
+      relRentDetails.relevantRent.map(_ => ValidationSuccess)
+        .getOrElse(ValidationFailure("No relevant rent amount provided"))
+    else
+      relRentDetails match {
+          case RelevantRentDetails(Some(false), _, _)                => ValidationSuccess
+          case RelevantRentDetails(Some(true), Some(true), _)        => ValidationSuccess
+          case RelevantRentDetails(Some(true), Some(false), Some(_)) => ValidationSuccess
+          case RelevantRentDetails(exchangedBefore, contractChanged, relRent) =>
+            ValidationFailure(
+              s"Relevant Rent details failed validation with " +
+                s"'exchangedContractsBeforeMar16': $exchangedBefore, " +
+                s"'contractChangedSinceMar16': $contractChanged, " +
+                s"'relevantRent': $relRent")
+      }
   }
 }

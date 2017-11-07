@@ -3,7 +3,7 @@ package calculation.fixtures
 import java.time.LocalDate
 
 import calculation.enums.{HoldingTypes, PropertyTypes}
-import calculation.models.{PropertyDetails, Request}
+import calculation.models.{PropertyDetails, RelevantRentDetails, Request}
 
 trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 
@@ -74,6 +74,56 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None
+  )
+
+  def leaseholdNonResidentialMar16OnwardsRequest(
+                                                  premium: BigDecimal,
+                                                  year2Rent: BigDecimal = 200,
+                                                  exchangedPreMarch2016: Boolean = true
+                                                ) = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.nonResidential,
+    effectiveDate = LocalDate.of(2013, 2, 14),
+    premium = premium,
+    highestRent = 1000,
+    leaseDetails = Some(testLeaseDetailsAllRentsUnder2000.copy(year2Rent = Some(year2Rent))),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = None
+      )
+    ),
+    relevantRentDetails = Some(
+      RelevantRentDetails(
+        exchangedContractsBeforeMar16 = Some(exchangedPreMarch2016),
+        contractChangedSinceMar16 = Some(false),
+        relevantRent = Some(999)
+      )
+    )
+  )
+
+  def leaseholdNonResidentialMar12toMar16Request(premium: BigDecimal, year2Rent: BigDecimal = 200) = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.nonResidential,
+    effectiveDate = LocalDate.of(2013, 2, 14),
+    premium = premium,
+    highestRent = 1000,
+    leaseDetails = Some(testLeaseDetailsAllRentsUnder2000.copy(year2Rent = Some(year2Rent))),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = None
+      )
+    ),
+    relevantRentDetails = Some(
+      RelevantRentDetails(
+        exchangedContractsBeforeMar16 = None,
+        contractChangedSinceMar16 = None,
+        relevantRent = Some(999)
+      )
+    )
   )
 
 }

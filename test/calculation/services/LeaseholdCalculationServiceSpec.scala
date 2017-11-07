@@ -1,5 +1,8 @@
 package calculation.services
 
+import java.time.LocalDate
+
+import calculation.enums.{HoldingTypes, PropertyTypes}
 import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.fixtures.{LeaseholdRequestFeature, LeaseholdResultFixture}
 import calculation.models._
@@ -17,6 +20,10 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         override def calculateRefundEntitlement(premiumResultTaxDue: BigDecimal, prevResultTax: Int, reqPropertyDetails: Option[PropertyDetails]): Option[Int] = refundEntitlement
       }
     )
+  }
+
+  class Setup {
+    val service = new LeaseholdCalculationService(new BaseCalculationService, new RefundEntitlementService)
   }
 
   "getNPV" should {
@@ -413,6 +420,338 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
 
       val res = leaseholdResidentialMar12toDec14Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
       service.leaseholdResidentialMar12toDec14(leaseholdResidentialMar12toDec14Request(2000001)) shouldBe res
+    }
+  }
+
+  "leaseholdNonResidentialMar16Onwards" should {
+    "return 0, 0 for premium of 149000, npv of 150000, prevCalc is FALSE (exchanged contracts post March 2016)" in new PredefinedNPVSetup(150000) {
+      val leaseTaxDue, premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000),  rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(5000000), rate = 1, taxDue = 0),
+        SliceDetails(from = 5000000, to = None,          rate = 2, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(250000), rate = 2, taxDue = 0),
+        SliceDetails(from = 250000,  to = None,         rate = 5, taxDue = 0)
+      )
+      val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(149000, exchangedPreMarch2016 = false)) shouldBe Seq(res)
+    }
+    "return (1, 1), (1500, 0) for premium of 150050, npv of 150100, prevCalc is TRUE" in new PredefinedNPVSetup(150100) {
+      val leaseTaxDue = 1
+      val premTaxDue = 1
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000),  rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(5000000), rate = 1, taxDue = 1),
+        SliceDetails(from = 5000000, to = None,          rate = 2, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(250000), rate = 2, taxDue = 1),
+        SliceDetails(from = 250000,  to = None,         rate = 5, taxDue = 0)
+      )
+
+      val prevLeaseTaxDue = 0
+      val prevPremTaxDue = 1500
+      val prevPremRate = 1
+      val prevLeaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      val prevRes = leaseholdNonResidentialMar12toMar16PrevResult(prevLeaseTaxDue, prevLeaseSliceDetails, prevPremTaxDue, prevPremRate, npv)
+      service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(150050)) shouldBe Seq(res, prevRes)
+    }
+    "return (2000, 48500), (2500, 47500) for premium of 250000, npv of 5000000, prevCalc is TRUE" in new PredefinedNPVSetup(5000000) {
+      val leaseTaxDue = 48500
+      val premTaxDue = 2000
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000),  rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(5000000), rate = 1, taxDue = 48500),
+        SliceDetails(from = 5000000, to = None,          rate = 2, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(250000), rate = 2, taxDue = 2000),
+        SliceDetails(from = 250000,  to = None,         rate = 5, taxDue = 0)
+      )
+
+      val prevLeaseTaxDue = 47500
+      val prevPremTaxDue = 2500
+      val prevPremRate = 1
+      val prevLeaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 47500)
+      )
+
+      val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      val prevRes = leaseholdNonResidentialMar12toMar16PrevResult(prevLeaseTaxDue, prevLeaseSliceDetails, prevPremTaxDue, prevPremRate, npv)
+      service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(250000)) shouldBe Seq(res, prevRes)
+    }
+    "return (2001, 48501), (7500, 47500) for premium of 250020, npv of 5000050, prevCalc is TRUE" in new PredefinedNPVSetup(5000050) {
+      val leaseTaxDue = 48501
+      val premTaxDue = 2001
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000),  rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(5000000), rate = 1, taxDue = 48500),
+        SliceDetails(from = 5000000, to = None,          rate = 2, taxDue = 1)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(250000), rate = 2, taxDue = 2000),
+        SliceDetails(from = 250000,  to = None,         rate = 5, taxDue = 1)
+      )
+
+      val prevLeaseTaxDue = 47500
+      val prevPremTaxDue = 7500
+      val prevPremRate = 3
+      val prevLeaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 47500)
+      )
+
+      val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      val prevRes = leaseholdNonResidentialMar12toMar16PrevResult(prevLeaseTaxDue, prevLeaseSliceDetails, prevPremTaxDue, prevPremRate, npv)
+      service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(250020)) shouldBe Seq(res, prevRes)
+    }
+  }
+
+  "leaseholdNonResidentialMar12toMar16" should {
+    "return 0, 0 for purchase price of 149000, npv of 150000 and zeroRate is TRUE" in new PredefinedNPVSetup(150000) {
+      val leaseTaxDue, premTaxDue = 0
+      val premRate = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      val res = leaseholdNonResidentialMar12toMar16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdNonResidentialMar12toMar16(leaseholdNonResidentialMar12toMar16Request(149000)) shouldBe res
+    }
+    "return 1490, 0 for purchase price of 149000, npv of 150000 and zeroRate is FALSE (because year 2 rent > £2000)" in new PredefinedNPVSetup(150000) {
+      val leaseTaxDue = 0
+      val premTaxDue = 1490
+      val premRate = 1
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      val res = leaseholdNonResidentialMar12toMar16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdNonResidentialMar12toMar16(leaseholdNonResidentialMar12toMar16Request(149000, year2Rent = 2001)) shouldBe res
+    }
+    "return 2500, 0 for purchase price of 250000, npv of 150000 and zeroRate is FALSE (because premium > £150000)" in new PredefinedNPVSetup(150000) {
+      val leaseTaxDue = 0
+      val premTaxDue = 2500
+      val premRate = 1
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      val res = leaseholdNonResidentialMar12toMar16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdNonResidentialMar12toMar16(leaseholdNonResidentialMar12toMar16Request(250000)) shouldBe res
+    }
+    "return 7500, 0 for purchase price of 250001, npv of 150000 and zeroRate is FALSE (because premium > £150000)" in new PredefinedNPVSetup(150000) {
+      val leaseTaxDue = 0
+      val premTaxDue = 7500
+      val premRate = 3
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      val res = leaseholdNonResidentialMar12toMar16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdNonResidentialMar12toMar16(leaseholdNonResidentialMar12toMar16Request(250001)) shouldBe res
+    }
+    "return 15000, 0 for purchase price of 500000, npv of 150000 and zeroRate is FALSE (because premium > £150000)" in new PredefinedNPVSetup(150000) {
+      val leaseTaxDue = 0
+      val premTaxDue = 15000
+      val premRate = 3
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      val res = leaseholdNonResidentialMar12toMar16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdNonResidentialMar12toMar16(leaseholdNonResidentialMar12toMar16Request(500000)) shouldBe res
+    }
+    "return 20000, 0 for purchase price of 500001, npv of 150000 and zeroRate is FALSE (because premium > £150000)" in new PredefinedNPVSetup(150000) {
+      val leaseTaxDue = 0
+      val premTaxDue = 20000
+      val premRate = 4
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      val res = leaseholdNonResidentialMar12toMar16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdNonResidentialMar12toMar16(leaseholdNonResidentialMar12toMar16Request(500001)) shouldBe res
+    }
+    "return 20000, 1 for purchase price of 500001, npv of 250100 and zeroRate is FALSE (because premium > £150000)" in new PredefinedNPVSetup(250100) {
+      val leaseTaxDue = 1
+      val premTaxDue = 20000
+      val premRate = 4
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 1)
+      )
+
+      val res = leaseholdNonResidentialMar12toMar16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdNonResidentialMar12toMar16(leaseholdNonResidentialMar12toMar16Request(500001)) shouldBe res
+    }
+  }
+
+  "eligibleForZeroRate" should {
+
+    def testRequest(
+                   premium: BigDecimal = 150000,
+                   year2Rent: BigDecimal = 200,
+                   relevantRent: BigDecimal = 200
+                   ) = Request(
+      holdingType = HoldingTypes.leasehold,
+      propertyType = PropertyTypes.nonResidential,
+      effectiveDate = LocalDate.of(2017, 1, 13),
+      premium = premium,
+      highestRent = 1000,
+      propertyDetails = None,
+      leaseDetails = Some(leaseDetailsWithYear2Rent(year2Rent)),
+      relevantRentDetails = Some(RelevantRentDetails(
+        exchangedContractsBeforeMar16 = Some(true),
+        contractChangedSinceMar16 = Some(false),
+        relevantRent = Some(relevantRent)
+      ))
+    )
+
+    def leaseDetailsWithYear2Rent(rent: BigDecimal) = testLeaseDetailsAllRentsUnder2000.copy(year2Rent = Some(rent))
+
+    "return false" when {
+      "premium is £150,000" in new Setup {
+        service.eligibleForZeroRate(testRequest()) shouldBe false
+      }
+      "premium is over £150,000" in new Setup {
+        private val request = testRequest(premium = 150001)
+        service.eligibleForZeroRate(request) shouldBe false
+      }
+      "premium is under £150,000 but there is an annual rent of £2,000" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 2000)
+        service.eligibleForZeroRate(request) shouldBe false
+      }
+      "premium is under £150,000 but there is an annual rent of over £2,000" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 2001)
+        service.eligibleForZeroRate(request) shouldBe false
+      }
+      "premium is under £150,000, all rents are below £2,000 but relevant rent is £1,000" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 1999, relevantRent = 1000)
+        service.eligibleForZeroRate(request) shouldBe false
+      }
+      "premium is under £150,000, all rents are below £2,000 but relevant rent is over £1,000" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 1999, relevantRent = 1001)
+        service.eligibleForZeroRate(request) shouldBe false
+      }
+    }
+    "return true" when {
+      "premium is under £150,000, all rents are below £2,000 and relevant rent is below £1,000" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 1999, relevantRent = 999)
+        service.eligibleForZeroRate(request) shouldBe true
+      }
+    }
+    "throw the correct exception" when {
+      "premium is under £150,000 but there are no lease details" in new Setup {
+        private val request = testRequest(premium = 149999).copy(leaseDetails = None)
+        the[RequiredValueNotDefinedException] thrownBy
+          service.eligibleForZeroRate(request) should
+          have message "[LeaseholdCalculationService] [eligibleForZeroRate] - " +
+          "lease details not defined when premium less than £150,000"
+      }
+      "premium is under £150,000, all rents are below £2,000 but there are no relevant rent details" in new Setup {
+        private val request = testRequest(premium = 149999).copy(relevantRentDetails = None)
+        the[RequiredValueNotDefinedException] thrownBy
+          service.eligibleForZeroRate(request) should
+          have message "[LeaseholdCalculationService] [eligibleForZeroRate] - relevant rent not defined"
+      }
+    }
+  }
+
+  "nonResPrevCalcRequired" should {
+
+    def testRequest(
+                     premium: BigDecimal = 150000,
+                     year2Rent: BigDecimal = 200,
+                     relevantRent: BigDecimal = 200
+                   ) = Request(
+      holdingType = HoldingTypes.leasehold,
+      propertyType = PropertyTypes.nonResidential,
+      effectiveDate = LocalDate.of(2017, 1, 13),
+      premium = premium,
+      highestRent = 1000,
+      propertyDetails = None,
+      leaseDetails = Some(leaseDetailsWithYear2Rent(year2Rent)),
+      relevantRentDetails = Some(RelevantRentDetails(
+        exchangedContractsBeforeMar16 = Some(true),
+        contractChangedSinceMar16 = Some(false),
+        relevantRent = Some(relevantRent)
+      ))
+    )
+
+    def leaseDetailsWithYear2Rent(rent: BigDecimal) = testLeaseDetailsAllRentsUnder2000.copy(year2Rent = Some(rent))
+
+    "return true" when {
+      "premium is £150,000" in new Setup {
+        service.nonResPrevCalcRequired(testRequest()) shouldBe true
+      }
+      "premium is over £150,000" in new Setup {
+        private val request = testRequest(premium = 150001)
+        service.nonResPrevCalcRequired(request) shouldBe true
+      }
+      "premium is under £150,000 and there is an annual rent of £2,000" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 2000)
+        service.nonResPrevCalcRequired(request) shouldBe true
+      }
+      "premium is under £150,000 and there is an annual rent of over £2,000" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 2001)
+        service.nonResPrevCalcRequired(request) shouldBe true
+      }
+      "premium is under £150,000, all rents are below £2,000 and contract was exchanged < March 2016 and not altered since" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 1999).copy(
+          relevantRentDetails = Some(RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(true),
+            contractChangedSinceMar16 = Some(false),
+            relevantRent = Some(100)
+          ))
+        )
+        service.nonResPrevCalcRequired(request) shouldBe true
+      }
+    }
+    "return false" when {
+      "premium is under £150,000, all rents are below £2,000 but contract was exchanged > March 2016" in new Setup {
+        private val request = testRequest(premium = 149999, year2Rent = 1999).copy(
+          relevantRentDetails = Some(RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(false),
+            contractChangedSinceMar16 = Some(false),
+            relevantRent = Some(100)
+          ))
+        )
+        service.nonResPrevCalcRequired(request) shouldBe false
+      }
+    }
+    "throw the correct exception" when {
+      "premium is under £150,000 but there are no lease details" in new Setup {
+        private val request = testRequest(premium = 149999).copy(leaseDetails = None)
+        the[RequiredValueNotDefinedException] thrownBy
+          service.nonResPrevCalcRequired(request) should
+          have message "[LeaseholdCalculationService] [nonResPrevCalcRequired] - " +
+          "lease details not defined when premium less than £150,000"
+      }
+      "premium is under £150,000, all rents are below £2,000 but there are no relevant rent details" in new Setup {
+        private val request = testRequest(premium = 149999).copy(relevantRentDetails = None)
+        the[RequiredValueNotDefinedException] thrownBy
+          service.nonResPrevCalcRequired(request) should
+          have message "[LeaseholdCalculationService] [nonResPrevCalcRequired] - relevant rent not defined"
+      }
     }
   }
 
