@@ -12,21 +12,37 @@ import calculation.validators.internal.ModelValidation
 
 @Singleton
 class LeaseholdCalculationService @Inject()(
-  val baseCalculationService: BaseCalculationService
+  val baseCalculationService: BaseCalculationService,
+  val refundEntitlementService: RefundEntitlementService
 ) extends LeaseholdCalculationSrv
 
 trait LeaseholdCalculationSrv {
 
   val baseCalculationService: BaseCalculationSrv
+  val refundEntitlementService: RefundEntitlementSrv
 
-  def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = ???
+  def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
+    val prevResult = leaseholdResidentialDec14Onwards(request, asPreviousResult = true)
+
+    val npv = getNPV("leaseholdResidentialAddPropApr16Onwards", request.leaseDetails)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialAddPropApr16OnwardsLeaseRates.slices)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(
+      if(request.premium < 40000) 0 else request.premium,
+      SliceRatesTables.leaseholdResidentialAddPropApr16OnwardsPremiumRates.slices
+    )
+
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(premiumResult.taxDue, prevResult.totalTax, request.propertyDetails)
+    val currResult = LeaseholdResultFactory.leaseholdResidentialAddPropApr16Onwards(leaseResult, premiumResult, npv, refundEntitlement)
+
+    Seq(currResult, prevResult)
+  }
 
   def leaseholdResidentialDec14Onwards(request: Request, asPreviousResult: Boolean = false): Result = {
     val npv = getNPV("leaseholdResidentialDec14Onwards", request.leaseDetails)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialDec14OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialDec14OnwardsPremiumRates.slices)
 
-    LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(leaseResult, premiumResult, npv)
+    LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(leaseResult, premiumResult, npv, asPreviousResult)
   }
 
   def leaseholdResidentialMar12toDec14(request: Request): Result = {

@@ -79,4 +79,22 @@ object SliceRatesTables {
     )
   )
 
+  val leaseholdResidentialAddPropApr16OnwardsLeaseRates = SliceTable(
+    slices = Seq(
+      Slice(from = 0,      to = Some(125000), rate = 0),
+      Slice(from = 125000, to = None,         rate = 1)
+    )
+  )
+
+  val leaseholdResidentialAddPropApr16OnwardsPremiumRates = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(125000),   rate = 3),
+      Slice(from = 125000,   to = Some(250000),   rate = 5),
+      Slice(from = 250000,   to = Some(925000),   rate = 8),
+      Slice(from = 925000,   to = Some(1500000),  rate = 13),
+      Slice(from = 1500000,  to = None,           rate = 15)
+    )
+  )
+
+
 }
