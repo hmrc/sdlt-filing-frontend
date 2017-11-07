@@ -72,11 +72,51 @@ object LeaseholdResultFactory {
     )
   }
 
-  def leaseholdNonResidentialMar12toMar16Result(leaseResult: SliceResult, premiumResult: SlabResult, npv: BigDecimal): Result = {
+  def leaseholdNonResidentialMar16OnwardsResult(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal): Result = {
     val leaseCalcDetails = CalculationDetails(
       taxType = TaxTypes.rent,
       calcType = CalcTypes.slice,
-      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT),
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT_FROM_MAR_2016),
+      bandHeading = Some(DETAIL_COL_HEADER_RENT),
+      detailFooter = Some(DETAIL_FOOTER_RENT),
+      taxDue = leaseResult.taxDue.toInt,
+      slices = Some(leaseResult.slices)
+    )
+    val premiumCalcDetails = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_PREM_FROM_MAR_2016),
+      bandHeading = Some(DETAIL_COL_HEADER_PREM),
+      detailFooter = Some(DETAIL_FOOTER_PREM),
+      taxDue = premiumResult.taxDue.toInt,
+      slices = Some(premiumResult.slices)
+    )
+
+    Result(
+      totalTax = leaseCalcDetails.taxDue + premiumCalcDetails.taxDue,
+      resultHeading = Some(RESULT_HEADING_FROM_MAR_2016),
+      resultHint = None,
+      npv = Some(npv.toInt),
+      taxCalcs = Seq(
+        leaseCalcDetails,
+        premiumCalcDetails
+      )
+    )
+  }
+
+  def leaseholdNonResidentialMar12toMar16Result(leaseResult: SliceResult, premiumResult: SlabResult,
+                                                npv: BigDecimal, asPrevResult: Boolean = false): Result = {
+    val (resultHeading, resultHint, leaseDetailHeading) = if(asPrevResult) {
+      (Some(RESULT_HEADING_BEFORE_MAR_2016),
+        Some(RESULT_HINT_EXCHANGE_BEFORE_MAR_2016),
+        Some(DETAIL_HEADING_SDLT_ON_RENT_BEFORE_MAR_2016))
+    } else {
+      (None, None, Some(DETAIL_HEADING_SDLT_ON_RENT))
+    }
+    val leaseCalcDetails = CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slice,
+      detailHeading = leaseDetailHeading,
       bandHeading = Some(DETAIL_COL_HEADER_RENT),
       detailFooter = Some(DETAIL_FOOTER_RENT),
       taxDue = leaseResult.taxDue.toInt,
@@ -95,8 +135,8 @@ object LeaseholdResultFactory {
 
     Result(
       totalTax = leaseCalcDetails.taxDue + premiumCalcDetails.taxDue,
-      resultHeading = None,
-      resultHint = None,
+      resultHeading = resultHeading,
+      resultHint = resultHint,
       npv = Some(npv.toInt),
       taxCalcs = Seq(
         leaseCalcDetails,

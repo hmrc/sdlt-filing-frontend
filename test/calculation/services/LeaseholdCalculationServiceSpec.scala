@@ -321,6 +321,102 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
+  "leaseholdNonResidentialMar16Onwards" should {
+    "return 0, 0 for premium of 149000, npv of 150000, prevCalc is FALSE (exchanged contracts post March 2016)" in new PredefinedNPVSetup(150000) {
+      val leaseTaxDue, premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000),  rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(5000000), rate = 1, taxDue = 0),
+        SliceDetails(from = 5000000, to = None,          rate = 2, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(250000), rate = 2, taxDue = 0),
+        SliceDetails(from = 250000,  to = None,         rate = 5, taxDue = 0)
+      )
+      val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(149000, exchangedPreMarch2016 = false)) shouldBe Seq(res)
+    }
+    "return (1, 1), (1500, 0) for premium of 150050, npv of 150100, prevCalc is TRUE" in new PredefinedNPVSetup(150100) {
+      val leaseTaxDue = 1
+      val premTaxDue = 1
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000),  rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(5000000), rate = 1, taxDue = 1),
+        SliceDetails(from = 5000000, to = None,          rate = 2, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(250000), rate = 2, taxDue = 1),
+        SliceDetails(from = 250000,  to = None,         rate = 5, taxDue = 0)
+      )
+
+      val prevLeaseTaxDue = 0
+      val prevPremTaxDue = 1500
+      val prevPremRate = 1
+      val prevLeaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      val prevRes = leaseholdNonResidentialMar12toMar16PrevResult(prevLeaseTaxDue, prevLeaseSliceDetails, prevPremTaxDue, prevPremRate, npv)
+      service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(150050)) shouldBe Seq(res, prevRes)
+    }
+    "return (2000, 48500), (2500, 47500) for premium of 250000, npv of 5000000, prevCalc is TRUE" in new PredefinedNPVSetup(5000000) {
+      val leaseTaxDue = 48500
+      val premTaxDue = 2000
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000),  rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(5000000), rate = 1, taxDue = 48500),
+        SliceDetails(from = 5000000, to = None,          rate = 2, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(250000), rate = 2, taxDue = 2000),
+        SliceDetails(from = 250000,  to = None,         rate = 5, taxDue = 0)
+      )
+
+      val prevLeaseTaxDue = 47500
+      val prevPremTaxDue = 2500
+      val prevPremRate = 1
+      val prevLeaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 47500)
+      )
+
+      val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      val prevRes = leaseholdNonResidentialMar12toMar16PrevResult(prevLeaseTaxDue, prevLeaseSliceDetails, prevPremTaxDue, prevPremRate, npv)
+      service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(250000)) shouldBe Seq(res, prevRes)
+    }
+    "return (2001, 48501), (7500, 47500) for premium of 250020, npv of 5000050, prevCalc is TRUE" in new PredefinedNPVSetup(5000050) {
+      val leaseTaxDue = 48501
+      val premTaxDue = 2001
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000),  rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(5000000), rate = 1, taxDue = 48500),
+        SliceDetails(from = 5000000, to = None,          rate = 2, taxDue = 1)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,  to = Some(250000), rate = 2, taxDue = 2000),
+        SliceDetails(from = 250000,  to = None,         rate = 5, taxDue = 1)
+      )
+
+      val prevLeaseTaxDue = 47500
+      val prevPremTaxDue = 7500
+      val prevPremRate = 3
+      val prevLeaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(250000), rate = 0, taxDue = 0),
+        SliceDetails(from = 250000, to = None,         rate = 1, taxDue = 47500)
+      )
+
+      val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      val prevRes = leaseholdNonResidentialMar12toMar16PrevResult(prevLeaseTaxDue, prevLeaseSliceDetails, prevPremTaxDue, prevPremRate, npv)
+      service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(250020)) shouldBe Seq(res, prevRes)
+    }
+  }
+
   "leaseholdNonResidentialMar12toMar16" should {
     "return 0, 0 for purchase price of 149000, npv of 150000 and zeroRate is TRUE" in new PredefinedNPVSetup(150000) {
       val leaseTaxDue, premTaxDue = 0

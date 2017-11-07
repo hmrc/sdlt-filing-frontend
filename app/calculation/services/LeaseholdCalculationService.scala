@@ -37,7 +37,19 @@ trait LeaseholdCalculationSrv {
     LeaseholdResultFactory.leaseholdResidentialMar12toDec14Result(leaseResult, premiumResult, npv)
   }
 
-  def leaseholdNonResidentialMar16Onwards(request: Request): Seq[Result] = ???
+  def leaseholdNonResidentialMar16Onwards(request: Request): Seq[Result] = {
+    val npv = getNPV("leaseholdNonResidentialMar16Onwards", request.leaseDetails)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdNonResidentialMar16OnwardsLeaseRates.slices)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdNonResidentialMar16OnwardsPremiumRates.slices)
+
+    if(nonResPrevCalcRequired(request))
+      Seq(
+        LeaseholdResultFactory.leaseholdNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv),
+        leaseholdNonResidentialMar12toMar16(request, asPrevResult = true)
+      )
+    else
+      Seq(LeaseholdResultFactory.leaseholdNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv))
+  }
 
   def leaseholdNonResidentialMar12toMar16(request: Request, asPrevResult: Boolean = false): Result = {
     val npv = getNPV("leaseholdNonResidentialMar12toMar16", request.leaseDetails)
@@ -49,7 +61,7 @@ trait LeaseholdCalculationSrv {
       baseCalculationService.calculateTaxDueSlab(request.premium, SlabRatesTables.leaseholdNonResidentialMar12toMar16PremiumRates.slabs)
     }
 
-    LeaseholdResultFactory.leaseholdNonResidentialMar12toMar16Result(leaseResult, premiumResult, npv)
+    LeaseholdResultFactory.leaseholdNonResidentialMar12toMar16Result(leaseResult, premiumResult, npv, asPrevResult)
   }
 
   private[services] def getNPV(func: String, oLeaseDetails: Option[LeaseDetails]): BigDecimal = {
