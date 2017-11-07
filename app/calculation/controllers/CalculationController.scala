@@ -20,7 +20,7 @@ trait CalculationCtr extends FrontendController{
 
   val calculationService :  CalculationSrv
 
-  def calculateSDLTC: Action[AnyContent] = Action{ implicit request =>
+  val calculateSDLTC: Action[AnyContent] = Action{ implicit request =>
     request.body.asJson match {
       case Some(json) => json.validate[Request] match {
           case success: JsSuccess[Request] =>
