@@ -11,7 +11,10 @@ class DemoController extends DemoCtr
 trait DemoCtr extends FrontendController {
 
   val respond: Action[AnyContent] = Action { implicit request =>
-    Ok("response confirmed")
+    Thread.sleep(3000)
+    request.body.asJson.map {
+      json => Ok(s"response confirmed: Json received = $json")
+    }.getOrElse(BadRequest("No Json"))
   }
 
 }
