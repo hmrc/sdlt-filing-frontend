@@ -5,5 +5,3 @@ GET         /javascript/*file                      controllers.Assets.at(path="/
 
 #Calculation Routes
 POST        /calculate                             calculation.controllers.CalculationController.calculateSDLTC
-
-POST        /test-response                         demo.DemoController.respond
