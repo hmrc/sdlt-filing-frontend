@@ -118,13 +118,6 @@
                 reloadOnSearch: false
             })
 
-            .when('/demo-response', {
-                title : 'demo',
-                templateUrl : 'demo.html',
-                controller  : 'demoController',
-                reloadOnSearch: false
-            })
-
             // unsupported url, redirect to intro page
             .otherwise({redirectTo:'/intro'});
 
