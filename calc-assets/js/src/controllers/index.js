@@ -14,10 +14,11 @@
   require("./allinone/purchaserController");
   require("./allinone/relevantRentController");
   require("./allinone/rentController");
-
-  require("./allinone/resultController");
+	require("./allinone/resultController");
   require("./allinone/summaryController");
   require("./allinone/detailController");
   require("./allinone/printController");
+
+	require("./allinone/demoController");
 
 }());
