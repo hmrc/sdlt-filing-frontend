@@ -1,32 +1,22 @@
 package component
 
-import akka.stream.Materializer
-import calculation.controllers.CalculationController
-import calculation.services._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import play.api.http.Status._
-import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
-import play.api.mvc.{Action, EssentialAction}
-import play.api.test.FakeRequest
-import play.api.test.Helpers
-import play.mvc.Call
-
-import scala.concurrent.Future
+import play.api.libs.ws.{WSClient, WSResponse}
 
 
 class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
   lazy val ws = app.injector.instanceOf[WSClient]
-  implicit lazy val materializer: Materializer = app.materializer
 
   "Hitting the /calculate route" should {
-    "return a 200 and valid result for [leasehold,residential,notIndividual,2012-2014]" in {
-      def request: WSResponse = ws.url("http://localhost/calculate-stamp-duty-land-tax/calculate")
-        .post(
-          Json.parse(
-            """
+    "return a 200 and valid result for leasehold" when {
+      "residential, notIndividual, 2012-2014" in {
+        def request: WSResponse = ws.url("http://localhost/calculate-stamp-duty-land-tax/calculate")
+          .post(
+            Json.parse(
+              """
               |{
               |  "holdingType": "Leasehold",
               |  "propertyType": "Residential",
@@ -54,7 +44,8 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
               |    "year5Rent": 50000
               |  }
               |}
-            """.stripMargin)
+            """.
+                stripMargin)
         )
 
       val responseJson = Json.parse(
@@ -74,18 +65,18 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
           |     "detailFooter":"SDLT due on the rent",
           |     "slices":[
           |      {
-          |        "from":0,
-          |        "to":125000,
-          |        "rate":0,
-          |        "taxDue":0
+          |       "from":0,
+          |       "to":125000,
+          |       "rate":0,
+          |       "taxDue":0
           |      },{
-          |        "from":125000,
-          |        "to":-1,
-          |        "rate":1,
-          |        "taxDue":8027
+          |       "from":125000,
+          |       "to":-1,
+          |       "rate":1,
+          |       "taxDue":8027
           |      }
-          |    ]
-          |   },
+          |     ]
+          |    },
           |   {
           |    "taxType":"premium",
           |    "calcType":"slab",
@@ -96,18 +87,18 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
           |  }
           | ]
           |}
-        """.
-          stripMargin
-      )
+        """.stripMargin)
 
-      request.status shouldBe OK
-      request.json shouldBe responseJson
+        request.status shouldBe OK
+        request.json shouldBe responseJson
     }
 
-    "return a 200 and valid result for [leasehold,residential,notIndividual,2014-2016]" in {
-      def request: WSResponse = ws.url("http://localhost/calculate-stamp-duty-land-tax/calculate")
+      "residential, notIndividual, 2014-2016" in {
+      def request: WSResponse = ws.url(
+        "http://localhost/calculate-stamp-duty-land-tax/calculate")
         .post(
           Json.parse(
+
             """
                      |{
                      |  "holdingType": "Leasehold",
@@ -139,8 +130,9 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
                    """.stripMargin)
       )
 
-      val responseJson = Json.parse(
-        """
+        val
+        responseJson = Json.parse(
+          """
           |{
           | "result":[
           |  {
@@ -207,19 +199,18 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
           |  }
           | ]
           |}
-        """.
-          stripMargin
-      )
+        """.stripMargin)
 
-      request.status shouldBe OK
-      request.json shouldBe responseJson
+        request.status shouldBe OK
+        request.json shouldBe responseJson
     }
 
-    "return a 200 and valid result for [leasehold,residential,Individual,2016+]" in{
-    def request: WSResponse = ws.url("http://localhost/calculate-stamp-duty-land-tax/calculate")
+      "residential, Individual, 2016+" in{
+    def request: WSResponse = ws.url(
+      "http://localhost/calculate-stamp-duty-land-tax/calculate")
       .post(
         Json.parse(
-            """
+          """
                      |{
                      |  "holdingType": "Leasehold",
                      |  "propertyType": "Residential",
@@ -252,12 +243,11 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
                      |    "year5Rent": 50000
                      |  }
                      |}
-                   """.stripMargin
-          )
+                   """. stripMargin)
       )
 
-    val responseJson = Json.parse(
-      """
+        val responseJson = Json.parse(
+          """
         |{
         |"result":[
         |  {
@@ -391,14 +381,12 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
         |  }
         | ]
         |}
-      """.stripMargin
-    )
-
-    request.status shouldBe OK
-    request.json shouldBe responseJson
+      """.stripMargin)
+        request.status shouldBe OK
+       request.json shouldBe responseJson
     }
 
-    "return a 200 and valid result for [leasehold,non-residential, notIndividual,2012-2016]" in {
+      "non-residential, notIndividual, 2012-2016" in {
       def request: WSResponse = ws.url("http://localhost/calculate-stamp-duty-land-tax/calculate")
         .post(
           Json.parse(
@@ -430,7 +418,8 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
               |    "year5Rent": 50000
               |  }
               |}
-            """.stripMargin)
+            """.
+              stripMargin)
         )
 
       val responseJson = Json.parse(
@@ -471,19 +460,18 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
           |  }
           | ]
           |}
-        """.
-          stripMargin
-      )
+        """.stripMargin)
 
       request.status shouldBe OK
       request.json shouldBe responseJson
     }
 
-    "return a 200 and valid result for [leasehold,non-residential, notIndividual,2016+]" in {
-      def request: WSResponse = ws.url("http://localhost/calculate-stamp-duty-land-tax/calculate")
+      "non-residential, notIndividual, 2016+" in {
+      def request: WSResponse = ws.url(
+        "http://localhost/calculate-stamp-duty-land-tax/calculate")
         .post(
-          Json.parse(
-            """
+            Json.parse(
+              """
               |{
               |  "holdingType": "Leasehold",
               |  "propertyType": "Non-residential",
@@ -614,12 +602,373 @@ class ComponentTestSpec extends UnitSpec with GuiceOneAppPerSuite {
           |   }
           | ]
           |}
-        """.
-          stripMargin
-      )
+        """.stripMargin)
 
-      request.status shouldBe OK
-      request.json shouldBe responseJson
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+     }
+    }
+
+    "return a 200 and valid result for freehold" when {
+      "residential, notIndividual, 2012-2014" in{
+      def request: WSResponse = ws.url(
+        "http://localhost/calculate-stamp-duty-land-tax/calculate")
+        .post(
+          Json.parse(
+            """
+              |{
+              |  "holdingType": "Freehold",
+              |  "propertyType": "Residential",
+              |  "effectiveDateDay": 13,
+              |  "effectiveDateMonth": 7,
+              |  "effectiveDateYear": 2013,
+              |  "premium": 500000,
+              |  "highestRent": 0
+              |}
+            """.
+              stripMargin)
+        )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result":[
+            |  {
+            |   "totalTax":15000,
+            |   "taxCalcs":[
+            |   {
+            |    "taxType":"premium",
+            |    "calcType":"slab",
+            |    "taxDue":15000,
+            |    "rate":3
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+          """.stripMargin)
+
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+
+    }
+
+      "residential, notIndividual, 2014-2016" in{
+        def request: WSResponse = ws.url(
+          "http://localhost/calculate-stamp-duty-land-tax/calculate")
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Freehold",
+                |  "propertyType": "Residential",
+                |  "effectiveDateDay": 13,
+                |  "effectiveDateMonth": 7,
+                |  "effectiveDateYear": 2015,
+                |  "premium": 500000,
+                |  "highestRent": 0
+                |}
+              """.
+                stripMargin)
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result":[
+            |  {
+            |   "totalTax":15000,
+            |   "taxCalcs":[
+            |    {
+            |     "taxType":"premium",
+            |     "calcType":"slice",
+            |     "taxDue":15000,
+            |     "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated",
+            |     "bandHeading":"Purchase price bands (£)",
+            |     "detailFooter":"Total SDLT due",
+            |     "slices":[
+            |      {
+            |       "from":0,
+            |       "to":125000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":125000,
+            |       "to":250000,
+            |       "rate":2,
+            |       "taxDue":2500
+            |       },{
+            |       "from":250000,
+            |       "to":925000,
+            |       "rate":5,
+            |       "taxDue":12500
+            |       },{
+            |       "from":925000,
+            |       "to":1500000,
+            |       "rate":10,
+            |       "taxDue":0
+            |       },{
+            |       "from":1500000,
+            |       "to":-1,
+            |       "rate":12,
+            |       "taxDue":0
+            |       }
+            |      ]
+            |     }
+            |    ]
+            |   }
+            |  ]
+            | }
+          """.stripMargin)
+
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
+
+      "residential, Individual, 2016+" in{
+        def request: WSResponse = ws.url(
+          "http://localhost/calculate-stamp-duty-land-tax/calculate")
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Freehold",
+                |  "propertyType": "Residential",
+                |  "effectiveDateDay": 13,
+                |  "effectiveDateMonth": 7,
+                |  "effectiveDateYear": 2017,
+                |  "premium": 500000,
+                |  "highestRent": 0,
+                |  "propertyDetails": {
+                |   "individual": "Yes",
+                |   "twoOrMoreProperties": "Yes",
+                |   "replaceMainResidence": "No"
+                | }
+                |}
+              """.
+                stripMargin)
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result":[
+            |  {
+            |   "totalTax":30000,
+            |   "resultHeading":"Results based on SDLT rules from 1 April 2016",
+            |   "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £15,000.",
+            |   "taxCalcs":[
+            |    {
+            |     "taxType":"premium",
+            |     "calcType":"slice",
+            |     "taxDue":30000,
+            |     "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated based on the rules from 1 April 2016",
+            |     "bandHeading":"Purchase price bands (£)",
+            |     "detailFooter":"Total SDLT due",
+            |     "slices":[
+            |      {
+            |       "from":0,
+            |       "to":125000,
+            |       "rate":3,
+            |       "taxDue":3750
+            |       },{
+            |       "from":125000,
+            |       "to":250000,
+            |       "rate":5,
+            |       "taxDue":6250
+            |       },{
+            |       "from":250000,
+            |       "to":925000,
+            |       "rate":8,
+            |       "taxDue":20000
+            |       },{
+            |       "from":925000,
+            |       "to":1500000,
+            |       "rate":13,
+            |       "taxDue":0
+            |       },{
+            |       "from":1500000,
+            |       "to":-1,
+            |       "rate":15,
+            |       "taxDue":0
+            |      }
+            |     ]
+            |    }
+            |   ]
+            |  },
+            | {
+            |  "totalTax":15000,
+            |  "resultHeading":"Results based on SDLT rules before 1 April 2016",
+            |  "resultHint":"You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.",
+            |  "taxCalcs":[
+            |   {
+            |    "taxType":"premium",
+            |    "calcType":"slice",
+            |    "taxDue":15000,
+            |    "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated based on the rules before 1 April 2016",
+            |    "bandHeading":"Purchase price bands (£)",
+            |    "detailFooter":"Total SDLT due",
+            |    "slices":[
+            |     {
+            |      "from":0,
+            |      "to":125000,
+            |      "rate":0,
+            |      "taxDue":0
+            |      },{
+            |      "from":125000,
+            |      "to":250000,
+            |      "rate":2,
+            |      "taxDue":2500
+            |      },{
+            |      "from":250000,
+            |      "to":925000,
+            |      "rate":5,
+            |      "taxDue":12500
+            |      },{
+            |      "from":925000,
+            |      "to":1500000,
+            |      "rate":10,
+            |      "taxDue":0
+            |      },{
+            |      "from":1500000,
+            |      "to":-1,
+            |      "rate":12,
+            |      "taxDue":0
+            |      }
+            |     ]
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+          """.stripMargin)
+
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
+
+      "non-residential, notIndividual, 2012-2016" in{
+        def request: WSResponse = ws.url(
+          "http://localhost/calculate-stamp-duty-land-tax/calculate")
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Freehold",
+                |  "propertyType": "Non-residential",
+                |  "effectiveDateDay": 13,
+                |  "effectiveDateMonth": 7,
+                |  "effectiveDateYear": 2013,
+                |  "premium": 500000,
+                |  "highestRent": 0
+                |}
+              """.
+                stripMargin)
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result":[
+            |  {
+            |   "totalTax":15000,
+            |   "taxCalcs":[
+            |   {
+            |    "taxType":"premium",
+            |    "calcType":"slab",
+            |    "taxDue":15000,
+            |    "rate":3
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+          """.stripMargin)
+
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+
+      }
+
+      "non-residential, notIndividual, 2016+" in{
+        def request: WSResponse = ws.url(
+          "http://localhost/calculate-stamp-duty-land-tax/calculate")
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Freehold",
+                |  "propertyType": "Non-residential",
+                |  "effectiveDateDay": 13,
+                |  "effectiveDateMonth": 7,
+                |  "effectiveDateYear": 2017,
+                |  "premium": 500000,
+                |  "highestRent": 0,
+                |  "propertyDetails": {
+                |   "individual": "Yes",
+                |   "twoOrMoreProperties": "Yes",
+                |   "replaceMainResidence": "No"
+                | }
+                |}
+              """.stripMargin)
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result":[
+            |  {
+            |   "totalTax":14500,
+            |   "resultHeading":"Results based on SDLT rules from 17 March 2016",
+            |   "taxCalcs":[
+            |    {
+            |     "taxType":"premium",
+            |     "calcType":"slice",
+            |     "taxDue":14500,
+            |     "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated based on the rules from 17 March 2016",
+            |     "bandHeading":"Purchase price bands (£)",
+            |     "detailFooter":"Total SDLT due",
+            |     "slices":[
+            |      {
+            |       "from":0,
+            |       "to":150000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":150000,
+            |       "to":250000,
+            |       "rate":2,
+            |       "taxDue":2000
+            |       },{
+            |       "from":250000,
+            |       "to":-1,
+            |       "rate":5,
+            |       "taxDue":12500
+            |       }
+            |      ]
+            |     }
+            |    ]
+            |   },
+            |  {
+            |   "totalTax":15000,
+            |   "resultHeading":"Results based on SDLT rules before 17 March 2016",
+            |   "resultHint":"You may be entitled to pay SDLT using the old rules if you exchanged contracts before 17 March 2016.",
+            |   "taxCalcs":[
+            |    {
+            |     "taxType":"premium",
+            |     "calcType":"slab",
+            |     "taxDue":15000,
+            |     "rate":3
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+          """.stripMargin)
+
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
     }
   }
 }
