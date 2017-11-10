@@ -474,6 +474,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       private val res = leaseholdNonResidentialMar16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
       service.leaseholdNonResidentialMar16Onwards(leaseholdNonResidentialMar16OnwardsRequest(149000, exchangedPreMarch2016 = false)) shouldBe Seq(res)
     }
+
     "return (1, 1), (1500, 1) for premium of 150050, npv of 150100, prevCalc is TRUE" in new PredefinedNPVSetup(150100) {
       val leaseTaxDue = 1
       val premTaxDue = 1
@@ -626,6 +627,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       private val res = leaseholdNonResidentialMar12toMar16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
       service.leaseholdNonResidentialMar12toMar16(leaseholdNonResidentialMar12toMar16Request(500001)) shouldBe res
     }
+
     "return 20000, 1 for purchase price of 500001, npv of 150100 and zeroRate is FALSE (because premium > £150000)" in new PredefinedNPVSetup(150100) {
       val leaseTaxDue = 1
       val premTaxDue = 20000
