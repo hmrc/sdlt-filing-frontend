@@ -12,9 +12,9 @@
 
       model.holdingType = data.holdingType;
       model.propertyType = data.propertyType;
-      model.effectiveDateDay = data.effectiveDateDay;
-      model.effectiveDateMonth = data.effectiveDateMonth;
-      model.effectiveDateYear = data.effectiveDateYear;
+      model.effectiveDateDay = parseInt(data.effectiveDateDay);
+      model.effectiveDateMonth = parseInt(data.effectiveDateMonth);
+      model.effectiveDateYear = parseInt(data.effectiveDateYear);
       model.highestRent = data.highestRent;
       model.premium = data.premium;
 
@@ -51,12 +51,12 @@
 
     function constructLeaseDetails(data) {
       var leaseDetails = {};
-      leaseDetails.startDateDay = data.startDateDay;
-      leaseDetails.startDateMonth = data.startDateMonth;
-      leaseDetails.startDateYear = data.startDateYear;
-      leaseDetails.endDateDay = data.endDateDay;
-      leaseDetails.endDateMonth = data.endDateMonth;
-      leaseDetails.endDateYear = data.endDateYear;
+      leaseDetails.startDateDay = parseInt(data.startDateDay);
+      leaseDetails.startDateMonth = parseInt(data.startDateMonth);
+      leaseDetails.startDateYear = parseInt(data.startDateYear);
+      leaseDetails.endDateDay = parseInt(data.endDateDay);
+      leaseDetails.endDateMonth = parseInt(data.endDateMonth);
+      leaseDetails.endDateYear = parseInt(data.endDateYear);
       leaseDetails.leaseTerm = data.leaseTerm;
 
       var rentsToInclude = yearsOfRentToInclude(data.leaseTerm);
