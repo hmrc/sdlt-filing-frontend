@@ -21,7 +21,7 @@ trait RefundEntitlementSrv {
     currentTaxDue > prevTaxDue && individualWithAdditionalProperty(oPropertyDetails)
   }
 
-  private [services] def individualWithAdditionalProperty(oPropertyDetails: Option[PropertyDetails]): Boolean = {
+  def individualWithAdditionalProperty(oPropertyDetails: Option[PropertyDetails]): Boolean = {
     oPropertyDetails.map {propertyDetails =>
       if(propertyDetails.individual) {
         additionalProperty(propertyDetails.twoOrMoreProperties, propertyDetails.replaceMainResidence)
