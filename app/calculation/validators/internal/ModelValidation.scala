@@ -92,7 +92,8 @@ object ModelValidation {
   private [validators] def validPropertyDetailsStructure(propertyDetails: PropertyDetails): ValidationResult = {
     propertyDetails match {
       case PropertyDetails(false, _, _) => ValidationSuccess
-      case PropertyDetails(true, Some(_), Some(_)) => ValidationSuccess
+      case PropertyDetails(true, Some(false), _) => ValidationSuccess
+      case PropertyDetails(true, Some(true), Some(_)) => ValidationSuccess
       case PropertyDetails(true, twoOrMoreProperties, replaceMainResidence) =>
         ValidationFailure(
           s"Property details failed validation with 'individual': true, " +

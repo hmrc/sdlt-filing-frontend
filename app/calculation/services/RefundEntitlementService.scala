@@ -35,7 +35,8 @@ trait RefundEntitlementSrv {
 
   private def additionalProperty(twoOrMoreProperties: Option[Boolean], replaceMainResidence: Option[Boolean]): Boolean = {
     (twoOrMoreProperties, replaceMainResidence) match {
-      case (Some(twoOrMore), Some(replace)) => twoOrMore && !replace
+      case (Some(false), _) => false
+      case (Some(true), Some(replace)) => !replace
       case (oTwoOrMore, oReplace) =>
         throw new RequiredValueNotDefinedException(
           "[RefundEntitlementService] [additionalProperty]" +

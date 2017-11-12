@@ -17,6 +17,22 @@ class RefundEntitlementServiceSpec extends UnitSpec {
       )
       refundService.individualWithAdditionalProperty(propertyDetails) shouldBe true
     }
+    "return false for an individual with additional property who is replacing main residence" in {
+      val propertyDetails = Some(PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(true),
+        replaceMainResidence = Some(true))
+      )
+      refundService.individualWithAdditionalProperty(propertyDetails) shouldBe true
+    }
+    "return false for an individual with only one property" in {
+      val propertyDetails = Some(PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = None)
+      )
+      refundService.individualWithAdditionalProperty(propertyDetails) shouldBe false
+    }
     "return true for a non-individual" in {
       val propertyDetails = Some(PropertyDetails(
         individual = false,
