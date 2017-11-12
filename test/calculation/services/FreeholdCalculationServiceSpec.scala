@@ -763,6 +763,25 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       )
     }
 
+    "throw the correct exception" when {
+      "there is no calculation details in the previous calculation" in {
+        val testPrevErrorService = new FreeholdCalculationService(new BaseCalculationService, new RefundEntitlementService) {
+          override def freeholdResidentialDec14Onwards(request: Request, asPrevResult: Boolean): Result = {
+            Result(
+              totalTax = 50000,
+              npv = None,
+              taxCalcs = Seq.empty
+            )
+          }
+        }
+
+        the[RequiredValueNotDefinedException] thrownBy
+          testPrevErrorService.freeholdResidentialAddPropApr16Onwards(baseRequest(75000000)) should
+            have message "[FreeholdCalculationService] [freeholdResidentialAddPropApr16Onwards] - " +
+                         "Premium result not defined in previous calculation"
+      }
+    }
+
     "return no hints about refunds" when {
       "The purchaser is not an individual" in {
 

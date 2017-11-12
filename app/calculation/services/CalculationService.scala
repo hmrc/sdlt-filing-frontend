@@ -11,13 +11,15 @@ import calculation.data.Dates
 @Singleton
 class CalculationService @Inject()(
                                     val leaseCalculationService: LeaseholdCalculationService,
-                                    val freeCalculationService: FreeholdCalculationService
+                                    val freeCalculationService: FreeholdCalculationService,
+                                    val additionalPropertyService: AdditionalPropertyService
                                   ) extends CalculationSrv
 
 trait CalculationSrv{
 
   val leaseCalculationService: LeaseholdCalculationSrv
   val freeCalculationService: FreeholdCalculationSrv
+  val additionalPropertyService: AdditionalPropertySrv
 
   def CalculateTax(request: Request): CalculationResponse ={
     request.holdingType match {
@@ -43,7 +45,7 @@ trait CalculationSrv{
 
   def calculateFreeholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) &&  =>  CalculationResponse(freeCalculationService.freeholdResidentialAddPropApr16Onwards(request))
+      case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) && additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails) =>  CalculationResponse(freeCalculationService.freeholdResidentialAddPropApr16Onwards(request))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(freeCalculationService.freeholdResidentialMar12toDec14(request)))
       case _ => throw new InvalidDateException(s"Date of ${request.effectiveDate} is invalid or before 22/3/2012")
@@ -60,7 +62,7 @@ trait CalculationSrv{
 
   def calculateLeaseholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>  CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropApr16Onwards(request))
+      case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) && additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails) =>  CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropApr16Onwards(request))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialMar12toDec14(request)))
       case _ => throw new InvalidDateException(s"Date of ${request.effectiveDate} is invalid or before 22/3/2012")
