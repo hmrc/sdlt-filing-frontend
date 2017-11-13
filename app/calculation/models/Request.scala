@@ -52,7 +52,7 @@ object Request {
     (__ \ "propertyDetails").readNullable[PropertyDetails] and
     (__ \ "leaseDetails").readNullable[LeaseDetails] and
     (__ \ "relevantRentDetails").readNullable[RelevantRentDetails] and
-      (__ \ "firstTimeBuyer").readNullable[Boolean]
+      (__ \ "firstTimeBuyer").readNullable[Boolean](yesNoToBooleanReads)
   )(Request.apply _)
 }
 

@@ -15,8 +15,8 @@ case class   ValidationFailure(err: String) extends ValidationResult
 object ModelValidation {
 
   implicit class DateHelper(dt: LocalDate) {
-    def onOrAfter(compDate: LocalDate): Boolean = {
-      dt.isAfter(compDate) || dt.isEqual(compDate)
+    def onAfterAndBefore(compDate: LocalDate, limitDate: LocalDate): Boolean = {
+      (dt.isAfter(compDate) || dt.isEqual(compDate)) && (dt.isBefore(limitDate) || dt.isEqual(limitDate))
     }
   }
 
@@ -112,7 +112,7 @@ object ModelValidation {
   }
 
   private [validators] def validFirstTimeBuyer(request: Request): ValidationResult ={
-    if(request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) && request.propertyType.equals(PropertyTypes.residential)){
+    if(request.effectiveDate.onAfterAndBefore(Dates.NOV2017_RESIDENTIAL_DATE,Dates.NOV2019_RESIDENTIAL_DATE) && request.propertyType.equals(PropertyTypes.residential)){
       request.propertyDetails.map{ propDetails =>
         if(propDetails.individual && propDetails.twoOrMoreProperties.contains(false)){
           request.firstTimeBuyer match{

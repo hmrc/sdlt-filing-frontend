@@ -305,7 +305,7 @@ class RequestSpec extends UnitSpec {
           |  "holdingType": "Leasehold",
           |  "propertyType": "Residential",
           |  "effectiveDateDay": 13,
-          |  "effectiveDateMonth": 7,
+          |  "effectiveDateMonth": 12,
           |  "effectiveDateYear": 2017,
           |  "premium": 500000,
           |  "highestRent": 50000,
@@ -314,14 +314,14 @@ class RequestSpec extends UnitSpec {
           |    "twoOrMoreProperties": "No",
           |    "replaceMainResidence": "No"
           |  },
-          |  "firstTimeBuyer": true
+          |  "firstTimeBuyer": "Yes"
           |}
         """.stripMargin)
 
       val model = Request(
         holdingType = HoldingTypes.leasehold,
         propertyType = PropertyTypes.residential,
-        effectiveDate = LocalDate.of(2017, 7, 13),
+        effectiveDate = LocalDate.of(2017, 12, 13),
         premium = 500000,
         highestRent = 50000,
         propertyDetails = Some(PropertyDetails(

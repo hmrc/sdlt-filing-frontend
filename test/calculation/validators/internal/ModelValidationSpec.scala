@@ -877,6 +877,21 @@ class ModelValidationSpec extends UnitSpec {
         validFirstTimeBuyer(request) shouldBe ValidationSuccess
       }
 
+      "the effective date is after 30/11/2019" in{
+        val request = Request(
+          holdingType = HoldingTypes.freehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2020, 12, 31),
+          premium = 140000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = None,
+          relevantRentDetails = None,
+          firstTimeBuyer = None
+        )
+        validFirstTimeBuyer(request) shouldBe ValidationSuccess
+      }
+
       "the property type is not residential" in{
         val request = Request(
           holdingType = HoldingTypes.freehold,
