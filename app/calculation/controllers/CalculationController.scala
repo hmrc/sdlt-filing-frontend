@@ -28,11 +28,11 @@ trait CalculationCtr extends FrontendController{
               val result = Json.toJson(calculationService.CalculateTax(success.value))
                 Ok(result)
             }else{
-              Logger.warn("[CalculationController] - Json request body fails model validation.")
+              Logger.warn(s"[CalculationController] - Json request body fails model validation for request: $request from json: $json.")
               BadRequest(Json.toJson("Validation error: "+ModelValidation.listValidationErrors(success.value)))
             }
           case error: JsError =>
-            Logger.warn("[CalculationController] - Incorrect Json request body format supplied.")
+            Logger.error(s"[CalculationController] - Incorrect Json request body format supplied for request json: $json.")
             BadRequest(Json.toJson("Incorrect Json request body format supplied: "+error))
       }
       case None =>
