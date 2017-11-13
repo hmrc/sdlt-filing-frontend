@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import calculation.data.{SlabRatesTables, SliceRatesTables}
 import calculation.exceptions.RequiredValueNotDefinedException
-import calculation.models.{PropertyDetails, Request, Result}
+import calculation.models.{Request, Result}
 import calculation.factories.FreeholdResultFactory
 
 @Singleton
@@ -19,14 +19,18 @@ trait FreeholdCalculationSrv {
   val refundEntitlementService: RefundEntitlementSrv
 
   def freeholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
-    val prevResult = freeholdResidentialDec14Onwards(request, asPreviousResult = true)
-
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
       if(request.premium < 40000) 0 else request.premium,
       SliceRatesTables.freeholdResidentialAddPropApr16OnwardsRates.slices
     )
 
-    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(currentPremiumResult.taxDue, prevResult.totalTax, request.propertyDetails)
+    val prevResult = freeholdResidentialDec14Onwards(request, asPreviousResult = true)
+    val prevPrem = prevResult.taxCalcs.headOption.map(_.taxDue).getOrElse({
+      throw new RequiredValueNotDefinedException("[FreeholdCalculationService] [freeholdResidentialAddPropApr16Onwards] - " +
+        "Premium result not defined in previous calculation")
+    })
+
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(currentPremiumResult.taxDue, prevPrem, request.propertyDetails)
 
     Seq(
       FreeholdResultFactory.freeholdResidentialAddPropApr16OnwardsResult(currentPremiumResult, refundEntitlement),

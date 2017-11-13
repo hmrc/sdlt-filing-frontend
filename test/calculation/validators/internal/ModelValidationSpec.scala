@@ -543,7 +543,15 @@ class ModelValidationSpec extends UnitSpec {
         )
         validPropertyDetailsStructure(deets) shouldBe ValidationSuccess
       }
-      "individual is 'true' and other fields are defined" in {
+      "individual is 'true', twoOrMoreProperties 'false' and replaceMainResidence not defined" in {
+        val deets = PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = None
+        )
+        validPropertyDetailsStructure(deets) shouldBe ValidationSuccess
+      }
+      "individual is 'true', twoOrMoreProperties 'true' and replaceMainResidence defined" in {
         val deets = PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(true),
@@ -563,6 +571,18 @@ class ModelValidationSpec extends UnitSpec {
           "Property details failed validation with 'individual': true, " +
             "'twoOrMoreProperties': None, " +
             "'replaceMainResidence': Some(false)"
+        )
+      }
+      "individual is true, twoOrMoreProperties 'true' and replaceMainResidence not defined" in {
+        val deets = PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(true),
+          replaceMainResidence = None
+        )
+        validPropertyDetailsStructure(deets) shouldBe ValidationFailure(
+          "Property details failed validation with 'individual': true, " +
+            "'twoOrMoreProperties': Some(true), " +
+            "'replaceMainResidence': None"
         )
       }
     }

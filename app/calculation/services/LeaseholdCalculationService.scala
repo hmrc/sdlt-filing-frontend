@@ -29,8 +29,12 @@ trait LeaseholdCalculationSrv {
       SliceRatesTables.leaseholdResidentialAddPropApr16OnwardsPremiumRates.slices
     )
     val prevResult = leaseholdResidentialDec14Onwards(request, asPreviousResult = true, Some(npv))
+    val prevPrem = prevResult.taxCalcs.lift(1).map(_.taxDue).getOrElse({
+      throw new RequiredValueNotDefinedException("[LeaseholdCalculationService] [leaseholdResidentialAddPropApr16Onwards] - " +
+        "Premium result not defined in previous calculation")
+    })
 
-    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(premiumResult.taxDue, prevResult.totalTax, request.propertyDetails)
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(premiumResult.taxDue, prevPrem, request.propertyDetails)
     val currResult = LeaseholdResultFactory.leaseholdResidentialAddPropApr16Onwards(leaseResult, premiumResult, npv, refundEntitlement)
 
     Seq(currResult, prevResult)

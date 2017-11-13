@@ -18,30 +18,11 @@ trait RefundEntitlementSrv {
   }
 
   private def eligibleForRefund(currentTaxDue: Int, prevTaxDue: Int, oPropertyDetails: Option[PropertyDetails]): Boolean = {
-    currentTaxDue > prevTaxDue && individualWithAdditionalProperty(oPropertyDetails)
-  }
-
-  private [services] def individualWithAdditionalProperty(oPropertyDetails: Option[PropertyDetails]): Boolean = {
-    oPropertyDetails.map {propertyDetails =>
-      if(propertyDetails.individual) {
-        additionalProperty(propertyDetails.twoOrMoreProperties, propertyDetails.replaceMainResidence)
-      } else false
-    }.getOrElse{
+    currentTaxDue > prevTaxDue && oPropertyDetails.map(_.individual).getOrElse(
       throw new RequiredValueNotDefinedException(
-        "[RefundEntitlementService] [individualWithAdditionalProperty]" +
-          " - property details not defined in freehold residential additional property calculation"
-      )}
-  }
-
-  private def additionalProperty(twoOrMoreProperties: Option[Boolean], replaceMainResidence: Option[Boolean]): Boolean = {
-    (twoOrMoreProperties, replaceMainResidence) match {
-      case (Some(twoOrMore), Some(replace)) => twoOrMore && !replace
-      case (oTwoOrMore, oReplace) =>
-        throw new RequiredValueNotDefinedException(
-          "[RefundEntitlementService] [additionalProperty]" +
-            s" - twoOrMoreProperties: $oTwoOrMore, replaceMainResidence: $oReplace"
-        )
-    }
+        "[RefundEntitlementService] [eligibleForRefund] - property details not defined when expected"
+      )
+    )
   }
 
 }
