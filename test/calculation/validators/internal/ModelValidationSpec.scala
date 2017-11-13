@@ -863,23 +863,37 @@ class ModelValidationSpec extends UnitSpec {
   "validFirstTimeBuyer" should {
     "return a ValidationSuccess" when {
       "the effective date is before 22/11/2017" in{
-
+        val request = Request(
+          holdingType = HoldingTypes.freehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2012, 12, 31),
+          premium = 140000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = None,
+          relevantRentDetails = None,
+          firstTimeBuyer = None
+        )
+        validFirstTimeBuyer(request) shouldBe ValidationSuccess
       }
 
       "the property type is not residential" in{
-
-      }
-
-      "the effective date is after 22/11/2017, the property type is residential & the user is not an individual" in{
-
-      }
-
-      "the effective date is after 22/11/2017, the property type is residential & the user is an individual owning twoOrMoreProperties" in{
-
+        val request = Request(
+          holdingType = HoldingTypes.freehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2017, 12, 31),
+          premium = 140000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = None,
+          relevantRentDetails = None,
+          firstTimeBuyer = None
+        )
+        validFirstTimeBuyer(request) shouldBe ValidationSuccess
       }
 
       "the effective date is after 22/11/2017 and the property type is residential " when {
-        "the user is an individual and doesn't own twoOrMoreProperties" in {
+        "the user is an individual who doesn't own twoOrMoreProperties and firstTimeBuyer is defined" in {
           val request = Request(
             holdingType = HoldingTypes.freehold,
             propertyType = PropertyTypes.residential,
@@ -899,16 +913,89 @@ class ModelValidationSpec extends UnitSpec {
           )
           validFirstTimeBuyer(request) shouldBe ValidationSuccess
         }
+
+        "the user is an individual owning twoOrMoreProperties" in{
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = Some(
+              PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(true),
+                replaceMainResidence = Some(false)
+              )
+            ),
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationSuccess
+        }
+
+        "the user is not an individual" in{
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = Some(
+              PropertyDetails(
+                individual = false,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = Some(false)
+              )
+            ),
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationSuccess
+
+        }
       }
     }
 
     "return a ValidationFailure" when{
-      "the effective date is after 22/11/2017, the property type is residential & there are no property details " in{
+      "the effective date is after 22/11/2017, the property type is residential" when{
+        "there are no property details " in{
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = None,
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationFailure("No property details found for first time buyer.")
+        }
 
-      }
-
-      "the effective date is after 22/11/2017, the property type is residential & there are valid property details but firstTimeBuyer is undefined. " in{
-
+        "there are valid property details but firstTimeBuyer is undefined. " in{
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = Some(
+              PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = Some(false)
+              )
+            ),
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationFailure("First time buyer was not defined.")
+        }
       }
     }
   }
