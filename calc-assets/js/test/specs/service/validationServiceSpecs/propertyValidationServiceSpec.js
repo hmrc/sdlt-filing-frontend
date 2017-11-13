@@ -18,7 +18,7 @@
             expect(state.validationMessage('propertyType')).toEqual("Provide an answer to continue. Select 'Residential' or 'Non-residential'");
         });
 
-        it('propertyType.format should return no error when "Freehold" selected', function() {
+        it('propertyType.format should return no error when "residential" selected', function() {
             var form = {
                 propertyType : "residential"
             };
@@ -29,7 +29,7 @@
             expect(state.validationMessage('propertyType')).toEqual("");
         });
 
-        it('propertyType.format should return no error when "Leasehold" selected', function() {
+        it('propertyType.format should return no error when "non-residential" selected', function() {
             var form = {
                 propertyType : "non-residential"
             };

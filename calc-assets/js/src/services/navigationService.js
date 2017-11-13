@@ -65,6 +65,9 @@
                 }
             }
             else if (currentView === "additional-property") {
+                redirectBasedOnFTBExclusionCriteria(model, locationService);
+            }
+            else if (currentView === "first-time-buyer") {
                 redirectBasedOnHoldingType(model, locationService);
             }
             else if (currentView === 'lease-dates') {
@@ -101,17 +104,33 @@
             }
     	};
 
-        function redirectBasedOnHoldingType(model, locationService) {
-            if (model.holdingType === 'Freehold') {
-                redirectToNext(locationService, 'purchase-price');
-            } 
-            else if (model.holdingType === 'Leasehold') {
-                redirectToNext(locationService, 'lease-dates');
-            } 
-            else {
-                redirectToSummary(locationService);
-            }
-        }
+      function redirectBasedOnFTBExclusionCriteria(model, locationService) {
+        if(model.propertyType === 'Residential' &&
+          effectiveDateWithinFTBRange(model.effectiveDate) &&
+          model.individual === 'Yes' &&
+          model.twoOrMoreProperties === 'No'
+          ) {
+            redirectToNext(locationService, 'first-time-buyer');
+          } else {
+            redirectBasedOnHoldingType(model, locationService);
+          }
+      }
+
+      function redirectBasedOnHoldingType(model, locationService) {
+          if (model.holdingType === 'Freehold') {
+              redirectToNext(locationService, 'purchase-price');
+          }
+          else if (model.holdingType === 'Leasehold') {
+              redirectToNext(locationService, 'lease-dates');
+          }
+          else {
+              redirectToSummary(locationService);
+          }
+      }
+
+      function effectiveDateWithinFTBRange (effectiveDate) {
+        return effectiveDate >= new Date('November 22, 2017') && effectiveDate <= new Date('November 30, 2019');
+      }
 
 	    return {
 	    	logView : logView,

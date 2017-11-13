@@ -55,6 +55,13 @@
                 reloadOnSearch: false
             })
 
+            .when('/first-time-buyer', {
+                title : 'First time buyer',
+                templateUrl : 'first-time-buyer.html',
+                controller  : 'firstTimeBuyerController',
+                reloadOnSearch: false
+            })
+
             .when('/lease-dates', {
                 title : 'Lease dates',
                 templateUrl : 'lease-dates.html',

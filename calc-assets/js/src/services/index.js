@@ -9,6 +9,7 @@
   require("./validationServices/additionalPropertyValidationService.js");
   require("./validationServices/exchangeContractsValidationService.js");
   require("./validationServices/dateValidationService.js");
+  require("./validationServices/firstTimeBuyerValidationService.js");
   require("./validationServices/holdingValidationService.js");
   require("./validationServices/leaseDatesValidationService.js");
   require("./validationServices/premiumValidationService.js");
