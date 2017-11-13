@@ -13,6 +13,7 @@
             mockNavigationService,
             mockModelValidationService,
             mockDataMarshallingService,
+            mockLoggingService,
             mockBackend,
             calledServiceGetModel = false;
 
@@ -49,6 +50,10 @@
                 }
             };
 
+            mockLoggingService = {
+                logEvent : function() { }
+            };
+
             mockBackend = $httpBackend;
             mockBackend.whenPOST('/calculate-stamp-duty-land-tax/calculate').respond(200, {result: "Ok"});
 
@@ -57,6 +62,7 @@
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
             spyOn(mockDataService, 'updateModel');
+            spyOn(mockLoggingService, 'logEvent');
             
             controller = $controller('resultController', {
                 $scope : mockScope,
@@ -64,7 +70,8 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
                 modelValidationService : mockModelValidationService,
-                dataMarshallingService : mockDataMarshallingService
+                dataMarshallingService : mockDataMarshallingService,
+                loggingService: mockLoggingService
             });
             mockBackend.flush();
         }));
@@ -75,6 +82,10 @@
 
         it('should make 1 call to navigationService.logView', function () {
             expect(mockNavigationService.logView.calls.count()).toEqual(1);
+        });
+
+        it('should make no calls to loggingService.logEvent', function () {
+            expect(mockLoggingService.logEvent.calls.count()).toEqual(0);
         });
 
         it('should make 1 call to mockDataMarshallingService.constructCalculationRequest', function () {
@@ -110,6 +121,7 @@
             mockNavigationService,
             mockModelValidationService,
             mockDataMarshallingService,
+            mockLoggingService,
             mockBackend,
             calledServiceGetModel = false;
 
@@ -146,6 +158,10 @@
                 }
             };
 
+            mockLoggingService = {
+                logEvent : function() { }
+            };
+
             mockBackend = $httpBackend;
             mockBackend.whenPOST('/calculate-stamp-duty-land-tax/calculate').respond(400, {result: "Error"});
 
@@ -154,6 +170,7 @@
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
             spyOn(mockDataService, 'updateModel');
+            spyOn(mockLoggingService, 'logEvent');
 
             controller = $controller('resultController', {
                 $scope : mockScope,
@@ -161,7 +178,8 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
                 modelValidationService : mockModelValidationService,
-                dataMarshallingService : mockDataMarshallingService
+                dataMarshallingService : mockDataMarshallingService,
+                loggingService: mockLoggingService
             });
             mockBackend.flush();
         }));
@@ -172,6 +190,10 @@
 
         it('should make 1 call to navigationService.logView', function () {
             expect(mockNavigationService.logView.calls.count()).toEqual(1);
+        });
+
+        it('should make 1 call to loggingService.logEvent', function () {
+            expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
         });
 
         it('should make 1 call to mockDataMarshallingService.constructCalculationRequest', function () {
@@ -207,6 +229,7 @@
             mockNavigationService,
             mockModelValidationService,
             mockDataMarshallingService,
+            mockLoggingService,
             mockLocation,
             mockBackend,
             calledServiceGetModel = false;
@@ -238,6 +261,10 @@
                 }
             };
 
+            mockLoggingService = {
+                logEvent : function() { }
+            };
+
             mockDataMarshallingService = {
                 constructCalculationRequest: function(data) {
                   return { requestData : "testRequest" };
@@ -255,7 +282,8 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
                 modelValidationService : mockModelValidationService,
-                dataMarshallingService : mockDataMarshallingService
+                dataMarshallingService : mockDataMarshallingService,
+                loggingService: mockLoggingService
             });
         }));
 
@@ -281,6 +309,7 @@
             mockNavigationService,
             mockModelValidationService,
             mockDataMarshallingService,
+            mockLoggingService,
             mockBackend,
             calledServiceGetModel = false;
 
@@ -312,6 +341,10 @@
                 }
             };
 
+            mockLoggingService = {
+                logEvent : function() { }
+            };
+
             mockDataMarshallingService = {
                 constructCalculationRequest: function(data) {
                   return { requestData : "testRequest" };
@@ -329,7 +362,8 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
                 modelValidationService : mockModelValidationService,
-                dataMarshallingService : mockDataMarshallingService
+                dataMarshallingService : mockDataMarshallingService,
+                loggingService: mockLoggingService
             });
             mockBackend.flush();
 
@@ -349,6 +383,7 @@
             mockNavigationService,
             mockModelValidationService,
             mockDataMarshallingService,
+            mockLoggingService,
             mockBackend,
             calledServiceGetModel = false;
 
@@ -380,6 +415,10 @@
                 }
             };
 
+            mockLoggingService = {
+                logEvent : function() { }
+            };
+
             mockDataMarshallingService = {
                 constructCalculationRequest: function(data) {
                   return { requestData : "testRequest" };
@@ -397,7 +436,8 @@
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
                 modelValidationService : mockModelValidationService,
-                dataMarshallingService : mockDataMarshallingService
+                dataMarshallingService : mockDataMarshallingService,
+                loggingService: mockLoggingService
             });
             mockBackend.flush();
 
