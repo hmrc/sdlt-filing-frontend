@@ -1,7 +1,7 @@
 "use strict";
 
 var path = require("path");
-var jsVersion = "v7";
+var jsVersion = "v8";
 
 module.exports =
 {
