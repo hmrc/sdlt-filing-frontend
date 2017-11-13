@@ -8,6 +8,36 @@ import calculation.utils.StringUtils
 
 object LeaseholdResultFactory {
 
+  def leaseholdResidential17OnwardsFTB(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal): Result = {
+    val leaseCalcDetails = CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT_FROM_NOV_2017),
+      bandHeading = Some(DETAIL_COL_HEADER_RENT),
+      detailFooter = Some(DETAIL_FOOTER_RENT),
+      taxDue = leaseResult.taxDue.toInt,
+      slices = Some(leaseResult.slices)
+    )
+    val premiumCalcDetails = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_PREM_FROM_NOV_2017),
+      bandHeading = Some(DETAIL_COL_HEADER_PREM),
+      detailFooter = Some(DETAIL_FOOTER_PREM),
+      taxDue = premiumResult.taxDue.toInt,
+      slices = Some(premiumResult.slices)
+    )
+
+    Result(
+      totalTax = leaseCalcDetails.taxDue + premiumCalcDetails.taxDue,
+      npv = Some(npv.toInt),
+      taxCalcs = Seq(
+        leaseCalcDetails,
+        premiumCalcDetails
+      )
+    )
+  }
+
   def leaseholdResidentialAddPropApr16Onwards(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal, refundEntitlement: Option[Int]): Result = {
     val resHint = refundEntitlement.map { amount =>
       s"$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}."
