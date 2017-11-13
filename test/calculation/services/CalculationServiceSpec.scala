@@ -51,7 +51,8 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       highestRent = BigDecimal(0),
       propertyDetails = None,
       leaseDetails = None,
-      relevantRentDetails = None
+      relevantRentDetails = None,
+      firstTimeBuyer = None
     )
 
     "select the freeholdNonResidential function for March2016 onwards" when {

@@ -71,7 +71,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -100,7 +101,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -129,7 +131,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -158,7 +161,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -187,7 +191,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -216,7 +221,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -247,7 +253,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -276,7 +283,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -305,7 +313,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -338,7 +347,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         validLeaseTerm(model) shouldBe ValidationSuccess
@@ -368,7 +378,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseTerm(model) shouldBe ValidationSuccess
       }
@@ -397,7 +408,8 @@ class ModelValidationSpec extends UnitSpec {
         highestRent = 0,
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
-        relevantRentDetails = None
+        relevantRentDetails = None,
+          firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationSuccess
     }
@@ -426,7 +438,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseTerm(model) shouldBe ValidationSuccess
       }
@@ -458,7 +471,8 @@ class ModelValidationSpec extends UnitSpec {
         highestRent = 0,
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
-        relevantRentDetails = None
+        relevantRentDetails = None,
+          firstTimeBuyer = None
       )
 
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 2 does not match amount of lease year rents: 1 and 0 partial days")
@@ -488,7 +502,8 @@ class ModelValidationSpec extends UnitSpec {
         highestRent = 0,
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
-        relevantRentDetails = None
+        relevantRentDetails = None,
+          firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 7 does not match amount of lease year rents: 4 and 0 partial days")
     }
@@ -517,7 +532,8 @@ class ModelValidationSpec extends UnitSpec {
         highestRent = 0,
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
-        relevantRentDetails = None
+        relevantRentDetails = None,
+          firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 4 does not match amount of lease year rents: 4 and 1 partial days")
     }
@@ -645,7 +661,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 0,
             propertyDetails = None,
             leaseDetails = None,
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
@@ -659,7 +676,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 1000,
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
@@ -673,7 +691,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 2000,
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
@@ -687,7 +706,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 2000,
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(2000)),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
@@ -701,7 +721,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 1000,
           propertyDetails = None,
           leaseDetails = Some(validLeaseDetails(800)),
-          relevantRentDetails = Some(testRelevantRentDetails)
+          relevantRentDetails = Some(testRelevantRentDetails),
+          firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationSuccess
       }
@@ -716,7 +737,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 1000,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = Some(testRelevantRentDetails)
+          relevantRentDetails = Some(testRelevantRentDetails),
+          firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationFailure("No lease details provided for leasehold property")
       }
@@ -729,7 +751,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 1000,
           propertyDetails = None,
           leaseDetails = Some(validLeaseDetails(800)),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationFailure(
           "Relevant rent details not provided when premium: 140000, " +
@@ -837,6 +860,59 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
+  "validFirstTimeBuyer" should {
+    "return a ValidationSuccess" when {
+      "the effective date is before 22/11/2017" in{
+
+      }
+
+      "the property type is not residential" in{
+
+      }
+
+      "the effective date is after 22/11/2017, the property type is residential & the user is not an individual" in{
+
+      }
+
+      "the effective date is after 22/11/2017, the property type is residential & the user is an individual owning twoOrMoreProperties" in{
+
+      }
+
+      "the effective date is after 22/11/2017 and the property type is residential " when {
+        "the user is an individual and doesn't own twoOrMoreProperties" in {
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = Some(
+              PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = Some(false)
+              )
+            ),
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = Some(true)
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationSuccess
+        }
+      }
+    }
+
+    "return a ValidationFailure" when{
+      "the effective date is after 22/11/2017, the property type is residential & there are no property details " in{
+
+      }
+
+      "the effective date is after 22/11/2017, the property type is residential & there are valid property details but firstTimeBuyer is undefined. " in{
+
+      }
+    }
+  }
+
   "listValidationErrors" should {
     "have no errors" when {
       "holding type is freehold, non-residential and there are no lease details" in {
@@ -848,7 +924,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq.empty
@@ -862,7 +939,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq.empty
@@ -877,7 +955,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 0,
             propertyDetails = None,
             leaseDetails = None,
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -892,7 +971,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 0,
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -907,7 +987,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 0,
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -923,7 +1004,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
             leaseDetails = None,
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -937,7 +1019,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
             leaseDetails = Some(validTestLeaseDetails),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -956,7 +1039,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -973,7 +1057,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -990,7 +1075,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -1007,7 +1093,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -1023,7 +1110,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 1000,
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetailsAllLessTan2000),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         listValidationErrors(model) shouldBe Seq(
           ValidationFailure(
@@ -1042,7 +1130,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(

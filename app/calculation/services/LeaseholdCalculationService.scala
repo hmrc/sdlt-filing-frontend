@@ -21,6 +21,10 @@ trait LeaseholdCalculationSrv {
   val baseCalculationService: BaseCalculationSrv
   val refundEntitlementService: RefundEntitlementSrv
 
+  def leaseholdResidential17OnwardsFTB(request: Request): Result = {
+   ???
+  }
+
   def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
     val npv = getNPV("leaseholdResidentialAddPropApr16Onwards", request.leaseDetails)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialAddPropApr16OnwardsLeaseRates.slices)

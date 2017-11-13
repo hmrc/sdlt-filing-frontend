@@ -2,6 +2,7 @@ package calculation.validators.internal
 
 import java.time.LocalDate
 
+import calculation.data.Dates
 import calculation.enums.{HoldingTypes, PropertyTypes}
 import calculation.models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
 import calculation.data.Dates._
@@ -13,13 +14,21 @@ case class   ValidationFailure(err: String) extends ValidationResult
 
 object ModelValidation {
 
+  implicit class DateHelper(dt: LocalDate) {
+    def onOrAfter(compDate: LocalDate): Boolean = {
+      dt.isAfter(compDate) || dt.isEqual(compDate)
+    }
+  }
+
+
   def listValidationErrors(request: Request): Seq[ValidationFailure] = {
     Seq(
       validLeaseDetails(request),
       validEffectiveDate(request),
       validPropertyDetails(request),
       validLeaseTerm(request),
-      validRelevantRentDetails(request)
+      validRelevantRentDetails(request),
+      validFirstTimeBuyer(request)
     ).flatMap {
       case err :ValidationFailure => Some(err)
       case _ => None
@@ -100,6 +109,19 @@ object ModelValidation {
             s"'twoOrMoreProperties': $twoOrMoreProperties, " +
             s"'replaceMainResidence': $replaceMainResidence")
     }
+  }
+
+  private [validators] def validFirstTimeBuyer(request: Request): ValidationResult ={
+    if(request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) && request.propertyType.equals(PropertyTypes.residential)){
+      request.propertyDetails.map{ propDetails =>
+        if(propDetails.individual && propDetails.twoOrMoreProperties.contains(false)){
+          request.firstTimeBuyer match{
+            case Some(_) => ValidationSuccess
+            case _ => ValidationFailure(s"First time buyer was not defined.")
+          }
+        } else ValidationSuccess
+      }getOrElse ValidationFailure("No property details found for first time buyer.")
+    }else ValidationSuccess
   }
 
   private [validators] def validRelevantRentDetails(request: Request): ValidationResult = {

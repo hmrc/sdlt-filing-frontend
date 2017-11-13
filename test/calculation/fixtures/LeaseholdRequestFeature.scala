@@ -21,7 +21,8 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         replaceMainResidence = Some(false)
       )
     ),
-    relevantRentDetails = None
+    relevantRentDetails = None,
+    firstTimeBuyer = None
   )
 
   def leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(premium: BigDecimal) = Request(
@@ -38,7 +39,8 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         replaceMainResidence = Some(false)
       )
     ),
-    relevantRentDetails = None
+    relevantRentDetails = None,
+    firstTimeBuyer = None
   )
 
 
@@ -56,7 +58,8 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         replaceMainResidence = None
       )
     ),
-    relevantRentDetails = None
+    relevantRentDetails = None,
+    firstTimeBuyer = Some(false)
   )
 
   def leaseholdResidentialMar12toDec14Request(premium: BigDecimal) = Request(
@@ -73,7 +76,8 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         replaceMainResidence = None
       )
     ),
-    relevantRentDetails = None
+    relevantRentDetails = None,
+    firstTimeBuyer = Some(false)
   )
 
   def leaseholdNonResidentialMar16OnwardsRequest(
@@ -100,7 +104,8 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         contractChangedSinceMar16 = Some(false),
         relevantRent = Some(999)
       )
-    )
+    ),
+    firstTimeBuyer = Some(false)
   )
 
   def leaseholdNonResidentialMar12toMar16Request(premium: BigDecimal, year2Rent: BigDecimal = 200) = Request(
@@ -123,7 +128,8 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         contractChangedSinceMar16 = None,
         relevantRent = Some(999)
       )
-    )
+    ),
+    firstTimeBuyer = Some(false)
   )
 
 }

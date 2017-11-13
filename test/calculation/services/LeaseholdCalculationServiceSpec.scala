@@ -660,7 +660,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         exchangedContractsBeforeMar16 = Some(true),
         contractChangedSinceMar16 = Some(false),
         relevantRent = Some(relevantRent)
-      ))
+      )),
+      firstTimeBuyer = None
     )
 
     def leaseDetailsWithYear2Rent(rent: BigDecimal) = testLeaseDetailsAllRentsUnder2000.copy(year2Rent = Some(rent))
@@ -741,7 +742,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         exchangedContractsBeforeMar16 = Some(true),
         contractChangedSinceMar16 = Some(false),
         relevantRent = Some(relevantRent)
-      ))
+      )),
+      firstTimeBuyer = None
     )
 
     def leaseDetailsWithYear2Rent(rent: BigDecimal) = testLeaseDetailsAllRentsUnder2000.copy(year2Rent = Some(rent))

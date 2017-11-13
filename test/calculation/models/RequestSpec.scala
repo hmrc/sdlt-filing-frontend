@@ -253,7 +253,8 @@ class RequestSpec extends UnitSpec {
           exchangedContractsBeforeMar16 = Some(true),
           contractChangedSinceMar16 = Some(false),
           relevantRent = Some(1000)
-        ))
+        )),
+        firstTimeBuyer = None
       )
 
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
@@ -290,7 +291,47 @@ class RequestSpec extends UnitSpec {
           replaceMainResidence = Some(true)
         )),
         leaseDetails = None,
-        relevantRentDetails = None
+        relevantRentDetails = None,
+        firstTimeBuyer = None
+      )
+
+      Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
+    }
+
+    "read from Json with property details and first time buyer" in {
+      val testJson = Json.parse(
+        """
+          |{
+          |  "holdingType": "Leasehold",
+          |  "propertyType": "Residential",
+          |  "effectiveDateDay": 13,
+          |  "effectiveDateMonth": 7,
+          |  "effectiveDateYear": 2017,
+          |  "premium": 500000,
+          |  "highestRent": 50000,
+          |  "propertyDetails": {
+          |    "individual": "Yes",
+          |    "twoOrMoreProperties": "No",
+          |    "replaceMainResidence": "No"
+          |  },
+          |  "firstTimeBuyer": true
+          |}
+        """.stripMargin)
+
+      val model = Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = LocalDate.of(2017, 7, 13),
+        premium = 500000,
+        highestRent = 50000,
+        propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(false)
+        )),
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = Some(true)
       )
 
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
@@ -318,7 +359,8 @@ class RequestSpec extends UnitSpec {
         highestRent = 50000,
         propertyDetails = None,
         leaseDetails = None,
-        relevantRentDetails = None
+        relevantRentDetails = None,
+        firstTimeBuyer = None
       )
 
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
