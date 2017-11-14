@@ -7,6 +7,24 @@ import calculation.models.{PropertyDetails, RelevantRentDetails, Request}
 
 trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 
+  def leaseholdResidentialNov17OnwardsFTBRequest(premium: BigDecimal) = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = LocalDate.of(2018, 1, 1),
+    premium = premium,
+    highestRent = 1000,
+    leaseDetails = Some(testLeaseDetails),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = None
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = Some(true)
+  )
+
   def leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(premium: BigDecimal) = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,

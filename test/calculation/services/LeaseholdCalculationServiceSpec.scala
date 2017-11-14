@@ -37,6 +37,27 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
+  "leaseholdResidentialNov17OnwardsFTB" should {
+
+    "return ?, ? for purchase price of ?, npv of ?" in new PredefinedNPVSetup(125000) {
+      val leaseTaxDue, premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None,         rate = 5, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 1,  taxDue = 0),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 4,  taxDue = 0),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 7,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(125000)) shouldBe res
+    }
+  }
+
   "leaseholdResidentialAddPropApr16Onwards" should{
     "return 0, 0 for purchase price of 39,999.99, npv of 125000" in new PredefinedNPVSetup(125000, Some(15000)){
       val leaseTaxDue, premTaxDue = 0

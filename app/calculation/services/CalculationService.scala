@@ -40,7 +40,7 @@ trait CalculationSrv extends DateUtil{
 
   def calculateFreeholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidential17OnwardsFTB(request)))
+      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialNov17OnwardsFTB(request)))
       case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) && additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails) =>  CalculationResponse(freeCalculationService.freeholdResidentialAddPropApr16Onwards(request))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(freeCalculationService.freeholdResidentialMar12toDec14(request)))
@@ -58,7 +58,7 @@ trait CalculationSrv extends DateUtil{
 
   def calculateLeaseholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidential17OnwardsFTB(request)))
+      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialNov17OnwardsFTB(request)))
       case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) && additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails) =>  CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropApr16Onwards(request))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialMar12toDec14(request)))

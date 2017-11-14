@@ -18,7 +18,7 @@ trait FreeholdCalculationSrv {
   val baseCalculationService: BaseCalculationSrv
   val refundEntitlementService: RefundEntitlementSrv
 
-  def freeholdResidential17OnwardsFTB(request: Request): Result = {
+  def freeholdResidentialNov17OnwardsFTB(request: Request): Result = {
     ???
   }
 

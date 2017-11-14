@@ -8,11 +8,11 @@ import calculation.utils.StringUtils
 
 object LeaseholdResultFactory {
 
-  def leaseholdResidential17OnwardsFTB(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal): Result = {
+  def leaseholdResidentialNov17OnwardsFTB(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal): Result = {
     val leaseCalcDetails = CalculationDetails(
       taxType = TaxTypes.rent,
       calcType = CalcTypes.slice,
-      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT_FROM_NOV_2017),
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT),
       bandHeading = Some(DETAIL_COL_HEADER_RENT),
       detailFooter = Some(DETAIL_FOOTER_RENT),
       taxDue = leaseResult.taxDue.toInt,
@@ -21,7 +21,7 @@ object LeaseholdResultFactory {
     val premiumCalcDetails = CalculationDetails(
       taxType = TaxTypes.premium,
       calcType = CalcTypes.slice,
-      detailHeading = Some(DETAIL_HEADING_SDLT_ON_PREM_FROM_NOV_2017),
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_PREM),
       bandHeading = Some(DETAIL_COL_HEADER_PREM),
       detailFooter = Some(DETAIL_FOOTER_PREM),
       taxDue = premiumResult.taxDue.toInt,
