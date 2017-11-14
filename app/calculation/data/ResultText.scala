@@ -8,7 +8,6 @@ object ResultText {
   private val DATE_17_03_2016 = "17 March 2016"
   private val DATE_01_04_2016 = "1 April 2016"
   private val DATE_26_11_2015 = "26 November 2015"
-  private val DATE_22_11_2017 = "22 November 2017"
 
   private val RESULT_HEADING_BEFORE = "Results based on SDLT rules before"
   private val RESULT_HEADING_FROM   = "Results based on SDLT rules from"

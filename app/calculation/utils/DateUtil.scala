@@ -4,8 +4,8 @@ import java.time.LocalDate
 
 trait DateUtil {
   implicit class DateHelper(dt: LocalDate) {
-    def isBetween(compDate: LocalDate, limitDate: LocalDate): Boolean = {
-      (dt.isAfter(compDate) || dt.isEqual(compDate)) && (dt.isBefore(limitDate) || dt.isEqual(limitDate))
+    def isBetween(startDate: LocalDate, endDate: LocalDate): Boolean = {
+      (dt.isAfter(startDate) || dt.isEqual(startDate)) && (dt.isBefore(endDate) || dt.isEqual(endDate))
     }
 
     def onOrAfter(compDate: LocalDate): Boolean = {
