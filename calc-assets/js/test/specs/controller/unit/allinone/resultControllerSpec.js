@@ -163,7 +163,7 @@
             };
 
             mockBackend = $httpBackend;
-            mockBackend.whenPOST('/calculate-stamp-duty-land-tax/calculate').respond(400, {result: "Error"});
+            mockBackend.expectPOST('/calculate-stamp-duty-land-tax/calculate').respond(400, {result: "Error"}, {"Server": "hoola"});
 
             spyOn(mockDataMarshallingService, 'constructCalculationRequest').and.callThrough();
             spyOn(mockModelValidationService, 'validate').and.callThrough();
@@ -193,7 +193,7 @@
         });
 
         it('should make 1 call to loggingService.logEvent', function () {
-            expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
+            expect(mockLoggingService.logEvent).toHaveBeenCalledWith("error", "calculation", "status: 400, server: hoola");
         });
 
         it('should make 1 call to mockDataMarshallingService.constructCalculationRequest', function () {

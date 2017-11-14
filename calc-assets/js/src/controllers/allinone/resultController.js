@@ -37,7 +37,7 @@
              error(function(data, status, headers, config) {
                $scope.errorResponse = true;
                $scope.responseReceived = true;
-               loggingService.logEvent("error", "calculation", status);
+               loggingService.logEvent("error", "calculation", "status: "+status+", server: "+headers('Server'));
              });
         }
         else {
