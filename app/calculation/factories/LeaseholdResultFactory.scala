@@ -8,7 +8,7 @@ import calculation.utils.StringUtils
 
 object LeaseholdResultFactory {
 
-  def leaseholdResidentialNov17OnwardsFTB(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal): Result = {
+  def leaseholdResidentialNov17OnwardsFTBResult(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal): Result = {
     val leaseCalcDetails = CalculationDetails(
       taxType = TaxTypes.rent,
       calcType = CalcTypes.slice,

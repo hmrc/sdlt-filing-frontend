@@ -26,7 +26,7 @@ trait LeaseholdCalculationSrv {
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialNov17FTBLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
 
-    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTB(leaseResult, premiumResult, npv)
+    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv)
   }
 
   def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
