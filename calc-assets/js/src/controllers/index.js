@@ -5,7 +5,7 @@
   require("./allinone/additionalPropertyController");
   require("./allinone/exchangeContractsController");
   require("./allinone/dateController");
-  require("./allinone/firstTimeBuyerController");
+  require("./allinone/ownedOtherPropertiesController");
   require("./allinone/holdingController");
   require("./allinone/introController");
   require("./allinone/leaseDatesController");

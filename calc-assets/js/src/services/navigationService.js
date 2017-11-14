@@ -67,7 +67,7 @@
             else if (currentView === "additional-property") {
                 redirectBasedOnFTBExclusionCriteria(model, locationService);
             }
-            else if (currentView === "first-time-buyer") {
+            else if (currentView === "owned-other-properties") {
                 redirectBasedOnHoldingType(model, locationService);
             }
             else if (currentView === 'lease-dates') {
@@ -87,7 +87,7 @@
                 } 
                 else {
                     redirectToNext(locationService, 'summary');
-                } 
+                }
             }
             else if(currentView === 'exchange-contracts') {
                 if(model.contractPre201603 === 'Yes' && model.contractVariedPost201603 === 'No') {
@@ -106,11 +106,11 @@
 
       function redirectBasedOnFTBExclusionCriteria(model, locationService) {
         if(model.propertyType === 'Residential' &&
-          effectiveDateWithinFTBRange(model.effectiveDate) &&
+          validator.effectiveDateWithinFTBRange(model.effectiveDate) &&
           model.individual === 'Yes' &&
           model.twoOrMoreProperties === 'No'
           ) {
-            redirectToNext(locationService, 'first-time-buyer');
+            redirectToNext(locationService, 'owned-other-properties');
           } else {
             redirectBasedOnHoldingType(model, locationService);
           }
@@ -126,10 +126,6 @@
           else {
               redirectToSummary(locationService);
           }
-      }
-
-      function effectiveDateWithinFTBRange (effectiveDate) {
-        return effectiveDate >= new Date('November 22, 2017') && effectiveDate <= new Date('November 30, 2019');
       }
 
 	    return {

@@ -55,10 +55,10 @@
                 reloadOnSearch: false
             })
 
-            .when('/first-time-buyer', {
-                title : 'First time buyer',
-                templateUrl : 'first-time-buyer.html',
-                controller  : 'firstTimeBuyerController',
+            .when('/owned-other-properties', {
+                title : 'Other property',
+                templateUrl : 'owned-other-properties.html',
+                controller  : 'ownedOtherPropertiesController',
                 reloadOnSearch: false
             })
 

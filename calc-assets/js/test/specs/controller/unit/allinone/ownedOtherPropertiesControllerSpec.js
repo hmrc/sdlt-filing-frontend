@@ -5,7 +5,7 @@
 
     var mocks = require("angular-mocks-wrapper");
 
-    describe('First Time Buyer Controller', function () {
+    describe('Owned Other Properties Controller', function () {
 
         var controller,
             mockScope,
@@ -43,11 +43,11 @@
 
             mockValidationService = {};
 
-            controller = $controller('firstTimeBuyerController', {
+            controller = $controller('ownedOtherPropertiesController', {
                 $scope : mockScope,
                 $location : {},
                 dataService : mockDataService,
-                firstTimeBuyerValidationService : mockValidationService,
+                ownedOtherPropertiesValidationService : mockValidationService,
                 navigationService : mockNavigationService,
                 loggingService : mockLoggingService
             });
@@ -97,11 +97,11 @@
                 spyOn(mockValidationService, 'validate').and.callThrough();
                 spyOn(mockLoggingService, 'logEvent');
 
-                controller = $controller('firstTimeBuyerController', {
+                controller = $controller('ownedOtherPropertiesController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    firstTimeBuyerValidationService : mockValidationService,
+                    ownedOtherPropertiesValidationService : mockValidationService,
                     navigationService : mockNavigationService,
                     loggingService : mockLoggingService
                 });
@@ -158,11 +158,11 @@
                 spyOn(mockValidationService, 'validate').and.callThrough();
                 spyOn(mockLoggingService, 'logEvent');
 
-                controller = $controller('firstTimeBuyerController', {
+                controller = $controller('ownedOtherPropertiesController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    firstTimeBuyerValidationService : mockValidationService,
+                    ownedOtherPropertiesValidationService : mockValidationService,
                     navigationService : mockNavigationService,
                     loggingService : mockLoggingService
                 });

@@ -3,15 +3,15 @@
 
     var app = require("../module");
 
-    app.service('firstTimeBuyerValidationService', function() {
+    app.service('ownedOtherPropertiesValidationService', function() {
 
         var validate = function(data) {
             var state = {};
             var buildState = require("../../utilities/buildState");
             var validator = require("../../utilities/validator")();
 
-            if (validator.isNotPopulated(data.firstTimeBuyer)) {
-                state.firstTimeBuyer = "Provide an answer to continue. Select 'Yes' or 'No'";
+            if (validator.isNotPopulated(data.ownedOtherProperties)) {
+                state.ownedOtherProperties = "Provide an answer to continue. Select 'Yes' or 'No'";
             }
 
             return buildState(state);

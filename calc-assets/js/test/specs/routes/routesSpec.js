@@ -104,6 +104,21 @@
             });
         });
 
+        describe('owned other properties property route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('owned-other-properties.html')
+                        .respond(200);
+                }));
+
+            it('should load the owned other properties page on successful load of /owned-other-properties', function() {
+                location.path('/owned-other-properties');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('ownedOtherPropertiesController');
+                expect(route.current.title).toBe('Other property');
+            });
+        });
+
         describe('purchase-price route', function() {
             beforeEach(inject(
                 function($httpBackend) {

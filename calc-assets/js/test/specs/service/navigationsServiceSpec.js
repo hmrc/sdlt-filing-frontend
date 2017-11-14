@@ -332,10 +332,10 @@
                   twoOrMoreProperties : "No"
                 };
                 service.next(currentView, data, mockLocation);
-                expect(mockLocation.path()).toEqual('/first-time-buyer');
+                expect(mockLocation.path()).toEqual('/owned-other-properties');
             });
 
-            it('should redirect to fist-time-buyer page when all ftb criteria are met (latest date)', function() {
+            it('should redirect to owned-other-properties page when all ftb criteria are met (latest date)', function() {
                 data = {
                   holdingType : 'Freehold',
                   propertyType : 'Residential',
@@ -344,13 +344,13 @@
                   twoOrMoreProperties : "No"
                 };
                 service.next(currentView, data, mockLocation);
-                expect(mockLocation.path()).toEqual('/first-time-buyer');
+                expect(mockLocation.path()).toEqual('/owned-other-properties');
             });
         });
 
-        describe('Calling .next() from the first-time-buyer view', function() {
+        describe('Calling .next() from the owned-other-properties view', function() {
             var mockLocation,
-                currentView = 'first-time-buyer',
+                currentView = 'owned-other-properties',
                 data = {};
 
             beforeEach(inject(function($location) {
