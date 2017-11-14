@@ -1043,9 +1043,248 @@
             expect(result.isPurchasePriceValid).toEqual(undefined);
         });
 
+        it('should return true for a valid Freehold Residential 21/11/2017, single property', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2017, 10, 21),
+                individual : 'Yes',
+                twoOrMoreProperties : "No",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+        });
+
+        it('should return true for a valid Freehold Residential 22/11/2017, first property', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2017, 10, 22),
+                individual : 'Yes',
+                twoOrMoreProperties : "No",
+                ownedOtherProperties: "No",
+                mainResidence: "Yes",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+            expect(result.isOwnedOtherPropertiesValid).toEqual('');
+            expect(result.isMainResidenceValid).toEqual('');
+        });
+
+        it('should return true for a valid Freehold Residential 22/11/2017, not first property', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2017, 10, 22),
+                individual : 'Yes',
+                twoOrMoreProperties : "No",
+                ownedOtherProperties: "Yes",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+            expect(result.isOwnedOtherPropertiesValid).toEqual('');
+        });
+
+        it('should return true for a valid Freehold Residential 30/11/2019, first property', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2019, 10, 30),
+                individual : 'Yes',
+                twoOrMoreProperties : "No",
+                ownedOtherProperties: "No",
+                mainResidence: "Yes",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+            expect(result.isOwnedOtherPropertiesValid).toEqual('');
+            expect(result.isMainResidenceValid).toEqual('');
+        });
 
 
+        it('should return true for a valid Freehold Residential 1/12/2019, first property', function() {
 
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2019, 11, 1),
+                individual : 'Yes',
+                twoOrMoreProperties : "No",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+        });
+
+        it('should return true for a valid Freehold Residential 30/11/2019, not-individual', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2019, 10, 30),
+                individual : 'No',
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+        });
+
+        it('should return true for a valid Freehold Residential 30/11/2019, two or more properties', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2019, 10, 30),
+                individual : 'Yes',
+                twoOrMoreProperties : "Yes",
+                replaceMainResidence: "Yes",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isReplaceMainResidenceValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+        });
+
+        it('should return true for a valid Freehold Non-Residential 30/11/2019', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Non-residential",
+                effectiveDate : new Date(2019, 10, 30),
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual(undefined);
+            expect(result.isReplaceMainResidenceValid).toEqual(undefined);
+            expect(result.isPurchasePriceValid).toEqual('');
+        });
+
+        it('should return false for a Freehold Residential 30/11/2019, first time buyer without details', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2019, 10, 30),
+                individual : 'Yes',
+                twoOrMoreProperties : "No",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+            expect(result.isOwnedOtherPropertiesValid).toEqual('form-field--error');
+            expect(result.isMainResidenceValid).toEqual(undefined);
+        });
+
+        it('should return false for a Freehold Residential 30/11/2019, first time buyer without main residence details', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2019, 10, 30),
+                individual : 'Yes',
+                twoOrMoreProperties : "No",
+                ownedOtherProperties: "No",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+            expect(result.isOwnedOtherPropertiesValid).toEqual('');
+            expect(result.isMainResidenceValid).toEqual('form-field--error');
+        });
 
     });
 
