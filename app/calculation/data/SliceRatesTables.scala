@@ -105,14 +105,6 @@ object SliceRatesTables {
   )
 
   //TODO Replace placeholder values
-  val freeholdResidentialNov17FTBLeaseRates = SliceTable(
-    slices = Seq(
-      Slice(from = 0,      to = Some(125000), rate = 0),
-      Slice(from = 125000, to = None,         rate = 2)
-    )
-  )
-
-  //TODO Replace placeholder values
   val leaseholdResidentialNov17OnwardsFTBPremiumRates = SliceTable(
     slices = Seq(
       Slice(from = 0,        to = Some(125000),   rate = 2),
@@ -124,7 +116,7 @@ object SliceRatesTables {
   )
 
   //TODO Replace placeholder values
-  val freeholdResidentialNov17OnwardsFTBPremiumRates = SliceTable(
+  val freeholdResidentialNov17OnwardsFTBRates = SliceTable(
     slices = Seq(
       Slice(from = 0,        to = Some(125000),   rate = 2),
       Slice(from = 125000,   to = Some(250000),   rate = 5),
