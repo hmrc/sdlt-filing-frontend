@@ -119,6 +119,21 @@
             });
         });
 
+        describe('main residence route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('main-residence.html')
+                        .respond(200);
+                }));
+
+            it('should load the owned main residence page on successful load of /main-residence', function() {
+                location.path('/main-residence');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('mainResidenceController');
+                expect(route.current.title).toBe('Main residence');
+            });
+        });
+
         describe('purchase-price route', function() {
             beforeEach(inject(
                 function($httpBackend) {

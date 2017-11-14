@@ -5,7 +5,7 @@
 
     var mocks = require("angular-mocks-wrapper");
 
-    describe('Owned Other Properties Controller', function () {
+    describe('Main Residence Controller', function () {
 
         var controller,
             mockScope,
@@ -43,11 +43,11 @@
 
             mockValidationService = {};
 
-            controller = $controller('ownedOtherPropertiesController', {
+            controller = $controller('mainResidenceController', {
                 $scope : mockScope,
                 $location : {},
                 dataService : mockDataService,
-                ownedOtherPropertiesValidationService : mockValidationService,
+                mainResidenceValidationService : mockValidationService,
                 navigationService : mockNavigationService,
                 loggingService : mockLoggingService
             });
@@ -97,11 +97,11 @@
                 spyOn(mockValidationService, 'validate').and.callThrough();
                 spyOn(mockLoggingService, 'logEvent');
 
-                controller = $controller('ownedOtherPropertiesController', {
+                controller = $controller('mainResidenceController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    ownedOtherPropertiesValidationService : mockValidationService,
+                    mainResidenceValidationService : mockValidationService,
                     navigationService : mockNavigationService,
                     loggingService : mockLoggingService
                 });
@@ -158,11 +158,11 @@
                 spyOn(mockValidationService, 'validate').and.callThrough();
                 spyOn(mockLoggingService, 'logEvent');
 
-                controller = $controller('ownedOtherPropertiesController', {
+                controller = $controller('mainResidenceController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
-                    ownedOtherPropertiesValidationService : mockValidationService,
+                    mainResidenceValidationService : mockValidationService,
                     navigationService : mockNavigationService,
                     loggingService : mockLoggingService
                 });

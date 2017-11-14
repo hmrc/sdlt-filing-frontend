@@ -68,6 +68,13 @@
                 redirectBasedOnFTBExclusionCriteria(model, locationService);
             }
             else if (currentView === "owned-other-properties") {
+                if(model.ownedOtherProperties === "No") {
+                    redirectToNext(locationService, 'main-residence');
+                } else {
+                    redirectBasedOnHoldingType(model, locationService);
+                }
+            }
+            else if (currentView === "main-residence") {
                 redirectBasedOnHoldingType(model, locationService);
             }
             else if (currentView === 'lease-dates') {

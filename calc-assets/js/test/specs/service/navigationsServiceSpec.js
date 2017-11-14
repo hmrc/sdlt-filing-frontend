@@ -358,8 +358,43 @@
                 service.next(currentView, data, mockLocation);
             }));
 
+            it('should set the location path to /main-residence when ownedOtherProperties is "No"', function() {
+                service.next(currentView, { ownedOtherProperties : 'No' }, mockLocation);
+                expect(mockLocation.path()).toEqual('/main-residence');
+            });
+
+            it('should set the location path to /summary when ownedOtherProperties is "Yes" and holdingType has not been answered', function() {
+                service.next(currentView, { ownedOtherProperties : 'Yes' }, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /purchase-price when ownedOtherProperties is "Yes" and holdingType is "Freehold"', function() {
+                data = { ownedOtherProperties : 'Yes',
+                         holdingType : 'Freehold' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+
+            it('should set the location path to /lease-dates when ownedOtherProperties is "Yes" and holdingType is "Leasehold"', function() {
+                data = { ownedOtherProperties : 'Yes',
+                         holdingType : 'Leasehold' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/lease-dates');
+            });
+        });
+
+        describe('Calling .next() from the main-residence view', function() {
+            var mockLocation,
+                currentView = 'main-residence',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
             it('should set the location path to /summary when holdingType has not been answered', function() {
-                service.next(currentView, {}, mockLocation);
+                service.next(currentView, { ownedOtherProperty : 'Yes' }, mockLocation);
                 expect(mockLocation.path()).toEqual('/summary');
             });
 

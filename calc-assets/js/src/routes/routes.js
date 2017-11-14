@@ -62,6 +62,13 @@
                 reloadOnSearch: false
             })
 
+            .when('/main-residence', {
+                title : 'Main residence',
+                templateUrl : 'main-residence.html',
+                controller  : 'mainResidenceController',
+                reloadOnSearch: false
+            })
+
             .when('/lease-dates', {
                 title : 'Lease dates',
                 templateUrl : 'lease-dates.html',
