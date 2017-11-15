@@ -11,7 +11,15 @@
 
     <div class="form-group {{state.hasError('ownedOtherProperties')}}">
         <fieldset>
-            <legend id="ownedOtherProperties" class="form-label-bold">Have you ever owned another property?</legend>
+            <legend id="ownedOtherProperties" class="form-label-bold">Have you ever owned or part owned another property?</legend>
+            <div class="form-hint">
+                <p>We only need to know about residential property, or property that has both residential and non-residential use. This includes freehold property, or leasehold property of at least 21 years. Select yes if you either:</p>
+                <ul class="list-bullet">
+                    <li>bought a property</li>
+                    <li>inherited a property</li>
+                    <li>are a beneficiary of a trust that owns a property</li>
+                </ul>
+            </div>
             <span id="ownedOtherPropertiesErrMsg" class="error-notification">{{state.validationMessage('ownedOtherProperties')}}</span>
             <div class="inline">
                 <label class="block-label" for="ownedOtherProperties-yes">
