@@ -58,6 +58,19 @@
         return (displayIndividual(data) && data.individual === "Yes");
     };
 
+    var displayOwnedOtherProperties = function(data) {
+        if(data === undefined) return false;
+        return (data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties == 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate));
+    };
+
+    var displayMainResidence = function(data) {
+        if(displayOwnedOtherProperties(data)) {
+            return data.ownedOtherProperties === 'No';
+        } else {
+            return false;
+        }
+    };
+
     var displayReplaceMainResidence = function(data) {
         if(data === undefined) return false;
         return (displayAdditionalProperty(data) && data.twoOrMoreProperties === 'Yes');
@@ -122,6 +135,22 @@
                 id         : "replaceMainResidence",
                 isValid    : validatedModel.isReplaceMainResidenceValid,
                 hiddenText : "Are you replacing a main residence?"
+            },
+            {
+                question   : displayOwnedOtherProperties(scope.data) ? "Ever owned other property" : undefined,
+                answer     : (scope.data !== undefined) ? scope.data.ownedOtherProperties : undefined,
+                link       : "#owned-other-properties",
+                id         : "ownedOtherProperties",
+                isValid    : validatedModel.isOwnedOtherPropertiesValid,
+                hiddenText : "Have you ever owned any other property?"
+            },
+            {
+                question   : displayMainResidence(scope.data) ? "This property is your main residence" : undefined,
+                answer     : (scope.data !== undefined) ? scope.data.mainResidence : undefined,
+                link       : "#main-residence",
+                id         : "mainResidence",
+                isValid    : validatedModel.isMainResidenceValid,
+                hiddenText : "Will this property be your main residence?"
             },
             {
                 question   : displayFreehold(scope.data) ? "Purchase price" : undefined,

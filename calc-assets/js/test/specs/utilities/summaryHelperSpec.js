@@ -346,5 +346,83 @@
             });
         });
 
+        describe('Summary for first time buyer', function(){
+
+            var data = {};
+            var scope = {};
+            var emptyValidatedModel = {};
+
+            beforeEach(function(){
+                data = {
+                    holdingType    : "Freehold",
+                    propertyType   : "Residential",
+                    effectiveDate  : undefined,
+                    individual     : undefined,
+                    premium        : 1000000,
+                    twoOrMoreProperties : undefined,
+                    replaceMainResidence : undefined
+                };
+                scope = {
+                    data : data
+                };
+
+            });
+
+            it('should return 8 elements with date 22/11/2017 - twoOrMoreProperties : "No", ownedOtherProperties : "No", mainResidence : "Yes"', function(){
+                scope.data.effectiveDate = new Date(2017,10,22);
+                scope.data.individual = "Yes";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.ownedOtherProperties = "No";
+                scope.data.mainResidence = "Yes";
+                var result = summaryHelper.summaryHelper(scope, emptyValidatedModel);
+                expect(result.length).toEqual(8);
+                expect(result[3].answer).toEqual('Yes');
+                expect(result[4].answer).toEqual('No');
+                expect(result[5].answer).toEqual('No');
+                expect(result[6].answer).toEqual('Yes');
+            });
+
+            it('should return 7 elements with date 22/11/2017 - twoOrMoreProperties : "No", ownedOtherProperties : "Yes"', function(){
+                scope.data.effectiveDate = new Date(2017,10,22);
+                scope.data.individual = "Yes";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.ownedOtherProperties = "Yes";
+                var result = summaryHelper.summaryHelper(scope, emptyValidatedModel);
+                expect(result.length).toEqual(7);
+                expect(result[3].answer).toEqual('Yes');
+                expect(result[4].answer).toEqual('No');
+                expect(result[5].answer).toEqual('Yes');
+            });
+
+            it('should return 7 elements with ownedOtherProperties invalid with date 22/11/2017 - twoOrMoreProperties : "No", ownedOtherProperties : undefined', function(){
+                scope.data.effectiveDate = new Date(2017,10,22);
+                scope.data.individual = "Yes";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.ownedOtherProperties = undefined;
+                var validatedModel = {};
+                validatedModel.isOwnedOtherPropertiesValid = 'form-field--error';
+                var result = summaryHelper.summaryHelper(scope, validatedModel);
+                expect(result.length).toEqual(7);
+                expect(result[3].answer).toEqual('Yes');
+                expect(result[4].answer).toEqual('No');
+                expect(result[5].isValid).toEqual('form-field--error'); // Owned other properties has error
+            });
+
+            it('should return 8 elements with mainResidence invalid with date 22/11/2017 - twoOrMoreProperties : "No", ownedOtherProperties : "No", mainResidence : undefined', function(){
+                scope.data.effectiveDate = new Date(2017,10,22);
+                scope.data.individual = "Yes";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.ownedOtherProperties = "No";
+                var validatedModel = {};
+                validatedModel.isMainResidenceValid = 'form-field--error';
+                var result = summaryHelper.summaryHelper(scope, validatedModel);
+                expect(result.length).toEqual(8);
+                expect(result[3].answer).toEqual('Yes');
+                expect(result[4].answer).toEqual('No');
+                expect(result[5].answer).toEqual('No');
+                expect(result[6].isValid).toEqual('form-field--error'); // Main residence has error
+            });
+        });
+
     });
 }());
