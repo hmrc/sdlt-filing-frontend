@@ -88,7 +88,7 @@
     var summaryHelper = function(scope, validatedModel) {
         var template = [
             {
-                question   : "Freehold / leasehold",
+                question   : "Freehold or leasehold",
                 answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.holdingType) : undefined,
                 link       : "#holding",
                 id         : "holdingType",
@@ -96,7 +96,7 @@
                 hiddenText : "Is property freehold or leasehold?"
             },
             {
-                question   : "Property type",
+                question   : "Residential or non-residential",
                 answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.propertyType) : undefined,
                 link       : "#property",
                 id         : "propertyType",
@@ -113,7 +113,7 @@
                 type       : "Date"
             },
             {
-                question   : displayIndividual(scope.data) ? "Are you an individual?" : undefined,
+                question   : displayIndividual(scope.data) ? "Individual" : undefined,
                 answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.individual) : undefined,
                 link       : "#purchaser",
                 id         : "individual",
@@ -137,7 +137,7 @@
                 hiddenText : "Are you replacing a main residence?"
             },
             {
-                question   : displayOwnedOtherProperties(scope.data) ? "Ever owned other property" : undefined,
+                question   : displayOwnedOtherProperties(scope.data) ? "Owned other property" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.ownedOtherProperties : undefined,
                 link       : "#owned-other-properties",
                 id         : "ownedOtherProperties",
@@ -145,7 +145,7 @@
                 hiddenText : "Have you ever owned any other property?"
             },
             {
-                question   : displayMainResidence(scope.data) ? "This property is your main residence" : undefined,
+                question   : displayMainResidence(scope.data) ? "Main residence" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.mainResidence : undefined,
                 link       : "#main-residence",
                 id         : "mainResidence",
