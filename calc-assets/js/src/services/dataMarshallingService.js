@@ -34,6 +34,10 @@
         }
       }
 
+      if(data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties == 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate)) {
+        model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
+      }
+
       return model;
     };
 
@@ -92,6 +96,14 @@
         }
       }
       return relRentDetails;
+    }
+
+    function constructFirstTimeBuyerDetails(data) {
+      if(data.ownedOtherProperties === "No" && data.mainResidence === "Yes") {
+        return "Yes";
+      } else {
+        return "No";
+      }
     }
 
     return {
