@@ -147,7 +147,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         relevantRent = Some(999)
       )
     ),
-    firstTimeBuyer = Some(false)
+    firstTimeBuyer = None
   )
 
 }

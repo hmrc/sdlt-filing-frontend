@@ -1,6 +1,6 @@
 package calculation.validators.internal
 
-import java.time.LocalDate
+import java.time.{LocalDate, Period}
 
 import calculation.data.Dates
 import calculation.enums.{HoldingTypes, PropertyTypes}
@@ -55,11 +55,20 @@ object ModelValidation extends DateUtil{
      val yearsRequired = if(fullYears < 5 && lease.leaseTerm.daysInPartialYear > 0) fullYears + 1 else fullYears
 
      if(yearsRequired == rentsList.size || yearsRequired > 5 && rentsList.size == 5){
-       ValidationSuccess
-     }else{
+       validLeaseLength(request.effectiveDate, lease)
+       }else{
        ValidationFailure(s"Lease term: ${lease.leaseTerm.years} does not match amount of lease year rents: ${rentsList.size} and ${lease.leaseTerm.daysInPartialYear} partial days")
      }
    }.getOrElse(ValidationSuccess)
+  }
+
+  private[validators] def validLeaseLength(effectiveDate: LocalDate, leaseDetails: LeaseDetails) : ValidationResult ={
+    // ??? Necessary ??? val validStartDate = if(effectiveDate.isAfter(leaseDetails.startDate)) effectiveDate else leaseDetails.startDate
+    val comparisonDate = effectiveDate.plus(Period.of(leaseDetails.leaseTerm.years, 0, leaseDetails.leaseTerm.days-1))
+    if(comparisonDate.equals(leaseDetails.endDate))
+      ValidationSuccess
+    else
+      ValidationFailure(s"Lease term year: ${leaseDetails.leaseTerm.years} or Lease term date: ${leaseDetails.leaseTerm.days} does not match the difference between $effectiveDate and ${leaseDetails.endDate}")
   }
 
   private def validEffectiveDate(request: Request): ValidationResult = {

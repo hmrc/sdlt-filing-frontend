@@ -41,7 +41,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
                 |    "endDateYear": 2049,
                 |    "leaseTerm":  {
                 |      "years": 36,
-                |      "days": 172,
+                |      "days": 171,
                 |      "daysInPartialYear": 365
                 |     },
                 |    "year1Rent": 10000,
@@ -60,13 +60,13 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
             |{
             | "result":[
             |  {
-            |   "totalTax":23027,
-            |   "npv":927716,
+            |   "totalTax":23026,
+            |   "npv":927677,
             |   "taxCalcs":[
             |    {
             |     "taxType":"rent",
             |     "calcType":"slice",
-            |     "taxDue":8027,
+            |     "taxDue":8026,
             |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
             |     "bandHeading":"Rent bands (£)",
             |     "detailFooter":"SDLT due on the rent",
@@ -80,7 +80,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
             |       "from":125000,
             |       "to":-1,
             |       "rate":1,
-            |       "taxDue":8027
+            |       "taxDue":8026
             |      }
             |     ]
             |    },
@@ -124,7 +124,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
                 |    "endDateYear": 2049,
                 |    "leaseTerm":  {
                 |      "years": 34,
-                |      "days": 172,
+                |      "days": 171,
                 |      "daysInPartialYear": 365
                 |     },
                 |    "year1Rent": 10000,
@@ -144,7 +144,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
             | "result":[
             |  {
             |   "totalTax":22736,
-            |   "npv":898695,
+            |   "npv":898654,
             |   "taxCalcs":[
             |    {
             |     "taxType":"rent",
@@ -240,7 +240,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
                 |    "endDateYear": 2049,
                 |    "leaseTerm":  {
                 |      "years": 32,
-                |      "days": 172,
+                |      "days": 171,
                 |      "daysInPartialYear": 365
                 |     },
                 |    "year1Rent": 10000,
@@ -716,7 +716,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
                 |    "endDateYear": 2049,
                 |    "leaseTerm":  {
                 |      "years": 32,
-                |      "days": 172,
+                |      "days": 39,
                 |      "daysInPartialYear": 365
                 |     },
                 |    "year1Rent": 10000,

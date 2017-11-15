@@ -32,8 +32,8 @@ class ModelValidationSpec extends UnitSpec {
     startDate = LocalDate.of(2000, 1, 30),
     endDate = LocalDate.of(2099, 12, 31),
     leaseTerm = LeaseTerm(
-      years = 83,
-      days = 200,
+      years = 85,
+      days = 286,
       daysInPartialYear = 0
     ),
     year1Rent = 5000,
@@ -342,7 +342,7 @@ class ModelValidationSpec extends UnitSpec {
         val model = Request(
           holdingType = HoldingTypes.leasehold,
           propertyType = PropertyTypes.residential,
-          effectiveDate = LocalDate.of(2014, 3, 20),
+          effectiveDate = LocalDate.of(2098, 12, 31),
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
@@ -373,7 +373,7 @@ class ModelValidationSpec extends UnitSpec {
         val model = Request(
           holdingType = HoldingTypes.leasehold,
           propertyType = PropertyTypes.residential,
-          effectiveDate = LocalDate.of(2014, 3, 20),
+          effectiveDate = LocalDate.of(2097, 12, 31),
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
@@ -389,8 +389,8 @@ class ModelValidationSpec extends UnitSpec {
         startDate = LocalDate.of(2000, 1, 30),
         endDate = LocalDate.of(2099, 12, 31),
         leaseTerm = LeaseTerm(
-          years = 7,
-          days = 0,
+          years = 85,
+          days = 286,
           daysInPartialYear = 0
         ),
         year1Rent = 5000,
@@ -419,8 +419,8 @@ class ModelValidationSpec extends UnitSpec {
           startDate = LocalDate.of(2000, 1, 30),
           endDate = LocalDate.of(2099, 12, 31),
           leaseTerm = LeaseTerm(
-            years = 4,
-            days = 0,
+            years = 85,
+            days = 286,
             daysInPartialYear = 1
           ),
           year1Rent = 5000,
@@ -1062,13 +1062,12 @@ class ModelValidationSpec extends UnitSpec {
           )
 
           listValidationErrors(model) shouldBe Seq.empty
-          listValidationErrors(model.copy(effectiveDate = LocalDate.of(2016, 3, 31))) shouldBe Seq.empty
         }
         "leasehold, residential and effective date between 22/03/2012 and 31/03/2016" in {
           val model = Request(
             holdingType = HoldingTypes.leasehold,
             propertyType = PropertyTypes.residential,
-            effectiveDate = LocalDate.of(2012, 3, 22),
+            effectiveDate = LocalDate.of(2014, 3, 20),
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
@@ -1078,13 +1077,12 @@ class ModelValidationSpec extends UnitSpec {
           )
 
           listValidationErrors(model) shouldBe Seq.empty
-          listValidationErrors(model.copy(effectiveDate = LocalDate.of(2016, 3, 31))) shouldBe Seq.empty
         }
         "property type is non-residential" in {
           val model = Request(
             holdingType = HoldingTypes.leasehold,
             propertyType = PropertyTypes.nonResidential,
-            effectiveDate = LocalDate.of(2016, 6, 30),
+            effectiveDate = LocalDate.of(2014, 3, 20),
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
@@ -1101,7 +1099,7 @@ class ModelValidationSpec extends UnitSpec {
           val model = Request(
             holdingType = HoldingTypes.freehold,
             propertyType = PropertyTypes.residential,
-            effectiveDate = LocalDate.of(2014, 4, 1),
+            effectiveDate = LocalDate.of(2012, 3, 22),
             premium = 500000,
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
@@ -1116,11 +1114,24 @@ class ModelValidationSpec extends UnitSpec {
           val model = Request(
             holdingType = HoldingTypes.freehold,
             propertyType = PropertyTypes.residential,
-            effectiveDate = LocalDate.of(2016, 4, 1),
+            effectiveDate = LocalDate.of(2017, 3, 20),
             premium = 500000,
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
-            leaseDetails = Some(validTestLeaseDetails),
+            leaseDetails = Some(LeaseDetails(
+              startDate = LocalDate.of(2000, 1, 30),
+              endDate = LocalDate.of(2099, 12, 31),
+              leaseTerm = LeaseTerm(
+                years = 82,
+                days = 286,
+                daysInPartialYear = 0
+              ),
+              year1Rent = 5000,
+              year2Rent = Some(10000),
+              year3Rent = Some(10000),
+              year4Rent = Some(10000),
+              year5Rent = Some(10000)
+            )),
             relevantRentDetails = None,
           firstTimeBuyer = None
           )
@@ -1200,7 +1211,8 @@ class ModelValidationSpec extends UnitSpec {
         )
 
         listValidationErrors(model) shouldBe Seq(
-          ValidationFailure("No property details for 'leasehold' residential property with effective date of '2016-04-01'")
+          ValidationFailure("No property details for 'leasehold' residential property with effective date of '2016-04-01'"),
+          ValidationFailure("Lease term year: 85 or Lease term date: 286 does not match the difference between 2016-04-01 and 2099-12-31")
         )
       }
       "leasehold, non-residential, premium is <£150000, all rents are <£2000 and relevant rent is not defined" in {
@@ -1216,8 +1228,8 @@ class ModelValidationSpec extends UnitSpec {
           firstTimeBuyer = None
         )
         listValidationErrors(model) shouldBe Seq(
-          ValidationFailure(
-            "Relevant rent details not provided when premium: 140000, " +
+          ValidationFailure("Lease term year: 83 or Lease term date: 200 does not match the difference between 2017-01-31 and 2099-12-31"),
+          ValidationFailure("Relevant rent details not provided when premium: 140000, " +
               "holding type: leasehold, property type: non-residential and all rents <£2000"
           )
         )
