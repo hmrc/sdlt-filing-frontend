@@ -484,7 +484,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           replaceMainResidence = Some(true)
           )
          )
-        testCalculationService.checkPropDetailsFTB(propertyDetails) shouldBe true
+        testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(true)) shouldBe true
       }
     }
 
@@ -496,7 +496,17 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           replaceMainResidence = None
           )
          )
-        testCalculationService.checkPropDetailsFTB(propertyDetails) shouldBe false
+        testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(false)) shouldBe false
+      }
+
+      "the user is an individual who does not own twoOrMoreProperties but FTB is false"in{
+        val propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(true)
+        )
+        )
+        testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(false)) shouldBe false
       }
 
       "the user is an individual who owns twoOrMoreProperties" in{
@@ -506,12 +516,12 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           replaceMainResidence = Some(false)
          )
         )
-        testCalculationService.checkPropDetailsFTB(propertyDetails) shouldBe false
+        testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(false)) shouldBe false
       }
 
       "the property details are not defined" in{
         val propertyDetails = None
-        testCalculationService.checkPropDetailsFTB(propertyDetails) shouldBe false
+        testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(false)) shouldBe false
       }
     }
   }

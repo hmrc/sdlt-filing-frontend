@@ -40,7 +40,7 @@ trait CalculationSrv extends DateUtil{
 
   def calculateFreeholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE) && checkPropDetailsFTB(request.propertyDetails) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialNov17OnwardsFTB(request)))
+      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE) && checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialNov17OnwardsFTB(request)))
       case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) && additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails) =>  CalculationResponse(freeCalculationService.freeholdResidentialAddPropApr16Onwards(request))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(freeCalculationService.freeholdResidentialMar12toDec14(request)))
@@ -49,7 +49,7 @@ trait CalculationSrv extends DateUtil{
   }
 
   def calculateFreeholdNonResidentialTax (request: Request): CalculationResponse = {
-    if(request.effectiveDate.isBetween(Dates.MARCH2016_NON_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE)){
+    if(request.effectiveDate.onOrAfter(Dates.MARCH2016_NON_RESIDENTIAL_DATE)){
       CalculationResponse(freeCalculationService.freeholdNonResidentialMar16Onwards(request))
     }else{
       CalculationResponse(Seq(freeCalculationService.freeholdNonResidentialMar12toMar16(request)))
@@ -58,7 +58,7 @@ trait CalculationSrv extends DateUtil{
 
   def calculateLeaseholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE)  && checkPropDetailsFTB(request.propertyDetails) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialNov17OnwardsFTB(request)))
+      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE)  && checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialNov17OnwardsFTB(request)))
       case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) && additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails) =>  CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropApr16Onwards(request))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialMar12toDec14(request)))
@@ -73,9 +73,9 @@ trait CalculationSrv extends DateUtil{
     }
   }
 
-  def checkPropDetailsFTB(propertyDetails: Option[PropertyDetails]): Boolean = {
+  def checkPropDetailsFTB(propertyDetails: Option[PropertyDetails], firstTimeBuyer: Option[Boolean]): Boolean = {
     propertyDetails.exists(propDetails =>
-      if (propDetails.individual && propDetails.twoOrMoreProperties.contains(false)) true
+      if (propDetails.individual && propDetails.twoOrMoreProperties.contains(false) && firstTimeBuyer.contains(true)) true
       else false
     )
   }
