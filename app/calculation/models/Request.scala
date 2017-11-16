@@ -51,7 +51,8 @@ object Request {
     (__ \ "highestRent").read[BigDecimal] and
     (__ \ "propertyDetails").readNullable[PropertyDetails] and
     (__ \ "leaseDetails").readNullable[LeaseDetails] and
-    (__ \ "relevantRentDetails").readNullable[RelevantRentDetails]
+    (__ \ "relevantRentDetails").readNullable[RelevantRentDetails] and
+      (__ \ "firstTimeBuyer").readNullable[Boolean](yesNoToBooleanReads)
   )(Request.apply _)
 }
 
@@ -63,7 +64,8 @@ case class Request(
                   highestRent: BigDecimal,
                   propertyDetails: Option[PropertyDetails],
                   leaseDetails: Option[LeaseDetails],
-                  relevantRentDetails: Option[RelevantRentDetails]
+                  relevantRentDetails: Option[RelevantRentDetails],
+                  firstTimeBuyer: Option[Boolean]
                   )
 
 case class PropertyDetails(

@@ -1,25 +1,27 @@
 package calculation.validators.internal
 
-import java.time.LocalDate
+import java.time.{LocalDate, Period}
 
+import calculation.data.Dates
 import calculation.enums.{HoldingTypes, PropertyTypes}
 import calculation.models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
 import calculation.data.Dates._
 import calculation.data.SignificantAmounts.RELEVANT_RENT_PREMIUM_THRESHOLD
+import calculation.utils.DateUtil
 
 sealed trait ValidationResult
 case object  ValidationSuccess              extends ValidationResult
 case class   ValidationFailure(err: String) extends ValidationResult
 
-object ModelValidation {
-
+object ModelValidation extends DateUtil{
   def listValidationErrors(request: Request): Seq[ValidationFailure] = {
     Seq(
       validLeaseDetails(request),
       validEffectiveDate(request),
       validPropertyDetails(request),
       validLeaseTerm(request),
-      validRelevantRentDetails(request)
+      validRelevantRentDetails(request),
+      validFirstTimeBuyer(request)
     ).flatMap {
       case err :ValidationFailure => Some(err)
       case _ => None
@@ -53,11 +55,20 @@ object ModelValidation {
      val yearsRequired = if(fullYears < 5 && lease.leaseTerm.daysInPartialYear > 0) fullYears + 1 else fullYears
 
      if(yearsRequired == rentsList.size || yearsRequired > 5 && rentsList.size == 5){
-       ValidationSuccess
-     }else{
+       validLeaseLength(request.effectiveDate, lease)
+       }else{
        ValidationFailure(s"Lease term: ${lease.leaseTerm.years} does not match amount of lease year rents: ${rentsList.size} and ${lease.leaseTerm.daysInPartialYear} partial days")
      }
    }.getOrElse(ValidationSuccess)
+  }
+
+  private[validators] def validLeaseLength(effectiveDate: LocalDate, leaseDetails: LeaseDetails) : ValidationResult ={
+    val selectDate = if(effectiveDate.isAfter(leaseDetails.startDate)) effectiveDate else leaseDetails.startDate
+    val comparisonDate = selectDate.plus(Period.of(leaseDetails.leaseTerm.years, 0, leaseDetails.leaseTerm.days-1))
+    if(comparisonDate.equals(leaseDetails.endDate))
+      ValidationSuccess
+    else
+      ValidationFailure(s"Lease term year: ${leaseDetails.leaseTerm.years} or Lease term date: ${leaseDetails.leaseTerm.days} does not match the difference between $effectiveDate and ${leaseDetails.endDate}")
   }
 
   private def validEffectiveDate(request: Request): ValidationResult = {
@@ -100,6 +111,19 @@ object ModelValidation {
             s"'twoOrMoreProperties': $twoOrMoreProperties, " +
             s"'replaceMainResidence': $replaceMainResidence")
     }
+  }
+
+  private [validators] def validFirstTimeBuyer(request: Request): ValidationResult ={
+    if(request.effectiveDate.isBetween(Dates.NOV2017_RESIDENTIAL_DATE,Dates.NOV2019_RESIDENTIAL_DATE) && request.propertyType.equals(PropertyTypes.residential)){
+      request.propertyDetails.map{ propDetails =>
+        if(propDetails.individual && propDetails.twoOrMoreProperties.contains(false)){
+          request.firstTimeBuyer match{
+            case Some(_) => ValidationSuccess
+            case _ => ValidationFailure(s"First time buyer was not defined.")
+          }
+        } else ValidationSuccess
+      }getOrElse ValidationFailure("No property details found for first time buyer.")
+    }else ValidationSuccess
   }
 
   private [validators] def validRelevantRentDetails(request: Request): ValidationResult = {

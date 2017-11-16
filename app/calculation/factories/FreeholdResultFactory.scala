@@ -8,6 +8,27 @@ import calculation.utils.StringUtils
 
 object FreeholdResultFactory {
 
+  def freeholdResidentialNov17OnwardsFTBResult(sliceResult: SliceResult): Result = {
+    Result(
+      totalTax = sliceResult.taxDue.toInt,
+      resultHeading = None,
+      resultHint = None,
+      npv = None,
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slice,
+          detailHeading = Some(DETAIL_HEADING_TOTAL_SDLT),
+          bandHeading = Some(DETAIL_COL_HEADER_PURCHASE_PRICE),
+          detailFooter = Some(DETAIL_FOOTER_TOTAL),
+          taxDue = sliceResult.taxDue.toInt,
+          slices = Some(sliceResult.slices)
+        )
+      )
+    )
+  }
+
+
   def freeholdResidentialAddPropApr16OnwardsResult(sliceResult: SliceResult, refundEntitlement: Option[Int]): Result = {
 
     val resHint = refundEntitlement.map { amount =>

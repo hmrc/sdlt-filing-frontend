@@ -6,6 +6,37 @@ import calculation.models.{CalculationDetails, Result, SliceDetails}
 trait LeaseholdResultFixture {
 
 
+  def leaseholdResidentialNov17OnwardsFTBResult(
+                                              leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
+                                              premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
+                                              npv:         Int) =
+    Result(
+      totalTax = leaseTaxDue + premTaxDue,
+      resultHeading = None,
+      resultHint = None,
+      npv = Some(npv),
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.rent,
+          calcType = CalcTypes.slice,
+          detailHeading = Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
+          bandHeading = Some("Rent bands (£)"),
+          detailFooter = Some("SDLT due on the rent"),
+          taxDue = leaseTaxDue,
+          slices = Some(leaseSliceDetails)
+        ),
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slice,
+          detailHeading =Some("This is a breakdown of how the amount of SDLT on the premium was calculated"),
+          bandHeading = Some("Premium bands (£)"),
+          detailFooter = Some("SDLT due on the premium"),
+          taxDue = premTaxDue,
+          slices = Some(premSliceDetails)
+        )
+      )
+    )
+
   def leaseholdResidentialAddPropApr16OnwardsResult(
                                               leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                               premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],

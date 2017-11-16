@@ -11,6 +11,175 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
 
   val testFreeholdCalcService = new FreeholdCalculationService(new BaseCalculationService, new RefundEntitlementService)
 
+  "calculating freeholdResidentialNov17OnwardsFTB" should {
+
+    def baseCalculationDetails(taxDue: Int, slices: Seq[SliceDetails]) = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slice,
+      detailHeading = Some("This is a breakdown of how the total amount of SDLT was calculated"),
+      bandHeading = Some("Purchase price bands (£)"),
+      detailFooter = Some("Total SDLT due"),
+      taxDue = taxDue,
+      slices = Some(slices)
+    )
+
+    def baseResult(taxDue: Int, calcDeets: CalculationDetails) = Result(
+      totalTax = taxDue,
+      resultHeading = None,
+      resultHint = None,
+      npv = None,
+      taxCalcs = Seq(calcDeets)
+    )
+
+    def baseRequest(premium: BigDecimal) = Request(
+      holdingType = HoldingTypes.freehold,
+      propertyType = PropertyTypes.residential,
+      effectiveDate = LocalDate.of(2018, 1, 1),
+      premium = premium,
+      highestRent = 0,
+      leaseDetails = None,
+      propertyDetails = Some(
+        PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = None
+        )
+      ),
+      relevantRentDetails = None,
+      firstTimeBuyer = Some(true)
+    )
+
+    "return 0 for purchase price of 1" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 0),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 0),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(1))
+      res shouldBe baseResult(0, baseCalculationDetails(0, resSlices))
+    }
+
+    "return 1 for purchase price of 50" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 1),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 0),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(50))
+      res shouldBe baseResult(1, baseCalculationDetails(1, resSlices))
+    }
+
+    "return 2500 for purchase price of 125000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 0),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(125000))
+      res shouldBe baseResult(2500, baseCalculationDetails(2500, resSlices))
+    }
+
+    "return 2501 for purchase price of 125000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 1),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(125025))
+      res shouldBe baseResult(2501, baseCalculationDetails(2501, resSlices))
+    }
+
+    "return 8750 for purchase price of 250000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(250000))
+      res shouldBe baseResult(8750, baseCalculationDetails(8750, resSlices))
+    }
+
+    "return 8751 for purchase price of 250000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 1),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(250015))
+      res shouldBe baseResult(8751, baseCalculationDetails(8751, resSlices))
+    }
+
+    "return 62750 for purchase price of 925000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 54000),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(925000))
+      res shouldBe baseResult(62750, baseCalculationDetails(62750, resSlices))
+    }
+
+    "return 62751 for purchase price of 925010" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 54000),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 1),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(925010))
+      res shouldBe baseResult(62751, baseCalculationDetails(62751, resSlices))
+    }
+
+    "return 126000 for purchase price of 1500000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 54000),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 63250),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 0)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(1500000))
+      res shouldBe baseResult(126000, baseCalculationDetails(126000, resSlices))
+    }
+
+    "return 126001 for purchase price of 1500010" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 54000),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 11, taxDue = 63250),
+        SliceDetails(from = 1500000, to = None,          rate = 16, taxDue = 1)
+      )
+
+      val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(1500010))
+      res shouldBe baseResult(126001, baseCalculationDetails(126001, resSlices))
+    }
+  }
+
   "calculating freeholdResidentialDec14Onwards" should {
 
     def baseCalculationDetails(taxDue: Int, slices: Seq[SliceDetails]) = CalculationDetails(
@@ -39,7 +208,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       highestRent = 0,
       leaseDetails = None,
       propertyDetails = None,
-      relevantRentDetails = None
+      relevantRentDetails = None,
+      firstTimeBuyer = None
     )
 
     "return 0 for purchase price of 125000" in {
@@ -179,7 +349,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       highestRent = 0,
       leaseDetails = None,
       propertyDetails = None,
-      relevantRentDetails = None
+      relevantRentDetails = None,
+      firstTimeBuyer = None
     )
 
     "return 0 for purchase price of 125000" in {
@@ -284,7 +455,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       highestRent = 0,
       leaseDetails = None,
       propertyDetails = None,
-      relevantRentDetails = None
+      relevantRentDetails = None,
+      firstTimeBuyer = None
     )
 
     "return current: 0, prev: 0 for purchase price of 150000" in {
@@ -401,7 +573,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       highestRent = 0,
       leaseDetails = None,
       propertyDetails = None,
-      relevantRentDetails = None
+      relevantRentDetails = None,
+      firstTimeBuyer = None
     )
 
     "return 0 for purchase price of 150000" in {
@@ -434,7 +607,6 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       res shouldBe baseResult(20000, baseCalculationDetails(20000, 4))
     }
   }
-
 
   "calculating freeholdResidentialAddPropApr16Onwards" should {
 
@@ -493,7 +665,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
           replaceMainResidence = Some(false)
         )
       ),
-      relevantRentDetails = None
+      relevantRentDetails = None,
+      firstTimeBuyer = None
     )
 
     def hint(amount: String) = "If you dispose of your previous main residence within 3 years " +
@@ -799,7 +972,8 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
               replaceMainResidence = None
             )
           ),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         val currentSlices = Seq(

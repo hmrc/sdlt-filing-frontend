@@ -688,6 +688,122 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
         request.json shouldBe responseJson
       }
 
+      "residential, Individual && notTwoOrMoreProperties, FTB, NOV2017+" in{
+        def request: WSResponse = ws.url(
+          calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Leasehold",
+                |  "propertyType": "Residential",
+                |  "effectiveDateDay": 23,
+                |  "effectiveDateMonth": 11,
+                |  "effectiveDateYear": 2017,
+                |  "premium": 500000,
+                |  "highestRent": 50000,
+                |  "propertyDetails": {
+                |     "individual": "Yes",
+                |     "twoOrMoreProperties": "No",
+                |     "replaceMainResidence": "Yes"
+                |   },
+                |  "leaseDetails": {
+                |    "startDateDay": 15,
+                |    "startDateMonth": 1,
+                |    "startDateYear": 1949,
+                |    "endDateDay": 31,
+                |    "endDateMonth": 12,
+                |    "endDateYear": 2049,
+                |    "leaseTerm":  {
+                |      "years": 32,
+                |      "days": 39,
+                |      "daysInPartialYear": 365
+                |     },
+                |    "year1Rent": 10000,
+                |    "year2Rent": 20000,
+                |    "year3Rent": 30000,
+                |    "year4Rent": 40000,
+                |    "year5Rent": 50000
+                |  },
+                |  "firstTimeBuyer": "Yes"
+                |}
+              """. stripMargin)
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            |"result":[
+            |  {
+            |   "totalTax":43485,
+            |   "npv":861753,
+            |   "taxCalcs":[
+            |     {
+            |      "taxType":"rent",
+            |      "calcType":"slice",
+            |      "taxDue":14735,
+            |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+            |      "bandHeading":"Rent bands (£)",
+            |      "detailFooter":"SDLT due on the rent",
+            |      "slices":[
+            |      {
+            |       "from":0,
+            |       "to":125000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":125000,
+            |       "to":-1,
+            |       "rate":2,
+            |       "taxDue":14735
+            |       }
+            |      ]
+            |     },
+            |    {
+            |     "taxType":"premium",
+            |     "calcType":"slice",
+            |     "taxDue":28750,
+            |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+            |     "bandHeading":"Premium bands (£)",
+            |     "detailFooter":"SDLT due on the premium",
+            |     "slices":[
+            |     {
+            |      "from":0,
+            |      "to":125000,
+            |      "rate":2,
+            |      "taxDue":2500
+            |      },{
+            |      "from":125000,
+            |      "to":250000,
+            |      "rate":5,
+            |      "taxDue":6250
+            |      },{
+            |      "from":250000,
+            |      "to":925000,
+            |      "rate":8,
+            |      "taxDue":20000
+            |      },{
+            |      "from":925000,
+            |      "to":1500000,
+            |      "rate":11,
+            |      "taxDue":0
+            |      },{
+            |      "from":1500000,
+            |      "to":-1,
+            |      "rate":16,
+            |      "taxDue":0
+            |      }
+            |     ]
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+          """.stripMargin)
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
+
       "non-residential, notIndividual, 2012-2016" in {
         def request: WSResponse = ws.url(calculateUrl)
           .post(
@@ -1333,6 +1449,84 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
             |      "from":1500000,
             |      "to":-1,
             |      "rate":12,
+            |      "taxDue":0
+            |      }
+            |     ]
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+          """.stripMargin)
+
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
+
+      "residential, Individual && notTwoOrMoreProperties, FTB, NOV2017+" in{
+        def request: WSResponse = ws.url(
+          calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Freehold",
+                |  "propertyType": "Residential",
+                |  "effectiveDateDay": 23,
+                |  "effectiveDateMonth": 11,
+                |  "effectiveDateYear": 2017,
+                |  "premium": 500000,
+                |  "highestRent": 0,
+                |  "propertyDetails": {
+                |   "individual": "Yes",
+                |   "twoOrMoreProperties": "No",
+                |   "replaceMainResidence": "Yes"
+                | },
+                | "firstTimeBuyer": "Yes"
+                |}
+              """.
+                stripMargin)
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result":[
+            |  {
+            |  "totalTax":28750,
+            |  "taxCalcs":[
+            |   {
+            |    "taxType":"premium",
+            |    "calcType":"slice",
+            |    "taxDue":28750,
+            |    "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated",
+            |    "bandHeading":"Purchase price bands (£)",
+            |    "detailFooter":"Total SDLT due",
+            |    "slices":[
+            |     {
+            |      "from":0,
+            |      "to":125000,
+            |      "rate":2,
+            |      "taxDue":2500
+            |      },{
+            |      "from":125000,
+            |      "to":250000,
+            |      "rate":5,
+            |      "taxDue":6250
+            |      },{
+            |      "from":250000,
+            |      "to":925000,
+            |      "rate":8,
+            |      "taxDue":20000
+            |      },{
+            |      "from":925000,
+            |      "to":1500000,
+            |      "rate":11,
+            |      "taxDue":0
+            |      },{
+            |      "from":1500000,
+            |      "to":-1,
+            |      "rate":16,
             |      "taxDue":0
             |      }
             |     ]

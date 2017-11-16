@@ -32,8 +32,8 @@ class ModelValidationSpec extends UnitSpec {
     startDate = LocalDate.of(2000, 1, 30),
     endDate = LocalDate.of(2099, 12, 31),
     leaseTerm = LeaseTerm(
-      years = 83,
-      days = 200,
+      years = 85,
+      days = 287,
       daysInPartialYear = 0
     ),
     year1Rent = 5000,
@@ -71,7 +71,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -100,7 +101,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -129,7 +131,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -158,7 +161,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -187,7 +191,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -216,7 +221,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
       }
@@ -247,7 +253,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -276,7 +283,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -305,7 +313,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
       }
@@ -320,7 +329,7 @@ class ModelValidationSpec extends UnitSpec {
           endDate = LocalDate.of(2099, 12, 31),
           leaseTerm = LeaseTerm(
             years = 1,
-            days = 0,
+            days = 1,
             daysInPartialYear = 0
           ),
           year1Rent = 5000,
@@ -333,12 +342,13 @@ class ModelValidationSpec extends UnitSpec {
         val model = Request(
           holdingType = HoldingTypes.leasehold,
           propertyType = PropertyTypes.residential,
-          effectiveDate = LocalDate.of(2014, 3, 20),
+          effectiveDate = LocalDate.of(2098, 12, 31),
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         validLeaseTerm(model) shouldBe ValidationSuccess
@@ -350,7 +360,7 @@ class ModelValidationSpec extends UnitSpec {
           endDate = LocalDate.of(2099, 12, 31),
           leaseTerm = LeaseTerm(
             years = 2,
-            days = 0,
+            days = 1,
             daysInPartialYear = 0
           ),
           year1Rent = 5000,
@@ -363,12 +373,13 @@ class ModelValidationSpec extends UnitSpec {
         val model = Request(
           holdingType = HoldingTypes.leasehold,
           propertyType = PropertyTypes.residential,
-          effectiveDate = LocalDate.of(2014, 3, 20),
+          effectiveDate = LocalDate.of(2097, 12, 31),
           premium = 500000,
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseTerm(model) shouldBe ValidationSuccess
       }
@@ -378,8 +389,8 @@ class ModelValidationSpec extends UnitSpec {
         startDate = LocalDate.of(2000, 1, 30),
         endDate = LocalDate.of(2099, 12, 31),
         leaseTerm = LeaseTerm(
-          years = 7,
-          days = 0,
+          years = 85,
+          days = 287,
           daysInPartialYear = 0
         ),
         year1Rent = 5000,
@@ -397,7 +408,8 @@ class ModelValidationSpec extends UnitSpec {
         highestRent = 0,
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
-        relevantRentDetails = None
+        relevantRentDetails = None,
+          firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationSuccess
     }
@@ -407,8 +419,8 @@ class ModelValidationSpec extends UnitSpec {
           startDate = LocalDate.of(2000, 1, 30),
           endDate = LocalDate.of(2099, 12, 31),
           leaseTerm = LeaseTerm(
-            years = 4,
-            days = 0,
+            years = 85,
+            days = 287,
             daysInPartialYear = 1
           ),
           year1Rent = 5000,
@@ -426,7 +438,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validLeaseTerm(model) shouldBe ValidationSuccess
       }
@@ -458,7 +471,8 @@ class ModelValidationSpec extends UnitSpec {
         highestRent = 0,
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
-        relevantRentDetails = None
+        relevantRentDetails = None,
+          firstTimeBuyer = None
       )
 
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 2 does not match amount of lease year rents: 1 and 0 partial days")
@@ -488,7 +502,8 @@ class ModelValidationSpec extends UnitSpec {
         highestRent = 0,
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
-        relevantRentDetails = None
+        relevantRentDetails = None,
+          firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 7 does not match amount of lease year rents: 4 and 0 partial days")
     }
@@ -517,7 +532,8 @@ class ModelValidationSpec extends UnitSpec {
         highestRent = 0,
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
-        relevantRentDetails = None
+        relevantRentDetails = None,
+          firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 4 does not match amount of lease year rents: 4 and 1 partial days")
     }
@@ -645,7 +661,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 0,
             propertyDetails = None,
             leaseDetails = None,
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
@@ -659,7 +676,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 1000,
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
@@ -673,7 +691,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 2000,
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
@@ -687,7 +706,8 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 2000,
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(2000)),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
@@ -701,7 +721,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 1000,
           propertyDetails = None,
           leaseDetails = Some(validLeaseDetails(800)),
-          relevantRentDetails = Some(testRelevantRentDetails)
+          relevantRentDetails = Some(testRelevantRentDetails),
+          firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationSuccess
       }
@@ -716,7 +737,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 1000,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = Some(testRelevantRentDetails)
+          relevantRentDetails = Some(testRelevantRentDetails),
+          firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationFailure("No lease details provided for leasehold property")
       }
@@ -729,7 +751,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 1000,
           propertyDetails = None,
           leaseDetails = Some(validLeaseDetails(800)),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationFailure(
           "Relevant rent details not provided when premium: 140000, " +
@@ -837,6 +860,161 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
+  "validFirstTimeBuyer" should {
+    "return a ValidationSuccess" when {
+      "the effective date is before 22/11/2017" in{
+        val request = Request(
+          holdingType = HoldingTypes.freehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2012, 12, 31),
+          premium = 140000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = None,
+          relevantRentDetails = None,
+          firstTimeBuyer = None
+        )
+        validFirstTimeBuyer(request) shouldBe ValidationSuccess
+      }
+
+      "the effective date is after 30/11/2019" in{
+        val request = Request(
+          holdingType = HoldingTypes.freehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2020, 12, 31),
+          premium = 140000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = None,
+          relevantRentDetails = None,
+          firstTimeBuyer = None
+        )
+        validFirstTimeBuyer(request) shouldBe ValidationSuccess
+      }
+
+      "the property type is not residential" in{
+        val request = Request(
+          holdingType = HoldingTypes.freehold,
+          propertyType = PropertyTypes.nonResidential,
+          effectiveDate = LocalDate.of(2017, 12, 31),
+          premium = 140000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = None,
+          relevantRentDetails = None,
+          firstTimeBuyer = None
+        )
+        validFirstTimeBuyer(request) shouldBe ValidationSuccess
+      }
+
+      "the effective date is after 22/11/2017 and the property type is residential " when {
+        "the user is an individual who doesn't own twoOrMoreProperties and firstTimeBuyer is defined" in {
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = Some(
+              PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = Some(false)
+              )
+            ),
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = Some(true)
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationSuccess
+        }
+
+        "the user is an individual owning twoOrMoreProperties" in{
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = Some(
+              PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(true),
+                replaceMainResidence = Some(false)
+              )
+            ),
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationSuccess
+        }
+
+        "the user is not an individual" in{
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = Some(
+              PropertyDetails(
+                individual = false,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = Some(false)
+              )
+            ),
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationSuccess
+
+        }
+      }
+    }
+
+    "return a ValidationFailure" when{
+      "the effective date is after 22/11/2017, the property type is residential" when{
+        "there are no property details " in{
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = None,
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationFailure("No property details found for first time buyer.")
+        }
+
+        "there are valid property details but firstTimeBuyer is undefined. " in{
+          val request = Request(
+            holdingType = HoldingTypes.freehold,
+            propertyType = PropertyTypes.residential,
+            effectiveDate = LocalDate.of(2017, 12, 31),
+            premium = 140000,
+            highestRent = 0,
+            propertyDetails = Some(
+              PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = Some(false)
+              )
+            ),
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None
+          )
+          validFirstTimeBuyer(request) shouldBe ValidationFailure("First time buyer was not defined.")
+        }
+      }
+    }
+  }
+
   "listValidationErrors" should {
     "have no errors" when {
       "holding type is freehold, non-residential and there are no lease details" in {
@@ -848,7 +1026,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq.empty
@@ -862,7 +1041,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq.empty
@@ -877,37 +1057,38 @@ class ModelValidationSpec extends UnitSpec {
             highestRent = 0,
             propertyDetails = None,
             leaseDetails = None,
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
-          listValidationErrors(model.copy(effectiveDate = LocalDate.of(2016, 3, 31))) shouldBe Seq.empty
         }
         "leasehold, residential and effective date between 22/03/2012 and 31/03/2016" in {
           val model = Request(
             holdingType = HoldingTypes.leasehold,
             propertyType = PropertyTypes.residential,
-            effectiveDate = LocalDate.of(2012, 3, 22),
+            effectiveDate = LocalDate.of(2014, 3, 20),
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
-          listValidationErrors(model.copy(effectiveDate = LocalDate.of(2016, 3, 31))) shouldBe Seq.empty
         }
         "property type is non-residential" in {
           val model = Request(
             holdingType = HoldingTypes.leasehold,
             propertyType = PropertyTypes.nonResidential,
-            effectiveDate = LocalDate.of(2016, 6, 30),
+            effectiveDate = LocalDate.of(2014, 3, 20),
             premium = 500000,
             highestRent = 0,
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -918,12 +1099,13 @@ class ModelValidationSpec extends UnitSpec {
           val model = Request(
             holdingType = HoldingTypes.freehold,
             propertyType = PropertyTypes.residential,
-            effectiveDate = LocalDate.of(2014, 4, 1),
+            effectiveDate = LocalDate.of(2012, 3, 22),
             premium = 500000,
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
             leaseDetails = None,
-            relevantRentDetails = None
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -932,12 +1114,26 @@ class ModelValidationSpec extends UnitSpec {
           val model = Request(
             holdingType = HoldingTypes.freehold,
             propertyType = PropertyTypes.residential,
-            effectiveDate = LocalDate.of(2016, 4, 1),
+            effectiveDate = LocalDate.of(2017, 3, 20),
             premium = 500000,
             highestRent = 0,
             propertyDetails = Some(validPropertyDetails),
-            leaseDetails = Some(validTestLeaseDetails),
-            relevantRentDetails = None
+            leaseDetails = Some(LeaseDetails(
+              startDate = LocalDate.of(2000, 1, 30),
+              endDate = LocalDate.of(2099, 12, 31),
+              leaseTerm = LeaseTerm(
+                years = 82,
+                days = 287,
+                daysInPartialYear = 0
+              ),
+              year1Rent = 5000,
+              year2Rent = Some(10000),
+              year3Rent = Some(10000),
+              year4Rent = Some(10000),
+              year5Rent = Some(10000)
+            )),
+            relevantRentDetails = None,
+          firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
@@ -956,7 +1152,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -973,7 +1170,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -990,7 +1188,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(
@@ -1007,11 +1206,13 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetails),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(
-          ValidationFailure("No property details for 'leasehold' residential property with effective date of '2016-04-01'")
+          ValidationFailure("No property details for 'leasehold' residential property with effective date of '2016-04-01'"),
+          ValidationFailure("Lease term year: 85 or Lease term date: 287 does not match the difference between 2016-04-01 and 2099-12-31")
         )
       }
       "leasehold, non-residential, premium is <£150000, all rents are <£2000 and relevant rent is not defined" in {
@@ -1023,11 +1224,12 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 1000,
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetailsAllLessTan2000),
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
         listValidationErrors(model) shouldBe Seq(
-          ValidationFailure(
-            "Relevant rent details not provided when premium: 140000, " +
+          ValidationFailure("Lease term year: 83 or Lease term date: 200 does not match the difference between 2017-01-31 and 2099-12-31"),
+          ValidationFailure("Relevant rent details not provided when premium: 140000, " +
               "holding type: leasehold, property type: non-residential and all rents <£2000"
           )
         )
@@ -1042,7 +1244,8 @@ class ModelValidationSpec extends UnitSpec {
           highestRent = 0,
           propertyDetails = None,
           leaseDetails = None,
-          relevantRentDetails = None
+          relevantRentDetails = None,
+          firstTimeBuyer = None
         )
 
         listValidationErrors(model) shouldBe Seq(

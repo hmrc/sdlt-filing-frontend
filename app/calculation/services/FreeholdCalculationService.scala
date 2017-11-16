@@ -18,6 +18,14 @@ trait FreeholdCalculationSrv {
   val baseCalculationService: BaseCalculationSrv
   val refundEntitlementService: RefundEntitlementSrv
 
+  def freeholdResidentialNov17OnwardsFTB(request: Request): Result = {
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      SliceRatesTables.freeholdResidentialNov17OnwardsFTBRates.slices
+    )
+    FreeholdResultFactory.freeholdResidentialNov17OnwardsFTBResult(premiumResult)
+  }
+
   def freeholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
       if(request.premium < 40000) 0 else request.premium,

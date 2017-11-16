@@ -110,7 +110,7 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
         val fakeRequest = FakeRequest().withJsonBody(jsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe BAD_REQUEST
-        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("Validation error: List(ValidationFailure(Effective date of '2011-07-13' is before 22 March, 2012))")
+        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("Validation error: List(ValidationFailure(Effective date of '2011-07-13' is before 22 March, 2012), ValidationFailure(Lease term year: 33 or Lease term date: 0 does not match the difference between 2011-07-13 and 2049-12-31))")
       }
     }
 
@@ -137,8 +137,8 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
                                               |    "endDateMonth": 12,
                                               |    "endDateYear": 2049,
                                               |    "leaseTerm":  {
-                                              |      "years": 33,
-                                              |      "days": 0,
+                                              |      "years": 34,
+                                              |      "days": 172,
                                               |      "daysInPartialYear": 0
                                               |     },
                                               |    "year1Rent": 10000,
@@ -166,6 +166,7 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
         val fakeRequest = FakeRequest().withJsonBody(completeJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe OK
+        println(jsonBodyOf(await(result))(materializer))
         jsonBodyOf(await(result))(materializer) shouldBe Json.toJson(response)
       }
     }
