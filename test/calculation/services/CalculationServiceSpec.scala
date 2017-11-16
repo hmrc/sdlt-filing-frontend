@@ -65,7 +65,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = Some(false)
+        replaceMainResidence = Some(true)
         )
       ),
       leaseDetails = None,
