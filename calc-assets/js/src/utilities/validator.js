@@ -91,6 +91,10 @@
             return true;
         };
 
+        var effectiveDateWithinFTBRange = function(effectiveDate) {
+          return effectiveDate >= new Date('November 22, 2017') && effectiveDate <= new Date('November 30, 2019');
+        };
+
         return {
             isPopulated : isPopulated,
             isNotPopulated : isNotPopulated,
@@ -109,7 +113,8 @@
             isGreaterThanOrEqualToDate : isGreaterThanOrEqualToDate,
             isGreaterThanInteger : isGreaterThanInteger,
             isGreaterThanFloat : isGreaterThanFloat,
-            checkAllRentsBelow2000 : checkAllRentsBelow2000
+            checkAllRentsBelow2000 : checkAllRentsBelow2000,
+            effectiveDateWithinFTBRange: effectiveDateWithinFTBRange
         };
 
     };

@@ -65,6 +65,16 @@
                 }
             }
             else if (currentView === "additional-property") {
+                redirectBasedOnFTBExclusionCriteria(model, locationService);
+            }
+            else if (currentView === "owned-other-properties") {
+                if(model.ownedOtherProperties === "No") {
+                    redirectToNext(locationService, 'main-residence');
+                } else {
+                    redirectBasedOnHoldingType(model, locationService);
+                }
+            }
+            else if (currentView === "main-residence") {
                 redirectBasedOnHoldingType(model, locationService);
             }
             else if (currentView === 'lease-dates') {
@@ -84,7 +94,7 @@
                 } 
                 else {
                     redirectToNext(locationService, 'summary');
-                } 
+                }
             }
             else if(currentView === 'exchange-contracts') {
                 if(model.contractPre201603 === 'Yes' && model.contractVariedPost201603 === 'No') {
@@ -101,17 +111,29 @@
             }
     	};
 
-        function redirectBasedOnHoldingType(model, locationService) {
-            if (model.holdingType === 'Freehold') {
-                redirectToNext(locationService, 'purchase-price');
-            } 
-            else if (model.holdingType === 'Leasehold') {
-                redirectToNext(locationService, 'lease-dates');
-            } 
-            else {
-                redirectToSummary(locationService);
-            }
-        }
+      function redirectBasedOnFTBExclusionCriteria(model, locationService) {
+        if(model.propertyType === 'Residential' &&
+          validator.effectiveDateWithinFTBRange(model.effectiveDate) &&
+          model.individual === 'Yes' &&
+          model.twoOrMoreProperties === 'No'
+          ) {
+            redirectToNext(locationService, 'owned-other-properties');
+          } else {
+            redirectBasedOnHoldingType(model, locationService);
+          }
+      }
+
+      function redirectBasedOnHoldingType(model, locationService) {
+          if (model.holdingType === 'Freehold') {
+              redirectToNext(locationService, 'purchase-price');
+          }
+          else if (model.holdingType === 'Leasehold') {
+              redirectToNext(locationService, 'lease-dates');
+          }
+          else {
+              redirectToSummary(locationService);
+          }
+      }
 
 	    return {
 	    	logView : logView,

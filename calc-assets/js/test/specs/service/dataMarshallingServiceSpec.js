@@ -453,6 +453,155 @@
         expect(service.constructCalculationRequest(freeholdData)).toEqual(freeholdRequest);
     });
 
+    var ftbData = angular.copy(baseLeaseholdData);
+    ftbData.effectiveDate = new Date(2019, 10, 30);
+    ftbData.effectiveDateDay = 30;
+    ftbData.effectiveDateMonth = 11;
+    ftbData.effectiveDateYear = 2019;
+    ftbData.twoOrMoreProperties = "No";
+    delete ftbData.replaceMainResidence;
+
+    var ftbRequest = angular.copy(baseLeaseholdRequest);
+    ftbRequest.effectiveDateDay = 30;
+    ftbRequest.effectiveDateMonth = 11;
+    ftbRequest.effectiveDateYear = 2019;
+    ftbRequest.propertyDetails = {
+      individual : "Yes",
+      twoOrMoreProperties : "No"
+    };
+
+    it('should include first time buyer details for a first time, main residence property', function() {
+
+        var ftbYesData = angular.copy(ftbData);
+        ftbYesData.ownedOtherProperties = "No";
+        ftbYesData.mainResidence = "Yes";
+
+        var ftbYesRequest = angular.copy(ftbRequest);
+        ftbYesRequest.firstTimeBuyer = "Yes";
+
+        expect(service.constructCalculationRequest(ftbYesData)).toEqual(ftbYesRequest);
+    });
+
+    it('should include first time buyer details for a first time, non-main residence property', function() {
+
+        var ftbNonMainResData = angular.copy(ftbData);
+        ftbNonMainResData.ownedOtherProperties = "No";
+        ftbNonMainResData.mainResidence = "No";
+
+        var ftbNonMainResRequest = angular.copy(ftbRequest);
+        ftbNonMainResRequest.firstTimeBuyer = "No";
+
+        expect(service.constructCalculationRequest(ftbNonMainResData)).toEqual(ftbNonMainResRequest);
+    });
+
+    it('should include first time buyer details for a non-first time buyer', function() {
+
+        var ftbNotFirstPropertyData = angular.copy(ftbData);
+        ftbNotFirstPropertyData.ownedOtherProperties = "Yes";
+
+        var ftbNotFirstPropertyRequest = angular.copy(ftbRequest);
+        ftbNotFirstPropertyRequest.firstTimeBuyer = "No";
+
+        expect(service.constructCalculationRequest(ftbNotFirstPropertyData)).toEqual(ftbNotFirstPropertyRequest);
+    });
+
+    it('should not include first time buyer details for a non-residential property', function() {
+
+        var ftbNonResidentialPropertyData = angular.copy(ftbData);
+        ftbNonResidentialPropertyData.propertyType = "Non-residential";
+        ftbNonResidentialPropertyData.ownedOtherProperties = "Yes";
+
+        var ftbNonResidentialPropertyRequest = angular.copy(ftbRequest);
+        ftbNonResidentialPropertyRequest.propertyType = "Non-residential";
+        delete ftbNonResidentialPropertyRequest.propertyDetails;
+
+        expect(service.constructCalculationRequest(ftbNonResidentialPropertyData)).toEqual(ftbNonResidentialPropertyRequest);
+    });
+
+    it('should not include first time buyer details for a non-individual property', function() {
+
+        var ftbNonIndividualPropertyData = angular.copy(ftbData);
+        ftbNonIndividualPropertyData.individual = "No";
+        ftbNonIndividualPropertyData.ownedOtherProperties = "Yes";
+
+        var ftbNonIndividualPropertyRequest = angular.copy(ftbRequest);
+        ftbNonIndividualPropertyRequest.propertyDetails = {
+          individual : "No"
+        };
+
+        expect(service.constructCalculationRequest(ftbNonIndividualPropertyData)).toEqual(ftbNonIndividualPropertyRequest);
+    });
+
+    it('should not include first time buyer details for an individual with two or more properties', function() {
+
+        var ftb2OrMorePropertiesData = angular.copy(ftbData);
+        ftb2OrMorePropertiesData.individual = "Yes";
+        ftb2OrMorePropertiesData.twoOrMoreProperties = "Yes";
+        ftb2OrMorePropertiesData.replaceMainResidence = "Yes";
+        ftb2OrMorePropertiesData.ownedOtherProperties = "Yes";
+
+        var ftb2OrMorePropertiesRequest = angular.copy(ftbRequest);
+        ftb2OrMorePropertiesRequest.propertyDetails = {
+          individual : "Yes",
+          twoOrMoreProperties : "Yes",
+          replaceMainResidence : "Yes"
+        };
+
+        expect(service.constructCalculationRequest(ftb2OrMorePropertiesData)).toEqual(ftb2OrMorePropertiesRequest);
+    });
+
+    it('should not include first time buyer details for a date of 21/11/2017', function() {
+
+        var ftbEarlyData = angular.copy(ftbData);
+        ftbEarlyData.effectiveDate = new Date(2017, 10, 21);
+        ftbEarlyData.effectiveDateDay = 21;
+        ftbEarlyData.effectiveDateMonth = 11;
+        ftbEarlyData.effectiveDateYear = 2017;
+        ftbEarlyData.ownedOtherProperties = "Yes";
+
+        var ftbEarlyRequest = angular.copy(ftbRequest);
+        ftbEarlyRequest.effectiveDateDay = 21;
+        ftbEarlyRequest.effectiveDateMonth = 11;
+        ftbEarlyRequest.effectiveDateYear = 2017;
+
+        expect(service.constructCalculationRequest(ftbEarlyData)).toEqual(ftbEarlyRequest);
+    });
+
+    it('should not include first time buyer details for a date of 1/12/2019', function() {
+
+        var ftbLateData = angular.copy(ftbData);
+        ftbLateData.effectiveDate = new Date(2019, 11, 1);
+        ftbLateData.effectiveDateDay = 1;
+        ftbLateData.effectiveDateMonth = 12;
+        ftbLateData.effectiveDateYear = 2019;
+        ftbLateData.ownedOtherProperties = "Yes";
+
+        var ftbLateRequest = angular.copy(ftbRequest);
+        ftbLateRequest.effectiveDateDay = 1;
+        ftbLateRequest.effectiveDateMonth = 12;
+        ftbLateRequest.effectiveDateYear = 2019;
+
+        expect(service.constructCalculationRequest(ftbLateData)).toEqual(ftbLateRequest);
+    });
+
+    it('should include first time buyer details for a date of 22/11/2017', function() {
+
+        var ftbFirstDayData = angular.copy(ftbData);
+        ftbFirstDayData.effectiveDate = new Date(2017, 10, 22);
+        ftbFirstDayData.effectiveDateDay = 22;
+        ftbFirstDayData.effectiveDateMonth = 11;
+        ftbFirstDayData.effectiveDateYear = 2017;
+        ftbFirstDayData.ownedOtherProperties = "Yes";
+
+        var ftbFirstDayRequest = angular.copy(ftbRequest);
+        ftbFirstDayRequest.effectiveDateDay = 22;
+        ftbFirstDayRequest.effectiveDateMonth = 11;
+        ftbFirstDayRequest.effectiveDateYear = 2017;
+        ftbFirstDayRequest.firstTimeBuyer = "No";
+
+        expect(service.constructCalculationRequest(ftbFirstDayData)).toEqual(ftbFirstDayRequest);
+    });
+
 
   });
 }());

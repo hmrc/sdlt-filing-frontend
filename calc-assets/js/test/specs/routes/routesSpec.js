@@ -104,6 +104,36 @@
             });
         });
 
+        describe('owned other properties property route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('owned-other-properties.html')
+                        .respond(200);
+                }));
+
+            it('should load the owned other properties page on successful load of /owned-other-properties', function() {
+                location.path('/owned-other-properties');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('ownedOtherPropertiesController');
+                expect(route.current.title).toBe('Other property');
+            });
+        });
+
+        describe('main residence route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('main-residence.html')
+                        .respond(200);
+                }));
+
+            it('should load the owned main residence page on successful load of /main-residence', function() {
+                location.path('/main-residence');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('mainResidenceController');
+                expect(route.current.title).toBe('Main residence');
+            });
+        });
+
         describe('purchase-price route', function() {
             beforeEach(inject(
                 function($httpBackend) {

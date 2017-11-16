@@ -55,6 +55,20 @@
                 reloadOnSearch: false
             })
 
+            .when('/owned-other-properties', {
+                title : 'Other property',
+                templateUrl : 'owned-other-properties.html',
+                controller  : 'ownedOtherPropertiesController',
+                reloadOnSearch: false
+            })
+
+            .when('/main-residence', {
+                title : 'Main residence',
+                templateUrl : 'main-residence.html',
+                controller  : 'mainResidenceController',
+                reloadOnSearch: false
+            })
+
             .when('/lease-dates', {
                 title : 'Lease dates',
                 templateUrl : 'lease-dates.html',

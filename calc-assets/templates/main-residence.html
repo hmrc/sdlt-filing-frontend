@@ -1,0 +1,31 @@
+<h1>{{title}}</h1>
+
+<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
+    <ul class="error-summary-list">
+        <li ng-if="state.hasError('mainResidence')"><a id="mainResidencePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('mainResidence')">{{state.validationMessage('mainResidence')}}</a></li>
+    </ul>
+</div>
+
+<form name="mainResidenceForm" class="form">
+
+    <div class="form-group {{state.hasError('mainResidence')}}">
+        <fieldset>
+            <legend id="mainResidence" class="form-label-bold">Will this property be your main residence?</legend>
+            <span id="mainResidenceErrMsg" class="error-notification">{{state.validationMessage('mainResidence')}}</span>
+            <div class="inline">
+                <label class="block-label" for="mainResidence-yes">
+                    <input id="mainResidence-yes" ng-model="data.mainResidence" name="mainResidence" value="Yes" type="radio" required>Yes
+                </label>
+                <label class="block-label" for="mainResidence-no">
+                    <input id="mainResidence-no" ng-model="data.mainResidence" name="mainResidence" value="No" type="radio" required>No
+                </label>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="form-group">
+        <button ng-click="submit()" class="button" id="continue-button" type="submit">Continue</button>
+    </div>
+
+</form>

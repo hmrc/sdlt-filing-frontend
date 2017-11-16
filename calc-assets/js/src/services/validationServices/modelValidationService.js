@@ -46,6 +46,19 @@
                 }
             }
 
+            // if Residential, between 22/11/2017 and 30/11/2019 and individual and not
+            // two or more properties then FTB information required
+            if(data.propertyType === 'Residential' &&
+               validator.effectiveDateWithinFTBRange(data.effectiveDate) &&
+               data.individual === 'Yes' &&
+               data.twoOrMoreProperties === 'No'
+            ){
+                result.isOwnedOtherPropertiesValid = hasError('ownedOtherProperties');
+                if(data.ownedOtherProperties === 'No') {
+                    result.isMainResidenceValid = hasError('mainResidence');
+                }
+            }
+
             // if Leasehold must have lease dates and appropriate number of rents
             if(data.holdingType === 'Leasehold') {
                 result.isStartDateValid = hasError('startDate');

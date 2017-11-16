@@ -262,6 +262,153 @@
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/lease-dates');
             });
+
+            it('should redirect based on holding type when property type is non-residential', function() {
+                data = {
+                  holdingType : 'Freehold',
+                  propertyType : 'Non-residential',
+                  effectiveDate : new Date('November 22, 2017'),
+                  individual : "Yes",
+                  twoOrMoreProperties : "No"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+
+            it('should redirect based on holding type when effective date is before 22/11/2017', function() {
+                data = {
+                  holdingType : 'Freehold',
+                  propertyType : 'Residential',
+                  effectiveDate : new Date('November 21, 2017'),
+                  individual : "Yes",
+                  twoOrMoreProperties : "No"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+
+            it('should redirect based on holding type when effective date is after 30/11/2019', function() {
+                data = {
+                  holdingType : 'Freehold',
+                  propertyType : 'Residential',
+                  effectiveDate : new Date('December 1, 2019'),
+                  individual : "Yes",
+                  twoOrMoreProperties : "No"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+
+            it('should redirect based on holding type when purchaser is not an individual', function() {
+                data = {
+                  holdingType : 'Freehold',
+                  propertyType : 'Residential',
+                  effectiveDate : new Date('November 22, 2017'),
+                  individual : "No",
+                  twoOrMoreProperties : "No"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+
+            it('should redirect based on holding type when purchase results in two or more properties', function() {
+                data = {
+                  holdingType : 'Freehold',
+                  propertyType : 'Residential',
+                  effectiveDate : new Date('November 22, 2017'),
+                  individual : "Yes",
+                  twoOrMoreProperties : "Yes"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+
+            it('should redirect to fist-time-buyer page when all ftb criteria are met (earliest date)', function() {
+                data = {
+                  holdingType : 'Freehold',
+                  propertyType : 'Residential',
+                  effectiveDate : new Date('November 22, 2017'),
+                  individual : "Yes",
+                  twoOrMoreProperties : "No"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/owned-other-properties');
+            });
+
+            it('should redirect to owned-other-properties page when all ftb criteria are met (latest date)', function() {
+                data = {
+                  holdingType : 'Freehold',
+                  propertyType : 'Residential',
+                  effectiveDate : new Date('November 30, 2019'),
+                  individual : "Yes",
+                  twoOrMoreProperties : "No"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/owned-other-properties');
+            });
+        });
+
+        describe('Calling .next() from the owned-other-properties view', function() {
+            var mockLocation,
+                currentView = 'owned-other-properties',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
+            it('should set the location path to /main-residence when ownedOtherProperties is "No"', function() {
+                service.next(currentView, { ownedOtherProperties : 'No' }, mockLocation);
+                expect(mockLocation.path()).toEqual('/main-residence');
+            });
+
+            it('should set the location path to /summary when ownedOtherProperties is "Yes" and holdingType has not been answered', function() {
+                service.next(currentView, { ownedOtherProperties : 'Yes' }, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /purchase-price when ownedOtherProperties is "Yes" and holdingType is "Freehold"', function() {
+                data = { ownedOtherProperties : 'Yes',
+                         holdingType : 'Freehold' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+
+            it('should set the location path to /lease-dates when ownedOtherProperties is "Yes" and holdingType is "Leasehold"', function() {
+                data = { ownedOtherProperties : 'Yes',
+                         holdingType : 'Leasehold' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/lease-dates');
+            });
+        });
+
+        describe('Calling .next() from the main-residence view', function() {
+            var mockLocation,
+                currentView = 'main-residence',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
+            it('should set the location path to /summary when holdingType has not been answered', function() {
+                service.next(currentView, { ownedOtherProperty : 'Yes' }, mockLocation);
+                expect(mockLocation.path()).toEqual('/summary');
+            });
+
+            it('should set the location path to /purchase-price when holdingType is "Freehold"', function() {
+                data = { holdingType : 'Freehold' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/purchase-price');
+            });
+
+            it('should set the location path to /lease-dates when holdingType is "Leasehold"', function() {
+                data = { holdingType : 'Leasehold' };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/lease-dates');
+            });
         });
 
         describe('Calling .next() from the purchase-price view', function() {
