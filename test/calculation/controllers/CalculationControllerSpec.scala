@@ -138,7 +138,7 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
                                               |    "endDateYear": 2049,
                                               |    "leaseTerm":  {
                                               |      "years": 34,
-                                              |      "days": 171,
+                                              |      "days": 172,
                                               |      "daysInPartialYear": 0
                                               |     },
                                               |    "year1Rent": 10000,

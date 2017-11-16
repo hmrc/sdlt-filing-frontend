@@ -33,7 +33,7 @@ class ModelValidationSpec extends UnitSpec {
     endDate = LocalDate.of(2099, 12, 31),
     leaseTerm = LeaseTerm(
       years = 85,
-      days = 286,
+      days = 287,
       daysInPartialYear = 0
     ),
     year1Rent = 5000,
@@ -329,7 +329,7 @@ class ModelValidationSpec extends UnitSpec {
           endDate = LocalDate.of(2099, 12, 31),
           leaseTerm = LeaseTerm(
             years = 1,
-            days = 0,
+            days = 1,
             daysInPartialYear = 0
           ),
           year1Rent = 5000,
@@ -360,7 +360,7 @@ class ModelValidationSpec extends UnitSpec {
           endDate = LocalDate.of(2099, 12, 31),
           leaseTerm = LeaseTerm(
             years = 2,
-            days = 0,
+            days = 1,
             daysInPartialYear = 0
           ),
           year1Rent = 5000,
@@ -390,7 +390,7 @@ class ModelValidationSpec extends UnitSpec {
         endDate = LocalDate.of(2099, 12, 31),
         leaseTerm = LeaseTerm(
           years = 85,
-          days = 286,
+          days = 287,
           daysInPartialYear = 0
         ),
         year1Rent = 5000,
@@ -420,7 +420,7 @@ class ModelValidationSpec extends UnitSpec {
           endDate = LocalDate.of(2099, 12, 31),
           leaseTerm = LeaseTerm(
             years = 85,
-            days = 286,
+            days = 287,
             daysInPartialYear = 1
           ),
           year1Rent = 5000,
@@ -1123,7 +1123,7 @@ class ModelValidationSpec extends UnitSpec {
               endDate = LocalDate.of(2099, 12, 31),
               leaseTerm = LeaseTerm(
                 years = 82,
-                days = 286,
+                days = 287,
                 daysInPartialYear = 0
               ),
               year1Rent = 5000,
@@ -1212,7 +1212,7 @@ class ModelValidationSpec extends UnitSpec {
 
         listValidationErrors(model) shouldBe Seq(
           ValidationFailure("No property details for 'leasehold' residential property with effective date of '2016-04-01'"),
-          ValidationFailure("Lease term year: 85 or Lease term date: 286 does not match the difference between 2016-04-01 and 2099-12-31")
+          ValidationFailure("Lease term year: 85 or Lease term date: 287 does not match the difference between 2016-04-01 and 2099-12-31")
         )
       }
       "leasehold, non-residential, premium is <£150000, all rents are <£2000 and relevant rent is not defined" in {
