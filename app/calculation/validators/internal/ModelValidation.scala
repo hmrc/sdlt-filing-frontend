@@ -63,7 +63,6 @@ object ModelValidation extends DateUtil{
   }
 
   private[validators] def validLeaseLength(effectiveDate: LocalDate, leaseDetails: LeaseDetails) : ValidationResult ={
-    // ??? Necessary ??? val validStartDate = if(effectiveDate.isAfter(leaseDetails.startDate)) effectiveDate else leaseDetails.startDate
     val comparisonDate = effectiveDate.plus(Period.of(leaseDetails.leaseTerm.years, 0, leaseDetails.leaseTerm.days-1))
     if(comparisonDate.equals(leaseDetails.endDate))
       ValidationSuccess

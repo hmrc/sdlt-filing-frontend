@@ -474,4 +474,46 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       }
     }
   }
+
+  "checkPropDetailsFTB" should{
+    "return true" when{
+      "the user is an individual who does not own twoOrMoreProperties"in{
+         val propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(true)
+          )
+         )
+        testCalculationService.checkPropDetailsFTB(propertyDetails) shouldBe true
+      }
+    }
+
+    "return false" when{
+      "the user is not an individual"in{
+         val propertyDetails = Some(PropertyDetails(
+          individual = false,
+          twoOrMoreProperties = None,
+          replaceMainResidence = None
+          )
+         )
+        testCalculationService.checkPropDetailsFTB(propertyDetails) shouldBe false
+      }
+
+      "the user is an individual who owns twoOrMoreProperties" in{
+        val propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(true),
+          replaceMainResidence = Some(false)
+         )
+        )
+        testCalculationService.checkPropDetailsFTB(propertyDetails) shouldBe false
+      }
+
+      "the property details are not defined" in{
+        val propertyDetails = None
+        testCalculationService.checkPropDetailsFTB(propertyDetails) shouldBe false
+      }
+    }
+  }
+  
 }
