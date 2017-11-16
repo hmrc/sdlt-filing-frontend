@@ -323,6 +323,37 @@ class ModelValidationSpec extends UnitSpec {
 
   "validLeaseTerm" should{
     "return a ValidationSuccess" when{
+      "the effective date is before the lease start date" in{
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2098, 12, 31),
+          endDate = LocalDate.of(2099, 12, 31),
+          leaseTerm = LeaseTerm(
+            years = 1,
+            days = 1,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = None,
+          year3Rent = None,
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        val model = Request(
+          holdingType = HoldingTypes.leasehold,
+          propertyType = PropertyTypes.residential,
+          effectiveDate = LocalDate.of(2000, 1, 30),
+          premium = 500000,
+          highestRent = 0,
+          propertyDetails = None,
+          leaseDetails = Some(tempLeaseDetails),
+          relevantRentDetails = None,
+          firstTimeBuyer = None
+        )
+
+        validLeaseTerm(model) shouldBe ValidationSuccess
+      }
+
       "only the year1Rent has been applied and it is equal to the leaseTerm years" in{
          val tempLeaseDetails = LeaseDetails(
           startDate = LocalDate.of(2000, 1, 30),
@@ -884,7 +915,13 @@ class ModelValidationSpec extends UnitSpec {
           effectiveDate = LocalDate.of(2020, 12, 31),
           premium = 140000,
           highestRent = 0,
-          propertyDetails = None,
+          propertyDetails = Some(
+            PropertyDetails(
+              individual = true,
+              twoOrMoreProperties = Some(true),
+              replaceMainResidence = Some(false)
+            )
+          ),
           leaseDetails = None,
           relevantRentDetails = None,
           firstTimeBuyer = None
