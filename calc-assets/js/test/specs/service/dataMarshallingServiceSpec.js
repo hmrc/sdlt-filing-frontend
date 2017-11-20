@@ -567,23 +567,6 @@
         expect(service.constructCalculationRequest(ftbEarlyData)).toEqual(ftbEarlyRequest);
     });
 
-    it('should not include first time buyer details for a date of 1/12/2019', function() {
-
-        var ftbLateData = angular.copy(ftbData);
-        ftbLateData.effectiveDate = new Date(2019, 11, 1);
-        ftbLateData.effectiveDateDay = 1;
-        ftbLateData.effectiveDateMonth = 12;
-        ftbLateData.effectiveDateYear = 2019;
-        ftbLateData.ownedOtherProperties = "Yes";
-
-        var ftbLateRequest = angular.copy(ftbRequest);
-        ftbLateRequest.effectiveDateDay = 1;
-        ftbLateRequest.effectiveDateMonth = 12;
-        ftbLateRequest.effectiveDateYear = 2019;
-
-        expect(service.constructCalculationRequest(ftbLateData)).toEqual(ftbLateRequest);
-    });
-
     it('should include first time buyer details for a date of 22/11/2017', function() {
 
         var ftbFirstDayData = angular.copy(ftbData);

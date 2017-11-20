@@ -287,18 +287,6 @@
                 expect(mockLocation.path()).toEqual('/purchase-price');
             });
 
-            it('should redirect based on holding type when effective date is after 30/11/2019', function() {
-                data = {
-                  holdingType : 'Freehold',
-                  propertyType : 'Residential',
-                  effectiveDate : new Date('December 1, 2019'),
-                  individual : "Yes",
-                  twoOrMoreProperties : "No"
-                };
-                service.next(currentView, data, mockLocation);
-                expect(mockLocation.path()).toEqual('/purchase-price');
-            });
-
             it('should redirect based on holding type when purchaser is not an individual', function() {
                 data = {
                   holdingType : 'Freehold',
@@ -328,18 +316,6 @@
                   holdingType : 'Freehold',
                   propertyType : 'Residential',
                   effectiveDate : new Date('November 22, 2017'),
-                  individual : "Yes",
-                  twoOrMoreProperties : "No"
-                };
-                service.next(currentView, data, mockLocation);
-                expect(mockLocation.path()).toEqual('/owned-other-properties');
-            });
-
-            it('should redirect to owned-other-properties page when all ftb criteria are met (latest date)', function() {
-                data = {
-                  holdingType : 'Freehold',
-                  propertyType : 'Residential',
-                  effectiveDate : new Date('November 30, 2019'),
                   individual : "Yes",
                   twoOrMoreProperties : "No"
                 };

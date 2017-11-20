@@ -1,6 +1,5 @@
 package calculation.services
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 import calculation.enums.{HoldingTypes, PropertyTypes}

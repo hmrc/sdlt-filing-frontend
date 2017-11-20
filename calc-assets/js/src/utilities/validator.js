@@ -92,7 +92,7 @@
         };
 
         var effectiveDateWithinFTBRange = function(effectiveDate) {
-          return effectiveDate >= new Date('November 22, 2017') && effectiveDate <= new Date('November 30, 2019');
+          return effectiveDate >= new Date('November 22, 2017');
         };
 
         return {
