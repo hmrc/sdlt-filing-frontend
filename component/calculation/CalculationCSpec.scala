@@ -733,19 +733,19 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
         val responseJson = Json.parse(
           """
             |{
-            |"result":[
+            | "result":[
             |  {
-            |   "totalTax":43485,
+            |   "totalTax":17367,
             |   "npv":861753,
             |   "taxCalcs":[
-            |     {
-            |      "taxType":"rent",
-            |      "calcType":"slice",
-            |      "taxDue":14735,
-            |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-            |      "bandHeading":"Rent bands (£)",
-            |      "detailFooter":"SDLT due on the rent",
-            |      "slices":[
+            |    {
+            |     "taxType":"rent",
+            |     "calcType":"slice",
+            |     "taxDue":7367,
+            |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+            |     "bandHeading":"Rent bands (£)",
+            |     "detailFooter":"SDLT due on the rent",
+            |     "slices":[
             |      {
             |       "from":0,
             |       "to":125000,
@@ -754,44 +754,28 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
             |       },{
             |       "from":125000,
             |       "to":-1,
-            |       "rate":2,
-            |       "taxDue":14735
-            |       }
-            |      ]
-            |     },
-            |    {
+            |       "rate":1,
+            |       "taxDue":7367
+            |      }
+            |     ]
+            |    },{
             |     "taxType":"premium",
             |     "calcType":"slice",
-            |     "taxDue":28750,
+            |     "taxDue":10000,
             |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
             |     "bandHeading":"Premium bands (£)",
             |     "detailFooter":"SDLT due on the premium",
             |     "slices":[
-            |     {
-            |      "from":0,
-            |      "to":125000,
-            |      "rate":2,
-            |      "taxDue":2500
-            |      },{
-            |      "from":125000,
-            |      "to":250000,
-            |      "rate":5,
-            |      "taxDue":6250
-            |      },{
-            |      "from":250000,
-            |      "to":925000,
-            |      "rate":8,
-            |      "taxDue":20000
-            |      },{
-            |      "from":925000,
-            |      "to":1500000,
-            |      "rate":11,
-            |      "taxDue":0
-            |      },{
-            |      "from":1500000,
-            |      "to":-1,
-            |      "rate":16,
-            |      "taxDue":0
+            |      {
+            |       "from":0,
+            |       "to":300000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":300000,
+            |       "to":500000,
+            |       "rate":5,
+            |       "taxDue":10000
             |      }
             |     ]
             |    }
@@ -1493,41 +1477,26 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
             |{
             | "result":[
             |  {
-            |  "totalTax":28750,
-            |  "taxCalcs":[
-            |   {
-            |    "taxType":"premium",
-            |    "calcType":"slice",
-            |    "taxDue":28750,
-            |    "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated",
-            |    "bandHeading":"Purchase price bands (£)",
-            |    "detailFooter":"Total SDLT due",
-            |    "slices":[
-            |     {
-            |      "from":0,
-            |      "to":125000,
-            |      "rate":2,
-            |      "taxDue":2500
-            |      },{
-            |      "from":125000,
-            |      "to":250000,
-            |      "rate":5,
-            |      "taxDue":6250
-            |      },{
-            |      "from":250000,
-            |      "to":925000,
-            |      "rate":8,
-            |      "taxDue":20000
-            |      },{
-            |      "from":925000,
-            |      "to":1500000,
-            |      "rate":11,
-            |      "taxDue":0
-            |      },{
-            |      "from":1500000,
-            |      "to":-1,
-            |      "rate":16,
-            |      "taxDue":0
+            |   "totalTax":10000,
+            |   "taxCalcs":[
+            |    {
+            |     "taxType":"premium",
+            |     "calcType":"slice",
+            |     "taxDue":10000,
+            |     "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated",
+            |     "bandHeading":"Purchase price bands (£)",
+            |     "detailFooter":"Total SDLT due",
+            |     "slices":[
+            |      {
+            |       "from":0,
+            |       "to":300000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":300000,
+            |       "to":500000,
+            |       "rate":5,
+            |       "taxDue":10000
             |      }
             |     ]
             |    }

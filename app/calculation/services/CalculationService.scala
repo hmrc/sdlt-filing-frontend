@@ -20,6 +20,7 @@ trait CalculationSrv extends DateUtil{
   val leaseCalculationService: LeaseholdCalculationSrv
   val freeCalculationService: FreeholdCalculationSrv
   val additionalPropertyService: AdditionalPropertySrv
+  val MAX_PREMIUM_FTB = 500000
 
   def CalculateTax(request: Request): CalculationResponse ={
     request.holdingType match {
@@ -39,7 +40,9 @@ trait CalculationSrv extends DateUtil{
 
   def calculateFreeholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE) && checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialNov17OnwardsFTB(request)))
+      case date if date.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE)
+                                  && checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer)
+                                  && request.premium <= MAX_PREMIUM_FTB =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialNov17OnwardsFTB(request)))
       case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) && additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails) =>  CalculationResponse(freeCalculationService.freeholdResidentialAddPropApr16Onwards(request))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(freeCalculationService.freeholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(freeCalculationService.freeholdResidentialMar12toDec14(request)))
@@ -57,7 +60,9 @@ trait CalculationSrv extends DateUtil{
 
   def calculateLeaseholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case date if date.isBetween(Dates.NOV2017_RESIDENTIAL_DATE, Dates.NOV2019_RESIDENTIAL_DATE)  && checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialNov17OnwardsFTB(request)))
+      case date if date.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE)
+                                  && checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer)
+                                  && request.premium <= MAX_PREMIUM_FTB =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialNov17OnwardsFTB(request)))
       case date if date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) && additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails) =>  CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropApr16Onwards(request))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>  CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialMar12toDec14(request)))
