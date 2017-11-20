@@ -38,6 +38,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
   }
 
   "leaseholdResidentialNov17OnwardsFTB" should {
+    val MAX_PREMIUM_FTB = 500000
     "return 0, 0 for purchase price of 299999, npv of 125000" in new PredefinedNPVSetup(125000) {
       val leaseTaxDue = 0
       val premTaxDue = 0
@@ -47,7 +48,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
       val premSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 0)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
@@ -63,7 +64,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
       val premSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 0)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
@@ -79,7 +80,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
       val premSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 1)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 1)
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
@@ -95,7 +96,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
       val premSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 9999)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 9999)
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
@@ -111,7 +112,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
       val premSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 10000)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 10000)
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)

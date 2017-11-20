@@ -49,10 +49,12 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       firstTimeBuyer = Some(true)
     )
 
+    val MAX_PREMIUM_FTB = 500000
+
     "return 0 for purchase price of 299999" in {
       val resSlices = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 0)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
       val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(299999))
@@ -63,7 +65,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     "return 0 for purchase price of 300000" in {
       val resSlices = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 0)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
       val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(300000))
@@ -73,7 +75,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     "return 1 for purchase price of 300025" in {
       val resSlices = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 1)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 1)
       )
 
       val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(300025))
@@ -83,7 +85,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     "return 9999 for purchase price of 499999" in {
       val resSlices = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 9999)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 9999)
       )
 
       val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(499999))
@@ -93,7 +95,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     "return 10000 for purchase price of 500000" in {
       val resSlices = Seq(
         SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
-        SliceDetails(from = 300000, to = Some(500000), rate = 5, taxDue = 10000)
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 10000)
       )
 
       val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequest(500000))
