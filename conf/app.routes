@@ -1,6 +1,6 @@
 # microservice specific routes
 
-GET         /                                      controllers.Assets.at(path="/public", file="index.html")
+GET         /                                      journey.controllers.IndexController.showIndex
 GET         /javascript/*file                      controllers.Assets.at(path="/public/javascript", file)
 
 #Calculation Routes
