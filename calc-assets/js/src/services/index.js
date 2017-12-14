@@ -3,7 +3,6 @@
 
   require("./dataService.js");
   require("./dataMarshallingService.js");
-  require("./calculationService.js");
   require("./navigationService.js");
   require("./loggingService.js");
   require("./validationServices/additionalPropertyValidationService.js");
