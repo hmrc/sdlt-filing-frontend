@@ -13,11 +13,14 @@
 #### calc-assets/gulpfile.js/config.js
 var jsVersion = "v```1```";
 
-#### calc-assets/index.html
+#### app/journey/views/index.scala.html
 ga('send', 'event', 'asset-version', 'v```1```', 'calc-javascripts');  
 script src="javascript/v```1```-calc.js"  
 script src="javascript/v```1```-calc-templates.js"
 
+
+### Node version
+Requires node version 4.4.5 to run locally. Install [NVM](https://github.com/creationix/nvm) to manage local node versions.
 
 
 ### Running the SDLTC Frontend
