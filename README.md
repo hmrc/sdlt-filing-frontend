@@ -20,7 +20,7 @@ script src="javascript/v```1```-calc-templates.js"
 
 
 ### Node version
-Requires node version 4.4.5 to run locally. Install [NVM](https://github.com/creationix/nvm) to manage local node versions.
+Requires node version 4.4.5 to run locally. You can install [NVM](https://github.com/creationix/nvm) to manage local node versions.
 
 
 ### Running the SDLTC Frontend
