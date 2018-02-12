@@ -571,6 +571,52 @@ class ModelValidationSpec extends UnitSpec {
    }
   }
 
+  "validLeaseLength" should{
+    "return a ValidationSuccess" when{
+      "given a lease start date in a leap year and an end date not in a leap year" in{
+        val effectiveDate = LocalDate.of(2016,2,29)
+
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2016, 2, 29),
+          endDate = LocalDate.of(2019, 2, 28),
+          leaseTerm = LeaseTerm(
+            years = 3,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 1000,
+          year2Rent = Some(2000),
+          year3Rent = Some(3000),
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
+      }
+
+      "given a lease start date in a leap year and an end date in a leap year" in{
+        val effectiveDate = LocalDate.of(2016,2,29)
+
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2016, 2, 29),
+          endDate = LocalDate.of(2020, 2, 29),
+          leaseTerm = LeaseTerm(
+            years = 4,
+            days = 1,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(1000),
+          year3Rent = Some(2000),
+          year4Rent = Some(3000),
+          year5Rent = None
+        )
+
+        validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
+      }
+    }
+  }
+
   "validPropertyDetailsStructure" should {
     "Return a ValidationSuccess for a PropertyDetailsModel" when {
       "individual is 'false' and other fields are defined" in {
@@ -1249,7 +1295,7 @@ class ModelValidationSpec extends UnitSpec {
 
         listValidationErrors(model) shouldBe Seq(
           ValidationFailure("No property details for 'leasehold' residential property with effective date of '2016-04-01'"),
-          ValidationFailure("Lease term year: 85 or Lease term date: 287 does not match the difference between 2016-04-01 and 2099-12-31")
+          ValidationFailure("Lease term year: 85, Lease term day: 287, comparisonDate: 2102-01-12 does not match the difference between 2016-04-01 and 2099-12-31")
         )
       }
       "leasehold, non-residential, premium is <£150000, all rents are <£2000 and relevant rent is not defined" in {
@@ -1265,7 +1311,7 @@ class ModelValidationSpec extends UnitSpec {
           firstTimeBuyer = None
         )
         listValidationErrors(model) shouldBe Seq(
-          ValidationFailure("Lease term year: 83 or Lease term date: 200 does not match the difference between 2017-01-31 and 2099-12-31"),
+          ValidationFailure("Lease term year: 83, Lease term day: 200, comparisonDate: 2100-08-18 does not match the difference between 2017-01-31 and 2099-12-31"),
           ValidationFailure("Relevant rent details not provided when premium: 140000, " +
               "holding type: leasehold, property type: non-residential and all rents <£2000"
           )
