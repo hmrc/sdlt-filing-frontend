@@ -63,12 +63,18 @@ object ModelValidation extends DateUtil{
   }
 
   private[validators] def validLeaseLength(effectiveDate: LocalDate, leaseDetails: LeaseDetails) : ValidationResult ={
-    val selectDate = if(effectiveDate.isAfter(leaseDetails.startDate)) effectiveDate else leaseDetails.startDate
-    val comparisonDate = selectDate.plus(Period.of(leaseDetails.leaseTerm.years, 0, leaseDetails.leaseTerm.days-1))
-    if(comparisonDate.equals(leaseDetails.endDate))
+    val selectDate = if(effectiveDate.isAfter(leaseDetails.startDate)) effectiveDate
+                     else leaseDetails.startDate
+
+    val leaseTermDays = if ((selectDate.isLeapYear, leaseDetails.endDate.isLeapYear).equals(true,false) && !selectDate.onOrAfter(LocalDate.of(selectDate.getYear, 3, 1))) leaseDetails.leaseTerm.days
+                        else leaseDetails.leaseTerm.days-1
+
+    val comparisonDate = selectDate.plus(Period.of(leaseDetails.leaseTerm.years, 0, leaseTermDays))
+
+    if(comparisonDate.equals(leaseDetails.endDate)) {
       ValidationSuccess
-    else
-      ValidationFailure(s"Lease term year: ${leaseDetails.leaseTerm.years} or Lease term date: ${leaseDetails.leaseTerm.days} does not match the difference between $effectiveDate and ${leaseDetails.endDate}")
+    }else
+      ValidationFailure(s"Lease term year: ${leaseDetails.leaseTerm.years}, Lease term day: ${leaseDetails.leaseTerm.days}, comparisonDate: $comparisonDate does not match the difference between $selectDate and ${leaseDetails.endDate}")
   }
 
   private def validEffectiveDate(request: Request): ValidationResult = {

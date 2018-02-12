@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import calculation.models.Request
 import calculation.services._
-import calculation.validators.internal.ModelValidation
+import calculation.validators.internal.{ModelValidation, ValidationFailure}
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent}
@@ -24,12 +24,13 @@ trait CalculationCtr extends FrontendController{
     request.body.asJson match {
       case Some(json) => json.validate[Request] match {
           case success: JsSuccess[Request] =>
-            if(validateModel(success.value)) {
+            if(validateModel(success.value)._1) {
               val result = Json.toJson(calculationService.CalculateTax(success.value))
                 Ok(result)
             }else{
-              Logger.error(s"[CalculationController] - Json request body fails model validation with errors: ${ModelValidation.listValidationErrors(success.value)} for request: $success from json: $json.")
-              BadRequest(Json.toJson("Validation error: "+ModelValidation.listValidationErrors(success.value)))
+              val listOfErrors = validateModel(success.value)._2
+              Logger.error(s"[CalculationController] - Json request body fails model validation with errors: $listOfErrors for request: $success from json: $json.")
+              BadRequest(Json.toJson(s"Validation error: $listOfErrors"))
             }
           case error: JsError =>
             Logger.error(s"[CalculationController] - Incorrect Json request body format supplied for request json: $json. Failed validation with errors: $error.")
@@ -41,8 +42,8 @@ trait CalculationCtr extends FrontendController{
     }
   }
 
-  private def validateModel(request: Request) : Boolean ={
+  private def validateModel(request: Request) : (Boolean, Seq[ValidationFailure]) ={
     val listOfErrors = ModelValidation.listValidationErrors(request)
-    if(listOfErrors.isEmpty) true else false
+    if(listOfErrors.isEmpty) (true, listOfErrors) else (false, listOfErrors)
   }
 }
