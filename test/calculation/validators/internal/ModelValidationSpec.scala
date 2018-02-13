@@ -573,7 +573,7 @@ class ModelValidationSpec extends UnitSpec {
 
   "validLeaseLength" should{
     "return a ValidationSuccess" when{
-      "given a lease start date in a leap year and an end date not in a leap year" in{
+/*      "given a lease start date in a leap year and an end date not in a leap year" in{
         val effectiveDate = LocalDate.of(2016,2,29)
 
         val tempLeaseDetails = LeaseDetails(
@@ -592,7 +592,7 @@ class ModelValidationSpec extends UnitSpec {
         )
 
         validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
-      }
+      }*/
 
       "given a lease start date in a leap year and an end date in a leap year" in{
         val effectiveDate = LocalDate.of(2016,2,29)

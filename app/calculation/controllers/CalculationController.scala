@@ -24,13 +24,12 @@ trait CalculationCtr extends FrontendController{
     request.body.asJson match {
       case Some(json) => json.validate[Request] match {
           case success: JsSuccess[Request] =>
-            if(validateModel(success.value)._1) {
+            if(validateModel(success.value)) {
               val result = Json.toJson(calculationService.CalculateTax(success.value))
                 Ok(result)
             }else{
-              val listOfErrors = validateModel(success.value)._2
-              Logger.error(s"[CalculationController] - Json request body fails model validation with errors: $listOfErrors for request: $success from json: $json.")
-              BadRequest(Json.toJson(s"Validation error: $listOfErrors"))
+              Logger.error(s"[CalculationController] - Json request body fails model validation with errors: ${ModelValidation.listValidationErrors(success.value)} for request: $success from json: $json.")
+              BadRequest(Json.toJson(s"Validation error: ${ModelValidation.listValidationErrors(success.value)}"))
             }
           case error: JsError =>
             Logger.error(s"[CalculationController] - Incorrect Json request body format supplied for request json: $json. Failed validation with errors: $error.")
@@ -42,8 +41,7 @@ trait CalculationCtr extends FrontendController{
     }
   }
 
-  private def validateModel(request: Request) : (Boolean, Seq[ValidationFailure]) ={
-    val listOfErrors = ModelValidation.listValidationErrors(request)
-    if(listOfErrors.isEmpty) (true, listOfErrors) else (false, listOfErrors)
+  private def validateModel(request: Request) : Boolean ={
+    ModelValidation.listValidationErrors(request).isEmpty
   }
 }
