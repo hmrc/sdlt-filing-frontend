@@ -66,6 +66,10 @@
             return futureDate;
         }
 
+        function is29thFeb(date) {
+          return date.getDate() == 29 && date.getMonth() == 1;
+        }
+
         numYears = 1;
         var comparisonDate = getEndOfFutureYear(startDate, numYears);
         while (comparisonDate <= endDate) {
@@ -77,7 +81,13 @@
 
         // count the number of partial days, i.e. keep adding 1 day till we get past the end date
         numDays = 1;
-        comparisonDate = getEndOfFutureYear(startDate, numYears);
+
+       comparisonDate = getEndOfFutureYear(startDate, numYears);
+
+       if (is29thFeb(startDate) && numYears % 4 != 0) {
+        comparisonDate.setDate(comparisonDate.getDate() -1);
+        }
+
         comparisonDate.setDate(comparisonDate.getDate() + 1);
         while (comparisonDate <= endDate) {
             numDays += 1;
