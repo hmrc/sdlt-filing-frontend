@@ -701,7 +701,7 @@ class ModelValidationSpec extends UnitSpec {
         validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
       }
     }
-  }
+  }ssss
 
   "validPropertyDetailsStructure" should {
     "Return a ValidationSuccess for a PropertyDetailsModel" when {
