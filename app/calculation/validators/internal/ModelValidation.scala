@@ -66,10 +66,7 @@ object ModelValidation extends DateUtil{
     val selectDate = if(effectiveDate.isAfter(leaseDetails.startDate)) effectiveDate
                      else leaseDetails.startDate
 
-    val leaseTermDays = if ((selectDate.isLeapYear, leaseDetails.endDate.isLeapYear).equals(true,false) && !selectDate.onOrAfter(LocalDate.of(selectDate.getYear, 3, 1))) leaseDetails.leaseTerm.days
-                        else leaseDetails.leaseTerm.days-1
-
-    val comparisonDate = selectDate.plus(Period.of(leaseDetails.leaseTerm.years, 0, leaseTermDays))
+    val comparisonDate = selectDate.plus(Period.of(leaseDetails.leaseTerm.years, 0, leaseDetails.leaseTerm.days-1))
 
     if(comparisonDate.equals(leaseDetails.endDate)) {
       ValidationSuccess
