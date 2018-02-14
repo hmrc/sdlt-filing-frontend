@@ -573,11 +573,33 @@ class ModelValidationSpec extends UnitSpec {
 
   "validLeaseLength" should{
     "return a ValidationSuccess" when{
-/*      "given a lease start date in a leap year and an end date not in a leap year" in{
-        val effectiveDate = LocalDate.of(2016,2,29)
+      "given a lease start date in a leap year(feb 29th) and an end date not in a leap year" in {
+
+        val effectiveDate = LocalDate.of(2016, 2, 29)
 
         val tempLeaseDetails = LeaseDetails(
           startDate = LocalDate.of(2016, 2, 29),
+          endDate = LocalDate.of(2019, 2, 28),
+          leaseTerm = LeaseTerm(
+            years = 3,
+            days = 1,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 1000,
+          year2Rent = Some(2000),
+          year3Rent = Some(3000),
+          year4Rent = None,
+          year5Rent = None
+        )
+
+        validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
+      }
+
+      "given a lease start date in a leap year(march 1st) and an end date not in a leap year" in{
+        val effectiveDate = LocalDate.of(2016,3,1)
+
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2016, 3, 1),
           endDate = LocalDate.of(2019, 2, 28),
           leaseTerm = LeaseTerm(
             years = 3,
@@ -592,9 +614,10 @@ class ModelValidationSpec extends UnitSpec {
         )
 
         validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
-      }*/
+      }
 
-      "given a lease start date in a leap year and an end date in a leap year" in{
+
+      "given a lease start date in a leap year(feb 29th) and an end date in a leap year" in{
         val effectiveDate = LocalDate.of(2016,2,29)
 
         val tempLeaseDetails = LeaseDetails(
@@ -603,6 +626,69 @@ class ModelValidationSpec extends UnitSpec {
           leaseTerm = LeaseTerm(
             years = 4,
             days = 1,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(1000),
+          year3Rent = Some(2000),
+          year4Rent = Some(3000),
+          year5Rent = None
+        )
+
+        validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
+      }
+
+      "given a lease start date in a leap year(march 1st) and an end date in a leap year" in{
+        val effectiveDate = LocalDate.of(2016,3,1)
+
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2016, 3, 1),
+          endDate = LocalDate.of(2020, 2, 29),
+          leaseTerm = LeaseTerm(
+            years = 4,
+            days = 0,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(1000),
+          year3Rent = Some(2000),
+          year4Rent = Some(3000),
+          year5Rent = None
+        )
+
+        validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
+      }
+
+      "given a lease start date not in a leap year and an end date in a leap year" in{
+        val effectiveDate = LocalDate.of(2017,2,28)
+
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2017, 2, 28),
+          endDate = LocalDate.of(2020, 2, 29),
+          leaseTerm = LeaseTerm(
+            years = 3,
+            days = 2,
+            daysInPartialYear = 0
+          ),
+          year1Rent = 5000,
+          year2Rent = Some(1000),
+          year3Rent = Some(2000),
+          year4Rent = Some(3000),
+          year5Rent = None
+        )
+
+        validLeaseLength(effectiveDate, tempLeaseDetails) shouldBe ValidationSuccess
+      }
+
+      "given a lease start date not in a leap year and an end date not in a leap year" in{
+        val effectiveDate = LocalDate.of(2017,2,28)
+
+        val tempLeaseDetails = LeaseDetails(
+          startDate = LocalDate.of(2017, 2, 28),
+          endDate = LocalDate.of(2021, 3, 11),
+          leaseTerm = LeaseTerm(
+            years = 4,
+            days = 12,
             daysInPartialYear = 0
           ),
           year1Rent = 5000,

@@ -172,7 +172,65 @@
                 expect(dateHelper.calculateTermOfLease(effectiveDate, leaseStartDate, leaseEndDate)).toEqual(termOfLeaseResults);
             });
 
-        });
+            it('should return 4 yr 1 Days for effective 29/02/2016, lease 29/02/2016 to 29/02/2020', function() {
+                var effectiveDate = new Date(2016, 1, 29);
+                var leaseStartDate = new Date(2016, 1, 29);
+                var leaseEndDate = new Date(2020, 1, 29);
+                termOfLeaseResults.years = 4;
+                termOfLeaseResults.days = 1;
+                termOfLeaseResults.daysInPartialYear = 366;
+                expect(dateHelper.calculateTermOfLease(effectiveDate, leaseStartDate, leaseEndDate)).toEqual(termOfLeaseResults);
+            });
 
+            it('should return 4 yr 0 Days for effective 01/03/2016, lease 1/03/2016 to 29/02/2020', function() {
+                var effectiveDate = new Date(2016, 2, 1);
+                var leaseStartDate = new Date(2016, 2, 1);
+                var leaseEndDate = new Date(2020, 1, 29);
+                termOfLeaseResults.years = 4;
+                termOfLeaseResults.days = 0;
+                termOfLeaseResults.daysInPartialYear = 0;
+                expect(dateHelper.calculateTermOfLease(effectiveDate, leaseStartDate, leaseEndDate)).toEqual(termOfLeaseResults);
+            });
+
+            it('should return 4 yr 0 Days for effective 29/02/2016, lease 29/02/2016 to 28/02/2020', function() {
+                var effectiveDate = new Date(2016, 1, 29);
+                var leaseStartDate = new Date(2016, 1, 29);
+                var leaseEndDate = new Date(2020, 1, 28);
+                termOfLeaseResults.years = 4;
+                termOfLeaseResults.days = 0;
+                termOfLeaseResults.daysInPartialYear = 0;
+                expect(dateHelper.calculateTermOfLease(effectiveDate, leaseStartDate, leaseEndDate)).toEqual(termOfLeaseResults);
+            });
+
+            it('should return 3 yr 1 Days for effective 29/02/2016, lease 29/02/2016 to 28/02/2019', function() {
+                var effectiveDate = new Date(2016, 1, 29);
+                var leaseStartDate = new Date(2016, 1, 29);
+                var leaseEndDate = new Date(2019, 1, 28);
+                termOfLeaseResults.years = 3;
+                termOfLeaseResults.days = 1;
+                termOfLeaseResults.daysInPartialYear = 365;
+                expect(dateHelper.calculateTermOfLease(effectiveDate, leaseStartDate, leaseEndDate)).toEqual(termOfLeaseResults);
+            });
+
+            it('should return 3 yr 0 Days for effective 01/03/2016, lease 01/03/2016 to 28/02/2019', function() {
+                var effectiveDate = new Date(2016, 2, 1);
+                var leaseStartDate = new Date(2016, 2, 1);
+                var leaseEndDate = new Date(2019, 1, 28);
+                termOfLeaseResults.years = 3;
+                termOfLeaseResults.days = 0;
+                termOfLeaseResults.daysInPartialYear = 0;
+                expect(dateHelper.calculateTermOfLease(effectiveDate, leaseStartDate, leaseEndDate)).toEqual(termOfLeaseResults);
+            });
+
+            it('should return 0 yr 230 Days for effective 11/09/2016, lease 11/09/2016 to 28/04/2017', function() {
+                var effectiveDate = new Date(2016, 8, 11);
+                var leaseStartDate = new Date(2016, 8, 11);
+                var leaseEndDate = new Date(2017, 3, 28);
+                termOfLeaseResults.years = 0;
+                termOfLeaseResults.days = 230;
+                termOfLeaseResults.daysInPartialYear = 365;
+                expect(dateHelper.calculateTermOfLease(effectiveDate, leaseStartDate, leaseEndDate)).toEqual(termOfLeaseResults);
+            });
+        });
     });
 }());
