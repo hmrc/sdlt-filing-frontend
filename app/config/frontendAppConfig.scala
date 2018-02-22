@@ -6,6 +6,7 @@ import uk.gov.hmrc.play.config.{ServicesConfig, AssetsConfig}
 trait AppConfig {
   val analyticsToken: String
   val analyticsHost: String
+  val optimizelyId: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
   val betaFeedbackUrl: String
@@ -28,6 +29,7 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
 
   override lazy val analyticsToken = loadConfig(s"$env.google-analytics.token")
   override lazy val analyticsHost = loadConfig(s"$env.google-analytics.host")
+  override lazy val optimizelyId = loadConfig(s"$env.optimizely.projectId")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   override lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"

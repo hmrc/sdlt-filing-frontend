@@ -27,6 +27,7 @@ class IndexController extends IndexCtr {
 
   override lazy val gatoken = FrontendAppConfig.analyticsToken
   override lazy val gahost = FrontendAppConfig.analyticsHost
+  override lazy val optimizelyId = FrontendAppConfig.optimizelyId
 
 
 }
@@ -35,9 +36,9 @@ trait IndexCtr extends FrontendController{
 
   val gatoken: String
   val gahost: String
-
+  val optimizelyId: String
   val showIndex: Action[AnyContent] = Action{ implicit request =>
-   Ok(journey.views.html.index(gatoken, gahost))
+   Ok(journey.views.html.index(gatoken, gahost, optimizelyId))
   }
 
 }
