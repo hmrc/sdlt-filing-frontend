@@ -15,8 +15,10 @@
             var validateRent = function(data, state, field) {
                 if (validator.isNotPopulated(data[field])) {
                     state[field] = "Enter the annual rent for all the years";
+                    ga('send', 'event', "userError", field + "Error", "notPopulated");
                 } else if (validator.isInvalidFloat(data[field])) {
                     state[field] = "Enter the rent again - don't use any letters or characters including £";
+                    ga('send', 'event', "userError", field + "Error", "invalid");
                 }
             };
 
