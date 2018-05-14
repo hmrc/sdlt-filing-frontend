@@ -11,6 +11,21 @@
             $(selector).focus();
         };
 
+        $scope.getURBannerClass = function() {
+            var cookieData = GOVUK.getCookie("mdtpurr");
+                if (cookieData == null && onResultPage()){
+                    return "banner-panel banner-panel--show";
+                } else {
+                    return "banner-panel";
+                }
+        };
+
+        function onResultPage() {
+            var page = window.location.href.split("/").slice(-1)[0];
+            return page == "result";
+        }
+
+
         $scope.optionalHelp = {};
         
         $scope.toggleHelp = function(helpId, summary) {
