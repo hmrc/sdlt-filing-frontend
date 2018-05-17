@@ -2,7 +2,7 @@
     "use strict";
     var app = require("../module");
     // define the main controller
-    var mainController = function($scope, loggingService) {
+    var mainController = function($scope, $window, loggingService, cookieService) {
 
         var expanded = false;
 
@@ -12,8 +12,7 @@
         };
 
         $scope.getURBannerClass = function() {
-            var cookieData = GOVUK.getCookie("mdtpurr");
-                if (cookieData == null && onResultPage()){
+                if (cookieService.getCookie() == null && onResultPage()){
                     return "banner-panel banner-panel--show";
                 } else {
                     return "banner-panel";
@@ -21,7 +20,7 @@
         };
 
         function onResultPage() {
-            var page = window.location.href.split("/").slice(-1)[0];
+            var page = $window.location.href.split("/").slice(-1)[0];
             return page == "result";
         }
 
@@ -85,5 +84,5 @@
     };
 
     // register the main controller
-    app.controller('mainController', ['$scope', 'loggingService', mainController]);
+    app.controller('mainController', ['$scope', '$window', 'loggingService', 'cookieService', mainController]);
 }());

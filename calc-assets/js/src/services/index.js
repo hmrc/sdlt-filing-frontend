@@ -4,6 +4,7 @@
   require("./dataService.js");
   require("./dataMarshallingService.js");
   require("./navigationService.js");
+  require("./cookieService.js");
   require("./loggingService.js");
   require("./validationServices/additionalPropertyValidationService.js");
   require("./validationServices/exchangeContractsValidationService.js");

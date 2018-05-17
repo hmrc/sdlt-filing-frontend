@@ -19,9 +19,6 @@
             }
         };
 
-         var pageLocation = window.location.href.split("/").slice(-1)[0];
-         if(pageLocation == "result"){ scope.isResultPage = true; } else { scope.isResultPage = false; }
-
         scope.jumpTo = function(id) {
             if (location.hash() !== id) {
                 location.hash(id);
