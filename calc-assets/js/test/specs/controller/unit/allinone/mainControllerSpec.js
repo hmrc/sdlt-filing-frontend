@@ -9,7 +9,9 @@
         
         var controller,
             mockScope,
-            mockLoggingService;
+            mockWindow,
+            mockLoggingService,
+            mockCookieService;
 
         beforeEach(mocks.module('calc.controllers'));
         beforeEach(mocks.inject(function ($controller, $rootScope) {
@@ -28,12 +30,14 @@
             
             mockScope = $rootScope.$new();
             mockLoggingService = { logEvent: function() {} };
+
             
             controller = $controller(
                 'mainController', 
                 {
                     $scope: mockScope,
-                    loggingService: mockLoggingService
+                    loggingService: mockLoggingService,
+                    cookieService: mockCookieService
                 });
         }));
 
@@ -57,11 +61,13 @@
                 mockLoggingService = { logEvent: function() {} };
                 spyOn(mockLoggingService, 'logEvent');
 
+
                 controller = $controller(
                     'mainController', 
                     {
                         $scope: mockScope,
-                        loggingService: mockLoggingService
+                        loggingService: mockLoggingService,
+                        cookieService: mockCookieService
                     });
             }));
 
@@ -112,11 +118,13 @@
                 mockLoggingService = { logEvent: function() {} };
                 spyOn(mockLoggingService, 'logEvent');
 
+
                 controller = $controller(
                     'mainController', 
                     {
                         $scope: mockScope,
-                        loggingService: mockLoggingService
+                        loggingService: mockLoggingService,
+                        cookieService: mockCookieService
                     });
             }));
 
@@ -176,6 +184,7 @@
                     {
                         $scope: mockScope,
                         loggingService: mockLoggingService,
+                        cookieService: mockCookieService
                     });
             }));
 
@@ -273,6 +282,59 @@
                 expect($('#partner-no').closest('label')[0]).toNotHaveClass('add-focus selected');
             });
 
+        });
+
+       describe('Calling the UR Banner', function () {
+
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+
+                mockScope = $rootScope.$new();
+                mockLoggingService = { logEvent: function() {} };
+                mockCookieService = { getCookie: function() {  return "potato"; } };
+
+                mockWindow = {
+                        location: {  href : "result" }
+                 };
+
+            controller = $controller(
+                'mainController',
+                {
+                    $scope: mockScope,
+                    $window: mockWindow,
+                    loggingService: mockLoggingService,
+                    cookieService: mockCookieService
+                });
+            }));
+
+            it('should get banner-panel', function () {
+                expect(mockScope.getURBannerClass()).toEqual("banner-panel");
+            });
+        });
+
+       describe('Calling the UR Banner', function () {
+            beforeEach(mocks.inject(function ($controller, $rootScope) {
+
+                mockScope = $rootScope.$new();
+                mockLoggingService = { logEvent: function() {} };
+                mockCookieService = { getCookie: function() {  return null; } };
+
+                mockWindow = {
+                        location: {  href : "result" }
+                 };
+
+            controller = $controller(
+                'mainController',
+                {
+                    $scope: mockScope,
+                    $window: mockWindow,
+                    loggingService: mockLoggingService,
+                    cookieService: mockCookieService
+                });
+            }));
+
+            it('should get banner-panel banner-panel--show', function () {
+                expect(mockScope.getURBannerClass()).toEqual("banner-panel banner-panel--show");
+            });
         });
 
     });
