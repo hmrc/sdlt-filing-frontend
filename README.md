@@ -22,6 +22,14 @@ script src="javascript/v```1```-calc-templates.js"
 ### Node version
 Requires node version 4.4.5 to run locally. You can install [NVM](https://github.com/creationix/nvm) to manage local node versions.
 
+### Running unit tests
+To simulate the building of the application by Jenkins it is advisable to execute unit tests using the shell script:
+
+```
+build-test.sh
+```
+
+In order to run this you will need to have installed sbt-bobby as it utilises 'validate' within the script
 
 ### Running the SDLTC Frontend
 Run SDLTC Frontend App from the console at /sdltc-frontend level with:  
