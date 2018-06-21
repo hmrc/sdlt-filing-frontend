@@ -1,7 +1,6 @@
 "use strict";
 
 var path = require("path");
-var jsVersion = "v18";
 
 module.exports =
 {
@@ -24,7 +23,7 @@ module.exports =
 
     templateCache:
     {
-        file: 'javascript/'+jsVersion+'-calc-templates.js',
+        file: 'javascript/calc-templates.js',
         options: {
             module: 'calc-templates',
             standalone: true
@@ -80,7 +79,7 @@ module.exports =
         entry: ["./js/src/app.js"],
         output:
         {
-            filename: "../public/javascript/"+jsVersion+"-calc.js"
+            filename: "../public/javascript/calc.js"
         },
         externals: ["angular"]
     },

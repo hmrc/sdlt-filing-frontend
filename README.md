@@ -4,20 +4,6 @@
 [![Build Status](https://ci-dev.tax.service.gov.uk/buildStatus/icon?job=sdltc-frontend)](https://ci-dev.tax.service.gov.uk/job/sdltc-frontend/)
 
 ## Release Notes
-### Change javascript version number for every release, update below files with next version number (in snippet below its version 1):  
-
-#### conf/application.conf
-"assets.cache./public/javascript/v```1```-calc.js"="public, max-age=31536000"  
-"assets.cache./public/javascript/v```1```-calc-templates.js"="public, max-age=31536000"   
-
-#### calc-assets/gulpfile.js/config.js
-var jsVersion = "v```1```";
-
-#### app/journey/views/index.scala.html
-ga('send', 'event', 'asset-version', 'v```1```', 'calc-javascripts');  
-script src="javascript/v```1```-calc.js"  
-script src="javascript/v```1```-calc-templates.js"
-
 
 ### Node version
 Requires node version 4.4.5 to run locally. You can install [NVM](https://github.com/creationix/nvm) to manage local node versions.

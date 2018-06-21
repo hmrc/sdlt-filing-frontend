@@ -4,6 +4,9 @@ import sbt.{Def, _}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import play.routes.compiler.InjectedRoutesGenerator
 import play.sbt.routes.RoutesKeys.routesGenerator
+import com.typesafe.sbt.digest.Import.digest
+import com.typesafe.sbt.web.Import.pipelineStages
+import com.typesafe.sbt.web.Import.Assets
 
 
 trait MicroService {
@@ -48,7 +51,8 @@ trait MicroService {
       parallelExecution in Test := false,
       fork in Test := false,
       retrieveManaged := true,
-      routesGenerator := InjectedRoutesGenerator
+      routesGenerator := InjectedRoutesGenerator,
+      pipelineStages in Assets := Seq(digest)
     )
     .settings(Repositories.playPublishingSettings : _*)
     .configs(IntegrationTest)
