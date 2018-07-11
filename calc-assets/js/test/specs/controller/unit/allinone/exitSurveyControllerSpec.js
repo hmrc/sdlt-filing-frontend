@@ -3,7 +3,7 @@
 
     require("calc-module");
 
-        var mocks = require("angular").mock;
+        var mocks = require("angular-mocks-wrapper");
 
         describe('exitSurveyController with invalid data and an error response', function () {
 
@@ -12,7 +12,6 @@
                 mockDataService,
                 mockNavigationService,
                 mockLoggingService,
-                mockMessagesService,
                 mockBackend,
                 calledServiceGetModel = false;
 
@@ -34,8 +33,6 @@
                     logEvent : function() {}
                 };
 
-                mockMessagesService = {};
-
                 mockBackend = $httpBackend;
                 mockBackend.whenPOST('/calculate-stamp-duty-land-tax/submitExitSurvey').respond(400, {result: "Bad things happened"}, {"server" : "boom boom"});
 
@@ -45,8 +42,7 @@
                     $scope : mockScope,
                     dataService : mockDataService,
                     navigationService : mockNavigationService,
-                    loggingService : mockLoggingService,
-                    messagesService : mockMessagesService
+                    loggingService : mockLoggingService
                 });
 
                 mockScope.data = {};
@@ -69,7 +65,6 @@
                 mockDataService,
                 mockNavigationService,
                 mockLoggingService,
-                mockMessagesService,
                 mockBackend,
                 calledServiceGetModel = false;
 
@@ -91,8 +86,6 @@
                     logEvent : function() {}
                 };
 
-                mockMessagesService = {};
-
                 mockBackend = $httpBackend;
                 mockBackend.whenPOST('/calculate-stamp-duty-land-tax/submitExitSurvey').respond(200, {result: "Good things happened"}, {"server" : "no boom"});
 
@@ -102,8 +95,7 @@
                     $scope : mockScope,
                     dataService : mockDataService,
                     navigationService : mockNavigationService,
-                    loggingService : mockLoggingService,
-                    messagesService : mockMessagesService
+                    loggingService : mockLoggingService
                 });
 
                 mockScope.data = {};
