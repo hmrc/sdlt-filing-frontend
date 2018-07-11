@@ -1,0 +1,42 @@
+<h1>Give feedback</h1>
+<p>We use your feedback to make our services better.</p>
+
+<form name="exitSurveyForm" class="form" action="https://www.gov.uk/">
+    <h2 class="heading-medium">Overall, how did you feel about the service you received today?</h2>
+
+    <div class="form-group">
+        <fieldset>
+
+            <label class="block-label">
+                <input type="radio" data-ng-model="data.survey.radioFeedback" value="verySatisfied"> Very satisfied
+            </label>
+
+            <label class="block-label">
+                <input type="radio" data-ng-model="data.survey.radioFeedback" value="satisfied"> Satisfied
+            </label>
+
+            <label class="block-label">
+                <input type="radio" data-ng-model="data.survey.radioFeedback" value="neither"> Neither satisfied or dissatisfied
+            </label>
+
+            <label class="block-label">
+                <input type="radio" data-ng-model="data.survey.radioFeedback" value="dissatisfied"> Dissatisfied
+            </label>
+
+            <label class="block-label">
+                <input type="radio" data-ng-model="data.survey.radioFeedback" value="veryDissatisfied"> Very dissatisfied
+            </label>
+
+        </fieldset>
+    </div>
+
+    <h3 class="heading-medium">How could we improve this service?</h3>
+    <textarea data-ng-model="data.survey.textFeedback" rows="4" cols="70" maxlength="1200"> </textarea>
+    <p> (Limit is 1200 characters) </p>
+    <p> Please don't include any personal or financial information, for example your National Insurance or credit card numbers. </p>
+
+    <div class="form-group">
+        <button data-ng-click="submitExitSurvey()" class="button" id="continue-button" type="submit">Send Feedback</button>
+    </div>
+
+</form>

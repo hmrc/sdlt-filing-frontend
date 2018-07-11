@@ -20,5 +20,6 @@
   require("./allinone/summaryController");
   require("./allinone/detailController");
   require("./allinone/printController");
+  require("./allinone/exitSurveyController");
 
 }());

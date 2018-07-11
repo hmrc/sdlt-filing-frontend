@@ -132,6 +132,13 @@
                 reloadOnSearch: false
             })
 
+            .when('/exit-Survey', {
+                title : 'Exit-Survey',
+                templateUrl : 'exit-Survey.html',
+                controller  : 'exitSurveyController',
+                reloadOnSearch: false
+            })
+
             // unsupported url, redirect to intro page
             .otherwise({redirectTo:'/intro'});
 
