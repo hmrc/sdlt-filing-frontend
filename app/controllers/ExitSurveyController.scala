@@ -19,13 +19,14 @@ class ExitSurveyController @Inject()(auditConnector: FrontendAuditConnector) ext
         val model = json.validate[ExitSurveyModel]
 
         model.fold(
-          invalid = { fieldErrors =>
-            BadRequest(s"Invalid Json received: $fieldErrors")
+          {
+            fieldErrors =>
+              BadRequest(s"Invalid Json received: $fieldErrors")
           },
-          valid = {
+          {
             case ExitSurveyModel(None, None) => Ok("Empty Survey received")
-            case ExitSurveyModel(_, _) =>
-              sendAuditEvent(model.get)
+            case valid @ExitSurveyModel(_, _) =>
+              sendAuditEvent(valid)
               Ok("Completed Survey")
           }
         )

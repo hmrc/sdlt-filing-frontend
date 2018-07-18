@@ -1,22 +1,19 @@
-package journey.controllers
+package exitsurvey.controllers
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import config.FrontendAuditConnector
-import play.api.http.Status._
 import controllers.ExitSurveyController
 import org.mockito.Matchers
-import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import uk.gov.hmrc.play.audit.model
-import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class ExitSurveyControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication{
