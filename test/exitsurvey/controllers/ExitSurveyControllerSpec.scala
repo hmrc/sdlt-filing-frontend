@@ -3,7 +3,6 @@ package exitsurvey.controllers
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import config.FrontendAuditConnector
-import controllers.ExitSurveyController
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -82,6 +81,7 @@ class ExitSurveyControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
         val result = testExitSurveyController.onSubmit(fakeRequest)
         status(result) shouldBe OK
         bodyOf(await(result))(materializer) shouldBe "Completed Survey"
+        verify(auditConnector, times(1)).sendEvent(Matchers.any())(Matchers.any[HeaderCarrier](), Matchers.any[ExecutionContext]())
       }
 
       "given valid partially complete json" in{

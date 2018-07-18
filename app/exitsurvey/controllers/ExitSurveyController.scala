@@ -1,14 +1,14 @@
-package controllers
+package exitsurvey.controllers
 
-import javax.inject.Inject
 import config.FrontendAuditConnector
-import models.ExitSurveyModel
+import exitsurvey.models.ExitSurveyModel
+import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.AuditExtensions._
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.play.audit.AuditExtensions._
 
 
 class ExitSurveyController @Inject()(auditConnector: FrontendAuditConnector) extends FrontendController {
