@@ -529,6 +529,11 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
       val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequest(500001))
       res shouldBe baseResult(20000, baseCalculationDetails(20000, 4))
     }
+
+    "return 20000 for purchase price of 75000000" in {
+      val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequest(75000000))
+      res shouldBe baseResult(3000000, baseCalculationDetails(3000000, 4))
+    }
   }
 
   "calculating freeholdResidentialAddPropApr16Onwards" should {

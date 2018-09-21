@@ -455,6 +455,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
         testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
       }
+
       "given a request with an effective date of 1/4/2016 and additional property rates check false" in {
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential,LocalDate.of(2016, 4, 1))
         val result = createResult("leaseholdResidential, December2014 to April2016")
