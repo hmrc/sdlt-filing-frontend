@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Thanks for helping sdltc-frontend better!
+=======
+Thanks for helping make sdltc-frontend better!
+>>>>>>> added github template.
 
 **Before** you open an issue, please check whether a similar issue already exists or has been closed before.  Please also come and talk to us in our [Slack channel](https://hmrcdigital.slack.com/archives/team-ddct-liveservices).
 
