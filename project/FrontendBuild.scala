@@ -1,20 +1,23 @@
 import sbt._
 import play.sbt.PlayImport._
+import play.sbt.PlayScala
+import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 
 
 object FrontendBuild extends Build with MicroService {
-  import scala.util.Properties.envOrElse
-
   import com.typesafe.sbt.web.SbtWeb
   import com.typesafe.sbt.web.SbtWeb.autoImport._
+  import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
   import sbt.Keys._
+  import uk.gov.hmrc.SbtAutoBuildPlugin
+  import uk.gov.hmrc.versioning.SbtGitVersioning
+  import uk.gov.hmrc.SbtArtifactory
 
   val appName = "sdltc-frontend"
-  val appVersion = envOrElse("SDLTC_FRONTEND_VERSION", "999-SNAPSHOT")
 
   override lazy val appDependencies: Seq[ModuleID] = AppDependencies()
 
-  override lazy val plugins : Seq[Plugins] = Seq(play.sbt.PlayScala, SbtWeb)
+  override lazy val plugins : Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory, SbtWeb)
 
   override lazy val playSettings : Seq[Setting[_]] = Seq(
 
@@ -62,7 +65,8 @@ private object AppDependencies {
       override lazy val scope: String = "it"
 
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % scope,
+        "uk.gov.hmrc" %% "hmrctest" % "3.1.0" % scope,
+        "org.mockito" % "mockito-all" % "1.9.5" % scope,
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
         "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope
       )
