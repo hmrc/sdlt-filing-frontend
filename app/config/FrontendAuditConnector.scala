@@ -7,5 +7,5 @@ import uk.gov.hmrc.play.frontend.config.LoadAuditingConfig
 
 @Singleton
 class FrontendAuditConnector @Inject()() extends Auditing with AppName with RunMode {
-  override lazy val auditingConfig = LoadAuditingConfig(s"$env.auditing")
+  override lazy val auditingConfig = LoadAuditingConfig("auditing")
 }
