@@ -36,7 +36,7 @@ Install nginx
 sudo apt-get update
 sudo apt-get install nginx
 ```  
-
+ 
 Open default file to edit
 ```
 sudo nano /etc/nginx/sites-enabled/default   
