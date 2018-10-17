@@ -38,7 +38,9 @@ object PropertyDetails {
   implicit val reads = (
     (__ \ "individual").read[Boolean](yesNoToBooleanReads) and
     (__ \ "twoOrMoreProperties").readNullable[Boolean](yesNoToBooleanReads) and
-    (__ \ "replaceMainResidence").readNullable[Boolean](yesNoToBooleanReads)
+    (__ \ "replaceMainResidence").readNullable[Boolean](yesNoToBooleanReads) and
+    (__ \ "sharedOwnership").readNullable[Boolean](yesNoToBooleanReads) and
+    (__ \ "currentValue").readNullable[Boolean](yesNoToBooleanReads)
   )(PropertyDetails.apply _)
 }
 
@@ -71,7 +73,9 @@ case class Request(
 case class PropertyDetails(
                           individual: Boolean,
                           twoOrMoreProperties: Option[Boolean],
-                          replaceMainResidence: Option[Boolean]
+                          replaceMainResidence: Option[Boolean],
+                          sharedOwnership: Option[Boolean],
+                          currentValue: Option[Boolean]
                           )
 
 case class LeaseDetails(

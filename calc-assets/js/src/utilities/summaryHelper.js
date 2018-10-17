@@ -71,6 +71,14 @@
         }
     };
 
+    var displaySharedOwnership = function(data) {
+        if(displayMainResidence(data)) {
+            return data.mainResidence === 'No';
+        } else {
+            return false;
+        }
+    };
+
     var displayReplaceMainResidence = function(data) {
         if(data === undefined) return false;
         return (displayAdditionalProperty(data) && data.twoOrMoreProperties === 'Yes');
@@ -150,6 +158,14 @@
                 link       : "#main-residence",
                 id         : "mainResidence",
                 isValid    : validatedModel.isMainResidenceValid,
+                hiddenText : "Will this property be your main residence?"
+            },
+            {
+                question   : displaySharedOwnership(scope.data) ? "Shared ownership" : undefined,
+                answer     : (scope.data !== undefined) ? scope.data.sharedOwnership : undefined,
+                link       : "#shared-ownership",
+                id         : "sharedOwnership",
+                isValid    : validatedModel.isSharedOwnershipValid,
                 hiddenText : "Will this property be your main residence?"
             },
             {

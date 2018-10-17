@@ -7,6 +7,9 @@
   require("./allinone/dateController");
   require("./allinone/ownedOtherPropertiesController");
   require("./allinone/mainResidenceController");
+  require("./allinone/sharedOwnershipController");
+  require("./allinone/currentValueController");
+  require("./allinone/marketValueController");
   require("./allinone/holdingController");
   require("./allinone/introController");
   require("./allinone/leaseDatesController");
