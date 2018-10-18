@@ -25,7 +25,9 @@ class ModelValidationSpec extends UnitSpec {
   private val validPropertyDetails = PropertyDetails(
     individual = false,
     twoOrMoreProperties = None,
-    replaceMainResidence = None
+    replaceMainResidence = None,
+    sharedOwnership = None,
+    currentValue = None
   )
 
   private val validTestLeaseDetails = LeaseDetails(
@@ -709,7 +711,9 @@ class ModelValidationSpec extends UnitSpec {
         val deets = PropertyDetails(
           individual = false,
           twoOrMoreProperties = Some(false),
-          replaceMainResidence = Some(true)
+          replaceMainResidence = Some(true),
+          sharedOwnership = None,
+          currentValue = None
         )
         validPropertyDetailsStructure(deets) shouldBe ValidationSuccess
       }
@@ -718,7 +722,9 @@ class ModelValidationSpec extends UnitSpec {
         val deets = PropertyDetails(
           individual = false,
           twoOrMoreProperties = None,
-          replaceMainResidence = None
+          replaceMainResidence = None,
+          sharedOwnership = None,
+          currentValue = None
         )
         validPropertyDetailsStructure(deets) shouldBe ValidationSuccess
       }
@@ -726,7 +732,9 @@ class ModelValidationSpec extends UnitSpec {
         val deets = PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(false),
-          replaceMainResidence = None
+          replaceMainResidence = None,
+          sharedOwnership = None,
+          currentValue = None
         )
         validPropertyDetailsStructure(deets) shouldBe ValidationSuccess
       }
@@ -734,7 +742,9 @@ class ModelValidationSpec extends UnitSpec {
         val deets = PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(true),
-          replaceMainResidence = Some(false)
+          replaceMainResidence = Some(false),
+          sharedOwnership = None,
+          currentValue = None
         )
         validPropertyDetailsStructure(deets) shouldBe ValidationSuccess
       }
@@ -744,7 +754,9 @@ class ModelValidationSpec extends UnitSpec {
         val deets = PropertyDetails(
           individual = true,
           twoOrMoreProperties = None,
-          replaceMainResidence = Some(false)
+          replaceMainResidence = Some(false),
+          sharedOwnership = None,
+          currentValue = None
         )
         validPropertyDetailsStructure(deets) shouldBe ValidationFailure(
           "Property details failed validation with 'individual': true, " +
@@ -756,7 +768,9 @@ class ModelValidationSpec extends UnitSpec {
         val deets = PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(true),
-          replaceMainResidence = None
+          replaceMainResidence = None,
+          sharedOwnership = None,
+          currentValue = None
         )
         validPropertyDetailsStructure(deets) shouldBe ValidationFailure(
           "Property details failed validation with 'individual': true, " +
@@ -1051,7 +1065,9 @@ class ModelValidationSpec extends UnitSpec {
             PropertyDetails(
               individual = true,
               twoOrMoreProperties = Some(true),
-              replaceMainResidence = Some(false)
+              replaceMainResidence = Some(false),
+              sharedOwnership = None,
+              currentValue = None
             )
           ),
           leaseDetails = None,
@@ -1088,7 +1104,9 @@ class ModelValidationSpec extends UnitSpec {
               PropertyDetails(
                 individual = true,
                 twoOrMoreProperties = Some(false),
-                replaceMainResidence = Some(false)
+                replaceMainResidence = Some(false),
+                sharedOwnership = None,
+                currentValue = None
               )
             ),
             leaseDetails = None,
@@ -1109,7 +1127,9 @@ class ModelValidationSpec extends UnitSpec {
               PropertyDetails(
                 individual = true,
                 twoOrMoreProperties = Some(true),
-                replaceMainResidence = Some(false)
+                replaceMainResidence = Some(false),
+                sharedOwnership = None,
+                currentValue = None
               )
             ),
             leaseDetails = None,
@@ -1130,7 +1150,9 @@ class ModelValidationSpec extends UnitSpec {
               PropertyDetails(
                 individual = false,
                 twoOrMoreProperties = Some(false),
-                replaceMainResidence = Some(false)
+                replaceMainResidence = Some(false),
+                sharedOwnership = None,
+                currentValue = None
               )
             ),
             leaseDetails = None,
@@ -1171,7 +1193,9 @@ class ModelValidationSpec extends UnitSpec {
               PropertyDetails(
                 individual = true,
                 twoOrMoreProperties = Some(false),
-                replaceMainResidence = Some(false)
+                replaceMainResidence = Some(false),
+                sharedOwnership = None,
+                currentValue = None
               )
             ),
             leaseDetails = None,

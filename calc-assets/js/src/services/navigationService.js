@@ -76,32 +76,32 @@
             }
             else if (currentView === "main-residence") {
                 if(model.mainResidence === "Yes" && model.holdingType === "Leasehold") {
-                    redirectToNext(locationService, 'shared-ownership')
+                    redirectToNext(locationService, 'shared-ownership');
                 } else {
                 redirectBasedOnHoldingType(model, locationService);
                 }
             }
             else if (currentView === "shared-ownership") {
                 if(model.sharedOwnership === "Yes") {
-                    redirectToNext(locationService, 'current-value')
+                    redirectToNext(locationService, 'current-value');
                 } else {
                     redirectBasedOnHoldingType(model, locationService);
                 }
             }
             else if (currentView === "current-value") {
                 if(model.currentValue === "Yes") {
-                    redirectToNext(locationService, 'market-value')
+                    redirectToNext(locationService, 'market-value');
                 } else {
                     redirectBasedOnHoldingType(model, locationService);
                 }
             }
             else if (currentView === "market-value") {
-                if(model.paySDLT === "UpFront" || model.paySDLT === "Stages") {
+                if(model.paySDLT === "Upfront" || model.paySDLT === "Stages") {
                     redirectToNext(locationService, 'lease-dates');
                 }
             }
             else if (currentView === 'lease-dates') {
-                if(model.premium && model.currentValue === 'Yes' && model.sharedOwnership === 'Yes') {
+                if(model.premium !== undefined && model.currentValue === 'Yes' && model.sharedOwnership === 'Yes') {
                     redirectToNext(locationService, 'rent');
                 } else {
                 redirectToNext(locationService, 'premium');

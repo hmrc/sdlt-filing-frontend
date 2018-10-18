@@ -11,12 +11,13 @@
         $scope.beforeUpdateModel = function() {
                 if($scope.data.paySDLT === "Upfront" && $scope.data.marketPropValue) {
                     loggingService.logEvent('decision', 'submit', "MarketValue.UpfrontMarketValue");
-                } else {
-                    if($scope.data.paySDLT === "Stages" && $scope.data.sharePropValue) {
-                        loggingService.logEvent('decision', 'submit', "MarketValue.StagesShareValue");
-                    }
                 }
-            }
+
+                if($scope.data.paySDLT === "Stages" && $scope.data.stagePropValue) {
+                    loggingService.logEvent('decision', 'submit', "MarketValue.StagesShareValue");
+                }
+
+            };
         };
 
     app.controller('marketValueController', ['$scope', '$location', '$anchorScroll', 'dataService', 'marketValueValidationService', 'navigationService', 'loggingService', marketValueController ]);

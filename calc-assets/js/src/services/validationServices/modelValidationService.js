@@ -59,6 +59,28 @@
                 }
             }
 
+            // if Residential, between 22/11/2017 and 30/11/2019 and individual and not
+            // two or more properties then FTB information required
+            if( data.holdingType === 'Leasehold' &&
+                data.propertyType === 'Residential' &&
+                validator.effectiveDateWithinFTBRange(data.effectiveDate) &&
+                data.individual === 'Yes' &&
+                data.twoOrMoreProperties === 'No' &&
+                data.ownedOtherProperties === 'No' &&
+                data.mainResidence === 'Yes'
+            ){
+                result.isSharedOwnershipValid = hasError('sharedOwnership');
+                if(data.sharedOwnership === 'Yes'){
+                    result.isCurrentValueValid = hasError('currentValue');
+                    if(data.currentValue === 'Yes'){
+                        result.isMarketValueValid = hasError('paySDLT');
+                        if(data.paySDLT === ('Upfront')|| data.paySDLT === 'Stages') {
+                            result.isPremiumValid = hasError('premium');
+                        }
+                    }
+                }
+            }
+
             // if Leasehold must have lease dates and appropriate number of rents
             if(data.holdingType === 'Leasehold') {
                 result.isStartDateValid = hasError('startDate');

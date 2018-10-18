@@ -78,6 +78,11 @@
                         years : 0,
                         days : 1
                     },
+                    mainResidence            : undefined,
+                    sharedOwnership          : undefined,
+                    currentValue             : undefined,
+                    ownedOtherProperties     : undefined,
+                    paySDLT                  : undefined,
                     premium                  : 100000,
                     twoOrMoreProperties      : undefined,
                     replaceMainResidence     : undefined,
@@ -260,6 +265,102 @@
                 expect(result.length).toEqual(14);
             });
 
+            it('should return 14 elements with Non-residential property, date 16/3/2016 and 5 years and 1 day lease term', function() {
+                scope.data.propertyType = "Non-residential";
+                scope.data.effectiveDate = new Date(2016,2,16);
+                scope.data.startDate = new Date(2016,2,16);
+                scope.data.endDate = new Date(2021,2,16);
+                scope.data.year2Rent = 1999;
+                scope.data.year3Rent = 1999;
+                scope.data.year4Rent = 1999;
+                scope.data.year5Rent = 1999;
+                scope.data.leaseTerm.years = 5;
+                scope.data.leaseTerm.days = 1;
+                scope.data.relevantRent = 100;
+                scope.displayYearOneRent = function() {return true;};
+                scope.displayYearTwoRent = function() {return true;};
+                scope.displayYearThreeRent = function() {return true;};
+                scope.displayYearFourRent = function() {return true;};
+                scope.displayYearFiveRent = function() {return true;};
+                var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
+                expect(result.length).toEqual(14);
+            });
+
+            it('should return 17 elements with Residential property, date 22/11/2017 and 1 years and 1 day lease term and Shared Ownership', function() {
+                scope.data.effectiveDate = new Date(2017,11,22);
+                scope.data.startDate = new Date(2017,11,22);
+                scope.data.endDate = new Date(2018,11,22);
+                scope.data.year2Rent = 1999;
+                scope.data.individual = "Yes";
+                scope.data.mainResidence = "Yes";
+                scope.data.sharedOwnership = "Yes";
+                scope.data.currentValue = "Yes";
+                scope.data.ownedOtherProperties = "No";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.leaseTerm.years = 1;
+                scope.data.leaseTerm.days = 1;
+                data.paySDLT = "Upfront";
+                scope.displayYearOneRent = function() {return true;};
+                scope.displayYearTwoRent = function() {return true;};
+                var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
+                expect(result.length).toEqual(17);
+            });
+
+            it('should return 17 elements with Residential property, date 22/11/2017 and 1 years and 1 day lease term and Shared Ownership', function() {
+                scope.data.effectiveDate = new Date(2017,11,22);
+                scope.data.startDate = new Date(2017,11,22);
+                scope.data.endDate = new Date(2018,11,22);
+                scope.data.year2Rent = 1999;
+                scope.data.individual = "Yes";
+                scope.data.mainResidence = "Yes";
+                scope.data.sharedOwnership = "Yes";
+                scope.data.currentValue = "Yes";
+                scope.data.ownedOtherProperties = "No";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.leaseTerm.years = 1;
+                scope.data.leaseTerm.days = 1;
+                data.paySDLT = "Stages";
+                scope.displayYearOneRent = function() {return true;};
+                scope.displayYearTwoRent = function() {return true;};
+                var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
+                expect(result.length).toEqual(17);
+            });
+            it('should return 15 elements with Residential property, date 22/11/2017 and 1 years and 1 day lease term and Shared Ownership is "No"', function() {
+                scope.data.effectiveDate = new Date(2017,11,22);
+                scope.data.startDate = new Date(2017,11,22);
+                scope.data.endDate = new Date(2018,11,22);
+                scope.data.year2Rent = 1999;
+                scope.data.individual = "Yes";
+                scope.data.mainResidence = "Yes";
+                scope.data.sharedOwnership = "No";
+                scope.data.ownedOtherProperties = "No";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.leaseTerm.years = 1;
+                scope.data.leaseTerm.days = 1;
+                scope.displayYearOneRent = function() {return true;};
+                scope.displayYearTwoRent = function() {return true;};
+                var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
+                expect(result.length).toEqual(15);
+            });
+
+            it('should return 16 elements with Residential property, date 22/11/2017 and 1 years and 1 day lease term and Shared Ownership and Current value is "No"', function() {
+                scope.data.effectiveDate = new Date(2017,11,22);
+                scope.data.startDate = new Date(2017,11,22);
+                scope.data.endDate = new Date(2018,11,22);
+                scope.data.year2Rent = 1999;
+                scope.data.individual = "Yes";
+                scope.data.mainResidence = "Yes";
+                scope.data.sharedOwnership = "Yes";
+                scope.data.currentValue = "No";
+                scope.data.ownedOtherProperties = "No";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.leaseTerm.years = 1;
+                scope.data.leaseTerm.days = 1;
+                scope.displayYearOneRent = function() {return true;};
+                scope.displayYearTwoRent = function() {return true;};
+                var result = summaryHelper.summaryHelper(scope, mockModelValidationService);
+                expect(result.length).toEqual(16);
+            });
         });
 
         describe('Summary page with errors', function(){

@@ -15,6 +15,7 @@
                   individual: "Yes",
                   twoOrMoreProperties: "Yes",
                   replaceMainResidence: "No",
+                  sharedOwnership : "N/A",
                   startDate: new Date(2000, 0, 1),
                   startDateDay: 1,
                   startDateMonth: 1,
@@ -46,7 +47,9 @@
                   propertyDetails: {
                     individual: "Yes",
                     twoOrMoreProperties: "Yes",
-                    replaceMainResidence: "No"
+                    replaceMainResidence: "No",
+                      sharedOwnership : "N/A"
+
                   },
                   leaseDetails: {
                     startDateDay: 1,
@@ -77,8 +80,11 @@
     }));
 
     it('should construct a leasehold, residential calculation request from full data', function() {
+        var withoutSharedOwnership =  angular.copy(baseLeaseholdData);
+        delete withoutSharedOwnership.sharedOwnership;
+        delete baseLeaseholdRequest.propertyDetails.sharedOwnership;
 
-        expect(service.constructCalculationRequest(baseLeaseholdData)).toEqual(baseLeaseholdRequest);
+        expect(service.constructCalculationRequest(withoutSharedOwnership)).toEqual(baseLeaseholdRequest);
     });
 
     it('should construct a leasehold, residential calculation request without property details when effectiveDate is before Apr 2016', function() {
@@ -116,6 +122,7 @@
         var singlePropertyData = angular.copy(baseLeaseholdData);
         singlePropertyData.individual = "Yes";
         singlePropertyData.twoOrMoreProperties = "No";
+        singlePropertyData.sharedOwnership = "No";
 
         var singlePropertyRequest = angular.copy(baseLeaseholdRequest);
         singlePropertyRequest.propertyDetails.individual = "Yes";
@@ -475,9 +482,11 @@
         var ftbYesData = angular.copy(ftbData);
         ftbYesData.ownedOtherProperties = "No";
         ftbYesData.mainResidence = "Yes";
+        ftbYesData.sharedOwnership = "No";
 
         var ftbYesRequest = angular.copy(ftbRequest);
         ftbYesRequest.firstTimeBuyer = "Yes";
+        ftbYesRequest.propertyDetails.sharedOwnership = "No";
 
         expect(service.constructCalculationRequest(ftbYesData)).toEqual(ftbYesRequest);
     });
@@ -487,6 +496,7 @@
         var ftbNonMainResData = angular.copy(ftbData);
         ftbNonMainResData.ownedOtherProperties = "No";
         ftbNonMainResData.mainResidence = "No";
+        delete ftbNonMainResData.sharedOwnership;
 
         var ftbNonMainResRequest = angular.copy(ftbRequest);
         ftbNonMainResRequest.firstTimeBuyer = "No";
@@ -498,6 +508,7 @@
 
         var ftbNotFirstPropertyData = angular.copy(ftbData);
         ftbNotFirstPropertyData.ownedOtherProperties = "Yes";
+        delete ftbNotFirstPropertyData.sharedOwnership;
 
         var ftbNotFirstPropertyRequest = angular.copy(ftbRequest);
         ftbNotFirstPropertyRequest.firstTimeBuyer = "No";
@@ -585,6 +596,36 @@
         expect(service.constructCalculationRequest(ftbFirstDayData)).toEqual(ftbFirstDayRequest);
     });
 
+      it('should include first time buyer details for a first time, main-residence, shared ownership and current value', function() {
 
+          var ftbSharedOwnership = angular.copy(ftbData);
+          ftbSharedOwnership.ownedOtherProperties = "No";
+          ftbSharedOwnership.mainResidence = "Yes";
+          ftbSharedOwnership.sharedOwnership = "Yes";
+          ftbSharedOwnership.currentValue = "Yes";
+
+          var ftbSharedOwnershipResRequest = angular.copy(ftbRequest);
+          ftbSharedOwnershipResRequest.firstTimeBuyer = "Yes";
+          ftbSharedOwnershipResRequest.propertyDetails.sharedOwnership = "Yes";
+          ftbSharedOwnershipResRequest.propertyDetails.currentValue = "Yes";
+
+          expect(service.constructCalculationRequest(ftbSharedOwnership)).toEqual(ftbSharedOwnershipResRequest);
+      });
+
+      it('should include first time buyer details for a first time, main-residence, shared ownership and should not include current value', function() {
+
+          var ftbSharedOwnership = angular.copy(ftbData);
+          ftbSharedOwnership.ownedOtherProperties = "No";
+          ftbSharedOwnership.mainResidence = "Yes";
+          ftbSharedOwnership.sharedOwnership = "Yes";
+          ftbSharedOwnership.currentValue = "No";
+
+          var ftbSharedOwnershipResRequest = angular.copy(ftbRequest);
+          ftbSharedOwnershipResRequest.firstTimeBuyer = "Yes";
+          ftbSharedOwnershipResRequest.propertyDetails.sharedOwnership = "Yes";
+          ftbSharedOwnershipResRequest.propertyDetails.currentValue = "No";
+
+          expect(service.constructCalculationRequest(ftbSharedOwnership)).toEqual(ftbSharedOwnershipResRequest);
+      });
   });
 }());
