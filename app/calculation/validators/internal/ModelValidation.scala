@@ -91,7 +91,13 @@ object ModelValidation extends DateUtil{
       case PropertyTypes.nonResidential => ValidationSuccess
       case PropertyTypes.residential =>
         if(request.effectiveDate.isAfter(END_OF_MARCH_2016)) {
-          request.propertyDetails.map(validPropertyDetailsStructure).getOrElse(
+          val propDetailsValidationResult = if(request.holdingType.equals(HoldingTypes.freehold)){
+            request.propertyDetails.map(validPropertyDetailsStructureFreehold)
+          }else{
+            request.propertyDetails.map(validPropertyDetailsStructureLeasehold)
+          }
+
+          propDetailsValidationResult.getOrElse(
             ValidationFailure(
               s"No property details for '${request.holdingType}' residential property " +
                 s"with effective date of '${request.effectiveDate}'"
@@ -103,18 +109,34 @@ object ModelValidation extends DateUtil{
     }
   }
 
-  private [validators] def validPropertyDetailsStructure(propertyDetails: PropertyDetails): ValidationResult = {
+  private [validators] def validPropertyDetailsStructureLeasehold(propertyDetails: PropertyDetails): ValidationResult = {
     propertyDetails match {
-      case PropertyDetails(false, _, _) => ValidationSuccess
-      case PropertyDetails(true, Some(false), _) => ValidationSuccess
-      case PropertyDetails(true, Some(true), Some(_)) => ValidationSuccess
-      case PropertyDetails(true, twoOrMoreProperties, replaceMainResidence) =>
+      case PropertyDetails(false, _, _, _, _) => ValidationSuccess
+      case PropertyDetails(true, Some(true), Some(_), None, None) => ValidationSuccess
+      case PropertyDetails(true, Some(false), None, Some(true), Some(_)) => ValidationSuccess
+      case PropertyDetails(true, Some(false), None, Some(false), None) => ValidationSuccess
+      case PropertyDetails(true, twoOrMoreProperties, replaceMainResidence, sharedOwnership, currentValue) =>
         ValidationFailure(
           s"Property details failed validation with 'individual': true, " +
             s"'twoOrMoreProperties': $twoOrMoreProperties, " +
-            s"'replaceMainResidence': $replaceMainResidence")
+            s"'replaceMainResidence': $replaceMainResidence," +
+            s"'sharedOwnership': $sharedOwnership," +
+            s"'currentValue' : $currentValue")
     }
   }
+
+  private [validators] def validPropertyDetailsStructureFreehold(propertyDetails: PropertyDetails): ValidationResult = {
+      propertyDetails match {
+        case PropertyDetails(false, _,_ , _, _) => ValidationSuccess
+        case PropertyDetails(true, Some(false), _, _, _) => ValidationSuccess
+        case PropertyDetails(true, Some(true), Some(_), _, _) => ValidationSuccess
+        case PropertyDetails(true, twoOrMoreProperties, replaceMainResidence, sharedOwnership, currentValue) =>
+          ValidationFailure(
+            s"Property details failed validation with 'individual': true, " +
+              s"'twoOrMoreProperties': $twoOrMoreProperties, " +
+              s"'replaceMainResidence': $replaceMainResidence")
+      }
+    }
 
   private [validators] def validFirstTimeBuyer(request: Request): ValidationResult ={
     if(request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) && request.propertyType.equals(PropertyTypes.residential)){

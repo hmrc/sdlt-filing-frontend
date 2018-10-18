@@ -118,7 +118,9 @@ class RequestSpec extends UnitSpec {
       val model = PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = Some(true)
+        replaceMainResidence = Some(true),
+        sharedOwnership = None,
+        currentValue = None
       )
 
       Json.fromJson[PropertyDetails](testJson) shouldBe JsSuccess(model)
@@ -135,7 +137,9 @@ class RequestSpec extends UnitSpec {
       val model = PropertyDetails(
         individual = false,
         twoOrMoreProperties = None,
-        replaceMainResidence = None
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
       )
 
       Json.fromJson[PropertyDetails](testJson) shouldBe JsSuccess(model)
@@ -233,7 +237,9 @@ class RequestSpec extends UnitSpec {
         propertyDetails = Some(PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(true),
-          replaceMainResidence = Some(true)
+          replaceMainResidence = Some(true),
+          sharedOwnership = None,
+          currentValue = None
         )),
         leaseDetails = Some(LeaseDetails(
           startDate = LocalDate.of(1949, 1, 15),
@@ -288,7 +294,9 @@ class RequestSpec extends UnitSpec {
         propertyDetails = Some(PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(true),
-          replaceMainResidence = Some(true)
+          replaceMainResidence = Some(true),
+          sharedOwnership = None,
+          currentValue = None
         )),
         leaseDetails = None,
         relevantRentDetails = None,
@@ -298,7 +306,7 @@ class RequestSpec extends UnitSpec {
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
     }
 
-    "read from Json with property details and first time buyer" in {
+    "read from Json with property details and first time buyer sharedOwnership 'No'" in {
       val testJson = Json.parse(
         """
           |{
@@ -312,7 +320,8 @@ class RequestSpec extends UnitSpec {
           |  "propertyDetails": {
           |    "individual": "Yes",
           |    "twoOrMoreProperties": "No",
-          |    "replaceMainResidence": "No"
+          |    "replaceMainResidence": "No",
+          |    "sharedOwnership": "No"
           |  },
           |  "firstTimeBuyer": "Yes"
           |}
@@ -327,7 +336,9 @@ class RequestSpec extends UnitSpec {
         propertyDetails = Some(PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(false),
-          replaceMainResidence = Some(false)
+          replaceMainResidence = Some(false),
+          sharedOwnership = Some(false),
+          currentValue = None
         )),
         leaseDetails = None,
         relevantRentDetails = None,
@@ -365,5 +376,92 @@ class RequestSpec extends UnitSpec {
 
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
     }
+
+    "read from Json with property details and first time buyer sharedOwnership 'Yes' and currentValue 'No'" in {
+      val testJson = Json.parse(
+        """
+          |{
+          |  "holdingType": "Leasehold",
+          |  "propertyType": "Residential",
+          |  "effectiveDateDay": 13,
+          |  "effectiveDateMonth": 12,
+          |  "effectiveDateYear": 2017,
+          |  "premium": 500000,
+          |  "highestRent": 50000,
+          |  "propertyDetails": {
+          |    "individual": "Yes",
+          |    "twoOrMoreProperties": "No",
+          |    "replaceMainResidence": "No",
+          |    "sharedOwnership": "Yes",
+          |    "currentValue": "No"
+          |  },
+          |  "firstTimeBuyer": "Yes"
+          |}
+        """.stripMargin)
+
+      val model = Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = LocalDate.of(2017, 12, 13),
+        premium = 500000,
+        highestRent = 50000,
+        propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(false),
+          sharedOwnership = Some(true),
+          currentValue = Some(false)
+        )),
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = Some(true)
+      )
+
+      Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
+    }
+
+    "read from Json with property details and first time buyer sharedOwnership 'Yes' and currentValue 'Yes'" in {
+      val testJson = Json.parse(
+        """
+          |{
+          |  "holdingType": "Leasehold",
+          |  "propertyType": "Residential",
+          |  "effectiveDateDay": 13,
+          |  "effectiveDateMonth": 12,
+          |  "effectiveDateYear": 2017,
+          |  "premium": 500000,
+          |  "highestRent": 50000,
+          |  "propertyDetails": {
+          |    "individual": "Yes",
+          |    "twoOrMoreProperties": "No",
+          |    "replaceMainResidence": "No",
+          |    "sharedOwnership": "Yes",
+          |    "currentValue": "Yes"
+          |  },
+          |  "firstTimeBuyer": "Yes"
+          |}
+        """.stripMargin)
+
+      val model = Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = LocalDate.of(2017, 12, 13),
+        premium = 500000,
+        highestRent = 50000,
+        propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(false),
+          sharedOwnership = Some(true),
+          currentValue = Some(true)
+        )),
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = Some(true)
+      )
+
+      Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
+    }
+
   }
 }

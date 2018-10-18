@@ -71,6 +71,30 @@
         }
     };
 
+    var displaySharedOwnership = function(data) {
+        if(displayMainResidence(data) && data.holdingType === 'Leasehold') {
+            return data.mainResidence === 'Yes';
+        } else {
+            return false;
+        }
+    };
+
+    var displayCurrentValue = function(data) {
+        if(displaySharedOwnership(data)) {
+            return data.sharedOwnership === 'Yes';
+        } else {
+            return false;
+        }
+    };
+
+    var displayPaySDLT = function(data) {
+        if(displayCurrentValue(data)) {
+            return data.currentValue === 'Yes';
+        } else {
+            return false;
+        }
+    };
+
     var displayReplaceMainResidence = function(data) {
         if(data === undefined) return false;
         return (displayAdditionalProperty(data) && data.twoOrMoreProperties === 'Yes');
@@ -153,6 +177,31 @@
                 hiddenText : "Will this property be your main residence?"
             },
             {
+                question   : displaySharedOwnership(scope.data) ? "Shared ownership" : undefined,
+                answer     : (scope.data !== undefined) ? scope.data.sharedOwnership : undefined,
+                link       : "#shared-ownership",
+                id         : "sharedOwnership",
+                isValid    : validatedModel.isSharedOwnershipValid,
+                hiddenText : "Are you buying the property through a shared ownership scheme?"
+            },
+            {
+                question   : displayCurrentValue(scope.data) ? "Current value" : undefined,
+                answer     : (scope.data !== undefined) ? scope.data.currentValue : undefined,
+                link       : "#current-value",
+                id         : "currentValue",
+                isValid    : validatedModel.isCurrentValueValid,
+                hiddenText : "Is the current market value of the property £500,000 or less?"
+            },
+
+            {
+                question   : displayPaySDLT(scope.data) ? "Pay SDLT" : undefined,
+                answer     : displayPaySDLT(scope.data) ? scope.data.paySDLT : undefined,
+                link       : "#market-value",
+                id         : "market-value",
+                isValid    : validatedModel.isMarketValueValid,
+                hiddenText : "Pay SDLT"
+            },
+            {
                 question   : displayFreehold(scope.data) ? "Purchase price" : undefined,
                 answer     : displayFreehold(scope.data) ? scope.data.premium : undefined,
                 link       : "#purchase-price",
@@ -188,12 +237,12 @@
                 hiddenText : undefined
             },
             {
-                question   : displayLeasehold(scope.data) ? "Total premium payable" : undefined,
+                question   : displayLeasehold(scope.data) ? "Premium" : undefined,
                 answer     : displayLeasehold(scope.data) ? scope.data.premium : undefined,
                 link       : "#premium",
                 id         : "premium",
                 isValid    : validatedModel.isPremiumValid,
-                hiddenText : "Total premium payable?",
+                hiddenText : "Premium payable?",
                 type       : "Currency"
             },
             {

@@ -1,13 +1,12 @@
 package calculation.services
 
 import javax.inject.{Inject, Singleton}
-
 import calculation.data.{SlabRatesTables, SliceRatesTables}
 import calculation.data.SignificantAmounts._
 import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.factories.LeaseholdResultFactory
 import calculation.models.calculationtables.SlabResult
-import calculation.models.{LeaseDetails, RelevantRentDetails, Request, Result}
+import calculation.models._
 import calculation.validators.internal.ModelValidation
 
 @Singleton
@@ -21,11 +20,15 @@ trait LeaseholdCalculationSrv {
   val baseCalculationService: BaseCalculationSrv
   val refundEntitlementService: RefundEntitlementSrv
 
-  def leaseholdResidentialNov17OnwardsFTB(request: Request): Result = {
-    val npv = getNPV("leaseholdResidentialNov17Onwards", request.leaseDetails)
-    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialNov17FTBLeaseRates.slices)
-    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
+  def checkIfShared(propertyDetails: Option[PropertyDetails]) : Boolean = {
+   propertyDetails.exists(propDetails => propDetails.sharedOwnership.getOrElse(false))
+  }
 
+  def leaseholdResidentialNov17OnwardsFTB(request: Request): Result = {
+    val sliceRateTable = if(checkIfShared(request.propertyDetails)) SliceRatesTables.leaseholdResidentialNov17FTBSharedLeaseRates.slices else SliceRatesTables.leaseholdResidentialNov17FTBLeaseRates.slices
+    val npv = getNPV("leaseholdResidentialNov17Onwards", request.leaseDetails)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
     LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv)
   }
 

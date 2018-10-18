@@ -48,6 +48,13 @@
           propertyDetails.twoOrMoreProperties = data.twoOrMoreProperties;
           if (data.twoOrMoreProperties === 'Yes') {
             propertyDetails.replaceMainResidence = data.replaceMainResidence;
+          }else{
+            if(data.mainResidence === 'Yes'){
+              propertyDetails.sharedOwnership = data.sharedOwnership;
+                if(data.sharedOwnership === 'Yes'){
+                    propertyDetails.currentValue = data.currentValue;
+                }
+            }
           }
         }
         return propertyDetails;

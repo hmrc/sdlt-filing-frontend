@@ -11,6 +11,9 @@
   require("./validationServices/dateValidationService.js");
   require("./validationServices/ownedOtherPropertiesValidationService.js");
   require("./validationServices/mainResidenceValidationService.js");
+  require("./validationServices/sharedOwnershipValidationService.js");
+  require("./validationServices/currentValueValidationService.js");
+  require("./validationServices/marketValueValidationService.js");
   require("./validationServices/holdingValidationService.js");
   require("./validationServices/leaseDatesValidationService.js");
   require("./validationServices/premiumValidationService.js");

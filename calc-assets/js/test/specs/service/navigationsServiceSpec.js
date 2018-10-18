@@ -385,7 +385,106 @@
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/lease-dates');
             });
+
+            it('should set the location path to /shared-ownership when holdingType is "Leasehold" and mainResidence is "Yes"', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    mainResidence : 'Yes'
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/shared-ownership');
+            });
+
         });
+
+
+        describe('Calling .next() from the shared-ownership view', function() {
+            var mockLocation,
+                currentView = 'shared-ownership',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
+            it('should set the location path to /current-value and sharedOwnership is "Yes"', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    sharedOwnership : 'Yes'
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/current-value');
+            });
+
+            it('should set the location path to /lease-dates and sharedOwnership is "No"', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    sharedOwnership : 'No'
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/lease-dates');
+            });
+        });
+
+        describe('Calling .next() from the current-value view', function() {
+            var mockLocation,
+                currentView = 'current-value',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
+            it('should set the location path to /current-value and currentValue is "Yes"', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    currentValue : 'Yes'
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/market-value');
+            });
+
+            it('should set the location path to /lease-dates and currentValue is "No"', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    currentValue : 'No'
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/lease-dates');
+            });
+        });
+
+        describe('Calling .next() from the market-value view', function() {
+            var mockLocation,
+                currentView = 'market-value',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
+            it('should set the location path to /lease-dates and paySDLT is "Upfront"', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    paySDLT : 'Upfront'
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/lease-dates');
+            });
+
+            it('should set the location path to /lease-dates and paySDLT is "Stages"', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    paySDLT : 'Stages'
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/lease-dates');
+            });
+        });
+
 
         describe('Calling .next() from the purchase-price view', function() {
             var mockLocation,
@@ -413,6 +512,43 @@
             }));
 
            it('should set the location path to /premium', function() {
+                expect(mockLocation.path()).toEqual('/premium');
+            });
+
+            it('should set the location path to /rent if sharedOwnership is "Yes" and currentValue is "Yes" and premium is provided', function() {
+                data = {
+                    sharedOwnership : 'Yes',
+                    currentValue : 'Yes',
+                    premium : "250000"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/rent');
+            });
+
+            it('should set the location path to /premium if sharedOwnership is "No" and premium is provided', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    sharedOwnership : 'No',
+                    premium : "250000"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/premium');
+            });
+            it('should set the location path to /premium if sharedOwnership is "Yes" and premium is provided', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    sharedOwnership : 'Yes',
+                    premium : "250000"
+                };
+                service.next(currentView, data, mockLocation);
+                expect(mockLocation.path()).toEqual('/premium');
+            });
+            it('should set the location path to /premium if premium is provided', function() {
+                data = {
+                    holdingType : 'Leasehold',
+                    premium : "250000"
+                };
+                service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/premium');
             });
         });

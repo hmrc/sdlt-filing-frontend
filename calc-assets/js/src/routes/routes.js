@@ -69,6 +69,27 @@
                 reloadOnSearch: false
             })
 
+            .when('/shared-ownership', {
+                title : 'Shared ownership scheme',
+                templateUrl : 'shared-ownership.html',
+                controller  : 'sharedOwnershipController',
+                reloadOnSearch: false
+            })
+
+            .when('/current-value', {
+                title : 'Shared ownership scheme',
+                templateUrl : 'current-value.html',
+                controller  : 'currentValueController',
+                reloadOnSearch: false
+            })
+
+            .when('/market-value', {
+                title : 'Shared ownership scheme',
+                templateUrl : 'market-value.html',
+                controller  : 'marketValueController',
+                reloadOnSearch: false
+            })
+
             .when('/lease-dates', {
                 title : 'Lease dates',
                 templateUrl : 'lease-dates.html',

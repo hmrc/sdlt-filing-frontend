@@ -13,7 +13,10 @@ class AdditionalPropertyServiceSpec extends UnitSpec {
       val propertyDetails = Some(PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(true),
-        replaceMainResidence = Some(false))
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
+        )
       )
       additionalPropertyService.additionalPropertyRatesApply(propertyDetails) shouldBe true
     }
@@ -21,7 +24,10 @@ class AdditionalPropertyServiceSpec extends UnitSpec {
       val propertyDetails = Some(PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(true),
-        replaceMainResidence = Some(true))
+        replaceMainResidence = Some(true),
+        sharedOwnership = None,
+        currentValue = None
+        )
       )
       additionalPropertyService.additionalPropertyRatesApply(propertyDetails) shouldBe false
     }
@@ -29,7 +35,10 @@ class AdditionalPropertyServiceSpec extends UnitSpec {
       val propertyDetails = Some(PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = None)
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
+        )
       )
       additionalPropertyService.additionalPropertyRatesApply(propertyDetails) shouldBe false
     }
@@ -37,7 +46,10 @@ class AdditionalPropertyServiceSpec extends UnitSpec {
       val propertyDetails = Some(PropertyDetails(
         individual = false,
         twoOrMoreProperties = None,
-        replaceMainResidence = None)
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
+        )
       )
       additionalPropertyService.additionalPropertyRatesApply(propertyDetails) shouldBe true
     }
@@ -45,7 +57,10 @@ class AdditionalPropertyServiceSpec extends UnitSpec {
       val propertyDetails = Some(PropertyDetails(
         individual = true,
         twoOrMoreProperties = None,
-        replaceMainResidence = Some(false))
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
+        )
       )
       the[RequiredValueNotDefinedException]
         .thrownBy(additionalPropertyService.additionalPropertyRatesApply(propertyDetails))
@@ -56,7 +71,10 @@ class AdditionalPropertyServiceSpec extends UnitSpec {
       val propertyDetails = Some(PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(true),
-        replaceMainResidence = None)
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
+        )
       )
       the[RequiredValueNotDefinedException]
         .thrownBy(additionalPropertyService.additionalPropertyRatesApply(propertyDetails))

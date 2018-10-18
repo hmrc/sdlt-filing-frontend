@@ -65,7 +65,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = Some(true)
+        replaceMainResidence = Some(true),
+        sharedOwnership = None,
+        currentValue = None
         )
       ),
       leaseDetails = None,
@@ -514,7 +516,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
          val propertyDetails = Some(PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(false),
-          replaceMainResidence = Some(true)
+          replaceMainResidence = Some(true),
+          sharedOwnership = None,
+          currentValue = None
           )
          )
         testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(true)) shouldBe true
@@ -526,7 +530,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
          val propertyDetails = Some(PropertyDetails(
           individual = false,
           twoOrMoreProperties = None,
-          replaceMainResidence = None
+          replaceMainResidence = None,
+          sharedOwnership = None,
+          currentValue = None
           )
          )
         testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(false)) shouldBe false
@@ -536,7 +542,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val propertyDetails = Some(PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(false),
-          replaceMainResidence = Some(true)
+          replaceMainResidence = Some(true),
+          sharedOwnership = None,
+          currentValue = None
         )
         )
         testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(false)) shouldBe false
@@ -546,7 +554,9 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val propertyDetails = Some(PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(true),
-          replaceMainResidence = Some(false)
+          replaceMainResidence = Some(false),
+          sharedOwnership = None,
+          currentValue = None
          )
         )
         testCalculationService.checkPropDetailsFTB(propertyDetails, firstTimeBuyer = Some(false)) shouldBe false

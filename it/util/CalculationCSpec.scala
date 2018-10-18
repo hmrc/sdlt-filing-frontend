@@ -590,7 +590,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
                 |  "propertyDetails": {
                 |     "individual": "Yes",
                 |     "twoOrMoreProperties": "No",
-                |     "replaceMainResidence": "No"
+                |     "sharedOwnership" : "No"
                 |   },
                 |  "leaseDetails": {
                 |    "startDateDay": 15,
@@ -705,7 +705,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
                 |  "propertyDetails": {
                 |     "individual": "Yes",
                 |     "twoOrMoreProperties": "No",
-                |     "replaceMainResidence": "Yes"
+                |     "sharedOwnership": "No"
                 |   },
                 |  "leaseDetails": {
                 |    "startDateDay": 15,
@@ -1006,6 +1006,208 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
             |}
           """.stripMargin)
 
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
+
+      "residential, Individual && notTwoOrMoreProperties, FTB, NOV2017+, Shared" in{
+        def request: WSResponse = ws.url(
+          calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Leasehold",
+                |  "propertyType": "Residential",
+                |  "effectiveDateDay": 1,
+                |  "effectiveDateMonth": 11,
+                |  "effectiveDateYear": 2018,
+                |  "premium": 315000,
+                |  "highestRent": 15000,
+                |  "propertyDetails": {
+                |     "individual": "Yes",
+                |     "twoOrMoreProperties": "No",
+                |     "sharedOwnership": "Yes",
+                |     "currentValue": "Yes"
+                |   },
+                |  "leaseDetails": {
+                |    "startDateDay": 1,
+                |    "startDateMonth": 11,
+                |    "startDateYear": 2018,
+                |    "endDateDay": 1,
+                |    "endDateMonth": 11,
+                |    "endDateYear": 3007,
+                |    "leaseTerm":  {
+                |      "years": 989,
+                |      "days": 1,
+                |      "daysInPartialYear": 365
+                |     },
+                |    "year1Rent": 15000,
+                |    "year2Rent": 15000,
+                |    "year3Rent": 15000,
+                |    "year4Rent": 15000,
+                |    "year5Rent": 15000
+                |  },
+                |  "firstTimeBuyer": "Yes"
+                |}
+              """. stripMargin)
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result":[
+            |  {
+            |   "totalTax":750,
+            |   "npv":428571,
+            |   "taxCalcs":[
+            |    {
+            |     "taxType":"rent",
+            |     "calcType":"slice",
+            |     "taxDue":0,
+            |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+            |     "bandHeading":"Rent bands (£)",
+            |     "detailFooter":"SDLT due on the rent",
+            |     "slices":[
+            |      {
+            |       "from":0,
+            |       "to":125000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":125000,
+            |       "to":-1,
+            |       "rate":0,
+            |       "taxDue":0
+            |      }
+            |     ]
+            |    },{
+            |     "taxType":"premium",
+            |     "calcType":"slice",
+            |     "taxDue":750,
+            |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+            |     "bandHeading":"Premium bands (£)",
+            |     "detailFooter":"SDLT due on the premium",
+            |     "slices":[
+            |      {
+            |       "from":0,
+            |       "to":300000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":300000,
+            |       "to":500000,
+            |       "rate":5,
+            |       "taxDue":750
+            |      }
+            |     ]
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+          """.stripMargin)
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
+
+      "residential, Individual && notTwoOrMoreProperties, FTB, NOV2017+, Shared (NPV proof) " in{
+        def request: WSResponse = ws.url(
+          calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Leasehold",
+                |  "propertyType": "Residential",
+                |  "effectiveDateDay": 1,
+                |  "effectiveDateMonth": 11,
+                |  "effectiveDateYear": 2018,
+                |  "premium": 195000,
+                |  "highestRent": 2500,
+                |  "propertyDetails": {
+                |     "individual": "Yes",
+                |     "twoOrMoreProperties": "No",
+                |     "sharedOwnership": "Yes",
+                |     "currentValue": "Yes"
+                |   },
+                |  "leaseDetails": {
+                |    "startDateDay": 1,
+                |    "startDateMonth": 11,
+                |    "startDateYear": 2018,
+                |    "endDateDay": 1,
+                |    "endDateMonth": 11,
+                |    "endDateYear": 3007,
+                |    "leaseTerm":  {
+                |      "years": 989,
+                |      "days": 1,
+                |      "daysInPartialYear": 365
+                |     },
+                |    "year1Rent": 2500,
+                |    "year2Rent": 2500,
+                |    "year3Rent": 2500,
+                |    "year4Rent": 2500,
+                |    "year5Rent": 2500
+                |  },
+                |  "firstTimeBuyer": "Yes"
+                |}
+              """. stripMargin)
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result":[
+            |  {
+            |   "totalTax":0,
+            |   "npv":71428,
+            |   "taxCalcs":[
+            |    {
+            |     "taxType":"rent",
+            |     "calcType":"slice",
+            |     "taxDue":0,
+            |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+            |     "bandHeading":"Rent bands (£)",
+            |     "detailFooter":"SDLT due on the rent",
+            |     "slices":[
+            |      {
+            |       "from":0,
+            |       "to":125000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":125000,
+            |       "to":-1,
+            |       "rate":0,
+            |       "taxDue":0
+            |      }
+            |     ]
+            |    },{
+            |     "taxType":"premium",
+            |     "calcType":"slice",
+            |     "taxDue":0,
+            |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+            |     "bandHeading":"Premium bands (£)",
+            |     "detailFooter":"SDLT due on the premium",
+            |     "slices":[
+            |      {
+            |       "from":0,
+            |       "to":300000,
+            |       "rate":0,
+            |       "taxDue":0
+            |       },{
+            |       "from":300000,
+            |       "to":500000,
+            |       "rate":5,
+            |       "taxDue":0
+            |      }
+            |     ]
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+          """.stripMargin)
         request.status shouldBe OK
         request.json shouldBe responseJson
       }
@@ -1634,4 +1836,10 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
       }
     }
   }
+
 }
+
+
+
+
+
