@@ -3,9 +3,29 @@ package calculation.fixtures
 import java.time.LocalDate
 
 import calculation.enums.{HoldingTypes, PropertyTypes}
-import calculation.models.{PropertyDetails, RelevantRentDetails, Request}
+import calculation.models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
 
 trait LeaseholdRequestFeature extends LeaseDetailsFixture {
+
+  def leaseholdResidentialNov17OnwardsFTBRequestShared(premium: BigDecimal, testLeaseDetails: LeaseDetails) = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = LocalDate.of(2018, 1, 1),
+    premium = premium,
+    highestRent = 1000,
+    leaseDetails = Some(testLeaseDetails),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = None,
+        sharedOwnership = Some(true),
+        currentValue = Some(true)
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = Some(true)
+  )
 
   def leaseholdResidentialNov17OnwardsFTBRequest(premium: BigDecimal) = Request(
     holdingType = HoldingTypes.leasehold,
@@ -18,7 +38,9 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = None
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
       )
     ),
     relevantRentDetails = None,
@@ -36,7 +58,9 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(true),
-        replaceMainResidence = Some(false)
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
       )
     ),
     relevantRentDetails = None,
@@ -54,7 +78,9 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       PropertyDetails(
         individual = false,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = Some(false)
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
       )
     ),
     relevantRentDetails = None,
@@ -73,7 +99,9 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = None
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
       )
     ),
     relevantRentDetails = None,
@@ -91,7 +119,9 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = None
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
       )
     ),
     relevantRentDetails = None,
@@ -113,7 +143,9 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = None
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
       )
     ),
     relevantRentDetails = Some(
@@ -137,7 +169,9 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       PropertyDetails(
         individual = true,
         twoOrMoreProperties = Some(false),
-        replaceMainResidence = None
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
       )
     ),
     relevantRentDetails = Some(

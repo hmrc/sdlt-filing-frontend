@@ -12,13 +12,17 @@ class RefundEntitlementServiceSpec extends UnitSpec with MockFactory {
   val individualPropertyDetails = PropertyDetails(
     individual = true,
     twoOrMoreProperties = Some(false),
-    replaceMainResidence = None
+    replaceMainResidence = None,
+    sharedOwnership = None,
+    currentValue = None
   )
 
   val nonIndividualPropertyDetails = PropertyDetails(
     individual = false,
     twoOrMoreProperties = None,
-    replaceMainResidence = None
+    replaceMainResidence = None,
+    sharedOwnership = None,
+    currentValue = None
   )
 
   "calculateRefundEntitlement" should {

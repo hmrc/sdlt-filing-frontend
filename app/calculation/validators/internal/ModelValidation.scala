@@ -112,9 +112,9 @@ object ModelValidation extends DateUtil{
   private [validators] def validPropertyDetailsStructureLeasehold(propertyDetails: PropertyDetails): ValidationResult = {
     propertyDetails match {
       case PropertyDetails(false, _, _, _, _) => ValidationSuccess
-      case PropertyDetails(true, Some(true), Some(_), _, _) => ValidationSuccess
-      case PropertyDetails(true, Some(false), _, Some(true), Some(_)) => ValidationSuccess
-      case PropertyDetails(true, Some(false), _, Some(false), _) => ValidationSuccess
+      case PropertyDetails(true, Some(true), Some(_), None, None) => ValidationSuccess
+      case PropertyDetails(true, Some(false), None, Some(true), Some(_)) => ValidationSuccess
+      case PropertyDetails(true, Some(false), None, Some(false), None) => ValidationSuccess
       case PropertyDetails(true, twoOrMoreProperties, replaceMainResidence, sharedOwnership, currentValue) =>
         ValidationFailure(
           s"Property details failed validation with 'individual': true, " +

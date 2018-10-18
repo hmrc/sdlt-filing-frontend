@@ -20,16 +20,8 @@ trait LeaseholdCalculationSrv {
   val baseCalculationService: BaseCalculationSrv
   val refundEntitlementService: RefundEntitlementSrv
 
-
-  def leaseholdResidentialNov18OnwardsFTB(request: Request): Result = {
-    val npv = getNPV("leaseholdResidentialNov17Onwards", request.leaseDetails)
-    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialNov17FTBLeaseRates.slices)
-    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
-    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv)
-  }
-
   def checkIfShared(propertyDetails: Option[PropertyDetails]) : Boolean = {
-   propertyDetails.exists(propDetails => propDetails.sharedOwnership.get)
+   propertyDetails.exists(propDetails => propDetails.sharedOwnership.getOrElse(false))
   }
 
   def leaseholdResidentialNov17OnwardsFTB(request: Request): Result = {

@@ -42,7 +42,9 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(false),
-          replaceMainResidence = None
+          replaceMainResidence = None,
+          sharedOwnership = None,
+          currentValue = None
         )
       ),
       relevantRentDetails = None,
@@ -590,7 +592,9 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         PropertyDetails(
           individual = true,
           twoOrMoreProperties = Some(true),
-          replaceMainResidence = Some(false)
+          replaceMainResidence = Some(false),
+          sharedOwnership = None,
+          currentValue = None
         )
       ),
       relevantRentDetails = None,
@@ -897,7 +901,9 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
             PropertyDetails(
               individual = false,
               twoOrMoreProperties = None,
-              replaceMainResidence = None
+              replaceMainResidence = None,
+              sharedOwnership = None,
+              currentValue = None
             )
           ),
           relevantRentDetails = None,

@@ -590,7 +590,7 @@ class CalculationCSpec extends UnitSpec with GuiceOneServerPerSuite {
                 |  "propertyDetails": {
                 |     "individual": "Yes",
                 |     "twoOrMoreProperties": "No",
-                |     "replaceMainResidence": "No"
+                |     "sharedOwnership" : "No"
                 |   },
                 |  "leaseDetails": {
                 |    "startDateDay": 15,
