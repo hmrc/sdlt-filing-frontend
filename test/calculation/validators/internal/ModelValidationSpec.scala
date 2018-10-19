@@ -795,6 +795,18 @@ class ModelValidationSpec extends UnitSpec {
         )
         validPropertyDetailsStructureLeasehold(deets) shouldBe ValidationSuccess
       }
+
+      "individual is 'true', twoOrMoreProperties is false and other fields are undefined" in {
+        val deets = PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = None,
+          sharedOwnership = None,
+          currentValue = None
+        )
+        validPropertyDetailsStructureLeasehold(deets) shouldBe ValidationSuccess
+      }
+
       "individual is 'true' and sharedOwnership 'true' and currentValue 'false'" in {
         val deets = PropertyDetails(
           individual = true,
