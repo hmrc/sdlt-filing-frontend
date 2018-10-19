@@ -93,7 +93,7 @@ object ModelValidation extends DateUtil{
         if(request.effectiveDate.isAfter(END_OF_MARCH_2016)) {
           val propDetailsValidationResult = if(request.holdingType.equals(HoldingTypes.freehold)){
             request.propertyDetails.map(validPropertyDetailsStructureFreehold)
-          }else{
+          }else {
             request.propertyDetails.map(validPropertyDetailsStructureLeasehold)
           }
 
@@ -115,6 +115,7 @@ object ModelValidation extends DateUtil{
       case PropertyDetails(true, Some(true), Some(_), None, None) => ValidationSuccess
       case PropertyDetails(true, Some(false), None, Some(true), Some(_)) => ValidationSuccess
       case PropertyDetails(true, Some(false), None, Some(false), None) => ValidationSuccess
+      case PropertyDetails(true, Some(false), None, None, None) => ValidationSuccess
       case PropertyDetails(true, twoOrMoreProperties, replaceMainResidence, sharedOwnership, currentValue) =>
         ValidationFailure(
           s"Property details failed validation with 'individual': true, " +
