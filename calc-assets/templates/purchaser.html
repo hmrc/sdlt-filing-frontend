@@ -3,7 +3,7 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-      <li ng-if="state.hasError('individual')"><a id="individualPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('individual')">{{state.validationMessage('individual')}}</a></li>
+      <li data-ng-if="state.hasError('individual')"><a id="individualPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('individual')">{{state.validationMessage('individual')}}</a></li>
     </ul>
 </div>
 
@@ -16,17 +16,17 @@
             <span id="individualErrMsg" class="error-notification">{{state.validationMessage('individual')}}</span>
             <div class="inline">
                 <label class="block-label" for="individual-yes">
-                    <input id="individual-yes" ng-model="data.individual" name="individual" value="Yes" type="radio" required>Yes
+                    <input id="individual-yes" data-ng-model="data.individual" name="individual" value="Yes" type="radio" required>Yes
                 </label>
                 <label class="block-label" for="individual-no">
-                    <input id="individual-no" ng-model="data.individual" name="individual" value="No" type="radio" required>No
+                    <input id="individual-no" data-ng-model="data.individual" name="individual" value="No" type="radio" required>No
                 </label>
             </div>
         </fieldset>
     </div>
 
     <div class="form-group">
-        <button ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/purchaser')">Continue</button>
+        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/purchaser')">Continue</button>
     </div>
 
 </form>

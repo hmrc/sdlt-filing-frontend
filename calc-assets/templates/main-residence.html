@@ -3,7 +3,7 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-        <li ng-if="state.hasError('mainResidence')"><a id="mainResidencePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('mainResidence')">{{state.validationMessage('mainResidence')}}</a></li>
+        <li data-ng-if="state.hasError('mainResidence')"><a id="mainResidencePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('mainResidence')">{{state.validationMessage('mainResidence')}}</a></li>
     </ul>
 </div>
 
@@ -15,17 +15,17 @@
             <span id="mainResidenceErrMsg" class="error-notification">{{state.validationMessage('mainResidence')}}</span>
             <div class="inline">
                 <label class="block-label" for="mainResidence-yes">
-                    <input id="mainResidence-yes" ng-model="data.mainResidence" name="mainResidence" value="Yes" type="radio" required>Yes
+                    <input id="mainResidence-yes" data-ng-model="data.mainResidence" name="mainResidence" value="Yes" type="radio" required>Yes
                 </label>
                 <label class="block-label" for="mainResidence-no">
-                    <input id="mainResidence-no" ng-model="data.mainResidence" name="mainResidence" value="No" type="radio" required>No
+                    <input id="mainResidence-no" data-ng-model="data.mainResidence" name="mainResidence" value="No" type="radio" required>No
                 </label>
             </div>
         </fieldset>
     </div>
 
     <div class="form-group">
-        <button ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/main-residence')">Continue</button>
+        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/main-residence')">Continue</button>
     </div>
 
 </form>

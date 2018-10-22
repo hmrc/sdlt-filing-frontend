@@ -4,25 +4,25 @@
         <article>
             <table>
                 <tbody>
-                  <tr class="section" ng-repeat="item in data.summary">   
+                  <tr class="section" data-ng-repeat="item in data.summary">
                       <td class="previous-question-title" id="td1_{{item.id}}">{{item.question}}</td>
-                      <td class="previous-question-body"  id="td2_{{item.id}}" ng-if="item.type === undefined">{{item.answer}}</td>
-                      <td class="previous-question-body"  id="td2_{{item.id}}" ng-if="item.type === 'Date'">{{item.answer | date: 'd MMMM yyyy'}}</td>
-                      <td class="previous-question-body"  id="td2_{{item.id}}" ng-if="item.type === 'Currency'">{{item.answer | calcCurrency: '£'}}</td>
+                      <td class="previous-question-body"  id="td2_{{item.id}}" data-ng-if="item.type === undefined">{{item.answer}}</td>
+                      <td class="previous-question-body"  id="td2_{{item.id}}" data-ng-if="item.type === 'Date'">{{item.answer | date: 'd MMMM yyyy'}}</td>
+                      <td class="previous-question-body"  id="td2_{{item.id}}" data-ng-if="item.type === 'Currency'">{{item.answer | calcCurrency: '£'}}</td>
                   </tr>
                 </tbody>
             </table>
         </article>
     </div>
 
-  <h2 ng-if="data.result[0].resultHeading === undefined">Results</h2>
+  <h2 data-ng-if="data.result[0].resultHeading === undefined">Results</h2>
 
-  <div ng-repeat="res in data.result">
-    <h2 id="resultHeading{{$index}}" ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
+  <div data-ng-repeat="res in data.result">
+    <h2 id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
     <span id="resultHint{{$index}}" class="form-hint">{{res.resultHint}}</span>
     <div class="form-group">
-      <table ng-if="data.holdingType === 'Freehold'">
-        <tbody ng-if="res.taxCalcs[0].calcType === 'slice'">
+      <table data-ng-if="data.holdingType === 'Freehold'">
+        <tbody data-ng-if="res.taxCalcs[0].calcType === 'slice'">
           <tr class="section">
             <th>Effective date</th>
             <th>Purchase price (&pound;)</th>
@@ -35,7 +35,7 @@
             <td></td>
           </tr>
         </tbody>
-        <tbody ng-if="res.taxCalcs[0].calcType === 'slab'">
+        <tbody data-ng-if="res.taxCalcs[0].calcType === 'slab'">
           <tr class="section">
             <th>Effective date</th>
             <th>Purchase price (&pound;)</th>
@@ -50,7 +50,7 @@
           </tr>
         </tbody>
       </table>
-      <table ng-if="data.holdingType === 'Leasehold'">
+      <table data-ng-if="data.holdingType === 'Leasehold'">
         <tbody>
           <tr class="section">
             <td>Total amount of tax for this transaction</td>
@@ -62,8 +62,8 @@
             <td id="npv{{$index}}">{{res.npv | calcCurrency:"£"}}</td>
             <td></td>
           </tr>
-          <tr ng-repeat="taxCalc in res.taxCalcs" class="section">
-            <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}} <span id="taxRate{{$index}}" ng-if="tax.calcType === 'slab'">({{taxCalc.rate}}%)</span></td>
+          <tr data-ng-repeat="taxCalc in res.taxCalcs" class="section">
+            <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}} <span id="taxRate{{$index}}" data-ng-if="tax.calcType === 'slab'">({{taxCalc.rate}}%)</span></td>
             <td id="taxDue{{$parent.$parent.$index+''+$index}}">{{taxCalc.taxDue | calcCurrency:"£"}}</td>
             <td></td>
           </tr>
