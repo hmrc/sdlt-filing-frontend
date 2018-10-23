@@ -13,15 +13,24 @@
         <fieldset>
             <legend id="currentValue" class="form-label-bold">Is the current market value of the property £500,000 or less?</legend>
             <span id="currentValueErrMsg" class="error-notification">{{state.validationMessage('currentValue')}}</span>
-            <div class="inline">
+            <div>
                 <label class="block-label" for="currentValue-yes">
-                    <input id="currentValue-yes" ng-model="data.currentValue" name="currentValue" value="Yes" type="radio" required>Yes
+                    <input id="currentValue-yes" ng-model="data.currentValue" name="currentValue" value="£500,000 or less" type="radio" required>£500,000 or less
                 </label>
                 <label class="block-label" for="currentValue-no">
-                    <input id="currentValue-no" ng-model="data.currentValue" name="currentValue" value="No" type="radio" required>No
+                    <input id="currentValue-no" ng-model="data.currentValue" name="currentValue" value="More than £500,000" type="radio" required>More than £500,000
                 </label>
             </div>
         </fieldset>
+    </div>
+
+    <div ng-if="data.currentValue === 'Yes'">
+        <div class="form-group {{state.hasError('currentValue')}}">
+            <fieldset>
+                <p>Based on the answers given, this purchase may qualify for First Time Buyers Relief.</p>
+                <span id="currentValuePropErrMsg" class="error-notification">{{state.validationMessage('currentValue')}}</span>
+            </fieldset>
+        </div>
     </div>
 
     <div class="form-group">

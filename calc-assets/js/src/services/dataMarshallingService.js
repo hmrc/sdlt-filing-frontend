@@ -52,7 +52,11 @@
             if(data.mainResidence === 'Yes'){
               propertyDetails.sharedOwnership = data.sharedOwnership;
                 if(data.sharedOwnership === 'Yes'){
-                    propertyDetails.currentValue = data.currentValue;
+                  if(data.currentValue === '£500,000 or less'){
+                      propertyDetails.currentValue = 'Yes';
+                  }else {
+                      propertyDetails.currentValue = 'No';
+                  }
                 }
             }
           }
@@ -107,7 +111,13 @@
 
     function constructFirstTimeBuyerDetails(data) {
       if(data.ownedOtherProperties === "No" && data.mainResidence === "Yes") {
-        return "Yes";
+        if(data.sharedOwnership === 'Yes' && data.currentValue === '£500,000 or less'){
+          return "Yes";
+        }else if (data.currentValue === 'More than £500,000') {
+            return "No";
+        }else{
+            return "Yes";
+        }
       } else {
         return "No";
       }

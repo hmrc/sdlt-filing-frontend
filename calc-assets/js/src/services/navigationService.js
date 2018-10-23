@@ -89,7 +89,7 @@
                 }
             }
             else if (currentView === "current-value") {
-                if(model.currentValue === "Yes") {
+                if(model.currentValue === "£500,000 or less") {
                     redirectToNext(locationService, 'market-value');
                 } else {
                     redirectBasedOnHoldingType(model, locationService);
@@ -101,7 +101,7 @@
                 }
             }
             else if (currentView === 'lease-dates') {
-                if(model.premium !== undefined && model.currentValue === 'Yes' && model.sharedOwnership === 'Yes') {
+                if(model.premium !== undefined && model.currentValue === '£500,000 or less' && model.sharedOwnership === 'Yes') {
                     redirectToNext(locationService, 'rent');
                 } else {
                 redirectToNext(locationService, 'premium');
