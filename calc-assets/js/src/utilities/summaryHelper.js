@@ -185,7 +185,7 @@
                 hiddenText : "Are you buying the property through a shared ownership scheme?"
             },
             {
-                question   : displayCurrentValue(scope.data) ? "Current value" : undefined,
+                question   : displayCurrentValue(scope.data) ? "Market Value" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.currentValue : undefined,
                 link       : "#current-value",
                 id         : "currentValue",

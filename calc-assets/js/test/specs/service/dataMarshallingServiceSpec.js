@@ -602,7 +602,7 @@
           ftbSharedOwnership.ownedOtherProperties = "No";
           ftbSharedOwnership.mainResidence = "Yes";
           ftbSharedOwnership.sharedOwnership = "Yes";
-          ftbSharedOwnership.currentValue = "Yes";
+          ftbSharedOwnership.currentValue = "£500,000 or less";
 
           var ftbSharedOwnershipResRequest = angular.copy(ftbRequest);
           ftbSharedOwnershipResRequest.firstTimeBuyer = "Yes";
@@ -618,10 +618,10 @@
           ftbSharedOwnership.ownedOtherProperties = "No";
           ftbSharedOwnership.mainResidence = "Yes";
           ftbSharedOwnership.sharedOwnership = "Yes";
-          ftbSharedOwnership.currentValue = "No";
+          ftbSharedOwnership.currentValue = "More than £500,000";
 
           var ftbSharedOwnershipResRequest = angular.copy(ftbRequest);
-          ftbSharedOwnershipResRequest.firstTimeBuyer = "Yes";
+          ftbSharedOwnershipResRequest.firstTimeBuyer = "No";
           ftbSharedOwnershipResRequest.propertyDetails.sharedOwnership = "Yes";
           ftbSharedOwnershipResRequest.propertyDetails.currentValue = "No";
 
