@@ -74,7 +74,7 @@
                     result.isCurrentValueValid = hasError('currentValue');
                     if(data.currentValue === 'Yes'){
                         result.isMarketValueValid = hasError('paySDLT');
-                        if(data.paySDLT === ('Upfront')|| data.paySDLT === 'Stages') {
+                        if(data.paySDLT === ('Using market value election')|| data.paySDLT === 'Stages') {
                             result.isPremiumValid = hasError('premium');
                         }
                     }

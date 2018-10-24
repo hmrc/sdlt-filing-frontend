@@ -11,8 +11,9 @@
 
     <div class="form-group {{state.hasError('currentValue')}}">
         <fieldset>
-            <legend id="currentValue" class="form-label-bold">Is the current market value of the property £500,000 or less?</legend>
+            <legend id="currentValue" class="form-label-bold">What is the market value of the property?</legend>
             <span id="currentValueErrMsg" class="error-notification">{{state.validationMessage('currentValue')}}</span>
+            <p>This means the market value at the time of purchase. If the maximum share of the property ultimately  obtainable is less than 100%, enter the value of that percentage.</p>
             <div>
                 <label class="block-label" for="currentValue-yes">
                     <input id="currentValue-yes" ng-model="data.currentValue" name="currentValue" value="£500,000 or less" type="radio" required>£500,000 or less
@@ -24,7 +25,7 @@
         </fieldset>
     </div>
 
-    <div ng-if="data.currentValue === 'Yes'">
+    <div ng-if="data.currentValue === '£500,000 or less'">
         <div class="form-group {{state.hasError('currentValue')}}">
             <fieldset>
                 <p>Based on the answers given, this purchase may qualify for First Time Buyers Relief.</p>

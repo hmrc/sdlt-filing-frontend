@@ -118,7 +118,7 @@
             });
         });
 
-        describe('Calling .submit() on the Market Value Controller with invalid Upfront data', function () {
+        describe('Calling .submit() on the Market Value Controller with invalid Using market value election data', function () {
 
             beforeEach(mocks.inject(function ($controller, $rootScope) {
 
@@ -160,7 +160,7 @@
                 });
 
                 mockScope.data = {
-                    paySDLT : "Upfront"
+                    paySDLT : "Using market value election"
                 };
 
                 mockScope.submit({});
@@ -179,7 +179,7 @@
             });
         });
 
-        describe('Calling .submit() on the Market Value Controller with valid Upfront data', function () {
+        describe('Calling .submit() on the Market Value Controller with valid Using market value election data', function () {
 
             beforeEach(mocks.inject(function ($controller, $rootScope) {
 
@@ -221,7 +221,7 @@
                 });
 
                 mockScope.data = {
-                    paySDLT : "Upfront",
+                    paySDLT : "Using market value election",
                     marketPropValue: "250000"
                 };
 

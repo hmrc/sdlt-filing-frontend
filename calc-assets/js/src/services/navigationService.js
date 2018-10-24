@@ -96,7 +96,7 @@
                 }
             }
             else if (currentView === "market-value") {
-                if(model.paySDLT === "Upfront" || model.paySDLT === "Stages") {
+                if(model.paySDLT === "Using market value election" || model.paySDLT === "Stages") {
                     redirectToNext(locationService, 'lease-dates');
                 }
             }

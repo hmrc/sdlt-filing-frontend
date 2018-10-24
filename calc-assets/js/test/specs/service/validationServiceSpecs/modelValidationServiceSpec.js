@@ -755,7 +755,7 @@
             expect(result.isYear5RentValid).toEqual('');
         });
 
-        it('should return true for a Leasehold Residential >= 22/11/2017 FTB and Shared Ownership is Yes, Current Value is Yes, PaySDLT is Upfront', function() {
+        it('should return true for a Leasehold Residential >= 22/11/2017 FTB and Shared Ownership is Yes, Current Value is Yes, PaySDLT is Using market value election', function() {
 
             var data = {
                 holdingType : "Leasehold",
@@ -767,7 +767,7 @@
                 mainResidence : "Yes",
                 sharedOwnership : 'Yes',
                 currentValue : 'Yes',
-                paySDLT : 'Upfront',
+                paySDLT : 'Using market value election',
                 startDate : new Date(2015, 1, 1),
                 endDate : new Date(2019, 12, 31),
                 premium : 200000,
@@ -869,7 +869,7 @@
             expect(result.isYear5RentValid).toEqual('');
         });
 
-        it('should return true for a Leasehold Residential >= 22/11/2017 FTB and Shared Ownership is Yes, Current Value is Yes, PaySDLT is Upfront, Premium is undefined', function() {
+        it('should return true for a Leasehold Residential >= 22/11/2017 FTB and Shared Ownership is Yes, Current Value is Yes, PaySDLT is Using market value election, Premium is undefined', function() {
 
             var data = {
                 holdingType : "Leasehold",
@@ -881,7 +881,7 @@
                 mainResidence : "Yes",
                 sharedOwnership : 'Yes',
                 currentValue : 'Yes',
-                paySDLT : 'Upfront',
+                paySDLT : 'Using market value election',
                 startDate : new Date(2015, 1, 1),
                 endDate : new Date(2019, 12, 31),
 

@@ -89,7 +89,7 @@
 
     var displayPaySDLT = function(data) {
         if(displayCurrentValue(data)) {
-            return data.currentValue === 'Yes';
+            return data.currentValue === '£500,000 or less';
         } else {
             return false;
         }
@@ -185,7 +185,7 @@
                 hiddenText : "Are you buying the property through a shared ownership scheme?"
             },
             {
-                question   : displayCurrentValue(scope.data) ? "Market Value" : undefined,
+                question   : displayCurrentValue(scope.data) ? "Market value" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.currentValue : undefined,
                 link       : "#current-value",
                 id         : "currentValue",

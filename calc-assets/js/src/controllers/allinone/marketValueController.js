@@ -9,7 +9,7 @@
         init($scope, $location, $anchorScroll, 'market-value', dataService, marketValueValidationService, navigationService);
 
         $scope.beforeUpdateModel = function() {
-                if($scope.data.paySDLT === "Upfront" && $scope.data.marketPropValue) {
+                if($scope.data.paySDLT === "Using market value election" && $scope.data.marketPropValue) {
                     loggingService.logEvent('decision', 'submit', "MarketValue.UpfrontMarketValue");
                 }
 

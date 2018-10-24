@@ -19,7 +19,7 @@
                 <details>
                     <summary ng-click="toggleHelp('marketValue')"><span class="summary">How does this work?</span></summary>
                     <div class="panel-indent" ng-if="displayHelp('marketValue')">
-                        <p><a id="first-time-buyers" href="https://www.gov.uk/guidance/stamp-duty-land-tax-relief-for-land-or-property-transactions#first-time-buyers-relief" title="opens in a new window" rel="external" target="_blank" onClick="ga('send', 'event', 'link', 'click', 'corpBodies.govuk')">First time buyers relief </a>
+                        <p><a id="first-time-buyers" href="https://www.gov.uk/guidance/stamp-duty-land-tax-relief-for-land-or-property-transactions#first-time-buyers-relief" title="opens in a new window" rel="external" target="_blank" onClick="ga('send', 'event', 'link', 'click', 'corpBodies.govuk')">First Time Buyers Relief </a>
                             will be applied to the SDLT on:
                         </p>
                         <ul class="list-bullet">
@@ -45,7 +45,7 @@
             </div>
             <div>
                 <label class="block" for="paySDLTUpfront">
-                    <input id="paySDLTUpfront" ng-model="data.paySDLT" name="paySDLT" value="Upfront" type="radio" required>Pay SDLT up front by making a market value election
+                    <input id="paySDLTUpfront" ng-model="data.paySDLT" name="paySDLT" value="Using market value election" type="radio" required>Pay SDLT up front by making a market value election
                 </label>
                 <label class="block" for="paySDLTInStages">
                     <input id="paySDLTInStages" ng-model="data.paySDLT" name="paySDLT" value="Stages" type="radio" required>Pay SDLT in stages
@@ -54,7 +54,7 @@
         </fieldset>
     </div>
 
-    <div ng-if="data.paySDLT === 'Upfront'">
+    <div ng-if="data.paySDLT === 'Using market value election'">
         <div class="form-group {{state.hasError('marketValue')}}">
             <fieldset>
                 <legend id="marketValueProp" class="form-label-bold">Enter the market value of the property you are buying</legend>
