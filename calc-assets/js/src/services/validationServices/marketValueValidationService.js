@@ -15,7 +15,7 @@
                 ga('send', 'event', "userError", "marketValueError", "notPopulated");
             }
 
-            if(data.paySDLT === "Upfront" || data.paySDLT === "Stages") {
+            if(data.paySDLT === "Using market value election" || data.paySDLT === "Stages") {
                 if (validator.isNotPopulated(data.premium)) {
                     state.marketValue = "Provide an answer to continue.";
                     ga('send', 'event', "userError", "marketValueError", "notPopulated");

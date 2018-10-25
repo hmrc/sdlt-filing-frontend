@@ -466,10 +466,10 @@
                 service.next(currentView, data, mockLocation);
             }));
 
-            it('should set the location path to /lease-dates and paySDLT is "Upfront"', function() {
+            it('should set the location path to /lease-dates and paySDLT is "Using market value election"', function() {
                 data = {
                     holdingType : 'Leasehold',
-                    paySDLT : 'Upfront'
+                    paySDLT : 'Using market value election'
                 };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/lease-dates');

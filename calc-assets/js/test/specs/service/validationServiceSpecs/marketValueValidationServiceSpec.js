@@ -47,18 +47,18 @@
             expect(state.validationMessage('marketValue')).toEqual('');
         });
 
-        it('paySDLT.mandatory should return an error when data is Upfront and no premium present', function() {
+        it('paySDLT.mandatory should return an error when data is Using market value election and no premium present', function() {
             var state = service.validate({
-                paySDLT: "Upfront"
+                paySDLT: "Using market value election"
             });
             expect(state.isValid).toEqual(false);
             expect(state.hasError('marketValue')).toEqual('form-field--error');
             expect(state.validationMessage('marketValue')).toEqual("Provide an answer to continue.");
         });
 
-        it('paySDLT.mandatory should return an error when data is Upfront and premium is greater than £500,000', function() {
+        it('paySDLT.mandatory should return an error when data is Using market value election and premium is greater than £500,000', function() {
             var state = service.validate({
-                paySDLT: "Upfront",
+                paySDLT: "Using market value election",
                 premium : "500001"
             });
             expect(state.isValid).toEqual(false);
@@ -66,9 +66,9 @@
             expect(state.validationMessage('marketValue')).toEqual("Enter a value that is £500000 or less.");
         });
 
-        it('paySDLT.mandatory shouldnt return an error when data is Upfront and premium is greater than £500,000', function() {
+        it('paySDLT.mandatory shouldnt return an error when data is Using market value election and premium is greater than £500,000', function() {
             var state = service.validate({
-                paySDLT: "Upfront",
+                paySDLT: "Using market value election",
                 premium : "499999"
             });
             expect(state.isValid).toEqual(true);
