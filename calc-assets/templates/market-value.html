@@ -15,7 +15,7 @@
             <legend id="marketValue" class="form-label-bold">Do you want to pay SDLT on the market value or only on the percentage of the property you are buying?</legend>
             <span id="paySDLTErrMsg" class="error-notification">{{state.validationMessage('paySDLT')}}</span>
             <p>You can choose to pay SDLT on the market value of the property. This is known as a ‘market value election’.</p>
-            <div data-ng-show="showMarketValueHelp">
+
                 <details>
                     <summary data-ng-click="toggleHelp('marketValue')"><span class="summary">How does this work?</span></summary>
                     <div class="panel-indent" data-ng-if="displayHelp('marketValue')">
@@ -29,9 +29,8 @@
                         <p class="form-group"> No further SDLT will be due if you purchase further shares in the property or acquire the property outright.</p>
                     </div>
                 </details>
-            </div>
             <p>Alternatively you can choose to pay SDLT on the amount you are paying for your initial purchase.</p>
-            <div data-ng-show="showInitialValueHelp">
+
                 <details>
                     <summary data-ng-click="toggleHelp('initialValue')"><span class="summary">How does this work?</span></summary>
                     <div class="panel-indent" data-ng-if="displayHelp('initialValue')">
@@ -42,7 +41,6 @@
                         <p>However if your total share in the property is never more than 80%, then you will not be liable for any further SDLT.</p>
                     </div>
                 </details>
-            </div>
             <div>
                 <label class="block-label" for="paySDLTUpfront">
                     <input id="paySDLTUpfront" data-ng-model="data.paySDLT" name="paySDLT" value="Using market value election" type="radio" required>Pay SDLT up front by making a market value election
