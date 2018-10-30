@@ -3,7 +3,7 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-        <li ng-if="state.hasError('sharedOwnership')"><a id="sharedOwnershipPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('sharedOwnership')">{{state.validationMessage('sharedOwnership')}}</a></li>
+        <li data-ng-if="state.hasError('sharedOwnership')"><a id="sharedOwnershipPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('sharedOwnership')">{{state.validationMessage('sharedOwnership')}}</a></li>
     </ul>
 </div>
 
@@ -18,17 +18,17 @@
             <span id="sharedOwnershipErrMsg" class="error-notification">{{state.validationMessage('sharedOwnership')}}</span>
             <div class="inline">
                 <label class="block-label" for="sharedOwnership-yes">
-                    <input id="sharedOwnership-yes" ng-model="data.sharedOwnership" name="sharedOwnership" value="Yes" type="radio" required>Yes
+                    <input id="sharedOwnership-yes" data-ng-model="data.sharedOwnership" name="sharedOwnership" value="Yes" type="radio" required>Yes
                 </label>
                 <label class="block-label" for="sharedOwnership-no">
-                    <input id="sharedOwnership-no" ng-model="data.sharedOwnership" name="sharedOwnership" value="No" type="radio" required>No
+                    <input id="sharedOwnership-no" data-ng-model="data.sharedOwnership" name="sharedOwnership" value="No" type="radio" required>No
                 </label>
             </div>
         </fieldset>
     </div>
 
     <div class="form-group">
-        <button ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/shared-ownership')">Continue</button>
+        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/shared-ownership')">Continue</button>
     </div>
 
 </form>

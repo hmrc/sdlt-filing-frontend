@@ -3,7 +3,7 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-        <li ng-if="state.hasError('ownedOtherProperties')"><a id="ownedOtherPropertiesPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('ownedOtherProperties')">{{state.validationMessage('ownedOtherProperties')}}</a></li>
+        <li data-ng-if="state.hasError('ownedOtherProperties')"><a id="ownedOtherPropertiesPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('ownedOtherProperties')">{{state.validationMessage('ownedOtherProperties')}}</a></li>
     </ul>
 </div>
 
@@ -23,17 +23,17 @@
             <span id="ownedOtherPropertiesErrMsg" class="error-notification">{{state.validationMessage('ownedOtherProperties')}}</span>
             <div class="inline">
                 <label class="block-label" for="ownedOtherProperties-yes">
-                    <input id="ownedOtherProperties-yes" ng-model="data.ownedOtherProperties" name="ownedOtherProperties" value="Yes" type="radio" required>Yes
+                    <input id="ownedOtherProperties-yes" data-ng-model="data.ownedOtherProperties" name="ownedOtherProperties" value="Yes" type="radio" required>Yes
                 </label>
                 <label class="block-label" for="ownedOtherProperties-no">
-                    <input id="ownedOtherProperties-no" ng-model="data.ownedOtherProperties" name="ownedOtherProperties" value="No" type="radio" required>No
+                    <input id="ownedOtherProperties-no" data-ng-model="data.ownedOtherProperties" name="ownedOtherProperties" value="No" type="radio" required>No
                 </label>
             </div>
         </fieldset>
     </div>
 
     <div class="form-group">
-        <button ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/owned-other-properties')">Continue</button>
+        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/owned-other-properties')">Continue</button>
     </div>
 
 </form>

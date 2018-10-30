@@ -10,17 +10,17 @@
                         <td id="td2StartAgain"></td>
                         <td class="link-right" id="td3StartAgain"><a class="start-right" id="startAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'start-again')">Start again</a></td>
                     </tr>
-                    <tr class="section" ng-repeat="item in data.summary">   
+                    <tr class="section" data-ng-repeat="item in data.summary">
                         <td class="previous-question-title" id="td1_{{item.id}}">
                             <p class="{{item.isValid}}">
                                 <span class="error-notification">Provide an answer to continue</span>
                                 {{item.question}}
                             </p>
                         </td>
-                        <td class="previous-question-body" id="td2_{{item.id}}" ng-if="item.type === undefined">{{item.answer}}</td>
-                        <td class="previous-question-body" id="td2_{{item.id}}" ng-if="item.type === 'Date'">{{item.answer | date: 'd MMMM yyyy'}}</td>
-                        <td class="previous-question-body" id="td2_{{item.id}}" ng-if="item.type === 'Currency'">{{item.answer | calcCurrency: '£'}}</td>
-                        <td class="link-right" id="td3_{{item.id}}"><a ng-if="item.link !== undefined" id="change_{{item.id}}" href="{{item.link}}" ng-click="logEvent('change', 'click', item.id)">Change <span class="visuallyhidden">{{item.hiddenText}}</span></a></td>
+                        <td class="previous-question-body" id="td2_{{item.id}}" data-ng-if="item.type === undefined">{{item.answer}}</td>
+                        <td class="previous-question-body" id="td2_{{item.id}}" data-ng-if="item.type === 'Date'">{{item.answer | date: 'd MMMM yyyy'}}</td>
+                        <td class="previous-question-body" id="td2_{{item.id}}" data-ng-if="item.type === 'Currency'">{{item.answer | calcCurrency: '£'}}</td>
+                        <td class="link-right" id="td3_{{item.id}}"><a data-ng-if="item.link !== undefined" id="change_{{item.id}}" href="{{item.link}}" data-ng-click="logEvent('change', 'click', item.id)">Change <span class="visuallyhidden">{{item.hiddenText}}</span></a></td>
                     </tr>
                 </tbody>
             </table>
@@ -28,8 +28,8 @@
     </div>
 </div>
 <div class="form-group">
-    <div ng-if="!validatedModel.isModelValid">
+    <div data-ng-if="!validatedModel.isModelValid">
         Please fix any errors before continuing to calculation.
     </div>
-    <button ng-click="submit()" class="button" id="calculate" type="submit">Calculate your SDLT</button>
+    <button data-ng-click="submit()" class="button" id="calculate" type="submit">Calculate your SDLT</button>
 </div>

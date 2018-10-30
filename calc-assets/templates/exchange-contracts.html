@@ -3,8 +3,8 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-        <li ng-if="state.hasError('contractPre201603')"><a id="contractPre201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contractPre201603')">{{state.validationMessage('contractPre201603')}}</a></li>
-        <li ng-if="state.hasError('contractVariedPost201603')"><a id="contractVariedPost201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contractVariedPost201603')">{{state.validationMessage('contractVariedPost201603')}}</a></li>
+        <li data-ng-if="state.hasError('contractPre201603')"><a id="contractPre201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contractPre201603')">{{state.validationMessage('contractPre201603')}}</a></li>
+        <li data-ng-if="state.hasError('contractVariedPost201603')"><a id="contractVariedPost201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contractVariedPost201603')">{{state.validationMessage('contractVariedPost201603')}}</a></li>
     </ul>
 </div>
 
@@ -16,26 +16,26 @@
           <span id="contractPre201603ErrMsg" class="error-notification">{{state.validationMessage('contractPre201603')}}</span>
           <div class="inline">
               <label class="block-label" for="contract-pre-201603-yes">
-                  <input id="contract-pre-201603-yes" ng-model="data.contractPre201603" name="contractPre201603" value="Yes" type="radio" required>Yes
+                  <input id="contract-pre-201603-yes" data-ng-model="data.contractPre201603" name="contractPre201603" value="Yes" type="radio" required>Yes
               </label>
               <label class="block-label" for="contract-pre-201603-no">
-                  <input id="contract-pre-201603-no" ng-model="data.contractPre201603" name="contractPre201603" value="No" type="radio" required>No
+                  <input id="contract-pre-201603-no" data-ng-model="data.contractPre201603" name="contractPre201603" value="No" type="radio" required>No
               </label>
           </div>
       </fieldset>
     </div>
 
-    <div ng-if="data.contractPre201603 === 'Yes'">
+    <div data-ng-if="data.contractPre201603 === 'Yes'">
       <div class="form-group {{state.hasError('contractVariedPost201603')}}">
         <fieldset>
             <legend id="contractVariedPost201603" class="form-label-bold">Has your contract been changed on or after 17 March 2016?</legend>
             <span id="contractVariedPost201603ErrMsg" class="error-notification">{{state.validationMessage('contractVariedPost201603')}}</span>
             <div class="inline">
                 <label class="block-label" for="contract-varied-post-201603-yes">
-                    <input id="contract-varied-post-201603-yes" ng-model="data.contractVariedPost201603" name="contractVariedPost201603" value="Yes" type="radio" required>Yes
+                    <input id="contract-varied-post-201603-yes" data-ng-model="data.contractVariedPost201603" name="contractVariedPost201603" value="Yes" type="radio" required>Yes
                 </label>
                 <label class="block-label" for="contract-varied-post-201603-no">
-                    <input id="contract-varied-post-201603-no" ng-model="data.contractVariedPost201603" name="contractVariedPost201603" value="No" type="radio" required>No
+                    <input id="contract-varied-post-201603-no" data-ng-model="data.contractVariedPost201603" name="contractVariedPost201603" value="No" type="radio" required>No
                 </label>
             </div>
         </fieldset>
@@ -43,7 +43,7 @@
     </div>
 
     <div class="form-group">
-        <button ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/exchange-contracts')">Continue</button>
+        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/exchange-contracts')">Continue</button>
     </div>    
 
 </form>

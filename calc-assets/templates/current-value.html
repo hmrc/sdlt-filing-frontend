@@ -3,7 +3,7 @@
 <div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
     <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
     <ul class="error-summary-list">
-        <li ng-if="state.hasError('currentValue')"><a id="currentValuePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('currentValue')">{{state.validationMessage('currentValue')}}</a></li>
+        <li data-ng-if="state.hasError('currentValue')"><a id="currentValuePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('currentValue')">{{state.validationMessage('currentValue')}}</a></li>
     </ul>
 </div>
 
@@ -16,16 +16,16 @@
             <p>This means the market value at the time of purchase. If the maximum share of the property ultimately  obtainable is less than 100%, enter the value of that percentage.</p>
             <div>
                 <label class="block-label" for="currentValue-yes">
-                    <input id="currentValue-yes" ng-model="data.currentValue" name="currentValue" value="£500,000 or less" type="radio" required>£500,000 or less
+                    <input id="currentValue-yes" data-ng-model="data.currentValue" name="currentValue" value="£500,000 or less" type="radio" required>£500,000 or less
                 </label>
                 <label class="block-label" for="currentValue-no">
-                    <input id="currentValue-no" ng-model="data.currentValue" name="currentValue" value="More than £500,000" type="radio" required>More than £500,000
+                    <input id="currentValue-no" data-ng-model="data.currentValue" name="currentValue" value="More than £500,000" type="radio" required>More than £500,000
                 </label>
             </div>
         </fieldset>
     </div>
 
-    <div ng-if="data.currentValue === '£500,000 or less'">
+    <div data-ng-if="data.currentValue === '£500,000 or less'">
         <div class="form-group {{state.hasError('currentValue')}}">
             <fieldset>
                 <p>Based on the answers given, this purchase may qualify for First Time Buyers Relief.</p>
@@ -35,7 +35,7 @@
     </div>
 
     <div class="form-group">
-        <button ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/currentValue')">Continue</button>
+        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/currentValue')">Continue</button>
     </div>
 
 </form>

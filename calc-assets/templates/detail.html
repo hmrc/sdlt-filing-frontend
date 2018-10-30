@@ -10,10 +10,10 @@
           <th>Percentage rate (%)</th>
           <th>SDLT due (&pound;)</th>
         </tr>
-        <tr class="section" ng-repeat="slice in data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].slices">
-          <td id="{{'band'+($index+1)+'Range'}}" ng-if="$first">Up to {{slice.to | calcCurrency}}</td>
-          <td id="{{'band'+($index+1)+'Range'}}" ng-if="$middle">Above {{slice.from | calcCurrency}} and up to {{slice.to | calcCurrency}}</td>
-          <td id="{{'band'+($index+1)+'Range'}}" ng-if="$last">Above {{slice.from | calcCurrency}}+</td>
+        <tr class="section" data-ng-repeat="slice in data.result[data.resultIndex].taxCalcs[data.taxCalcIndex].slices">
+          <td id="{{'band'+($index+1)+'Range'}}" data-ng-if="$first">Up to {{slice.to | calcCurrency}}</td>
+          <td id="{{'band'+($index+1)+'Range'}}" data-ng-if="$middle">Above {{slice.from | calcCurrency}} and up to {{slice.to | calcCurrency}}</td>
+          <td id="{{'band'+($index+1)+'Range'}}" data-ng-if="$last">Above {{slice.from | calcCurrency}}+</td>
           <td id="{{'band'+($index+1)+'Rate'}}">{{slice.rate}}</td>
           <td id="{{'band'+($index+1)+'Tax'}}">{{slice.taxDue | calcCurrency}}</td>
         </tr>
@@ -26,6 +26,6 @@
     </table>
 </div>
 <div>
-    <p>You can <a ng-click="printView()" id="print-calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'detail.printView'); return false;">print your calculation</a>.</p>
+    <p>You can <a data-ng-click="printView()" id="print-calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'detail.printView'); return false;">print your calculation</a>.</p>
     <p>Go to the <a id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax" title="opens in a new window" onClick="ga('send', 'event', 'link', 'click', 'detail.govuk')" rel="external" target="_blank">GOV.UK</a> homepage for SDLT.</p>
 </div>

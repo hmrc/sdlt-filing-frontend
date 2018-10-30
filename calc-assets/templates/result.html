@@ -1,20 +1,20 @@
 <h1>{{title}}</h1>
 
-<div ng-if="responseReceived === false">
+<div data-ng-if="responseReceived === false">
   <p>Calculating...</p>
 </div>
 
-<div ng-if="responseReceived === true">
-  <div ng-if="errorResponse === true">
+<div data-ng-if="responseReceived === true">
+  <div data-ng-if="errorResponse === true">
     <h2>Sorry, we're experiencing technical difficulties</h2>
     <p>You can try <a id="errorStartAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'result.start-again')">restarting your calculation</a>.</p>
   </div>
-  <div ng-repeat="res in data.result" ng-if="errorResponse === false">
-    <h2 id="resultHeading{{$index}}" ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
+  <div data-ng-repeat="res in data.result" data-ng-if="errorResponse === false">
+    <h2 id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
     <span id="resultHint{{$index}}" class="form-hint">{{res.resultHint}}</span>
     <div class="form-group">
-      <table ng-if="data.holdingType === 'Freehold'">
-        <tbody ng-if="res.taxCalcs[0].calcType === 'slice'">
+      <table data-ng-if="data.holdingType === 'Freehold'">
+        <tbody data-ng-if="res.taxCalcs[0].calcType === 'slice'">
           <tr class="section">
             <th>Effective date</th>
             <th>Purchase price (&pound;)</th>
@@ -24,10 +24,10 @@
             <td id="effDate{{$index}}">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
             <td id="premium{{$index}}">{{data.premium | calcCurrency}}</td>
             <td id="totalTax{{$index}}">{{res.totalTax | calcCurrency}}</td>
-            <td><a id="detailCalc{{$index}}" ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
+            <td><a id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
           </tr>
         </tbody>
-        <tbody ng-if="res.taxCalcs[0].calcType === 'slab'">
+        <tbody data-ng-if="res.taxCalcs[0].calcType === 'slab'">
           <tr class="section">
             <th>Effective date</th>
             <th>Purchase price (&pound;)</th>
@@ -42,7 +42,7 @@
           </tr>
         </tbody>
       </table>
-      <table ng-if="data.holdingType === 'Leasehold'">
+      <table data-ng-if="data.holdingType === 'Leasehold'">
         <tbody>
           <tr class="section">
             <td>Total amount of tax for this transaction</td>
@@ -54,10 +54,10 @@
             <td id="npv{{$index}}">{{res.npv | calcCurrency:"£"}}</td>
             <td></td>
           </tr>
-          <tr ng-repeat="taxCalc in res.taxCalcs" class="section">
-            <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}}<span id="taxRate{{$index}}" ng-if="taxCalc.calcType === 'slab'"> ({{taxCalc.rate}}%)</span></td>
+          <tr data-ng-repeat="taxCalc in res.taxCalcs" class="section">
+            <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}}<span id="taxRate{{$index}}" data-ng-if="taxCalc.calcType === 'slab'"> ({{taxCalc.rate}}%)</span></td>
             <td id="taxDue{{$parent.$parent.$index+''+$index}}">{{taxCalc.taxDue | calcCurrency:"£"}}</td>
-            <td><a id="detailCalc{{$parent.$parent.$index+''+$index}}" ng-if="taxCalc.calcType === 'slice'" ng-click="viewDetails($parent.$parent.$index, $index)" href="javascript:return false" title="view detailed calculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
+            <td><a id="detailCalc{{$parent.$parent.$index+''+$index}}" data-ng-if="taxCalc.calcType === 'slice'" data-ng-click="viewDetails($parent.$parent.$index, $index)" href="javascript:return false" title="view detailed calculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">Detail</a></td>
           </tr>
         </tbody>
       </table>
@@ -66,7 +66,7 @@
 
 
   <div class="form-group">
-    <p>You can <a ng-click="printView()" id="print-calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.printView'); return false;">print your calculation</a>.</p>
+    <p>You can <a data-ng-click="printView()" id="print-calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.printView'); return false;">print your calculation</a>.</p>
     <p>Or you can <a id="startAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'result.start-again')">start again</a>.</p>
     <p>Go to the <a id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax" title="opens in a new window" onClick="ga('send', 'event', 'link', 'click', 'result.govuk')" rel="external" target="_blank">GOV.UK</a> homepage for SDLT.</p>
   </div>
