@@ -19,12 +19,16 @@
                 if (validator.isNotPopulated(data.premium)) {
                     state.marketValue = "Provide an answer to continue.";
                     ga('send', 'event', "userError", "marketValueError", "notPopulated");
+                } else if (validator.isInvalidFloat(data.premium)) {
+                    state.marketValue = "Enter the market value again - don't use any letters or characters including £";
+                    ga('send', 'event', "userError", "marketValueError", "invalid");
                 }
             }
             if(validator.isLessThanInteger(500000, data.premium)) {
                 state.marketValue = "Enter a value that is £500000 or less.";
                 ga('send', 'event', "userError", "marketValueError", "notPopulated");
             }
+            
             return buildState(state);
         };
 

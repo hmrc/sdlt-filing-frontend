@@ -27,6 +27,16 @@
             expect(state.validationMessage('marketValue')).toEqual("Provide an answer to continue.");
         });
 
+        it('paySDLT.mandatory should return an error when data is Stages and premium includes an invalid character', function() {
+            var state = service.validate({
+                paySDLT: "Stages",
+                premium : "200,000"
+            });
+            expect(state.isValid).toEqual(false);
+            expect(state.hasError('marketValue')).toEqual('form-field--error');
+            expect(state.validationMessage('marketValue')).toEqual("Enter the market value again - don't use any letters or characters including £");
+        });
+
         it('paySDLT.mandatory should return an error when data is Stages and premium is greater than £500,000', function() {
             var state = service.validate({
                 paySDLT: "Stages",
