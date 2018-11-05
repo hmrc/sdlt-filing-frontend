@@ -34,7 +34,7 @@
             });
             expect(state.isValid).toEqual(false);
             expect(state.hasError('marketValue')).toEqual('form-field--error');
-            expect(state.validationMessage('marketValue')).toEqual("Enter the market value again - don't use any letters or characters including £");
+            expect(state.validationMessage('marketValue')).toEqual("Enter the amount again - don't use any letters or characters including £");
         });
 
         it('paySDLT.mandatory should return an error when data is Stages and premium is greater than £500,000', function() {
