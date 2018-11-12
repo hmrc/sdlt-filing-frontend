@@ -11,6 +11,14 @@
             $(selector).focus();
         };
 
+        $scope.getFeedbackSurveyClass = function(){
+                  if(onResultPage()){
+                    return "feedback-survey--show";
+                  }else{
+                    return "visually-hidden";
+                  }
+                };
+
         $scope.getURBannerClass = function() {
                 if (cookieService.getCookie() == null && onResultPage()){
                     return "banner-panel banner-panel--show";

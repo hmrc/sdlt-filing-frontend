@@ -5,6 +5,3 @@ GET         /javascript/*file                      controllers.Assets.versioned(
 
 #Calculation Routes
 POST        /calculate                             calculation.controllers.CalculationController.calculateSDLTC
-
-#Exit survey
-POST        /submitExitSurvey                      exitsurvey.controllers.ExitSurveyController.onSubmit
