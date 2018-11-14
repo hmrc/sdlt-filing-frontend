@@ -337,5 +337,72 @@
             });
         });
 
+       describe("should display the feedback survey link on the results page", function () {
+
+           beforeEach(mocks.inject(function ($controller, $rootScope, $window) {
+
+            mockWindow = {
+                location: {
+                    href : "result"
+                }
+            };
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup =function () {return true;};
+            mockLoggingService = { logEvent: function() {} };
+            spyOn(mockLoggingService, 'logEvent');
+            mockCookieService = {
+                getCookie : function() {return "candy";}
+            };
+
+
+            controller = $controller(
+                'mainController',
+                {
+                    $scope: mockScope,
+                    $window: mockWindow,
+                    loggingService: mockLoggingService,
+                    cookieService : mockCookieService
+                    });
+                }));
+
+            it('should return the feedback survey link when on the results page', function () {
+                expect(mockScope.getFeedbackSurveyClass()).toEqual("feedback-survey--show");
+            });
+         });
+
+
+        describe("The feedback survey link being hidden on all pages but the results page", function () {
+
+           beforeEach(mocks.inject(function ($controller, $rootScope, $window) {
+
+            mockWindow = {
+                location: {
+                    href : "partner"
+                }
+            };
+            mockScope = $rootScope.$new();
+            mockScope.getHelpSetup =function () {return true;};
+            mockLoggingService = { logEvent: function() {} };
+            spyOn(mockLoggingService, 'logEvent');
+            mockCookieService = {
+                getCookie : function() {return "candy";}
+            };
+
+
+            controller = $controller(
+                'mainController',
+                {
+                    $scope: mockScope,
+                    $window: mockWindow,
+                    loggingService: mockLoggingService,
+                    cookieService : mockCookieService
+                    });
+                }));
+
+            it('should return nothing when on the partner page', function () {
+                expect(mockScope.getFeedbackSurveyClass()).toEqual("visually-hidden");
+            });
+         });
+
     });
 }());

@@ -192,6 +192,12 @@
 	width: 1px !important;
 	overflow: hidden;
  }
+
+ .feedback-survey--show {
+     display: block;
+ }
+
+
  .banner-panel {
     display: none;
     background-color: #005ea5;
@@ -307,6 +313,10 @@
 
         <div id="main">
             <div data-ng-view data-autoscroll="true">Loading...</div>
+        </div>
+
+        <div ng-class="getFeedbackSurveyClass()">
+            <p><a id="exitSurvey" href="@FrontendAppConfig.feedbackSurveyUrl"> What did you think of this service?</a></p>
         </div>
 
         <div class="report-error">
