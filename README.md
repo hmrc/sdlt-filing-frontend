@@ -25,8 +25,8 @@ sbt "run 9953"
     
 ### Start dependencies via Service Manager:  
 ```
-sm --start ASSETS_FRONTEND
-sm --start CONTACT_FRONTEND
+sm --start SDLTC_ALL -r
+sm --start SDLTC_DEP -r (doesn't start up the frontend.)
 ```
 
 ### Accessing the ASSSETS_FRONTEND via nginx (This is one time activity, switch user to admin user and complete the following)
