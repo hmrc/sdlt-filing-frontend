@@ -3,6 +3,7 @@ package config
 
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
+import play.api.Mode.Mode
 import play.api._
 import play.api.mvc._
 import play.twirl.api.Html
@@ -10,6 +11,11 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig}
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import uk.gov.hmrc.play.frontend.filters._
+
+trait RunModeConfig {
+  def runModeConfiguration: Configuration = Play.current.configuration
+  def mode: Mode = Play.current.mode
+}
 
 object FrontendGlobal
   extends DefaultFrontendGlobal {
@@ -53,4 +59,6 @@ object AuditFilter extends FrontendAuditFilter with AppName with MicroserviceFil
   override lazy val auditConnector = FrontendAuditConnector
 
   override def controllerNeedsAuditing(controllerName: String): Boolean = ControllerConfiguration.paramsForController(controllerName).needsAuditing
+
+  override protected def appNameConfiguration: Configuration = Play.current.configuration
 }
