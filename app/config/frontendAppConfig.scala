@@ -15,17 +15,15 @@ trait AppConfig {
   val urBannerLink: String
 }
 
-object FrontendAppConfig extends AppConfig with ServicesConfig {
+object FrontendAppConfig extends AppConfig with ServicesConfig with RunModeConfig {
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   private val contactHost = configuration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "SDLTC"
 
-  override implicit lazy val assetsConfig =  new AssetsConfig {
-    override lazy val assetsUrl = loadConfig("assets.url")
-    override lazy val assetsVersion = loadConfig("assets.version")
-    override lazy val assetsPrefix = loadConfig("assets.url") + loadConfig("assets.version")
+  override implicit lazy val assetsConfig =  new AssetsConfig(configuration) {
+    override val assetsPrefix = loadConfig("assets.url") + loadConfig("assets.version")
   }
 
   override lazy val analyticsToken = loadConfig("google-analytics.token")
