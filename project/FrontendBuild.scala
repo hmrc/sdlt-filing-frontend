@@ -38,7 +38,9 @@ private object AppDependencies {
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" % "12.1.0",
+    "uk.gov.hmrc" %% "bootstrap-play-25" % "4.8.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.27.0-play-25",
+    "uk.gov.hmrc" %% "play-ui" % "7.31.0-play-25",
     "com.kenshoo" %% "metrics-play" % "2.4.0_0.4.1",
     "com.codahale.metrics" % "metrics-graphite" % "3.0.2"
   )

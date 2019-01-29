@@ -36,11 +36,24 @@ Install nginx
 sudo apt-get update
 sudo apt-get install nginx
 ```  
- 
+
+For Mac
+```
+brew install nginx
+
+(you may have to start nginx manually on mac)
+sudo nginx
+```
+
 Open default file to edit
 ```
 sudo nano /etc/nginx/sites-enabled/default   
-```  
+```
+
+For Mac
+```
+sudo nano /usr/local/etc/nginx/nginx.conf
+```
 
 (Modify above file to add below snippet in Default server configuration below default location snippet)
 
@@ -60,9 +73,18 @@ sudo nano /etc/nginx/sites-enabled/default
         proxy_pass      http://localhost:9953/calculate-stamp-duty-land-tax;
 	}
 
-Restart nginx  
-```  
+(For Mac you might need to change the server port to listen for 80 from 8080)
+
+
+Restart nginx
+```
 sudo /etc/init.d/nginx restart
-```    
+```
+
+For Mac
+```
+sudo nginx -s stop : To stop
+sudo nginx : To start
+```
 
 

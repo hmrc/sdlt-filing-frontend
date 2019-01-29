@@ -1,7 +1,9 @@
 package config
 
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import play.api.Play.{configuration, current}
-import uk.gov.hmrc.play.config.{ServicesConfig, AssetsConfig}
+import uk.gov.hmrc.play.config.{AssetsConfig, ServicesConfig}
 
 trait AppConfig {
   val analyticsToken: String
@@ -13,6 +15,11 @@ trait AppConfig {
   val betaFeedbackUnauthenticatedUrl: String
   val assetsConfig: AssetsConfig
   val urBannerLink: String
+}
+
+trait RunModeConfig {
+  def runModeConfiguration: Configuration = Play.current.configuration
+  def mode: Mode = Play.current.mode
 }
 
 object FrontendAppConfig extends AppConfig with ServicesConfig with RunModeConfig {
