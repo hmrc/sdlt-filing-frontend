@@ -8,7 +8,7 @@ import calculation.validators.internal.{ModelValidation, ValidationFailure}
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 
 @Singleton
