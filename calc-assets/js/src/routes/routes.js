@@ -147,7 +147,7 @@
             })
 
             .when('/print', {
-                title : 'Summary',
+                title : 'SDLT calculator',
                 templateUrl : 'print.html',
                 controller  : 'printController',
                 reloadOnSearch: false

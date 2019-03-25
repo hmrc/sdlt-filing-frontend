@@ -265,7 +265,7 @@
                 location.path('/print');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('printController');
-                expect(route.current.title).toBe('Summary');
+                expect(route.current.title).toBe('SDLT calculator');
             });
         });
 
