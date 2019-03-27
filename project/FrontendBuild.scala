@@ -38,9 +38,9 @@ private object AppDependencies {
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "bootstrap-play-25" % "4.8.0",
-    "uk.gov.hmrc" %% "govuk-template" % "5.27.0-play-25",
-    "uk.gov.hmrc" %% "play-ui" % "7.31.0-play-25",
+    "uk.gov.hmrc" %% "bootstrap-play-25" % "4.9.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.30.0-play-25",
+    "uk.gov.hmrc" %% "play-ui" % "7.33.0-play-25",
     "com.kenshoo" %% "metrics-play" % "2.4.0_0.4.1",
     "com.codahale.metrics" % "metrics-graphite" % "3.0.2"
   )
@@ -53,7 +53,7 @@ private object AppDependencies {
   object Test {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" % "3.4.0-play-25" % scope,
+        "uk.gov.hmrc" %% "hmrctest" % "3.6.0-play-25" % scope,
         "org.mockito" % "mockito-all" % "1.9.5" % scope,
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
         "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope
@@ -67,7 +67,7 @@ private object AppDependencies {
       override lazy val scope: String = "it"
 
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" % "3.1.0" % scope,
+        "uk.gov.hmrc" %% "hmrctest" % "3.6.0-play-25" % scope,
         "org.mockito" % "mockito-all" % "1.9.5" % scope,
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
         "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope
