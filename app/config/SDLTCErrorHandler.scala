@@ -7,9 +7,8 @@ import play.api.i18n.MessagesApi
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import play.api.mvc.Request
 
-class frontendErrorHandler @Inject()(
-                                      val messagesApi: MessagesApi,
-                                      val configuration: Configuration) extends FrontendErrorHandler {
+class SDLTCErrorHandler @Inject()(val messagesApi: MessagesApi,
+                                  implicit val configuration: FrontendAppConfig) extends FrontendErrorHandler {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
       views.html.error_template(pageTitle, heading, message)

@@ -12,13 +12,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 
 @Singleton
-class CalculationController @Inject()(
-                                       val calculationService :  CalculationService
-                                     ) extends CalculationCtr
-
-trait CalculationCtr extends FrontendController{
-
-  val calculationService :  CalculationSrv
+class CalculationController @Inject()(val calculationService: CalculationService) extends FrontendController {
 
   val calculateSDLTC: Action[AnyContent] = Action{ implicit request =>
     request.body.asJson match {

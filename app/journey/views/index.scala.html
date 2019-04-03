@@ -1,5 +1,7 @@
-@(gatoken: String, gahost: String, optimizelyId: String, showBanner: Boolean)(implicit request: Request[_])
 @import config.FrontendAppConfig
+
+@(gatoken: String, gahost: String, optimizelyId: String, showBanner: Boolean)(implicit request: Request[_], config: FrontendAppConfig)
+
 <!DOCTYPE html>
 <!--[if lt IE 8]><html class="no-js lte-ie8" lang="en"><![endif]-->
 <!--[if gte IE 8]><!-->
@@ -276,7 +278,7 @@
 <div id="ur-panel" class="banner-panel" data-ng-class="getURBannerClass()">
     <section class="centered-content visible banner-panel__container" aria-hidden="false">
         <div class="banner-panel__title">Help improve GOV.UK</div>
-        <a href="@FrontendAppConfig.urBannerLink"
+        <a href="@config.urBannerLink"
            data-sso="false"
            data-journey-click="link - click:UR Banner:Participate"
            target="_blank"
@@ -316,7 +318,7 @@
         </div>
 
         <div ng-class="getFeedbackSurveyClass()">
-            <p><a id="exitSurvey" href="@FrontendAppConfig.feedbackSurveyUrl"> What did you think of this service?</a></p>
+            <p><a id="exitSurvey" href="@config.feedbackSurveyUrl"> What did you think of this service?</a></p>
         </div>
 
         <div class="report-error">

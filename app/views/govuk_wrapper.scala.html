@@ -1,8 +1,8 @@
 @import play.api.Play.current
 @import play.api.i18n.Messages.Implicits._
-@import config.FrontendAppConfig._
+@import config.FrontendAppConfig
 
-@(appConfig: config.AppConfig,
+@(appConfig: FrontendAppConfig,
   title: String,
   mainClass: Option[String] = None,
   mainDataAttributes: Option[Html] = None,

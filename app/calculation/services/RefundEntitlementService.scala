@@ -6,9 +6,7 @@ import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.models.PropertyDetails
 
 @Singleton
-class RefundEntitlementService extends RefundEntitlementSrv
-
-trait RefundEntitlementSrv {
+class RefundEntitlementService {
 
   def calculateRefundEntitlement(premiumResultTaxDue: BigDecimal, prevResultTax: Int, reqPropertyDetails: Option[PropertyDetails]): Option[Int] ={
     if(eligibleForRefund(premiumResultTaxDue.toInt, prevResultTax, reqPropertyDetails))

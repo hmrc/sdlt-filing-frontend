@@ -8,15 +8,8 @@ import calculation.models.{Request, Result}
 import calculation.factories.FreeholdResultFactory
 
 @Singleton
-class FreeholdCalculationService @Inject()(
-  val baseCalculationService: BaseCalculationService,
-  val refundEntitlementService: RefundEntitlementService
-) extends FreeholdCalculationSrv
-
-trait FreeholdCalculationSrv {
-
-  val baseCalculationService: BaseCalculationSrv
-  val refundEntitlementService: RefundEntitlementSrv
+class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalculationService,
+                                           val refundEntitlementService: RefundEntitlementService) {
 
   def freeholdResidentialNov17OnwardsFTB(request: Request): Result = {
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
