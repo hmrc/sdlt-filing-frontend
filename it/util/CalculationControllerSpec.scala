@@ -11,9 +11,10 @@ import play.api.libs.ws.{WSClient, WSResponse}
 class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .configure()
     .build()
 
-  val calculateUrl = s"http://localhost:$port/calculate-stamp-duty-land-tax/calculate"
+  lazy val calculateUrl = s"http://localhost:$port/calculate-stamp-duty-land-tax/calculate"
 
   lazy val ws: WSClient = app.injector.instanceOf[WSClient]
 

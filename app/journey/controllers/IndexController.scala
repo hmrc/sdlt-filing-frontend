@@ -20,7 +20,7 @@ import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -28,7 +28,8 @@ import scala.concurrent.Future
 import scala.util.Random
 
 @Singleton
-class IndexController @Inject()(implicit val config: FrontendAppConfig) extends FrontendController {
+class IndexController @Inject()(implicit val config: FrontendAppConfig,
+                                mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   val gatoken: String = config.analyticsToken
   val gahost: String = config.analyticsHost

@@ -1,18 +1,18 @@
 package calculation.controllers
 
 import javax.inject.{Inject, Singleton}
-
 import calculation.models.Request
 import calculation.services._
-import calculation.validators.internal.{ModelValidation, ValidationFailure}
+import calculation.validators.internal.ModelValidation
 import play.api.Logger
 import play.api.libs.json._
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 
 @Singleton
-class CalculationController @Inject()(val calculationService: CalculationService) extends FrontendController {
+class CalculationController @Inject()(val calculationService: CalculationService,
+                                      mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   val calculateSDLTC: Action[AnyContent] = Action{ implicit request =>
     request.body.asJson match {

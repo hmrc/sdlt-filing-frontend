@@ -24,8 +24,7 @@ object FrontendBuild extends Build with MicroService {
         unmanagedResourceDirectories in Assets += baseDirectory.value / "app" / "assets",
         // Dont include the source assets in the dist package (public folder)
         excludeFilter in Assets := "js*" || "sass*",
-        // Override the scala dependency (remove eviction warning) - remove this once sbt-settings updated
-        dependencyOverrides += "org.scala-lang" % "scala-library" % "2.11.7"
+        dependencyOverrides += "org.scala-lang" % "scala-library" % "2.11.12"
         ) ++ JavaScriptBuild.javaScriptUiSettings
 
 }
@@ -38,11 +37,9 @@ private object AppDependencies {
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "bootstrap-play-25" % "4.9.0",
-    "com.kenshoo" %% "metrics-play" % "2.4.0_0.4.1",
-    "com.codahale.metrics" % "metrics-graphite" % "3.0.2",
-    "uk.gov.hmrc" %% "govuk-template" % "5.30.0-play-25",
-    "uk.gov.hmrc" %% "play-ui" % "7.37.0-play-25"
+    "uk.gov.hmrc" %% "bootstrap-play-26" % "0.37.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.30.0-play-26",
+    "uk.gov.hmrc" %% "play-ui" % "7.38.0-play-26"
   )
 
   trait TestDependencies {
@@ -53,10 +50,9 @@ private object AppDependencies {
   object Test {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" % "3.4.0-play-25" % scope,
-        "org.mockito" % "mockito-all" % "1.9.5" % scope,
-        "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
-        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope
+        "uk.gov.hmrc" %% "hmrctest" % "3.6.0-play-26" % scope,
+        "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % scope,
+        "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
       )
     }.test
   }
@@ -67,10 +63,9 @@ private object AppDependencies {
       override lazy val scope: String = "it"
 
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" % "3.1.0" % scope,
-        "org.mockito" % "mockito-all" % "1.9.5" % scope,
-        "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
-        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope
+        "uk.gov.hmrc" %% "hmrctest" % "3.6.0-play-26" % scope,
+        "com.github.tomakehurst" % "wiremock-jre8" % "2.21.0" % scope,
+        "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
       )
     }.test
   }

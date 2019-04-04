@@ -1,23 +1,19 @@
 package config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Mode.Mode
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.AssetsConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject()(env: Environment, val runModeConfiguration: Configuration) {
+class FrontendAppConfig @Inject()(config: ServicesConfig) {
 
-  val mode: Mode = env.mode
-
-  private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+  private def loadConfig(key: String) = config.getString(key)
 
   private val contactFormServiceIdentifier = "SDLTC"
-  private lazy val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
+  private lazy val contactHost = config.getString("contact-frontend.host")
 
-  implicit lazy val assetsConfig =  new AssetsConfig(runModeConfiguration) {
-    override val assetsPrefix = loadConfig("assets.url") + loadConfig("assets.version")
-  }
+  private lazy val assetsUrl     = config.getString("assets.url")
+  private lazy val assetsVersion = config.getString("assets.version")
+  lazy val assetsPrefix: String  = assetsUrl + assetsVersion
 
   lazy val analyticsToken: String = loadConfig("google-analytics.token")
   lazy val analyticsHost: String = loadConfig("google-analytics.host")

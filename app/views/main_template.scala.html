@@ -5,13 +5,11 @@
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], config: FrontendAppConfig)
-
-@import uk.gov.hmrc.play.views.html.layouts
-
+  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], config: FrontendAppConfig, messages: Messages)
 
 @serviceInfoContent = {}
 
+@import uk.gov.hmrc.play.views.html.layouts
 @sidebar = {
     @if(sidebarLinks.isDefined) {
         @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
