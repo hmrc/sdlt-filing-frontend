@@ -10,15 +10,8 @@ import calculation.models._
 import calculation.validators.internal.ModelValidation
 
 @Singleton
-class LeaseholdCalculationService @Inject()(
-  val baseCalculationService: BaseCalculationService,
-  val refundEntitlementService: RefundEntitlementService
-) extends LeaseholdCalculationSrv
-
-trait LeaseholdCalculationSrv {
-
-  val baseCalculationService: BaseCalculationSrv
-  val refundEntitlementService: RefundEntitlementSrv
+class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalculationService,
+                                            val refundEntitlementService: RefundEntitlementService) {
 
   def checkIfShared(propertyDetails: Option[PropertyDetails]) : Boolean = {
    propertyDetails.exists(propDetails => propDetails.sharedOwnership.getOrElse(false))

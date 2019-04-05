@@ -2,19 +2,23 @@ package calculation.controllers
 
 import akka.actor.ActorSystem
 import calculation.services.CalculationService
-import org.scalamock.scalatest.MockFactory
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import akka.stream.ActorMaterializer
 import calculation.enums.{CalcTypes, TaxTypes}
 import calculation.models.{CalculationDetails, CalculationResponse, Result}
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.OneInstancePerTest
+import org.scalatest.mockito.MockitoSugar
+import play.api.mvc.{DefaultMessagesControllerComponents, MessagesControllerComponents}
 
-class CalculationControllerSpec extends UnitSpec with MockFactory {
+class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstancePerTest with WithFakeApplication{
 
+  val mockComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
   val mockCalculationService = mock[CalculationService]
-  val testCalculationController = new CalculationController(mockCalculationService)
+  val testCalculationController = new CalculationController(mockCalculationService, mockComponents)
   val actorSystem = ActorSystem("actorSystem")
   val materializer = ActorMaterializer()(actorSystem)
 
@@ -62,7 +66,7 @@ class CalculationControllerSpec extends UnitSpec with MockFactory {
         val fakeRequest = FakeRequest().withJsonBody(incompleteJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) shouldBe BAD_REQUEST
-        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("Incorrect Json request body format supplied: JsError(List((/highestRent,List(ValidationError(List(error.path.missing),WrappedArray())))))")
+        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("Incorrect Json request body format supplied: JsError(List((/highestRent,List(JsonValidationError(List(error.path.missing),WrappedArray())))))")
       }
 
 

@@ -3,7 +3,6 @@ package calculation.validators.api
 import java.time.LocalDate
 
 import calculation.models.{LeaseDetails, LeaseTerm}
-import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import testutils.JsonValidation
 import uk.gov.hmrc.play.test.UnitSpec
@@ -42,7 +41,7 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
 
         val result = Json.fromJson[LocalDate](testJson)(RequestValidators.multiFieldDateReads("specific"))
 
-        shouldHaveErrors(result, __ \ "specificDay", ValidationError(List("error.path.missing")))
+        shouldHaveErrors(result, __ \ "specificDay", JsonValidationError(List("error.path.missing")))
       }
 
       "month is not provided" in {
@@ -56,7 +55,7 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
 
         val result = Json.fromJson[LocalDate](testJson)(RequestValidators.multiFieldDateReads("other"))
 
-        shouldHaveErrors(result, __ \ "otherMonth", ValidationError(List("error.path.missing")))
+        shouldHaveErrors(result, __ \ "otherMonth", JsonValidationError(List("error.path.missing")))
       }
 
       "year is not provided" in {
@@ -70,7 +69,7 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
 
         val result = Json.fromJson[LocalDate](testJson)(RequestValidators.multiFieldDateReads("different"))
 
-        shouldHaveErrors(result, __ \ "differentYear", ValidationError(List("error.path.missing")))
+        shouldHaveErrors(result, __ \ "differentYear", JsonValidationError(List("error.path.missing")))
       }
 
       "the wrong data types are provided" in {
@@ -88,9 +87,9 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
         val result = Json.fromJson[LocalDate](testJson)(RequestValidators.multiFieldDateReads("memorable"))
 
         shouldHaveErrors(result, Map(
-          __ \ "memorableDay" -> Seq(ValidationError(List("error.expected.jsnumber"))),
-          __ \ "memorableMonth" -> Seq(ValidationError(List("error.expected.jsnumber"))),
-          __ \ "memorableYear" -> Seq(ValidationError(List("error.expected.jsnumber")))
+          __ \ "memorableDay" -> Seq(JsonValidationError(List("error.expected.jsnumber"))),
+          __ \ "memorableMonth" -> Seq(JsonValidationError(List("error.expected.jsnumber"))),
+          __ \ "memorableYear" -> Seq(JsonValidationError(List("error.expected.jsnumber")))
         ))
       }
 
@@ -108,7 +107,7 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
 
         val result = Json.fromJson[LocalDate](testJson)(RequestValidators.multiFieldDateReads("memorable"))
 
-        shouldHaveErrors(result, __, ValidationError(List("'memorable' date could not be parsed. Error: Invalid date 'February 29' as '2017' is not a leap year")))
+        shouldHaveErrors(result, __, JsonValidationError(List("'memorable' date could not be parsed. Error: Invalid date 'February 29' as '2017' is not a leap year")))
       }
     }
   }
@@ -123,11 +122,11 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
     "fail" when {
       "an invalid string is provided" in {
         val result = Json.fromJson[Boolean](JsString("notBool"))(RequestValidators.yesNoToBooleanReads)
-        shouldHaveErrors(result, __, ValidationError(List("'notBool' could not be converted to Boolean")))
+        shouldHaveErrors(result, __, JsonValidationError(List("'notBool' could not be converted to Boolean")))
       }
       "a non-string value is provided" in {
         val result = Json.fromJson[Boolean](JsNumber(3))(RequestValidators.yesNoToBooleanReads)
-        shouldHaveErrors(result, __, ValidationError(List("error.expected.jsstring")))
+        shouldHaveErrors(result, __, JsonValidationError(List("error.expected.jsstring")))
       }
     }
   }

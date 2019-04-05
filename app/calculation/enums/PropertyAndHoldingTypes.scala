@@ -1,6 +1,5 @@
 package calculation.enums
 
-import play.api.data.validation.ValidationError
 import play.api.libs.json._
 
 import scala.collection.Seq
@@ -16,8 +15,8 @@ object HoldingTypes extends Enumeration {
         HoldingTypes.values
           .find(_.toString == str.toLowerCase)
           .map(JsSuccess(_))
-          .getOrElse(JsError(Seq(JsPath() -> Seq(ValidationError("invalid holding type")))))
-      case _ => JsError(Seq(JsPath() -> Seq(ValidationError("no holding type string provided"))))
+          .getOrElse(JsError(Seq(JsPath() -> Seq(JsonValidationError("invalid holding type")))))
+      case _ => JsError(Seq(JsPath() -> Seq(JsonValidationError("no holding type string provided"))))
     }
   }
 
@@ -34,8 +33,8 @@ object PropertyTypes extends Enumeration {
     override def reads(json: JsValue): JsResult[PropertyTypes.Value] = json match {
       case JsString("Residential")     => JsSuccess(PropertyTypes.residential)
       case JsString("Non-residential") => JsSuccess(PropertyTypes.nonResidential)
-      case JsString(err) => JsError(Seq(JsPath() -> Seq(ValidationError("invalid property type"))))
-      case _ => JsError(Seq(JsPath() -> Seq(ValidationError("no property type string provided"))))
+      case JsString(err) => JsError(Seq(JsPath() -> Seq(JsonValidationError("invalid property type"))))
+      case _ => JsError(Seq(JsPath() -> Seq(JsonValidationError("no property type string provided"))))
     }
   }
 

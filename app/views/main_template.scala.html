@@ -1,22 +1,22 @@
+@import config.FrontendAppConfig
+
 @(title: String,
   sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_])
-
-@import uk.gov.hmrc.play.views.html.layouts
-
+  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], config: FrontendAppConfig, messages: Messages)
 
 @serviceInfoContent = {}
 
+@import uk.gov.hmrc.play.views.html.layouts
 @sidebar = {
     @if(sidebarLinks.isDefined) {
         @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
     }
 }
 
-@govuk_wrapper(appConfig = config.FrontendAppConfig,
+@govuk_wrapper(appConfig = config,
                title = title,
                mainClass = mainClass,
                bodyClasses = bodyClasses,
@@ -24,5 +24,4 @@
                contentHeader = contentHeader,
                mainContent = layouts.article(mainContent),
                serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem
-)
+               scriptElem = scriptElem)

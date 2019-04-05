@@ -9,17 +9,10 @@ import calculation.data.Dates
 import calculation.utils.DateUtil
 
 @Singleton
-class CalculationService @Inject()(
-                                    val leaseCalculationService: LeaseholdCalculationService,
-                                    val freeCalculationService: FreeholdCalculationService,
-                                    val additionalPropertyService: AdditionalPropertyService
-                                  ) extends CalculationSrv
+class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalculationService,
+                                   val freeCalculationService: FreeholdCalculationService,
+                                   val additionalPropertyService: AdditionalPropertyService) extends DateUtil {
 
-trait CalculationSrv extends DateUtil{
-
-  val leaseCalculationService: LeaseholdCalculationSrv
-  val freeCalculationService: FreeholdCalculationSrv
-  val additionalPropertyService: AdditionalPropertySrv
   val MAX_PREMIUM_FTB = 500000
 
   def CalculateTax(request: Request): CalculationResponse ={

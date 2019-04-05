@@ -1,6 +1,5 @@
 package calculation.enums
 
-import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -16,11 +15,11 @@ class PropertyAndHoldingTypesSpec extends UnitSpec {
 
 
     "fail to read 'leaseyholdings' to Json" in {
-      Json.fromJson[HoldingTypes.Value](JsString("leaseyholdings")) shouldBe JsError(Seq(JsPath() -> Seq(ValidationError("invalid holding type"))))
+      Json.fromJson[HoldingTypes.Value](JsString("leaseyholdings")) shouldBe JsError(Seq(JsPath() -> Seq(JsonValidationError("invalid holding type"))))
     }
 
     "fail to read 3 to Json" in {
-      Json.fromJson[HoldingTypes.Value](JsNumber(3)) shouldBe JsError(Seq(JsPath() -> Seq(ValidationError("no holding type string provided"))))
+      Json.fromJson[HoldingTypes.Value](JsNumber(3)) shouldBe JsError(Seq(JsPath() -> Seq(JsonValidationError("no holding type string provided"))))
     }
   }
 
@@ -33,11 +32,11 @@ class PropertyAndHoldingTypesSpec extends UnitSpec {
     }
 
     "fail to read 'ressssssssidential' to Json" in {
-      Json.fromJson[PropertyTypes.Value](JsString("ressssssssidential")) shouldBe JsError(Seq(JsPath() -> Seq(ValidationError("invalid property type"))))
+      Json.fromJson[PropertyTypes.Value](JsString("ressssssssidential")) shouldBe JsError(Seq(JsPath() -> Seq(JsonValidationError("invalid property type"))))
     }
 
     "fail to read 3 to Json" in {
-      Json.fromJson[PropertyTypes.Value](JsNumber(3)) shouldBe JsError(Seq(JsPath() -> Seq(ValidationError("no property type string provided"))))
+      Json.fromJson[PropertyTypes.Value](JsNumber(3)) shouldBe JsError(Seq(JsPath() -> Seq(JsonValidationError("no property type string provided"))))
     }
   }
 }

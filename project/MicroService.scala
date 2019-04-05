@@ -40,7 +40,7 @@ trait MicroService {
     .enablePlugins(plugins : _*)
     .settings(playSettings : _*)
     .settings(playSettings ++ scoverageSettings : _*)
-    .settings(scalaVersion := "2.11.11")
+    .settings(scalaVersion := "2.11.12")
     .settings(scalaSettings: _*)
     .settings(majorVersion := 5)
     .settings(publishingSettings: _*)
@@ -51,7 +51,6 @@ trait MicroService {
       parallelExecution in Test := false,
       fork in Test := false,
       retrieveManaged := true,
-      routesGenerator := InjectedRoutesGenerator,
       pipelineStages in Assets := Seq(digest)
     )
     .settings(Repositories.playPublishingSettings : _*)

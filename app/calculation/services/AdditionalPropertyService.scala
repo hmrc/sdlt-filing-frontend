@@ -6,12 +6,10 @@ import calculation.exceptions.RequiredValueNotDefinedException
 import calculation.models.PropertyDetails
 
 @Singleton
-class AdditionalPropertyService extends AdditionalPropertySrv
-
-trait AdditionalPropertySrv {
+class AdditionalPropertyService {
 
   def additionalPropertyRatesApply(oPropertyDetails: Option[PropertyDetails]): Boolean = {
-    oPropertyDetails.map {propertyDetails =>
+    oPropertyDetails.map { propertyDetails =>
       if(propertyDetails.individual) {
         additionalProperty(propertyDetails.twoOrMoreProperties, propertyDetails.replaceMainResidence)
       } else true

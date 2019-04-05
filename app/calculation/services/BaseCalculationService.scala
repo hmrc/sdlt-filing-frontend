@@ -8,9 +8,7 @@ import calculation.models.calculationtables.{Slab, SlabResult, Slice, SliceResul
 import scala.math.BigDecimal.RoundingMode
 
 @Singleton
-class BaseCalculationService extends BaseCalculationSrv
-
-trait BaseCalculationSrv {
+class BaseCalculationService {
 
   def calculateTaxDueSlab(amount: BigDecimal, slabs: Seq[Slab]): SlabResult = {
     slabs.find(amount > _.threshold).map { firstSlabAboveAmount =>
