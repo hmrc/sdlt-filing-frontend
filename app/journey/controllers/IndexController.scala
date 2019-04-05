@@ -28,8 +28,8 @@ import scala.concurrent.Future
 import scala.util.Random
 
 @Singleton
-class IndexController @Inject()(implicit val config: FrontendAppConfig,
-                                mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class IndexController @Inject()(mcc: MessagesControllerComponents,
+                                implicit val config: FrontendAppConfig) extends FrontendController(mcc) {
 
   val gatoken: String = config.analyticsToken
   val gahost: String = config.analyticsHost

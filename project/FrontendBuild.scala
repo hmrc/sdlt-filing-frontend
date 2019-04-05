@@ -38,7 +38,7 @@ private object AppDependencies {
     filters,
     ws,
     "uk.gov.hmrc" %% "bootstrap-play-26" % "0.37.0",
-    "uk.gov.hmrc" %% "govuk-template" % "5.30.0-play-26",
+    "uk.gov.hmrc" %% "govuk-template" % "5.31.0-play-26",
     "uk.gov.hmrc" %% "play-ui" % "7.38.0-play-26"
   )
 
@@ -52,6 +52,7 @@ private object AppDependencies {
       override lazy val test = Seq(
         "uk.gov.hmrc" %% "hmrctest" % "3.6.0-play-26" % scope,
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % scope,
+        "org.mockito" % "mockito-core" % "2.13.0" % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
       )
     }.test
