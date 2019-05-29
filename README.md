@@ -86,5 +86,10 @@ For Mac
 sudo nginx -s stop : To stop
 sudo nginx : To start
 ```
+Access SDLTC via nginx
+```
+http://localhost/calculate-stamp-duty-land-tax/
+```
+
 
 
