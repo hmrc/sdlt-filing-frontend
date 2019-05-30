@@ -37,9 +37,9 @@ private object AppDependencies {
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "bootstrap-play-26" % "0.37.0",
-    "uk.gov.hmrc" %% "govuk-template" % "5.34.0-play-26",
-    "uk.gov.hmrc" %% "play-ui" % "7.39.0-play-26"
+    "uk.gov.hmrc" %% "bootstrap-play-26" % "0.40.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.35.0-play-26",
+    "uk.gov.hmrc" %% "play-ui" % "7.40.0-play-26"
   )
 
   trait TestDependencies {
@@ -52,7 +52,7 @@ private object AppDependencies {
       override lazy val test = Seq(
         "uk.gov.hmrc" %% "hmrctest" % "3.8.0-play-26" % scope,
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % scope,
-        "org.mockito" % "mockito-core" % "2.13.0" % scope,
+        "org.mockito" % "mockito-core" % "2.28.1" % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
       )
     }.test
@@ -65,7 +65,7 @@ private object AppDependencies {
 
       override lazy val test = Seq(
         "uk.gov.hmrc" %% "hmrctest" % "3.8.0-play-26" % scope,
-        "com.github.tomakehurst" % "wiremock-jre8" % "2.21.0" % scope,
+        "com.github.tomakehurst" % "wiremock-jre8" % "2.23.2" % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
       )
     }.test
