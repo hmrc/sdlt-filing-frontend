@@ -27,7 +27,6 @@
             <td id="premium{{$index}}">{{data.premium | calcCurrency}}</td>
             <td id="totalTax{{$index}}">{{res.totalTax | calcCurrency}}</td>
             <td><a id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">View calculation</a></td>
-            <td><a id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">View calculation</a></td>
           </tr>
         </tbody>
         <tbody data-ng-if="res.taxCalcs[0].calcType === 'slab'">

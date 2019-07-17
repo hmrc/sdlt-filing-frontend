@@ -50,7 +50,7 @@ private object AppDependencies {
   object Test {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" % "3.8.0-play-26" % scope,
+        "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % scope,
         "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % scope,
         "org.mockito" % "mockito-core" % "2.28.1" % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
@@ -64,7 +64,7 @@ private object AppDependencies {
       override lazy val scope: String = "it"
 
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" % "3.8.0-play-26" % scope,
+        "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % scope,
         "com.github.tomakehurst" % "wiremock-jre8" % "2.23.2" % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
       )
