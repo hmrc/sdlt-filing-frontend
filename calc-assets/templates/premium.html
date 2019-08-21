@@ -20,9 +20,11 @@
 
     <div data-ng-show="showPremiumHelp">
         <details>
-            <summary data-ng-click="toggleHelp('leasePremium','premium.leasePremium')"><span class="summary">Is your lease premium less than £40,000?</span></summary>
+            <summary data-ng-click="toggleHelp('leasePremium','premium.leasePremium')"><span id="detailsSummaryLink" class="summary">Is your lease premium less than £40,000?</span></summary>
             <div class="panel-indent" data-ng-if="displayHelp('leasePremium')">
-                <p>You don't have to pay SDLT or file a return if the premium is less than £40,000 and tax isn't due on the rent.</p>
+                <p>You will not have to pay SDLT if the lease premium is less than £40,000 and no tax is due on the rent. You may still have to
+                    <a id="sdltlpLink" href="https://www.gov.uk/guidance/stamp-duty-land-tax-leasehold-purchases">file an SDLT return in some cases</a>.
+                </p>
             </div>
         </details>
     </div>
