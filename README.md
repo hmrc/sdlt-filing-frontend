@@ -91,5 +91,27 @@ Access SDLTC via nginx
 http://localhost/calculate-stamp-duty-land-tax/
 ```
 
+### Troubleshooting
+For Mac
 
+if you have any problem try the following steps:
 
+1. Make sure you have the correct `node` version (i.e. v4.4.5): ```node -v```
+
+2. If you don't, do the followings in order:
+
+    I.``` brew uninstall node```
+
+    II.``` nvm install v4.4.5```
+
+    III.``` nvm use v4.4.5```
+
+3. Check if you have `phantomjs` installed: ```which phantomjs```
+
+4. If you don't have `phantomjs`, install it:
+
+    ```brew cask install phantomjs```
+
+5. Add phantomjs to your bash profile:
+
+    ```export PHANTOMJS_BIN=/usr/local/bin/phantomjs``` (or where you have installed it)
