@@ -33,15 +33,16 @@ class IndexController @Inject()(mcc: MessagesControllerComponents,
 
   val gatoken: String = config.analyticsToken
   val gahost: String = config.analyticsHost
+  val googleTagManagerId: String = config.googleTagManagerId
   val optimizelyId: String = config.optimizelyId
 
   val showIndex: Action[AnyContent] = Action.async { implicit request =>
     if(request.session.get(SessionKeys.sessionId).isEmpty) {
       val sessionId = UUID.randomUUID().toString
-      Future.successful(Ok(journey.views.html.index(gatoken, gahost, optimizelyId, setURPanelFlag(sessionId)))
+      Future.successful(Ok(journey.views.html.index(gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag(sessionId)))
           .withSession(request.session + (SessionKeys.sessionId -> s"session-$sessionId")))
     } else {
-      Future.successful(Ok(journey.views.html.index(gatoken, gahost, optimizelyId, setURPanelFlag)))
+      Future.successful(Ok(journey.views.html.index(gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag)))
     }
   }
 
