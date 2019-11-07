@@ -1,6 +1,6 @@
 @import config.FrontendAppConfig
 
-@(gatoken: String, gahost: String, optimizelyId: String, showBanner: Boolean)(implicit request: Request[_], config: FrontendAppConfig)
+@(gatoken: String, gahost: String, googleTagManagerId: String, optimizelyId: String, showBanner: Boolean)(implicit request: Request[_], config: FrontendAppConfig)
 
 <!DOCTYPE html>
 <!--[if lt IE 8]><html class="no-js lte-ie8" lang="en"><![endif]-->
@@ -243,6 +243,14 @@
     }
  }
     </style>
+    @if(googleTagManagerId != "N/A") {
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','@googleTagManagerId');
+    </script>
+    }
 </head>
 
 <body>
@@ -258,6 +266,11 @@
 </div>
 
 <header role="banner" id="global-header" class=" with-proposition ">
+    @if(googleTagManagerId != "N/A") {
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=@googleTagManagerId" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    }
     <div class="header-wrapper">
         <div class="header-global">
             <div class="header-logo">

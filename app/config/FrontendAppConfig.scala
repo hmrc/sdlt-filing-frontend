@@ -24,4 +24,5 @@ class FrontendAppConfig @Inject()(config: ServicesConfig) {
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
   lazy val urBannerLink = "https://signup.take-part-in-research.service.gov.uk/?utm_campaign=SDLT_results&utm_source=Survey_Banner&utm_medium=other&t=HMRC&id=115"
   lazy val feedbackSurveyUrl: String = loadConfig(s"feedback-survey-frontend.url")
+  lazy val googleTagManagerId = loadConfig(s"google-tag-manager.id")
 }
