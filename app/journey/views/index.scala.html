@@ -78,6 +78,9 @@
     <link rel="apple-touch-icon-precomposed" href="/template/assets/images/apple-touch-icon-57x57.png">
 
     <style>
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+        display: none !important;
+    }
     form .form-label,
     form .form-field--error .error-notification {
       font-weight: bold;
@@ -253,7 +256,7 @@
     }
 </head>
 
-<body>
+<body data-ng-cloak>
 
 <script>
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
