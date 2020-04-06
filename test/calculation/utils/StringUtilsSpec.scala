@@ -1,3 +1,8 @@
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ */
+
 package calculation.utils
 
 import uk.gov.hmrc.play.test.UnitSpec

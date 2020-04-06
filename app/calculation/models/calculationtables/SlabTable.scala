@@ -1,3 +1,8 @@
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ */
+
 package calculation.models.calculationtables
 
 case class SlabTable(slabs: Seq[Slab])

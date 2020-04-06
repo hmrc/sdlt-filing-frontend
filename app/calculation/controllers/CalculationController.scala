@@ -1,3 +1,8 @@
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ */
+
 package calculation.controllers
 
 import javax.inject.{Inject, Singleton}

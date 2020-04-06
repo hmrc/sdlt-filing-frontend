@@ -1,3 +1,8 @@
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ */
+
 package calculation.enums
 
 import play.api.libs.json.{JsString, Json}
