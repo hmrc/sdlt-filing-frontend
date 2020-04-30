@@ -2,6 +2,8 @@ import sbt._
 import sbt.Keys._
 import com.typesafe.sbt.packager.Keys._
 import play.sbt.PlayImport.PlayKeys
+import sys.process._
+
 
 /**
  * Build of UI in JavaScript
@@ -21,10 +23,10 @@ object JavaScriptBuild {
   val javaScriptUiSettings = Seq(
 
     // the JavaScript application resides in "ui"
-    uiDirectory <<= (baseDirectory in Compile) { _ /"calc-assets" },
+    uiDirectory := (baseDirectory in Compile) { _ /"calc-assets" }.value,
 
     // add "npm" and "gulp" commands in sbt
-    commands <++= uiDirectory { base => Seq(Gulp.gulpCommand(base), npmCommand(base))},
+    commands ++= uiDirectory { base => Seq(Gulp.gulpCommand(base), npmCommand(base))}.value,
 
     npmInstall := {
       val result = Gulp.npmProcess(uiDirectory.value, "install").run().exitValue()
@@ -46,17 +48,16 @@ object JavaScriptBuild {
       result
     },
 
-    gulpTest <<= gulpTest dependsOn npmInstall,
-    gulpBuild <<= gulpBuild dependsOn npmInstall,
+    gulpTest := (gulpTest dependsOn npmInstall).value,
+    gulpBuild := (gulpBuild dependsOn npmInstall).value,
 
     // runs gulp before staging the application
-    dist <<= dist dependsOn gulpBuild,
-
-    (test in Test) <<= (test in Test) dependsOn gulpTest,
+    dist := (dist dependsOn gulpBuild).value,
+    (test in Test) := ((test in Test) dependsOn gulpTest).value,
 
 
     // integrate JavaScript build into play build
-    PlayKeys.playRunHooks <+= uiDirectory.map(ui => Gulp(ui))
+    PlayKeys.playRunHooks += uiDirectory.map(ui => Gulp(ui)).value
   )
 
   def npmCommand(base: File) = Command.args("npm", "<npm-command>") { (state, args) =>
