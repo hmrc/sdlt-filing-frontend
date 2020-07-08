@@ -483,8 +483,34 @@
                 expect(result[6].answer).toEqual('Yes');
             });
 
+            it('should return 8 elements with date 01/04/2021 - twoOrMoreProperties : "No", ownedOtherProperties : "No", mainResidence : "Yes"', function(){
+                scope.data.effectiveDate = new Date(2021,4,1);
+                scope.data.individual = "Yes";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.ownedOtherProperties = "No";
+                scope.data.mainResidence = "Yes";
+                var result = summaryHelper.summaryHelper(scope, emptyValidatedModel);
+                expect(result.length).toEqual(8);
+                expect(result[3].answer).toEqual('Yes');
+                expect(result[4].answer).toEqual('No');
+                expect(result[5].answer).toEqual('No');
+                expect(result[6].answer).toEqual('Yes');
+            });
+
             it('should return 7 elements with date 22/11/2017 - twoOrMoreProperties : "No", ownedOtherProperties : "Yes"', function(){
                 scope.data.effectiveDate = new Date(2017,10,22);
+                scope.data.individual = "Yes";
+                scope.data.twoOrMoreProperties = "No";
+                scope.data.ownedOtherProperties = "Yes";
+                var result = summaryHelper.summaryHelper(scope, emptyValidatedModel);
+                expect(result.length).toEqual(7);
+                expect(result[3].answer).toEqual('Yes');
+                expect(result[4].answer).toEqual('No');
+                expect(result[5].answer).toEqual('Yes');
+            });
+
+            it('should return 7 elements with date 01/04/2021 - twoOrMoreProperties : "No", ownedOtherProperties : "Yes"', function(){
+                scope.data.effectiveDate = new Date(2021,4,1);
                 scope.data.individual = "Yes";
                 scope.data.twoOrMoreProperties = "No";
                 scope.data.ownedOtherProperties = "Yes";

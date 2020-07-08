@@ -34,7 +34,11 @@
         }
       }
 
-      if(data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties == 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate)) {
+      if(data.propertyType === 'Residential' && data.individual === 'Yes'
+          && data.twoOrMoreProperties === 'No'
+          && validator.effectiveDateWithinFTBRange(data.effectiveDate)
+          && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate)
+          || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
         model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
       }
 
@@ -48,13 +52,13 @@
           propertyDetails.twoOrMoreProperties = data.twoOrMoreProperties;
           if (data.twoOrMoreProperties === 'Yes') {
             propertyDetails.replaceMainResidence = data.replaceMainResidence;
-          }else{
+          } else {
             if(data.mainResidence === 'Yes'){
               propertyDetails.sharedOwnership = data.sharedOwnership;
                 if(data.sharedOwnership === 'Yes'){
                   if(data.currentValue === '£500,000 or less'){
                       propertyDetails.currentValue = 'Yes';
-                  }else {
+                  } else {
                       propertyDetails.currentValue = 'No';
                   }
                 }
@@ -116,7 +120,7 @@
         }else if (data.currentValue === 'More than £500,000') {
             return "No";
         }else{
-            return "Yes";
+           return "Yes";
         }
       } else {
         return "No";

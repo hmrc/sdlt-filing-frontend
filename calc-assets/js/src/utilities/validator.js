@@ -95,6 +95,14 @@
           return effectiveDate >= new Date('November 22, 2017');
         };
 
+        var effectiveDateJuly2020 = function(effectiveDate) {
+            return effectiveDate < new Date('July 08, 2020');
+        };
+
+        var effectiveDateMarch2021 = function(effectiveDate) {
+            return effectiveDate > new Date('March 31, 2021');
+        };
+
         return {
             isPopulated : isPopulated,
             isNotPopulated : isNotPopulated,
@@ -114,7 +122,9 @@
             isGreaterThanInteger : isGreaterThanInteger,
             isGreaterThanFloat : isGreaterThanFloat,
             checkAllRentsBelow2000 : checkAllRentsBelow2000,
-            effectiveDateWithinFTBRange: effectiveDateWithinFTBRange
+            effectiveDateWithinFTBRange: effectiveDateWithinFTBRange,
+            effectiveDateIsAfterJuly2020: effectiveDateJuly2020,
+            effectiveDateIsAfterMarch2021: effectiveDateMarch2021
         };
 
     };

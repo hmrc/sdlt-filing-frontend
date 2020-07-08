@@ -308,5 +308,39 @@
     		});
     	});
 
+		describe('Calling effectiveDateMarch2021()', function () {
+
+			it('should return false if sent a date before March 31 2021', function () {
+				var effectiveDate = new Date('March 31, 2020');
+				var validatorInstance = new Validator();
+				var result = validatorInstance.effectiveDateIsAfterMarch2021(effectiveDate);
+				expect(result).toEqual(false);
+			});
+
+			it('should return true if sent a date after March 31 2021', function () {
+				var effectiveDate = new Date('April 1, 2021');
+				var validatorInstance = new Validator();
+				var result = validatorInstance.effectiveDateIsAfterMarch2021(effectiveDate);
+				expect(result).toEqual(true);
+			});
+		});
+
+		describe('Calling effectiveDateJuly2020()', function () {
+
+			it('should return true if sent a date before 08/07/2020', function () {
+				var effectiveDate = new Date('July 07, 2020');
+				var validatorInstance = new Validator();
+				var result = validatorInstance.effectiveDateIsAfterJuly2020(effectiveDate);
+				expect(result).toEqual(true);
+			});
+
+			it('should return false if sent a date after 08/07/2020', function () {
+				var effectiveDate = new Date('July 08, 2020');
+				var validatorInstance = new Validator();
+				var result = validatorInstance.effectiveDateIsAfterJuly2020(effectiveDate);
+				expect(result).toEqual(false);
+			});
+		});
+
     });
 }());

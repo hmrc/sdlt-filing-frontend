@@ -15,6 +15,14 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeature with LeaseholdResultFixture {
 
+  val april2021EffectiveEndDate: LocalDate = LocalDate.of(2021, 4, 1)
+  val march2021EffectiveDate: LocalDate = LocalDate.of(2021, 3, 31)
+  val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
+  val nov2018EffectiveDate: LocalDate = LocalDate.of(2018, 1, 1)
+  val dec2017EffectiveDate: LocalDate = LocalDate.of(2017, 12, 30)
+  val feb2017EffectiveDate: LocalDate = LocalDate.of(2017, 2, 14)
+
+
   class PredefinedNPVSetup(predefinedNPV: BigDecimal, refundEntitlement: Option[Int] = None){
     protected val npv: Int = predefinedNPV.toInt
     val service = new LeaseholdCalculationService(
@@ -246,6 +254,360 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
+  "leaseholdResidentialJuly20OnwardsFTB" should {
+    val MAX_PREMIUM_FTB = 500000
+    "return 0, 0 for purchase price of 499999, npv of 501945" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None,         rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialJuly20OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialJuly20OnwardsFTB(leaseholdResidentialJuly20OnwardsFTBRequest(499999, july2020EffectiveDate)) shouldBe res
+    }
+
+    "return 0, 0 for purchase price of 500000, npv of 125000" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None,         rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialJuly20OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialJuly20OnwardsFTB(leaseholdResidentialJuly20OnwardsFTBRequest(500000, july2020EffectiveDate)) shouldBe res
+    }
+
+    "return 0, 0 for purchase price of 500000, npv of 125000 with last effective date" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None,         rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialJuly20OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialJuly20OnwardsFTB(leaseholdResidentialJuly20OnwardsFTBRequest(500000, march2021EffectiveDate)) shouldBe res
+    }
+  }
+
+  "leaseholdResidentialAddPropJuly20Onwards" should {
+
+    "return 15019, 19 for purchase price of 500000, npv of 501945" in new PredefinedNPVSetup(501945, Some(15000)) {
+      val leaseTaxDue = 19
+      val premTaxDue = 15000
+      val prevTax = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 15000),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      val prevSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val leaseRequest = leaseholdResidentialAddPropJuly20OnwardsRequestIsIndividual(500000, july2020EffectiveDate)
+
+      private val result = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = Some("15,000"))
+      private val prevResult = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, prevTax, prevSliceDetails, npv, asPreviousResult = true)
+
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseRequest) shouldBe Seq(result, prevResult)
+    }
+
+    "return 15099, 69 for purchase price of 501000, npv of 501945" in new PredefinedNPVSetup(501945, Some(15000)) {
+      val leaseTaxDue = 19
+      val premTaxDue = 15080
+      val prevTax = 50
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 15000),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 80),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      val prevSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 50),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val leaseRequest = leaseholdResidentialAddPropJuly20OnwardsRequestIsIndividual(501000, july2020EffectiveDate)
+
+      private val result = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = Some("15,000"))
+      private val prevResult = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, prevTax, prevSliceDetails, npv, asPreviousResult = true)
+
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseRequest) shouldBe Seq(result, prevResult)
+    }
+
+    "return 14989, 0 for purchase price of 499000, npv of 501945" in new PredefinedNPVSetup(501945, Some(15000)) {
+      val leaseTaxDue = 19
+      val premTaxDue = 14970
+      val prevTax = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 14970),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      val prevSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val leaseRequest = leaseholdResidentialAddPropJuly20OnwardsRequestIsIndividual(499000, july2020EffectiveDate)
+
+      private val result = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = Some("15,000"))
+      private val prevResult = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, prevTax, prevSliceDetails, npv, asPreviousResult = true)
+
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseRequest) shouldBe Seq(result, prevResult)
+    }
+
+
+    "return 15021, 1 for purchase price of 500025, npv of 501945" in new PredefinedNPVSetup(501945, Some(15000)) {
+      val leaseTaxDue = 19
+      val premTaxDue = 15002
+      val prevTax = 1
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 15000),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 2),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      val prevSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 1),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val leaseRequest = leaseholdResidentialAddPropJuly20OnwardsRequestIsIndividual(500025, july2020EffectiveDate)
+
+      private val result = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = Some("15,000"))
+      private val prevResult = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, prevTax, prevSliceDetails, npv, asPreviousResult = true)
+
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseRequest) shouldBe Seq(result, prevResult)
+    }
+
+    "return 15021, 1 for purchase price of 500025, npv of 501945 last effective date" in new PredefinedNPVSetup(501945, Some(15000)) {
+      val leaseTaxDue = 19
+      val premTaxDue = 15002
+      val prevTax = 1
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 15000),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 2),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      val prevSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 1),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val leaseRequest = leaseholdResidentialAddPropJuly20OnwardsRequestIsIndividual(500025, march2021EffectiveDate)
+
+      private val result = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = Some("15,000"))
+      private val prevResult = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, prevTax, prevSliceDetails, npv, asPreviousResult = true)
+
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseRequest) shouldBe Seq(result, prevResult)
+    }
+  }
+
+
+  "leaseholdResidentialJuly20Onwards" should {
+
+    "return 19, 0 for purchase price of 499000, npv of 501945 as individual" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val res = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialJuly20Onwards(leaseholdResidentialJuly20OnwardsIndividualRequest(499000, july2020EffectiveDate)) shouldBe res
+    }
+
+    "return 19, 0 for purchase price of 500000, npv of 501945 as individual" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val res = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialJuly20Onwards(leaseholdResidentialJuly20OnwardsIndividualRequest(500000, july2020EffectiveDate)) shouldBe res
+    }
+
+    "return 19, 50 for purchase price of 501000, npv of 501945 as individual" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 50
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 50),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val res = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialJuly20Onwards(leaseholdResidentialJuly20OnwardsIndividualRequest(501000, july2020EffectiveDate)) shouldBe res
+    }
+
+    "return 19, 50 for purchase price of 501000, npv of 501945 as individual with last effective date" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 50
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = Some(925000), rate = 5, taxDue = 50),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
+      )
+
+      private val res = leaseholdResidential20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialJuly20Onwards(leaseholdResidentialJuly20OnwardsIndividualRequest(501000, march2021EffectiveDate)) shouldBe res
+    }
+
+    "return 19, 14970 for purchase price of 499000, npv of 501945 as company" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 14970
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 14970),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseholdResidentialJuly20OnwardsCompanyRequest(499000, july2020EffectiveDate)) shouldBe Seq(res)
+    }
+
+    "return 19, 15000 for purchase price of 500000, npv of 501945 as company" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 15000
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 15000),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseholdResidentialJuly20OnwardsCompanyRequest(500000, july2020EffectiveDate)) shouldBe Seq(res)
+    }
+
+    "return 19, 15000 for purchase price of 500000, npv of 501945 as company with last effective date" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 15000
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 15000),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 0),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseholdResidentialJuly20OnwardsCompanyRequest(500000, march2021EffectiveDate)) shouldBe Seq(res)
+    }
+
+    "return 19, 15080 for purchase price of 501000, npv of 501945 as company" in new PredefinedNPVSetup(501945) {
+      val leaseTaxDue = 19
+      val premTaxDue = 15080
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0),
+        SliceDetails(from = 500000, to = None, rate = 1, taxDue = 19)
+      )
+
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(500000), rate = 3, taxDue = 15000),
+        SliceDetails(from = 500000, to = Some(925000), rate = 8, taxDue = 80),
+        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialAddPropJuly20OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
+      service.leaseholdResidentialAddPropJuly20Onwards(leaseholdResidentialJuly20OnwardsCompanyRequest(501000, july2020EffectiveDate)) shouldBe Seq(res)
+    }
+  }
 
   "leaseholdResidentialNov17OnwardsFTB" should {
     val MAX_PREMIUM_FTB = 500000
@@ -262,7 +624,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(299999)) shouldBe res
+      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(299999, nov2018EffectiveDate)) shouldBe res
     }
 
     "return 0, 0 for purchase price of 300000, npv of 125000" in new PredefinedNPVSetup(125000) {
@@ -278,7 +640,23 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(300000)) shouldBe res
+      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(300000, nov2018EffectiveDate)) shouldBe res
+    }
+
+    "return 0, 0 for purchase price of 300000, npv of 125000 with a date after 31 March 2021" in new PredefinedNPVSetup(125000) {
+      val leaseTaxDue = 0
+      val premTaxDue = 0
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(125000), rate = 0, taxDue = 0),
+        SliceDetails(from = 125000, to = None,         rate = 1, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(300000), rate = 0, taxDue = 0),
+        SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, afterMarch2021 = true)
+      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(300000, april2021EffectiveEndDate)) shouldBe res
     }
 
     "return 0, 1 for purchase price of 300025, npv of 125000" in new PredefinedNPVSetup(125000) {
@@ -294,7 +672,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(300025)) shouldBe res
+      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(300025, nov2018EffectiveDate)) shouldBe res
     }
 
     "return 0, 9999 for purchase price of 499999, npv of 125000" in new PredefinedNPVSetup(125000) {
@@ -310,7 +688,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(499999)) shouldBe res
+      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(499999, nov2018EffectiveDate)) shouldBe res
     }
 
     "return 0, 10000 for purchase price of 500000, npv of 125000" in new PredefinedNPVSetup(125000) {
@@ -326,7 +704,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(500000)) shouldBe res
+      service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(500000, nov2018EffectiveDate)) shouldBe res
     }
   }
 
@@ -354,7 +732,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
       )
 
-      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(39999.99)
+      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(39999.99, dec2017EffectiveDate)
 
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = Some("15,000"))
       private val prevResult = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, prevSliceDetails, npv, asPreviousResult = true)
@@ -379,8 +757,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(40000)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(40000)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(40000, dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(40000, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -407,7 +785,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(125000)
+      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(125000, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val output: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequest)
 
@@ -432,7 +810,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(125050)
+      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(125050, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val output: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequest)
 
@@ -456,8 +834,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(250000)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(250000)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(250000,dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(250000, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -466,6 +844,34 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       outputCompany.head shouldBe result
       outputIndividual.tail.isEmpty shouldBe false
       outputCompany.tail.isEmpty shouldBe false
+    }
+
+    "return 1, 10000 for purchase price of 250000, npv of 125100 with a date after 31 March 2021" in new PredefinedNPVSetup(125100, None){
+      val leaseTaxDue = 1
+      val premTaxDue = 10000
+
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(125000), rate = 0, taxDue = 0),
+        SliceDetails(from = 125000, to = None,         rate = 1, taxDue = 1)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 3,  taxDue = 3750),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 6250),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 13, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
+      )
+
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(250000, april2021EffectiveEndDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(250000, april2021EffectiveEndDate)
+      private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None, afterMarch2021 = true)
+      private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
+      private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
+
+      outputIndividual.head shouldBe result
+      outputCompany.head shouldBe result
+      outputIndividual.tail.isEmpty shouldBe false
+      outputCompany.tail.isEmpty shouldBe true
     }
 
     "return 1, 10001 for purchase price of 250020, npv of 125100" in new PredefinedNPVSetup(125100, None){
@@ -484,8 +890,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(250020)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(250020)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(250020, dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(250020, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -512,8 +918,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(500000)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(500000)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(500000, dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(500000, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -540,8 +946,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(500050)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(500050)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(500050, dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(500050, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -568,8 +974,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(925000)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(925000)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(925000, dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(925000, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -596,8 +1002,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(925010)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(925010)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(925010, dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(925010, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -624,8 +1030,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
       )
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500000)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(1500000)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500000, dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(1500000, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -652,8 +1058,8 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 1)
       )
 
-      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500009)
-      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(1500009)
+      private val leaseRequestIndividual = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500009, dec2017EffectiveDate)
+      private val leaseRequestCompany = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(1500009, dec2017EffectiveDate)
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val outputIndividual: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestIndividual)
       private val outputCompany: Seq[Result] = service.leaseholdResidentialAddPropApr16Onwards(leaseRequestCompany)
@@ -689,7 +1095,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 12)
       )
 
-      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(1500100)
+      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(1500100, dec2017EffectiveDate)
 
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = None)
       private val prevResult = leaseholdResidentialDec14OnwardsResult(prevLeaseTaxDue, leaseSliceDetails, prevPremTaxDue, prevSliceDetails, npv, asPreviousResult = true)
@@ -722,7 +1128,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 12)
       )
 
-      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500100)
+      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500100, dec2017EffectiveDate)
 
       private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = Some("4,000"))
       private val prevResult = leaseholdResidentialDec14OnwardsResult(prevLeaseTaxDue, leaseSliceDetails, prevPremTaxDue, prevSliceDetails, npv, asPreviousResult = true)
@@ -757,7 +1163,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         }
       }
       "the previous calculation doesn't return any lease calculation details" in new testPrevErrorSetup {
-        private val req = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500100)
+        private val req = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(1500100, dec2017EffectiveDate)
         the[RequiredValueNotDefinedException] thrownBy
           service.leaseholdResidentialAddPropApr16Onwards(req) should
             have message "[LeaseholdCalculationService] [leaseholdResidentialAddPropApr16Onwards] - " +
@@ -783,7 +1189,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(125000)) shouldBe res
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(125000, feb2017EffectiveDate)) shouldBe res
     }
 
     "return 1, 0 for purchase price of 125050, npv of 125000" in new PredefinedNPVSetup(125000) {
@@ -802,7 +1208,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(125050)) shouldBe res
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(125050, feb2017EffectiveDate)) shouldBe res
     }
 
     "return 2500, 0 for purchase price of 250000, npv of 125000" in new PredefinedNPVSetup(125000) {
@@ -821,7 +1227,26 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(250000)) shouldBe res
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(250000, feb2017EffectiveDate)) shouldBe res
+    }
+
+    "return 2500, 0 for purchase price of 250000, npv of 125000 with a date after March 31 2021" in new PredefinedNPVSetup(125000) {
+      val leaseTaxDue = 0
+      val premTaxDue = 2500
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(125000), rate = 0, taxDue = 0),
+        SliceDetails(from = 125000, to = None,         rate = 1, taxDue = 0)
+      )
+      val premSliceDetails = Seq(
+        SliceDetails(from = 0,       to = Some(125000),  rate = 0,  taxDue = 0),
+        SliceDetails(from = 125000,  to = Some(250000),  rate = 2,  taxDue = 2500),
+        SliceDetails(from = 250000,  to = Some(925000),  rate = 5,  taxDue = 0),
+        SliceDetails(from = 925000,  to = Some(1500000), rate = 10, taxDue = 0),
+        SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
+      )
+
+      private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, afterMarch2021 = true)
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(250000, april2021EffectiveEndDate)) shouldBe res
     }
 
     "return 2501, 0 for purchase price of 250020, npv of 125000" in new PredefinedNPVSetup(125000) {
@@ -840,7 +1265,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(250020)) shouldBe res
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(250020, feb2017EffectiveDate)) shouldBe res
     }
 
     "return 36250, 1 for purchase price of 925000, npv of 125100" in new PredefinedNPVSetup(125100) {
@@ -859,7 +1284,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(925000)) shouldBe res
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(925000, feb2017EffectiveDate)) shouldBe res
     }
 
     "return 36251, 1 for purchase price of 925010, npv of 125100" in new PredefinedNPVSetup(125100) {
@@ -878,7 +1303,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(925010)) shouldBe res
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(925010, feb2017EffectiveDate)) shouldBe res
     }
 
     "return 93750, 1 for purchase price of 1500000, npv of 125100" in new PredefinedNPVSetup(125100) {
@@ -897,7 +1322,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(1500000)) shouldBe res
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(1500000, feb2017EffectiveDate)) shouldBe res
     }
 
     "return 93762, 1 for purchase price of 1500100, npv of 250000" in new PredefinedNPVSetup(250000) {
@@ -916,7 +1341,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       )
 
       private val res = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(1500100)) shouldBe res
+      service.leaseholdResidentialDec14Onwards(leaseholdResidentialDec14OnwardsRequest(1500100, feb2017EffectiveDate)) shouldBe res
     }
   }
 
