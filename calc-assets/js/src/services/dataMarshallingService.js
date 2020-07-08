@@ -34,11 +34,7 @@
         }
       }
 
-      if(data.propertyType === 'Residential' && data.individual === 'Yes'
-          && data.twoOrMoreProperties === 'No'
-          && validator.effectiveDateWithinFTBRange(data.effectiveDate)
-          && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate)
-          || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
+      if(data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties === 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate) && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
         model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
       }
 
