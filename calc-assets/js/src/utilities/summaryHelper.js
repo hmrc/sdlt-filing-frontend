@@ -60,11 +60,7 @@
 
     var displayOwnedOtherProperties = function(data) {
         if(data === undefined) return false;
-        return (data.propertyType === 'Residential' && data.individual === 'Yes'
-            && data.twoOrMoreProperties == 'No'
-            && validator.effectiveDateWithinFTBRange(data.effectiveDate)
-            && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate)
-            ||  validator.effectiveDateIsAfterMarch2021(data.effectiveDate)));
+        return (data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties == 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate) && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) ||  validator.effectiveDateIsAfterMarch2021(data.effectiveDate)));
     };
 
     var displayMainResidence = function(data) {
