@@ -15,6 +15,7 @@ import org.scalamock.scalatest.MockFactory
 
 class CalculationServiceSpec extends UnitSpec with MockFactory {
 
+  val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
   val mockLeaseholdCalculationService: LeaseholdCalculationService = mock[LeaseholdCalculationService]
   val mockFreeholdCalculationService: FreeholdCalculationService = mock[FreeholdCalculationService]
   val mockAdditionalPropertyService: AdditionalPropertyService = mock[AdditionalPropertyService]
@@ -48,7 +49,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       createResult(msg)
     )
 
-    def createRequest (hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate) =  Request(
+    def createRequest(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate) =  Request(
       holdingType = hType,
       propertyType = pType,
       effectiveDate = eDate,
@@ -133,6 +134,69 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       }
     }
 
+    "select the freeholdResidential July 2020 first time buyer function" when {
+      "given a request with an effective date of 08/07/2020 and the user is an individual without twoOrMoreProperties" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, july2020EffectiveDate)
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialJuly20OnwardsFTB _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 23/07/2020 and the user is an individual without twoOrMoreProperties" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2020, 7, 23))
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialJuly20OnwardsFTB _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 10/11/2020 and the user is an individual without twoOrMoreProperties" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2020, 11, 10))
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialJuly20OnwardsFTB _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 31/3/2021 and the user is an individual without twoOrMoreProperties" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2021, 3, 31))
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialJuly20OnwardsFTB _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+
+      "given a request with an effective date of 1/4/2021 and the user is an individual without twoOrMoreProperties" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2021, 4, 1))
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialNov17OnwardsFTB _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+    }
+
     "select the freeholdResidential November2017 first time buyer function" when {
       "given a request with an effective date of 22/11/2017 and the user is an individual without twoOrMoreProperties" in {
         val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2017, 11, 22))
@@ -172,6 +236,87 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
     }
 
     "select the freeholdResidential additional property function" when {
+      "given a request with an effective date of 08/07/2020,the user is an individual without twoOrMoreProperties but the premium is >500000" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, july2020EffectiveDate, BigDecimal(500001))
+        val result = createResultInSeq("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialAddPropJuly20Onwards _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(true)
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+
+      "given a request with an effective date of 08/7/2020 and additional property eligibility check returns true" in{
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, july2020EffectiveDate)
+        val result = createResultInSeq("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialAddPropJuly20Onwards _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(true)
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+
+      "given a request with an effective date of 11/7/2020 and additional property eligibility check returns true" in{
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2020, 7, 11))
+        val result = createResultInSeq("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialAddPropJuly20Onwards _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(true)
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+
+      "given a request with an effective date of 31/3/2021 and additional property eligibility check returns true" in{
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2021, 3, 31))
+        val result = createResultInSeq("freeholdResidential, July2020 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialAddPropJuly20Onwards _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(true)
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+
+      "given a request with an effective date of 1/4/2021 and additional property eligibility check returns true" in{
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2021, 4, 1))
+        val result = createResultInSeq("freeholdResidential, April2016 onwards")
+
+        (mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(true)
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+
+
       "given a request with an effective date of 30/11/2019,the user is an individual without twoOrMoreProperties but the premium is >500000" in {
         val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2019, 11, 30), BigDecimal(500001))
         val result = createResultInSeq("freeholdResidential, April2016 onwards")
@@ -221,7 +366,92 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       }
     }
 
+    "select the freeholdResidential function for July 2020" when {
+      "given a request with an effective date of 09/07/2020" in{
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2020, 7, 30))
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(None)
+          .noMoreThanTwice()
+
+        (mockFreeholdCalculationService.freeholdResidentialJuly20Onwards _)
+          .expects(testRequest, false)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 08/07/2020" in{
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, july2020EffectiveDate)
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(None)
+          .noMoreThanTwice()
+
+        (mockFreeholdCalculationService.freeholdResidentialJuly20Onwards _)
+          .expects(testRequest, false)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+      "given a request with an effective date of 08/7/2020 but with additional property eligibility check is false" in {
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, july2020EffectiveDate)
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+
+        (mockFreeholdCalculationService.freeholdResidentialJuly20Onwards _)
+          .expects(testRequest, false)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(false)
+          .noMoreThanTwice()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 31/3/2021 but with additional property eligibility check is false" in {
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2021, 3, 31))
+        val result = createResult("freeholdResidential, July2020 onwards")
+
+
+        (mockFreeholdCalculationService.freeholdResidentialJuly20Onwards _)
+          .expects(testRequest, false)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(false)
+          .noMoreThanTwice()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+    }
+
     "select the freeholdResidential function for December2014 to April2016" when {
+      "given a request with an effective date of 1/4/2021" in{
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2021, 4, 1))
+        val result = createResult("freeholdResidential, December2014 to April2016")
+
+        (mockFreeholdCalculationService.freeholdResidentialDec14Onwards _)
+          .expects(testRequest, false)
+          .returns(result)
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(false)
+          .noMoreThanTwice()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
       "given a request with an effective date of 31/3/2016" in{
         val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2016, 3, 31))
         val result = createResult("freeholdResidential, December2014 to April2016")
@@ -350,6 +580,44 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       }
     }
 
+    "select the leaseholdResidential July2020 first time buyer function" when {
+      "given a request with an effective date of 08/07/2020 and the user is an individual without twoOrMoreProperties" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.leasehold, PropertyTypes.residential, july2020EffectiveDate)
+        val result = createResult("leaseholdResidential, July2020 onwards")
+
+        (mockLeaseholdCalculationService.leaseholdResidentialJuly20OnwardsFTB _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 23/11/2020 and the user is an individual without twoOrMoreProperties" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2020, 11, 23))
+        val result = createResult("leaseholdResidential, July2020 onwards")
+
+        (mockLeaseholdCalculationService.leaseholdResidentialJuly20OnwardsFTB _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 30/11/2020 and the user is an individual without twoOrMoreProperties" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2020, 11, 30))
+        val result = createResult("leaseholdResidential, July2020 onwards")
+
+        (mockLeaseholdCalculationService.leaseholdResidentialJuly20OnwardsFTB _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+    }
+
     "select the leaseholdResidential November2017 first time buyer function" when {
       "given a request with an effective date of 22/11/2017 and the user is an individual without twoOrMoreProperties" in {
         val testRequest = createRequestWithPropDetails(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2017, 11, 22))
@@ -387,6 +655,57 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
       }
     }
+
+    "select the leaseholdResidential additional property function for July2020 onwards" when {
+      "given a request with an effective date of 30/11/2020,the user is an individual without twoOrMoreProperties but the premium is >500000" in {
+        val testRequest = createRequestWithPropDetails(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2020, 11, 30), BigDecimal(500001))
+        val result = createResultInSeq("leaseholdResidential, July2020 onwards")
+
+        (mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly20Onwards _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(true)
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+
+      "given a request with an effective date of 11/7/2020 and additional property rates check true" in{
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential,LocalDate.of(2020, 7, 11))
+        val result = createResultInSeq("leaseholdResidential, July2020 onwards")
+
+        (mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly20Onwards _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(true)
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+
+      "given a request with an effective date of 08/7/2020 and additional property rates check true" in{
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, july2020EffectiveDate)
+        val result = createResultInSeq("leaseholdResidential, July2020 onwards")
+
+        (mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly20Onwards _)
+          .expects(testRequest)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(true)
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+    }
+
 
     "select the leaseholdResidential additional property function for April2016 onwards" when {
       "given a request with an effective date of 30/11/2019,the user is an individual without twoOrMoreProperties but the premium is >500000" in {
@@ -435,6 +754,58 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .returns(true)
 
         testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(result)
+      }
+    }
+
+    "select the leaseholdResidential function for July 2020 onwards" when {
+      "given a request with an effective date of 31/7/2020" in{
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2020, 7, 31))
+        val result = createResult("leaseholdResidential, July2020 onwards")
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(None)
+          .noMoreThanTwice()
+
+        (mockLeaseholdCalculationService.leaseholdResidentialJuly20Onwards _)
+          .expects(testRequest, false, None)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 11/7/2020" in{
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2020, 7, 11))
+        val result = createResult("leaseholdResidential, July2020 onwards")
+
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(None)
+          .noMoreThanTwice()
+
+        (mockLeaseholdCalculationService.leaseholdResidentialJuly20Onwards _)
+          .expects(testRequest, false, None)
+          .returns(result)
+          .noMoreThanOnce()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+
+      "given a request with an effective date of 08/7/2020 and additional property rates check false" in {
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, july2020EffectiveDate)
+        val result = createResult("leaseholdResidential, July2020 onwards")
+
+        (mockLeaseholdCalculationService.leaseholdResidentialJuly20Onwards _)
+          .expects(testRequest, false, None)
+          .returns(result)
+          .noMoreThanOnce()
+
+        (mockAdditionalPropertyService.additionalPropertyRatesApply _)
+          .expects(*)
+          .returns(false)
+          .noMoreThanTwice()
+
+        testCalculationService.CalculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
       }
     }
 

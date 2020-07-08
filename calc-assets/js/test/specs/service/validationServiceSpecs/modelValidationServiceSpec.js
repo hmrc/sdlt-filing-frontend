@@ -594,6 +594,60 @@
             expect(result.isYear5RentValid).toEqual('');
         });
 
+        it('should return true for a Leasehold Residential >= 01/04/2021 FTB and not Shared Ownership', function() {
+
+            var data = {
+                holdingType : "Leasehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2021, 4, 1),
+                individual : "Yes",
+                twoOrMoreProperties : "No",
+                ownedOtherProperties : "No",
+                mainResidence : "Yes",
+                sharedOwnership : "No",
+                startDate : new Date(2021, 4, 1),
+                endDate : new Date(2120, 3 , 30),
+                premium : 200000,
+
+                leaseTerm : {
+                    years : 5
+                },
+                year1Rent : 2500,
+                year2Rent : 2500,
+                year3Rent : 2500,
+                year4Rent : 2500,
+                year5Rent : 2500
+
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(true);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isOwnedOtherPropertiesValid).toEqual('');
+            expect(result.isMainResidenceValid).toEqual('');
+            expect(result.isSharedOwnershipValid).toEqual('');
+
+
+            // the following are n/a in this scenario
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+            expect(result.isRelevantRentValid).toEqual(undefined);
+
+            expect(result.isStartDateValid).toEqual('');
+            expect(result.isEndDateValid).toEqual('');
+            expect(result.isPremiumValid).toEqual('');
+            expect(result.isYear1RentValid).toEqual('');
+            expect(result.isYear2RentValid).toEqual('');
+            expect(result.isYear3RentValid).toEqual('');
+            expect(result.isYear4RentValid).toEqual('');
+            expect(result.isYear5RentValid).toEqual('');
+        });
+
         it('should return true for a Leasehold Residential >= 22/11/2017 FTB and Shared Ownership is undefined', function() {
 
             var data = {
@@ -1714,6 +1768,32 @@
                 holdingType : "Freehold",
                 propertyType: "Residential",
                 effectiveDate : new Date(2019, 10, 30),
+                individual : 'Yes',
+                twoOrMoreProperties : "No",
+                ownedOtherProperties: "No",
+                premium : 100000
+            };
+
+            var result = service.validate(data);
+
+            expect(result.isModelValid).toEqual(false);
+
+            expect(result.isHoldingValid).toEqual('');
+            expect(result.isPropertyValid).toEqual('');
+            expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isIndividualValid).toEqual('');
+            expect(result.isTwoOrMorePropertiesValid).toEqual('');
+            expect(result.isPurchasePriceValid).toEqual('');
+            expect(result.isOwnedOtherPropertiesValid).toEqual('');
+            expect(result.isMainResidenceValid).toEqual('form-field--error');
+        });
+
+        it('should return false for a Freehold Residential 01/04/2021, first time buyer without main residence details', function() {
+
+            var data = {
+                holdingType : "Freehold",
+                propertyType: "Residential",
+                effectiveDate : new Date(2021, 4, 1),
                 individual : 'Yes',
                 twoOrMoreProperties : "No",
                 ownedOtherProperties: "No",

@@ -145,7 +145,9 @@ object ModelValidation extends DateUtil{
     }
 
   private [validators] def validFirstTimeBuyer(request: Request): ValidationResult ={
-    if(request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) && request.propertyType.equals(PropertyTypes.residential)){
+    if(request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE)
+      && request.propertyType.equals(PropertyTypes.residential)
+      && request.effectiveDate.isBefore(Dates.JULY2020_RESIDENTIAL_DATE)){
       request.propertyDetails.map{ propDetails =>
         if(propDetails.individual && propDetails.twoOrMoreProperties.contains(false)){
           request.firstTimeBuyer match{

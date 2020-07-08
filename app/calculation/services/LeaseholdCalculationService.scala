@@ -6,10 +6,10 @@
 package calculation.services
 
 import javax.inject.{Inject, Singleton}
-import calculation.data.{SlabRatesTables, SliceRatesTables}
+import calculation.data.{Dates, SlabRatesTables, SliceRatesTables}
 import calculation.data.SignificantAmounts._
 import calculation.exceptions.RequiredValueNotDefinedException
-import calculation.factories.LeaseholdResultFactory
+import calculation.factories.{FreeholdResultFactory, LeaseholdResultFactory}
 import calculation.models.calculationtables.SlabResult
 import calculation.models._
 import calculation.validators.internal.ModelValidation
@@ -22,12 +22,46 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
    propertyDetails.exists(propDetails => propDetails.sharedOwnership.getOrElse(false))
   }
 
+  def leaseholdResidentialJuly20OnwardsFTB(request: Request): Result = {
+    val sliceRateTable = if(checkIfShared(request.propertyDetails)) SliceRatesTables.leaseholdResidentialJuly20FTBSharedLeaseRates.slices else SliceRatesTables.leaseholdResidentialJuly20FTBLeaseRates.slices
+    val npv = getNPV("leaseholdResidentialJuly20Onwards", request.leaseDetails)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialJuly20OnwardsFTBPremiumRates.slices)
+    LeaseholdResultFactory.leaseholdResidentialJuly20OnwardsFTBResult(leaseResult, premiumResult, npv)
+  }
+
   def leaseholdResidentialNov17OnwardsFTB(request: Request): Result = {
     val sliceRateTable = if(checkIfShared(request.propertyDetails)) SliceRatesTables.leaseholdResidentialNov17FTBSharedLeaseRates.slices else SliceRatesTables.leaseholdResidentialNov17FTBLeaseRates.slices
     val npv = getNPV("leaseholdResidentialNov17Onwards", request.leaseDetails)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
-    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv)
+    val effectiveDateAfter31March2020: Boolean = request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE)
+
+    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv, effectiveDateAfter31March2020)
+  }
+
+  def leaseholdResidentialAddPropJuly20Onwards(request: Request): Seq[Result] = {
+    val npv = getNPV("leaseholdResidentialAddPropJuly20Onwards", request.leaseDetails)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialJuly20OnwardsLeaseRates.slices)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(
+      if(request.premium < 40000) 0 else request.premium,
+      SliceRatesTables.leaseholdResidentialAppPropJuly20OnwardsPremiumRates.slices
+    )
+    val prevResult = leaseholdResidentialJuly20Onwards(request, asPreviousResult = true, Some(npv))
+    val prevPrem = prevResult.taxCalcs.lift(1).map(_.taxDue).getOrElse({
+      throw new RequiredValueNotDefinedException("[LeaseholdCalculationService] [leaseholdResidentialAddPropJuly20Onwards] - " +
+        "Premium result not defined in previous calculation")
+    })
+
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(premiumResult.taxDue, prevPrem, request.propertyDetails)
+    val currResult = LeaseholdResultFactory.leaseholdResidentialAddPropJuly20Onwards(leaseResult, premiumResult, npv, refundEntitlement)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+
+    if(individual) {
+      Seq(currResult, prevResult)
+    } else {
+      Seq(currResult)
+    }
   }
 
   def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
@@ -43,18 +77,33 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
         "Premium result not defined in previous calculation")
     })
 
+    val effectiveDateAfter31March2020: Boolean = request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE)
     val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(premiumResult.taxDue, prevPrem, request.propertyDetails)
-    val currResult = LeaseholdResultFactory.leaseholdResidentialAddPropApr16Onwards(leaseResult, premiumResult, npv, refundEntitlement)
+    val currResult = LeaseholdResultFactory.leaseholdResidentialAddPropApr16Onwards(leaseResult, premiumResult, npv, refundEntitlement, effectiveDateAfter31March2020)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
 
-    Seq(currResult, prevResult)
+    (individual, effectiveDateAfter31March2020) match {
+      case (true, _) => Seq(currResult, prevResult)
+      case (false, true) => Seq(currResult)
+      case (false, false) => Seq(currResult, prevResult)
+    }
+  }
+
+  def leaseholdResidentialJuly20Onwards(request: Request, asPreviousResult: Boolean = false, preCalculatedNPV: Option[BigDecimal] = None): Result = {
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly20Onwards", request.leaseDetails))
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialJuly20OnwardsLeaseRates.slices)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialJuly20nwardsPremiumRates.slices)
+
+    LeaseholdResultFactory.leaseholdResidentialJuly20OnwardsResult(leaseResult, premiumResult, npv, asPreviousResult)
   }
 
   def leaseholdResidentialDec14Onwards(request: Request, asPreviousResult: Boolean = false, preCalculatedNPV: Option[BigDecimal] = None): Result = {
     val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialDec14Onwards", request.leaseDetails))
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, SliceRatesTables.leaseholdResidentialDec14OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, SliceRatesTables.leaseholdResidentialDec14OnwardsPremiumRates.slices)
+    val effectiveDateAfter31March2020: Boolean = request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE)
 
-    LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(leaseResult, premiumResult, npv, asPreviousResult)
+    LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(leaseResult, premiumResult, npv, asPreviousResult, effectiveDateAfter31March2020)
   }
 
   def leaseholdResidentialMar12toDec14(request: Request): Result = {

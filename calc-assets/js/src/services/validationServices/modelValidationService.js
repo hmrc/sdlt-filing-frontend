@@ -50,6 +50,8 @@
             // two or more properties then FTB information required
             if(data.propertyType === 'Residential' &&
                validator.effectiveDateWithinFTBRange(data.effectiveDate) &&
+                (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) ||
+                validator.effectiveDateIsAfterMarch2021(data.effectiveDate)) &&
                data.individual === 'Yes' &&
                data.twoOrMoreProperties === 'No'
             ){

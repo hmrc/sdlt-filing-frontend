@@ -10,11 +10,10 @@ import calculation.models.{CalculationDetails, Result, SliceDetails}
 
 trait LeaseholdResultFixture {
 
-
-  def leaseholdResidentialNov17OnwardsFTBResult(
-                                              leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
-                                              premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
-                                              npv:         Int) =
+  def leaseholdResidentialJuly20OnwardsFTBResult(
+                                                 leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
+                                                 premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
+                                                 npv:         Int)=
     Result(
       totalTax = leaseTaxDue + premTaxDue,
       resultHeading = None,
@@ -42,21 +41,109 @@ trait LeaseholdResultFixture {
       )
     )
 
+
+  def leaseholdResidentialNov17OnwardsFTBResult(
+                                              leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
+                                              premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
+                                              npv:         Int, afterMarch2021: Boolean = false) = {
+    val (resultHeading) = if(afterMarch2021) {
+      (Some("Results of calculation based on SDLT rules for the effective date entered"))
+    } else {
+      (None)
+    }
+      Result(
+        totalTax = leaseTaxDue + premTaxDue,
+        resultHeading = resultHeading,
+        resultHint = None,
+        npv = Some(npv),
+        taxCalcs = Seq(
+          CalculationDetails(
+            taxType = TaxTypes.rent,
+            calcType = CalcTypes.slice,
+            detailHeading = Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
+            bandHeading = Some("Rent bands (£)"),
+            detailFooter = Some("SDLT due on the rent"),
+            taxDue = leaseTaxDue,
+            slices = Some(leaseSliceDetails)
+          ),
+          CalculationDetails(
+            taxType = TaxTypes.premium,
+            calcType = CalcTypes.slice,
+            detailHeading = Some("This is a breakdown of how the amount of SDLT on the premium was calculated"),
+            bandHeading = Some("Premium bands (£)"),
+            detailFooter = Some("SDLT due on the premium"),
+            taxDue = premTaxDue,
+            slices = Some(premSliceDetails)
+          )
+        )
+      )
+    }
+
+  def leaseholdResidentialAddPropJuly20OnwardsResult(
+                                                     leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
+                                                     premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
+                                                     npv:         Int, resHintAmount: Option[String] = None) =
+
+    Result(
+      totalTax = leaseTaxDue + premTaxDue,
+      resultHeading = Some("Result of calculation based on SDLT rates for transactions dated 8 July 2020 to 31 March 2021"),
+      resultHint = resHintAmount.map(value => s"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. " +
+        s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value."),
+      npv = Some(npv),
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.rent,
+          calcType = CalcTypes.slice,
+          detailHeading = Some("Results based on SDLT rules from 8 July 2020 to 31 March 2021"),
+          bandHeading = Some("Rent bands (£)"),
+          detailFooter = Some("SDLT due on the rent"),
+          taxDue = leaseTaxDue,
+          slices = Some(leaseSliceDetails)
+        ),
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slice,
+          detailHeading = Some("Results based on SDLT rules from 8 July 2020 to 31 March 2021"),
+          bandHeading = Some("Premium bands (£)"),
+          detailFooter = Some("SDLT due on the premium"),
+          taxDue = premTaxDue,
+          slices = Some(premSliceDetails)
+        )
+      )
+    )
+
+
   def leaseholdResidentialAddPropApr16OnwardsResult(
                                               leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                               premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
-                                              npv:         Int, resHintAmount: Option[String]) =
+                                              npv:         Int, resHintAmount: Option[String],
+                                              afterMarch2021: Boolean = false) = {
+
+    val (resultHeading, resultHint, leaseDetailHeading, premDetailHeading) = if(afterMarch2021) {
+      (Some("Results of calculation based on SDLT rules for the effective date entered"),
+        resHintAmount.map(value => s"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. " +
+          s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value."),
+        Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
+        Some("This is a breakdown of how the amount of SDLT on the premium was calculated")
+         )
+    } else {
+      (Some("Results based on SDLT rules from 1 April 2016"),
+        resHintAmount.map(value => s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value."),
+        Some("This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules from 1 April 2016"),
+        Some("This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 1 April 2016") )
+    }
+
 
       Result(
       totalTax = leaseTaxDue + premTaxDue,
-      resultHeading = Some("Results based on SDLT rules from 1 April 2016" ),
-      resultHint = resHintAmount.map(value => s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value."),
+      resultHeading = resultHeading,
+      resultHint = resultHint,
       npv = Some(npv),
         taxCalcs = Seq(
           CalculationDetails(
           taxType = TaxTypes.rent,
           calcType = CalcTypes.slice,
-          detailHeading = Some("This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules from 1 April 2016"),
+          detailHeading = leaseDetailHeading,
           bandHeading = Some("Rent bands (£)"),
           detailFooter = Some("SDLT due on the rent"),
           taxDue = leaseTaxDue,
@@ -65,7 +152,7 @@ trait LeaseholdResultFixture {
           CalculationDetails(
           taxType = TaxTypes.premium,
           calcType = CalcTypes.slice,
-          detailHeading = Some("This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 1 April 2016"),
+          detailHeading = premDetailHeading,
           bandHeading = Some("Premium bands (£)"),
           detailFooter = Some("SDLT due on the premium"),
           taxDue = premTaxDue,
@@ -73,24 +160,38 @@ trait LeaseholdResultFixture {
           )
         )
       )
+  }
 
 
-  def leaseholdResidentialDec14OnwardsResult(
+  def leaseholdResidential20OnwardsResult(
                                               leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                               premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
-                                              npv:         Int, asPreviousResult: Boolean = false) =
+                                              npv:         Int, asPreviousResult: Boolean = false) = {
+    val resultheading = if(asPreviousResult) {
+      Some("Result if you become eligible for a repayment of the higher rate on additional dwellings")
+    } else {
+      Some("Result of calculation based on SDLT rates for transactions dated 8 July 2020 to 31 March 2021")
+    }
+
+    val resultHint = if(asPreviousResult) {
+      Some("If you dispose of your previous main residence within 3 years you may be eligible for a refund. " +
+        "You must apply for any repayment within 12 months of disposing of your old main residence.")
+    } else {
+      None
+    }
+
     Result(
       totalTax = leaseTaxDue + premTaxDue,
-      resultHeading = if(asPreviousResult) Some("Results based on SDLT rules before 1 April 2016") else None,
-      resultHint = if(asPreviousResult) Some("You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015.") else None,
+      resultHeading = resultheading,
+      resultHint = resultHint,
       npv = Some(npv),
       taxCalcs = Seq(
         CalculationDetails(
           taxType = TaxTypes.rent,
           calcType = CalcTypes.slice,
           detailHeading = if(asPreviousResult){
-            Some("This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules before 1 April 2016")
-          }else{
+            Some("Results based on SDLT rules from 8 July 2020 to 31 March 2021")
+          } else {
             Some("This is a breakdown of how the amount of SDLT on the rent was calculated")
           },
           bandHeading = Some("Rent bands (£)"),
@@ -102,8 +203,8 @@ trait LeaseholdResultFixture {
           taxType = TaxTypes.premium,
           calcType = CalcTypes.slice,
           detailHeading = if(asPreviousResult){
-            Some("This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules before 1 April 2016")
-          }else{
+            Some("Results based on SDLT rules from 8 July 2020 to 31 March 2021")
+          } else {
             Some("This is a breakdown of how the amount of SDLT on the premium was calculated")
           },
           bandHeading = Some("Premium bands (£)"),
@@ -113,6 +214,60 @@ trait LeaseholdResultFixture {
         )
       )
     )
+  }
+
+
+  def leaseholdResidentialDec14OnwardsResult(
+                                              leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
+                                              premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
+                                              npv:         Int, asPreviousResult: Boolean = false, afterMarch2021: Boolean = false) = {
+    val (resultHeading, resultHint, leaseDetailHeading, premDetailHeading) =
+      (asPreviousResult, afterMarch2021) match {
+        case (true, false) => (Some("Results based on SDLT rules before 1 April 2016"),
+          Some("You may be entitled to pay SDLT using the old rules if you exchanged contracts before 26 November 2015."),
+          Some("This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules before 1 April 2016"),
+          Some("This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules before 1 April 2016"))
+        case (true, true) => (Some("Result if you become eligible for a repayment of the higher rate on additional dwellings"),
+          Some("If you dispose of your previous main residence within 3 years you may be eligible for a refund. " +
+          "You must apply for any repayment within 12 months of disposing of your old main residence"),
+          Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
+          Some("This is a breakdown of how the amount of SDLT on the premium was calculated"))
+        case (false, true) => (Some("Results of calculation based on SDLT rules for the effective date entered"),
+          None,
+          Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
+          Some("This is a breakdown of how the amount of SDLT on the premium was calculated"))
+        case _ => (None, None,
+          Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
+          Some("This is a breakdown of how the amount of SDLT on the premium was calculated"))
+      }
+
+    Result(
+      totalTax = leaseTaxDue + premTaxDue,
+      resultHeading = resultHeading,
+      resultHint = resultHint,
+      npv = Some(npv),
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.rent,
+          calcType = CalcTypes.slice,
+          detailHeading = leaseDetailHeading,
+          bandHeading = Some("Rent bands (£)"),
+          detailFooter = Some("SDLT due on the rent"),
+          taxDue = leaseTaxDue,
+          slices = Some(leaseSliceDetails)
+        ),
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slice,
+          detailHeading = premDetailHeading,
+          bandHeading = Some("Premium bands (£)"),
+          detailFooter = Some("SDLT due on the premium"),
+          taxDue = premTaxDue,
+          slices = Some(premSliceDetails)
+        )
+      )
+    )
+  }
 
   def leaseholdResidentialMar12toDec14Result(
                                               leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
