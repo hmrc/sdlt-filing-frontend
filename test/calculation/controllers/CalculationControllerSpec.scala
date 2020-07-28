@@ -16,8 +16,7 @@ import calculation.enums.{CalcTypes, TaxTypes}
 import calculation.models.{CalculationDetails, CalculationResponse, Result}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.OneInstancePerTest
-import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.{DefaultMessagesControllerComponents, MessagesControllerComponents}
+import play.api.mvc.MessagesControllerComponents
 
 class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstancePerTest with WithFakeApplication{
 
