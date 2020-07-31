@@ -6,12 +6,10 @@
 package journey.controllers
 
 import config.FrontendAppConfig
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status._
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class IndexControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication{

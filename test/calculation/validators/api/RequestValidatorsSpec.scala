@@ -6,8 +6,6 @@
 package calculation.validators.api
 
 import java.time.LocalDate
-
-import calculation.models.{LeaseDetails, LeaseTerm}
 import play.api.libs.json._
 import testutils.JsonValidation
 import uk.gov.hmrc.play.test.UnitSpec

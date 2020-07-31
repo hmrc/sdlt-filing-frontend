@@ -9,7 +9,6 @@ import java.time.LocalDate
 
 import calculation.enums.{HoldingTypes, PropertyTypes}
 import calculation.models._
-import calculation.services.BaseCalculationService
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ModelValidationSpec extends UnitSpec {
