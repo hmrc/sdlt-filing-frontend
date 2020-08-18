@@ -3,14 +3,12 @@ import sbt.ModuleID
 import sbt._
 
 object AppDependencies {
-
-
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "bootstrap-play-26"  % "1.14.0",
-    "uk.gov.hmrc" %% "govuk-template"     % "5.55.0-play-26",
-    "uk.gov.hmrc" %% "play-ui"            % "8.11.0-play-26"
+    "uk.gov.hmrc" %% "bootstrap-frontend-play-27" % "2.24.0",
+    "uk.gov.hmrc" %% "govuk-template"     % "5.55.0-play-27",
+    "uk.gov.hmrc" %% "play-ui"            % "8.11.0-play-27"
   )
 
   trait TestDependencies {

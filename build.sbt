@@ -13,7 +13,7 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 
 val appName = "sdltc-frontend"
-
+crossScalaVersions := Seq("2.11.12", "2.12.12")
 lazy val playSettings: Seq[Setting[_]] = Seq(
   unmanagedResourceDirectories in Assets += baseDirectory.value / "app" / "assets",
   // Dont include the source assets in the dist package (public folder)
@@ -38,8 +38,8 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(plugins: _*)
   .settings(playSettings: _*)
   .settings(playSettings ++ scoverageSettings: _*)
-  .settings(scalaVersion := "2.12.12")
   .settings(scalaSettings: _*)
+  .settings(scalaVersion := "2.12.12")
   .settings(majorVersion := 5)
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
