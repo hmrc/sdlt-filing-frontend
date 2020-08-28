@@ -13,7 +13,6 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 
 val appName = "sdltc-frontend"
-crossScalaVersions := Seq("2.11.12", "2.12.12")
 lazy val playSettings: Seq[Setting[_]] = Seq(
   unmanagedResourceDirectories in Assets += baseDirectory.value / "app" / "assets",
   // Dont include the source assets in the dist package (public folder)
