@@ -106,12 +106,6 @@ if you have any problem try the following steps:
 
     III.``` nvm use v4.4.5```
 
-3. Check if you have `phantomjs` installed: ```which phantomjs```
+3. To run the tests locally you will need to run a docker container using the following command (hmrc vpn connection required)
 
-4. If you don't have `phantomjs`, install it:
-
-    ```brew cask install phantomjs```
-
-5. Add phantomjs to your bash profile:
-
-    ```export PHANTOMJS_BIN=/usr/local/bin/phantomjs``` (or where you have installed it)
+    ```docker pull artefacts.tax.service.gov.uk/chrome-with-rinetd:83.0.4103.61-latest && docker run -d --rm --name chrome-with-rinetd -p 4444:4444 -p 5900:5900 -e PORT_MAPPINGS="6001->6001" -e TARGET_IP='host.docker.internal' artefacts.tax.service.gov.uk/chrome-with-rinetd:83.0.4103.61-latest```

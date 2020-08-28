@@ -1,4 +1,8 @@
 var path = require("path");
+var webdriverConfig = {
+    "hostname": "localhost",
+    "port": 4444
+};
 
 module.exports = function (config)
 {
@@ -36,7 +40,7 @@ module.exports = function (config)
 
         // web server port
         // CLI --port 9876
-        port: 9871,
+        port: 6001,
 
         // enable / disable colors in the output (reporters and logs)
         // CLI --colors --no-colors
@@ -45,7 +49,7 @@ module.exports = function (config)
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         // CLI --log-level debug
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
 
         // enable / disable watching file and executing tests whenever any file changes
         // CLI --auto-watch --no-auto-watch
@@ -88,8 +92,10 @@ module.exports = function (config)
         },
 
         customLaunchers: {
-            "PhantomJS_DEBUG": {
-                base: "PhantomJS",
+            chrome: {
+                browserName: "chrome",
+                base: "WebDriver",
+                config: webdriverConfig,
                 debug: true
             }
         },
@@ -97,10 +103,8 @@ module.exports = function (config)
         plugins: [
             "karma-coverage",
             "karma-jasmine",
-            "karma-chrome-launcher",
-            "karma-firefox-launcher",
+            "karma-webdriver-launcher",
             "karma-junit-reporter",
-            "karma-phantomjs-launcher",
             "karma-spec-reporter",
             "karma-webpack"
         ],
