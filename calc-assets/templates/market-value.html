@@ -57,6 +57,7 @@
             <fieldset>
                 <legend id="marketValueProp" class="form-label-bold">Enter the market value of the property you are buying</legend>
                 <span id="marketValueErrMsg" class="error-notification">{{state.validationMessage('marketValue')}}</span>
+                <label for="marketPropValue" class="visually-hidden">Market value of the property</label>
                 &pound; <input id="marketPropValue" maxlength="10" data-ng-model="data.premium" name="marketPropValue" type="text" required>
             </fieldset>
         </div>
@@ -66,6 +67,7 @@
             <fieldset>
                 <legend id="stageValueProp" class="form-label-bold">Enter the price of the initial share of the property you are purchasing</legend>
                 <span id="stageValueErrMsg" class="error-notification">{{state.validationMessage('marketValue')}}</span>
+                <label for="stagePropValue" class="visually-hidden">Price of initial share of the property</label>
                 &pound; <input id="stagePropValue" maxlength="10" data-ng-model="data.premium" name="stagePropValue" type="text" required>
             </fieldset>
         </div>
