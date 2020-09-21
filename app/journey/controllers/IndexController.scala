@@ -5,13 +5,14 @@
 
 package journey.controllers
 
+import java.net.URLEncoder
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 import scala.util.Random
@@ -26,12 +27,13 @@ class IndexController @Inject()(mcc: MessagesControllerComponents,
   val optimizelyId: String = config.optimizelyId
 
   val showIndex: Action[AnyContent] = Action.async { implicit request =>
+    val referrer = URLEncoder.encode(s"${config.platformHost}${request.path}", "UTF-8")
     if(request.session.get(SessionKeys.sessionId).isEmpty) {
       val sessionId = UUID.randomUUID().toString
-      Future.successful(Ok(journey.views.html.index(gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag(sessionId)))
+      Future.successful(Ok(journey.views.html.index(referrer, gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag(sessionId)))
           .withSession(request.session + (SessionKeys.sessionId -> s"session-$sessionId")))
     } else {
-      Future.successful(Ok(journey.views.html.index(gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag)))
+      Future.successful(Ok(journey.views.html.index(referrer, gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag)))
     }
   }
 

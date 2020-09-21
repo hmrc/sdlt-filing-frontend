@@ -5,7 +5,7 @@
 
 @import config.FrontendAppConfig
 
-@(gatoken: String, gahost: String, googleTagManagerId: String, optimizelyId: String, showBanner: Boolean)(implicit request: Request[_], config: FrontendAppConfig)
+@(referrer: String, gatoken: String, gahost: String, googleTagManagerId: String, optimizelyId: String, showBanner: Boolean)(implicit request: Request[_], config: FrontendAppConfig)
 
 <!DOCTYPE html>
 <!--[if lt IE 8]><html class="no-js lte-ie8" lang="en"><![endif]-->
@@ -370,6 +370,7 @@
             <div class="footer-meta-inner">
                 <ul class="platform-help-links">
                     <li><a href='/help/cookies' target="_blank" data-sso="false" data-journey-click="footer:Click:Cookies">Cookies</a></li>
+                    <li><a href='@{config.accessibilityStatementUrl(referrer)}' target="_blank" data-sso="false" data-journey-click="footer:Click:Cookies">Accessibility statement</a></li>
                     <li><a href='/help/privacy' target="_blank" data-sso="false" data-journey-click="footer:Click:Privacy policy">Privacy policy</a></li>
                     <li><a href='/help/terms-and-conditions' target="_blank" data-sso="false" data-journey-click="footer:Click:Terms and conditions">Terms and conditions</a></li>
                     <li><a href='https://www.gov.uk/help' target="_blank" data-sso="false" data-journey-click="footer:Click:Help">Help using GOV.UK</a></li>

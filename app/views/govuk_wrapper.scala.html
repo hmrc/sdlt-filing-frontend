@@ -8,6 +8,7 @@
 @import config.FrontendAppConfig
 @import play.twirl.api.HtmlFormat
 
+@import java.net.URLEncoder
 @(appConfig: FrontendAppConfig,
   title: String,
   mainClass: Option[String] = None,
@@ -90,4 +91,4 @@
       sidebar = sidebar)
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links(accessibilityFooterUrl = Some("?referrerUrl=" + URLEncoder.encode(s"${appConfig.platformHost}${request.path}", "UTF-8")))), true)(content)
