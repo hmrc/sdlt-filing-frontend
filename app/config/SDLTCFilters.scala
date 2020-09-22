@@ -7,7 +7,7 @@ package config
 
 import javax.inject.Inject
 import play.api.http.DefaultHttpFilters
-import uk.gov.hmrc.play.bootstrap.filters.frontend.HeadersFilter
+import uk.gov.hmrc.play.bootstrap.frontend.filters.HeadersFilter
 
 class SDLTCFilters @Inject()(defaultFilters: MicroserviceFilters,
                              headersFilter: HeadersFilter) extends DefaultHttpFilters(defaultFilters.filters.+:(headersFilter) :_*)

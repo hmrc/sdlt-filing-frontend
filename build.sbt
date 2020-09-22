@@ -1,7 +1,7 @@
-import sbt.{Def, _}
+import sbt.{CrossVersion, Def, compilerPlugin, _}
 import sbt.Keys._
 import com.typesafe.sbt.digest.Import.digest
-import com.typesafe.sbt.web.Import.{pipelineStages, Assets}
+import com.typesafe.sbt.web.Import.{Assets, pipelineStages}
 import com.typesafe.sbt.web.SbtWeb
 import play.sbt.PlayScala
 import uk.gov.hmrc.DefaultBuildSettings._
@@ -33,6 +33,8 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
   )
 }
 
+val silencerVersion = "1.7.1"
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(plugins: _*)
   .settings(playSettings: _*)
@@ -57,7 +59,12 @@ lazy val microservice = Project(appName, file("."))
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     resolvers += Resolver.bintrayRepo("hmrc", "releases"),
-    resolvers += Resolver.jcenterRepo
+    resolvers += Resolver.jcenterRepo,
+    scalacOptions += "-P:silencer:pathFilters=views;routes",
+    libraryDependencies ++= Seq(
+      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
+      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
+    )
   )
 
 lazy val playPublishingSettings: Seq[sbt.Setting[_]] = Seq(

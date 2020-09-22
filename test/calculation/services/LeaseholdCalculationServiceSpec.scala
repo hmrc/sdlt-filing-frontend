@@ -255,7 +255,6 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
   }
 
   "leaseholdResidentialJuly20OnwardsFTB" should {
-    val MAX_PREMIUM_FTB = 500000
     "return 0, 0 for purchase price of 499999, npv of 501945" in new PredefinedNPVSetup(501945) {
       val leaseTaxDue = 19
       val premTaxDue = 0
