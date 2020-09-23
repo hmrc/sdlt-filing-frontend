@@ -5,13 +5,11 @@
 
 package calculation.services
 
-import java.time.LocalDate
-
-import javax.inject.{Inject, Singleton}
 import calculation.data.{Dates, SlabRatesTables, SliceRatesTables}
 import calculation.exceptions.RequiredValueNotDefinedException
-import calculation.models.{Request, Result}
 import calculation.factories.FreeholdResultFactory
+import calculation.models.{Request, Result}
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalculationService,

@@ -5,14 +5,14 @@
 
 package calculation.services
 
-import javax.inject.{Inject, Singleton}
-import calculation.data.{Dates, SlabRatesTables, SliceRatesTables}
 import calculation.data.SignificantAmounts._
+import calculation.data.{Dates, SlabRatesTables, SliceRatesTables}
 import calculation.exceptions.RequiredValueNotDefinedException
-import calculation.factories.{FreeholdResultFactory, LeaseholdResultFactory}
-import calculation.models.calculationtables.SlabResult
+import calculation.factories.LeaseholdResultFactory
 import calculation.models._
+import calculation.models.calculationtables.SlabResult
 import calculation.validators.internal.ModelValidation
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalculationService,

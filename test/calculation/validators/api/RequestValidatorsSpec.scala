@@ -85,8 +85,6 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
             |}
           """.stripMargin)
 
-        val date = LocalDate.of(2003, 6, 21)
-
         val result = Json.fromJson[LocalDate](testJson)(RequestValidators.multiFieldDateReads("memorable"))
 
         shouldHaveErrors(result, Map(
@@ -105,8 +103,6 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
             |  "memorableYear":2017
             |}
           """.stripMargin)
-
-        val date = LocalDate.of(2003, 6, 21)
 
         val result = Json.fromJson[LocalDate](testJson)(RequestValidators.multiFieldDateReads("memorable"))
 

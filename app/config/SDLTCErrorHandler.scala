@@ -6,11 +6,10 @@
 package config
 
 import javax.inject.Inject
-import play.twirl.api.Html
-import play.api.Configuration
 import play.api.i18n.{Messages, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import play.api.mvc.Request
+import play.twirl.api.Html
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 class SDLTCErrorHandler @Inject()(val messagesApi: MessagesApi,
                                   implicit val configuration: FrontendAppConfig) extends FrontendErrorHandler {
