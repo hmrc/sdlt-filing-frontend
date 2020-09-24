@@ -46,7 +46,7 @@ class BaseCalculationService {
     val initialNPV = BigDecimal(0)
     val initialDivisor = BigDecimal(1)
     
-    val (fullYearsNPV, lastFullYearDivisor) = (0 until fullNPVYears).foldLeft(initialNPV, initialDivisor) {
+    val (fullYearsNPV, lastFullYearDivisor) = (0 until fullNPVYears).foldLeft(Tuple2(initialNPV, initialDivisor)) {
       case ((npv, divisor), year) =>
         val updatedDivisor = calcDivisorRate(divisor)
         val updatedNPV = rentsList.lift(year).map {
