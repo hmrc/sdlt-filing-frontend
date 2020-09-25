@@ -6,12 +6,14 @@
 package config
 
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.FakeRequest
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import play.api.test.{FakeRequest, Injecting}
+import uk.gov.hmrc.play.test.UnitSpec
 import org.jsoup.Jsoup
 import play.twirl.api.Content
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import views.html.error_template
 
-class SDLTCErrorHandlerSpec extends UnitSpec with WithFakeApplication {
+class SDLTCErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite  with Injecting {
 
 
   implicit val mcc: MessagesControllerComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
@@ -23,7 +25,8 @@ class SDLTCErrorHandlerSpec extends UnitSpec with WithFakeApplication {
 
     "retrieve the correct messages" in {
       implicit val request = FakeRequest()
-      val errorHandler = new SDLTCErrorHandler(mcc.messagesApi, appConfig)
+      val errorTemplate: error_template = inject[error_template]
+      val errorHandler = new SDLTCErrorHandler(mcc.messagesApi, errorTemplate, appConfig)
       val result = errorHandler.internalServerErrorTemplate
       val document = Jsoup.parse(contentAsString(result))
 

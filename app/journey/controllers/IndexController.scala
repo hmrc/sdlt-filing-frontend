@@ -19,6 +19,7 @@ import scala.util.Random
 
 @Singleton
 class IndexController @Inject()(mcc: MessagesControllerComponents,
+                                template: journey.views.html.index,
                                 implicit val config: FrontendAppConfig) extends FrontendController(mcc) {
 
   val gatoken: String = config.analyticsToken
@@ -30,10 +31,10 @@ class IndexController @Inject()(mcc: MessagesControllerComponents,
     val referrer = URLEncoder.encode(s"${config.platformHost}${request.path}", "UTF-8")
     if(request.session.get(SessionKeys.sessionId).isEmpty) {
       val sessionId = UUID.randomUUID().toString
-      Future.successful(Ok(journey.views.html.index(referrer, gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag(sessionId)))
+      Future.successful(Ok(template(referrer, gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag(sessionId)))
           .withSession(request.session + (SessionKeys.sessionId -> s"session-$sessionId")))
     } else {
-      Future.successful(Ok(journey.views.html.index(referrer, gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag)))
+      Future.successful(Ok(template(referrer, gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag)))
     }
   }
 
