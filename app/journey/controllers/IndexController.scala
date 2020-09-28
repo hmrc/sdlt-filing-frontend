@@ -5,9 +5,7 @@
 
 package journey.controllers
 
-import java.net.URLEncoder
 import java.util.UUID
-
 import javax.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -22,19 +20,15 @@ class IndexController @Inject()(mcc: MessagesControllerComponents,
                                 template: journey.views.html.index,
                                 implicit val config: FrontendAppConfig) extends FrontendController(mcc) {
 
-  val gatoken: String = config.analyticsToken
-  val gahost: String = config.analyticsHost
   val googleTagManagerId: String = config.googleTagManagerId
-  val optimizelyId: String = config.optimizelyId
-
+  val sessionId = UUID.randomUUID().toString
   val showIndex: Action[AnyContent] = Action.async { implicit request =>
-    val referrer = URLEncoder.encode(s"${config.platformHost}${request.path}", "UTF-8")
+
     if(request.session.get(SessionKeys.sessionId).isEmpty) {
-      val sessionId = UUID.randomUUID().toString
-      Future.successful(Ok(template(referrer, gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag(sessionId)))
-          .withSession(request.session + (SessionKeys.sessionId -> s"session-$sessionId")))
+      Future.successful(Ok(template(setURPanelFlag(sessionId), googleTagManagerId))
+        .withSession(request.session + (SessionKeys.sessionId -> s"session-$sessionId")))
     } else {
-      Future.successful(Ok(template(referrer, gatoken, gahost, googleTagManagerId, optimizelyId, setURPanelFlag)))
+      Future.successful(Ok(template(setURPanelFlag(sessionId), googleTagManagerId)))
     }
   }
 

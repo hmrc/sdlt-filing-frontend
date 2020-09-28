@@ -8,7 +8,6 @@ package config
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.util.Try
 
 @Singleton
 class FrontendAppConfig @Inject()(config: ServicesConfig) {
@@ -32,13 +31,5 @@ class FrontendAppConfig @Inject()(config: ServicesConfig) {
   lazy val urBannerLink = "https://signup.take-part-in-research.service.gov.uk/?utm_campaign=SDLT_results&utm_source=Survey_Banner&utm_medium=other&t=HMRC&id=115"
   lazy val feedbackSurveyUrl: String = loadConfig(s"feedback-survey-frontend.url")
   lazy val googleTagManagerId = loadConfig(s"google-tag-manager.id")
-  lazy val accessibilityStatementFrontendHost: String = config.getString("accessibility-statement-frontend.host")
-  lazy val accessibilityStatementFrontendUrl: String = config.getString("accessibility-statement-frontend.url")
-  lazy val accessibilityStatementServicePath: String =  config.getString("accessibility-statement.service-path")
-  lazy val platformHost: String = Try(config.getString("platform.frontend.host")).getOrElse("")
-
-  def accessibilityStatementUrl(referrerUrl: String): String = {
-    s"$accessibilityStatementFrontendHost$accessibilityStatementFrontendUrl$accessibilityStatementServicePath?referrerUrl=$referrerUrl"
-  }
 
 }

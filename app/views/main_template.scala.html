@@ -8,15 +8,13 @@
 
 @this(govuk_wrapper: govuk_wrapper, layoutsSidebar: Sidebar )
 
-
-@(title: String,
+@(title: String = "Stamp Duty Land Tax Calculator",
   sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], config: FrontendAppConfig, messages: Messages)
-
-@serviceInfoContent = {}
+  scriptElem: Option[Html] = None,
+  showBanner: Boolean = false)(mainContent: Html)(implicit request : Request[_], config: FrontendAppConfig, messages: Messages)
 
 @sidebar = {
     @if(sidebarLinks.isDefined) {
@@ -31,5 +29,5 @@
                sidebar = sidebar,
                contentHeader = contentHeader,
                mainContent = mainContent,
-               serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem)
+               scriptElem = scriptElem,
+               showBanner = showBanner)
