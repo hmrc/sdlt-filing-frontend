@@ -10,6 +10,7 @@
 
 @import uk.gov.hmrc.play.views.html.layouts.HeaderNav
 @import uk.gov.hmrc.play.views.html.layouts.FooterLinks
+@import uk.gov.hmrc.play.views.html.layouts.ServiceInfo
 @import uk.gov.hmrc.play.views.html.layouts.MainContent
 @import uk.gov.hmrc.play.views.html.layouts.MainContentHeader
 @import uk.gov.hmrc.play.views.html.layouts.Head
@@ -30,7 +31,8 @@ main_content_header: MainContentHeader,
 main_content: MainContent,
 footer: Footer,
 footer_links: FooterLinks,
-header_nav: HeaderNav)
+header_nav: HeaderNav,
+serviceInfo: ServiceInfo)
 
 @(appConfig: FrontendAppConfig,
   title: String,
@@ -41,7 +43,8 @@ header_nav: HeaderNav)
   contentHeader: Option[Html] = None,
   mainContent: Html = HtmlFormat.empty,
   scriptElem: Option[Html] = None,
-  showBanner: Boolean = false)(implicit request: Request[_], messages: Messages)
+  showBanner: Boolean = false,
+  serviceInfoContent: Html = HtmlFormat.empty)(implicit request: Request[_], messages: Messages)
 
 
 @head = {
@@ -307,6 +310,14 @@ header_nav: HeaderNav)
 
 @footerTop = {}
 
+@svcInfo = {
+    @serviceInfo(
+      betaBanner = HtmlFormat.empty,
+      includeGridWrapper = false,
+      serviceInfoContent = None,
+      includeHMRCBranding = false)
+}
+
 @mainContentHeader = {
     @if(contentHeader.isDefined) {
         @main_content_header(contentHeader = contentHeader.get)
@@ -345,6 +356,7 @@ header_nav: HeaderNav)
       mainClass = mainClass,
       mainDataAttributes = mainDataAttributes,
       mainContentHeader = mainContentHeader,
+      serviceInfo = svcInfo,
       getHelpForm = getHelpForm,
       sidebar = sidebar)
 }
