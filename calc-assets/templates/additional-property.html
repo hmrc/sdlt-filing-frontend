@@ -1,50 +1,76 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-        <li ng-if="state.hasError('twoOrMoreProperties')"><a id="twoOrMorePropertiesPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('twoOrMoreProperties')">{{state.validationMessage('twoOrMoreProperties')}}</a></li>
-        <li ng-if="state.hasError('replaceMainResidence')"><a id="replaceMainResidencePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('replaceMainResidence')">{{state.validationMessage('replaceMainResidence')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            <li data-ng-if="state.hasError('twoOrMoreProperties')"><a id="twoOrMorePropertiesPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('twoOrMoreYes')">{{state.validationMessage('twoOrMoreProperties')}}</a></li>
+            <li data-ng-if="state.hasError('replaceMainResidence')"><a id="replaceMainResidencePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('mainResidenceYes')">{{state.validationMessage('replaceMainResidence')}}</a></li>
+        </ul>
+    </div>
 </div>
 
 <form name="additionalPropertyForm" class="form">
 
-    <div class="form-group {{state.hasError('twoOrMoreProperties')}}">
-        <fieldset>
-            <legend id="twoOrMoreProperties" class="form-label-bold">Will the purchase of the property result in owning two or more properties?</legend>
-            <span id="twoOrMorePropertiesErrMsg" class="error-notification">{{state.validationMessage('twoOrMoreProperties')}}</span>
-            <div class="inline">
-                <label class="block-label" for="twoOrMoreYes">
-                    <input id="twoOrMoreYes" data-ng-model="data.twoOrMoreProperties" name="twoOrMoreProperties" value="Yes" type="radio" required>Yes
-                </label>
-                <label class="block-label" for="twoOrMoreNo">
-                    <input id="twoOrMoreNo" data-ng-model="data.twoOrMoreProperties" name="twoOrMoreProperties" value="No" type="radio" required>No
-                </label>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('twoOrMoreProperties')}">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 id="twoOrMoreProperties" class="govuk-fieldset__heading">
+                    Will the purchase of the property result in owning two or more properties?
+                </h2>
+            </legend>
+            <span id="twoOrMorePropertiesErrMsg" class="govuk-error-message" data-ng-if="state.hasError('twoOrMoreProperties')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('twoOrMoreProperties')}}
+            </span>
+            <div class="govuk-radios govuk-radios--inline">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="twoOrMoreYes" data-ng-model="data.twoOrMoreProperties" name="twoOrMoreProperties" value="Yes" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="twoOrMoreYes">
+                        Yes
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="twoOrMoreNo" data-ng-model="data.twoOrMoreProperties" name="twoOrMoreProperties" value="No" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="twoOrMoreNo">
+                        No
+                    </label>
+                </div>
             </div>
         </fieldset>
     </div>
 
-    <div ng-if="data.twoOrMoreProperties === 'Yes'">
-      <div class="form-group {{state.hasError('replaceMainResidence')}}">
-          <fieldset>
-              <legend id="replaceMainResidence" class="form-label-bold">Is the property being purchased replacing your main residence?</legend>
-              <span class="form-hint text">If your previous main residence has not yet been sold choose "No". A refund may be available if the previous main residence is sold within 3 years.</span>
-              <span id="replaceMainResidenceErrMsg" class="error-notification">{{state.validationMessage('replaceMainResidence')}}</span>
-              <div class="inline">
-                  <label class="block-label" for="mainResidenceYes">
-                      <input id="mainResidenceYes" data-ng-model="data.replaceMainResidence" name="replaceMainResidence" value="Yes" type="radio" required>Yes
-                  </label>
-                  <label class="block-label" for="mainResidenceNo">
-                      <input id="mainResidenceNo" data-ng-model="data.replaceMainResidence" name="replaceMainResidence" value="No" type="radio" required>No
-                  </label>
+    <div data-ng-if="data.twoOrMoreProperties === 'Yes'">
+      <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('replaceMainResidence')}">
+          <fieldset class="govuk-fieldset" aria-describedby="replaceMainRes-hint">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                  <h2 id="replaceMainResidence" class="govuk-fieldset__heading">
+                    Is the property being purchased replacing your main residence?
+                  </h2>
+              </legend>
+              <div class="govuk-hint" id="replaceMainRes-hint">If your previous main residence has not yet been sold choose "No". A refund may be available if the previous main residence is sold within 3 years.</div>
+              <span id="replaceMainResidenceErrMsg" class="govuk-error-message" data-ng-if="state.hasError('replaceMainResidence')">
+                  <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('replaceMainResidence')}}
+              </span>
+              <div class="govuk-radios govuk-radios--inline">
+                  <div class="govuk-radios__item">
+                      <input class="govuk-radios__input" id="mainResidenceYes" data-ng-model="data.replaceMainResidence" name="replaceMainResidence" value="Yes" type="radio">
+                      <label class="govuk-label govuk-radios__label" for="mainResidenceYes">
+                          Yes
+                      </label>
+                  </div>
+                  <div class="govuk-radios__item">
+                      <input class="govuk-radios__input" id="mainResidenceNo" data-ng-model="data.replaceMainResidence" name="replaceMainResidence" value="No" type="radio">
+                      <label class="govuk-label govuk-radios__label" for="mainResidenceNo">
+                          No
+                      </label>
+                  </div>
               </div>
           </fieldset>
       </div>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/additional-property')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/additional-property')">Continue</button>
     </div>    
 
 </form>

@@ -1,79 +1,124 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div class = "form-group">
-  <table>
-    <caption style="text-align:left" class="heading-small">Summary</caption>
-    <tbody>
-    <tr class="section" data-ng-repeat="item in data.summary">
-      <td class="previous-question-title" id="td1_{{item.id}}">{{item.question}}</td>
-      <td class="previous-question-body"  id="td2_{{item.id}}" data-ng-if="item.type === undefined">{{item.answer}}</td>
-      <td class="previous-question-body"  id="td2_{{item.id}}" data-ng-if="item.type === 'Date'">{{item.answer | date: 'd MMMM yyyy'}}</td>
-      <td class="previous-question-body"  id="td2_{{item.id}}" data-ng-if="item.type === 'Currency'">{{item.answer | calcCurrency: '£'}}</td>
-    </tr>
-    </tbody>
-  </table>
-</div>
-
-<h2 data-ng-if="data.result[0].resultHeading === undefined">Results</h2>
+<dl class="govuk-summary-list">
+  <h2 class="govuk-heading-l">Summary</h2>
+  <div class="govuk-summary-list__row" data-ng-repeat="item in data.summary">
+    <dt class="govuk-summary-list__key previous-question-title" id="td1_{{item.id}}">
+      {{item.question}}
+    </dt>
+    <dd class="govuk-summary-list__value" id="td2_{{item.id}}" data-ng-if="item.type === undefined">
+      {{item.answer}}
+    </dd>
+    <dd class="govuk-summary-list__value" id="td2_{{item.id}}" data-ng-if="item.type === 'Date'">
+      {{item.answer | date: 'd MMMM yyyy'}}
+    </dd>
+    <dd class="govuk-summary-list__value" id="td2_{{item.id}}" data-ng-if="item.type === 'Currency'">
+      {{item.answer | calcCurrency: '£'}}
+    </dd>
+  </div>
+</dl>
 
 <div data-ng-repeat="res in data.result">
-  <h2 id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
-  <span id="resultHint{{$index}}" class="form-hint">{{res.resultHint}}</span>
-  <div class="form-group">
-    <table data-ng-if="data.holdingType === 'Freehold'">
-      <caption style="text-align:left" class="heading-small">Result of SDLT calculation</caption>
-      <tbody data-ng-if="res.taxCalcs[0].calcType === 'slice'">
-      <tr class="section">
-        <th>Effective date</th>
-        <th>Purchase price (&pound;)</th>
-        <th colspan="2">Total SDLT due (&pound;)</th>
-      </tr>
-      <tr class="section">
-        <td id="effDate{{$index}}">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-        <td id="premium{{$index}}">{{data.premium | calcCurrency}}</td>
-        <td id="totalTax{{$index}}">{{res.totalTax | calcCurrency}}</td>
-        <td></td>
-      </tr>
-      </tbody>
-      <tbody data-ng-if="res.taxCalcs[0].calcType === 'slab'">
-      <tr class="section">
-        <th>Effective date</th>
-        <th>Purchase price (&pound;)</th>
-        <th>Percentage rate (%)</th>
-        <th>Total SDLT due (&pound;)</th>
-      </tr>
-      <tr class="section">
-        <td id="effDate{{$index}}">{{data.effectiveDate | date:'d MMMM yyyy'}}</td>
-        <td id="premium{{$index}}">{{data.premium | calcCurrency}}</td>
-        <td id="taxRate{{$index}}">{{res.taxCalcs[0].rate | calcCurrency}}</td>
-        <td id="totalTax{{$index}}">{{res.totalTax | calcCurrency}}</td>
-      </tr>
-      </tbody>
-    </table>
-    <table data-ng-if="data.holdingType === 'Leasehold'">
-      <caption style="text-align:left" class="heading-small">Result of SDLT calculation</caption>
-      <tbody>
-      <tr class="section">
-        <td>Total amount of tax for this transaction</td>
-        <td id="totalTax{{$index}}">{{res.totalTax | calcCurrency:"£"}}</td>
-        <td></td>
-      </tr>
-      <tr class="section">
-        <td>Net present value</td>
-        <td id="npv{{$index}}">{{res.npv | calcCurrency:"£"}}</td>
-        <td></td>
-      </tr>
-      <tr data-ng-repeat="taxCalc in res.taxCalcs" class="section">
-        <td id="taxType{{$parent.$parent.$index+''+$index}}">SDLT on {{taxCalc.taxType}} <span id="taxRate{{$index}}" data-ng-if="tax.calcType === 'slab'">({{taxCalc.rate}}%)</span></td>
-        <td id="taxDue{{$parent.$parent.$index+''+$index}}">{{taxCalc.taxDue | calcCurrency:"£"}}</td>
-        <td></td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+
+  <h2 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
+  <span id="resultHint{{$index}}" class="govuk-hint">{{res.resultHint}}</span>
+
+  <span class="govuk-summary-list" data-ng-if="data.holdingType === 'Freehold'">
+    <h2 class="govuk-heading-l">Result of SDLT calculation</h2>
+    <dl class="govuk-summary-list" data-ng-if="res.taxCalcs[0].calcType === 'slice'">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Effective date
+        </dt>
+        <dd class="govuk-summary-list__value" id="effDate{{$index}}">
+          {{data.effectiveDate | date:'d MMMM yyyy'}}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Purchase price (&pound;)
+        </dt>
+        <dd class="govuk-summary-list__value" id="premium{{$index}}">
+          {{data.premium | calcCurrency}}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Total SDLT due (&pound;)
+        </dt>
+        <dd class="govuk-summary-list__value" id="totalTax{{$index}}">
+          {{res.totalTax | calcCurrency}}
+        </dd>
+      </div>
+
+    </dl>
+
+    <dl class="govuk-summary-list" data-ng-if="res.taxCalcs[0].calcType === 'slab'">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Effective date
+        </dt>
+        <dd class="govuk-summary-list__value" id="effDate{{$index}}">
+          {{data.effectiveDate | date:'d MMMM yyyy'}}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Purchase price (&pound;)
+        </dt>
+        <dd class="govuk-summary-list__value" id="premium{{$index}}">
+          {{data.premium | calcCurrency}}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Percentage rate (%)
+        </dt>
+        <dd class="govuk-summary-list__value" id="taxRate{{$index}}">
+          {{res.taxCalcs[0].rate | calcCurrency}}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Total SDLT due (&pound;)
+        </dt>
+        <dd class="govuk-summary-list__value" id="totalTax{{$index}}">
+          {{res.totalTax | calcCurrency}}
+        </dd>
+      </div>
+    </dl>
+  </span>
+  <span class="govuk-summary-list" data-ng-if="data.holdingType === 'Leasehold'">
+      <h2 class="govuk-heading-l">Result of SDLT calculation</h2>
+      <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            Total amount of tax for this transaction
+          </dt>
+          <dd class="govuk-summary-list__value" id="totalTax{{$index}}">
+            {{res.totalTax | calcCurrency:"£"}}
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            Net present value
+          </dt>
+          <dd class="govuk-summary-list__value" id="npv{{$index}}">
+            {{res.npv | calcCurrency:"£"}}
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row" data-ng-repeat="taxCalc in res.taxCalcs">
+          <dt class="govuk-summary-list__key" id="taxType{{$parent.$parent.$index+''+$index}}">
+            SDLT on {{taxCalc.taxType}}<span id="taxRate{{$index}}" data-ng-if="taxCalc.calcType === 'slab'"> ({{taxCalc.rate}}%)</span>
+          </dt>
+          <dd class="govuk-summary-list__value" id="taxDue{{$parent.$parent.$index+''+$index}}">
+            {{taxCalc.taxDue | calcCurrency:"£"}}
+          </dd>
+        </div>
+      </dl>
+    </span>
 </div>
 
-
 <div class="form-group">
-  <button class ="button" onCLick="javascript:window.print();ga('send', 'event', 'button', 'click', 'print')">Print</button>
+  <button class="govuk-button" onCLick="javascript:window.print();ga('send', 'event', 'button', 'click', 'print')">Print</button>
 </div>

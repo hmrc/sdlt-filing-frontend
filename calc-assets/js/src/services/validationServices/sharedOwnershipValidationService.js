@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.sharedOwnership)) {
-                state.sharedOwnership = "Provide an answer to continue. Select 'Yes' or 'No'";
+                state.sharedOwnership = "Select 'Yes' or 'No'";
                 ga('send', 'event', "userError", "sharedOwnershipError", "notPopulated");
             }
 

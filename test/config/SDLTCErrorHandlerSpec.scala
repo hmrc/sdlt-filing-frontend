@@ -5,12 +5,12 @@
 
 package config
 
+import org.jsoup.Jsoup
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.{FakeRequest, Injecting}
-import uk.gov.hmrc.play.test.UnitSpec
-import org.jsoup.Jsoup
 import play.twirl.api.Content
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import uk.gov.hmrc.play.test.UnitSpec
 import views.html.error_template
 
 class SDLTCErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite  with Injecting {
@@ -32,7 +32,7 @@ class SDLTCErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite  with Inje
 
       document.title() should be("Sorry, there is a problem with the service - 500")
       document.getElementsByTag("h1").text() should be("Sorry, there is a problem with the service")
-      document.select("#content p").first().text() should be("Try again later.")
+      document.select(".govuk-grid-column-two-thirds p").first().text() should be("Try again later.")
     }
   }
 }

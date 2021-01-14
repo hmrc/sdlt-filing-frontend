@@ -1,31 +1,45 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-        <li data-ng-if="state.hasError('mainResidence')"><a id="mainResidencePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('mainResidence')">{{state.validationMessage('mainResidence')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            <li data-ng-if="state.hasError('mainResidence')"><a id="mainResidencePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('mainResidence-yes')">{{state.validationMessage('mainResidence')}}</a></li>
+        </ul>
+    </div>
 </div>
 
 <form name="mainResidenceForm" class="form">
 
-    <div class="form-group {{state.hasError('mainResidence')}}">
-        <fieldset>
-            <legend id="mainResidence" class="form-label-bold">Will this property be your main residence?</legend>
-            <span id="mainResidenceErrMsg" class="error-notification">{{state.validationMessage('mainResidence')}}</span>
-            <div class="inline">
-                <label class="block-label" for="mainResidence-yes">
-                    <input id="mainResidence-yes" data-ng-model="data.mainResidence" name="mainResidence" value="Yes" type="radio" required>Yes
-                </label>
-                <label class="block-label" for="mainResidence-no">
-                    <input id="mainResidence-no" data-ng-model="data.mainResidence" name="mainResidence" value="No" type="radio" required>No
-                </label>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('mainResidence')}">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 id="mainResidence" class="govuk-fieldset__heading">
+                    Will this property be your main residence?
+                </h2>
+            </legend>
+            <span id="mainResidenceErrMsg" class="govuk-error-message" data-ng-if="state.hasError('mainResidence')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('mainResidence')}}
+            </span>
+            <div class="govuk-radios govuk-radios--inline">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="mainResidence-yes" data-ng-model="data.mainResidence" name="mainResidence" value="Yes" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="mainResidence-yes">
+                        Yes
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="mainResidence-no" data-ng-model="data.mainResidence" name="mainResidence" value="No" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="mainResidence-no">
+                        No
+                    </label>
+                </div>
             </div>
         </fieldset>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/main-residence')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/main-residence')">Continue</button>
     </div>
 
 </form>

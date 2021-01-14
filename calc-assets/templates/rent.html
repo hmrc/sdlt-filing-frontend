@@ -1,64 +1,110 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-      <li data-ng-if="state.hasError('year1Rent')"><a id="year1RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year1Rent')">{{state.validationMessage('year1Rent')}}</a></li>
-      <li data-ng-if="state.hasError('year2Rent')"><a id="year2RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year2Rent')">{{state.validationMessage('year2Rent')}}</a></li>
-      <li data-ng-if="state.hasError('year3Rent')"><a id="year3RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year3Rent')">{{state.validationMessage('year3Rent')}}</a></li>
-      <li data-ng-if="state.hasError('year4Rent')"><a id="year4RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year4Rent')">{{state.validationMessage('year4Rent')}}</a></li>
-      <li data-ng-if="state.hasError('year5Rent')"><a id="year5RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year5Rent')">{{state.validationMessage('year5Rent')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          <li data-ng-if="state.hasError('year1Rent')"><a id="year1RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year1Rent')">{{state.validationMessage('year1Rent')}}</a></li>
+          <li data-ng-if="state.hasError('year2Rent')"><a id="year2RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year2Rent')">{{state.validationMessage('year2Rent')}}</a></li>
+          <li data-ng-if="state.hasError('year3Rent')"><a id="year3RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year3Rent')">{{state.validationMessage('year3Rent')}}</a></li>
+          <li data-ng-if="state.hasError('year4Rent')"><a id="year4RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year4Rent')">{{state.validationMessage('year4Rent')}}</a></li>
+          <li data-ng-if="state.hasError('year5Rent')"><a id="year5RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year5Rent')">{{state.validationMessage('year5Rent')}}</a></li>
+        </ul>
+    </div>
 </div>
 
 <form name="rentForm" class="form">
-    <div class="form-group">
-        <span class="form-label-bold" data-ng-if="displayYearFiveRent">Enter the annual rent due for the first 5 years.</span>
-        <span class="form-label-bold" data-ng-if="!displayYearFiveRent">Enter the annual rent due.</span>
-    </div>   
 
-    <div class="form-group {{state.hasError('year1Rent')}}" data-ng-if="displayYearOneRent">
-        <label for="year1Rent">
-            <span class="form-label-bold">Year 1 rent</span>
-            <span id="year1RentErrMsg" class="error-notification">{{state.validationMessage('year1Rent')}}</span>
-        </label>            
-        &pound; <input id="year1Rent" maxlength="10" data-ng-model="data.year1Rent" name="year1Rent" type="tel" required>
+    <h2 class="govuk-heading-l" data-ng-if="displayYearFiveRent">Enter the annual rent due for the first 5 years.</h2>
+    <h2 class="govuk-heading-l" data-ng-if="!displayYearFiveRent">Enter the annual rent due.</h2>
+
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('year1Rent')}" data-ng-if="displayYearOneRent">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="year1Rent">Year 1 rent</label>
+                </h2>
+            </legend>
+            <span id="year1RentErrMsg" class="govuk-error-message" data-ng-if="state.hasError('year1Rent')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('year1Rent')}}
+            </span>
+            <div class="govuk-input__wrapper">
+                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                <input class="govuk-input govuk-input--width-5" id="year1Rent" maxlength="10" data-ng-model="data.year1Rent" name="year1Rent" type="text">
+            </div>
+        </fieldset>
     </div>
 
-    <div class="form-group {{state.hasError('year2Rent')}}" data-ng-if="displayYearTwoRent">
-        <label for="year2Rent">
-            <span class="form-label-bold">Year 2 rent</span>
-            <span id="year2RentErrMsg" class="error-notification">{{state.validationMessage('year2Rent')}}</span>
-        </label>            
-        &pound; <input id="year2Rent" maxlength="10" data-ng-model="data.year2Rent" name="year2Rent" type="tel" required>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('year2Rent')}" data-ng-if="displayYearTwoRent">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="year2Rent">Year 2 rent</label>
+                </h2>
+            </legend>
+            <span id="year2RentErrMsg" class="govuk-error-message" data-ng-if="state.hasError('year2Rent')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('year2Rent')}}
+            </span>
+            <div class="govuk-input__wrapper">
+                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                <input class="govuk-input govuk-input--width-5" id="year2Rent" maxlength="10" data-ng-model="data.year2Rent" name="year2Rent" type="text">
+            </div>
+        </fieldset>
     </div>
 
-    <div class="form-group {{state.hasError('year3Rent')}}" data-ng-if="displayYearThreeRent">
-        <label for="year3Rent">
-            <span class="form-label-bold">Year 3 rent</span>
-            <span id="year3RentErrMsg" class="error-notification">{{state.validationMessage('year3Rent')}}</span>
-        </label>            
-        &pound; <input id="year3Rent" maxlength="10" data-ng-model="data.year3Rent" name="year3Rent" type="tel" required>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('year3Rent')}" data-ng-if="displayYearThreeRent">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="year3Rent">Year 3 rent</label>
+                </h2>
+            </legend>
+            <span id="year3RentErrMsg" class="govuk-error-message" data-ng-if="state.hasError('year3Rent')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('year3Rent')}}
+            </span>
+            <div class="govuk-input__wrapper">
+                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                <input class="govuk-input govuk-input--width-5" id="year3Rent" maxlength="10" data-ng-model="data.year3Rent" name="year3Rent" type="text">
+            </div>
+        </fieldset>
     </div>
 
-    <div class="form-group {{state.hasError('year4Rent')}}" data-ng-if="displayYearFourRent">
-        <label for="year4Rent">
-            <span class="form-label-bold">Year 4 rent</span>
-            <span id="year4RentErrMsg" class="error-notification">{{state.validationMessage('year4Rent')}}</span>
-        </label>            
-        &pound; <input id="year4Rent" maxlength="10" data-ng-model="data.year4Rent" name="year4Rent" type="tel" required>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('year4Rent')}" data-ng-if="displayYearFourRent">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="year4Rent">Year 4 rent</label>
+                </h2>
+            </legend>
+            <span id="year4RentErrMsg" class="govuk-error-message" data-ng-if="state.hasError('year4Rent')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('year4Rent')}}
+            </span>
+            <div class="govuk-input__wrapper">
+                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                <input class="govuk-input govuk-input--width-5" id="year4Rent" maxlength="10" data-ng-model="data.year4Rent" name="year4Rent" type="text">
+            </div>
+        </fieldset>
     </div>
 
-    <div class="form-group {{state.hasError('year5Rent')}}" data-ng-if="displayYearFiveRent">
-        <label for="year5Rent">
-            <span class="form-label-bold">Year 5 rent</span>
-            <span id="year5RentErrMsg" class="error-notification">{{state.validationMessage('year5Rent')}}</span>
-        </label>            
-        &pound; <input id="year5Rent" maxlength="10" data-ng-model="data.year5Rent" name="year5Rent" type="tel" required>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('year5Rent')}" data-ng-if="displayYearFiveRent">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="year5Rent">Year 5 rent</label>
+                </h2>
+            </legend>
+            <span id="year5RentErrMsg" class="govuk-error-message" data-ng-if="state.hasError('year5Rent')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('year5Rent')}}
+            </span>
+            <div class="govuk-input__wrapper">
+                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                <input class="govuk-input govuk-input--width-5" id="year5Rent" maxlength="10" data-ng-model="data.year5Rent" name="year5Rent" type="text">
+            </div>
+        </fieldset>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/rent')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/rent')">Continue</button>
     </div>
 
 </form>

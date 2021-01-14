@@ -1,32 +1,50 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-      <li data-ng-if="state.hasError('holdingType')"><a id="holdingTypePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('holdingType')">{{state.validationMessage('holdingType')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            <li data-ng-if="state.hasError('holdingType')"><a id="holdingTypePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('holding-free')">{{state.validationMessage('holdingType')}}</a>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <form name="holdingForm" class="form">
 
-    <div class="form-group {{state.hasError('holdingType')}}">
-        <fieldset>
-            <legend id="holdingType" class="form-label-bold">Is your transaction freehold or leasehold?</legend>
-            <span class="form-hint text">Choose 'Freehold' if it's a freehold transaction or you're acquiring an existing lease. Choose 'Leasehold' if it's a new lease.</span>
-            <span id="holdingTypeErrMsg" class="error-notification">{{state.validationMessage('holdingType')}}</span>
-            <div class="inline">
-                <label class="block-label" for="holding-free">
-                    <input id="holding-free" data-ng-model="data.holdingType" name="holdingType" value="Freehold" type="radio" required>Freehold
-                </label>
-                <label class="block-label" for="holding-lease">
-                    <input id="holding-lease" data-ng-model="data.holdingType" name="holdingType" value="Leasehold" type="radio" required>Leasehold
-                </label>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('holdingType')}">
+        <fieldset class="govuk-fieldset" aria-describedby="freehold-leasehold-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 id="holdingType" class="govuk-fieldset__heading">
+                    Is your transaction freehold or leasehold?
+                </h2>
+            </legend>
+            <span id="holdingTypeErrMsg" class="govuk-error-message" data-ng-if="state.hasError('holdingType')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('holdingType')}}
+            </span>
+            <div id="freehold-leasehold-hint" class="govuk-hint">
+                Choose 'Freehold' if it's a freehold transaction or you're acquiring an existing lease. Choose 'Leasehold' if it's a new lease.
+            </div>
+            <div class="govuk-radios govuk-radios--inline">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="holding-free" data-ng-model="data.holdingType" name="holdingType" value="Freehold" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="holding-free">
+                        Freehold
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="holding-lease" data-ng-model="data.holdingType" name="holdingType" value="Leasehold" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="holding-lease">
+                        Leasehold
+                    </label>
+                </div>
             </div>
         </fieldset>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/holding')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button"  id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/holding')">Continue</button>
     </div>
 
 </form>

@@ -1,6 +1,7 @@
 npm install mocha
 npm install blanket
 npm install chai
+npp install ng-attr --save
 
 mkdir -p target/test-reports/xunit
 ./node_modules/mocha/bin/mocha --reporter xunit > target/test-reports/xunit/results.xml

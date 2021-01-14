@@ -1,6 +1,10 @@
 # microservice specific routes
 
+->          /govuk-frontend                        govuk.Routes
+->          /hmrc-frontend                         hmrcfrontend.Routes
+
 GET         /                                      journey.controllers.IndexController.showIndex
+GET         /assets/*file                          controllers.Assets.versioned(path="/public", file: Asset)
 GET         /javascript/*file                      controllers.Assets.versioned(path="/public", file: Asset)
 
 #Calculation Routes

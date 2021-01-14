@@ -28,8 +28,13 @@ class FrontendAppConfig @Inject()(config: ServicesConfig) {
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
-  lazy val urBannerLink = "https://signup.take-part-in-research.service.gov.uk/?utm_campaign=SDLT_results&utm_source=Survey_Banner&utm_medium=other&t=HMRC&id=115"
   lazy val feedbackSurveyUrl: String = loadConfig(s"feedback-survey-frontend.url")
   lazy val googleTagManagerId = loadConfig(s"google-tag-manager.id")
+
+  lazy val cookies: String = loadConfig("urls.footer.cookies")
+  lazy val accessibilityStatement: String = loadConfig("urls.footer.accessibility_statement")
+  lazy val privacy: String = loadConfig("urls.footer.privacy_policy")
+  lazy val termsConditions: String = loadConfig("urls.footer.terms_and_conditions")
+  lazy val govukHelp: String = loadConfig("urls.footer.help_page")
 
 }

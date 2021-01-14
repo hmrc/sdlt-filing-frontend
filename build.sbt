@@ -17,7 +17,11 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
   unmanagedResourceDirectories in Assets += baseDirectory.value / "app" / "assets",
   // Dont include the source assets in the dist package (public folder)
   excludeFilter in Assets := "js*" || "sass*",
-  dependencyOverrides += "org.scala-lang" % "scala-library" % "2.12.12"
+  TwirlKeys.templateImports ++= Seq(
+    "uk.gov.hmrc.govukfrontend.views.html.components._",
+    "uk.gov.hmrc.govukfrontend.views.html.helpers._"
+  ),
+  dependencyOverrides += "org.scala-lang" % "scala-library" % "2.12.13"
 ) ++ JavaScriptBuild.javaScriptUiSettings
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtWeb)

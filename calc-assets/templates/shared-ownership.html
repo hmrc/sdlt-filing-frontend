@@ -1,34 +1,48 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-        <li data-ng-if="state.hasError('sharedOwnership')"><a id="sharedOwnershipPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('sharedOwnership')">{{state.validationMessage('sharedOwnership')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            <li data-ng-if="state.hasError('sharedOwnership')"><a id="sharedOwnershipPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('sharedOwnership-yes')">{{state.validationMessage('sharedOwnership')}}</a></li>
+        </ul>
+    </div>
 </div>
 
 <form name="sharedOwnershipForm" class="form">
 
-    <div class="form-group {{state.hasError('sharedOwnership')}}">
-        <fieldset>
-            <legend id="sharedOwnership" class="form-label-bold">Are you buying the property through a shared ownership scheme?</legend>
-            <div class="form-hint">
-                <p>The scheme must be operated by an approved qualifying body, like a housing association or local authority.</p>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('sharedOwnership')}">
+        <fieldset class="govuk-fieldset" aria-describedby="sharedOwnership-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 id="sharedOwnership" class="govuk-fieldset__heading">
+                    Are you buying the property through a shared ownership scheme?
+                </h2>
+            </legend>
+            <div id="sharedOwnership-hint" class="form-hint">
+                <p class="govuk-body">The scheme must be operated by an approved qualifying body, like a housing association or local authority.</p>
             </div>
-            <span id="sharedOwnershipErrMsg" class="error-notification">{{state.validationMessage('sharedOwnership')}}</span>
-            <div class="inline">
-                <label class="block-label" for="sharedOwnership-yes">
-                    <input id="sharedOwnership-yes" data-ng-model="data.sharedOwnership" name="sharedOwnership" value="Yes" type="radio" required>Yes
-                </label>
-                <label class="block-label" for="sharedOwnership-no">
-                    <input id="sharedOwnership-no" data-ng-model="data.sharedOwnership" name="sharedOwnership" value="No" type="radio" required>No
-                </label>
+            <span id="sharedOwnershipErrMsg" class="govuk-error-message" data-ng-if="state.hasError('sharedOwnership')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('sharedOwnership')}}
+            </span>
+            <div class="govuk-radios govuk-radios--inline">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="sharedOwnership-yes" data-ng-model="data.sharedOwnership" name="sharedOwnership" value="Yes" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="sharedOwnership-yes">
+                        Yes
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="sharedOwnership-no" data-ng-model="data.sharedOwnership" name="sharedOwnership" value="No" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="sharedOwnership-no">
+                        No
+                    </label>
+                </div>
             </div>
         </fieldset>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/shared-ownership')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/shared-ownership')">Continue</button>
     </div>
 
 </form>

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ */
+
 package util
 
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite

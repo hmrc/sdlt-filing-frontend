@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You must complete this box. Enter your Premium");
+            expect(state.validationMessage('premium')).toEqual("Enter your Premium");
         });
 
         it('premium.mandatory should return an error when Premium is empty', function() {
@@ -26,7 +26,7 @@
             var state = service.validate(form);
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You must complete this box. Enter your Premium");
+            expect(state.validationMessage('premium')).toEqual("Enter your Premium");
         });
 
         it('premium.format should return an error when NaN', function() {

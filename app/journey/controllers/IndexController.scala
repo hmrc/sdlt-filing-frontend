@@ -5,13 +5,13 @@
 
 package journey.controllers
 
-import java.util.UUID
-import javax.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import scala.util.Random
 
@@ -25,28 +25,11 @@ class IndexController @Inject()(mcc: MessagesControllerComponents,
   val showIndex: Action[AnyContent] = Action.async { implicit request =>
 
     if(request.session.get(SessionKeys.sessionId).isEmpty) {
-      Future.successful(Ok(template(setURPanelFlag(sessionId), googleTagManagerId))
+      Future.successful(Ok(template(googleTagManagerId))
         .withSession(request.session + (SessionKeys.sessionId -> s"session-$sessionId")))
     } else {
-      Future.successful(Ok(template(setURPanelFlag(sessionId), googleTagManagerId)))
+      Future.successful(Ok(template(googleTagManagerId)))
     }
-  }
-
-  private[controllers] def setURPanelFlag(implicit hc: HeaderCarrier): Boolean = {
-    val session = hc.sessionId.map(_.value).getOrElse("0")
-    val numericSessionValues = session.replaceAll("[^0-9]", "") match {
-      case "" => "0"
-      case num => num
-    }
-    setBooleanFlag(numericSessionValues)
-  }
-
-  private[controllers] def setURPanelFlag(sessionID: String): Boolean = {
-    val numericSessionValues = sessionID.replaceAll("[^0-9]", "") match {
-      case "" => "0"
-      case num => num
-    }
-    setBooleanFlag(numericSessionValues)
   }
 
   private [controllers] def setBooleanFlag(numericSessionValues: String): Boolean = {

@@ -1,36 +1,49 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-      <li data-ng-if="state.hasError('premium')"><a id="premiumPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          <li data-ng-if="state.hasError('premium')"><a id="premiumPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a></li>
+        </ul>
+    </div>
 </div>
 
 <form name="premiumForm" class="form">
 
-    <div class="form-group {{state.hasError('premium')}}">
-        <label for="premium">
-            <span class="form-label-bold">Total premium payable.</span>
-            <span class="form-hint">Find this in your lease.</span>
-            <span id="premiumErrMsg" class="error-notification">{{state.validationMessage('premium')}}</span>
-        </label>            
-        &pound; <input id="premium" maxlength="10" data-ng-model="data.premium" name="premium" type="tel" required>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('premium')}">
+        <fieldset class="govuk-fieldset" aria-describedby="premium-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="premium">Total premium payable</label>
+                </h2>
+            </legend>
+            <span id="purchasePriceErrMsg" class="govuk-error-message" data-ng-if="state.hasError('premium')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('premium')}}
+            </span>
+            <div id="premium-hint" class="govuk-hint">
+                Find this in your lease.
+            </div>
+            <div class="govuk-input__wrapper">
+                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                <input class="govuk-input govuk-input--width-10" id="premium" maxlength="10" data-ng-model="data.premium" name="premium" type="text">
+            </div>
+        </fieldset>
     </div>
 
     <div data-ng-show="showPremiumHelp">
-        <details>
-            <summary data-ng-click="toggleHelp('leasePremium','premium.leasePremium')"><span id="detailsSummaryLink" class="summary">Is your lease premium less than £40,000?</span></summary>
-            <div class="panel-indent" data-ng-if="displayHelp('leasePremium')">
-                <p>You will not have to pay SDLT if the lease premium is less than £40,000 and no tax is due on the rent. You may still have to
-                    <a id="sdltlpLink" href="https://www.gov.uk/guidance/stamp-duty-land-tax-leasehold-purchases">file an SDLT return in some cases</a>.
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary" data-ng-click="toggleHelp('leasePremium','premium.leasePremium')"><span class="govuk-details__summary-text" id="detailsSummaryLink">Is your lease premium less than £40,000?</span></summary>
+            <div class="govuk-details__text" data-ng-if="displayHelp('leasePremium')">
+                <p class="govuk-body">You will not have to pay SDLT if the lease premium is less than £40,000 and no tax is due on the rent. You may still have to
+                    <a class="govuk-link" id="sdltlpLink" href="https://www.gov.uk/guidance/stamp-duty-land-tax-leasehold-purchases">file an SDLT return in some cases</a>.
                 </p>
             </div>
         </details>
     </div>
 
-    <div class="form-group">
-         <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/premium')">Continue</button>
+    <div class="govuk-form-group">
+         <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/premium')">Continue</button>
     </div>
 
 </form>
