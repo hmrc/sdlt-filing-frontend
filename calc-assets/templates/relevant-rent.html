@@ -1,24 +1,35 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-      <li data-ng-if="state.hasError('relevantRent')"><a id="relevantRentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('relevantRent')">{{state.validationMessage('relevantRent')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          <li data-ng-if="state.hasError('relevantRent')"><a id="relevantRentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('relevantRent')">{{state.validationMessage('relevantRent')}}</a></li>
+        </ul>
+    </div>
 </div>
 
 <form name="relevantRentForm" class="form">
 
-    <div class="form-group {{state.hasError('relevantRent')}}">
-        <label for="relevantRent">
-            <span class="form-label-bold">Relevant rental figure</span>
-            <span id="relevantRentErrMsg" class="error-notification">{{state.validationMessage('relevantRent')}}</span>
-        </label>            
-        &pound; <input id="relevantRent" maxlength="10" data-ng-model="data.relevantRent" name="relevantRent" type="text" required>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('relevantRent')}">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="relevantRent">Relevant rental figure</label>
+                </h2>
+            </legend>
+            <span id="relevantRentErrMsg" class="govuk-error-message" data-ng-if="state.hasError('relevantRent')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('relevantRent')}}
+            </span>
+            <div class="govuk-input__wrapper">
+                <div class="govuk-input__prefix" aria-hidden="true">£</div>
+                <input class="govuk-input govuk-input--width-10" id="relevantRent" maxlength="10" data-ng-model="data.relevantRent" name="relevantRent" type="text">
+            </div>
+        </fieldset>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/relevant-rent')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/relevant-rent')">Continue</button>
     </div>
 
 </form>

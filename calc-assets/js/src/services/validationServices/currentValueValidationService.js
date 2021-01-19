@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.currentValue)) {
-                state.currentValue = "Provide an answer to continue. Select 'Yes' or 'No'";
+                state.currentValue = "Select 'Yes' or 'No'";
                 ga('send', 'event', "userError", "currentValueError", "notPopulated");
             }
 

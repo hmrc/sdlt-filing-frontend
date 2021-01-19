@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('mainResidence')).toEqual('form-field--error');
-            expect(state.validationMessage('mainResidence')).toEqual("Provide an answer to continue. Select 'Yes' or 'No'");
+            expect(state.validationMessage('mainResidence')).toEqual("Select 'Yes' or 'No'");
         });
 
         it('mainResidence.format should return no error when "Yes" selected', function() {

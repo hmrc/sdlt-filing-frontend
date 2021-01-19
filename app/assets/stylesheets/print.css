@@ -1,0 +1,9 @@
+@media print {
+    .govuk-skip-link, .govuk-button, .govuk-link, footer, .govuk-back-link {
+        display: none;
+    }
+
+    .govuk-grid-column-two-thirds {
+        width: 100%;
+    }
+}

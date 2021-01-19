@@ -1,32 +1,53 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-      <li data-ng-if="state.hasError('propertyType')"><a id="propertyTypePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('propertyType')">{{state.validationMessage('propertyType')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            <li data-ng-if="state.hasError('propertyType')">
+                <a id="propertyTypePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('residential')">
+                    {{state.validationMessage('propertyType')}}
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <form name="propertyForm" class="form">
 
-    <div class="form-group {{state.hasError('propertyType')}}">
-        <fieldset>
-            <legend id="propertyType" class="form-label-bold">Is the transaction residential or non-residential?</legend>
-            <span class="form-hint">If it's a mixed transaction, choose 'Non-residential'.</span>
-            <span id="propertyTypeErrMsg" class="error-notification">{{state.validationMessage('propertyType')}}</span>
-            <div class="inline">
-                <label class="block-label" for="residential">
-                    <input id="residential" data-ng-model="data.propertyType" name="propertyType" value="Residential" type="radio" required>Residential
-                </label>
-                <label class="block-label" for="non-residential">
-                    <input id="non-residential" data-ng-model="data.propertyType" name="propertyType" value="Non-residential" type="radio" required>Non-residential
-                </label>
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('propertyType')}">
+        <fieldset class="govuk-fieldset" aria-describedby="residential-nonResidential-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 id="propertyType" class="govuk-fieldset__heading">
+                    Is the transaction residential or non-residential?
+                </h2>
+            </legend>
+            <div id="residential-nonResidential-hint" class="govuk-hint">
+                If it's a mixed transaction, choose 'Non-residential'.
+            </div>
+            <span id="propertyTypeErrMsg" class="govuk-error-message" data-ng-if="state.hasError('propertyType')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('propertyType')}}
+            </span>
+            <div class="govuk-radios govuk-radios--inline">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="residential" data-ng-model="data.propertyType" name="propertyType" value="Residential" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="residential">
+                        Residential
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="non-residential" data-ng-model="data.propertyType" name="propertyType" value="Non-residential" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="non-residential">
+                        Non-residential
+                    </label>
+                </div>
             </div>
         </fieldset>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/property')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/property')">Continue</button>
     </div>
 
 </form>

@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You must complete this box. Enter your Purchase Price");
+            expect(state.validationMessage('premium')).toEqual("Enter your Purchase Price");
         });
 
         it('premium.mandatory should return an error when Purchase Price is empty', function() {
@@ -26,7 +26,7 @@
             var state = service.validate(form);
             expect(state.isValid).toEqual(false);
             expect(state.hasError('premium')).toEqual('form-field--error');
-            expect(state.validationMessage('premium')).toEqual("You must complete this box. Enter your Purchase Price");
+            expect(state.validationMessage('premium')).toEqual("Enter your Purchase Price");
         });
 
         it('premium.format should return an error when NaN', function() {

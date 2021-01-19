@@ -1,12 +1,12 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
 <form name="introForm" class="form">
     
-  <div class="form-group">
+  <div class="govuk-form-group">
 
-    <p class="text">This calculator can be used for property purchases that are:</p>
+    <p class="govuk-body">This calculator can be used for property purchases that are:</p>
 
-    <ul class="list list-bullet">
+    <ul class="govuk-list govuk-list--bullet">
       <li>for first-time buyers</li>
       <li>replacing main residence</li>
       <li>additional property</li>
@@ -15,14 +15,14 @@
     </ul>
   </div>
 
-  <div class="form-group">
-    <p class="text">The calculator will work out the SDLT payable for most transactions. You should <a href="https://www.gov.uk/topic/business-tax/stamp-taxes">check the guidance</a> if you are uncertain about how SDLT applies to your purchase or if you believe it may qualify for a relief.</p>
-    <p class="govuk-inset-text" style = "padding: 15px; border-left: 10px solid #b1b4b6; margin-top: 30px; margin-bottom: 30px; max-width: 30em;">New rules on SDLT transactions undertaken by non-UK residents come into effect from 1 April 2021.  The calculator will be updated to work out these transactions closer to this date.</p>
-    <p class="text">There are <a id="gov-corporate-bodies" href="https://www.gov.uk/guidance/stamp-duty-land-tax-corporate-bodies" onClick="ga('send', 'event', 'link', 'click', 'corpBodies.govuk')">different rules for a corporate body</a> purchasing residential property for more than £500,000.</p>
+  <div class="govuk-form-group">
+    <p class="govuk-body">The calculator will work out the SDLT payable for most transactions. You should <a class="govuk-link" href="https://www.gov.uk/topic/business-tax/stamp-taxes">check the guidance</a> if you are uncertain about how SDLT applies to your purchase or if you believe it may qualify for a relief.</p>
+    <div class="govuk-inset-text">New rules on SDLT transactions undertaken by non-UK residents come into effect from 1 April 2021. The calculator will be updated to work out these transactions closer to this date.</div>
+    <p class="govuk-body">There are <a class="govuk-link" id="gov-corporate-bodies" href="https://www.gov.uk/guidance/stamp-duty-land-tax-corporate-bodies" onClick="ga('send', 'event', 'link', 'click', 'corpBodies.govuk')">different rules for a corporate body</a> purchasing residential property for more than £500,000.</p>
   </div>
 
-  <div class="form-group">
-        <button id="start" class="button" data-ng-click="startNow()" onClick="ga('send', 'event', 'button', 'click', 'startNow')">Start now</button>
+  <div class="govuk-form-group">
+    <button id="start" class="govuk-button" data-module="govuk-button" data-ng-click="startNow()" onClick="ga('send', 'event', 'button', 'click', 'startNow')">Start now</button>
   </div>
 
 </form>

@@ -1,41 +1,50 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-        <li data-ng-if="state.hasError('currentValue')"><a id="currentValuePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('currentValue')">{{state.validationMessage('currentValue')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            <li data-ng-if="state.hasError('currentValue')"><a id="currentValuePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('currentValue-yes')">{{state.validationMessage('currentValue')}}</a></li>
+        </ul>
+    </div>
 </div>
 
 <form name="currentValueForm" class="form">
 
-    <div class="form-group {{state.hasError('currentValue')}}">
-        <fieldset>
-            <legend id="currentValue" class="form-label-bold">What is the market value of the property?</legend>
-            <span id="currentValueErrMsg" class="error-notification">{{state.validationMessage('currentValue')}}</span>
-            <p>This means the market value at the time of purchase. If the maximum share of the property ultimately  obtainable is less than 100%, enter the value of that percentage.</p>
-            <div>
-                <label class="block-label" for="currentValue-yes">
-                    <input id="currentValue-yes" data-ng-model="data.currentValue" name="currentValue" value="£500,000 or less" type="radio" required>£500,000 or less
+    <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('currentValue')}">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 id="currentValue" class="govuk-fieldset__heading">
+                    What is the market value of the property?
+                </h2>
+            </legend>
+            <span id="currentValueErrMsg" class="govuk-error-message" data-ng-if="state.hasError('currentValue')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('currentValue')}}
+            </span>
+            <p class="govuk-body">This means the market value at the time of purchase. If the maximum share of the property ultimately  obtainable is less than 100%, enter the value of that percentage.</p>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="currentValue-yes" data-ng-model="data.currentValue" name="currentValue" value="£500,000 or less" type="radio">
+                <label class="govuk-label govuk-radios__label" for="currentValue-yes">
+                    £500,000 or less
                 </label>
-                <label class="block-label" for="currentValue-no">
-                    <input id="currentValue-no" data-ng-model="data.currentValue" name="currentValue" value="More than £500,000" type="radio" required>More than £500,000
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="currentValue-no" data-ng-model="data.currentValue" name="currentValue" value="More than £500,000" type="radio">
+                <label class="govuk-label govuk-radios__label" for="currentValue-no">
+                    More than £500,000
                 </label>
             </div>
         </fieldset>
     </div>
 
     <div data-ng-if="data.currentValue === '£500,000 or less'">
-        <div class="form-group {{state.hasError('currentValue')}}">
-            <fieldset>
-                <p>Based on the answers given, this purchase may qualify for First Time Buyers Relief.</p>
-                <span id="currentValuePropErrMsg" class="error-notification">{{state.validationMessage('currentValue')}}</span>
-            </fieldset>
+        <div class="govuk-inset-text">
+            Based on the answers given, this purchase may qualify for First Time Buyers Relief.
         </div>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/currentValue')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/currentValue')">Continue</button>
     </div>
 
 </form>

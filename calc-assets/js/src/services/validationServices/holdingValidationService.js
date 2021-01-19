@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.holdingType)) {
-                state.holdingType = "Provide an answer to continue. Select 'Freehold' or 'Leasehold'";
+                state.holdingType = "Select 'Freehold' or 'Leasehold'";
                 ga('send', 'event', "userError", "holdingTypeError", "notPopulated");
             }
 

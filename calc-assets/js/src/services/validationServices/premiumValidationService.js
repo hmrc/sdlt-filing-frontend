@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.premium)) {
-                state.premium = "You must complete this box. Enter your Premium";
+                state.premium = "Enter your Premium";
                 ga('send', 'event', "userError", "premiumError", "notPopulated");
             } else if (validator.isInvalidFloat(data.premium)) {
                 state.premium = "Enter the premium again - don't use any letters or characters including £";

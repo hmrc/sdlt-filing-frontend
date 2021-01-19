@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('sharedOwnership')).toEqual('form-field--error');
-            expect(state.validationMessage('sharedOwnership')).toEqual("Provide an answer to continue. Select 'Yes' or 'No'");
+            expect(state.validationMessage('sharedOwnership')).toEqual("Select 'Yes' or 'No'");
         });
 
         it('sharedOwnership.mandatory shouldnt return an error when no answer is provided ', function() {

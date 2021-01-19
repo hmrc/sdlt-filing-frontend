@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('ownedOtherProperties')).toEqual('form-field--error');
-            expect(state.validationMessage('ownedOtherProperties')).toEqual("Provide an answer to continue. Select 'Yes' or 'No'");
+            expect(state.validationMessage('ownedOtherProperties')).toEqual("Select 'Yes' or 'No'");
         });
 
         it('ownedOtherProperties.format should return no error when "Yes" selected', function() {

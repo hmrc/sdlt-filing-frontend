@@ -1,3 +1,6 @@
+service.name=Stamp Duty Land Tax Calculator
+service.homePageUrl=/calculate-stamp-duty-land-tax
+
 calc.error.badRequest400.title=Bad request - 400
 calc.error.badRequest400.heading=Bad request
 calc.error.badRequest400.message=Please check that you have entered the correct web address.
@@ -7,3 +10,9 @@ calc.error.pageNotFound404.message=Please check that you have entered the correc
 calc.error.InternalServerError500.title=Sorry, there is a problem with the service - 500
 calc.error.InternalServerError500.heading=Sorry, there is a problem with the service
 calc.error.InternalServerError500.message=Try again later.
+
+footer.links.accessibility.text=Accessibility statement
+footer.links.cookies.text=Cookies
+footer.links.privacy_policy.text=Privacy policy
+footer.links.terms_and_conditions.text=Terms and conditions
+footer.links.help_page.text=Help using GOV.UK

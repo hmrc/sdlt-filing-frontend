@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('holdingType')).toEqual('form-field--error');
-            expect(state.validationMessage('holdingType')).toEqual("Provide an answer to continue. Select 'Freehold' or 'Leasehold'");
+            expect(state.validationMessage('holdingType')).toEqual("Select 'Freehold' or 'Leasehold'");
         });
 
         it('holdingType.format should return no error when "Freehold" selected', function() {

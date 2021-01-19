@@ -1,42 +1,36 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  *@
 
 @import config.FrontendAppConfig
-@this(main_template: main_template)
+@this(layout: layout)
 
+@(googleTagManagerId: String)(implicit request: Request[_], config: FrontendAppConfig, messages: Messages)
 
-@(showBanner: Boolean, googleTagManagerId: String)(implicit request: Request[_], config: FrontendAppConfig, messages: Messages)
-@main_template(bodyClasses = Some("data-ng-cloak"), showBanner = showBanner){
+@layout(pageTitle = Some("Stamp Duty Land Tax Calculator")){
+    <!--[if lt IE 8]><html class="no-js lte-ie8" lang="en"><![endif]-->
+    <!--[if gte IE 8]><!-->
+    <html lang="en" class="no-js" data-ng-app="calc" data-ng-controller="mainController">
+    <!--<![endif]-->
 
-<!--[if lt IE 8]><html class="no-js lte-ie8" lang="en"><![endif]-->
-<!--[if gte IE 8]><!-->
-<html lang="en" class="no-js" data-ng-app="calc" data-ng-controller="mainController">
-<!--<![endif]-->
+    @if(googleTagManagerId != "N/A") {
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=@googleTagManagerId" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    }
 
-@if(googleTagManagerId != "N/A") {
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=@googleTagManagerId" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
-}
-
-<main id="wrapper" role="main">
-    <div id="content">
-        <span id="startOfContent" tabindex="-1"></span>
-
-
-        <div class="form-group">
-            <a class="link-back" id="link-back" href="javascript:return false" onclick="javascript:history.back(); return false;">Back</a>
+    <main id="wrapper" role="main">
+        <div id="content">
+            <span id="startOfContent" tabindex="-1"></span>
+            <a href="javascript:return false" onclick="javascript:history.back(); return false;" class="govuk-back-link" id="link-back">Back</a>
+            <div id="main">
+                <div data-ng-view data-autoscroll="true">
+                    <p class="govuk-body">Loading...</p>
+                </div>
+            </div>
         </div>
+    </main>
 
-        <div id="main">
-            <div data-ng-view data-autoscroll="true">Loading...</div>
-        </div>
-
-
-    </div>
-</main>
-
-<div id="global-app-error" class="app-error hidden"></div>
+    <div id="global-app-error" class="app-error hidden"></div>
 }

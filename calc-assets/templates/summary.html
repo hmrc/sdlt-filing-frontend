@@ -1,35 +1,42 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
+<h2 class="govuk-visually-hidden">Result of SDLT calculation</h2>
 
-<div class="previous-answers">
-    <div class="done-questions">
-        <table>
-            <caption style="text-align:left" class="visually-hidden">Result of SDLT calculation</caption>
-            <tbody>
-            <tr class="section" id="trStartAgain">
-                <td id="td1StartAgain"></td>
-                <td id="td2StartAgain"></td>
-                <td class="link-right" id="td3StartAgain"><a class="start-right" id="startAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'start-again')">Start again</a></td>
-            </tr>
-            <tr class="section" data-ng-repeat="item in data.summary">
-                <td class="previous-question-title" id="td1_{{item.id}}">
-                    <p class="{{item.isValid}}">
-                        <span class="error-notification">Provide an answer to continue</span>
-                        {{item.question}}
-                    </p>
-                </td>
-                <td class="previous-question-body" id="td2_{{item.id}}" data-ng-if="item.type === undefined">{{item.answer}}</td>
-                <td class="previous-question-body" id="td2_{{item.id}}" data-ng-if="item.type === 'Date'">{{item.answer | date: 'd MMMM yyyy'}}</td>
-                <td class="previous-question-body" id="td2_{{item.id}}" data-ng-if="item.type === 'Currency'">{{item.answer | calcCurrency: '£'}}</td>
-                <td class="link-right" id="td3_{{item.id}}"><a data-ng-if="item.link !== undefined" id="change_{{item.id}}" href="{{item.link}}" data-ng-click="logEvent('change', 'click', item.id)">Change <span class="visuallyhidden">{{item.hiddenText}}</span></a></td>
-            </tr>
-            </tbody>
-        </table>
-
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+        </dt>
+        <dd class="govuk-summary-list__value">
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" id="startAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'start-again')">Start again</a>
+        </dd>
     </div>
+    <div class="govuk-summary-list__row" data-ng-repeat="item in data.summary">
+        <dt class="govuk-summary-list__key previous-question-title" id="td1_{{item.id}}">
+            <p class="{{item.isValid}}">
+                <span class="govuk-error-message govuk-visually-hidden">Provide an answer to continue</span>
+                {{item.question}}
+            </p>
+        </dt>
+        <dd class="govuk-summary-list__value">
+            <span id="td2_{{item.id}}" data-ng-if="item.type === undefined">{{item.answer}}</span>
+            <span id="td2_{{item.id}}" data-ng-if="item.type === 'Date'">{{item.answer | date: 'd MMMM yyyy'}}</span>
+            <span id="td2_{{item.id}}" data-ng-if="item.type === 'Currency'">{{item.answer | calcCurrency: '£'}}</span>
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <span id="td3_{{item.id}}">
+                <a class="govuk-link" data-ng-if="item.link !== undefined" id="change_{{item.id}}" href="{{item.link}}" data-ng-click="logEvent('change', 'click', item.id)">
+                    Change <span class="govuk-visually-hidden">{{item.hiddenText}}</span>
+                </a>
+            </span>
+        </dd>
+    </div>
+</dl>
+
+<div class="govuk-!-margin-bottom-1" data-ng-if="!validatedModel.isModelValid">
+    <p class="govuk-body">Please fix any errors before continuing to calculation.</p>
 </div>
-<div class="form-group">
-    <div data-ng-if="!validatedModel.isModelValid">
-        Please fix any errors before continuing to calculation.
-    </div>
-    <button data-ng-click="submit()" class="button" id="calculate" type="submit">Calculate your SDLT</button>
+
+<div class="govuk-form-group">
+    <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="calculate" type="submit">Calculate your SDLT</button>
 </div>

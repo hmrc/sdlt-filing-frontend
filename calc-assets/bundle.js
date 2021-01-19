@@ -366,14 +366,6 @@
 	                  }
 	                };
 
-	        $scope.getURBannerClass = function() {
-	                if (cookieService.getCookie() == null && onResultPage()){
-	                    return "banner-panel banner-panel--show";
-	                } else {
-	                    return "banner-panel";
-	                }
-	        };
-
 	        function onResultPage() {
 	            var page = $window.location.href.split("/").slice(-1)[0];
 	            return page == "result";
@@ -423,7 +415,7 @@
 
 	        // re-apply radio/checkbox styling
 	        $('#main').on(
-	            'focus click', 
+	            'focus click',
 	            'label.block-label input[type=radio], label.block-label input[type=checkbox]',
 	            $scope.addFocusToLabel
 	        ).on(
@@ -522,7 +514,7 @@
 	        };
 	        
 	        // hide error summary
-	        $('#pageErrors').hide();
+			$('#pageErrors').hide();
 
 	        // add submit method to scope
 	        scope.submit = function() {
@@ -2342,13 +2334,13 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.twoOrMoreProperties)) {
-	                state.twoOrMoreProperties = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                state.twoOrMoreProperties = "Select 'Yes' or 'No'";
 	                ga('send', 'event', "userError", "twoOrMorePropertiesError", "notPopulated");
 	            }
 
 	            if(data.twoOrMoreProperties === "Yes") {
 	                if (validator.isNotPopulated(data.replaceMainResidence)) {
-	                    state.replaceMainResidence = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                    state.replaceMainResidence = "Select 'Yes' or 'No'";
 	                    ga('send', 'event', "userError", "replaceMainResidenceError", "notPopulated");
 	                }
 	            }
@@ -2421,13 +2413,13 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.contractPre201603)) {
-	                state.contractPre201603 = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                state.contractPre201603 = "Select 'Yes' or 'No'";
 	                ga('send', 'event', "userError", "contractPre201603Error", "notPopulated");
 	            }
 
 	            if(data.contractPre201603 === "Yes") {
 	                if (validator.isNotPopulated(data.contractVariedPost201603)) {
-	                    state.contractVariedPost201603 = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                    state.contractVariedPost201603 = "Select 'Yes' or 'No'";
 	                    ga('send', 'event', "userError", "contractVariedPost201603Error", "notPopulated");
 	                }
 	            }
@@ -2498,7 +2490,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.ownedOtherProperties)) {
-	                state.ownedOtherProperties = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                state.ownedOtherProperties = "Select 'Yes' or 'No'";
 	                ga('send', 'event', "userError", "ownedOtherPropertiesError", "notPopulated");
 	            }
 
@@ -2530,7 +2522,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.mainResidence)) {
-	                state.mainResidence = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                state.mainResidence = "Select 'Yes' or 'No'";
 	                ga('send', 'event', "userError", "mainResidenceError", "notPopulated");
 	            }
 
@@ -2562,7 +2554,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.sharedOwnership)) {
-	                state.sharedOwnership = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                state.sharedOwnership = "Select 'Yes' or 'No'";
 	                ga('send', 'event', "userError", "sharedOwnershipError", "notPopulated");
 	            }
 
@@ -2593,7 +2585,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.currentValue)) {
-	                state.currentValue = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                state.currentValue = "Select 'Yes' or 'No'";
 	                ga('send', 'event', "userError", "currentValueError", "notPopulated");
 	            }
 
@@ -2671,7 +2663,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.holdingType)) {
-	                state.holdingType = "Provide an answer to continue. Select 'Freehold' or 'Leasehold'";
+	                state.holdingType = "Select 'Freehold' or 'Leasehold'";
 	                ga('send', 'event', "userError", "holdingTypeError", "notPopulated");
 	            }
 
@@ -2756,7 +2748,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.premium)) {
-	                state.premium = "You must complete this box. Enter your Premium";
+	                state.premium = "Enter your Premium";
 	                ga('send', 'event', "userError", "premiumError", "notPopulated");
 	            } else if (validator.isInvalidFloat(data.premium)) {
 	                state.premium = "Enter the premium again - don't use any letters or characters including £";
@@ -2791,7 +2783,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.propertyType)) {
-	                state.propertyType = "Provide an answer to continue. Select 'Residential' or 'Non-residential'";
+	                state.propertyType = "Select 'Residential' or 'Non-residential'";
 	                ga('send', 'event', "userError", "propertyTypeError", "notPopulated");
 	            }
 
@@ -2823,7 +2815,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.premium)) {
-	                state.premium = "You must complete this box. Enter your Purchase Price";
+	                state.premium = "Enter your Purchase Price";
 	                ga('send', 'event', "userError", "purchasePriceError", "notPopulated");
 	            } else if (validator.isInvalidFloat(data.premium)) {
 	                state.premium = "Enter the purchase price again - don't use any letters or characters including £";
@@ -2858,7 +2850,7 @@
 	            var validator = __webpack_require__(33)();
 
 	            if (validator.isNotPopulated(data.individual)) {
-	                state.individual = "Provide an answer to continue. Select 'Yes' or 'No'";
+	                state.individual = "Select 'Yes' or 'No'";
 	                ga('send', 'event', "userError", "individualError", "notPopulated");
 	            }
 

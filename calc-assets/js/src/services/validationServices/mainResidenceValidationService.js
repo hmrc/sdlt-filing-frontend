@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.mainResidence)) {
-                state.mainResidence = "Provide an answer to continue. Select 'Yes' or 'No'";
+                state.mainResidence = "Select 'Yes' or 'No'";
                 ga('send', 'event', "userError", "mainResidenceError", "notPopulated");
             }
 

@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('twoOrMoreProperties')).toEqual('form-field--error');
-            expect(state.validationMessage('twoOrMoreProperties')).toEqual("Provide an answer to continue. Select 'Yes' or 'No'");
+            expect(state.validationMessage('twoOrMoreProperties')).toEqual("Select 'Yes' or 'No'");
         });
 
         it('twoOrMoreProperties.mandatory should return no error when "two or more properties - Yes" selected', function() {
@@ -43,7 +43,7 @@
             });
             expect(state.isValid).toEqual(false);
             expect(state.hasError('replaceMainResidence')).toEqual('form-field--error');
-            expect(state.validationMessage('replaceMainResidence')).toEqual("Provide an answer to continue. Select 'Yes' or 'No'");
+            expect(state.validationMessage('replaceMainResidence')).toEqual("Select 'Yes' or 'No'");
         });
 
 

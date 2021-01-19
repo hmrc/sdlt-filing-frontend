@@ -1,49 +1,75 @@
-<h1>{{title}}</h1>
+<h1 class="govuk-heading-xl">{{title}}</h1>
 
-<div id="pageErrors" class="flash error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1">
-    <h2 class="heading-medium error-summary-heading" id="errorSummary">There are problems with the information you provided</h2>
-    <ul class="error-summary-list">
-        <li data-ng-if="state.hasError('contractPre201603')"><a id="contractPre201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contractPre201603')">{{state.validationMessage('contractPre201603')}}</a></li>
-        <li data-ng-if="state.hasError('contractVariedPost201603')"><a id="contractVariedPost201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contractVariedPost201603')">{{state.validationMessage('contractVariedPost201603')}}</a></li>
-    </ul>
+<div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            <li data-ng-if="state.hasError('contractPre201603')"><a id="contractPre201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contract-pre-201603-yes')">{{state.validationMessage('contractPre201603')}}</a></li>
+            <li data-ng-if="state.hasError('contractVariedPost201603')"><a id="contractVariedPost201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contract-varied-post-201603-yes')">{{state.validationMessage('contractVariedPost201603')}}</a></li>
+        </ul>
+    </div>
 </div>
 
 <form name="exchangeContractsForm" class="form">
 
-  <div class="form-group {{state.hasError('contractPre201603')}}">
-      <fieldset>
-          <legend id="contractPre201603" class="form-label-bold">Did you exchange contracts before 17 March 2016?</legend>
-          <span id="contractPre201603ErrMsg" class="error-notification">{{state.validationMessage('contractPre201603')}}</span>
-          <div class="inline">
-              <label class="block-label" for="contract-pre-201603-yes">
-                  <input id="contract-pre-201603-yes" data-ng-model="data.contractPre201603" name="contractPre201603" value="Yes" type="radio" required>Yes
-              </label>
-              <label class="block-label" for="contract-pre-201603-no">
-                  <input id="contract-pre-201603-no" data-ng-model="data.contractPre201603" name="contractPre201603" value="No" type="radio" required>No
-              </label>
+  <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('contractPre201603')}">
+      <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+              <h2 id="contractPre201603" class="govuk-fieldset__heading">
+                Did you exchange contracts before 17 March 2016?
+              </h2>
+          </legend>
+          <span id="contractPre201603ErrMsg" class="govuk-error-message" data-ng-if="state.hasError('contractPre201603')">
+              <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('contractPre201603')}}
+          </span>
+          <div class="govuk-radios govuk-radios--inline">
+              <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="contract-pre-201603-yes" data-ng-model="data.contractPre201603" name="contractPre201603" value="Yes" type="radio">
+                  <label class="govuk-label govuk-radios__label" for="contract-pre-201603-yes">
+                      Yes
+                  </label>
+              </div>
+              <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="contract-pre-201603-no" data-ng-model="data.contractPre201603" name="contractPre201603" value="No" type="radio">
+                  <label class="govuk-label govuk-radios__label" for="contract-pre-201603-no">
+                      No
+                  </label>
+              </div>
           </div>
       </fieldset>
     </div>
 
     <div data-ng-if="data.contractPre201603 === 'Yes'">
-      <div class="form-group {{state.hasError('contractVariedPost201603')}}">
-        <fieldset>
-            <legend id="contractVariedPost201603" class="form-label-bold">Has your contract been changed on or after 17 March 2016?</legend>
-            <span id="contractVariedPost201603ErrMsg" class="error-notification">{{state.validationMessage('contractVariedPost201603')}}</span>
-            <div class="inline">
-                <label class="block-label" for="contract-varied-post-201603-yes">
-                    <input id="contract-varied-post-201603-yes" data-ng-model="data.contractVariedPost201603" name="contractVariedPost201603" value="Yes" type="radio" required>Yes
-                </label>
-                <label class="block-label" for="contract-varied-post-201603-no">
-                    <input id="contract-varied-post-201603-no" data-ng-model="data.contractVariedPost201603" name="contractVariedPost201603" value="No" type="radio" required>No
-                </label>
+      <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('contractVariedPost201603')}">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h2 id="contractVariedPost201603" class="govuk-fieldset__heading">
+                    Has your contract been changed on or after 17 March 2016?
+                </h2>
+            </legend>
+            <span id="contractVariedPost201603ErrMsg" class="govuk-error-message" data-ng-if="state.hasError('contractVariedPost201603')">
+                <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('contractVariedPost201603')}}
+            </span>
+            <div class="govuk-radios govuk-radios--inline">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="contract-varied-post-201603-yes" data-ng-model="data.contractVariedPost201603" name="contractVariedPost201603" value="Yes" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="contract-varied-post-201603-yes">
+                        Yes
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="contract-varied-post-201603-no" data-ng-model="data.contractVariedPost201603" name="contractVariedPost201603" value="No" type="radio">
+                    <label class="govuk-label govuk-radios__label" for="contract-varied-post-201603-no">
+                        No
+                    </label>
+                </div>
             </div>
         </fieldset>
       </div>
     </div>
 
-    <div class="form-group">
-        <button data-ng-click="submit()" class="button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/exchange-contracts')">Continue</button>
+    <div class="govuk-form-group">
+        <button data-ng-click="submit()" class="govuk-button" data-module="govuk-button" id="continue-button" type="submit" onClick="ga('send', 'event', 'button', 'click', '/exchange-contracts')">Continue</button>
     </div>    
 
 </form>

@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('contractPre201603')).toEqual('form-field--error');
-            expect(state.validationMessage('contractPre201603')).toEqual("Provide an answer to continue. Select 'Yes' or 'No'");
+            expect(state.validationMessage('contractPre201603')).toEqual("Select 'Yes' or 'No'");
             expect(state.hasError('contractVariedPost201603')).toEqual('');
             expect(state.validationMessage('contractVariedPost201603')).toEqual("");
         });
@@ -39,7 +39,7 @@
             expect(state.hasError('contractPre201603')).toEqual('');
             expect(state.validationMessage('contractPre201603')).toEqual('');
             expect(state.hasError('contractVariedPost201603')).toEqual('form-field--error');
-            expect(state.validationMessage('contractVariedPost201603')).toEqual("Provide an answer to continue. Select 'Yes' or 'No'");
+            expect(state.validationMessage('contractVariedPost201603')).toEqual("Select 'Yes' or 'No'");
         });
 
         it('should return no error when contractPre201603 = Yes and contractVariedPost201603 = No', function() {

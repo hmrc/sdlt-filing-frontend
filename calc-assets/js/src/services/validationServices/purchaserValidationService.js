@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.individual)) {
-                state.individual = "Provide an answer to continue. Select 'Yes' or 'No'";
+                state.individual = "Select 'Yes' or 'No'";
                 ga('send', 'event', "userError", "individualError", "notPopulated");
             }
 

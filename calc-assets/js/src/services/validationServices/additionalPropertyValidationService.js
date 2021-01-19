@@ -11,13 +11,13 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.twoOrMoreProperties)) {
-                state.twoOrMoreProperties = "Provide an answer to continue. Select 'Yes' or 'No'";
+                state.twoOrMoreProperties = "Select 'Yes' or 'No'";
                 ga('send', 'event', "userError", "twoOrMorePropertiesError", "notPopulated");
             }
 
             if(data.twoOrMoreProperties === "Yes") {
                 if (validator.isNotPopulated(data.replaceMainResidence)) {
-                    state.replaceMainResidence = "Provide an answer to continue. Select 'Yes' or 'No'";
+                    state.replaceMainResidence = "Select 'Yes' or 'No'";
                     ga('send', 'event', "userError", "replaceMainResidenceError", "notPopulated");
                 }
             }
