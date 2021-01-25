@@ -1,5 +1,3 @@
-<h1 class="govuk-heading-xl">{{title}}</h1>
-
 <div data-ng-if="responseReceived === false">
   <p class="govuk-body">Calculating...</p>
 </div>
@@ -10,43 +8,42 @@
     <p class="govuk-body">You can try <a class="govuk-link" id="errorStartAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'result.start-again')">restarting your calculation</a>.</p>
   </div>
   <div data-ng-repeat="res in data.result" data-ng-if="errorResponse === false">
-    <h2 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
-    <span id="resultHint{{$index}}" class="govuk-hint">{{res.resultHint}}</span>
+    <h1 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h1>
+    <p id="resultHint{{$index}}" class="govuk-body">{{res.resultHint}}</p>
 
     <span class="govuk-summary-list" data-ng-if="data.holdingType === 'Freehold'">
-      <h2 class="govuk-heading-l">Result of SDLT calculation</h2>
-      <dl class="govuk-summary-list" data-ng-if="res.taxCalcs[0].calcType === 'slice'">
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Effective date
-          </dt>
-          <dd class="govuk-summary-list__value" id="effDate{{$index}}">
-            {{data.effectiveDate | date:'d MMMM yyyy'}}
-          </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Purchase price (&pound;)
-          </dt>
-          <dd class="govuk-summary-list__value" id="premium{{$index}}">
-            {{data.premium | calcCurrency}}
-          </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            Total SDLT due (&pound;)
-          </dt>
-          <dd class="govuk-summary-list__value" id="totalTax{{$index}}">
-            {{res.totalTax | calcCurrency}}
-          </dd>
-        </div>
-
-        <p class="govuk-body govuk-!-margin-top-3">
+      <h2 class="govuk-heading-m">Result of SDLT calculation</h2>
+      <span data-ng-if="res.taxCalcs[0].calcType === 'slice'">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Effective date
+            </dt>
+            <dd class="govuk-summary-list__value" id="effDate{{$index}}">
+              {{data.effectiveDate | date:'d MMMM yyyy'}}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Purchase price (&pound;)
+            </dt>
+            <dd class="govuk-summary-list__value" id="premium{{$index}}">
+              {{data.premium | calcCurrency}}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Total SDLT due (&pound;)
+            </dt>
+            <dd class="govuk-summary-list__value" id="totalTax{{$index}}">
+              {{res.totalTax | calcCurrency}}
+            </dd>
+          </div>
+        </dl>
+        <div class="govuk-body govuk-!-margin-top-3">
           <a class="govuk-link" id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">View calculation</a>
-        </p>
-
-      </dl>
-
+        </div>
+      </span>
       <dl class="govuk-summary-list" data-ng-if="res.taxCalcs[0].calcType === 'slab'">
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
@@ -83,7 +80,7 @@
       </dl>
     </span>
     <span class="govuk-summary-list" data-ng-if="data.holdingType === 'Leasehold'">
-      <h2 class="govuk-heading-l">Result of SDLT calculation</h2>
+      <h2 class="govuk-heading-m">Result of SDLT calculation</h2>
       <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">

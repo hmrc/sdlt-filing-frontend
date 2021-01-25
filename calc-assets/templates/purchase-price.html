@@ -1,6 +1,3 @@
-<h1 class="govuk-heading-xl">{{title}}</h1>
-
-
 <div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
@@ -15,9 +12,9 @@
     <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('premium')}">
         <fieldset class="govuk-fieldset" aria-describedby="premium-hint">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h2 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--l" for="premium">Enter the price</label>
-                </h2>
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="premium">Enter the purchase price</label>
+                </h1>
             </legend>
             <span id="purchasePriceErrMsg" class="govuk-error-message" data-ng-if="state.hasError('premium')">
                 <span class="govuk-visually-hidden">Error:</span> {{state.validationMessage('premium')}}
