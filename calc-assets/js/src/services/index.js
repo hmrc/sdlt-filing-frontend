@@ -7,6 +7,7 @@
   require("./cookieService.js");
   require("./loggingService.js");
   require("./validationServices/additionalPropertyValidationService.js");
+  require("./validationServices/nonUKResidentValidationService.js");
   require("./validationServices/exchangeContractsValidationService.js");
   require("./validationServices/dateValidationService.js");
   require("./validationServices/ownedOtherPropertiesValidationService.js");

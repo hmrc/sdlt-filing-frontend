@@ -1,7 +1,7 @@
 (function() {
     "use strict";
     
-	// returns an object with methods to check validitity of model
+	// returns an object with methods to check validity of model
 	module.exports = function(state){
         var hasError = function(field) {
             if (state[field]) {

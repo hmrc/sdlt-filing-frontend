@@ -48,8 +48,7 @@
                     individual: "Yes",
                     twoOrMoreProperties: "Yes",
                     replaceMainResidence: "No",
-                      sharedOwnership : "N/A"
-
+                    sharedOwnership : "N/A"
                   },
                   leaseDetails: {
                     startDateDay: 1,
@@ -482,6 +481,7 @@
       ftbDataApril2021.effectiveDateDay = 1;
       ftbDataApril2021.effectiveDateMonth = 4;
       ftbDataApril2021.effectiveDateYear = 2021;
+      ftbDataApril2021.nonUKResident = "No";
       ftbDataApril2021.twoOrMoreProperties = "No";
       delete ftbDataApril2021.replaceMainResidence;
 
@@ -489,6 +489,7 @@
       ftbRequestApril2021.effectiveDateDay = 1;
       ftbRequestApril2021.effectiveDateMonth = 4;
       ftbRequestApril2021.effectiveDateYear = 2021;
+      ftbRequestApril2021.nonUKResident = "No";
       ftbRequestApril2021.propertyDetails = {
           individual : "Yes",
           twoOrMoreProperties : "No"

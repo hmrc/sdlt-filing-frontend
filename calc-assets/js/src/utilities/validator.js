@@ -103,6 +103,10 @@
             return effectiveDate > new Date('March 31, 2021');
         };
 
+        var todayDateAfterJanuary2021 = function() {
+            return Date.now() > new Date('January 31, 2021');
+        };
+
         return {
             isPopulated : isPopulated,
             isNotPopulated : isNotPopulated,
@@ -124,7 +128,8 @@
             checkAllRentsBelow2000 : checkAllRentsBelow2000,
             effectiveDateWithinFTBRange: effectiveDateWithinFTBRange,
             effectiveDateIsAfterJuly2020: effectiveDateJuly2020,
-            effectiveDateIsAfterMarch2021: effectiveDateMarch2021
+            effectiveDateIsAfterMarch2021: effectiveDateMarch2021,
+            todayDateAfterJanuary2021: todayDateAfterJanuary2021
         };
 
     };

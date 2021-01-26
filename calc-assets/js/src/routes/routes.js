@@ -27,6 +27,14 @@
                 reloadOnSearch: false
             })
 
+            .when('/non-uk-resident', {
+                title : 'Are any of the purchasers non-UK resident?',
+                templateUrl : 'non-uk-resident.html',
+                controller  : 'nonUKResidentController',
+                reloadOnSearch: false,
+                beforeApril21: Date.now() < new Date("April 1, 2021")
+            })
+
             .when('/date', {
                 title : 'Effective date of transaction',
                 templateUrl : 'date.html',

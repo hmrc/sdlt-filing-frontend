@@ -2,6 +2,7 @@
   'use strict';
 
   require("./allinone/mainController");
+  require("./allinone/nonUKResidentController");
   require("./allinone/additionalPropertyController");
   require("./allinone/exchangeContractsController");
   require("./allinone/dateController");

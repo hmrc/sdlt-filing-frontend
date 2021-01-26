@@ -47,12 +47,18 @@
 
                     if(validator.isLessThanDate(effectiveDate, new Date(2016, 3, 1))) {
                         redirectBasedOnHoldingType(model, locationService);
+                    } else if(validator.todayDateAfterJanuary2021()
+                        && validator.effectiveDateIsAfterMarch2021(effectiveDate)){
+                        redirectToNext(locationService, 'non-uk-resident');
                     } else {
                         redirectToNext(locationService, 'purchaser');
                     }
                 } else {
                     redirectBasedOnHoldingType(model, locationService);
                 }
+            }
+            else if (currentView === 'non-uk-resident') {
+                redirectToNext(locationService, 'purchaser');
             }
             else if (currentView === 'purchase-price') {
                 redirectToNext(locationService, 'summary');

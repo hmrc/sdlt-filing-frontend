@@ -600,6 +600,7 @@
                 holdingType : "Leasehold",
                 propertyType: "Residential",
                 effectiveDate : new Date(2021, 4, 1),
+                nonUKResident : "No",
                 individual : "Yes",
                 twoOrMoreProperties : "No",
                 ownedOtherProperties : "No",
@@ -627,17 +628,12 @@
             expect(result.isHoldingValid).toEqual('');
             expect(result.isPropertyValid).toEqual('');
             expect(result.isEffectiveDateValid).toEqual('');
+            expect(result.isNonUKResidentValid).toEqual('');
             expect(result.isIndividualValid).toEqual('');
             expect(result.isTwoOrMorePropertiesValid).toEqual('');
             expect(result.isOwnedOtherPropertiesValid).toEqual('');
             expect(result.isMainResidenceValid).toEqual('');
             expect(result.isSharedOwnershipValid).toEqual('');
-
-
-            // the following are n/a in this scenario
-            expect(result.isPurchasePriceValid).toEqual(undefined);
-            expect(result.isRelevantRentValid).toEqual(undefined);
-
             expect(result.isStartDateValid).toEqual('');
             expect(result.isEndDateValid).toEqual('');
             expect(result.isPremiumValid).toEqual('');
@@ -646,6 +642,11 @@
             expect(result.isYear3RentValid).toEqual('');
             expect(result.isYear4RentValid).toEqual('');
             expect(result.isYear5RentValid).toEqual('');
+
+            // the following are n/a in this scenario
+            expect(result.isPurchasePriceValid).toEqual(undefined);
+            expect(result.isRelevantRentValid).toEqual(undefined);
+
         });
 
         it('should return true for a Leasehold Residential >= 22/11/2017 FTB and Shared Ownership is undefined', function() {

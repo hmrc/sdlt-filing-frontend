@@ -30,6 +30,12 @@
             validator.isGreaterThanOrEqualToDate(data.effectiveDate, new Date(2016, 2, 17)));
     };
 
+    var displayNonUKResident = function(data) {
+        if(data === undefined) return false;
+        return (data.propertyType === 'Residential' && validator.todayDateAfterJanuary2021()
+            && validator.effectiveDateIsAfterMarch2021(data.effectiveDate));
+    };
+
     var displayContractVaried = function(data) {
         if(data === undefined) return false;
         return (displayExchangeContracts(data) && data.contractPre201603 === 'Yes');
@@ -135,6 +141,14 @@
                 isValid    : validatedModel.isEffectiveDateValid,
                 hiddenText : "Effective date of your transaction?",
                 type       : "Date"
+            },
+            {
+                question   : displayNonUKResident(scope.data) ? "Non-UK resident" : undefined,
+                answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.nonUKResident) : undefined,
+                link       : "#non-uk-resident",
+                id         : "nonUKResident",
+                isValid    : validatedModel.isNonUKResidentValid,
+                hiddenText : "Are any of the purchasers non-UK resident?"
             },
             {
                 question   : displayIndividual(scope.data) ? "Individual" : undefined,
