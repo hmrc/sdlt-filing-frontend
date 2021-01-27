@@ -14,7 +14,7 @@ class FrontendAppConfig @Inject()(config: ServicesConfig) {
 
   private def loadConfig(key: String) = config.getString(key)
 
-  private val contactFormServiceIdentifier = "SDLTC"
+  val contactFormServiceIdentifier = "SDLTC"
   private lazy val contactHost = config.getString("contact-frontend.host")
 
   private lazy val assetsUrl     = config.getString("assets.url")

@@ -25,7 +25,7 @@
     @contentBlock
 
     @{ if(showReportIssue) {
-            problemLink(ReportTechnicalIssue(serviceId = "sdltc-frontend", language = En))
+            problemLink(ReportTechnicalIssue(serviceId = "sdltc-frontend", serviceCode = appConfig.contactFormServiceIdentifier, language = En))
         }
     }
 }
