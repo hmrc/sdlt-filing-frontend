@@ -1,5 +1,3 @@
-<h1 class="govuk-heading-xl">{{title}}</h1>
-
 <div id="pageErrors" class="flash govuk-error-summary" role="group" aria-labelledby="errorSummary" tabindex="-1" data-module="govuk-error-summary">
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
@@ -15,8 +13,8 @@
 
 <form name="rentForm" class="form">
 
-    <h2 class="govuk-heading-l" data-ng-if="displayYearFiveRent">Enter the annual rent due for the first 5 years.</h2>
-    <h2 class="govuk-heading-l" data-ng-if="!displayYearFiveRent">Enter the annual rent due.</h2>
+    <h1 class="govuk-heading-l" data-ng-if="displayYearFiveRent">Enter the annual rent due for the first 5 years</h1>
+    <h1 class="govuk-heading-l" data-ng-if="!displayYearFiveRent">Enter the annual rent due</h1>
 
     <div class="govuk-form-group" ng-class="{'govuk-form-group--error': state.hasError('year1Rent')}" data-ng-if="displayYearOneRent">
         <fieldset class="govuk-fieldset">
