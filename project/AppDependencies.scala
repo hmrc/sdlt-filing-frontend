@@ -6,9 +6,9 @@ object AppDependencies {
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "bootstrap-frontend-play-27" % "3.3.0",
-    "uk.gov.hmrc" %% "play-frontend-govuk" % "0.55.0-play-27",
-    "uk.gov.hmrc" %% "play-frontend-hmrc" % "0.28.0-play-27"
+    "uk.gov.hmrc" %% "bootstrap-frontend-play-27" % "3.4.0",
+    "uk.gov.hmrc" %% "play-frontend-govuk" % "0.60.0-play-27",
+    "uk.gov.hmrc" %% "play-frontend-hmrc" % "0.38.0-play-27"
   )
 
   trait TestDependencies {
@@ -34,7 +34,7 @@ object AppDependencies {
       override lazy val scope: String = "it"
 
       override lazy val test = Seq(
-        "uk.gov.hmrc"             %% "hmrctest"           % "3.9.0-play-26" % scope,
+        "uk.gov.hmrc"             %% "hmrctest"           % "3.10.0-play-26" % scope,
         "com.github.tomakehurst"  % "wiremock-jre8"       % "2.27.2"        % scope,
         "org.scalatestplus.play"  %% "scalatestplus-play" % "3.1.3"         % scope
       )
