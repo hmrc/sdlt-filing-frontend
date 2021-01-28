@@ -12,19 +12,24 @@
       <li>additional property</li>
       <li>residential or non-residential</li>
       <li>freehold or leasehold</li>
+      <li data-ng-if="beforeApril21 === false">for non-UK residents purchasing residential property</li>
     </ul>
   </div>
 
   <div class="govuk-form-group">
     <p class="govuk-body">The calculator will work out the SDLT payable for most transactions. You should <a class="govuk-link" href="https://www.gov.uk/topic/business-tax/stamp-taxes">check the guidance</a> if you are uncertain about how SDLT applies to your purchase or if you believe it may qualify for a relief.</p>
-    <div class="govuk-inset-text">New rules on SDLT transactions undertaken by non-UK residents come into effect from 1 April 2021. The calculator will be updated to work out these transactions closer to this date.</div>
+    <div class="govuk-inset-text" data-ng-if="beforeApril21">
+      <p>New rules on SDLT transactions undertaken by non-UK residents come into effect from 1 April 2021.</p>
+      <p>The calculator has been updated. All calculations now include these new rules.</p>
+    </div>
     <p class="govuk-body">There are <a class="govuk-link" id="gov-corporate-bodies" href="https://www.gov.uk/guidance/stamp-duty-land-tax-corporate-bodies" onClick="ga('send', 'event', 'link', 'click', 'corpBodies.govuk')">different rules for a corporate body</a> purchasing residential property for more than £500,000.</p>
 
     <a data-ng-click="startNow()" onClick="ga('send', 'event', 'button', 'click', 'startNow')" id="start" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
       Start now
       <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
         <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-      </svg></a>
+      </svg>
+    </a>
   </div>
 
 </form>

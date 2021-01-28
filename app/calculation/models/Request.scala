@@ -54,6 +54,7 @@ object Request {
     (__ \ "holdingType").read[HoldingTypes.Value] and
     (__ \ "propertyType").read[PropertyTypes.Value] and
      __.read[LocalDate](multiFieldDateReads("effectiveDate")) and
+    (__ \ "nonUKResident").readNullable[Boolean](yesNoToBooleanReads) and
     (__ \ "premium").read[BigDecimal] and
     (__ \ "highestRent").read[BigDecimal] and
     (__ \ "propertyDetails").readNullable[PropertyDetails] and
@@ -67,6 +68,7 @@ case class Request(
                   holdingType: HoldingTypes.Value,
                   propertyType: PropertyTypes.Value,
                   effectiveDate: LocalDate,
+                  nonUKResident: Option[Boolean],
                   premium: BigDecimal,
                   highestRent: BigDecimal,
                   propertyDetails: Option[PropertyDetails],

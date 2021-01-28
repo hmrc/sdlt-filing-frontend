@@ -4,7 +4,7 @@
 
 <div data-ng-if="responseReceived === true">
   <div data-ng-if="errorResponse === true">
-    <h2>Sorry, we're experiencing technical difficulties</h2>
+    <h2 class="govuk-heading-l">Sorry, we're experiencing technical difficulties</h2>
     <p class="govuk-body">You can try <a class="govuk-link" id="errorStartAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'result.start-again')">restarting your calculation</a>.</p>
   </div>
   <div data-ng-repeat="res in data.result" data-ng-if="errorResponse === false">

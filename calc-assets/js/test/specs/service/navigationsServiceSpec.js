@@ -121,6 +121,23 @@
                 expect(mockLocation.path()).toEqual('/summary');
             });
 
+            it('should set the location path to /non-uk-resident when propertyType is "Residential" and effective date' +
+                ' is 01/04/2021 and current date is on or after 01/02/2021', function() {
+                data = { propertyType  : 'Residential',
+                    holdingType        : 'Freehold',
+                    effectiveDateDay   : "01",
+                    effectiveDateMonth : "04",
+                    effectiveDateYear  : "2021"};
+
+                spyOn(Date, 'now').and.returnValue(
+                    new Date('2021-02-01')
+                );
+
+                service.next(currentView, data, mockLocation);
+
+                expect(mockLocation.path()).toEqual('/non-uk-resident');
+            });
+
             it('should set the location path to /purchaser when propertyType is "Residential" and holdingType is "Leasehold" and effective date is 01/04/2016', function() {
                 data = { propertyType       : 'Residential',
                          holdingType        : 'Leasehold',

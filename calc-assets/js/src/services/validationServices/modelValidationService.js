@@ -61,6 +61,15 @@
                 }
             }
 
+            // if Residential and today's date is after Jan 31st 2021 and effective date is after March 31st 2021
+            // nonUKResident question required
+            if(data.propertyType === 'Residential' &&
+               validator.todayDateAfterJanuary2021() &&
+                validator.effectiveDateIsAfterMarch2021(data.effectiveDate)
+            ){
+                result.isNonUKResidentValid = hasError('nonUKResident');
+            }
+
             // if Residential, between 22/11/2017 and 30/11/2019 and individual and not
             // two or more properties then FTB information required
             if( data.holdingType === 'Leasehold' &&

@@ -74,6 +74,21 @@
             });
         });
 
+        describe('nonUKResident route', function() {
+            beforeEach(inject(
+                function($httpBackend) {
+                    $httpBackend.expectGET('non-uk-resident.html')
+                        .respond(200);
+                }));
+
+            it('should load the non uk resident page on successful load of /non-uk-resident', function() {
+                location.path('/non-uk-resident');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('nonUKResidentController');
+                expect(route.current.title).toBe('Are any of the purchasers non-UK resident?');
+            });
+        });
+
         describe('purchaser route', function() {
             beforeEach(inject(
                 function($httpBackend) {

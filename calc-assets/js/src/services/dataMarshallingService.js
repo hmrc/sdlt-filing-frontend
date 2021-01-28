@@ -18,24 +18,30 @@
       model.highestRent = data.highestRent;
       model.premium = data.premium;
 
-      if(data.propertyType === 'Residential' && data.effectiveDate >= new Date('April 1, 2016')) {
-        model.propertyDetails = constructPropertyDetails(data);
+      if(data.propertyType === 'Residential') {
+        if (data.effectiveDate >= new Date('April 1, 2016')) {
+          model.propertyDetails = constructPropertyDetails(data);
+        }
+        if(data.individual === 'Yes' && data.twoOrMoreProperties === 'No' &&
+            validator.effectiveDateWithinFTBRange(data.effectiveDate) &&
+            (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
+          model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
+        }
+        if(validator.todayDateAfterJanuary2021() && validator.effectiveDateIsAfterMarch2021(data.effectiveDate)) {
+          model.nonUKResident = data.nonUKResident;
+        }
       }
 
       if(data.holdingType === "Leasehold") {
         model.leaseDetails = constructLeaseDetails(data);
-      }
 
-      if(data.holdingType === "Leasehold" && data.propertyType === 'Non-residential' && data.premium < 150000 && validator.checkAllRentsBelow2000(data)) {
-        if(data.effectiveDate >= new Date('March 16, 2016')) {
-          model.relevantRentDetails = constructRelevantRentDetails(data, true);
-        } else {
-          model.relevantRentDetails = constructRelevantRentDetails(data, false);
+        if(data.propertyType === 'Non-residential' && data.premium < 150000 && validator.checkAllRentsBelow2000(data)) {
+          if(data.effectiveDate >= new Date('March 16, 2016')) {
+            model.relevantRentDetails = constructRelevantRentDetails(data, true);
+          } else {
+            model.relevantRentDetails = constructRelevantRentDetails(data, false);
+          }
         }
-      }
-
-      if(data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties === 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate) && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
-        model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
       }
 
       return model;
