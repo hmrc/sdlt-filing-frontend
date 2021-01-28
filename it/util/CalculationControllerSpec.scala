@@ -2087,115 +2087,148 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
           request.json shouldBe responseJson
         }
 
-//        "non residential, notIndividual, Additional Property" in{
-//          def request: WSResponse = ws.url(
-//            calculateUrl)
-//            .post(
-//              Json.parse(
-//                """
-//                  |{
-//                  |  "holdingType": "Leasehold",
-//                  |  "propertyType": "Non-residential",
-//                  |  "effectiveDateDay": 1,
-//                  |  "effectiveDateMonth": 4,
-//                  |  "effectiveDateYear": 2021,
-//                  |  "premium": 500000,
-//                  |  "highestRent": 99000,
-//                  |  "propertyDetails": {
-//                  |     "individual": "No",
-//                  |     "twoOrMoreProperties": "No"
-//                  |   },
-//                  |  "leaseDetails": {
-//                  |    "startDateDay": 1,
-//                  |    "startDateMonth": 4,
-//                  |    "startDateYear": 2021,
-//                  |    "endDateDay": 31,
-//                  |    "endDateMonth": 3,
-//                  |    "endDateYear": 2121,
-//                  |    "leaseTerm":  {
-//                  |      "years": 100,
-//                  |      "days": 0,
-//                  |      "daysInPartialYear": 0
-//                  |     },
-//                  |    "year1Rent": 99000,
-//                  |    "year2Rent": 99000,
-//                  |    "year3Rent": 99000,
-//                  |    "year4Rent": 99000,
-//                  |    "year5Rent": 99000
-//                  |  }
-//                  |}
-//              """. stripMargin)
-//            )
-//
-//          val responseJson = Json.parse(
-//            """
-//              |{
-//              |"result":[
-//              |  {
-//              |   "totalTax":40378,
-//              |   "resultHeading":"Results based on SDLT rules from 17 March 2016",
-//              |   "npv":2737887,
-//              |   "taxCalcs":[
-//              |     {
-//              |      "taxType":"rent",
-//              |      "calcType":"slice",
-//              |      "taxDue":25878,
-//              |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules from 17 March 2016",
-//              |      "bandHeading":"Rent bands (£)",
-//              |      "detailFooter":"SDLT due on the rent",
-//              |      "slices":[
-//              |      {
-//              |       "from":0,
-//              |       "to":150000,
-//              |       "rate":0,
-//              |       "taxDue":0
-//              |       },{
-//              |       "from":150000,
-//              |       "to":5000000,
-//              |       "rate":1,
-//              |       "taxDue":25878
-//              |       },{
-//              |       "from":5000000,
-//              |       "to":-1,
-//              |       "rate":2,
-//              |       "taxDue":0
-//              |       }
-//              |      ]
-//              |     },
-//              |    {
-//              |     "taxType":"premium",
-//              |     "calcType":"slice",
-//              |     "taxDue":14500,
-//              |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 17 March 2016",
-//              |     "bandHeading":"Premium bands (£)",
-//              |     "detailFooter":"SDLT due on the premium",
-//              |     "slices":[
-//              |     {
-//              |      "from":0,
-//              |      "to":150000,
-//              |      "rate":0,
-//              |      "taxDue":3750
-//              |      },{
-//              |      "from":150000,
-//              |      "to":250000,
-//              |      "rate":2,
-//              |      "taxDue":2000
-//              |      },{
-//              |      "from":250000,
-//              |      "to":925000,
-//              |      "rate":5,
-//              |      "taxDue":12500
-//              |      }
-//              |     ]
-//              |    }
-//              |   ]
-//              |  }
-//              | ]
-//              |}
-//          """.stripMargin)
-//          request.status shouldBe OK
-//          request.json shouldBe responseJson
-//        }
+        "non residential, notIndividual, Additional Property (Business Threads Scenario 14)" in{
+          def request: WSResponse = ws.url(
+            calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Non-residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 4,
+                  |  "effectiveDateYear": 2021,
+                  |  "premium": 500000,
+                  |  "highestRent": 99000,
+                  |  "propertyDetails": {
+                  |     "individual": "No",
+                  |     "twoOrMoreProperties": "No"
+                  |   },
+                  |  "leaseDetails": {
+                  |    "startDateDay": 1,
+                  |    "startDateMonth": 4,
+                  |    "startDateYear": 2021,
+                  |    "endDateDay": 31,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2121,
+                  |    "leaseTerm":  {
+                  |      "years": 100,
+                  |      "days": 0,
+                  |      "daysInPartialYear": 0
+                  |     },
+                  |    "year1Rent": 99000,
+                  |    "year2Rent": 99000,
+                  |    "year3Rent": 99000,
+                  |    "year4Rent": 99000,
+                  |    "year5Rent": 99000
+                  |  }
+                  |}
+              """. stripMargin)
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{
+              |"result":[
+              |  {
+              |   "totalTax":40378,
+              |   "resultHeading":"Results based on SDLT rules from 17 March 2016",
+              |   "npv":2737887,
+              |   "taxCalcs":[
+              |     {
+              |      "taxType":"rent",
+              |      "calcType":"slice",
+              |      "taxDue":25878,
+              |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules from 17 March 2016",
+              |      "bandHeading":"Rent bands (£)",
+              |      "detailFooter":"SDLT due on the rent",
+              |      "slices":[
+              |      {
+              |       "from":0,
+              |       "to":150000,
+              |       "rate":0,
+              |       "taxDue":0
+              |       },{
+              |       "from":150000,
+              |       "to":5000000,
+              |       "rate":1,
+              |       "taxDue":25878
+              |       },{
+              |       "from":5000000,
+              |       "to":-1,
+              |       "rate":2,
+              |       "taxDue":0
+              |       }
+              |      ]
+              |     },
+              |    {
+              |     "taxType":"premium",
+              |     "calcType":"slice",
+              |     "taxDue":14500,
+              |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated based on the rules from 17 March 2016",
+              |     "bandHeading":"Premium bands (£)",
+              |     "detailFooter":"SDLT due on the premium",
+              |     "slices":[
+              |     {
+              |      "from":0,
+              |      "to":150000,
+              |      "rate":0,
+              |      "taxDue":0
+              |      },{
+              |      "from":150000,
+              |      "to":250000,
+              |      "rate":2,
+              |      "taxDue":2000
+              |      },{
+              |      "from":250000,
+              |      "to":-1,
+              |      "rate":5,
+              |      "taxDue":12500
+              |      }
+              |     ]
+              |    }
+              |   ]
+              |  },{
+              |   "totalTax":40878,
+              |   "resultHeading":"Results based on SDLT rules before 17 March 2016",
+              |   "resultHint":"You may be entitled to pay SDLT using the old rules if you exchanged contracts before 17 March 2016.",
+              |   "npv":2737887,
+              |   "taxCalcs":[
+              |    {
+              |     "taxType":"rent",
+              |     "calcType":"slice",
+              |     "taxDue":25878,
+              |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated based on the rules before 17 March 2016",
+              |     "bandHeading":"Rent bands (£)",
+              |     "detailFooter":"SDLT due on the rent",
+              |     "slices":[
+              |      {
+              |       "from":0,
+              |       "to":150000,
+              |       "rate":0,
+              |       "taxDue":0
+              |       },{
+              |       "from":150000,
+              |       "to":-1,
+              |       "rate":1,
+              |       "taxDue":25878
+              |      }
+              |     ]
+              |     },{
+              |      "taxType":"premium",
+              |      "calcType":"slab",
+              |      "taxDue":15000,
+              |      "rate":3
+              |     }
+              |    ]
+              |   }
+              | ]
+              |}
+          """.stripMargin)
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
       }
     }
 
