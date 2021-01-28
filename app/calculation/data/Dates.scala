@@ -17,6 +17,8 @@ object Dates {
   val NOV2017_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2017, 11, 22)
   val JULY2020_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2020, 7, 8)
   val MAR2021_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2021, 3, 31)
-  val FEB2021_NONUKRES_DATE: LocalDate = LocalDate.of(2021, 2, 1)
+
+  //temporary change to test in environments
+  val FEB2021_NONUKRES_DATE: LocalDate = LocalDate.of(2021, 1, 28)
 
 }

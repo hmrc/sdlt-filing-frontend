@@ -104,7 +104,8 @@
         };
 
         var todayDateAfterJanuary2021 = function() {
-            return Date.now() > new Date('January 31, 2021');
+            //temporary change to test in environments
+            return Date.now() > new Date('January 27, 2021');
         };
 
         return {
