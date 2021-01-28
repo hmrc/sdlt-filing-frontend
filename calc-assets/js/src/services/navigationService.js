@@ -47,8 +47,8 @@
 
                     if(validator.isLessThanDate(effectiveDate, new Date(2016, 3, 1))) {
                         redirectBasedOnHoldingType(model, locationService);
-                    } else if(validator.todayDateAfterJanuary2021()
-                        && validator.effectiveDateIsAfterMarch2021(effectiveDate)){
+                    } else if(validator.todayDateAfterJanuary2021() &&
+                        validator.effectiveDateIsAfterMarch2021(effectiveDate)){
                         redirectToNext(locationService, 'non-uk-resident');
                     } else {
                         redirectToNext(locationService, 'purchaser');

@@ -22,9 +22,9 @@
         if (data.effectiveDate >= new Date('April 1, 2016')) {
           model.propertyDetails = constructPropertyDetails(data);
         }
-        if(data.individual === 'Yes' && data.twoOrMoreProperties === 'No'
-            && validator.effectiveDateWithinFTBRange(data.effectiveDate)
-            && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
+        if(data.individual === 'Yes' && data.twoOrMoreProperties === 'No' &&
+            validator.effectiveDateWithinFTBRange(data.effectiveDate) &&
+            (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
           model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
         }
         if(validator.todayDateAfterJanuary2021() && validator.effectiveDateIsAfterMarch2021(data.effectiveDate)) {
