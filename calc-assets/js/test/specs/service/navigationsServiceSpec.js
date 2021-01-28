@@ -88,7 +88,6 @@
             });
         });
 
-
         describe('Calling .next() from the property view', function() {
             var mockLocation,
                 currentView = 'property',
@@ -101,6 +100,21 @@
 
            it('should set the location path to /date', function() {
                 expect(mockLocation.path()).toEqual('/date');
+            });
+        });
+
+        describe('Calling .next() from the non-uk-resident view', function() {
+            var mockLocation,
+                currentView = 'non-uk-resident',
+                data = {};
+
+            beforeEach(inject(function($location) {
+                mockLocation = $location;
+                service.next(currentView, data, mockLocation);
+            }));
+
+            it('should set the location path to /purchaser', function() {
+                expect(mockLocation.path()).toEqual('/purchaser');
             });
         });
 

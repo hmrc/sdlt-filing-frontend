@@ -9,11 +9,7 @@
         init($scope, $location, $anchorScroll, 'non-uk-resident', dataService, nonUKResidentValidationService, navigationService);
 
         $scope.beforeUpdateModel = function() {
-            if($scope.data.nonUKResident === "No") {
-                loggingService.logEvent('decision', 'submit', "NonUKResident.UKResident");
-            } else {
-                loggingService.logEvent('decision', 'submit', "NonUKResident.NonUKResident");
-            }
+            loggingService.logEvent('decision', 'submit', $scope.data.nonUKResident);
         };
 
         $scope.beforeApril21 = Date.now() < new Date('April 1, 2021');
