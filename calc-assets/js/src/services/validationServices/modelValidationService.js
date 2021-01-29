@@ -61,11 +61,10 @@
                 }
             }
 
-            // if Residential and today's date is after Jan 31st 2021 and effective date is after March 31st 2021
+            // if Residential and effective date is after March 31st 2021
             // nonUKResident question required
             if(data.propertyType === 'Residential' &&
-               validator.todayDateAfterJanuary2021() &&
-                validator.effectiveDateIsAfterMarch2021(data.effectiveDate)
+               validator.effectiveDateIsAfterMarch2021(data.effectiveDate)
             ){
                 result.isNonUKResidentValid = hasError('nonUKResident');
             }

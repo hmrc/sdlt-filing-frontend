@@ -32,7 +32,7 @@
 
     var displayNonUKResident = function(data) {
         if(data === undefined) return false;
-        return (data.propertyType === 'Residential' && validator.todayDateAfterJanuary2021() &&
+        return (data.propertyType === 'Residential' &&
             validator.effectiveDateIsAfterMarch2021(data.effectiveDate));
     };
 

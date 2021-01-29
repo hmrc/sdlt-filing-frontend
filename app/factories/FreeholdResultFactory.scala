@@ -89,7 +89,7 @@ object FreeholdResultFactory {
     val (resHeading, resHint, detailHeading) =
       (Some(RESULT_HEADING_AFTER_MARCH_2021),
         refundEntitlement.map { amount =>
-          s"$RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}."},
+          s"$RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}.$RESULT_HINT_NRSDLT_REFUND"},
         Some(DETAIL_HEADING_TOTAL_SDLT)
       )
 
@@ -176,7 +176,7 @@ object FreeholdResultFactory {
 
     val (resHeading, resHint, detailHeading) = {
       if(asPrevResult){
-        (Some(DETAIL_ADDITIONAL_DWELLINGS), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+        (Some(DETAIL_ADDITIONAL_DWELLINGS), Some(RESULT_HINT_EXCHANGE_APR_21), Some(DETAIL_HEADING_TOTAL_SDLT))
       }else{
         (Some(RESULT_HEADING_AFTER_MARCH_2021), None, Some(DETAIL_HEADING_TOTAL_SDLT))
       }

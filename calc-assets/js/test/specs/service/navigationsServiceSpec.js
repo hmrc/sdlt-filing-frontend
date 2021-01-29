@@ -127,7 +127,7 @@
                 spyOn(mockLocation, 'path').and.callThrough();
             }));
 
-            it('should set the location path to /summary when holdingType has not been answered nd effective date is 31/03/2016', function() {
+            it('should set the location path to /summary when holdingType has not been answered and effective date is 31/03/2016', function() {
                 data = { effectiveDateDay   : "31",
                          effectiveDateMonth : "03",
                          effectiveDateYear  : "2016"};
@@ -135,17 +135,12 @@
                 expect(mockLocation.path()).toEqual('/summary');
             });
 
-            it('should set the location path to /non-uk-resident when propertyType is "Residential" and effective date' +
-                ' is 01/04/2021 and current date is on or after 01/02/2021', function() {
+            it('should set the location path to /non-uk-resident when propertyType is "Residential" and effective date is 01/04/2021', function() {
                 data = { propertyType  : 'Residential',
                     holdingType        : 'Freehold',
                     effectiveDateDay   : "01",
                     effectiveDateMonth : "04",
                     effectiveDateYear  : "2021"};
-
-                spyOn(Date, 'now').and.returnValue(
-                    new Date('2021-02-01')
-                );
 
                 service.next(currentView, data, mockLocation);
 

@@ -12,6 +12,7 @@
 	    'calc.routes',
 	    'calc.filters',
 	    'calc.controllers',
-	    'calc-templates'
+	    'calc-templates',
+		'ngSanitize'
 	]);
 }());

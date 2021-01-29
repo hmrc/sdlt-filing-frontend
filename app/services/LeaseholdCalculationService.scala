@@ -180,7 +180,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialApr21OnwardsNonUKResLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialApr21OnwardsNonUKResPremiumRates.slices)
 
-    LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult, premiumResult, npv, asPrevResult = true, additonalProp = true)
+    LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult, premiumResult, npv, asPrevResult = true, additionalProp = true)
   }
 
   def leaseholdResidentialAddPropApr21OnwardsNonUKRes(request: Request): Seq[Result] = {

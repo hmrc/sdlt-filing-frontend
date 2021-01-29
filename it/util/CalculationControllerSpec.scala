@@ -1331,7 +1331,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |   ]
               |  },{
               |    "totalTax":31128,
-              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |    "npv":2737887,
               |    "taxCalcs":[
               |    {
@@ -1498,7 +1498,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |   ]
               |  },{
               |    "totalTax":0,
-              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |    "npv":2737887,
               |    "taxCalcs":[
               |    {
@@ -1660,7 +1660,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |   ]
               |  },{
               |    "totalTax":15000,
-              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |    "npv":95652,
               |    "taxCalcs":[
               |    {
@@ -1841,7 +1841,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |   ]
               |  },{
               |    "totalTax":31128,
-              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |    "npv":2737887,
               |    "taxCalcs":[
               |    {
@@ -1959,7 +1959,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |  {
               |   "totalTax":98386,
               |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-              |   "resultHint":"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. If you dispose of your previous main residence within 3 years you may be eligible for a refund of £8,250.",
+              |   "resultHint":"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. If you dispose of your previous main residence within 3 years you may be eligible for a refund of £8,250.<br /><br />You may also be eligible for a refund of the non-resident rate.",
               |   "npv":2737887,
               |   "taxCalcs":[
               |     {
@@ -2023,6 +2023,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |  },{
               |  "totalTax":90136,
               |  "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
+              |  "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
               |  "npv":2737887,
               |  "taxCalcs":[
               |   {
@@ -2965,7 +2966,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |  },
               | {
               |  "totalTax":0,
-              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |  "taxCalcs":[
               |   {
               |    "taxType":"premium",
@@ -3086,7 +3087,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |  },
               | {
               |  "totalTax":105750,
-              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |  "taxCalcs":[
               |   {
               |    "taxType":"premium",
@@ -3245,7 +3246,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |  {
               |   "totalTax":35000,
               |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-              |   "resultHint":"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. If you dispose of your previous main residence within 3 years you may be eligible for a refund of £13,500.",
+              |   "resultHint":"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. If you dispose of your previous main residence within 3 years you may be eligible for a refund of £13,500.<br /><br />You may also be eligible for a refund of the non-resident rate.",
               |   "taxCalcs":[
               |    {
               |     "taxType":"premium",
@@ -3288,6 +3289,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               | {
               |  "totalTax":21500,
               |  "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
+              |  "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
               |  "taxCalcs":[
               |   {
               |    "taxType":"premium",
@@ -3395,7 +3397,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |  },
               | {
               |  "totalTax":0,
-              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |  "taxCalcs":[
               |   {
               |    "taxType":"premium",
@@ -3488,7 +3490,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |  },
               | {
               |  "totalTax":2500,
-              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |  "taxCalcs":[
               |   {
               |    "taxType":"premium",
@@ -3596,7 +3598,7 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
               |  },
               | {
               |  "totalTax":2500,
-              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT.",
+              |  "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
               |  "taxCalcs":[
               |   {
               |    "taxType":"premium",
