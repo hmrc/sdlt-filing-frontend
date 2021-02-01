@@ -27,6 +27,7 @@ object ResultText {
   val DETAIL_COL_HEADER_PURCHASE_PRICE = "Purchase price bands (£)"
   val DETAIL_FOOTER_TOTAL              = "Total SDLT due"
   val DETAIL_ADDITIONAL_DWELLINGS      = "Result if you become eligible for a repayment of the higher rate on additional dwellings"
+  val RESULT_HINT_NRSDLT_REFUND        = "<br /><br />You may also be eligible for a refund of the non-resident rate."
 
   val DETAIL_HEADING_SDLT_ON_RENT = "This is a breakdown of how the amount of SDLT on the rent was calculated"
   val DETAIL_COL_HEADER_RENT      = "Rent bands (£)"
@@ -62,10 +63,10 @@ object ResultText {
   val RESULT_HEADING_PREVIOUS_AFTER_MARCH_2021 = s"$DETAIL_ADDITIONAL_DWELLINGS"
   val RESULT_HEADING_AFTER_JULY_2020_AND_BEFORE_MARCH_2021 = "Result of calculation based on SDLT rates for transactions dated 8 July 2020 to 31 March 2021"
   val RESULT_HEADING_AFTER_MARCH_2021 = "Results of calculation based on SDLT rules for the effective date entered"
-  val RESULT_HEADING_AFTER_MARCH_2021_NON_RES = "Result if you become eligible for a repayment of the Non-resident rate of SDLT."
+  val RESULT_HEADING_AFTER_MARCH_2021_NON_RES = "Result if you become eligible for a repayment of the Non-resident rate of SDLT"
   val RESULT_HINT_EXCHANGE_BEFORE_NOV_2015 = s"$RESULT_HINT_EXCHANGE_BEFORE $DATE_26_11_2015."
   val RESULT_HINT_EXCHANGE_JULY_20 = s"$RESULT_HINT_DISPOSE_BEFORE."
-  val RESULT_HINT_EXCHANGE_APR_21 = s"$RESULT_HINT_DISPOSE_BEFORE."
+  val RESULT_HINT_EXCHANGE_APR_21 = s"$RESULT_HINT_DISPOSE_BEFORE.$RESULT_HINT_NRSDLT_REFUND"
   val RESULT_HINT_EXCHANGE_AFTER_MARCH_21 = s"$RESULT_HINT_DISPOSE_BEFORE."
 
   val RESULT_HEADING_FROM_MAR_2016 = s"$RESULT_HEADING_FROM $DATE_17_03_2016"
@@ -77,5 +78,4 @@ object ResultText {
   val RESULT_HINT_ADDNL_PROP_2021 = "The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. "
   val RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021 = "The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. "
   val RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021 = "The results are based on the answers you have provided and show that the non-UK residential rate applies. "
-  val RESULT_HINT_NON_UK_RES_REFUND = "TBC: If you dispose of zzzz within zzzzz years you may be eligible for a refund of £"
 }

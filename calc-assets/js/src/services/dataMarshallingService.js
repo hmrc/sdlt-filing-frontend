@@ -27,7 +27,7 @@
             (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
           model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
         }
-        if(validator.todayDateAfterJanuary2021() && validator.effectiveDateIsAfterMarch2021(data.effectiveDate)) {
+        if(validator.effectiveDateIsAfterMarch2021(data.effectiveDate)) {
           model.nonUKResident = data.nonUKResident;
         }
       }

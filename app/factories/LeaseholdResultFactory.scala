@@ -86,7 +86,7 @@ object LeaseholdResultFactory {
     val (resHeading, resHint, leaseDetailHeading, premDetailHeading) =
       (Some(RESULT_HEADING_AFTER_MARCH_2021),
         refundEntitlement.map { amount =>
-          s"$RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}."},
+          s"$RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}.$RESULT_HINT_NRSDLT_REFUND"},
         Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
 
     val leaseCalcDetails = CalculationDetails(
@@ -201,17 +201,25 @@ object LeaseholdResultFactory {
     )
   }
 
-  def leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal, asPrevResult: Boolean = false, additonalProp: Boolean = false): Result = {
-    val (resHeading, resHint, leaseDetailHeading, premiumDetailHeading) =
-      (if(asPrevResult) {
-        if(additonalProp) {
-          Some(DETAIL_ADDITIONAL_DWELLINGS)
-        }else{
-          Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES)
-        }
-      } else{
-          Some(RESULT_HEADING_AFTER_MARCH_2021)
-        }, None, Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
+  def leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal, asPrevResult: Boolean = false, additionalProp: Boolean = false): Result = {
+
+    val resHeading = if(asPrevResult) {
+      if (additionalProp) {
+        Some(s"$DETAIL_ADDITIONAL_DWELLINGS")
+      } else {
+        Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES)
+      }
+    } else {
+      Some(RESULT_HEADING_AFTER_MARCH_2021)
+    }
+
+    val resHint = if(asPrevResult && additionalProp) {
+        Some(RESULT_HINT_EXCHANGE_APR_21)
+      } else {
+      None
+    }
+
+    val (leaseDetailHeading, premiumDetailHeading) = (Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
 
     val leaseCalcDetails = CalculationDetails(
       taxType = TaxTypes.rent,
