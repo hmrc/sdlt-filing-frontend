@@ -6,12 +6,12 @@
 package validators.internal
 
 import java.time.{LocalDate, Period}
-
 import data.Dates
 import enums.{HoldingTypes, PropertyTypes}
 import models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
 import data.Dates._
 import data.SignificantAmounts.RELEVANT_RENT_PREMIUM_THRESHOLD
+import enums.PropertyTypes.residential
 import utils.DateUtil
 
 sealed trait ValidationResult
@@ -23,6 +23,7 @@ object ModelValidation extends DateUtil{
     Seq(
       validLeaseDetails(request),
       validEffectiveDate(request),
+      validNonUKResident(request),
       validPropertyDetails(request),
       validLeaseTerm(request),
       validRelevantRentDetails(request),
@@ -88,6 +89,23 @@ object ModelValidation extends DateUtil{
         } else {
           ValidationSuccess
         }
+    }
+  }
+
+  private def validNonUKResident(request: Request): ValidationResult = {
+
+    val effectiveDate = request.effectiveDate;
+    val propertyType = request.propertyType;
+
+    if (propertyType == residential) {
+
+      request.nonUKResident match {
+        case Some(_) if effectiveDate.isAfter(MAR2021_RESIDENTIAL_DATE) => ValidationSuccess
+        case None if effectiveDate.isBefore(APR2021_RESIDENTIAL_DATE) => ValidationSuccess
+        case _ => ValidationFailure("Non UK resident question not answered for effective date after 31 March 2021")
+      }
+    } else {
+      ValidationSuccess
     }
   }
 

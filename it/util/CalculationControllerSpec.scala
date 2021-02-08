@@ -2230,6 +2230,53 @@ class CalculationControllerSpec extends UnitSpec with GuiceOneServerPerSuite {
           request.status shouldBe OK
           request.json shouldBe responseJson
         }
+
+        "residential, Non UK Resident, Individual negative test" in {
+
+          def request: WSResponse = ws.url(
+            calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 4,
+                  |  "effectiveDateYear": 2021,
+                  |  "premium": 300000,
+                  |  "highestRent": 99000,
+                  |  "ownedOtherProperties": "Yes",
+                  |  "propertyDetails": {
+                  |     "individual": "Yes",
+                  |     "twoOrMoreProperties": "No"
+                  |   },
+                  |  "leaseDetails": {
+                  |    "startDateDay": 1,
+                  |    "startDateMonth": 4,
+                  |    "startDateYear": 2021,
+                  |    "endDateDay": 31,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2121,
+                  |    "leaseTerm":  {
+                  |      "years": 100,
+                  |      "days": 0,
+                  |      "daysInPartialYear": 0
+                  |     },
+                  |    "year1Rent": 99000,
+                  |    "year2Rent": 99000,
+                  |    "year3Rent": 99000,
+                  |    "year4Rent": 99000,
+                  |    "year5Rent": 99000
+                  |  }
+                  |}
+              """. stripMargin)
+            )
+
+          request.status shouldBe BAD_REQUEST
+          request.body shouldBe "\"Validation error: List(ValidationFailure(Non UK resident question not answered for effective date after 31 March 2021))\""
+        }
+
       }
     }
 
