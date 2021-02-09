@@ -148,7 +148,7 @@
           validator.effectiveDateWithinFTBRange(model.effectiveDate) &&
           model.individual === 'Yes' &&
           model.twoOrMoreProperties === 'No' &&
-          (validator.effectiveDateIsAfterJuly2020(model.effectiveDate) ||
+          (validator.effectiveDateIsBeforeJuly2020(model.effectiveDate) ||
            validator.effectiveDateIsAfterMarch2021(model.effectiveDate))
           ) {
             redirectToNext(locationService, 'owned-other-properties');

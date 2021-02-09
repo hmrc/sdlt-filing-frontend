@@ -11,6 +11,7 @@ import exceptions.InvalidDateException
 import models.{CalculationResponse, PropertyDetails, Request}
 import data.Dates
 import utils.DateUtil
+import utils.CalculationUtils.{freeholdNRSDLTOutOfScope, leaseholdNRSDLTOutOfScopeForLeaseAndPremium}
 
 @Singleton
 class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalculationService,
@@ -36,16 +37,9 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
   }
 
   def calculateFreeholdResidentialTax(request: Request): CalculationResponse = {
-
     request.effectiveDate match {
-      case _ if checkNonUKResident(request.nonUKResident) && request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
-        if (checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer) && request.premium <= MAX_PREMIUM_FTB) {
-          CalculationResponse(freeCalculationService.freeholdResidentialApr21OnwardsFTBNonUKRes(request))
-        } else if (additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails)) {
-          CalculationResponse(freeCalculationService.freeholdResidentialAddPropNonUKResApr21Onwards(request))
-        } else {
-          CalculationResponse(freeCalculationService.freeholdResidentialApr21OnwardsNonUKRes(request))
-        }
+      case date if checkNonUKResident(request.nonUKResident) && date.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
+        calculateFreeholdNonUKResidentTax(request)
       case date if date.onOrAfter(Dates.JULY2020_RESIDENTIAL_DATE)
         && date.onOrBefore(Dates.MAR2021_RESIDENTIAL_DATE)
         && checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer)
@@ -64,6 +58,21 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     }
   }
 
+  def calculateFreeholdNonUKResidentTax(request: Request): CalculationResponse = {
+    val nonUKResSDLTOutOfScope: Boolean = freeholdNRSDLTOutOfScope(request.premium)
+    if (checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer) && request.premium <= MAX_PREMIUM_FTB) {
+      if(nonUKResSDLTOutOfScope) {
+        CalculationResponse(Seq(freeCalculationService.freeholdResidentialNov17OnwardsFTB(request)))
+      } else {
+        CalculationResponse(freeCalculationService.freeholdResidentialApr21OnwardsFTBNonUKRes(request))
+      }
+    } else if (additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails)) {
+        CalculationResponse(freeCalculationService.freeholdResidentialAddPropNonUKResApr21Onwards(request))
+    } else {
+      CalculationResponse(freeCalculationService.freeholdResidentialApr21OnwardsNonUKRes(request))
+    }
+  }
+
   def calculateFreeholdNonResidentialTax (request: Request): CalculationResponse = {
     if(request.effectiveDate.onOrAfter(Dates.MARCH2016_NON_RESIDENTIAL_DATE)){
       CalculationResponse(freeCalculationService.freeholdNonResidentialMar16Onwards(request))
@@ -74,14 +83,8 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
   def calculateLeaseholdResidentialTax (request: Request): CalculationResponse = {
     request.effectiveDate match {
-      case _ if checkNonUKResident(request.nonUKResident) && request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
-        if (checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer) && request.premium <= MAX_PREMIUM_FTB) {
-          CalculationResponse(leaseCalculationService.leaseholdResidentialApr21OnwardsFTBNonUKRes(request))
-        } else if (additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails)) {
-          CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropApr21OnwardsNonUKRes(request))
-        } else {
-          CalculationResponse(leaseCalculationService.leaseholdResidentialApr21OnwardsNonUKRes(request))
-        }
+      case date if checkNonUKResident(request.nonUKResident) && date.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
+        calculateLeaseholdNonUKResidentTax(request)
       case date if date.onOrAfter(Dates.JULY2020_RESIDENTIAL_DATE)
         && date.onOrBefore(Dates.MAR2021_RESIDENTIAL_DATE)
         && checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer)
@@ -98,6 +101,24 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialDec14Onwards(request)))
       case date if date.onOrAfter(Dates.MIN_RESIDENTIAL_DATE) => CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialMar12toDec14(request)))
       case _ => throw new InvalidDateException(s"Date of ${request.effectiveDate} is invalid or before 22/3/2012")
+    }
+  }
+
+  def calculateLeaseholdNonUKResidentTax(request: Request): CalculationResponse = {
+    val nonUKResSDLTOutOfScope: Boolean =
+      leaseholdNRSDLTOutOfScopeForLeaseAndPremium(request.premium, request.leaseDetails.get.leaseTerm.years, request.highestRent,
+        request.firstTimeBuyer.getOrElse(false), request.propertyDetails.get.sharedOwnership.getOrElse(false))
+
+    if (checkPropDetailsFTB(request.propertyDetails, request.firstTimeBuyer) && request.premium <= MAX_PREMIUM_FTB) {
+      if(nonUKResSDLTOutOfScope) {
+        CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialNov17OnwardsFTB(request)))
+      } else {
+        CalculationResponse(leaseCalculationService.leaseholdResidentialApr21OnwardsFTBNonUKRes(request))
+      }
+    } else if (additionalPropertyService.additionalPropertyRatesApply(request.propertyDetails)) {
+        CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropApr21OnwardsNonUKRes(request))
+    } else {
+      CalculationResponse(leaseCalculationService.leaseholdResidentialApr21OnwardsNonUKRes(request))
     }
   }
 

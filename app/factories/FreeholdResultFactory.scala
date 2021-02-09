@@ -13,11 +13,11 @@ import utils.StringUtils
 
 object FreeholdResultFactory {
 
-  def freeholdResidentialApr21OnwardsFTBResult(sliceResult: SliceResult): Result = {
+  def freeholdResidentialApr21OnwardsFTBResult(sliceResult: SliceResult, nonUKResident: Boolean): Result = {
     Result(
       totalTax = sliceResult.taxDue.toInt,
       resultHeading = Some(RESULT_HEADING_AFTER_MARCH_2021),
-      resultHint = None,
+      resultHint = if(nonUKResident) Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021) else None,
       npv = None,
       taxCalcs = Seq(
         CalculationDetails(
@@ -58,17 +58,27 @@ object FreeholdResultFactory {
     val resHeading = if(afterMarch2021) {
       if(prevResult){
         Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES)
-      }else {
+      } else {
         Some(RESULT_HEADING_AFTER_MARCH_2021)
       }
     } else {
-      (None)
+      None
+    }
+
+    val resHint = if(afterMarch2021) {
+      if(prevResult){
+        Some(RESULT_HINT_NON_UK_RES_WITHIN_12M)
+      } else {
+        None
+      }
+    } else {
+      None
     }
 
     Result(
       totalTax = sliceResult.taxDue.toInt,
       resultHeading = resHeading,
-      resultHint = None,
+      resultHint = resHint,
       npv = None,
       taxCalcs = Seq(
         CalculationDetails(
@@ -172,13 +182,17 @@ object FreeholdResultFactory {
     )
   }
 
-  def freeholdResidentialApr21OnwardsResultNonUKRes(sliceResult: SliceResult, asPrevResult: Boolean = false): Result = {
+  def freeholdResidentialApr21OnwardsResultNonUKRes(sliceResult: SliceResult, asPrevResult: Boolean = false, individual: Boolean): Result = {
 
     val (resHeading, resHint, detailHeading) = {
       if(asPrevResult){
         (Some(DETAIL_ADDITIONAL_DWELLINGS), Some(RESULT_HINT_EXCHANGE_APR_21), Some(DETAIL_HEADING_TOTAL_SDLT))
       }else{
-        (Some(RESULT_HEADING_AFTER_MARCH_2021), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+        if(individual) {
+          (Some(RESULT_HEADING_AFTER_MARCH_2021), Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021), Some(DETAIL_HEADING_TOTAL_SDLT))
+        } else{
+          (Some(RESULT_HEADING_AFTER_MARCH_2021), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+        }
       }
     }
 
@@ -230,14 +244,16 @@ object FreeholdResultFactory {
     )
   }
 
-  def freeholdResidentialDec14OnwardsResult(sliceResult: SliceResult, asPrevResult: Boolean, afterMarch2021: Boolean, nonUKResident: Boolean = false): Result = {
+  def freeholdResidentialDec14OnwardsResult(sliceResult: SliceResult, asPrevResult: Boolean, afterMarch2021: Boolean,
+                                            nonUKResident: Boolean = false, individual: Boolean): Result = {
 
     val (resHeading, resHint, detailHeading) =
       (asPrevResult, afterMarch2021, nonUKResident) match {
-        case (true, false, false)  => (Some(RESULT_HEADING_BEFORE_APR_2016), Some(RESULT_HINT_EXCHANGE_BEFORE_NOV_2015), Some(DETAIL_HEADING_TOTAL_SDLT_BEFORE_APR_2016))
-        case (false, true, false)  => (Some(RESULT_HEADING_AFTER_MARCH_2021), None, Some(DETAIL_HEADING_TOTAL_SDLT))
-        case (true, true, true)  => (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), None, Some(DETAIL_HEADING_TOTAL_SDLT))
-        case (true, true, false)   => (Some(RESULT_HEADING_BEFORE_JULY_2020), Some(RESULT_HINT_EXCHANGE_JULY_20), Some(DETAIL_HEADING_TOTAL_SDLT))
+        case (true, false, false) => (Some(RESULT_HEADING_BEFORE_APR_2016), Some(RESULT_HINT_EXCHANGE_BEFORE_NOV_2015), Some(DETAIL_HEADING_TOTAL_SDLT_BEFORE_APR_2016))
+        case (false, true, false) => (Some(RESULT_HEADING_AFTER_MARCH_2021), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+        case (true, true, true) if individual => (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), Some(RESULT_HINT_NON_UK_RES_WITHIN_12M), Some(DETAIL_HEADING_TOTAL_SDLT))
+        case (true, true, true) if !individual => (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+        case (true, true, false) => (Some(RESULT_HEADING_BEFORE_JULY_2020), Some(RESULT_HINT_EXCHANGE_JULY_20), Some(DETAIL_HEADING_TOTAL_SDLT))
         case _ => (None, None, Some(DETAIL_HEADING_TOTAL_SDLT))
       }
 

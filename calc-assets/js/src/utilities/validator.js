@@ -123,7 +123,7 @@
             isGreaterThanFloat : isGreaterThanFloat,
             checkAllRentsBelow2000 : checkAllRentsBelow2000,
             effectiveDateWithinFTBRange: effectiveDateWithinFTBRange,
-            effectiveDateIsAfterJuly2020: effectiveDateJuly2020,
+            effectiveDateIsBeforeJuly2020: effectiveDateJuly2020,
             effectiveDateIsAfterMarch2021: effectiveDateMarch2021
         };
 

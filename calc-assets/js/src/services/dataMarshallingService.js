@@ -24,7 +24,7 @@
         }
         if(data.individual === 'Yes' && data.twoOrMoreProperties === 'No' &&
             validator.effectiveDateWithinFTBRange(data.effectiveDate) &&
-            (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
+            (validator.effectiveDateIsBeforeJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
           model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
         }
         if(validator.effectiveDateIsAfterMarch2021(data.effectiveDate)) {
