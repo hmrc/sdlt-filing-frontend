@@ -1332,7 +1332,7 @@ class CalculationControllerLeaseholdSpec extends UnitSpec with GuiceOneServerPer
               |   ]
               |  },{
               |    "totalTax":31128,
-              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
+              |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
               |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
               |    "npv":2737887,
               |    "taxCalcs":[
@@ -1618,7 +1618,7 @@ class CalculationControllerLeaseholdSpec extends UnitSpec with GuiceOneServerPer
               |   ]
               |  },{
               |    "totalTax":0,
-              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
+              |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
               |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
               |    "npv":2737887,
               |    "taxCalcs":[
@@ -2188,7 +2188,7 @@ class CalculationControllerLeaseholdSpec extends UnitSpec with GuiceOneServerPer
               |   ]
               |  },{
               |    "totalTax":15000,
-              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
+              |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
               |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
               |    "npv":95652,
               |    "taxCalcs":[
@@ -2371,7 +2371,7 @@ class CalculationControllerLeaseholdSpec extends UnitSpec with GuiceOneServerPer
               |   ]
               |  },{
               |    "totalTax":31128,
-              |    "resultHeading":"Result if you become eligible for a repayment of the Non-resident rate of SDLT",
+              |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
               |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
               |    "npv":2737887,
               |    "taxCalcs":[
