@@ -330,14 +330,14 @@
 			it('should return true if sent a date before 08/07/2020', function () {
 				var effectiveDate = new Date('July 07, 2020');
 				var validatorInstance = new Validator();
-				var result = validatorInstance.effectiveDateIsAfterJuly2020(effectiveDate);
+				var result = validatorInstance.effectiveDateIsBeforeJuly2020(effectiveDate);
 				expect(result).toEqual(true);
 			});
 
 			it('should return false if sent a date after 08/07/2020', function () {
 				var effectiveDate = new Date('July 08, 2020');
 				var validatorInstance = new Validator();
-				var result = validatorInstance.effectiveDateIsAfterJuly2020(effectiveDate);
+				var result = validatorInstance.effectiveDateIsBeforeJuly2020(effectiveDate);
 				expect(result).toEqual(false);
 			});
 		});

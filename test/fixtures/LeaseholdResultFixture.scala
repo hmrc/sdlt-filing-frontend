@@ -137,9 +137,9 @@ trait LeaseholdResultFixture {
                                               premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
                                               npv:         Int, afterMarch2021: Boolean = false) = {
     val (resultHeading) = if(afterMarch2021) {
-      (Some("Results of calculation based on SDLT rules for the effective date entered"))
+      Some("Results of calculation based on SDLT rules for the effective date entered")
     } else {
-      (None)
+      None
     }
       Result(
         totalTax = leaseTaxDue + premTaxDue,

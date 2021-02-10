@@ -5,14 +5,16 @@
 
 package services
 
+import data.LeaseholdSliceRatesTables._
 import data.SignificantAmounts._
 import data.{Dates, SlabRatesTables}
-import data.LeaseholdSliceRatesTables._
 import exceptions.RequiredValueNotDefinedException
 import factories.LeaseholdResultFactory
 import models._
-import models.calculationtables.SlabResult
+import models.calculationtables.{SlabResult, Slice}
+import utils.CalculationUtils.leaseholdNRSDLTInScopeForLeaseOrPremium
 import validators.internal.ModelValidation
+
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -65,8 +67,10 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialDec14OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialDec14OnwardsPremiumRates.slices)
     val effectiveDateAfter31March2020: Boolean = request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
 
-    LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(leaseResult, premiumResult, npv, asPreviousResult, effectiveDateAfter31March2020, nonUKRes)
+    LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(
+      leaseResult, premiumResult, npv, asPreviousResult, effectiveDateAfter31March2020, nonUKRes, individual)
   }
 
   //April 16 requests
@@ -157,12 +161,21 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
     val prevLeaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialNov17FTBLeaseRates.slices)
     val prevPremiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialDec14OnwardsPremiumRates.slices)
-    val prevResult = LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(prevLeaseResult, prevPremiumResult, npv, asPrevResult = true, afterMarch2021 = true, nonUKRes = true)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+
+    val prevResult = LeaseholdResultFactory.leaseholdResidentialDec14OnwardsResult(prevLeaseResult, prevPremiumResult, npv, asPrevResult = true,
+      afterMarch2021 = true, nonUKRes = true, individual)
 
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialApr21OnwardsNonUKResLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialApr21OnwardsNonUKResPremiumRates.slices)
 
-    Seq(LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult, premiumResult, npv), prevResult)
+    val nrsdltInScope = leaseholdNRSDLTInScopeForLeaseOrPremium(
+      request.premium, request.leaseDetails.get.leaseTerm.years, request.highestRent,
+      request.propertyDetails.get.sharedOwnership.getOrElse(false), request.firstTimeBuyer.getOrElse(false)
+    )
+
+    Seq(LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(
+      leaseResult, premiumResult, npv, individual = individual, nrsdltInScope = nrsdltInScope, additionalProp = false), prevResult)
   }
 
   def leaseholdResidentialApr21OnwardsNonUKResFTBPrevRes(request: Request, preCalculatedNPV: Option[BigDecimal] = None): Result = {
@@ -170,22 +183,40 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialApr21FTBSharedNonUKResLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
 
-    LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult, premiumResult, npv, asPrevResult = true)
+    val nrsdltInScope = leaseholdNRSDLTInScopeForLeaseOrPremium(
+      request.premium, request.leaseDetails.get.leaseTerm.years, request.highestRent,
+      request.propertyDetails.get.sharedOwnership.getOrElse(false), request.firstTimeBuyer.getOrElse(false)
+    )
+
+    LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult, premiumResult, npv, asPrevResult = true,
+      individual = individual, nrsdltInScope = nrsdltInScope, additionalProp = false)
   }
 
   def leaseholdResidentialApr21OnwardsNonUKResAddPropResPrevRes(request: Request, preCalculatedNPV: Option[BigDecimal] = None): Result = {
     val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialApr21OnwardsNonUKResPrevRes", request.leaseDetails))
 
-    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialApr21OnwardsNonUKResLeaseRates.slices)
-    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialApr21OnwardsNonUKResPremiumRates.slices)
+    val leaseRates = ratesToUse(request.leaseDetails.get.leaseTerm.years, request.highestRent)
 
-    LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult, premiumResult, npv, asPrevResult = true, additionalProp = true)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseRates)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(
+      if(request.premium < 40000) 0 else request.premium, leaseholdResidentialApr21OnwardsNonUKResPremiumRates.slices)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+
+    val nrsdltInScope = leaseholdNRSDLTInScopeForLeaseOrPremium(
+      request.premium, request.leaseDetails.get.leaseTerm.years, request.highestRent,
+      request.propertyDetails.get.sharedOwnership.getOrElse(false), request.firstTimeBuyer.getOrElse(false)
+    )
+
+    LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(
+      leaseResult, premiumResult, npv, asPrevResult = true, additionalProp = true, individual = individual, nrsdltInScope = nrsdltInScope)
   }
 
   def leaseholdResidentialAddPropApr21OnwardsNonUKRes(request: Request): Seq[Result] = {
     val npv = getNPV("leaseholdResidentialAddPropApril21OnwardsNonUKRes", request.leaseDetails)
-    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialApr21OnwardsNonUKResLeaseRates.slices)
+    val leaseRates = ratesToUse(request.leaseDetails.get.leaseTerm.years, request.highestRent)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseRates)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       if(request.premium < 40000) 0 else request.premium,
       leaseholdResidentialAddPropNonUKResApr21OnwardsPremiumRates.slices
@@ -208,16 +239,39 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialApr21OnwardsFTBNonUKRes(request: Request): Seq[Result] = {
-    val sliceRateTable = if(checkIfShared(request.propertyDetails)) leaseholdResidentialApr21FTBSharedNonUKResLeaseRates.slices else leaseholdResidentialApr21FTBNonUKResLeaseRates.slices
+
+    val sharedOwnership = checkIfShared(request.propertyDetails)
+
+    val sliceRateTable = if(sharedOwnership) {
+      leaseholdResidentialApr21FTBSharedNonUKResLeaseRates.slices
+    } else {
+      leaseholdResidentialApr21FTBNonUKResLeaseRates.slices
+    }
+
     val npv = getNPV("leaseholdResidentialApril21Onwards", request.leaseDetails)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
-    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialApr21OnwardsFTBNonUKResPremiumRates.slices)
+
+    val premiumRatesToUse: Seq[Slice] = if(request.premium < 40000){
+      leaseholdResidentialNov17OnwardsFTBPremiumRates.slices
+    } else {
+      leaseholdResidentialApr21OnwardsFTBNonUKResPremiumRates.slices
+    }
+
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(if(request.premium < 40000) 0 else request.premium, premiumRatesToUse)
+
     val prevResult = leaseholdResidentialApr21OnwardsNonUKResFTBPrevRes(request, Some(npv))
 
-    val currResult = LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(leaseResult, premiumResult, npv)
     val individual: Boolean = request.propertyDetails.exists(_.individual)
 
-    if (individual) {
+    val nrsdltInScope = leaseholdNRSDLTInScopeForLeaseOrPremium(
+      request.premium, request.leaseDetails.get.leaseTerm.years, request.highestRent,
+      sharedOwnership, request.firstTimeBuyer.getOrElse(false)
+    )
+
+    val currResult = LeaseholdResultFactory.leaseholdResidentialApr21OnwardsResultNonUKRes(
+      leaseResult, premiumResult, npv, individual = individual, nrsdltInScope = nrsdltInScope, additionalProp = false)
+
+    if (individual && nrsdltInScope) {
       Seq(currResult, prevResult)
     } else {
       Seq(currResult)
@@ -225,6 +279,14 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   //Shared functions
+
+  def ratesToUse(leaseTermYears: Int, highestRent: BigDecimal): Seq[Slice] = {
+    if(leaseTermYears < 7 || highestRent < 1000){
+      leaseholdResidentialDec14OnwardsLeaseRates.slices
+    } else {
+      leaseholdResidentialApr21OnwardsNonUKResLeaseRates.slices
+    }
+  }
 
   def checkIfShared(propertyDetails: Option[PropertyDetails]): Boolean = {
     propertyDetails.exists(propDetails => propDetails.sharedOwnership.getOrElse(false))

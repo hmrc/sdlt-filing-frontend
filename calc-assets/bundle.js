@@ -1487,7 +1487,7 @@
 
 	    var displayOwnedOtherProperties = function(data) {
 	        if(data === undefined) return false;
-	        return (data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties == 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate) && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) ||  validator.effectiveDateIsAfterMarch2021(data.effectiveDate)));
+	        return (data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties == 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate) && (validator.effectiveDateIsBeforeJuly2020(data.effectiveDate) ||  validator.effectiveDateIsAfterMarch2021(data.effectiveDate)));
 	    };
 
 	    var displayMainResidence = function(data) {
@@ -1991,7 +1991,7 @@
 	        }
 	      }
 
-	      if(data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties === 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate) && (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
+	      if(data.propertyType === 'Residential' && data.individual === 'Yes' && data.twoOrMoreProperties === 'No' && validator.effectiveDateWithinFTBRange(data.effectiveDate) && (validator.effectiveDateIsBeforeJuly2020(data.effectiveDate) || validator.effectiveDateIsAfterMarch2021(data.effectiveDate))) {
 	        model.firstTimeBuyer = constructFirstTimeBuyerDetails(data);
 	      }
 
@@ -2236,7 +2236,7 @@
 	          validator.effectiveDateWithinFTBRange(model.effectiveDate) &&
 	          model.individual === 'Yes' &&
 	          model.twoOrMoreProperties === 'No' &&
-	          (validator.effectiveDateIsAfterJuly2020(model.effectiveDate) ||
+	          (validator.effectiveDateIsBeforeJuly2020(model.effectiveDate) ||
 	           validator.effectiveDateIsAfterMarch2021(model.effectiveDate))
 	          ) {
 	            redirectToNext(locationService, 'owned-other-properties');
@@ -3015,7 +3015,7 @@
 	            // two or more properties then FTB information required
 	            if(data.propertyType === 'Residential' &&
 	               validator.effectiveDateWithinFTBRange(data.effectiveDate) &&
-	                (validator.effectiveDateIsAfterJuly2020(data.effectiveDate) ||
+	                (validator.effectiveDateIsBeforeJuly2020(data.effectiveDate) ||
 	                validator.effectiveDateIsAfterMarch2021(data.effectiveDate)) &&
 	               data.individual === 'Yes' &&
 	               data.twoOrMoreProperties === 'No'

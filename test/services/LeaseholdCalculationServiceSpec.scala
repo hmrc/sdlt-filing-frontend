@@ -392,7 +392,6 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       service.leaseholdResidentialAddPropJuly20Onwards(leaseRequest) shouldBe Seq(result, prevResult)
     }
 
-
     "return 15021, 1 for purchase price of 500025, npv of 501945" in new PredefinedNPVSetup(501945, Some(15000)) {
       val leaseTaxDue = 19
       val premTaxDue = 15002
