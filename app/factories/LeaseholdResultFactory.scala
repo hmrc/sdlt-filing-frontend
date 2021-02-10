@@ -48,7 +48,7 @@ object LeaseholdResultFactory {
     val resHeading = if(afterMarch2021) {
       Some(RESULT_HEADING_AFTER_MARCH_2021)
     } else {
-      (None)
+      None
     }
 
     val leaseCalcDetails = CalculationDetails(

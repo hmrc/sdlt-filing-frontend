@@ -717,7 +717,7 @@ class CalculationControllerFreeholdSpec extends UnitSpec with GuiceOneServerPerS
               |  {
               |   "totalTax":2000,
               |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-              |   "resultHint":"The results are based on the answers you have provided and show that the non-UK residential rate applies",
+              |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
               |   "taxCalcs":[
               |    {
               |     "taxType":"premium",
@@ -919,7 +919,7 @@ class CalculationControllerFreeholdSpec extends UnitSpec with GuiceOneServerPerS
               |  {
               |   "totalTax":137750,
               |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-              |   "resultHint":"The results are based on the answers you have provided and show that the non-UK residential rate applies",
+              |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
               |   "taxCalcs":[
               |    {
               |     "taxType":"premium",
@@ -1246,7 +1246,7 @@ class CalculationControllerFreeholdSpec extends UnitSpec with GuiceOneServerPerS
               |  {
               |   "totalTax":5000,
               |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-              |   "resultHint":"The results are based on the answers you have provided and show that the non-UK residential rate applies",
+              |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
               |   "taxCalcs":[
               |    {
               |     "taxType":"premium",
@@ -1407,7 +1407,7 @@ class CalculationControllerFreeholdSpec extends UnitSpec with GuiceOneServerPerS
               |  {
               |   "totalTax":7500,
               |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-              |   "resultHint":"The results are based on the answers you have provided and show that the non-UK residential rate applies",
+              |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
               |   "taxCalcs":[
               |    {
               |     "taxType":"premium",
