@@ -276,7 +276,7 @@
                 expect(mockLocation.path()).toEqual('/purchase-price');
             });
 
-            it('should redirect to first-time-buyer page when all ftb criteria are met (earliest date)', function() {
+            it('should redirect to owned other properties page when all ftb criteria are met (earliest date)', function() {
                 data = {
                   holdingType : 'Freehold',
                   propertyType : 'Residential',
@@ -288,11 +288,11 @@
                 expect(mockLocation.path()).toEqual('/owned-other-properties');
             });
 
-            it('should redirect to first-time-buyer page when all ftb criteria are met (post March 31 2021)', function() {
+            it('should redirect to owned other properties page when all ftb criteria are met (post June 30 2021)', function() {
                 data = {
                     holdingType : 'Freehold',
                     propertyType : 'Residential',
-                    effectiveDate : new Date('April 1, 2021'),
+                    effectiveDate : new Date('July 1, 2021'),
                     individual : "Yes",
                     twoOrMoreProperties : "No"
                 };
@@ -300,11 +300,11 @@
                 expect(mockLocation.path()).toEqual('/owned-other-properties');
             });
 
-            it('should redirect to first-time-buyer page when all ftb criteria are met (post March 31 2021)', function() {
+            it('should redirect to owned other properties page when all ftb criteria are met (post June 30 2021)', function() {
                 data = {
                     holdingType : 'Leasehold',
                     propertyType : 'Residential',
-                    effectiveDate : new Date('April 1, 2021'),
+                    effectiveDate : new Date('July 1, 2021'),
                     individual : "Yes",
                     twoOrMoreProperties : "No"
                 };

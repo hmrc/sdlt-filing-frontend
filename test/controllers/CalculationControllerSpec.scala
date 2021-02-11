@@ -165,7 +165,7 @@ class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstan
       "given a valid json" in{
         val response = CalculationResponse(Seq(createResult("given a valid json")))
 
-        (mockCalculationService.CalculateTax _)
+        (mockCalculationService.calculateTax _)
           .expects(*)
           .returns(response)
           .noMoreThanOnce()

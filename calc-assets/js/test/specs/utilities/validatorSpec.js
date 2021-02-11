@@ -308,19 +308,19 @@
     		});
     	});
 
-		describe('Calling effectiveDateMarch2021()', function () {
+		describe('Calling effectiveDateIsAfterJune2021()', function () {
 
-			it('should return false if sent a date before March 31 2021', function () {
-				var effectiveDate = new Date('March 31, 2020');
+			it('should return false if sent a date before July 1 2021', function () {
+				var effectiveDate = new Date('June 30, 2020');
 				var validatorInstance = new Validator();
-				var result = validatorInstance.effectiveDateIsAfterMarch2021(effectiveDate);
+				var result = validatorInstance.effectiveDateIsAfterJune2021(effectiveDate);
 				expect(result).toEqual(false);
 			});
 
-			it('should return true if sent a date after March 31 2021', function () {
-				var effectiveDate = new Date('April 1, 2021');
+			it('should return true if sent a date after June 30 2021', function () {
+				var effectiveDate = new Date('July 1, 2021');
 				var validatorInstance = new Validator();
-				var result = validatorInstance.effectiveDateIsAfterMarch2021(effectiveDate);
+				var result = validatorInstance.effectiveDateIsAfterJune2021(effectiveDate);
 				expect(result).toEqual(true);
 			});
 		});

@@ -483,8 +483,20 @@
                 expect(result[6].answer).toEqual('Yes');
             });
 
-            it('should return 9 elements with date 01/04/2021 - nonUKResident : "Yes", twoOrMoreProperties : "No", ownedOtherProperties : "No", mainResidence : "Yes"', function(){
+            it('should return 7 elements with date 01/04/2021 - nonUKResident : "Yes", twoOrMoreProperties : "No", mainResidence : "Yes"', function(){
                 scope.data.effectiveDate = new Date(2021,4,1);
+                scope.data.nonUKResident = "Yes";
+                scope.data.individual = "Yes";
+                scope.data.twoOrMoreProperties = "No";
+                var result = summaryHelper.summaryHelper(scope, emptyValidatedModel);
+                expect(result.length).toEqual(7);
+                expect(result[3].answer).toEqual('Yes');
+                expect(result[4].answer).toEqual('Yes');
+                expect(result[5].answer).toEqual('No');
+            });
+
+            it('should return 9 elements with date 01/07/2021 - nonUKResident : "Yes", twoOrMoreProperties : "No", ownedOtherProperties : "No", mainResidence : "Yes"', function(){
+                scope.data.effectiveDate = new Date(2021,7,1);
                 scope.data.nonUKResident = "Yes";
                 scope.data.individual = "Yes";
                 scope.data.twoOrMoreProperties = "No";
@@ -511,8 +523,8 @@
                 expect(result[5].answer).toEqual('Yes');
             });
 
-            it('should return 8 elements with date 01/04/2021 - nonUKResident : "Yes" - twoOrMoreProperties : "No", ownedOtherProperties : "Yes"', function(){
-                scope.data.effectiveDate = new Date(2021,4,1);
+            it('should return 8 elements with date 01/07/2021 - nonUKResident : "Yes" - twoOrMoreProperties : "No", ownedOtherProperties : "Yes"', function(){
+                scope.data.effectiveDate = new Date(2021,7,1);
                 scope.data.nonUKResident = "Yes";
                 scope.data.individual = "Yes";
                 scope.data.twoOrMoreProperties = "No";

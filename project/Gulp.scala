@@ -11,7 +11,6 @@ object Gulp {
 
     object GulpProcess extends PlayRunHook {
 
-
       var gulpRun: Option[Process] = None
 
       override def beforeStarted(): Unit = {

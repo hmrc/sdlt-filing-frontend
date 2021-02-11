@@ -234,7 +234,6 @@
                   highestRent: 5000
                 };
 
-
     it('should construct a freehold, residential calculation request from full data', function() {
 
         var freeholdData = angular.copy(baseFreeholdData);
@@ -242,6 +241,24 @@
         var freeholdRequest = angular.copy(baseFreeholdRequest);
 
         expect(service.constructCalculationRequest(freeholdData)).toEqual(freeholdRequest);
+    });
+
+    it('should construct a freehold, residential calculation request from full data during the stamp duty holiday (NRB500)', function() {
+
+      var nonUKResFreeholdData = angular.copy(baseFreeholdData);
+      nonUKResFreeholdData.effectiveDateDay = 1;
+      nonUKResFreeholdData.effectiveDateMonth = 4;
+      nonUKResFreeholdData.effectiveDateYear = 2021;
+      nonUKResFreeholdData.effectiveDate = new Date(2021, 4, 1);
+      nonUKResFreeholdData.nonUKResident = true;
+
+      var nonUKResFreeholdRequest = angular.copy(baseFreeholdRequest);
+      nonUKResFreeholdRequest.effectiveDateDay = 1;
+      nonUKResFreeholdRequest.effectiveDateMonth = 4;
+      nonUKResFreeholdRequest.effectiveDateYear = 2021;
+      nonUKResFreeholdRequest.nonUKResident = true;
+
+      expect(service.constructCalculationRequest(nonUKResFreeholdData)).toEqual(nonUKResFreeholdRequest);
     });
 
     it('should ignore property details for a calculation request from before Apr 2016', function() {
@@ -318,7 +335,7 @@
                   relevantRent: 999
                 };
 
-      var leaseHoldNonResRentsUnder2kRequest = {
+    var leaseHoldNonResRentsUnder2kRequest = {
                   holdingType:"Leasehold",
                   propertyType: "Non-residential",
                   effectiveDateDay: 13,
@@ -476,105 +493,104 @@
       twoOrMoreProperties : "No"
     };
 
-      var ftbDataApril2021 = angular.copy(baseLeaseholdData);
-      ftbDataApril2021.effectiveDate = new Date(2021, 3, 1);
-      ftbDataApril2021.effectiveDateDay = 1;
-      ftbDataApril2021.effectiveDateMonth = 4;
-      ftbDataApril2021.effectiveDateYear = 2021;
-      ftbDataApril2021.nonUKResident = "No";
-      ftbDataApril2021.twoOrMoreProperties = "No";
-      delete ftbDataApril2021.replaceMainResidence;
+    var ftbDataJuly2021 = angular.copy(baseLeaseholdData);
+    ftbDataJuly2021.effectiveDate = new Date(2021, 7, 1);
+    ftbDataJuly2021.effectiveDateDay = 1;
+    ftbDataJuly2021.effectiveDateMonth = 7;
+    ftbDataJuly2021.effectiveDateYear = 2021;
+    ftbDataJuly2021.nonUKResident = "No";
+    ftbDataJuly2021.twoOrMoreProperties = "No";
+    delete ftbDataJuly2021.replaceMainResidence;
 
-      var ftbRequestApril2021 = angular.copy(baseLeaseholdRequest);
-      ftbRequestApril2021.effectiveDateDay = 1;
-      ftbRequestApril2021.effectiveDateMonth = 4;
-      ftbRequestApril2021.effectiveDateYear = 2021;
-      ftbRequestApril2021.nonUKResident = "No";
-      ftbRequestApril2021.propertyDetails = {
-          individual : "Yes",
-          twoOrMoreProperties : "No"
-      };
+    var ftbRequestJuly2021 = angular.copy(baseLeaseholdRequest);
+    ftbRequestJuly2021.effectiveDateDay = 1;
+    ftbRequestJuly2021.effectiveDateMonth = 7;
+    ftbRequestJuly2021.effectiveDateYear = 2021;
+    ftbRequestJuly2021.nonUKResident = "No";
+    ftbRequestJuly2021.propertyDetails = {
+      individual : "Yes",
+      twoOrMoreProperties : "No"
+    };
 
+    it('should include FTB details for main residence property before the stamp duty holiday', function() {
 
-      it('should include first time buyer details for a first time, main residence property', function() {
+    var ftbYesData = angular.copy(ftbData);
+    ftbYesData.ownedOtherProperties = "No";
+    ftbYesData.mainResidence = "Yes";
+    ftbYesData.sharedOwnership = "No";
 
-        var ftbYesData = angular.copy(ftbData);
-        ftbYesData.ownedOtherProperties = "No";
-        ftbYesData.mainResidence = "Yes";
-        ftbYesData.sharedOwnership = "No";
+    var ftbYesRequest = angular.copy(ftbRequest);
+    ftbYesRequest.firstTimeBuyer = "Yes";
+    ftbYesRequest.propertyDetails.sharedOwnership = "No";
 
-        var ftbYesRequest = angular.copy(ftbRequest);
-        ftbYesRequest.firstTimeBuyer = "Yes";
-        ftbYesRequest.propertyDetails.sharedOwnership = "No";
-
-          expect(service.constructCalculationRequest(ftbYesData)).toEqual(ftbYesRequest);
-      });
-
-      it('should include first time buyer details for a first time, main residence property and post April 2021', function() {
-
-          var ftbYesData = angular.copy(ftbDataApril2021);
-          ftbYesData.ownedOtherProperties = "No";
-          ftbYesData.mainResidence = "Yes";
-          ftbYesData.sharedOwnership = "No";
-
-          var ftbYesRequest = angular.copy(ftbRequestApril2021);
-          ftbYesRequest.firstTimeBuyer = "Yes";
-          ftbYesRequest.propertyDetails.sharedOwnership = "No";
-
-          expect(service.constructCalculationRequest(ftbYesData)).toEqual(ftbYesRequest);
-      });
-
-    it('should include first time buyer details for a first time, non-main residence property', function() {
-
-        var ftbNonMainResData = angular.copy(ftbData);
-        ftbNonMainResData.ownedOtherProperties = "No";
-        ftbNonMainResData.mainResidence = "No";
-        delete ftbNonMainResData.sharedOwnership;
-
-        var ftbNonMainResRequest = angular.copy(ftbRequest);
-        ftbNonMainResRequest.firstTimeBuyer = "No";
-
-        expect(service.constructCalculationRequest(ftbNonMainResData)).toEqual(ftbNonMainResRequest);
+      expect(service.constructCalculationRequest(ftbYesData)).toEqual(ftbYesRequest);
     });
 
-      it('should include first time buyer details for a first time, non-main residence property post April 2021', function() {
+    it('should include FTB details for a FTB, main residence property after the stamp duty holiday', function() {
 
-          var ftbNonMainResData = angular.copy(ftbDataApril2021);
-          ftbNonMainResData.ownedOtherProperties = "No";
-          ftbNonMainResData.mainResidence = "No";
-          delete ftbNonMainResData.sharedOwnership;
+      var ftbYesData = angular.copy(ftbDataJuly2021);
+      ftbYesData.ownedOtherProperties = "No";
+      ftbYesData.mainResidence = "Yes";
+      ftbYesData.sharedOwnership = "No";
 
-          var ftbNonMainResRequest = angular.copy(ftbRequestApril2021);
-          ftbNonMainResRequest.firstTimeBuyer = "No";
+      var ftbYesRequest = angular.copy(ftbRequestJuly2021);
+      ftbYesRequest.firstTimeBuyer = "Yes";
+      ftbYesRequest.propertyDetails.sharedOwnership = "No";
 
-          expect(service.constructCalculationRequest(ftbNonMainResData)).toEqual(ftbNonMainResRequest);
-      });
-
-    it('should include first time buyer details for a non-first time buyer', function() {
-
-        var ftbNotFirstPropertyData = angular.copy(ftbData);
-        ftbNotFirstPropertyData.ownedOtherProperties = "Yes";
-        delete ftbNotFirstPropertyData.sharedOwnership;
-
-        var ftbNotFirstPropertyRequest = angular.copy(ftbRequest);
-        ftbNotFirstPropertyRequest.firstTimeBuyer = "No";
-
-        expect(service.constructCalculationRequest(ftbNotFirstPropertyData)).toEqual(ftbNotFirstPropertyRequest);
+      expect(service.constructCalculationRequest(ftbYesData)).toEqual(ftbYesRequest);
     });
 
-      it('should include first time buyer details for a non-first time buyer post April 2021', function() {
+    it('should set FTB to "No" for a non-main residence property before the stamp duty holiday', function() {
 
-          var ftbNotFirstPropertyData = angular.copy(ftbDataApril2021);
-          ftbNotFirstPropertyData.ownedOtherProperties = "Yes";
-          delete ftbNotFirstPropertyData.sharedOwnership;
+    var ftbNonMainResData = angular.copy(ftbData);
+    ftbNonMainResData.ownedOtherProperties = "No";
+    ftbNonMainResData.mainResidence = "No";
+    delete ftbNonMainResData.sharedOwnership;
 
-          var ftbNotFirstPropertyRequest = angular.copy(ftbRequestApril2021);
-          ftbNotFirstPropertyRequest.firstTimeBuyer = "No";
+    var ftbNonMainResRequest = angular.copy(ftbRequest);
+    ftbNonMainResRequest.firstTimeBuyer = "No";
 
-          expect(service.constructCalculationRequest(ftbNotFirstPropertyData)).toEqual(ftbNotFirstPropertyRequest);
-      });
+    expect(service.constructCalculationRequest(ftbNonMainResData)).toEqual(ftbNonMainResRequest);
+    });
 
-    it('should not include first time buyer details for a non-residential property', function() {
+    it('should set FTB to "No" for a non-main residence property after the stamp duty holiday', function() {
+
+    var ftbNonMainResData = angular.copy(ftbDataJuly2021);
+    ftbNonMainResData.ownedOtherProperties = "No";
+    ftbNonMainResData.mainResidence = "No";
+    delete ftbNonMainResData.sharedOwnership;
+
+    var ftbNonMainResRequest = angular.copy(ftbRequestJuly2021);
+    ftbNonMainResRequest.firstTimeBuyer = "No";
+
+    expect(service.constructCalculationRequest(ftbNonMainResData)).toEqual(ftbNonMainResRequest);
+    });
+
+    it('should set FTB to "No" if owned other property, before the stamp duty holiday', function() {
+
+    var ftbNotFirstPropertyData = angular.copy(ftbData);
+    ftbNotFirstPropertyData.ownedOtherProperties = "Yes";
+    delete ftbNotFirstPropertyData.sharedOwnership;
+
+    var ftbNotFirstPropertyRequest = angular.copy(ftbRequest);
+    ftbNotFirstPropertyRequest.firstTimeBuyer = "No";
+
+    expect(service.constructCalculationRequest(ftbNotFirstPropertyData)).toEqual(ftbNotFirstPropertyRequest);
+    });
+
+    it('should set FTB to "No" if owned other property, after the stamp duty holiday', function() {
+
+      var ftbNotFirstPropertyData = angular.copy(ftbDataJuly2021);
+      ftbNotFirstPropertyData.ownedOtherProperties = "Yes";
+      delete ftbNotFirstPropertyData.sharedOwnership;
+
+      var ftbNotFirstPropertyRequest = angular.copy(ftbRequestJuly2021);
+      ftbNotFirstPropertyRequest.firstTimeBuyer = "No";
+
+      expect(service.constructCalculationRequest(ftbNotFirstPropertyData)).toEqual(ftbNotFirstPropertyRequest);
+    });
+
+    it('should not include FTB details for a non-residential property', function() {
 
         var ftbNonResidentialPropertyData = angular.copy(ftbData);
         ftbNonResidentialPropertyData.propertyType = "Non-residential";
@@ -587,7 +603,7 @@
         expect(service.constructCalculationRequest(ftbNonResidentialPropertyData)).toEqual(ftbNonResidentialPropertyRequest);
     });
 
-    it('should not include first time buyer details for a non-individual property', function() {
+    it('should not include FTB details for a non-individual property', function() {
 
         var ftbNonIndividualPropertyData = angular.copy(ftbData);
         ftbNonIndividualPropertyData.individual = "No";
@@ -601,7 +617,7 @@
         expect(service.constructCalculationRequest(ftbNonIndividualPropertyData)).toEqual(ftbNonIndividualPropertyRequest);
     });
 
-    it('should not include first time buyer details for an individual with two or more properties', function() {
+    it('should not include FTB details for an individual with two or more properties', function() {
 
         var ftb2OrMorePropertiesData = angular.copy(ftbData);
         ftb2OrMorePropertiesData.individual = "Yes";
@@ -619,7 +635,7 @@
         expect(service.constructCalculationRequest(ftb2OrMorePropertiesData)).toEqual(ftb2OrMorePropertiesRequest);
     });
 
-    it('should not include first time buyer details for a date of 21/11/2017', function() {
+    it('should not include FTB details for a date of 21/11/2017', function() {
 
         var ftbEarlyData = angular.copy(ftbData);
         ftbEarlyData.effectiveDate = new Date(2017, 10, 21);
@@ -636,7 +652,7 @@
         expect(service.constructCalculationRequest(ftbEarlyData)).toEqual(ftbEarlyRequest);
     });
 
-    it('should include first time buyer details for a date of 22/11/2017', function() {
+    it('should include FTB details for a date of 22/11/2017', function() {
 
         var ftbFirstDayData = angular.copy(ftbData);
         ftbFirstDayData.effectiveDate = new Date(2017, 10, 22);
@@ -654,7 +670,7 @@
         expect(service.constructCalculationRequest(ftbFirstDayData)).toEqual(ftbFirstDayRequest);
     });
 
-      it('should include first time buyer details for a first time, main-residence, shared ownership and current value', function() {
+    it('should include FTB details for main-residence, shared ownership and current value', function() {
 
           var ftbSharedOwnership = angular.copy(ftbData);
           ftbSharedOwnership.ownedOtherProperties = "No";
@@ -670,15 +686,15 @@
           expect(service.constructCalculationRequest(ftbSharedOwnership)).toEqual(ftbSharedOwnershipResRequest);
       });
 
-      it('should include first time buyer details for a first time, main-residence, shared ownership and current value post April 2021', function() {
+    it('should include FTB details for main-residence, shared ownership and current value after the NRB500 stamp duty holiday', function() {
 
-          var ftbSharedOwnership = angular.copy(ftbDataApril2021);
+          var ftbSharedOwnership = angular.copy(ftbDataJuly2021);
           ftbSharedOwnership.ownedOtherProperties = "No";
           ftbSharedOwnership.mainResidence = "Yes";
           ftbSharedOwnership.sharedOwnership = "Yes";
           ftbSharedOwnership.currentValue = "£500,000 or less";
 
-          var ftbSharedOwnershipResRequest = angular.copy(ftbRequestApril2021);
+          var ftbSharedOwnershipResRequest = angular.copy(ftbRequestJuly2021);
           ftbSharedOwnershipResRequest.firstTimeBuyer = "Yes";
           ftbSharedOwnershipResRequest.propertyDetails.sharedOwnership = "Yes";
           ftbSharedOwnershipResRequest.propertyDetails.currentValue = "Yes";
@@ -686,7 +702,7 @@
           expect(service.constructCalculationRequest(ftbSharedOwnership)).toEqual(ftbSharedOwnershipResRequest);
       });
 
-      it('should include first time buyer details for a first time, main-residence, shared ownership and should not include current value', function() {
+    it('should include FTB details for main-residence, shared ownership and should not include current value', function() {
 
           var ftbSharedOwnership = angular.copy(ftbData);
           ftbSharedOwnership.ownedOtherProperties = "No";
@@ -702,15 +718,15 @@
           expect(service.constructCalculationRequest(ftbSharedOwnership)).toEqual(ftbSharedOwnershipResRequest);
       });
 
-      it('should include first time buyer details for a first time, main-residence, shared ownership and should not include current value post April 2021', function() {
+    it('should include FTB details for main-residence, shared ownership and should not include current value after the stamp duty holiday', function() {
 
-          var ftbSharedOwnership = angular.copy(ftbDataApril2021);
+          var ftbSharedOwnership = angular.copy(ftbDataJuly2021);
           ftbSharedOwnership.ownedOtherProperties = "No";
           ftbSharedOwnership.mainResidence = "Yes";
           ftbSharedOwnership.sharedOwnership = "Yes";
           ftbSharedOwnership.currentValue = "More than £500,000";
 
-          var ftbSharedOwnershipResRequest = angular.copy(ftbRequestApril2021);
+          var ftbSharedOwnershipResRequest = angular.copy(ftbRequestJuly2021);
           ftbSharedOwnershipResRequest.firstTimeBuyer = "No";
           ftbSharedOwnershipResRequest.propertyDetails.sharedOwnership = "Yes";
           ftbSharedOwnershipResRequest.propertyDetails.currentValue = "No";

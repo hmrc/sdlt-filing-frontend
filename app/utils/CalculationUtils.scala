@@ -5,7 +5,11 @@
 
 package utils
 
-object CalculationUtils {
+import data.Dates
+
+import java.time.LocalDate
+
+object CalculationUtils extends DateUtil {
   def freeholdNRSDLTOutOfScope(premium: BigDecimal): Boolean = {
     premium < 40000
   }
@@ -24,7 +28,6 @@ object CalculationUtils {
 
     }
 
-
   def leaseholdNRSDLTInScopeForLeaseOrPremium(premium: BigDecimal, leaseTermYears: Int, highestRent: BigDecimal,
                                               firstTimeBuyer: Boolean, sharedOwnership: Boolean): Boolean = {
 
@@ -38,5 +41,13 @@ object CalculationUtils {
 
     inScopeForLease || inScopeForPremium
 
+  }
+
+  def duringNRB500HolidayPeriod(date: LocalDate): Boolean = {
+    date.onOrAfter(Dates.JULY2020_RESIDENTIAL_DATE) && date.onOrBefore(Dates.JUNE2021_RESIDENTIAL_DATE)
+  }
+
+  def duringNRB250HolidayPeriod(date: LocalDate): Boolean = {
+    date.onOrAfter(Dates.JULY2021_RESIDENTIAL_DATE) && date.onOrBefore(Dates.SEPT2021_RESIDENTIAL_DATE)
   }
 }

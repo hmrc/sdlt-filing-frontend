@@ -252,53 +252,6 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdResidentialJuly20OnwardsFTB" should {
-    "return 0, 0 for purchase price of 499999, npv of 501945" in new PredefinedNPVSetup(501945) {
-      val leaseTaxDue = 19
-      val premTaxDue = 0
-      val leaseSliceDetails = Seq(
-        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0),
-        SliceDetails(from = 500000, to = None,         rate = 1, taxDue = 19)
-      )
-      val premSliceDetails = Seq(
-        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0)
-      )
-
-      private val res = leaseholdResidentialJuly20OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialJuly20OnwardsFTB(leaseholdResidentialJuly20OnwardsFTBRequest(499999, july2020EffectiveDate)) shouldBe res
-    }
-
-    "return 0, 0 for purchase price of 500000, npv of 125000" in new PredefinedNPVSetup(501945) {
-      val leaseTaxDue = 19
-      val premTaxDue = 0
-      val leaseSliceDetails = Seq(
-        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0),
-        SliceDetails(from = 500000, to = None,         rate = 1, taxDue = 19)
-      )
-      val premSliceDetails = Seq(
-        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0)
-      )
-
-      private val res = leaseholdResidentialJuly20OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialJuly20OnwardsFTB(leaseholdResidentialJuly20OnwardsFTBRequest(500000, july2020EffectiveDate)) shouldBe res
-    }
-
-    "return 0, 0 for purchase price of 500000, npv of 125000 with last effective date" in new PredefinedNPVSetup(501945) {
-      val leaseTaxDue = 19
-      val premTaxDue = 0
-      val leaseSliceDetails = Seq(
-        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0),
-        SliceDetails(from = 500000, to = None,         rate = 1, taxDue = 19)
-      )
-      val premSliceDetails = Seq(
-        SliceDetails(from = 0,      to = Some(500000), rate = 0, taxDue = 0)
-      )
-
-      private val res = leaseholdResidentialJuly20OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
-      service.leaseholdResidentialJuly20OnwardsFTB(leaseholdResidentialJuly20OnwardsFTBRequest(500000, march2021EffectiveDate)) shouldBe res
-    }
-  }
-
   "leaseholdResidentialAddPropJuly20Onwards" should {
 
     "return 15019, 19 for purchase price of 500000, npv of 501945" in new PredefinedNPVSetup(501945, Some(15000)) {

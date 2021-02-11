@@ -139,16 +139,16 @@
     	};
 
       function redirectBasedOnFTBExclusionCriteria(model, locationService) {
-        if(model.propertyType === 'Residential' &&
-          validator.effectiveDateWithinFTBRange(model.effectiveDate) &&
-          model.individual === 'Yes' &&
-          model.twoOrMoreProperties === 'No' &&
-          (validator.effectiveDateIsBeforeJuly2020(model.effectiveDate) ||
-           validator.effectiveDateIsAfterMarch2021(model.effectiveDate))
+          if (model.propertyType === 'Residential' &&
+              validator.effectiveDateWithinFTBRange(model.effectiveDate) &&
+              model.individual === 'Yes' &&
+              model.twoOrMoreProperties === 'No' &&
+              (validator.effectiveDateIsBeforeJuly2020(model.effectiveDate) ||
+                  validator.effectiveDateIsAfterJune2021(model.effectiveDate))
           ) {
-            redirectToNext(locationService, 'owned-other-properties');
+              redirectToNext(locationService, 'owned-other-properties');
           } else {
-            redirectBasedOnHoldingType(model, locationService);
+              redirectBasedOnHoldingType(model, locationService);
           }
       }
 

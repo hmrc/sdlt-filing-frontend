@@ -50,7 +50,7 @@ trait LeaseholdResultFixture {
 
     Result(
       totalTax = leaseTaxDue + premTaxDue,
-      resultHeading = Some("Result of calculation based on SDLT rates for transactions dated 8 July 2020 to 31 March 2021"),
+      resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
       resultHint = resHintAmount.map(value => s"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. " +
         s"If you dispose of your previous main residence within 3 years you may be eligible for a refund of £$value."),
       npv = Some(npv),
@@ -58,7 +58,7 @@ trait LeaseholdResultFixture {
         CalculationDetails(
           taxType = TaxTypes.rent,
           calcType = CalcTypes.slice,
-          detailHeading = Some("Results based on SDLT rules from 8 July 2020 to 31 March 2021"),
+          detailHeading = Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
           bandHeading = Some("Rent bands (£)"),
           detailFooter = Some("SDLT due on the rent"),
           taxDue = leaseTaxDue,
@@ -67,7 +67,7 @@ trait LeaseholdResultFixture {
         CalculationDetails(
           taxType = TaxTypes.premium,
           calcType = CalcTypes.slice,
-          detailHeading = Some("Results based on SDLT rules from 8 July 2020 to 31 March 2021"),
+          detailHeading = Some("This is a breakdown of how the amount of SDLT on the premium was calculated"),
           bandHeading = Some("Premium bands (£)"),
           detailFooter = Some("SDLT due on the premium"),
           taxDue = premTaxDue,
@@ -83,7 +83,7 @@ trait LeaseholdResultFixture {
     val resultheading = if(asPreviousResult) {
       Some("Result if you become eligible for a repayment of the higher rate on additional dwellings")
     } else {
-      Some("Result of calculation based on SDLT rates for transactions dated 8 July 2020 to 31 March 2021")
+      Some("Results of calculation based on SDLT rules for the effective date entered")
     }
 
     val resultHint = if(asPreviousResult) {
@@ -102,11 +102,7 @@ trait LeaseholdResultFixture {
         CalculationDetails(
           taxType = TaxTypes.rent,
           calcType = CalcTypes.slice,
-          detailHeading = if(asPreviousResult){
-            Some("Results based on SDLT rules from 8 July 2020 to 31 March 2021")
-          } else {
-            Some("This is a breakdown of how the amount of SDLT on the rent was calculated")
-          },
+          detailHeading = Some("This is a breakdown of how the amount of SDLT on the rent was calculated"),
           bandHeading = Some("Rent bands (£)"),
           detailFooter = Some("SDLT due on the rent"),
           taxDue = leaseTaxDue,
@@ -115,11 +111,7 @@ trait LeaseholdResultFixture {
         CalculationDetails(
           taxType = TaxTypes.premium,
           calcType = CalcTypes.slice,
-          detailHeading = if(asPreviousResult){
-            Some("Results based on SDLT rules from 8 July 2020 to 31 March 2021")
-          } else {
-            Some("This is a breakdown of how the amount of SDLT on the premium was calculated")
-          },
+          detailHeading = Some("This is a breakdown of how the amount of SDLT on the premium was calculated"),
           bandHeading = Some("Premium bands (£)"),
           detailFooter = Some("SDLT due on the premium"),
           taxDue = premTaxDue,

@@ -99,8 +99,12 @@
             return effectiveDate < new Date('July 08, 2020');
         };
 
-        var effectiveDateMarch2021 = function(effectiveDate) {
+        var effectiveDateApril2021 = function(effectiveDate) {
             return effectiveDate > new Date('March 31, 2021');
+        };
+
+        var effectiveDateJuly2021 = function(effectiveDate) {
+            return effectiveDate > new Date('June 30, 2021');
         };
 
         return {
@@ -124,7 +128,8 @@
             checkAllRentsBelow2000 : checkAllRentsBelow2000,
             effectiveDateWithinFTBRange: effectiveDateWithinFTBRange,
             effectiveDateIsBeforeJuly2020: effectiveDateJuly2020,
-            effectiveDateIsAfterMarch2021: effectiveDateMarch2021
+            effectiveDateIsAfterMarch2021: effectiveDateApril2021,
+            effectiveDateIsAfterJune2021: effectiveDateJuly2021
         };
 
     };

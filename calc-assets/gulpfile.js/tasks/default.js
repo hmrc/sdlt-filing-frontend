@@ -6,7 +6,7 @@ var runSequence = require("run-sequence");
 gulp.task("default", function (cb)
 {
     runSequence(
-        ["jshint", "copyIndex", "templateCache", "webpack", "karma"],
+        ["jshint", "copyIndex", "templateCache", "webpack"],
          "uglify",
         cb
     );

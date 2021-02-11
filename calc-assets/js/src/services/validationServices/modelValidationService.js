@@ -51,7 +51,7 @@
             if(data.propertyType === 'Residential' &&
                validator.effectiveDateWithinFTBRange(data.effectiveDate) &&
                 (validator.effectiveDateIsBeforeJuly2020(data.effectiveDate) ||
-                validator.effectiveDateIsAfterMarch2021(data.effectiveDate)) &&
+                validator.effectiveDateIsAfterJune2021(data.effectiveDate)) &&
                data.individual === 'Yes' &&
                data.twoOrMoreProperties === 'No'
             ){
@@ -64,7 +64,7 @@
             // if Residential and effective date is after March 31st 2021
             // nonUKResident question required
             if(data.propertyType === 'Residential' &&
-               validator.effectiveDateIsAfterMarch2021(data.effectiveDate)
+               validator.effectiveDateIsAfterJune2021(data.effectiveDate)
             ){
                 result.isNonUKResidentValid = hasError('nonUKResident');
             }

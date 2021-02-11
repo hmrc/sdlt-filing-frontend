@@ -594,20 +594,20 @@
             expect(result.isYear5RentValid).toEqual('');
         });
 
-        it('should return true for a Leasehold Residential >= 01/04/2021 FTB and not Shared Ownership', function() {
+        it('should return true for a Leasehold Residential >= 01/07/2021 FTB and not Shared Ownership', function() {
 
             var data = {
                 holdingType : "Leasehold",
                 propertyType: "Residential",
-                effectiveDate : new Date(2021, 4, 1),
+                effectiveDate : new Date(2021, 7, 1),
                 nonUKResident : "No",
                 individual : "Yes",
                 twoOrMoreProperties : "No",
                 ownedOtherProperties : "No",
                 mainResidence : "Yes",
                 sharedOwnership : "No",
-                startDate : new Date(2021, 4, 1),
-                endDate : new Date(2120, 3 , 30),
+                startDate : new Date(2021, 7, 1),
+                endDate : new Date(2120, 6 , 30),
                 premium : 200000,
 
                 leaseTerm : {
@@ -1789,12 +1789,12 @@
             expect(result.isMainResidenceValid).toEqual('form-field--error');
         });
 
-        it('should return false for a Freehold Residential 01/04/2021, first time buyer without main residence details', function() {
+        it('should return false for a Freehold Residential 01/07/2021, first time buyer without main residence details', function() {
 
             var data = {
                 holdingType : "Freehold",
                 propertyType: "Residential",
-                effectiveDate : new Date(2021, 4, 1),
+                effectiveDate : new Date(2021, 7, 1),
                 individual : 'Yes',
                 twoOrMoreProperties : "No",
                 ownedOtherProperties: "No",

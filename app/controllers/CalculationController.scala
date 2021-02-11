@@ -24,7 +24,7 @@ class CalculationController @Inject()(val calculationService: CalculationService
       case Some(json) => json.validate[Request] match {
           case success: JsSuccess[Request] =>
             if(validateModel(success.value)) {
-              val result = Json.toJson(calculationService.CalculateTax(success.value))
+              val result = Json.toJson(calculationService.calculateTax(success.value))
                 Ok(result)
             }else{
               logError(s"[CalculationController] - Json request body fails model validation with errors: ${ModelValidation.listValidationErrors(success.value)} for request: $success from json: $json.")

@@ -46,7 +46,7 @@ object LeaseholdResultFactory {
   def leaseholdResidentialNov17OnwardsFTBResult(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal, afterMarch2021: Boolean): Result = {
 
     val resHeading = if(afterMarch2021) {
-      Some(RESULT_HEADING_AFTER_MARCH_2021)
+      Some(RESULT_HEADING_AFTER_JULY_2020)
     } else {
       None
     }
@@ -84,7 +84,7 @@ object LeaseholdResultFactory {
   def leaseholdResidentialAddPropApr21OnwardsNonUKRes(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal, refundEntitlement: Option[Int]): Result = {
 
     val (resHeading, resHint, leaseDetailHeading, premDetailHeading) =
-      (Some(RESULT_HEADING_AFTER_MARCH_2021),
+      (Some(RESULT_HEADING_AFTER_JULY_2020),
         refundEntitlement.map { amount =>
           s"$RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}.$RESULT_HINT_NRSDLT_REFUND"},
         Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
@@ -128,7 +128,7 @@ object LeaseholdResultFactory {
     val leaseCalcDetails = CalculationDetails(
       taxType = TaxTypes.rent,
       calcType = CalcTypes.slice,
-      detailHeading = Some(DETAIL_HEADING_TOTAL_SDLT_FROM_JULY_2020_AND_BEFORE_MARCH_2021),
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT),
       bandHeading = Some(DETAIL_COL_HEADER_RENT),
       detailFooter = Some(DETAIL_FOOTER_RENT),
       taxDue = leaseResult.taxDue.toInt,
@@ -137,7 +137,7 @@ object LeaseholdResultFactory {
     val premiumCalcDetails = CalculationDetails(
       taxType = TaxTypes.premium,
       calcType = CalcTypes.slice,
-      detailHeading = Some(DETAIL_HEADING_TOTAL_SDLT_FROM_JULY_2020_AND_BEFORE_MARCH_2021),
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_PREM),
       bandHeading = Some(DETAIL_COL_HEADER_PREM),
       detailFooter = Some(DETAIL_FOOTER_PREM),
       taxDue = premiumResult.taxDue.toInt,
@@ -146,7 +146,7 @@ object LeaseholdResultFactory {
 
     Result(
       totalTax = leaseCalcDetails.taxDue + premiumCalcDetails.taxDue,
-      resultHeading = Some(RESULT_HEADING_AFTER_JULY_2020_AND_BEFORE_MARCH_2021),
+      resultHeading = Some(RESULT_HEADING_AFTER_JULY_2020),
       resultHint = resHint,
       npv = Some(npv.toInt),
       taxCalcs = Seq(
@@ -159,7 +159,7 @@ object LeaseholdResultFactory {
   def leaseholdResidentialAddPropApr16Onwards(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal, refundEntitlement: Option[Int], afterMarch2021: Boolean): Result = {
 
     val (resHeading, resHint, leaseDetailHeading, premDetailHeading) = if(afterMarch2021){
-      (Some(RESULT_HEADING_AFTER_MARCH_2021),
+      (Some(RESULT_HEADING_AFTER_JULY_2020),
       refundEntitlement.map { amount =>
         s"$RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}."},
       Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
@@ -207,8 +207,8 @@ object LeaseholdResultFactory {
         case (true, true) => (Some(DETAIL_ADDITIONAL_DWELLINGS), Some(RESULT_HINT_EXCHANGE_APR_21))
         case (true, false) if nrsdltInScope => (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), Some(RESULT_HINT_NON_UK_RES_WITHIN_12M))
         case (true, false) if !nrsdltInScope => (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), None)
-        case (false, false) if nrsdltInScope => (Some(RESULT_HEADING_AFTER_MARCH_2021), Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021))
-        case (false, false) if !nrsdltInScope => (Some(RESULT_HEADING_AFTER_MARCH_2021), Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021))
+        case (false, false) if nrsdltInScope => (Some(RESULT_HEADING_AFTER_JULY_2020), Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021))
+        case (false, false) if !nrsdltInScope => (Some(RESULT_HEADING_AFTER_JULY_2020), Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021))
     }
 
     val (leaseDetailHeading, premiumDetailHeading) = (Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
@@ -246,12 +246,12 @@ object LeaseholdResultFactory {
 
   def leaseholdResidentialJuly20OnwardsResult(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal,  asPrevResult: Boolean): Result = {
     val (resHeading, resHint, leaseDetailHeading, premiumDetailHeading) = if(asPrevResult) {
-      (Some(RESULT_HEADING_BEFORE_JULY_2020),
+      (Some(DETAIL_ADDITIONAL_DWELLINGS),
         Some(RESULT_HINT_EXCHANGE_JULY_20),
-        Some(DETAIL_HEADING_TOTAL_SDLT_FROM_JULY_2020_AND_BEFORE_MARCH_2021),
-        Some(DETAIL_HEADING_TOTAL_SDLT_FROM_JULY_2020_AND_BEFORE_MARCH_2021))
+        Some(DETAIL_HEADING_SDLT_ON_RENT),
+        Some(DETAIL_HEADING_SDLT_ON_PREM))
     } else {
-      (Some(RESULT_HEADING_AFTER_JULY_2020_AND_BEFORE_MARCH_2021), None, Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
+      (Some(RESULT_HEADING_AFTER_JULY_2020), None, Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
     }
 
     val leaseCalcDetails = CalculationDetails(
@@ -299,9 +299,9 @@ object LeaseholdResultFactory {
         case (true, true, true) if !individual =>
           (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), None, Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
         case (false, true, false)  =>
-          (Some(RESULT_HEADING_AFTER_MARCH_2021), None, Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
+          (Some(RESULT_HEADING_AFTER_JULY_2020), None, Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
         case (true, true, false)   =>
-          (Some(RESULT_HEADING_PREVIOUS_AFTER_MARCH_2021), Some(RESULT_HINT_EXCHANGE_AFTER_MARCH_21),
+          (Some(DETAIL_ADDITIONAL_DWELLINGS), Some(RESULT_HINT_EXCHANGE_AFTER_MARCH_21),
             Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
         case _ =>
           (None, None, Some(DETAIL_HEADING_SDLT_ON_RENT), Some(DETAIL_HEADING_SDLT_ON_PREM))
