@@ -179,9 +179,10 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialApr21OnwardsNonUKResFTBPrevRes(request: Request, preCalculatedNPV: Option[BigDecimal] = None): Result = {
+    val sliceRateTable = if(checkIfShared(request.propertyDetails)) leaseholdResidentialNov17FTBSharedLeaseRates.slices else leaseholdResidentialNov17FTBLeaseRates.slices
     val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialApr21OnwardsNonUKResFTBPrevRes", request.leaseDetails))
 
-    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialApr21FTBSharedNonUKResLeaseRates.slices)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
     val individual: Boolean = request.propertyDetails.exists(_.individual)
 
