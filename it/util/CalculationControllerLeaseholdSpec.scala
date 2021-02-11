@@ -1519,6 +1519,159 @@ class CalculationControllerLeaseholdSpec extends UnitSpec with GuiceOneServerPer
           request.json shouldBe responseJson
         }
 
+        "residential, Non UK Resident, Individual, FTB, Premium > 40K, Rent > 1K, Lease > 7yrs" in{
+          def request: WSResponse = ws.url(
+            calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 4,
+                  |  "effectiveDateYear": 2021,
+                  |  "nonUKResident": "Yes",
+                  |  "premium": 300000,
+                  |  "highestRent": 99000,
+                  |  "firstTimeBuyer": "Yes",
+                  |  "propertyDetails": {
+                  |     "individual": "Yes",
+                  |     "twoOrMoreProperties": "No",
+                  |     "sharedOwnership": "No"
+                  |   },
+                  |  "leaseDetails": {
+                  |    "startDateDay": 1,
+                  |    "startDateMonth": 4,
+                  |    "startDateYear": 2021,
+                  |    "endDateDay": 31,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2121,
+                  |    "leaseTerm":  {
+                  |      "years":100,
+                  |      "days": 0,
+                  |      "daysInPartialYear": 0
+                  |     },
+                  |    "year1Rent": 99000,
+                  |    "year2Rent": 99000,
+                  |    "year3Rent": 99000,
+                  |    "year4Rent": 99000,
+                  |    "year5Rent": 99000
+                  |  }
+                  |}
+              """. stripMargin)
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{
+              |"result":[
+              |  {
+              |   "totalTax":86886,
+              |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+              |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
+              |   "npv":2737887,
+              |   "taxCalcs":[
+              |     {
+              |      "taxType":"rent",
+              |      "calcType":"slice",
+              |      "taxDue":80886,
+              |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+              |      "bandHeading":"Rent bands (£)",
+              |      "detailFooter":"SDLT due on the rent",
+              |      "slices":[
+              |      {
+              |       "from":0,
+              |       "to":125000,
+              |       "rate":2,
+              |       "taxDue":2500
+              |       },{
+              |       "from":125000,
+              |       "to":-1,
+              |       "rate":3,
+              |       "taxDue":78386
+              |       }
+              |      ]
+              |     },
+              |    {
+              |     "taxType":"premium",
+              |     "calcType":"slice",
+              |     "taxDue":6000,
+              |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+              |     "bandHeading":"Premium bands (£)",
+              |     "detailFooter":"SDLT due on the premium",
+              |     "slices":[
+              |     {
+              |      "from":0,
+              |      "to":300000,
+              |      "rate":2,
+              |      "taxDue":6000
+              |      },{
+              |      "from":300000,
+              |      "to":500000,
+              |      "rate":7,
+              |      "taxDue":0
+              |      }
+              |     ]
+              |    }
+              |   ]
+              |  },{
+              |    "totalTax":26128,
+              |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
+              |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
+              |    "npv":2737887,
+              |    "taxCalcs":[
+              |    {
+              |     "taxType":"rent",
+              |     "calcType":"slice",
+              |     "taxDue":26128,
+              |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+              |     "bandHeading":"Rent bands (£)",
+              |     "detailFooter":"SDLT due on the rent",
+              |     "slices":[
+              |     {
+              |      "from":0,
+              |      "to":125000,
+              |      "rate":0,
+              |      "taxDue":0
+              |      },{
+              |      "from":125000,
+              |      "to":-1,
+              |      "rate": 1,
+              |      "taxDue":26128
+              |      }
+              |     ]
+              |    },
+              |    {
+              |     "taxType":"premium",
+              |     "calcType":"slice",
+              |     "taxDue":0,
+              |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+              |     "bandHeading":"Premium bands (£)",
+              |     "detailFooter":"SDLT due on the premium",
+              |     "slices":[
+              |     {
+              |      "from":0,
+              |      "to":300000,
+              |      "rate":0,
+              |      "taxDue":0
+              |      },{
+              |      "from":300000,
+              |      "to":500000,
+              |      "rate":5,
+              |      "taxDue":0
+              |      }
+              |     ]
+              |    }
+              |   ]
+              |  }
+              | ]
+              |}
+          """.stripMargin)
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+
         "residential, Non UK Resident, Individual, FTB, Premium > 40K, Rent > 1K, Lease > 7yrs, Shared Ownership (Business Threads Scenario 10)" in{
           def request: WSResponse = ws.url(
             calculateUrl)
