@@ -40,10 +40,6 @@
             });
         }));
 
-        it('should make 1 call to navigationService.logView', function () {
-            expect(mockNavigationService.logView.calls.count()).toEqual(1);
-        });
-
         describe('Calling .startNow on the introController', function () {
         
         var controller, 
@@ -80,10 +76,6 @@
             });
             mockScope.startNow({});
         }));
-
-        it('should make 1 call to navigationService.logView', function () {
-            expect(mockNavigationService.logView.calls.count()).toEqual(1);
-        });
 
         it('should make 1 call to dataService.updateModel', function () {
             expect(mockDataService.updateModel.calls.count()).toEqual(1);

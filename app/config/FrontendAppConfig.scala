@@ -21,15 +21,11 @@ class FrontendAppConfig @Inject()(config: ServicesConfig) {
   private lazy val assetsVersion = config.getString("assets.version")
   lazy val assetsPrefix: String  = assetsUrl + assetsVersion
 
-  lazy val analyticsToken: String = loadConfig("google-analytics.token")
-  lazy val analyticsHost: String = loadConfig("google-analytics.host")
-  lazy val optimizelyId: String = loadConfig("optimizely.projectId")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
   lazy val feedbackSurveyUrl: String = loadConfig(s"feedback-survey-frontend.url")
-  lazy val googleTagManagerId = loadConfig(s"google-tag-manager.id")
 
   lazy val cookies: String = loadConfig("urls.footer.cookies")
   lazy val accessibilityStatement: String = loadConfig("urls.footer.accessibility_statement")

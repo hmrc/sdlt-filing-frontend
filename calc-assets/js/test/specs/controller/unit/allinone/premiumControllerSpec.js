@@ -53,9 +53,6 @@
             expect(mockDataService.getModel.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to navigationService.logView', function () {
-            expect(mockNavigationService.logView.calls.count()).toEqual(1);
-        });
 
         it('should default the state.hasError to ""', function () {
             expect(mockScope.state.hasError()).toEqual('');

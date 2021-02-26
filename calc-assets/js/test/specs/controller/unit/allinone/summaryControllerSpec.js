@@ -11,7 +11,6 @@
             mockScope, 
             mockDataService, 
             mockNavigationService,
-            mockLoggingService,
             mockModelValidationService,
             calledServiceGetModel = false;
 
@@ -43,10 +42,6 @@
                 }
             };
 
-            mockLoggingService = {
-                logEvent : function() {}
-            };
-
             spyOn(mockDataService, 'updateModel');
             spyOn(mockDataService, 'getModel').and.callThrough();
             spyOn(mockNavigationService, 'logView');
@@ -56,7 +51,6 @@
                 $location : {},
                 dataService : mockDataService,
                 navigationService : mockNavigationService,
-                loggingService : mockLoggingService,
                 modelValidationService : mockModelValidationService
             });
         }));
@@ -65,9 +59,6 @@
             expect(mockDataService.getModel.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to navigationService.logView', function () {
-            expect(mockNavigationService.logView.calls.count()).toEqual(1);
-        });
 
         describe('Calling .submit() on the Summary Controller', function () {
             
@@ -110,8 +101,7 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
 
                 mockScope.submit({});
@@ -122,9 +112,6 @@
                 expect(mockDataService.getModel.calls.count()).toEqual(1);
             });
 
-            it('should make 1 call to navigationService.logView', function () {
-                expect(mockNavigationService.logView.calls.count()).toEqual(1);
-            });
 
             it('should make 1 call to validationService.validate', function () {
                 expect(mockModelValidationService.validate.calls.count()).toEqual(1);
@@ -188,8 +175,7 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
             }));
 
@@ -198,9 +184,6 @@
                 expect(mockDataService.getModel.calls.count()).toEqual(1);
             });
 
-            it('should make 1 call to navigationService.logView', function () {
-                expect(mockNavigationService.logView.calls.count()).toEqual(1);
-            });
 
             it('should make 1 call to validationService.validate', function () {
                 expect(mockModelValidationService.validate.calls.count()).toEqual(1);
@@ -264,8 +247,7 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
             }));
 
@@ -274,9 +256,6 @@
                 expect(mockDataService.getModel.calls.count()).toEqual(1);
             });
 
-            it('should make 1 call to navigationService.logView', function () {
-                expect(mockNavigationService.logView.calls.count()).toEqual(1);
-            });
 
             it('should make 1 call to validationService.validate', function () {
                 expect(mockModelValidationService.validate.calls.count()).toEqual(1);
@@ -340,8 +319,7 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
             }));
 
@@ -350,9 +328,6 @@
                 expect(mockDataService.getModel.calls.count()).toEqual(1);
             });
 
-            it('should make 1 call to navigationService.logView', function () {
-                expect(mockNavigationService.logView.calls.count()).toEqual(1);
-            });
 
             it('should make 1 call to validationService.validate', function () {
                 expect(mockModelValidationService.validate.calls.count()).toEqual(1);
@@ -416,8 +391,7 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
             }));
 
@@ -426,9 +400,6 @@
                 expect(mockDataService.getModel.calls.count()).toEqual(1);
             });
 
-            it('should make 1 call to navigationService.logView', function () {
-                expect(mockNavigationService.logView.calls.count()).toEqual(1);
-            });
 
             it('should make 1 call to validationService.validate', function () {
                 expect(mockModelValidationService.validate.calls.count()).toEqual(1);
@@ -492,8 +463,7 @@
                     $location : {},
                     dataService : mockDataService,
                     modelValidationService : mockModelValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
             }));
 
@@ -502,9 +472,6 @@
                 expect(mockDataService.getModel.calls.count()).toEqual(1);
             });
 
-            it('should make 1 call to navigationService.logView', function () {
-                expect(mockNavigationService.logView.calls.count()).toEqual(1);
-            });
 
             it('should make 1 call to validationService.validate', function () {
                 expect(mockModelValidationService.validate.calls.count()).toEqual(1);

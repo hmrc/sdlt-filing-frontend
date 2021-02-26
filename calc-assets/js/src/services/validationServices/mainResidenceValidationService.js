@@ -12,7 +12,6 @@
 
             if (validator.isNotPopulated(data.mainResidence)) {
                 state.mainResidence = "Select 'Yes' or 'No'";
-                ga('send', 'event', "userError", "mainResidenceError", "notPopulated");
             }
 
             return buildState(state);

@@ -12,13 +12,11 @@
 
             if (validator.isNotPopulated(data.twoOrMoreProperties)) {
                 state.twoOrMoreProperties = "Select 'Yes' or 'No'";
-                ga('send', 'event', "userError", "twoOrMorePropertiesError", "notPopulated");
             }
 
             if(data.twoOrMoreProperties === "Yes") {
                 if (validator.isNotPopulated(data.replaceMainResidence)) {
                     state.replaceMainResidence = "Select 'Yes' or 'No'";
-                    ga('send', 'event', "userError", "replaceMainResidenceError", "notPopulated");
                 }
             }
 

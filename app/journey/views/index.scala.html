@@ -7,19 +7,13 @@
 @import play.api.mvc.Request
 @this(layout: layout)
 
-@(googleTagManagerId: String)(implicit request: Request[_], config: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], config: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = Some("Stamp Duty Land Tax Calculator")){
     <!--[if lt IE 8]><html class="no-js lte-ie8" lang="en"><![endif]-->
     <!--[if gte IE 8]><!-->
     <html lang="en" class="no-js" data-ng-app="calc" data-ng-controller="mainController">
     <!--<![endif]-->
-
-    @if(googleTagManagerId != "N/A") {
-    <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=@googleTagManagerId" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-    </noscript>
-    }
 
     <main id="wrapper" role="main">
         <div id="content">

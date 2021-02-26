@@ -5,7 +5,7 @@
 <div data-ng-if="responseReceived === true">
   <div data-ng-if="errorResponse === true">
     <h2 class="govuk-heading-l">Sorry, we're experiencing technical difficulties</h2>
-    <p class="govuk-body">You can try <a class="govuk-link" id="errorStartAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'result.start-again')">restarting your calculation</a>.</p>
+    <p class="govuk-body">You can try <a class="govuk-link" id="errorStartAgain" href="/calculate-stamp-duty-land-tax">restarting your calculation</a>.</p>
   </div>
   <div data-ng-repeat="res in data.result" data-ng-if="errorResponse === false">
     <h1 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h1>
@@ -41,7 +41,7 @@
           </div>
         </dl>
         <div class="govuk-body govuk-!-margin-top-3">
-          <a class="govuk-link" id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">View calculation</a>
+          <a class="govuk-link" id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false">View calculation</a>
         </div>
       </span>
       <dl class="govuk-summary-list" data-ng-if="res.taxCalcs[0].calcType === 'slab'">
@@ -110,15 +110,15 @@
             {{taxCalc.taxDue | calcCurrency:"£"}}
           </dd>
           <dd class="govuk-summary-list__actions">
-            <a class="govuk-link" id="detailCalc{{$parent.$parent.$index+''+$index}}" data-ng-if="taxCalc.calcType === 'slice'" data-ng-click="viewDetails($parent.$parent.$index, $index)" href="javascript:return false" title="view detailed calculation" onClick="ga('send', 'event', 'link', 'click', 'result.viewDetailedCalculation'); return false;">View calculation</a>
+            <a class="govuk-link" id="detailCalc{{$parent.$parent.$index+''+$index}}" data-ng-if="taxCalc.calcType === 'slice'" data-ng-click="viewDetails($parent.$parent.$index, $index)" href="javascript:return false" title="view detailed calculation">View calculation</a>
           </dd>
         </div>
       </dl>
     </span>
   </div>
 
-  <p class="govuk-body">You can <a class="govuk-link" data-ng-click="printView()" id="print-calculation" href="javascript:return false" onClick="ga('send', 'event', 'link', 'click', 'result.printView'); return false;">print your calculation</a>.</p>
-  <p class="govuk-body">Or you can <a class="govuk-link" id="startAgain" href="/calculate-stamp-duty-land-tax" onClick="ga('send', 'event', 'change', 'click', 'result.start-again')">start again</a>.</p>
-  <p class="govuk-body">Go to the <a class="govuk-link" id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax" onClick="ga('send', 'event', 'link', 'click', 'result.govuk')">GOV.UK</a> homepage for SDLT.</p>
+  <p class="govuk-body">You can <a class="govuk-link" data-ng-click="printView()" id="print-calculation" href="javascript:return false">print your calculation</a>.</p>
+  <p class="govuk-body">Or you can <a class="govuk-link" id="startAgain" href="/calculate-stamp-duty-land-tax">start again</a>.</p>
+  <p class="govuk-body">Go to the <a class="govuk-link" id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax">GOV.UK</a> homepage for SDLT.</p>
 
 </div>

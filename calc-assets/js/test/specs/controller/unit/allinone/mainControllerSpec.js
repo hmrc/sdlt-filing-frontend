@@ -10,7 +10,6 @@
         var controller,
             mockScope,
             mockWindow,
-            mockLoggingService,
             mockCookieService;
 
         beforeEach(mocks.module('calc.controllers'));
@@ -29,14 +28,12 @@
             });
             
             mockScope = $rootScope.$new();
-            mockLoggingService = { logEvent: function() {} };
 
             
             controller = $controller(
                 'mainController', 
                 {
                     $scope: mockScope,
-                    loggingService: mockLoggingService,
                     cookieService: mockCookieService
                 });
         }));
@@ -58,23 +55,15 @@
             beforeEach(mocks.inject(function ($controller, $rootScope) {
                 
                 mockScope = $rootScope.$new();
-                mockLoggingService = { logEvent: function() {} };
-                spyOn(mockLoggingService, 'logEvent');
 
 
                 controller = $controller(
                     'mainController', 
                     {
                         $scope: mockScope,
-                        loggingService: mockLoggingService,
                         cookieService: mockCookieService
                     });
             }));
-
-            it('should call the navigation service once', function(){
-                mockScope.toggleHelp('helpId', 'some text');
-                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
-            });
 
             it('should set a visibility toggle value to true when it is false', function(){
                 mockScope.optionalHelp.helpId = false;
@@ -113,31 +102,20 @@
         describe('Calling getHelpGA()', function () {
 
             beforeEach(mocks.inject(function ($controller, $rootScope) {
-                
-                mockScope = $rootScope.$new();
-                mockLoggingService = { logEvent: function() {} };
-                spyOn(mockLoggingService, 'logEvent');
 
+                mockScope = $rootScope.$new();
 
                 controller = $controller(
-                    'mainController', 
+                    'mainController',
                     {
                         $scope: mockScope,
-                        loggingService: mockLoggingService,
                         cookieService: mockCookieService
                     });
             }));
 
-            it('should call the getHelpGA function when expanding the "get help" section', function () {
-                mockScope.getHelpGA();
-                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
-            });
-
-            it('should call the getHelpGA function when colapsing the "get help" section', function () {
-                // User expanded "get help" then colapsed it.
-                mockScope.getHelpGA();
-                mockScope.getHelpGA();
-                expect(mockLoggingService.logEvent.calls.count()).toEqual(2);
+            it('should expand the "get help" section', function () {
+                var result = mockScope.getHelpGA();
+                expect(result).toEqual(undefined);
             });
 
         });
@@ -176,14 +154,11 @@
                 });
 
                 mockScope = $rootScope.$new();
-                mockLoggingService = { logEvent: function() {} };
-                spyOn(mockLoggingService, 'logEvent');
 
                 controller = $controller(
                     'mainController', 
                     {
                         $scope: mockScope,
-                        loggingService: mockLoggingService,
                         cookieService: mockCookieService
                     });
             }));
@@ -201,8 +176,6 @@
             };
             mockScope = $rootScope.$new();
             mockScope.getHelpSetup =function () {return true;};
-            mockLoggingService = { logEvent: function() {} };
-            spyOn(mockLoggingService, 'logEvent');
             mockCookieService = {
                 getCookie : function() {return "candy";}
             };
@@ -213,7 +186,6 @@
                 {
                     $scope: mockScope,
                     $window: mockWindow,
-                    loggingService: mockLoggingService,
                     cookieService : mockCookieService
                     });
                 }));
@@ -234,8 +206,6 @@
             };
             mockScope = $rootScope.$new();
             mockScope.getHelpSetup =function () {return true;};
-            mockLoggingService = { logEvent: function() {} };
-            spyOn(mockLoggingService, 'logEvent');
             mockCookieService = {
                 getCookie : function() {return "candy";}
             };
@@ -246,7 +216,6 @@
                 {
                     $scope: mockScope,
                     $window: mockWindow,
-                    loggingService: mockLoggingService,
                     cookieService : mockCookieService
                     });
                 }));
