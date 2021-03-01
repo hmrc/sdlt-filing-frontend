@@ -2,7 +2,7 @@
     "use strict";
     var app = require("../module");
     // define the main controller
-    var mainController = function($scope, $window, loggingService, cookieService) {
+    var mainController = function($scope, $window, cookieService) {
 
         var expanded = false;
 
@@ -24,15 +24,11 @@
             return page == "result";
         }
 
-
         $scope.optionalHelp = {};
         
         $scope.toggleHelp = function(helpId, summary) {
-            var currentValue = $scope.optionalHelp[helpId] || false,
-                action = currentValue ? 'hide' : 'show';
-            
+            var currentValue = $scope.optionalHelp[helpId] || false;
             $scope.optionalHelp[helpId] = !currentValue;
-            loggingService.logEvent('help', action, summary);
         };
 
         $scope.displayHelp = function(helpId) {
@@ -40,13 +36,11 @@
         };
 
         $scope.getHelpGA = function() {
-            var action = expanded ? "hide": "show";
-            loggingService.logEvent('getHelp', action, "/calculate-stamp-duty-land-tax/"+document.location.href.split('/').pop());
             expanded = !expanded;
         };
 
     };
 
     // register the main controller
-    app.controller('mainController', ['$scope', '$window', 'loggingService', 'cookieService', mainController]);
+    app.controller('mainController', ['$scope', '$window', 'cookieService', mainController]);
 }());

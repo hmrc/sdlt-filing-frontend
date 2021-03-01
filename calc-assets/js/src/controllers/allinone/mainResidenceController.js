@@ -3,16 +3,11 @@
 
     var app = require("../module");
 
-    var mainResidenceController = function($scope, $location, $anchorScroll, dataService, mainResidenceValidationService, navigationService, loggingService) {
+    var mainResidenceController = function($scope, $location, $anchorScroll, dataService, mainResidenceValidationService, navigationService) {
 
         var init = require("../../utilities/initFormController");
         init($scope, $location, $anchorScroll, 'main-residence', dataService, mainResidenceValidationService, navigationService);
-
-        $scope.beforeUpdateModel = function() {
-            loggingService.logEvent('decision', 'submit', $scope.data.mainResidence);
-        };
-
     };
 
-    app.controller('mainResidenceController', ['$scope', '$location', '$anchorScroll', 'dataService', 'mainResidenceValidationService', 'navigationService', 'loggingService', mainResidenceController ]);
+    app.controller('mainResidenceController', ['$scope', '$location', '$anchorScroll', 'dataService', 'mainResidenceValidationService', 'navigationService', mainResidenceController ]);
 }());

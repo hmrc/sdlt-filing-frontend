@@ -12,7 +12,6 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import org.mockito.Mockito._
 
 class IndexControllerSpec extends UnitSpec with MockitoSugar with GuiceOneServerPerSuite {
 
@@ -26,9 +25,6 @@ class IndexControllerSpec extends UnitSpec with MockitoSugar with GuiceOneServer
 
   "Sending a GET request to IndexController" should {
     "return a 200" in new Setup {
-
-        when(mockConfig.analyticsToken) thenReturn ""
-        when(mockConfig.analyticsHost) thenReturn ""
 
         val result = controller.showIndex(FakeRequest())
         status(result) shouldBe OK

@@ -4,9 +4,6 @@
     // performs standard controller setup
     module.exports = function(scope, location, scrollToHash, page, dataService, navigationService){
 
-        // log Google Analytics hit
-        navigationService.logView(page);
-
         // copy dataService data model into scope variable 'data'
         scope.data = dataService.getModel();
 

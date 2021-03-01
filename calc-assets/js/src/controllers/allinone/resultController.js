@@ -3,7 +3,7 @@
 
     var app = require("../module");
 
-    var resultController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, dataMarshallingService, loggingService, $http) {
+    var resultController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, dataMarshallingService, $http) {
 
         var init = require("../../utilities/initController");
         init($scope, $location, $anchorScroll, 'result', dataService, navigationService);
@@ -37,7 +37,6 @@
              error(function(data, status, headers, config) {
                $scope.errorResponse = true;
                $scope.responseReceived = true;
-               loggingService.logEvent("error", "calculation", "status: "+status+", server: "+headers('Server'));
              });
         }
         else {
@@ -45,5 +44,5 @@
         }
     };
 
-    app.controller('resultController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'dataMarshallingService', 'loggingService', '$http', resultController ]);
+    app.controller('resultController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'dataMarshallingService', '$http', resultController ]);
 }());

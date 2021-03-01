@@ -12,7 +12,6 @@
 
             if (validator.isNotPopulated(data.individual)) {
                 state.individual = "Select 'Yes' or 'No'";
-                ga('send', 'event', "userError", "individualError", "notPopulated");
             }
 
             return buildState(state);

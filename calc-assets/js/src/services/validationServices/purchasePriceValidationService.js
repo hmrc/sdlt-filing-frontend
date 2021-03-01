@@ -12,10 +12,8 @@
 
             if (validator.isNotPopulated(data.premium)) {
                 state.premium = "Enter your Purchase Price";
-                ga('send', 'event', "userError", "purchasePriceError", "notPopulated");
             } else if (validator.isInvalidFloat(data.premium)) {
                 state.premium = "Enter the purchase price again - don't use any letters or characters including £";
-                ga('send', 'event', "userError", "purchasePriceError", "invalid");
             }
 
             return buildState(state);

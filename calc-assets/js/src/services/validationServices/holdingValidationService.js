@@ -12,7 +12,6 @@
 
             if (validator.isNotPopulated(data.holdingType)) {
                 state.holdingType = "Select 'Freehold' or 'Leasehold'";
-                ga('send', 'event', "userError", "holdingTypeError", "notPopulated");
             }
 
             return buildState(state);

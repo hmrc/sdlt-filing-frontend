@@ -6,11 +6,6 @@
 	var navigationService = function() {
 
         var validator = require("../utilities/validator")();
-		var logView = function(pageName) {
-    		ga('set', 'page', '/calculate-stamp-duty-land-tax/' + pageName);
-    		ga('send', 'pageview', { 'anonymizeIp': true });
-    		return pageName;
-    	};
 
         var startNow = function(locationService) {
             locationService.path('holding');
@@ -170,7 +165,6 @@
       }
 
 	    return {
-	    	logView : logView,
             startNow : startNow,
 	    	next : gotoNextView,
             printView : gotoPrintView,

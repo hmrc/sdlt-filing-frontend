@@ -12,7 +12,6 @@
 
             if (validator.isNotPopulated(data.ownedOtherProperties)) {
                 state.ownedOtherProperties = "Select 'Yes' or 'No'";
-                ga('send', 'event', "userError", "ownedOtherPropertiesError", "notPopulated");
             }
 
             return buildState(state);

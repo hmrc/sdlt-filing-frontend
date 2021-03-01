@@ -12,7 +12,6 @@
 
             if (validator.isNotPopulated(data.sharedOwnership)) {
                 state.sharedOwnership = "Select 'Yes' or 'No'";
-                ga('send', 'event', "userError", "sharedOwnershipError", "notPopulated");
             }
 
             return buildState(state);

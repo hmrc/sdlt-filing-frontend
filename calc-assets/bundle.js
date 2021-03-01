@@ -349,7 +349,7 @@
 	    "use strict";
 	    var app = __webpack_require__(10);
 	    // define the main controller
-	    var mainController = function($scope, $window, loggingService, cookieService) {
+	    var mainController = function($scope, $window, cookieService) {
 
 	        var expanded = false;
 
@@ -375,11 +375,8 @@
 	        $scope.optionalHelp = {};
 	        
 	        $scope.toggleHelp = function(helpId, summary) {
-	            var currentValue = $scope.optionalHelp[helpId] || false,
-	                action = currentValue ? 'hide' : 'show';
-	            
+	            var currentValue = $scope.optionalHelp[helpId] || false;
 	            $scope.optionalHelp[helpId] = !currentValue;
-	            loggingService.logEvent('help', action, summary);
 	        };
 
 	        $scope.displayHelp = function(helpId) {
@@ -387,8 +384,6 @@
 	        };
 
 	        $scope.getHelpGA = function() {
-	            var action = expanded ? "hide": "show";
-	            loggingService.logEvent('getHelp', action, "/calculate-stamp-duty-land-tax/"+document.location.href.split('/').pop());
 	            expanded = !expanded;
 	        };
 
@@ -431,7 +426,7 @@
 	    };
 
 	    // register the main controller
-	    app.controller('mainController', ['$scope', '$window', 'loggingService', 'cookieService', mainController]);
+	    app.controller('mainController', ['$scope', '$window', 'cookieService', mainController]);
 	}());
 
 
@@ -457,26 +452,14 @@
 
 	    var app = __webpack_require__(10);
 
-	    var additionalPropertyController = function($scope, $location, $anchorScroll, dataService, additionalPropertyValidationService, navigationService, loggingService) {
+	    var additionalPropertyController = function($scope, $location, $anchorScroll, dataService, additionalPropertyValidationService, navigationService) {
 	        
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'additional-property', dataService, additionalPropertyValidationService, navigationService);
 
-	        $scope.beforeUpdateModel = function() {
-	            if($scope.data.twoOrMoreProperties === "No") {
-	                loggingService.logEvent('decision', 'submit', "AdditonalProperty.SingleProperty");
-	            } else {
-	                if($scope.data.replaceMainResidence === "Yes") {
-	                    loggingService.logEvent('decision', 'submit', "AdditonalProperty.MultiplePoperties.MainResidence");
-	                } else {
-	                    loggingService.logEvent('decision', 'submit', "AdditonalProperty.MultiplePoperties.NotMainResidence");
-	                }
-	            }
-	        };
-
 	    };
 
-	    app.controller('additionalPropertyController', ['$scope', '$location', '$anchorScroll', 'dataService', 'additionalPropertyValidationService', 'navigationService', 'loggingService', additionalPropertyController ]);
+	    app.controller('additionalPropertyController', ['$scope', '$location', '$anchorScroll', 'dataService', 'additionalPropertyValidationService', 'navigationService', additionalPropertyController ]);
 	}());
 
 
@@ -489,9 +472,6 @@
 
 	    // performs standard controller setup
 	    module.exports = function(scope, location, scrollToHash, page, dataService, validationService, navigationService){
-
-	        // log Google Analytics hit
-	        navigationService.logView(page);
 
 	        // copy dataService data model into scope variable 'data'
 	        scope.data = dataService.getModel();
@@ -543,26 +523,14 @@
 
 	    var app = __webpack_require__(10);
 
-	    var exchangeContractsController = function($scope, $location, $anchorScroll, dataService, exchangeContractsValidationService, navigationService, loggingService) {
+	    var exchangeContractsController = function($scope, $location, $anchorScroll, dataService, exchangeContractsValidationService, navigationService) {
 	        
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'exchange-contracts', dataService, exchangeContractsValidationService, navigationService);
 
-	        $scope.beforeUpdateModel = function() {
-	            if($scope.data.contractPre201603 === "No") {
-	                loggingService.logEvent('decision', 'submit', "ExchangeContracts.Post20160316");
-	            } else {
-	                if($scope.data.contractVariedPost201603 === "Yes") {
-	                    loggingService.logEvent('decision', 'submit', "ExchangeContracts.Pre20160317.VariedAfter");
-	                } else {
-	                    loggingService.logEvent('decision', 'submit', "ExchangeContracts.Pre20160317.NotVariedAfter");
-	                }
-	            }
-	        };
-
 	    };
 
-	    app.controller('exchangeContractsController', ['$scope', '$location', '$anchorScroll', 'dataService', 'exchangeContractsValidationService', 'navigationService', 'loggingService', exchangeContractsController ]);
+	    app.controller('exchangeContractsController', ['$scope', '$location', '$anchorScroll', 'dataService', 'exchangeContractsValidationService', 'navigationService', exchangeContractsController ]);
 	}());
 
 
@@ -730,7 +698,7 @@
 
 	    var app = __webpack_require__(10);
 
-	    var ownedOtherPropertiesController = function($scope, $location, $anchorScroll, dataService, ownedOtherPropertiesValidationService, navigationService, loggingService) {
+	    var ownedOtherPropertiesController = function($scope, $location, $anchorScroll, dataService, ownedOtherPropertiesValidationService, navigationService) {
 
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'owned-other-properties', dataService, ownedOtherPropertiesValidationService, navigationService);
@@ -741,7 +709,7 @@
 
 	    };
 
-	    app.controller('ownedOtherPropertiesController', ['$scope', '$location', '$anchorScroll', 'dataService', 'ownedOtherPropertiesValidationService', 'navigationService', 'loggingService', ownedOtherPropertiesController ]);
+	    app.controller('ownedOtherPropertiesController', ['$scope', '$location', '$anchorScroll', 'dataService', 'ownedOtherPropertiesValidationService', 'navigationService', ownedOtherPropertiesController ]);
 	}());
 
 
@@ -754,7 +722,7 @@
 
 	    var app = __webpack_require__(10);
 
-	    var mainResidenceController = function($scope, $location, $anchorScroll, dataService, mainResidenceValidationService, navigationService, loggingService) {
+	    var mainResidenceController = function($scope, $location, $anchorScroll, dataService, mainResidenceValidationService, navigationService) {
 
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'main-residence', dataService, mainResidenceValidationService, navigationService);
@@ -765,7 +733,7 @@
 
 	    };
 
-	    app.controller('mainResidenceController', ['$scope', '$location', '$anchorScroll', 'dataService', 'mainResidenceValidationService', 'navigationService', 'loggingService', mainResidenceController ]);
+	    app.controller('mainResidenceController', ['$scope', '$location', '$anchorScroll', 'dataService', 'mainResidenceValidationService', 'navigationService', mainResidenceController ]);
 	}());
 
 
@@ -778,7 +746,7 @@
 
 	    var app = __webpack_require__(10);
 
-	    var sharedOwnershipController = function($scope, $location, $anchorScroll, dataService, sharedOwnershipValidationService, navigationService, loggingService) {
+	    var sharedOwnershipController = function($scope, $location, $anchorScroll, dataService, sharedOwnershipValidationService, navigationService) {
 
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'shared-ownership', dataService, sharedOwnershipValidationService, navigationService);
@@ -789,7 +757,7 @@
 
 	    };
 
-	    app.controller('sharedOwnershipController', ['$scope', '$location', '$anchorScroll', 'dataService', 'sharedOwnershipValidationService', 'navigationService', 'loggingService', sharedOwnershipController ]);
+	    app.controller('sharedOwnershipController', ['$scope', '$location', '$anchorScroll', 'dataService', 'sharedOwnershipValidationService', 'navigationService', sharedOwnershipController ]);
 	}());
 
 
@@ -802,7 +770,7 @@
 
 	    var app = __webpack_require__(10);
 
-	    var currentValueController = function($scope, $location, $anchorScroll, dataService, currentValueValidationService, navigationService, loggingService) {
+	    var currentValueController = function($scope, $location, $anchorScroll, dataService, currentValueValidationService, navigationService) {
 
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'current-value', dataService, currentValueValidationService, navigationService);
@@ -813,7 +781,7 @@
 
 	    };
 
-	    app.controller('currentValueController', ['$scope', '$location', '$anchorScroll', 'dataService', 'currentValueValidationService', 'navigationService', 'loggingService', currentValueController ]);
+	    app.controller('currentValueController', ['$scope', '$location', '$anchorScroll', 'dataService', 'currentValueValidationService', 'navigationService', currentValueController ]);
 	}());
 
 
@@ -826,7 +794,7 @@
 
 	    var app = __webpack_require__(10);
 
-	    var marketValueController = function($scope, $location, $anchorScroll, dataService, marketValueValidationService, navigationService, loggingService) {
+	    var marketValueController = function($scope, $location, $anchorScroll, dataService, marketValueValidationService, navigationService) {
 
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'market-value', dataService, marketValueValidationService, navigationService);
@@ -843,7 +811,7 @@
 	            };
 	        };
 
-	    app.controller('marketValueController', ['$scope', '$location', '$anchorScroll', 'dataService', 'marketValueValidationService', 'navigationService', 'loggingService', marketValueController ]);
+	    app.controller('marketValueController', ['$scope', '$location', '$anchorScroll', 'dataService', 'marketValueValidationService', 'navigationService', marketValueController ]);
 	}());
 
 
@@ -856,7 +824,7 @@
 	    
 	    var app = __webpack_require__(10);
 
-	    var holdingController = function($scope, $location, $anchorScroll, dataService, holdingValidationService, navigationService, loggingService) {
+	    var holdingController = function($scope, $location, $anchorScroll, dataService, holdingValidationService, navigationService) {
 	        
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'holding', dataService, holdingValidationService, navigationService);
@@ -867,7 +835,7 @@
 
 	    };
 
-	    app.controller('holdingController', ['$scope', '$location', '$anchorScroll', 'dataService', 'holdingValidationService', 'navigationService', 'loggingService', holdingController ]);
+	    app.controller('holdingController', ['$scope', '$location', '$anchorScroll', 'dataService', 'holdingValidationService', 'navigationService', holdingController ]);
 	}());
 
 
@@ -905,9 +873,6 @@
 
 	    // performs standard controller setup
 	    module.exports = function(scope, location, scrollToHash, page, dataService, navigationService){
-
-	        // log Google Analytics hit
-	        navigationService.logView(page);
 
 	        // copy dataService data model into scope variable 'data'
 	        scope.data = dataService.getModel();
@@ -1075,7 +1040,7 @@
 
 	    var app = __webpack_require__(10);
 
-	    var propertyController = function($scope, $location, $anchorScroll, dataService, propertyValidationService, navigationService, loggingService) {
+	    var propertyController = function($scope, $location, $anchorScroll, dataService, propertyValidationService, navigationService) {
 	        
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'property', dataService, propertyValidationService, navigationService);
@@ -1086,7 +1051,7 @@
 
 	    };
 
-	    app.controller('propertyController', ['$scope', '$location', '$anchorScroll', 'dataService', 'propertyValidationService', 'navigationService', 'loggingService', propertyController ]);
+	    app.controller('propertyController', ['$scope', '$location', '$anchorScroll', 'dataService', 'propertyValidationService', 'navigationService', propertyController ]);
 	}());
 
 
@@ -1119,7 +1084,7 @@
 	    
 	    var app = __webpack_require__(10);
 
-	    var purchaserController = function($scope, $location, $anchorScroll, dataService, purchaserValidationService, navigationService, loggingService) {
+	    var purchaserController = function($scope, $location, $anchorScroll, dataService, purchaserValidationService, navigationService) {
 	        
 	        var init = __webpack_require__(12);
 	        init($scope, $location, $anchorScroll, 'purchaser', dataService, purchaserValidationService, navigationService);
@@ -1130,7 +1095,7 @@
 
 	    };
 
-	    app.controller('purchaserController', ['$scope', '$location', '$anchorScroll', 'dataService', 'purchaserValidationService', 'navigationService', 'loggingService', purchaserController ]);
+	    app.controller('purchaserController', ['$scope', '$location', '$anchorScroll', 'dataService', 'purchaserValidationService', 'navigationService', purchaserController ]);
 	}());
 
 /***/ }),
@@ -1191,7 +1156,7 @@
 
 	    var app = __webpack_require__(10);
 
-	    var resultController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, dataMarshallingService, loggingService, $http) {
+	    var resultController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, dataMarshallingService, $http) {
 
 	        var init = __webpack_require__(23);
 	        init($scope, $location, $anchorScroll, 'result', dataService, navigationService);
@@ -1233,7 +1198,7 @@
 	        }
 	    };
 
-	    app.controller('resultController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'dataMarshallingService', 'loggingService', '$http', resultController ]);
+	    app.controller('resultController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'dataMarshallingService', '$http', resultController ]);
 	}());
 
 
@@ -1383,7 +1348,7 @@
 
 	    var app = __webpack_require__(10);
 
-	    var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService, loggingService) {
+	    var summaryController = function($scope, $location, $anchorScroll, dataService, modelValidationService, navigationService) {
 
 	        var validator = __webpack_require__(33)();
 
@@ -1417,7 +1382,7 @@
 
 	    };
 
-	    app.controller('summaryController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', 'loggingService', summaryController]);
+	    app.controller('summaryController', ['$scope', '$location', '$anchorScroll', 'dataService', 'modelValidationService', 'navigationService', summaryController]);
 	}());
 
 
@@ -2312,7 +2277,7 @@
 	        };
 	    };
 
-	    app.service('loggingService', loggingService);
+	    app.service('loggingService');
 
 	}());
 

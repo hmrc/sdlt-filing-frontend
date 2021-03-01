@@ -20,15 +20,14 @@ class IndexController @Inject()(mcc: MessagesControllerComponents,
                                 template: journey.views.html.index,
                                 implicit val config: FrontendAppConfig) extends FrontendController(mcc) {
 
-  val googleTagManagerId: String = config.googleTagManagerId
   val sessionId = UUID.randomUUID().toString
   val showIndex: Action[AnyContent] = Action.async { implicit request =>
 
     if(request.session.get(SessionKeys.sessionId).isEmpty) {
-      Future.successful(Ok(template(googleTagManagerId))
+      Future.successful(Ok(template())
         .withSession(request.session + (SessionKeys.sessionId -> s"session-$sessionId")))
     } else {
-      Future.successful(Ok(template(googleTagManagerId)))
+      Future.successful(Ok(template()))
     }
   }
 

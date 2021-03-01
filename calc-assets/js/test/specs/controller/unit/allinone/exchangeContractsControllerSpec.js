@@ -12,7 +12,6 @@
             mockDataService, 
             mockValidationService, 
             mockNavigationService,
-            mockLoggingService,
             calledServiceGetModel = false;
 
         beforeEach(mocks.module('calc.controllers'));
@@ -29,13 +28,8 @@
                 logView : function() {} 
             };
 
-            mockLoggingService = { 
-                logEvent : function() {} 
-            };
-
             spyOn(mockDataService, 'getModel');
-            spyOn(mockNavigationService, 'logView');
-            spyOn(mockLoggingService, 'logEvent');
+
             
             mockValidationService = {};
 
@@ -44,17 +38,12 @@
                 $location : {},
                 dataService : mockDataService,
                 exchangeContractsValidationService : mockValidationService,
-                navigationService : mockNavigationService,
-                loggingService : mockLoggingService
+                navigationService : mockNavigationService
             });
         }));
 
         it('should make 1 call to dataService.getModel', function () {
             expect(mockDataService.getModel.calls.count()).toEqual(1);
-        });
-
-        it('should make 1 call to navigationService.logView', function () {
-            expect(mockNavigationService.logView.calls.count()).toEqual(1);
         });
 
         it('should default the state.hasError to ""', function () {
@@ -84,9 +73,6 @@
                     }
                 };
 
-                mockLoggingService = { 
-                    logEvent : function() {} 
-                };
 
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
@@ -97,7 +83,6 @@
                     $location : {},
                     dataService : mockDataService,
                     exchangeContractsValidationService : mockValidationService,
-                    loggingService : mockLoggingService,
                     navigationService : mockNavigationService
                 });
 
@@ -140,22 +125,17 @@
                     }
                 };
 
-                mockLoggingService = { 
-                    logEvent : function() {} 
-                };
 
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
-                spyOn(mockLoggingService, 'logEvent');
                 
                 controller = $controller('exchangeContractsController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
                     exchangeContractsValidationService : mockValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
 
                 mockScope.data = {
@@ -176,10 +156,6 @@
 
             it('should call to navigationService.next once', function () {
                 expect(mockNavigationService.next.calls.count()).toEqual(1);
-            });
-
-            it('should call beforeUpdateModel', function () {
-                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
             });
         });
 
@@ -206,22 +182,17 @@
                     }
                 };
 
-                mockLoggingService = { 
-                    logEvent : function() {} 
-                };
 
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
-                spyOn(mockLoggingService, 'logEvent');
                 
                 controller = $controller('exchangeContractsController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
                     exchangeContractsValidationService : mockValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
 
                 mockScope.data = {
@@ -243,9 +214,6 @@
                 expect(mockNavigationService.next.calls.count()).toEqual(1);
             });
 
-            it('should call beforeUpdateModel', function () {
-                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
-            });
         });
 
         describe('Calling .submit() on the Contracts Exchanged Controller with valid Yes No data', function () {
@@ -271,22 +239,17 @@
                     }
                 };
 
-                mockLoggingService = { 
-                    logEvent : function() {} 
-                };
 
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
-                spyOn(mockLoggingService, 'logEvent');
                 
                 controller = $controller('exchangeContractsController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
                     exchangeContractsValidationService : mockValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
 
                 mockScope.data = {
@@ -309,9 +272,6 @@
                 expect(mockNavigationService.next.calls.count()).toEqual(1);
             });
 
-            it('should call beforeUpdateModel', function () {
-                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
-            });
         });
     });
 }());

@@ -12,10 +12,8 @@
 
             if (validator.isNotPopulated(data.premium)) {
                 state.premium = "Enter your Premium";
-                ga('send', 'event', "userError", "premiumError", "notPopulated");
             } else if (validator.isInvalidFloat(data.premium)) {
                 state.premium = "Enter the premium again - don't use any letters or characters including £";
-                ga('send', 'event', "userError", "premiumError", "invalid");
             }
 
             return buildState(state);

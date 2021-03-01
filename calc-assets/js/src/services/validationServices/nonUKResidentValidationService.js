@@ -12,7 +12,6 @@
 
             if (validator.isNotPopulated(data.nonUKResident)) {
                 state.nonUKResident = "Select 'Yes' or 'No'";
-                ga('send', 'event', "userError", "nonUKResidentError", "notPopulated");
             }
 
             return buildState(state);

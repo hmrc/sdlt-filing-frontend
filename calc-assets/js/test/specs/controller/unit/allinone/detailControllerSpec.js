@@ -51,10 +51,6 @@
             expect(mockDataService.getModel.calls.count()).toEqual(1);
         });
 
-        it('should make 1 call to navigationService.logView', function () {
-            expect(mockNavigationService.logView.calls.count()).toEqual(1);
-        });
-
     });
 
     describe('Call to printView()', function () {
@@ -238,10 +234,6 @@
 
         it('should make 1 call to dataService.getModel', function () {
             expect(mockDataService.getModel.calls.count()).toEqual(1);
-        });
-
-        it('should make 1 call to navigationService.logView', function () {
-            expect(mockNavigationService.logView.calls.count()).toEqual(1);
         });
 
         it('should set the location path to /summary', function() {

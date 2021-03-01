@@ -12,7 +12,6 @@
             mockDataService,
             mockValidationService,
             mockNavigationService,
-            mockLoggingService,
             calledServiceGetModel = false;
 
         beforeEach(mocks.module('calc.controllers'));
@@ -33,13 +32,9 @@
                 logView : function() {}
             };
 
-            mockLoggingService = {
-                logEvent : function() {}
-            };
 
             spyOn(mockDataService, 'getModel');
-            spyOn(mockNavigationService, 'logView');
-            spyOn(mockLoggingService, 'logEvent');
+
 
             mockValidationService = {};
 
@@ -48,17 +43,12 @@
                 $location : {},
                 dataService : mockDataService,
                 currentValueValidationService : mockValidationService,
-                navigationService : mockNavigationService,
-                loggingService : mockLoggingService
+                navigationService : mockNavigationService
             });
         }));
 
         it('should make 1 call to dataService.getModel', function () {
             expect(mockDataService.getModel.calls.count()).toEqual(1);
-        });
-
-        it('should make 1 call to navigationService.logView', function () {
-            expect(mockNavigationService.logView.calls.count()).toEqual(1);
         });
 
         it('should default the state.hasError to ""', function () {
@@ -88,22 +78,17 @@
                     }
                 };
 
-                mockLoggingService = {
-                    logEvent : function() {}
-                };
 
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
-                spyOn(mockLoggingService, 'logEvent');
 
                 controller = $controller('currentValueController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
                     currentValueValidationService : mockValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
 
                 mockScope.submit({});
@@ -117,9 +102,6 @@
                 expect(mockDataService.updateModel.calls.count()).toEqual(0);
             });
 
-            it('should not call loggingService.logEvent', function () {
-                expect(mockLoggingService.logEvent.calls.count()).toEqual(0);
-            });
 
             it('should not call to navigationService.next', function () {
                 expect(mockNavigationService.next.calls.count()).toEqual(0);
@@ -150,22 +132,17 @@
                     }
                 };
 
-                mockLoggingService = {
-                    logEvent : function() {}
-                };
 
                 spyOn(mockDataService, 'updateModel');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockValidationService, 'validate').and.callThrough();
-                spyOn(mockLoggingService, 'logEvent');
 
                 controller = $controller('currentValueController', {
                     $scope : mockScope,
                     $location : {},
                     dataService : mockDataService,
                     currentValueValidationService : mockValidationService,
-                    navigationService : mockNavigationService,
-                    loggingService : mockLoggingService
+                    navigationService : mockNavigationService
                 });
 
                 mockScope.data = {
@@ -185,10 +162,6 @@
 
             it('should call to navigationService.next once', function () {
                 expect(mockNavigationService.next.calls.count()).toEqual(1);
-            });
-
-            it('should call loggingService.logEvent', function () {
-                expect(mockLoggingService.logEvent.calls.count()).toEqual(1);
             });
         });
     });

@@ -12,7 +12,6 @@
 
             if (validator.isNotPopulated(data.propertyType)) {
                 state.propertyType = "Select 'Residential' or 'Non-residential'";
-                ga('send', 'event', "userError", "propertyTypeError", "notPopulated");
             }
 
             return buildState(state);

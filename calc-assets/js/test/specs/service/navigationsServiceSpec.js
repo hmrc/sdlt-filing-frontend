@@ -12,67 +12,6 @@
             expect(service).not.toBeUndefined();
         });
 
-        describe("Calling .logView('start')", function() {
-            
-            var testPage = 'start',
-                gaCalls = [],
-                currentView = '';
-
-            beforeEach(function() {
-                ga = function(arg1, arg2, arg3) {
-                    var call = [arg1, arg2, arg3];
-                    gaCalls.push(call);
-                };
-
-                currentView = service.logView(testPage);
-            });
-
-            it('should call google analytics (GA) twice', function() {
-                expect(gaCalls.length).toEqual(2);
-            });
-
-            it('should first call GA with the command "set"', function() {
-                var call = gaCalls[0];
-                var command = call[0];
-                expect(command).toEqual('set');
-            });
-
-            it('should first call GA with the property "page"', function() {
-                var call = gaCalls[0];
-                var property = call[1];
-                expect(property).toEqual('page');
-            });
-
-            it('should prefix the page name with the context URL before calling GA', function() {
-                var call = gaCalls[0];
-                var pageName = call[2];
-                expect(pageName).toEqual('/calculate-stamp-duty-land-tax/' + testPage);
-            });
-
-            it('should make a second GA call with the command "send"', function() {
-                var call = gaCalls[1];
-                var command = call[0];
-                expect(command).toEqual('send');
-            });
-
-            it('should make a second call to GA with the property "pageView"', function() {
-                var call = gaCalls[1];
-                var property = call[1];
-                expect(property).toEqual('pageview');
-            });
-
-            it('should instruct GA to anonymise the IP address', function() {
-                var call = gaCalls[1];
-                var instruction = call[2];
-                expect(instruction.anonymizeIp).toEqual(true);
-            });
-
-            it('should return a current view with the value "start"', function() {
-                expect(currentView).toEqual('start');
-            });
-        });
-
-        
         describe('Calling .next() from the holding view', function() {
             var mockLocation,
                 currentView = 'holding',
