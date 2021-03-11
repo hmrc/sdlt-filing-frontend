@@ -22,7 +22,7 @@ object FreeholdResultFactory {
         Some(RESULT_HINT_EXCHANGE_JULY_20),
         Some(DETAIL_HEADING_TOTAL_SDLT))
     } else {
-      (Some(RESULT_HEADING_AFTER_JULY_2020), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+      (Some(RESULT_HEADING_GENERIC), None, Some(DETAIL_HEADING_TOTAL_SDLT))
     }
 
     Result(
@@ -51,7 +51,7 @@ object FreeholdResultFactory {
         Some(RESULT_HINT_EXCHANGE_JULY_20),
         Some(DETAIL_HEADING_TOTAL_SDLT))
     } else {
-      (Some(RESULT_HEADING_AFTER_JULY_2020), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+      (Some(RESULT_HEADING_GENERIC), None, Some(DETAIL_HEADING_TOTAL_SDLT))
     }
 
     Result(
@@ -79,7 +79,7 @@ object FreeholdResultFactory {
     val (resHeading, resHint, detailHeading) =
       (asPrevResult, afterMarch2021, nonUKResident) match {
         case (true, false, false) => (Some(RESULT_HEADING_BEFORE_APR_2016), Some(RESULT_HINT_EXCHANGE_BEFORE_NOV_2015), Some(DETAIL_HEADING_TOTAL_SDLT_BEFORE_APR_2016))
-        case (false, true, false) => (Some(RESULT_HEADING_AFTER_JULY_2020), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+        case (false, _, false) => (Some(RESULT_HEADING_GENERIC), None, Some(DETAIL_HEADING_TOTAL_SDLT))
         case (true, true, true) if individual => (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), Some(RESULT_HINT_NON_UK_RES_WITHIN_12M), Some(DETAIL_HEADING_TOTAL_SDLT))
         case (true, true, true) if !individual => (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), None, Some(DETAIL_HEADING_TOTAL_SDLT))
         case (true, true, false) => (Some(DETAIL_ADDITIONAL_DWELLINGS), Some(RESULT_HINT_EXCHANGE_JULY_20), Some(DETAIL_HEADING_TOTAL_SDLT))
@@ -109,7 +109,7 @@ object FreeholdResultFactory {
 
     Result(
       totalTax = slabResult.taxDue.toInt,
-      resultHeading = None,
+      resultHeading = Some(RESULT_HEADING_GENERIC),
       resultHint = None,
       npv = None,
       taxCalcs = Seq(
@@ -133,7 +133,7 @@ object FreeholdResultFactory {
 
     val (resHeading, resHint) = if(asPrevResult) {
       (Some(RESULT_HEADING_BEFORE_MAR_2016), Some(RESULT_HINT_EXCHANGE_BEFORE_MAR_2016))
-    } else (None, None)
+    } else (Some(RESULT_HEADING_GENERIC), None)
 
     Result(
       totalTax = slabResult.taxDue.toInt,
@@ -178,36 +178,16 @@ object FreeholdResultFactory {
 
   //FTB
 
-  def freeholdResidentialJuly20OnwardsFTBResult(sliceResult: SliceResult): Result = {
-    Result(
-      totalTax = sliceResult.taxDue.toInt,
-      resultHeading = Some(RESULT_HEADING_AFTER_JULY_2020),
-      resultHint = None,
-      npv = None,
-      taxCalcs = Seq(
-        CalculationDetails(
-          taxType = TaxTypes.premium,
-          calcType = CalcTypes.slice,
-          detailHeading = Some(DETAIL_HEADING_TOTAL_SDLT),
-          bandHeading = Some(DETAIL_COL_HEADER_PURCHASE_PRICE),
-          detailFooter = Some(DETAIL_FOOTER_TOTAL),
-          taxDue = sliceResult.taxDue.toInt,
-          slices = Some(sliceResult.slices)
-        )
-      )
-    )
-  }
-
   def freeholdResidentialNov17OnwardsFTBResult(sliceResult: SliceResult, afterMarch2021: Boolean, prevResult: Boolean = false): Result = {
 
     val resHeading = if(afterMarch2021) {
       if(prevResult){
         Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES)
       } else {
-        Some(RESULT_HEADING_AFTER_JULY_2020)
+        Some(RESULT_HEADING_GENERIC)
       }
     } else {
-      None
+      Some(RESULT_HEADING_GENERIC)
     }
 
     val resHint = if(afterMarch2021) {
@@ -242,43 +222,8 @@ object FreeholdResultFactory {
   def freeholdResidentialJuly21OnwardsFTBResult(sliceResult: SliceResult, nonUKResident: Boolean): Result = {
     Result(
       totalTax = sliceResult.taxDue.toInt,
-      resultHeading = Some(RESULT_HEADING_AFTER_JULY_2020),
+      resultHeading = Some(RESULT_HEADING_GENERIC),
       resultHint = if(nonUKResident) Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021) else None,
-      npv = None,
-      taxCalcs = Seq(
-        CalculationDetails(
-          taxType = TaxTypes.premium,
-          calcType = CalcTypes.slice,
-          detailHeading = Some(DETAIL_HEADING_TOTAL_SDLT),
-          bandHeading = Some(DETAIL_COL_HEADER_PURCHASE_PRICE),
-          detailFooter = Some(DETAIL_FOOTER_TOTAL),
-          taxDue = sliceResult.taxDue.toInt,
-          slices = Some(sliceResult.slices)
-        )
-      )
-    )
-  }
-
-  //FTB + NRSDLT
-
-  def freeholdResidentialApril21OnwardsFTBNonUKResResult(sliceResult: SliceResult, prevResult: Boolean = false): Result = {
-
-    val resHeading = if(prevResult){
-      Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES)
-    } else {
-      Some(RESULT_HEADING_AFTER_JULY_2020)
-    }
-
-    val resHint = if(prevResult){
-      Some(RESULT_HINT_NON_UK_RES_WITHIN_12M)
-    } else {
-      None
-    }
-
-    Result(
-      totalTax = sliceResult.taxDue.toInt,
-      resultHeading = resHeading,
-      resultHint = resHint,
       npv = None,
       taxCalcs = Seq(
         CalculationDetails(
@@ -304,7 +249,7 @@ object FreeholdResultFactory {
 
     Result(
       totalTax = sliceResult.taxDue.toInt,
-      resultHeading = Some(RESULT_HEADING_AFTER_JULY_2020),
+      resultHeading = Some(RESULT_HEADING_GENERIC),
       resultHint = resHint,
       npv = None,
       taxCalcs = Seq(
@@ -324,7 +269,7 @@ object FreeholdResultFactory {
   def freeholdResidentialAddPropApr16OnwardsResult(sliceResult: SliceResult, refundEntitlement: Option[Int], afterMarch2021: Boolean): Result = {
 
     val (resHeading, resHint, detailHeading) = if(afterMarch2021) {
-      (Some(RESULT_HEADING_AFTER_JULY_2020),
+      (Some(RESULT_HEADING_GENERIC),
         refundEntitlement.map { amount =>
           s"$RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}."},
         Some(DETAIL_HEADING_TOTAL_SDLT)
@@ -365,9 +310,9 @@ object FreeholdResultFactory {
       case (true, false, _) =>
         (Some(RESULT_HEADING_AFTER_MARCH_2021_NON_RES), Some(RESULT_HINT_NON_UK_RES_WITHIN_12M), Some(DETAIL_HEADING_TOTAL_SDLT))
       case (_, _, true) =>
-        (Some(RESULT_HEADING_AFTER_JULY_2020), Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021), Some(DETAIL_HEADING_TOTAL_SDLT))
+        (Some(RESULT_HEADING_GENERIC), Some(RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021), Some(DETAIL_HEADING_TOTAL_SDLT))
       case (_, _, false) =>
-        (Some(RESULT_HEADING_AFTER_JULY_2020), None, Some(DETAIL_HEADING_TOTAL_SDLT))
+        (Some(RESULT_HEADING_GENERIC), None, Some(DETAIL_HEADING_TOTAL_SDLT))
     }
 
     Result(
@@ -446,7 +391,7 @@ object FreeholdResultFactory {
   def freeholdResidentialAddPropJuly21OnwardsResultNonUKRes(sliceResult: SliceResult, refundEntitlement: Option[Int]): Result = {
 
     val (resHeading, resHint, detailHeading) =
-      (Some(RESULT_HEADING_AFTER_JULY_2020),
+      (Some(RESULT_HEADING_GENERIC),
         refundEntitlement.map { amount =>
           s"$RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021$RESULT_HINT_ADDNL_PROP_REFUND${StringUtils.intToMonetaryString(amount)}.$RESULT_HINT_NRSDLT_REFUND"},
         Some(DETAIL_HEADING_TOTAL_SDLT)

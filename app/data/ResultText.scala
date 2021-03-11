@@ -51,7 +51,7 @@ object ResultText {
   val RESULT_HEADING_BEFORE_MAR_2016       = s"$RESULT_HEADING_BEFORE $DATE_17_03_2016"
   val RESULT_HINT_EXCHANGE_BEFORE_MAR_2016 = s"$RESULT_HINT_EXCHANGE_BEFORE $DATE_17_03_2016."
   val RESULT_HEADING_BEFORE_APR_2016       = s"$RESULT_HEADING_BEFORE $DATE_01_04_2016"
-  val RESULT_HEADING_AFTER_JULY_2020 = "Results of calculation based on SDLT rules for the effective date entered"
+  val RESULT_HEADING_GENERIC = "Results of calculation based on SDLT rules for the effective date entered"
   val RESULT_HEADING_AFTER_MARCH_2021_NON_RES = "Result if you become eligible for a repayment of the non-resident rate of SDLT"
   val RESULT_HINT_EXCHANGE_BEFORE_NOV_2015 = s"$RESULT_HINT_EXCHANGE_BEFORE $DATE_26_11_2015."
   val RESULT_HINT_EXCHANGE_JULY_20 = s"$RESULT_HINT_DISPOSE_BEFORE."

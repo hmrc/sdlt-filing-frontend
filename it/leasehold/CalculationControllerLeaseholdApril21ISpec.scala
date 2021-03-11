@@ -26,7 +26,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
   "Hitting the /calculate route" should {
     "return a 200 and valid result for leasehold property type" when {
 
-      "the effective date is APR 1 2021 [NRB500 Leasehold Business Threads]" when {
+      "the effective date is APR 1 2021" when {
 
         "non-residential, company, Additional Property" in{
           def request: WSResponse = ws.url(
@@ -914,350 +914,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
 
           "the purchaser(s) is an individual" when {
 
-            "residential 1M Premium, NRSDLT (NRB500 Leasehold Business Thread 3)" in {
-              def request: WSResponse = ws.url(
-                calculateUrl)
-                .post(
-                  Json.parse(
-                    """
-                      |{
-                      |  "holdingType": "Leasehold",
-                      |  "propertyType": "Residential",
-                      |  "effectiveDateDay": 1,
-                      |  "effectiveDateMonth": 4,
-                      |  "effectiveDateYear": 2021,
-                      |  "nonUKResident": "Yes",
-                      |  "premium": 1000000,
-                      |  "highestRent": 9100,
-                      |  "propertyDetails": {
-                      |     "individual": "Yes",
-                      |     "twoOrMoreProperties": "No"
-                      |   },
-                      |  "leaseDetails": {
-                      |    "startDateDay": 1,
-                      |    "startDateMonth": 4,
-                      |    "startDateYear": 2021,
-                      |    "endDateDay": 31,
-                      |    "endDateMonth": 3,
-                      |    "endDateYear": 2121,
-                      |    "leaseTerm":  {
-                      |      "years":100,
-                      |      "days": 0,
-                      |      "daysInPartialYear": 0
-                      |     },
-                      |    "year1Rent": 9100,
-                      |    "year2Rent": 9100,
-                      |    "year3Rent": 9100,
-                      |    "year4Rent": 9100,
-                      |    "year5Rent": 9100
-                      |  }
-                      |}
-              """.stripMargin)
-                )
-
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |"result":[
-                  |  {
-                  |   "totalTax":53783,
-                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
-                  |   "npv":251664,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":5033,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":2,
-                  |       "taxDue":5033
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":3,
-                  |       "taxDue":0
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":48750,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":2,
-                  |      "taxDue":10000
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":7,
-                  |      "taxDue":29750
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":12,
-                  |      "taxDue":9000
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":14,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  },{
-                  |    "totalTax":28750,
-                  |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
-                  |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
-                  |    "npv":251664,
-                  |    "taxCalcs":[
-                  |    {
-                  |     "taxType":"rent",
-                  |     "calcType":"slice",
-                  |     "taxDue":0,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |     "bandHeading":"Rent bands (£)",
-                  |     "detailFooter":"SDLT due on the rent",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":0,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":-1,
-                  |      "rate":1,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":28750,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":0,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":5,
-                  |      "taxDue":21250
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":10,
-                  |      "taxDue":7500
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":12,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  }
-                  | ]
-                  |}""".stripMargin
-              )
-
-              request.status shouldBe OK
-              request.json shouldBe responseJson
-            }
-
-            "residential, 550K Premium (NRB500 Leasehold Business Thread 9)" in {
-              def request: WSResponse = ws.url(
-                calculateUrl)
-                .post(
-                  Json.parse(
-                    """
-                      |{
-                      |  "holdingType": "Leasehold",
-                      |  "propertyType": "Residential",
-                      |  "effectiveDateDay": 1,
-                      |  "effectiveDateMonth": 4,
-                      |  "effectiveDateYear": 2021,
-                      |  "nonUKResident": "Yes",
-                      |  "premium": 550000,
-                      |  "highestRent": 99000,
-                      |  "propertyDetails": {
-                      |     "individual": "Yes",
-                      |     "twoOrMoreProperties": "No"
-                      |   },
-                      |  "leaseDetails": {
-                      |    "startDateDay": 1,
-                      |    "startDateMonth": 4,
-                      |    "startDateYear": 2021,
-                      |    "endDateDay": 31,
-                      |    "endDateMonth": 3,
-                      |    "endDateYear": 2121,
-                      |    "leaseTerm":  {
-                      |      "years":100,
-                      |      "days": 0,
-                      |      "daysInPartialYear": 0
-                      |     },
-                      |    "year1Rent": 99000,
-                      |    "year2Rent": 99000,
-                      |    "year3Rent": 99000,
-                      |    "year4Rent": 99000,
-                      |    "year5Rent": 99000
-                      |  }
-                      |}
-              """.stripMargin)
-                )
-
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |"result":[
-                  |  {
-                  |   "totalTax":90636,
-                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
-                  |   "npv":2737887,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":77136,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":2,
-                  |       "taxDue":10000
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":3,
-                  |       "taxDue":67136
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":13500,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":2,
-                  |      "taxDue":10000
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":7,
-                  |      "taxDue":3500
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":12,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":14,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  },{
-                  |    "totalTax":24878,
-                  |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
-                  |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
-                  |    "npv":2737887,
-                  |    "taxCalcs":[
-                  |    {
-                  |     "taxType":"rent",
-                  |     "calcType":"slice",
-                  |     "taxDue":22378,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |     "bandHeading":"Rent bands (£)",
-                  |     "detailFooter":"SDLT due on the rent",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":0,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":-1,
-                  |      "rate":1,
-                  |      "taxDue":22378
-                  |      }
-                  |     ]
-                  |    },
-                  |   {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":2500,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":0,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":5,
-                  |      "taxDue":2500
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":10,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":12,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  }
-                  | ]
-                  |}
-          """.stripMargin)
-              request.status shouldBe OK
-              request.json shouldBe responseJson
-            }
-
-            "residential, 300K Premium" in {
+            "residential, 300K Premium 100Y Lease + NRSDLT (Scenario 1)" in {
               def request: WSResponse = ws.url(
                 calculateUrl)
                 .post(
@@ -1296,8 +953,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                       |    "year4Rent": 99000,
                       |    "year5Rent": 99000
                       |  }
-                      |}
-              """.stripMargin)
+                      |}""".stripMargin)
                 )
 
               val responseJson = Json.parse(
@@ -1424,13 +1080,120 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |   ]
                   |  }
                   | ]
-                  |}
-          """.stripMargin)
+                  |}""".stripMargin)
               request.status shouldBe OK
               request.json shouldBe responseJson
             }
 
-            "residential, 30K Premium + Rent < 1K (NRSDLT out of scope)" in {
+            "residential, 500K Premium 1Y Lease NRSDLT out of scope (Scenario 2)" in {
+              def request: WSResponse = ws.url(
+                calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 4,
+                      |  "effectiveDateYear": 2021,
+                      |  "nonUKResident": "Yes",
+                      |  "premium": 500000,
+                      |  "highestRent": 99000,
+                      |  "ownedOtherProperties": "Yes",
+                      |  "propertyDetails": {
+                      |     "individual": "Yes",
+                      |     "twoOrMoreProperties": "Yes",
+                      |     "replaceMainResidence": "Yes"
+                      |   },
+                      |  "leaseDetails": {
+                      |    "startDateDay": 1,
+                      |    "startDateMonth": 4,
+                      |    "startDateYear": 2021,
+                      |    "endDateDay": 31,
+                      |    "endDateMonth": 3,
+                      |    "endDateYear": 2022,
+                      |    "leaseTerm":  {
+                      |      "years":1,
+                      |      "days": 0,
+                      |      "daysInPartialYear": 0
+                      |     },
+                      |    "year1Rent": 99000
+                      |  }
+                      |}""".stripMargin)
+                )
+
+              val responseJson = Json.parse(
+                """
+                  |{
+                  |"result":[
+                  |  {
+                  |   "totalTax":0,
+                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                  |   "npv":95652,
+                  |   "taxCalcs":[
+                  |     {
+                  |      "taxType":"rent",
+                  |      "calcType":"slice",
+                  |      "taxDue":0,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |      "bandHeading":"Rent bands (£)",
+                  |      "detailFooter":"SDLT due on the rent",
+                  |      "slices":[
+                  |      {
+                  |       "from":0,
+                  |       "to":500000,
+                  |       "rate":0,
+                  |       "taxDue":0
+                  |       },{
+                  |       "from":500000,
+                  |       "to":-1,
+                  |       "rate":1,
+                  |       "taxDue":0
+                  |       }
+                  |      ]
+                  |     },
+                  |    {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":0,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":5,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":10,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  }
+                  | ]
+                  |}""".stripMargin)
+
+              request.status shouldBe OK
+              request.json shouldBe responseJson
+            }
+
+            "residential, 30K Premium 100Y Lease + NRSDLT (Scenario 3)" in {
               def request: WSResponse = ws.url(
                 calculateUrl)
                 .post(
@@ -1444,12 +1207,351 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                       |  "effectiveDateYear": 2021,
                       |  "nonUKResident": "Yes",
                       |  "premium": 30000,
+                      |  "highestRent": 99000,
+                      |  "ownedOtherProperties": "Yes",
+                      |  "propertyDetails": {
+                      |     "individual": "Yes",
+                      |     "twoOrMoreProperties": "No"
+                      |   },
+                      |  "leaseDetails": {
+                      |    "startDateDay": 1,
+                      |    "startDateMonth": 4,
+                      |    "startDateYear": 2021,
+                      |    "endDateDay": 31,
+                      |    "endDateMonth": 3,
+                      |    "endDateYear": 2121,
+                      |    "leaseTerm":  {
+                      |      "years":100,
+                      |      "days": 0,
+                      |      "daysInPartialYear": 0
+                      |     },
+                      |    "year1Rent": 99000,
+                      |    "year2Rent": 99000,
+                      |    "year3Rent": 99000,
+                      |    "year4Rent": 99000,
+                      |    "year5Rent": 99000
+                      |  }
+                      |}""".stripMargin)
+                )
+
+              val responseJson = Json.parse(
+                """
+                  |{
+                  |"result":[
+                  |  {
+                  |   "totalTax":77736,
+                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                  |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
+                  |   "npv":2737887,
+                  |   "taxCalcs":[
+                  |     {
+                  |      "taxType":"rent",
+                  |      "calcType":"slice",
+                  |      "taxDue":77136,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |      "bandHeading":"Rent bands (£)",
+                  |      "detailFooter":"SDLT due on the rent",
+                  |      "slices":[
+                  |      {
+                  |       "from":0,
+                  |       "to":500000,
+                  |       "rate":2,
+                  |       "taxDue":10000
+                  |       },{
+                  |       "from":500000,
+                  |       "to":-1,
+                  |       "rate":3,
+                  |       "taxDue":67136
+                  |       }
+                  |      ]
+                  |     },
+                  |    {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":600,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":2,
+                  |      "taxDue":600
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":7,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":14,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  },{
+                  |    "totalTax":22378,
+                  |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
+                  |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
+                  |    "npv":2737887,
+                  |    "taxCalcs":[
+                  |    {
+                  |     "taxType":"rent",
+                  |     "calcType":"slice",
+                  |     "taxDue":22378,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |     "bandHeading":"Rent bands (£)",
+                  |     "detailFooter":"SDLT due on the rent",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":-1,
+                  |      "rate":1,
+                  |      "taxDue":22378
+                  |      }
+                  |     ]
+                  |    },
+                  |   {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":0,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":5,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":10,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  }
+                  | ]
+                  |}""".stripMargin)
+              request.status shouldBe OK
+              request.json shouldBe responseJson
+            }
+
+            "residential, 0 Premium 100Y Lease + NRSDLT (Scenario 4)" in {
+              def request: WSResponse = ws.url(
+                calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 4,
+                      |  "effectiveDateYear": 2021,
+                      |  "nonUKResident": "Yes",
+                      |  "premium": 0,
+                      |  "highestRent": 99000,
+                      |  "ownedOtherProperties": "Yes",
+                      |  "propertyDetails": {
+                      |     "individual": "Yes",
+                      |     "twoOrMoreProperties": "No"
+                      |   },
+                      |  "leaseDetails": {
+                      |    "startDateDay": 1,
+                      |    "startDateMonth": 4,
+                      |    "startDateYear": 2021,
+                      |    "endDateDay": 31,
+                      |    "endDateMonth": 3,
+                      |    "endDateYear": 2121,
+                      |    "leaseTerm":  {
+                      |      "years":100,
+                      |      "days": 0,
+                      |      "daysInPartialYear": 0
+                      |     },
+                      |    "year1Rent": 99000,
+                      |    "year2Rent": 99000,
+                      |    "year3Rent": 99000,
+                      |    "year4Rent": 99000,
+                      |    "year5Rent": 99000
+                      |  }
+                      |}""".stripMargin)
+                )
+
+              val responseJson = Json.parse(
+                """
+                  |{
+                  |"result":[
+                  |  {
+                  |   "totalTax":77136,
+                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                  |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
+                  |   "npv":2737887,
+                  |   "taxCalcs":[
+                  |     {
+                  |      "taxType":"rent",
+                  |      "calcType":"slice",
+                  |      "taxDue":77136,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |      "bandHeading":"Rent bands (£)",
+                  |      "detailFooter":"SDLT due on the rent",
+                  |      "slices":[
+                  |      {
+                  |       "from":0,
+                  |       "to":500000,
+                  |       "rate":2,
+                  |       "taxDue":10000
+                  |       },{
+                  |       "from":500000,
+                  |       "to":-1,
+                  |       "rate":3,
+                  |       "taxDue":67136
+                  |       }
+                  |      ]
+                  |     },
+                  |    {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":0,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":2,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":7,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":14,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  },{
+                  |    "totalTax":22378,
+                  |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
+                  |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
+                  |    "npv":2737887,
+                  |    "taxCalcs":[
+                  |    {
+                  |     "taxType":"rent",
+                  |     "calcType":"slice",
+                  |     "taxDue":22378,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |     "bandHeading":"Rent bands (£)",
+                  |     "detailFooter":"SDLT due on the rent",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":-1,
+                  |      "rate":1,
+                  |      "taxDue":22378
+                  |      }
+                  |     ]
+                  |    },
+                  |   {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":0,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":5,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":10,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  }
+                  | ]
+                  |}""".stripMargin)
+              request.status shouldBe OK
+              request.json shouldBe responseJson
+            }
+
+            "residential, 0 Premium + Rent < 1K NRDLT out of scope (Scenario 5)" in {
+              def request: WSResponse = ws.url(
+                calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 4,
+                      |  "effectiveDateYear": 2021,
+                      |  "nonUKResident": "Yes",
+                      |  "premium": 0,
                       |  "highestRent": 999,
                       |  "ownedOtherProperties": "Yes",
                       |  "propertyDetails": {
                       |     "individual": "Yes",
-                      |     "twoOrMoreProperties": "Yes",
-                      |     "replaceMainResidence": "Yes"
+                      |     "twoOrMoreProperties": "No"
                       |   },
                       |  "leaseDetails": {
                       |    "startDateDay": 1,
@@ -1544,7 +1646,346 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
               request.json shouldBe responseJson
             }
 
-            "residential, one year rent input" in {
+            "residential, 550K Premium 100Y Lease Rent < 1K + NRSDLT (Scenario 6)" in {
+              def request: WSResponse = ws.url(
+                calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 4,
+                      |  "effectiveDateYear": 2021,
+                      |  "nonUKResident": "Yes",
+                      |  "premium": 550000,
+                      |  "highestRent": 999,
+                      |  "propertyDetails": {
+                      |     "individual": "Yes",
+                      |     "twoOrMoreProperties": "No"
+                      |   },
+                      |  "leaseDetails": {
+                      |    "startDateDay": 1,
+                      |    "startDateMonth": 4,
+                      |    "startDateYear": 2021,
+                      |    "endDateDay": 31,
+                      |    "endDateMonth": 3,
+                      |    "endDateYear": 2121,
+                      |    "leaseTerm":  {
+                      |      "years":100,
+                      |      "days": 0,
+                      |      "daysInPartialYear": 0
+                      |     },
+                      |    "year1Rent": 999,
+                      |    "year2Rent": 999,
+                      |    "year3Rent": 999,
+                      |    "year4Rent": 999,
+                      |    "year5Rent": 999
+                      |  }
+                      |}""".stripMargin)
+                )
+
+              val responseJson = Json.parse(
+                """
+                  |{
+                  |"result":[
+                  |  {
+                  |   "totalTax":14052,
+                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                  |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
+                  |   "npv":27627,
+                  |   "taxCalcs":[
+                  |     {
+                  |      "taxType":"rent",
+                  |      "calcType":"slice",
+                  |      "taxDue":552,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |      "bandHeading":"Rent bands (£)",
+                  |      "detailFooter":"SDLT due on the rent",
+                  |      "slices":[
+                  |      {
+                  |       "from":0,
+                  |       "to":500000,
+                  |       "rate":2,
+                  |       "taxDue":552
+                  |       },{
+                  |       "from":500000,
+                  |       "to":-1,
+                  |       "rate":3,
+                  |       "taxDue":0
+                  |       }
+                  |      ]
+                  |     },
+                  |    {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":13500,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":2,
+                  |      "taxDue":10000
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":7,
+                  |      "taxDue":3500
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":14,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  },{
+                  |    "totalTax":2500,
+                  |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
+                  |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
+                  |    "npv":27627,
+                  |    "taxCalcs":[
+                  |    {
+                  |     "taxType":"rent",
+                  |     "calcType":"slice",
+                  |     "taxDue":0,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |     "bandHeading":"Rent bands (£)",
+                  |     "detailFooter":"SDLT due on the rent",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":-1,
+                  |      "rate":1,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    },
+                  |   {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":2500,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":5,
+                  |      "taxDue":2500
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":10,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  }
+                  | ]
+                  |}""".stripMargin)
+              request.status shouldBe OK
+              request.json shouldBe responseJson
+            }
+
+            "residential, 300K Premium + NRSDT and HRAD (Scenario 7)" in {
+              def request: WSResponse = ws.url(
+                calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 4,
+                      |  "effectiveDateYear": 2021,
+                      |  "nonUKResident": "Yes",
+                      |  "premium": 300000,
+                      |  "highestRent": 99000,
+                      |  "propertyDetails": {
+                      |     "individual": "Yes",
+                      |     "twoOrMoreProperties": "Yes",
+                      |     "replaceMainResidence": "No"
+                      |   },
+                      |  "leaseDetails": {
+                      |    "startDateDay": 15,
+                      |    "startDateMonth": 1,
+                      |    "startDateYear": 2021,
+                      |    "endDateDay": 31,
+                      |    "endDateMonth": 3,
+                      |    "endDateYear": 2121,
+                      |    "leaseTerm":  {
+                      |      "years": 100,
+                      |      "days": 0,
+                      |      "daysInPartialYear": 0
+                      |     },
+                      |    "year1Rent": 99000,
+                      |    "year2Rent": 99000,
+                      |    "year3Rent": 99000,
+                      |    "year4Rent": 99000,
+                      |    "year5Rent": 99000
+                      |  }
+                      |}""".stripMargin)
+                )
+
+              val responseJson = Json.parse(
+                """
+                  |{
+                  |"result":[
+                  |  {
+                  |   "totalTax":92136,
+                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                  |   "resultHint":"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. If you dispose of your previous main residence within 3 years you may be eligible for a refund of £9,000.<br /><br />You may also be eligible for a refund of the non-resident rate.",
+                  |   "npv":2737887,
+                  |   "taxCalcs":[
+                  |     {
+                  |      "taxType":"rent",
+                  |      "calcType":"slice",
+                  |      "taxDue":77136,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |      "bandHeading":"Rent bands (£)",
+                  |      "detailFooter":"SDLT due on the rent",
+                  |      "slices":[
+                  |      {
+                  |       "from":0,
+                  |       "to":500000,
+                  |       "rate":2,
+                  |       "taxDue":10000
+                  |       },{
+                  |       "from":500000,
+                  |       "to":-1,
+                  |       "rate":3,
+                  |       "taxDue":67136
+                  |       }
+                  |      ]
+                  |     },
+                  |    {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":15000,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":5,
+                  |      "taxDue":15000
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":10,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":15,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":17,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  },{
+                  |  "totalTax":83136,
+                  |  "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
+                  |  "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
+                  |  "npv":2737887,
+                  |  "taxCalcs":[
+                  |   {
+                  |    "taxType":"rent",
+                  |    "calcType":"slice",
+                  |    "taxDue":77136,
+                  |    "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |    "bandHeading":"Rent bands (£)",
+                  |    "detailFooter":"SDLT due on the rent",
+                  |    "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":2,
+                  |      "taxDue":10000
+                  |      },{
+                  |      "from":500000,
+                  |      "to":-1,
+                  |      "rate":3,
+                  |      "taxDue":67136
+                  |      }
+                  |      ]
+                  |     },{
+                  |      "taxType":"premium",
+                  |      "calcType":"slice",
+                  |      "taxDue":6000,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |      "bandHeading":"Premium bands (£)",
+                  |      "detailFooter":"SDLT due on the premium",
+                  |      "slices":[
+                  |       {
+                  |        "from":0,
+                  |        "to":500000,
+                  |        "rate":2,
+                  |        "taxDue":6000
+                  |        },{
+                  |        "from":500000,
+                  |        "to":925000,
+                  |        "rate":7,
+                  |        "taxDue":0
+                  |        },{
+                  |        "from":925000,
+                  |        "to":1500000,
+                  |        "rate":12,
+                  |        "taxDue":0
+                  |        },{
+                  |        "from":1500000,
+                  |        "to":-1,
+                  |        "rate":14,
+                  |        "taxDue":0
+                  |        }
+                  |       ]
+                  |      }
+                  |    ]
+                  |   }
+                  | ]
+                  |}""".stripMargin)
+
+              request.status shouldBe OK
+              request.json shouldBe responseJson
+            }
+
+            "residential, 500K Premium 1Y Lease + NRSDLT and HRAD both out of scope (Scenario 8)" in {
               def request: WSResponse = ws.url(
                 calculateUrl)
                 .post(
@@ -1563,7 +2004,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                       |  "propertyDetails": {
                       |     "individual": "Yes",
                       |     "twoOrMoreProperties": "Yes",
-                      |     "replaceMainResidence": "Yes"
+                      |     "replaceMainResidence": "No"
                       |   },
                       |  "leaseDetails": {
                       |    "startDateDay": 1,
@@ -1579,8 +2020,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                       |     },
                       |    "year1Rent": 99000
                       |  }
-                      |}
-              """.stripMargin)
+                      |}""".stripMargin)
                 )
 
               val responseJson = Json.parse(
@@ -1588,15 +2028,126 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |{
                   |"result":[
                   |  {
-                  |   "totalTax":11913,
+                  |   "totalTax":0,
                   |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
                   |   "npv":95652,
                   |   "taxCalcs":[
                   |     {
                   |      "taxType":"rent",
                   |      "calcType":"slice",
-                  |      "taxDue":1913,
+                  |      "taxDue":0,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |      "bandHeading":"Rent bands (£)",
+                  |      "detailFooter":"SDLT due on the rent",
+                  |      "slices":[
+                  |      {
+                  |       "from":0,
+                  |       "to":500000,
+                  |       "rate":0,
+                  |       "taxDue":0
+                  |       },{
+                  |       "from":500000,
+                  |       "to":-1,
+                  |       "rate":1,
+                  |       "taxDue":0
+                  |       }
+                  |      ]
+                  |     },
+                  |    {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":0,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":5,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":10,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  }
+                  | ]
+                  |}""".stripMargin)
+
+              request.status shouldBe OK
+              request.json shouldBe responseJson
+            }
+
+            "residential, 30K Premium 100Y Lease + NRSDLT but HRAD out of scope (Scenario 9)" in {
+              def request: WSResponse = ws.url(
+                calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 4,
+                      |  "effectiveDateYear": 2021,
+                      |  "nonUKResident": "Yes",
+                      |  "premium": 30000,
+                      |  "highestRent": 99000,
+                      |  "propertyDetails": {
+                      |     "individual": "Yes",
+                      |     "twoOrMoreProperties": "Yes",
+                      |     "replaceMainResidence": "No"
+                      |   },
+                      |  "leaseDetails": {
+                      |    "startDateDay": 15,
+                      |    "startDateMonth": 1,
+                      |    "startDateYear": 2021,
+                      |    "endDateDay": 31,
+                      |    "endDateMonth": 3,
+                      |    "endDateYear": 2121,
+                      |    "leaseTerm":  {
+                      |      "years": 100,
+                      |      "days": 0,
+                      |      "daysInPartialYear": 0
+                      |     },
+                      |    "year1Rent": 99000,
+                      |    "year2Rent": 99000,
+                      |    "year3Rent": 99000,
+                      |    "year4Rent": 99000,
+                      |    "year5Rent": 99000
+                      |  }
+                      |}""".stripMargin)
+                )
+
+              val responseJson = Json.parse(
+                """
+                  |{
+                  |"result":[
+                  |  {
+                  |   "totalTax":77736,
+                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                  |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
+                  |   "npv":2737887,
+                  |   "taxCalcs":[
+                  |     {
+                  |      "taxType":"rent",
+                  |      "calcType":"slice",
+                  |      "taxDue":77136,
                   |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
                   |      "bandHeading":"Rent bands (£)",
                   |      "detailFooter":"SDLT due on the rent",
@@ -1605,19 +2156,19 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |       "from":0,
                   |       "to":500000,
                   |       "rate":2,
-                  |       "taxDue":1913
+                  |       "taxDue":10000
                   |       },{
                   |       "from":500000,
                   |       "to":-1,
                   |       "rate":3,
-                  |       "taxDue":0
+                  |       "taxDue":67136
                   |       }
                   |      ]
                   |     },
                   |    {
                   |     "taxType":"premium",
                   |     "calcType":"slice",
-                  |     "taxDue":10000,
+                  |     "taxDue":600,
                   |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
                   |     "bandHeading":"Premium bands (£)",
                   |     "detailFooter":"SDLT due on the premium",
@@ -1626,7 +2177,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |      "from":0,
                   |      "to":500000,
                   |      "rate":2,
-                  |      "taxDue":10000
+                  |      "taxDue":600
                   |      },{
                   |      "from":500000,
                   |      "to":925000,
@@ -1647,15 +2198,184 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |    }
                   |   ]
                   |  },{
-                  |    "totalTax":0,
+                  |  "totalTax":22378,
+                  |  "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
+                  |  "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
+                  |  "npv":2737887,
+                  |  "taxCalcs":[
+                  |   {
+                  |    "taxType":"rent",
+                  |    "calcType":"slice",
+                  |    "taxDue":22378,
+                  |    "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |    "bandHeading":"Rent bands (£)",
+                  |    "detailFooter":"SDLT due on the rent",
+                  |    "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":-1,
+                  |      "rate":1,
+                  |      "taxDue":22378
+                  |      }
+                  |      ]
+                  |     },{
+                  |      "taxType":"premium",
+                  |      "calcType":"slice",
+                  |      "taxDue":0,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |      "bandHeading":"Premium bands (£)",
+                  |      "detailFooter":"SDLT due on the premium",
+                  |      "slices":[
+                  |       {
+                  |        "from":0,
+                  |        "to":500000,
+                  |        "rate":0,
+                  |        "taxDue":0
+                  |        },{
+                  |        "from":500000,
+                  |        "to":925000,
+                  |        "rate":5,
+                  |        "taxDue":0
+                  |        },{
+                  |        "from":925000,
+                  |        "to":1500000,
+                  |        "rate":10,
+                  |        "taxDue":0
+                  |        },{
+                  |        "from":1500000,
+                  |        "to":-1,
+                  |        "rate":12,
+                  |        "taxDue":0
+                  |        }
+                  |       ]
+                  |      }
+                  |    ]
+                  |   }
+                  | ]
+                  |}""".stripMargin)
+
+              request.status shouldBe OK
+              request.json shouldBe responseJson
+            }
+
+            "residential, 0 Premium 100Y Lease + NRSDLT but HRAD out of scope (Scenario 10)" in {
+              def request: WSResponse = ws.url(
+                calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 4,
+                      |  "effectiveDateYear": 2021,
+                      |  "nonUKResident": "Yes",
+                      |  "premium": 0,
+                      |  "highestRent": 99000,
+                      |  "propertyDetails": {
+                      |     "individual": "Yes",
+                      |     "twoOrMoreProperties": "No"
+                      |   },
+                      |  "leaseDetails": {
+                      |    "startDateDay": 1,
+                      |    "startDateMonth": 4,
+                      |    "startDateYear": 2021,
+                      |    "endDateDay": 31,
+                      |    "endDateMonth": 3,
+                      |    "endDateYear": 2121,
+                      |    "leaseTerm":  {
+                      |      "years":100,
+                      |      "days": 0,
+                      |      "daysInPartialYear": 0
+                      |     },
+                      |    "year1Rent": 99000,
+                      |    "year2Rent": 99000,
+                      |    "year3Rent": 99000,
+                      |    "year4Rent": 99000,
+                      |    "year5Rent": 99000
+                      |  }
+                      |}""".stripMargin)
+                )
+
+              val responseJson = Json.parse(
+                """
+                  |{
+                  |"result":[
+                  |  {
+                  |   "totalTax":77136,
+                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                  |   "resultHint":"The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.",
+                  |   "npv":2737887,
+                  |   "taxCalcs":[
+                  |     {
+                  |      "taxType":"rent",
+                  |      "calcType":"slice",
+                  |      "taxDue":77136,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |      "bandHeading":"Rent bands (£)",
+                  |      "detailFooter":"SDLT due on the rent",
+                  |      "slices":[
+                  |      {
+                  |       "from":0,
+                  |       "to":500000,
+                  |       "rate":2,
+                  |       "taxDue":10000
+                  |       },{
+                  |       "from":500000,
+                  |       "to":-1,
+                  |       "rate":3,
+                  |       "taxDue":67136
+                  |       }
+                  |      ]
+                  |     },
+                  |    {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":0,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":2,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":7,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":14,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  },{
+                  |    "totalTax":22378,
                   |    "resultHeading":"Result if you become eligible for a repayment of the non-resident rate of SDLT",
                   |    "resultHint":"If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.",
-                  |    "npv":95652,
+                  |    "npv":2737887,
                   |    "taxCalcs":[
                   |    {
                   |     "taxType":"rent",
                   |     "calcType":"slice",
-                  |     "taxDue":0,
+                  |     "taxDue":22378,
                   |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
                   |     "bandHeading":"Rent bands (£)",
                   |     "detailFooter":"SDLT due on the rent",
@@ -1669,7 +2389,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |      "from":500000,
                   |      "to":-1,
                   |      "rate":1,
-                  |      "taxDue":0
+                  |      "taxDue":22378
                   |      }
                   |     ]
                   |    },
@@ -1707,14 +2427,13 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |   ]
                   |  }
                   | ]
-                  |}
-          """.stripMargin)
+                  |}""".stripMargin)
 
               request.status shouldBe OK
               request.json shouldBe responseJson
             }
 
-            "residential, 275K Premium + HRAD" in {
+            "residential, 0 Premium 100Y Lease <1K Rent HRAD/NRSDLT both out of scope (Scenario 11)" in {
               def request: WSResponse = ws.url(
                 calculateUrl)
                 .post(
@@ -1727,178 +2446,9 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                       |  "effectiveDateMonth": 4,
                       |  "effectiveDateYear": 2021,
                       |  "nonUKResident": "Yes",
-                      |  "premium": 275000,
-                      |  "highestRent": 99000,
-                      |  "propertyDetails": {
-                      |     "individual": "Yes",
-                      |     "twoOrMoreProperties": "Yes",
-                      |     "replaceMainResidence": "No"
-                      |   },
-                      |  "leaseDetails": {
-                      |    "startDateDay": 15,
-                      |    "startDateMonth": 1,
-                      |    "startDateYear": 1949,
-                      |    "endDateDay": 31,
-                      |    "endDateMonth": 3,
-                      |    "endDateYear": 2121,
-                      |    "leaseTerm":  {
-                      |      "years": 100,
-                      |      "days": 0,
-                      |      "daysInPartialYear": 0
-                      |     },
-                      |    "year1Rent": 99000,
-                      |    "year2Rent": 99000,
-                      |    "year3Rent": 99000,
-                      |    "year4Rent": 99000,
-                      |    "year5Rent": 99000
-                      |  }
-                      |}
-              """.stripMargin)
-                )
-
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |"result":[
-                  |  {
-                  |   "totalTax":90886,
-                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "resultHint":"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. If you dispose of your previous main residence within 3 years you may be eligible for a refund of £8,250.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                  |   "npv":2737887,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":77136,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":2,
-                  |       "taxDue":10000
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":3,
-                  |       "taxDue":67136
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":13750,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":5,
-                  |      "taxDue":13750
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":10,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":15,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":17,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  },{
-                  |  "totalTax":82636,
-                  |  "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
-                  |  "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                  |  "npv":2737887,
-                  |  "taxCalcs":[
-                  |   {
-                  |    "taxType":"rent",
-                  |    "calcType":"slice",
-                  |    "taxDue":77136,
-                  |    "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |    "bandHeading":"Rent bands (£)",
-                  |    "detailFooter":"SDLT due on the rent",
-                  |    "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":2,
-                  |      "taxDue":10000
-                  |      },{
-                  |      "from":500000,
-                  |      "to":-1,
-                  |      "rate":3,
-                  |      "taxDue":67136}
-                  |      ]
-                  |     },{
-                  |      "taxType":"premium",
-                  |      "calcType":"slice",
-                  |      "taxDue":5500,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |      "bandHeading":"Premium bands (£)",
-                  |      "detailFooter":"SDLT due on the premium",
-                  |      "slices":[
-                  |       {
-                  |        "from":0,
-                  |        "to":500000,
-                  |        "rate":2,
-                  |        "taxDue":5500
-                  |        },{
-                  |        "from":500000,
-                  |        "to":925000,
-                  |        "rate":7,
-                  |        "taxDue":0
-                  |        },{
-                  |        "from":925000,
-                  |        "to":1500000,
-                  |        "rate":12,
-                  |        "taxDue":0
-                  |        },{
-                  |        "from":1500000,
-                  |        "to":-1,
-                  |        "rate":14,
-                  |        "taxDue":0
-                  |        }
-                  |       ]
-                  |      }
-                  |    ]
-                  |   }
-                  | ]
-                  |}
-          """.stripMargin)
-              request.status shouldBe OK
-              request.json shouldBe responseJson
-            }
-
-            "residential, 2M Premium + HRAD (NRB500 Leasehold Business Thread 4)" in {
-              def request: WSResponse = ws.url(
-                calculateUrl)
-                .post(
-                  Json.parse(
-                    """
-                      |{
-                      |  "holdingType": "Leasehold",
-                      |  "propertyType": "Residential",
-                      |  "effectiveDateDay": 1,
-                      |  "effectiveDateMonth": 4,
-                      |  "effectiveDateYear": 2021,
-                      |  "nonUKResident": "Yes",
-                      |  "premium": 2000000,
-                      |  "highestRent": 9100,
+                      |  "premium": 0,
+                      |  "highestRent": 999,
+                      |  "ownedOtherProperties": "Yes",
                       |  "propertyDetails": {
                       |     "individual": "Yes",
                       |     "twoOrMoreProperties": "Yes",
@@ -1912,18 +2462,17 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                       |    "endDateMonth": 3,
                       |    "endDateYear": 2121,
                       |    "leaseTerm":  {
-                      |      "years": 100,
+                      |      "years":100,
                       |      "days": 0,
                       |      "daysInPartialYear": 0
                       |     },
-                      |    "year1Rent": 9100,
-                      |    "year2Rent": 9100,
-                      |    "year3Rent": 9100,
-                      |    "year4Rent": 9100,
-                      |    "year5Rent": 9100
+                      |    "year1Rent": 999,
+                      |    "year2Rent": 999,
+                      |    "year3Rent": 999,
+                      |    "year4Rent": 999,
+                      |    "year5Rent": 999
                       |  }
-                      |}""".stripMargin
-                  )
+                      |}""".stripMargin)
                 )
 
               val responseJson = Json.parse(
@@ -1931,15 +2480,126 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |{
                   |"result":[
                   |  {
-                  |   "totalTax":243783,
+                  |   "totalTax":0,
                   |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "resultHint":"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. If you dispose of your previous main residence within 3 years you may be eligible for a refund of £60,000.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                  |   "npv":251664,
+                  |   "npv":27627,
                   |   "taxCalcs":[
                   |     {
                   |      "taxType":"rent",
                   |      "calcType":"slice",
-                  |      "taxDue":5033,
+                  |      "taxDue":0,
+                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |      "bandHeading":"Rent bands (£)",
+                  |      "detailFooter":"SDLT due on the rent",
+                  |      "slices":[
+                  |      {
+                  |       "from":0,
+                  |       "to":500000,
+                  |       "rate":0,
+                  |       "taxDue":0
+                  |       },{
+                  |       "from":500000,
+                  |       "to":-1,
+                  |       "rate":1,
+                  |       "taxDue":0
+                  |       }
+                  |      ]
+                  |     },
+                  |    {
+                  |     "taxType":"premium",
+                  |     "calcType":"slice",
+                  |     "taxDue":0,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+                  |     "bandHeading":"Premium bands (£)",
+                  |     "detailFooter":"SDLT due on the premium",
+                  |     "slices":[
+                  |     {
+                  |      "from":0,
+                  |      "to":500000,
+                  |      "rate":0,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":500000,
+                  |      "to":925000,
+                  |      "rate":5,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":925000,
+                  |      "to":1500000,
+                  |      "rate":10,
+                  |      "taxDue":0
+                  |      },{
+                  |      "from":1500000,
+                  |      "to":-1,
+                  |      "rate":12,
+                  |      "taxDue":0
+                  |      }
+                  |     ]
+                  |    }
+                  |   ]
+                  |  }
+                  | ]
+                  |}""".stripMargin)
+
+              request.status shouldBe OK
+              request.json shouldBe responseJson
+            }
+
+            "residential, 550K Premium 100Y Lease Rent < 1K + HRAD and NRSDLT (Scenario 12)" in {
+              def request: WSResponse = ws.url(
+                calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 4,
+                      |  "effectiveDateYear": 2021,
+                      |  "nonUKResident": "Yes",
+                      |  "premium": 550000,
+                      |  "highestRent": 999,
+                      |  "propertyDetails": {
+                      |     "individual": "Yes",
+                      |     "twoOrMoreProperties": "Yes",
+                      |     "replaceMainResidence": "No"
+                      |   },
+                      |  "leaseDetails": {
+                      |    "startDateDay": 1,
+                      |    "startDateMonth": 4,
+                      |    "startDateYear": 2021,
+                      |    "endDateDay": 31,
+                      |    "endDateMonth": 3,
+                      |    "endDateYear": 2121,
+                      |    "leaseTerm":  {
+                      |      "years":100,
+                      |      "days": 0,
+                      |      "daysInPartialYear": 0
+                      |     },
+                      |    "year1Rent": 999,
+                      |    "year2Rent": 999,
+                      |    "year3Rent": 999,
+                      |    "year4Rent": 999,
+                      |    "year5Rent": 999
+                      |  }
+                      |}""".stripMargin)
+                )
+
+              val responseJson = Json.parse(
+                """
+                  |{
+                  |"result":[
+                  |  {
+                  |   "totalTax":30552,
+                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                  |   "resultHint":"Results of calculation based on SDLT rules for the effective date entered","resultHint":"The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. If you dispose of your previous main residence within 3 years you may be eligible for a refund of £16,500.<br /><br />You may also be eligible for a refund of the non-resident rate.",
+                  |   "npv":27627,
+                  |   "taxCalcs":[
+                  |     {
+                  |      "taxType":"rent",
+                  |      "calcType":"slice",
+                  |      "taxDue":552,
                   |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
                   |      "bandHeading":"Rent bands (£)",
                   |      "detailFooter":"SDLT due on the rent",
@@ -1948,7 +2608,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |       "from":0,
                   |       "to":500000,
                   |       "rate":2,
-                  |       "taxDue":5033
+                  |       "taxDue":552
                   |       },{
                   |       "from":500000,
                   |       "to":-1,
@@ -1960,7 +2620,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |    {
                   |     "taxType":"premium",
                   |     "calcType":"slice",
-                  |     "taxDue":238750,
+                  |     "taxDue":30000,
                   |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
                   |     "bandHeading":"Premium bands (£)",
                   |     "detailFooter":"SDLT due on the premium",
@@ -1974,40 +2634,40 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |      "from":500000,
                   |      "to":925000,
                   |      "rate":10,
-                  |      "taxDue":42500
+                  |      "taxDue":5000
                   |      },{
                   |      "from":925000,
                   |      "to":1500000,
                   |      "rate":15,
-                  |      "taxDue":86250
+                  |      "taxDue":0
                   |      },{
                   |      "from":1500000,
                   |      "to":-1,
                   |      "rate":17,
-                  |      "taxDue":85000
+                  |      "taxDue":0
                   |      }
                   |     ]
                   |    }
                   |   ]
                   |  },{
-                  |  "totalTax":183783,
-                  |  "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
-                  |  "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                  |  "npv":251664,
-                  |  "taxCalcs":[
-                  |   {
-                  |    "taxType":"rent",
-                  |    "calcType":"slice",
-                  |    "taxDue":5033,
-                  |    "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |    "bandHeading":"Rent bands (£)",
-                  |    "detailFooter":"SDLT due on the rent",
-                  |    "slices":[
+                  |    "totalTax":14052,
+                  |   "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
+                  |   "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
+                  |    "npv":27627,
+                  |    "taxCalcs":[
+                  |    {
+                  |     "taxType":"rent",
+                  |     "calcType":"slice",
+                  |     "taxDue":552,
+                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+                  |     "bandHeading":"Rent bands (£)",
+                  |     "detailFooter":"SDLT due on the rent",
+                  |     "slices":[
                   |     {
                   |      "from":0,
                   |      "to":500000,
                   |      "rate":2,
-                  |      "taxDue":5033
+                  |      "taxDue":552
                   |      },{
                   |      "from":500000,
                   |      "to":-1,
@@ -2015,183 +2675,11 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |      "taxDue":0
                   |      }
                   |     ]
-                  |     },{
-                  |      "taxType":"premium",
-                  |      "calcType":"slice",
-                  |      "taxDue":178750,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |      "bandHeading":"Premium bands (£)",
-                  |      "detailFooter":"SDLT due on the premium",
-                  |      "slices":[
-                  |       {
-                  |        "from":0,
-                  |        "to":500000,
-                  |        "rate":2,
-                  |        "taxDue":10000
-                  |        },{
-                  |        "from":500000,
-                  |        "to":925000,
-                  |        "rate":7,
-                  |        "taxDue":29750
-                  |        },{
-                  |        "from":925000,
-                  |        "to":1500000,
-                  |        "rate":12,
-                  |        "taxDue":69000
-                  |        },{
-                  |        "from":1500000,
-                  |        "to":-1,
-                  |        "rate":14,
-                  |        "taxDue":70000
-                  |        }
-                  |       ]
-                  |      }
-                  |    ]
-                  |   }
-                  | ]
-                  |}""".stripMargin
-              )
-
-              request.status shouldBe OK
-              request.json shouldBe responseJson
-            }
-
-            "residential, 30K Premium + HRAD" in {
-              def request: WSResponse = ws.url(
-                calculateUrl)
-                .post(
-                  Json.parse(
-                    """
-                      |{
-                      |  "holdingType": "Leasehold",
-                      |  "propertyType": "Residential",
-                      |  "effectiveDateDay": 1,
-                      |  "effectiveDateMonth": 4,
-                      |  "effectiveDateYear": 2021,
-                      |  "nonUKResident": "Yes",
-                      |  "premium": 30000,
-                      |  "highestRent": 99000,
-                      |  "propertyDetails": {
-                      |     "individual": "Yes",
-                      |     "twoOrMoreProperties": "Yes",
-                      |     "replaceMainResidence": "No"
-                      |   },
-                      |  "leaseDetails": {
-                      |    "startDateDay": 1,
-                      |    "startDateMonth": 4,
-                      |    "startDateYear": 2021,
-                      |    "endDateDay": 31,
-                      |    "endDateMonth": 3,
-                      |    "endDateYear": 2121,
-                      |    "leaseTerm":  {
-                      |      "years": 100,
-                      |      "days": 0,
-                      |      "daysInPartialYear": 0
-                      |     },
-                      |    "year1Rent": 99000,
-                      |    "year2Rent": 99000,
-                      |    "year3Rent": 99000,
-                      |    "year4Rent": 99000,
-                      |    "year5Rent": 99000
-                      |  }
-                      |}
-                """.stripMargin)
-                )
-
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |"result":[
-                  |  {
-                  |   "totalTax":77136,
-                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "npv":2737887,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":77136,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":2,
-                  |       "taxDue":10000
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":3,
-                  |       "taxDue":67136
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
+                  |    },
+                  |   {
                   |     "taxType":"premium",
                   |     "calcType":"slice",
-                  |     "taxDue":0,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":5,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":10,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":15,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":17,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  },
-                  |  {
-                  |   "totalTax":77136,
-                  |   "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
-                  |   "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                  |   "npv":2737887,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":77136,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":2,
-                  |       "taxDue":10000
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":3,
-                  |       "taxDue":67136
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":0,
+                  |     "taxDue":13500,
                   |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
                   |     "bandHeading":"Premium bands (£)",
                   |     "detailFooter":"SDLT due on the premium",
@@ -2200,12 +2688,12 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |      "from":0,
                   |      "to":500000,
                   |      "rate":2,
-                  |      "taxDue":0
+                  |      "taxDue":10000
                   |      },{
                   |      "from":500000,
                   |      "to":925000,
                   |      "rate":7,
-                  |      "taxDue":0
+                  |      "taxDue":3500
                   |      },{
                   |      "from":925000,
                   |      "to":1500000,
@@ -2222,522 +2710,8 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |   ]
                   |  }
                   | ]
-                  |}
-            """.stripMargin)
-              request.status shouldBe OK
-              request.json shouldBe responseJson
-            }
+                  |}""".stripMargin)
 
-            "residential, 30K Premium + HRAD + less than 7y lease (NRSDLT Exempt on Rent)" in {
-              def request: WSResponse = ws.url(
-                calculateUrl)
-                .post(
-                  Json.parse(
-                    """
-                      |{
-                      |  "holdingType": "Leasehold",
-                      |  "propertyType": "Residential",
-                      |  "effectiveDateDay": 1,
-                      |  "effectiveDateMonth": 4,
-                      |  "effectiveDateYear": 2021,
-                      |  "nonUKResident": "Yes",
-                      |  "premium": 30000,
-                      |  "highestRent": 99000,
-                      |  "propertyDetails": {
-                      |     "individual": "Yes",
-                      |     "twoOrMoreProperties": "Yes",
-                      |     "replaceMainResidence": "No"
-                      |   },
-                      |  "leaseDetails": {
-                      |    "startDateDay": 1,
-                      |    "startDateMonth": 4,
-                      |    "startDateYear": 2021,
-                      |    "endDateDay": 31,
-                      |    "endDateMonth": 3,
-                      |    "endDateYear": 2025,
-                      |    "leaseTerm":  {
-                      |      "years": 4,
-                      |      "days": 0,
-                      |      "daysInPartialYear": 0
-                      |     },
-                      |    "year1Rent": 99000,
-                      |    "year2Rent": 99000,
-                      |    "year3Rent": 99000,
-                      |    "year4Rent": 99000
-                      |  }
-                      |}
-              """.stripMargin)
-                )
-
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |"result":[
-                  |  {
-                  |   "totalTax":0,
-                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "npv":363634,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":0,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":0,
-                  |       "taxDue":0
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":1,
-                  |       "taxDue":0
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":0,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":5,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":10,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":15,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":17,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  },
-                  |  {
-                  |   "totalTax":0,
-                  |   "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
-                  |   "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                  |   "npv":363634,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":0,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":0,
-                  |       "taxDue":0
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":1,
-                  |       "taxDue":0
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":0,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":2,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":7,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":12,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":14,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  }
-                  | ]
-                  |}
-          """.stripMargin)
-              request.status shouldBe OK
-              request.json shouldBe responseJson
-            }
-
-            "residential, 30K Premium + HRAD + less than 7y lease + rent < 1000 (NRSDLT Exempt on Rent)" in {
-              def request: WSResponse = ws.url(
-                calculateUrl)
-                .post(
-                  Json.parse(
-                    """
-                      |{
-                      |  "holdingType": "Leasehold",
-                      |  "propertyType": "Residential",
-                      |  "effectiveDateDay": 1,
-                      |  "effectiveDateMonth": 4,
-                      |  "effectiveDateYear": 2021,
-                      |  "nonUKResident": "Yes",
-                      |  "premium": 30000,
-                      |  "highestRent": 999,
-                      |  "propertyDetails": {
-                      |     "individual": "Yes",
-                      |     "twoOrMoreProperties": "Yes",
-                      |     "replaceMainResidence": "No"
-                      |   },
-                      |  "leaseDetails": {
-                      |    "startDateDay": 1,
-                      |    "startDateMonth": 4,
-                      |    "startDateYear": 2021,
-                      |    "endDateDay": 31,
-                      |    "endDateMonth": 3,
-                      |    "endDateYear": 2025,
-                      |    "leaseTerm":  {
-                      |      "years": 4,
-                      |      "days": 0,
-                      |      "daysInPartialYear": 0
-                      |     },
-                      |    "year1Rent": 999,
-                      |    "year2Rent": 999,
-                      |    "year3Rent": 999,
-                      |    "year4Rent": 999
-                      |  }
-                      |}
-              """.stripMargin)
-                )
-
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |"result":[
-                  |  {
-                  |   "totalTax":0,
-                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "npv":3669,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":0,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":0,
-                  |       "taxDue":0
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":1,
-                  |       "taxDue":0
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":0,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":5,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":10,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":15,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":17,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  },
-                  |  {
-                  |   "totalTax":0,
-                  |   "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
-                  |   "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                  |   "npv":3669,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":0,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":0,
-                  |       "taxDue":0
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":1,
-                  |       "taxDue":0
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":0,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":2,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":7,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":12,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":14,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  }
-                  | ]
-                  |}
-          """.stripMargin)
-              request.status shouldBe OK
-              request.json shouldBe responseJson
-            }
-
-            "residential, 30K Premiums + HRAD + Rent < 1000 (NRSDLT Exempt on Rent)" in {
-              def request: WSResponse = ws.url(
-                calculateUrl)
-                .post(
-                  Json.parse(
-                    """
-                      |{
-                      |  "holdingType": "Leasehold",
-                      |  "propertyType": "Residential",
-                      |  "effectiveDateDay": 1,
-                      |  "effectiveDateMonth": 4,
-                      |  "effectiveDateYear": 2021,
-                      |  "nonUKResident": "Yes",
-                      |  "premium": 30000,
-                      |  "highestRent": 999,
-                      |  "propertyDetails": {
-                      |     "individual": "Yes",
-                      |     "twoOrMoreProperties": "Yes",
-                      |     "replaceMainResidence": "No"
-                      |   },
-                      |  "leaseDetails": {
-                      |    "startDateDay": 1,
-                      |    "startDateMonth": 4,
-                      |    "startDateYear": 2021,
-                      |    "endDateDay": 31,
-                      |    "endDateMonth": 3,
-                      |    "endDateYear": 2121,
-                      |    "leaseTerm":  {
-                      |      "years": 100,
-                      |      "days": 0,
-                      |      "daysInPartialYear": 0
-                      |     },
-                      |    "year1Rent": 999,
-                      |    "year2Rent": 999,
-                      |    "year3Rent": 999,
-                      |    "year4Rent": 999,
-                      |    "year5Rent": 999
-                      |  }
-                      |}
-                """.stripMargin)
-                )
-
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |"result":[
-                  |  {
-                  |   "totalTax":0,
-                  |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-                  |   "npv":27627,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":0,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":0,
-                  |       "taxDue":0
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":1,
-                  |       "taxDue":0
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":0,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":5,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":10,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":15,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":17,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  },
-                  |  {
-                  |   "totalTax":0,
-                  |   "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
-                  |   "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                  |   "npv":27627,
-                  |   "taxCalcs":[
-                  |     {
-                  |      "taxType":"rent",
-                  |      "calcType":"slice",
-                  |      "taxDue":0,
-                  |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
-                  |      "bandHeading":"Rent bands (£)",
-                  |      "detailFooter":"SDLT due on the rent",
-                  |      "slices":[
-                  |      {
-                  |       "from":0,
-                  |       "to":500000,
-                  |       "rate":0,
-                  |       "taxDue":0
-                  |       },{
-                  |       "from":500000,
-                  |       "to":-1,
-                  |       "rate":1,
-                  |       "taxDue":0
-                  |       }
-                  |      ]
-                  |     },
-                  |    {
-                  |     "taxType":"premium",
-                  |     "calcType":"slice",
-                  |     "taxDue":0,
-                  |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
-                  |     "bandHeading":"Premium bands (£)",
-                  |     "detailFooter":"SDLT due on the premium",
-                  |     "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":500000,
-                  |      "rate":2,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":500000,
-                  |      "to":925000,
-                  |      "rate":7,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":12,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":14,
-                  |      "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  }
-                  | ]
-                  |}
-            """.stripMargin)
               request.status shouldBe OK
               request.json shouldBe responseJson
             }
@@ -2790,7 +2764,6 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
 
           }
         }
-
       }
     }
   }

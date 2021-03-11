@@ -5,8 +5,9 @@
 
 package services
 
-import java.time.LocalDate
+import data.ResultText.RESULT_HEADING_GENERIC
 
+import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import models._
@@ -121,7 +122,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
 
   def baseResult(taxDue: Int,
                  calcDeets: CalculationDetails,
-                 resultHeading: Option[String] = None,
+                 resultHeading: Option[String] = Some(RESULT_HEADING_GENERIC),
                  resultHint: Option[String] = None,
                  npv: Option[Int] = None) = Result(
     totalTax = taxDue,
@@ -133,7 +134,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
 
   def basePrevResult(taxDue: Int,
                      calcDeets: CalculationDetails,
-                     resultHeading: Option[String] = None,
+                     resultHeading: Option[String] = Some(RESULT_HEADING_GENERIC),
                      resultHint: Option[String] = None,
                      npv: Option[Int] = None) = Result(
     totalTax = taxDue,
@@ -358,92 +359,6 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-//  "calculating freeholdResidentialJuly21OnwardsFTB" when {
-//
-//    "all purchasers are UK resident" should {
-//      val resultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")//
-//      val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
-//      val bandHeading: Option[String] = Some("Purchase price bands (£)")
-//      val detailFooter: Option[String] = Some("Total SDLT due")
-
-//
-//      "return 0 for purchase price of 299999" in {
-//        val resSlices = Seq(SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0))
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(299999, october2021EffectiveDate, Some(false)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//
-//      "return 0 for purchase price of 300000" in {
-//        val resSlices = Seq(SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0))
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(300000, october2021EffectiveDate, Some(false)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//
-//      "return 0 for purchase price of 499999" in {
-//        val resSlices = Seq(SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0))
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(499999, october2021EffectiveDate, Some(false)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//
-//      "return 0 for purchase price of 500000" in {
-//        val resSlices = Seq(SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0))
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(500000, october2021EffectiveDate, Some(false)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//
-//      "return 0 for purchase price of 500000 with final effective date" in {
-//        val resSlices = Seq(SliceDetails(from = 0, to = Some(500000), rate = 0, taxDue = 0))
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(500000, june2021EffectiveDate, Some(false)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//    }
-//
-//    "any purchasers are non-UK resident" should {
-//
-//      val resultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
-//      val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
-//      val bandHeading: Option[String] = Some("Purchase price bands (£)")
-//      val detailFooter: Option[String] = Some("Total SDLT due")
-//      val resSlices = Seq(SliceDetails(from = 0, to = Some(500000), rate = 2, taxDue = 0))
-//
-//      "return 0 for purchase price of 299999" in {
-//
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(299999, october2021EffectiveDate, Some(true)))
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//
-//      "return 0 for purchase price of 300000" in {
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(300000, october2021EffectiveDate, Some(true)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//
-//      "return 0 for purchase price of 499999" in {
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(499999, october2021EffectiveDate, Some(true)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//
-//      "return 0 for purchase price of 500000" in {
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(500000, october2021EffectiveDate, Some(true)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//
-//      "return 0 for purchase price of 500000 with final effective date" in {
-//        val res = testFreeholdCalcService.freeholdResidentialJuly20OnwardsFTB(baseRequestFTB(500000, june2021EffectiveDate, Some(true)))
-//
-//        res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter), resultHeading = resultHeading)
-//      }
-//    }
-//
-//  }
-
   "calculating freeholdResidentialAddPropJuly20Onwards" should {
 
     val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
@@ -457,22 +372,6 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
 
     val hintMessage: String = "The results are based on the answers you have provided and show that the higher rate on additional dwellings applies." +
       s" If you dispose of your previous main residence within 3 years you may be eligible for a refund of"
-
-
-    "return add props: 0, current: 0 for purchase price of 39999.99" in {
-      val addPropsSlices = july2020AddPropSlices(band1Tax = 0, band2Tax = 0, band3Tax = 0, band4Tax = 0)
-      val currentSlices = july2020Slices(band1Tax = 0, band2Tax = 0, band3Tax = 0, band4Tax = 0)
-      val res = testFreeholdCalcService.freeholdResidentialAddPropJuly20Onwards(baseRequestAddProps(39999.99, july2020EffectiveDate))
-
-      res shouldBe Seq(
-        baseResult(0,
-          baseCalculationDetails(0, addPropsSlices, detailHeading, bandHeading, detailFooter),
-          addPropResultHeading),
-        basePrevResult(0, prevSliceCalculationDetails(0, currentSlices, detailHeading, bandHeading, detailFooter),
-          currentResultHeading,
-          currentResultHint)
-      )
-    }
 
     "return add props: 1200, current: 0 for purchase price of 40000" in {
       val addPropsSlices = july2020AddPropSlices(band1Tax = 1200, band2Tax = 0, band3Tax = 0, band4Tax = 0)
@@ -510,7 +409,6 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
         )
       )
     }
-
 
     "return add props: 15000, current: 0 for purchase price of 500000" in {
       val addPropsSlices = july2020AddPropSlices(band1Tax = 15000, band2Tax = 0, band3Tax = 0, band4Tax = 0)
@@ -1229,36 +1127,6 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     val prevResultHeading: Option[String] = Some("Results based on SDLT rules before 1 April 2016")
     val prevResultHint: Option[String] = Some("You may be entitled to pay SDLT using the old rules if you exchanged contracts before " +
       "26 November 2015.")
-
-    "return current: 0, prev: 0 for purchase price of 39999.99" in {
-
-      val currentSlices = Seq(
-        SliceDetails(from = 0, to = Some(125000), rate = 3, taxDue = 0),
-        SliceDetails(from = 125000, to = Some(250000), rate = 5, taxDue = 0),
-        SliceDetails(from = 250000, to = Some(925000), rate = 8, taxDue = 0),
-        SliceDetails(from = 925000, to = Some(1500000), rate = 13, taxDue = 0),
-        SliceDetails(from = 1500000, to = None, rate = 15, taxDue = 0)
-      )
-      val prevSlices = Seq(
-        SliceDetails(from = 0, to = Some(125000), rate = 0, taxDue = 0),
-        SliceDetails(from = 125000, to = Some(250000), rate = 2, taxDue = 0),
-        SliceDetails(from = 250000, to = Some(925000), rate = 5, taxDue = 0),
-        SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 0),
-        SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 0)
-      )
-
-      val res = testFreeholdCalcService.freeholdResidentialAddPropApr16Onwards(baseRequestAddProps(39999.99, april2016EffectiveDate))
-      res shouldBe Seq(
-        baseResult(0,
-          baseCalculationDetails(0, currentSlices, detailHeading, bandHeading, detailFooter),
-          resultHeading),
-
-        basePrevResult(0,
-          prevSliceCalculationDetails(0, prevSlices, prevDetailHeading, bandHeading, detailFooter),
-          prevResultHeading,
-          prevResultHint)
-      )
-    }
 
     "return current: 1200, prev: 0 for purchase price of 40000" in {
 

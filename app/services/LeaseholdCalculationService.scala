@@ -164,9 +164,8 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     val npv = getNPV("leaseholdResidentialNov17Onwards", request.leaseDetails)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
-    val effectiveDateAfter31March2020: Boolean = request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE)
 
-    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv, effectiveDateAfter31March2020)
+    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv)
   }
 
   def leaseholdResidentialJuly21OnwardsFTB(request: Request): Result = {
@@ -174,9 +173,8 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     val npv = getNPV("leaseholdResidentialJuly21OnwardsFTB", request.leaseDetails)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
-    val effectiveDateAfter31March2020: Boolean = request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE)
 
-    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv, effectiveDateAfter31March2020)
+    LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv)
   }
 
   //NRSDLT

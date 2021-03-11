@@ -603,7 +603,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
-      private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, afterMarch2021 = true)
+      private val res = leaseholdResidentialNov17OnwardsFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv)
       service.leaseholdResidentialNov17OnwardsFTB(leaseholdResidentialNov17OnwardsFTBRequest(300000, april2021EffectiveEndDate)) shouldBe res
     }
 

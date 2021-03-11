@@ -14,33 +14,25 @@ object CalculationUtils extends DateUtil {
     premium < 40000
   }
 
-  def leaseholdNRSDLTOutOfScopeForLeaseAndPremium(premium: BigDecimal, leaseTermYears: Int, highestRent: BigDecimal,
+  private def nrsdltOutOfScopeForRent(premium: BigDecimal, leaseTermYears: Int, highestRent: BigDecimal,
                                                   firstTimeBuyer: Boolean, sharedOwnership: Boolean): Boolean = {
-    def outOfScopeForLease: Boolean = {
-      (firstTimeBuyer && sharedOwnership) || (premium < 40000 && (highestRent < 1000 || leaseTermYears < 7))
-    }
+    (firstTimeBuyer && sharedOwnership) || leaseTermYears <= 7 || (premium < 40000 && highestRent < 1000)
+  }
 
-    def outOfScopeForPremium: Boolean = {
-      premium < 40000
-    }
-
-    outOfScopeForLease && outOfScopeForPremium
-
-    }
+  private def nrsdltOutOfScopeForPremium(premium: BigDecimal, leaseTermYears: Int): Boolean = {
+    leaseTermYears <= 7 || premium < 40000
+  }
 
   def leaseholdNRSDLTInScopeForLeaseOrPremium(premium: BigDecimal, leaseTermYears: Int, highestRent: BigDecimal,
                                               firstTimeBuyer: Boolean, sharedOwnership: Boolean): Boolean = {
+    !nrsdltOutOfScopeForRent(premium, leaseTermYears, highestRent, firstTimeBuyer, sharedOwnership) ||
+      !nrsdltOutOfScopeForPremium(premium, leaseTermYears)
+  }
 
-    def inScopeForLease: Boolean = {
-      premium >= 40000 && (highestRent >= 1000 || leaseTermYears >= 7) && !(firstTimeBuyer && sharedOwnership)
-    }
-
-    def inScopeForPremium: Boolean = {
-      premium >= 40000
-    }
-
-    inScopeForLease || inScopeForPremium
-
+  def leaseholdNRSDLTOutOfScope(premium: BigDecimal, leaseTermYears: Int, highestRent: BigDecimal,
+                                              firstTimeBuyer: Boolean, sharedOwnership: Boolean): Boolean = {
+    nrsdltOutOfScopeForRent(premium, leaseTermYears, highestRent, firstTimeBuyer, sharedOwnership) &&
+      nrsdltOutOfScopeForPremium(premium, leaseTermYears)
   }
 
   def duringNRB500HolidayPeriod(date: LocalDate): Boolean = {
