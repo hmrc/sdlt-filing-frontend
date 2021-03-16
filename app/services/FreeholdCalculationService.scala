@@ -85,24 +85,36 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialOct21OnwardsFTBNonUKRes(request: Request): Seq[Result] = {
 
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
     val prevResult = freeholdResidentialNov17OnwardsFTB(request, prevResult = true)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
       freeholdResidentialOct21OnwardsFTBNonUKResRates.slices
     )
-    Seq(FreeholdResultFactory.freeholdResidentialJuly21OnwardsFTBResult(premiumResult, nonUKResident = true), prevResult)
+
+    val res = Seq(FreeholdResultFactory.freeholdResidentialJuly21OnwardsFTBResult(premiumResult, nonUKResident = true))
+
+    if(individual)
+      res :+ prevResult
+    else res
+
   }
 
   def freeholdResidentialJuly21OnwardsFTBNonUKRes(request: Request): Seq[Result] = {
 
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
     val prevResult = freeholdResidentialNov17OnwardsFTB(request, prevResult = true)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
       freeholdResidentialJuly21OnwardsFTBNonUKResRates.slices
     )
-    Seq(FreeholdResultFactory.freeholdResidentialJuly21OnwardsFTBResult(premiumResult, nonUKResident = true), prevResult)
+    val res = Seq(FreeholdResultFactory.freeholdResidentialJuly21OnwardsFTBResult(premiumResult, nonUKResident = true))
+
+    if(individual)
+      res :+ prevResult
+    else res
   }
 
   def freeholdResidentialNov17OnwardsFTB(request: Request, prevResult: Boolean = false): Result = {
@@ -186,35 +198,45 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialOct21OnwardsNonUKRes(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialOct21OnwardsNonUKResRates.slices
     )
 
     val prevResult = freeholdResidentialDec14Onwards(request, asPreviousResult = true, nonUKResident = true)
     val individual: Boolean = request.propertyDetails.exists(_.individual)
 
-    Seq(FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(
-      currentPremiumResult, individual = individual, additionalDwellings = false), prevResult
+    val res = Seq(FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(
+      currentPremiumResult, individual = individual, additionalDwellings = false)
     )
+
+    if(individual)
+      res :+ prevResult
+    else
+      res
   }
 
   def freeholdResidentialJuly21OnwardsNonUKRes(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialJuly21OnwardsNonUKResRates.slices
     )
 
     val prevResult = freeholdResidentialJuly21OnwardsNonUKResPrev(request)
     val individual: Boolean = request.propertyDetails.exists(_.individual)
 
-    Seq(FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(
-      currentPremiumResult, individual = individual, additionalDwellings = false), prevResult
+    val res = Seq(FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(
+      currentPremiumResult, individual = individual, additionalDwellings = false)
     )
+
+    if(individual)
+      res :+ prevResult
+    else
+      res
   }
 
   def freeholdResidentialJuly21OnwardsNonUKResPrev(request: Request): Result = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialJuly21OnwardsRates.slices
     )
 
@@ -225,21 +247,26 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialApril21OnwardsNonUKRes(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialApril21OnwardsNonUKResRates.slices
     )
 
     val prevResult = freeholdResidentialApril21OnwardsNonUKResPrev(request)
     val individual: Boolean = request.propertyDetails.exists(_.individual)
 
-    Seq(FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(
-      currentPremiumResult, individual = individual, additionalDwellings = false), prevResult
+    val res = Seq(FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(
+      currentPremiumResult, individual = individual, additionalDwellings = false)
     )
+
+    if(individual)
+      res :+ prevResult
+    else
+      res
   }
 
   def freeholdResidentialApril21OnwardsNonUKResPrev(request: Request): Result = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialJuly20OnwardsRates.slices
     )
 
@@ -252,7 +279,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialAddPropNonUKResOct21Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialAddPropNonUKResOct21OnwardsRates.slices
     )
 
@@ -274,7 +301,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
   def freeholdResidentialAddPropNonUKResOct21OnwardsPrev(request: Request): Result = {
 
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialOct21OnwardsNonUKResRates.slices
     )
 
@@ -285,7 +312,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialAddPropNonUKResJuly21Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialAddPropNonUKResJuly21OnwardsRates.slices
     )
 
@@ -307,7 +334,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
   def freeholdResidentialAddPropNonUKResJuly21OnwardsPrev(request: Request): Result = {
 
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
         freeholdResidentialJuly21OnwardsNonUKResRates.slices
     )
 
@@ -318,7 +345,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialAddPropNonUKResApril21Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialAddPropNonUKResApril21OnwardsRates.slices
     )
 
@@ -340,7 +367,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
   def freeholdResidentialAddPropNonUKResApril21OnwardsPrev(request: Request): Result = {
 
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialApril21OnwardsNonUKResRates.slices
     )
 

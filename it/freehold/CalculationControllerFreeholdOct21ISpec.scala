@@ -125,9 +125,7 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
                     |  "premium": 500000,
                     |  "highestRent": 0,
                     |  "propertyDetails": {
-                    |   "individual": "No",
-                    |   "twoOrMoreProperties": "No",
-                    |   "replaceMainResidence": "No"
+                    |   "individual": "No"
                     | }
                     |}""".stripMargin)
               )
@@ -361,13 +359,9 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
                       |  "premium": 100000,
                       |  "highestRent": 0,
                       |  "propertyDetails": {
-                      |   "individual": "No",
-                      |   "twoOrMoreProperties": "Yes",
-                      |   "replaceMainResidence": "Yes"
+                      |   "individual": "No"
                       | }
-                      |}
-              """.
-                      stripMargin)
+                      |}""".stripMargin)
                 )
 
               val responseJson = Json.parse(
@@ -439,13 +433,9 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
                       |  "premium": 1000000,
                       |  "highestRent": 0,
                       |  "propertyDetails": {
-                      |   "individual": "No",
-                      |   "twoOrMoreProperties": "Yes",
-                      |   "replaceMainResidence": "No"
+                      |   "individual": "No"
                       | }
-                      |}
-              """.
-                      stripMargin)
+                      |}""".stripMargin)
                 )
 
               val responseJson = Json.parse(

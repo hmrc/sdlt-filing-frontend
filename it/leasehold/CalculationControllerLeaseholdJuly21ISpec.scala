@@ -43,8 +43,7 @@ class CalculationControllerLeaseholdJuly21ISpec extends UnitSpec with GuiceOneSe
                   |  "premium": 500000,
                   |  "highestRent": 99000,
                   |  "propertyDetails": {
-                  |     "individual": "No",
-                  |     "twoOrMoreProperties": "No"
+                  |     "individual": "No"
                   |   },
                   |  "leaseDetails": {
                   |    "startDateDay": 1,
@@ -1030,10 +1029,8 @@ class CalculationControllerLeaseholdJuly21ISpec extends UnitSpec with GuiceOneSe
                       |  "nonUKResident": "Yes",
                       |  "premium": 300000,
                       |  "highestRent": 99000,
-                      |  "ownedOtherProperties": "Yes",
                       |  "propertyDetails": {
-                      |     "individual": "No",
-                      |     "twoOrMoreProperties": "No"
+                      |     "individual": "No"
                       |   },
                       |  "leaseDetails": {
                       |    "startDateDay": 1,
