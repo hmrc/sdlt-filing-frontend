@@ -6,43 +6,35 @@
 package utils
 
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.CalculationUtils.{leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScopeForLeaseAndPremium}
+import utils.CalculationUtils.{leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScope}
 
 class CalculationUtilsSpec extends UnitSpec {
 
-  ".leaseholdNRSDLTOutOfScopeForLeaseAndPremium" should {
+  ".leaseholdNRSDLTOutOfScope" should {
     "return true" when {
       "premium < 40K and first time buyer is true and shared ownership is true" in {
-        leaseholdNRSDLTOutOfScopeForLeaseAndPremium(39999, 10, 1001, true, true) shouldBe true
+        leaseholdNRSDLTOutOfScope(39999, 10, 1001, true, true) shouldBe true
       }
 
       "premium < 40K and highestRent < 1000" in {
-        leaseholdNRSDLTOutOfScopeForLeaseAndPremium(39999, 10, 999, false, false) shouldBe true
+        leaseholdNRSDLTOutOfScope(39999, 10, 999, false, false) shouldBe true
       }
 
       "premium < 40K and leasePeriod < 7 years" in {
-        leaseholdNRSDLTOutOfScopeForLeaseAndPremium(39999, 1, 1001, false, false) shouldBe true
+        leaseholdNRSDLTOutOfScope(39999, 1, 1001, false, false) shouldBe true
       }
     }
     "return false" when {
       "premium == 40K and first time buyer is true and shared ownership is true" in {
-        leaseholdNRSDLTOutOfScopeForLeaseAndPremium(40000, 10, 1001, true, true) shouldBe false
+        leaseholdNRSDLTOutOfScope(40000, 10, 1001, true, true) shouldBe false
       }
 
       "premium > 40K and first time buyer is true and shared ownership is false" in {
-        leaseholdNRSDLTOutOfScopeForLeaseAndPremium(40001, 10, 1001, true, true) shouldBe false
-      }
-
-      "premium > 40K and highestRent == 1000" in {
-        leaseholdNRSDLTOutOfScopeForLeaseAndPremium(40001, 1, 1000, false, false) shouldBe false
-      }
-
-      "premium > 40K and highestRent > 1000" in {
-        leaseholdNRSDLTOutOfScopeForLeaseAndPremium(40001, 1, 1001, false, false) shouldBe false
+        leaseholdNRSDLTOutOfScope(40001, 10, 1001, true, true) shouldBe false
       }
 
       "premium > 40K and leasePeriod > 7 years" in {
-        leaseholdNRSDLTOutOfScopeForLeaseAndPremium(40001, 8, 1, false, false) shouldBe false
+        leaseholdNRSDLTOutOfScope(40001, 8, 1, false, false) shouldBe false
       }
     }
   }
@@ -55,14 +47,6 @@ class CalculationUtilsSpec extends UnitSpec {
 
       "premium > 40K and first time buyer is true and shared ownership is false" in {
         leaseholdNRSDLTInScopeForLeaseOrPremium(40001, 10, 1001, true, false) shouldBe true
-      }
-
-      "premium > 40K and highestRent == 1000" in {
-        leaseholdNRSDLTInScopeForLeaseOrPremium(40001, 1, 1000, false, false) shouldBe true
-      }
-
-      "premium > 40K and highestRent > 1000" in {
-        leaseholdNRSDLTInScopeForLeaseOrPremium(40001, 1, 1001, false, false) shouldBe true
       }
 
       "premium > 40K and leasePeriod > 7 years" in {
@@ -78,8 +62,8 @@ class CalculationUtilsSpec extends UnitSpec {
         leaseholdNRSDLTInScopeForLeaseOrPremium(39999, 10, 999, false, false) shouldBe false
       }
 
-      "premium < 40K and leasePeriod < 7 years" in {
-        leaseholdNRSDLTInScopeForLeaseOrPremium(39999, 1, 1001, false, false) shouldBe false
+      "leasePeriod < 7 years" in {
+        leaseholdNRSDLTInScopeForLeaseOrPremium(50000, 1, 1001, false, false) shouldBe false
       }
     }
   }

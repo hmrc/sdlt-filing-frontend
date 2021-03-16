@@ -119,7 +119,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialAddPropJuly21Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialAddPropJuly21OnwardsRates.slices
     )
 
@@ -140,7 +140,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialAddPropJuly20Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialAddPropJuly20OnwardsRates.slices
     )
 
@@ -161,7 +161,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
   def freeholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
-      if(request.premium < 40000) 0 else request.premium,
+      request.premium,
       freeholdResidentialAddPropApr16OnwardsRates.slices
     )
 

@@ -65,8 +65,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                   |    "year5Rent": 50000
                   |  },
                   |  "firstTimeBuyer": "Yes"
-                  |}
-              """.stripMargin)
+                  |}""".stripMargin)
             )
 
           val responseJson = Json.parse(
@@ -75,6 +74,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               | "result":[
               |  {
               |   "totalTax":17367,
+              |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |   "npv":861753,
               |   "taxCalcs":[
               |    {
@@ -121,8 +121,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               |   ]
               |  }
               | ]
-              |}
-          """.stripMargin)
+              |}""".stripMargin)
           request.status shouldBe OK
           request.json shouldBe responseJson
         }
@@ -166,8 +165,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                   |    "year5Rent": 15000
                   |  },
                   |  "firstTimeBuyer": "Yes"
-                  |}
-              """.stripMargin)
+                  |}""".stripMargin)
             )
 
           val responseJson = Json.parse(
@@ -176,6 +174,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               | "result":[
               |  {
               |   "totalTax":750,
+              |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |   "npv":428571,
               |   "taxCalcs":[
               |    {
@@ -222,8 +221,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               |   ]
               |  }
               | ]
-              |}
-          """.stripMargin)
+              |}""".stripMargin)
           request.status shouldBe OK
           request.json shouldBe responseJson
         }
@@ -267,8 +265,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                   |    "year5Rent": 2500
                   |  },
                   |  "firstTimeBuyer": "Yes"
-                  |}
-              """.stripMargin)
+                  |}""".stripMargin)
             )
 
           val responseJson = Json.parse(
@@ -277,6 +274,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               | "result":[
               |  {
               |   "totalTax":0,
+              |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |   "npv":71428,
               |   "taxCalcs":[
               |    {
@@ -323,8 +321,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               |   ]
               |  }
               | ]
-              |}
-          """.stripMargin)
+              |}""".stripMargin)
           request.status shouldBe OK
           request.json shouldBe responseJson
         }
@@ -363,8 +360,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                   |    "year4Rent": 40000,
                   |    "year5Rent": 50000
                   |  }
-                  |}
-              """.stripMargin)
+                  |}""".stripMargin)
             )
 
           val responseJson = Json.parse(
@@ -466,8 +462,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               |     ]
               |   }
               | ]
-              |}
-          """.stripMargin)
+              |}""".stripMargin)
 
           request.status shouldBe OK
           request.json shouldBe responseJson
@@ -510,8 +505,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                   |    "year4Rent": 40000,
                   |    "year5Rent": 50000
                   |  }
-                  |}
-              """.stripMargin)
+                  |}""".stripMargin)
             )
 
           val responseJson = Json.parse(
@@ -647,8 +641,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               |   ]
               |  }
               | ]
-              |}
-          """.stripMargin)
+              |}""".stripMargin)
           request.status shouldBe OK
           request.json shouldBe responseJson
         }
@@ -690,8 +683,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                   |    "year4Rent": 40000,
                   |    "year5Rent": 50000
                   |  }
-                  |}
-              """.stripMargin)
+                  |}""".stripMargin)
             )
 
           val responseJson = Json.parse(
@@ -828,8 +820,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               |   ]
               |  }
               | ]
-              |}
-          """.stripMargin)
+              |}""".stripMargin)
           request.status shouldBe OK
           request.json shouldBe responseJson
         }
@@ -871,8 +862,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                   |    "year4Rent": 40000,
                   |    "year5Rent": 50000
                   |  }
-                  |}
-              """.stripMargin)
+                  |}""".stripMargin)
             )
 
           val responseJson = Json.parse(
@@ -881,6 +871,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               |"result":[
               |  {
               |   "totalTax":22426,
+              |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |   "npv":867608,
               |   "taxCalcs":[
               |     {
@@ -943,8 +934,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
               |   ]
               |  }
               | ]
-              |}
-          """.stripMargin)
+              |}""".stripMargin)
           request.status shouldBe OK
           request.json shouldBe responseJson
         }
@@ -983,8 +973,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                 |    "year4Rent": 40000,
                 |    "year5Rent": 50000
                 |  }
-                |}
-              """.stripMargin)
+                |}""".stripMargin)
           )
 
         val
@@ -994,6 +983,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
             | "result":[
             |  {
             |   "totalTax":22736,
+            |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
             |   "npv":898695,
             |   "taxCalcs":[
             |    {
@@ -1055,8 +1045,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
             |   ]
             |  }
             | ]
-            |}
-          """.stripMargin)
+            |}""".stripMargin)
 
         request.status shouldBe OK
         request.json shouldBe responseJson
@@ -1104,6 +1093,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
             | "result":[
             |   {
             |    "totalTax":22634,
+            |    "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
             |    "npv":913455,
             |    "taxCalcs":[
             |     {
@@ -1135,8 +1125,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
             |   ]
             |  }
             | ]
-            |}
-          """.stripMargin)
+            |}""".stripMargin)
 
         request.status shouldBe OK
         request.json shouldBe responseJson
@@ -1184,6 +1173,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
             | "result":[
             |  {
             |   "totalTax":23027,
+            |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
             |   "npv":927716,
             |   "taxCalcs":[
             |    {
@@ -1216,8 +1206,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
             |   ]
             |  }
             | ]
-            |}
-          """.stripMargin)
+            |}""".stripMargin)
 
         request.status shouldBe OK
         request.json shouldBe responseJson

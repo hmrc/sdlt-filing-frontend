@@ -550,7 +550,7 @@ class CalculationControllerFreeholdApril21ISpec extends UnitSpec with GuiceOneSe
                 request.json shouldBe responseJson
               }
 
-              "individual because premium < 40K (NRSDLT Exempt)" in {
+              "individual premium < 40K (NRSDLT and HRAD out of scope)" in {
                 def request: WSResponse = ws.url(
                   calculateUrl)
                   .post(
@@ -567,7 +567,8 @@ class CalculationControllerFreeholdApril21ISpec extends UnitSpec with GuiceOneSe
                         |  "highestRent": 0,
                         |  "propertyDetails": {
                         |   "individual": "Yes",
-                        |   "twoOrMoreProperties": "No"
+                        |   "twoOrMoreProperties": "Yes",
+                        |   "replaceMainResidence": "No"
                         | }
                         |}""".stripMargin
                     )
@@ -730,7 +731,7 @@ class CalculationControllerFreeholdApril21ISpec extends UnitSpec with GuiceOneSe
                 request.json shouldBe responseJson
               }
 
-              "individual 450K Premium + HRAD (NRB500 Freehold Business Thread 6)" in {
+              "individual 450K Premium + HRAD and NRSDLT (NRB500 Freehold Business Thread 6)" in {
                 def request: WSResponse = ws.url(
                   calculateUrl)
                   .post(

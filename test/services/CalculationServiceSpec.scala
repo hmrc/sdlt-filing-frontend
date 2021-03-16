@@ -212,7 +212,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -228,7 +228,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -244,7 +244,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -260,7 +260,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -276,7 +276,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -292,7 +292,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -308,7 +308,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -324,7 +324,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -341,7 +341,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .returns(result)
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(false)
           .noMoreThanTwice()
 
@@ -355,7 +355,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val result = createResult("freeholdResidential, July2020 onwards")
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(None)
+          .expects(*, None, None)
           .noMoreThanTwice()
 
         (mockFreeholdCalculationService.freeholdResidentialJuly20Onwards _)
@@ -371,7 +371,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val result = createResult("freeholdResidential, July2020 onwards")
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(None)
+          .expects(*, None, *)
           .noMoreThanTwice()
 
         (mockFreeholdCalculationService.freeholdResidentialJuly20Onwards _)
@@ -392,7 +392,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(false)
           .noMoreThanTwice()
 
@@ -410,7 +410,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(false)
           .noMoreThanTwice()
 
@@ -454,7 +454,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(false)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
@@ -572,7 +572,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -588,7 +588,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -604,7 +604,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -622,7 +622,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -638,7 +638,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -654,7 +654,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
@@ -667,7 +667,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
         val result = createResult("leaseholdResidential, July2020 onwards")
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(None)
+          .expects(*, None, *)
           .noMoreThanTwice()
 
         (mockLeaseholdCalculationService.leaseholdResidentialJuly20Onwards _)
@@ -684,7 +684,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
 
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(None)
+          .expects(*, None, *)
           .noMoreThanTwice()
 
         (mockLeaseholdCalculationService.leaseholdResidentialJuly20Onwards _)
@@ -705,7 +705,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(false)
           .noMoreThanTwice()
 
@@ -748,7 +748,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
           .noMoreThanOnce()
 
         (mockAdditionalPropertyService.additionalPropertyRatesApply _)
-          .expects(*)
+          .expects(*, *, *)
           .returns(false)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))

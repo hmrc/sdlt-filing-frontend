@@ -263,7 +263,7 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
               request.json shouldBe responseJson
             }
 
-            "Additional Property" in {
+            "Additional Property premium < 40K" in {
               def request: WSResponse = ws.url(
                 calculateUrl)
                 .post(
@@ -283,9 +283,7 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
                       |   "twoOrMoreProperties": "Yes",
                       |   "replaceMainResidence": "No"
                       | }
-                      |}
-              """.
-                      stripMargin)
+                      |}""".stripMargin)
                 )
 
               val responseJson = Json.parse(
@@ -307,71 +305,28 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
                   |      {
                   |       "from":0,
                   |       "to":125000,
-                  |       "rate":3,
+                  |       "rate":0,
                   |       "taxDue":0
                   |       },{
                   |       "from":125000,
                   |       "to":250000,
-                  |       "rate":5,
+                  |       "rate":2,
                   |       "taxDue":0
                   |       },{
                   |       "from":250000,
                   |       "to":925000,
-                  |       "rate":8,
+                  |       "rate":5,
                   |       "taxDue":0
                   |       },{
                   |       "from":925000,
                   |       "to":1500000,
-                  |       "rate":13,
+                  |       "rate":10,
                   |       "taxDue":0
                   |       },{
                   |       "from":1500000,
                   |       "to":-1,
-                  |       "rate":15,
+                  |       "rate":12,
                   |       "taxDue":0
-                  |      }
-                  |     ]
-                  |    }
-                  |   ]
-                  |  },
-                  | {
-                  |  "totalTax":0,
-                  |  "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
-                  |  "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.",
-                  |  "taxCalcs":[
-                  |   {
-                  |    "taxType":"premium",
-                  |    "calcType":"slice",
-                  |    "taxDue":0,
-                  |    "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated",
-                  |    "bandHeading":"Purchase price bands (£)",
-                  |    "detailFooter":"Total SDLT due",
-                  |    "slices":[
-                  |     {
-                  |      "from":0,
-                  |      "to":125000,
-                  |      "rate":0,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":125000,
-                  |      "to":250000,
-                  |      "rate":2,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":250000,
-                  |      "to":925000,
-                  |      "rate":5,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":925000,
-                  |      "to":1500000,
-                  |      "rate":10,
-                  |      "taxDue":0
-                  |      },{
-                  |      "from":1500000,
-                  |      "to":-1,
-                  |      "rate":12,
-                  |      "taxDue":0
                   |      }
                   |     ]
                   |    }
@@ -1170,9 +1125,7 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
                         |   "twoOrMoreProperties": "Yes",
                         |   "replaceMainResidence": "No"
                         | }
-                        |}
-              """.
-                        stripMargin)
+                        |}""".stripMargin)
                   )
 
                 val responseJson = Json.parse(
@@ -1272,7 +1225,7 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
                 request.json shouldBe responseJson
               }
 
-              "Additional Property Premium 30K" in {
+              "Additional Property Premium < 40K and NRSDLT out of scope" in {
                 def request: WSResponse = ws.url(
                   calculateUrl)
                   .post(
@@ -1314,71 +1267,28 @@ class CalculationControllerFreeholdOct21ISpec extends UnitSpec with GuiceOneServ
                     |      {
                     |       "from":0,
                     |       "to":125000,
-                    |       "rate":5,
+                    |       "rate":0,
                     |       "taxDue":0
                     |       },{
                     |       "from":125000,
                     |       "to":250000,
-                    |       "rate":7,
+                    |       "rate":2,
                     |       "taxDue":0
                     |       },{
                     |       "from":250000,
                     |       "to":925000,
-                    |       "rate":10,
+                    |       "rate":5,
                     |       "taxDue":0
                     |       },{
                     |       "from":925000,
                     |       "to":1500000,
-                    |       "rate":15,
+                    |       "rate":10,
                     |       "taxDue":0
                     |       },{
                     |       "from":1500000,
                     |       "to":-1,
-                    |       "rate":17,
+                    |       "rate":12,
                     |       "taxDue":0
-                    |      }
-                    |     ]
-                    |    }
-                    |   ]
-                    |  },
-                    | {
-                    |  "totalTax":0,
-                    |  "resultHeading":"Result if you become eligible for a repayment of the higher rate on additional dwellings",
-                    |  "resultHint":"If you dispose of your previous main residence within 3 years you may be eligible for a refund. You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.",
-                    |  "taxCalcs":[
-                    |   {
-                    |    "taxType":"premium",
-                    |    "calcType":"slice",
-                    |    "taxDue":0,
-                    |    "detailHeading":"This is a breakdown of how the total amount of SDLT was calculated",
-                    |    "bandHeading":"Purchase price bands (£)",
-                    |    "detailFooter":"Total SDLT due",
-                    |    "slices":[
-                    |     {
-                    |      "from":0,
-                    |      "to":125000,
-                    |      "rate":2,
-                    |      "taxDue":0
-                    |      },{
-                    |      "from":125000,
-                    |      "to":250000,
-                    |      "rate":4,
-                    |      "taxDue":0
-                    |      },{
-                    |      "from":250000,
-                    |      "to":925000,
-                    |      "rate":7,
-                    |      "taxDue":0
-                    |      },{
-                    |      "from":925000,
-                    |      "to":1500000,
-                    |      "rate":12,
-                    |      "taxDue":0
-                    |      },{
-                    |      "from":1500000,
-                    |      "to":-1,
-                    |      "rate":14,
-                    |      "taxDue":0
                     |      }
                     |     ]
                     |    }
