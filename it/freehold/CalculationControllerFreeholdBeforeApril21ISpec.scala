@@ -184,9 +184,7 @@ class CalculationControllerFreeholdBeforeApril21ISpec extends UnitSpec with Guic
                     |  "premium": 500000,
                     |  "highestRent": 0,
                     |  "propertyDetails": {
-                    |   "individual": "No",
-                    |   "twoOrMoreProperties": "No",
-                    |   "replaceMainResidence": "No"
+                    |   "individual": "No"
                     | }
                     |}""".stripMargin))
 

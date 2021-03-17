@@ -383,9 +383,7 @@ class CalculationControllerFreeholdApril21ISpec extends UnitSpec with GuiceOneSe
                         |  "premium": 1000000,
                         |  "highestRent": 0,
                         |  "propertyDetails": {
-                        |   "individual": "No",
-                        |   "twoOrMoreProperties": "No",
-                        |   "replaceMainResidence": "Yes"
+                        |   "individual": "No"
                         | }
                         |}""".stripMargin)
                   )

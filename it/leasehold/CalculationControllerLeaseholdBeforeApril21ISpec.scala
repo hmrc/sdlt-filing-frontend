@@ -483,9 +483,7 @@ class CalculationControllerLeaseholdBeforeApril21ISpec extends UnitSpec with Gui
                   |  "premium": 500000,
                   |  "highestRent": 50000,
                   |  "propertyDetails": {
-                  |     "individual": "No",
-                  |     "twoOrMoreProperties": "No",
-                  |     "replaceMainResidence": "No"
+                  |     "individual": "No"
                   |   },
                   |  "leaseDetails": {
                   |    "startDateDay": 15,

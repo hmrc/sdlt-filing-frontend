@@ -120,7 +120,7 @@ class AdditionalPropertyServiceSpec extends UnitSpec {
       the[RequiredValueNotDefinedException]
         .thrownBy(additionalPropertyService.additionalPropertyRatesApply(45000, propertyDetails,  None))
         .should(have message "[AdditionalPropertyService] [additionalProperty]" +
-          s" - twoOrMoreProperties: None, replaceMainResidence: Some(false), leaseDetails: None")
+          s" - individual: true, twoOrMoreProperties: None, replaceMainResidence: Some(false), leaseDetails: None")
     }
     "throw the correct exception when replaceMainResidence is required but undefined" in {
       val propertyDetails = Some(PropertyDetails(
@@ -134,7 +134,7 @@ class AdditionalPropertyServiceSpec extends UnitSpec {
       the[RequiredValueNotDefinedException]
         .thrownBy(additionalPropertyService.additionalPropertyRatesApply(45000, propertyDetails, None))
         .should(have message "[AdditionalPropertyService] [additionalProperty]" +
-          s" - twoOrMoreProperties: Some(true), replaceMainResidence: None, leaseDetails: None")
+          s" - individual: true, twoOrMoreProperties: Some(true), replaceMainResidence: None, leaseDetails: None")
     }
     "throw the correct exception when propertyDetails is undefined" in {
       val propertyDetails = None

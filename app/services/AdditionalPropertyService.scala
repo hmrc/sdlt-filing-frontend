@@ -16,9 +16,7 @@ class AdditionalPropertyService {
   def additionalPropertyRatesApply(premium: BigDecimal, oPropertyDetails: Option[PropertyDetails],
                                    leaseDetails: Option[Int]): Boolean = {
     oPropertyDetails.map { propertyDetails =>
-      if(propertyDetails.individual)
-          additionalProperty(propertyDetails.twoOrMoreProperties, propertyDetails.replaceMainResidence, premium, leaseDetails)
-      else true
+          additionalProperty(individual = propertyDetails.individual,propertyDetails.twoOrMoreProperties, propertyDetails.replaceMainResidence, premium, leaseDetails)
     }.getOrElse{
       throw new RequiredValueNotDefinedException(
         "[AdditionalPropertyService] [additionalPropertyRatesApply]" +
@@ -26,17 +24,20 @@ class AdditionalPropertyService {
       )}
   }
 
-  private def additionalProperty(twoOrMoreProperties: Option[Boolean], replaceMainResidence: Option[Boolean],
+  private def additionalProperty(individual: Boolean, twoOrMoreProperties: Option[Boolean], replaceMainResidence: Option[Boolean],
                                  premium: BigDecimal, leaseYears: Option[Int]): Boolean = {
-    (twoOrMoreProperties, replaceMainResidence, leaseYears) match {
-      case (Some(false), _, _) => false
-      case (Some(true), Some(true), _) => false
-      case (Some(true), Some(false), Some(years)) => years > 7 && premium >= 40000
-      case (Some(true), Some(false), None) => premium >= 40000
-      case (oTwoOrMore, oReplace, oLeaseDetails) =>
+    (individual, twoOrMoreProperties, replaceMainResidence, leaseYears) match {
+      case (false, None, None, Some(years)) => years > 7 && premium >= 40000
+      case (false, None, None, None) => premium >= 40000
+      case (true, Some(false), _, _) => false
+      case (true, Some(true), Some(true), _) => false
+      case (true, Some(true), Some(false), Some(years)) => years > 7 && premium >= 40000
+      case (true, Some(true), Some(false), None) => premium >= 40000
+      case (oIndividual, oTwoOrMore, oReplace, oLeaseDetails) =>
         throw new RequiredValueNotDefinedException(
-          "[AdditionalPropertyService] [additionalProperty]" +
-            s" - twoOrMoreProperties: $oTwoOrMore, replaceMainResidence: $oReplace, leaseDetails: $oLeaseDetails"
+          "[AdditionalPropertyService] [additionalProperty] - " +
+            s"individual: $oIndividual, twoOrMoreProperties: $oTwoOrMore," +
+            s" replaceMainResidence: $oReplace, leaseDetails: $oLeaseDetails"
         )
     }
   }

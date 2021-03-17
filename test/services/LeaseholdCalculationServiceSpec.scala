@@ -658,36 +658,6 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
 
   "leaseholdResidentialAddPropApr16Onwards" should{
 
-    "return 0, 0 for purchase price of 39,999.99, npv of 125000" in new PredefinedNPVSetup(125000, Some(15000)){
-      val leaseTaxDue, premTaxDue = 0
-      val leaseSliceDetails = Seq(
-        SliceDetails(from = 0,      to = Some(125000), rate = 0, taxDue = 0),
-        SliceDetails(from = 125000, to = None,         rate = 1, taxDue = 0)
-      )
-      val premSliceDetails = Seq(
-        SliceDetails(from = 0,       to = Some(125000),  rate = 3,  taxDue = 0),
-        SliceDetails(from = 125000,  to = Some(250000),  rate = 5,  taxDue = 0),
-        SliceDetails(from = 250000,  to = Some(925000),  rate = 8,  taxDue = 0),
-        SliceDetails(from = 925000,  to = Some(1500000), rate = 13, taxDue = 0),
-        SliceDetails(from = 1500000, to = None,          rate = 15, taxDue = 0)
-      )
-
-      val prevSliceDetails = Seq(
-        SliceDetails(from = 0,       to = Some(125000),  rate = 0,  taxDue = 0),
-        SliceDetails(from = 125000,  to = Some(250000),  rate = 2,  taxDue = 0),
-        SliceDetails(from = 250000,  to = Some(925000),  rate = 5,  taxDue = 0),
-        SliceDetails(from = 925000,  to = Some(1500000), rate = 10, taxDue = 0),
-        SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 0)
-      )
-
-      private val leaseRequest = leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(39999.99, dec2017EffectiveDate)
-
-      private val result = leaseholdResidentialAddPropApr16OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, npv, resHintAmount = Some("15,000"))
-      private val prevResult = leaseholdResidentialDec14OnwardsResult(leaseTaxDue, leaseSliceDetails, premTaxDue, prevSliceDetails, npv, asPreviousResult = true)
-
-      service.leaseholdResidentialAddPropApr16Onwards(leaseRequest) shouldBe Seq(result,prevResult)
-    }
-
     "return 0, 1 for purchase price of 40000, npv of 125000" in new PredefinedNPVSetup(125100, None){
       val leaseTaxDue = 1
       val premTaxDue = 1200

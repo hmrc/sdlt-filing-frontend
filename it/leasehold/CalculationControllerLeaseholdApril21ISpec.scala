@@ -43,8 +43,7 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                   |  "premium": 500000,
                   |  "highestRent": 99000,
                   |  "propertyDetails": {
-                  |     "individual": "No",
-                  |     "twoOrMoreProperties": "No"
+                  |     "individual": "No"
                   |   },
                   |  "leaseDetails": {
                   |    "startDateDay": 1,
@@ -167,6 +166,222 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
               | ]
               |}
           """.stripMargin)
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+
+        "residential, 550K Premium, nonUKResident, company, 1Y Lease, Additional Property (Scenario 13)" in{
+          def request: WSResponse = ws.url(
+            calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 4,
+                  |  "effectiveDateYear": 2021,
+                  |  "premium": 550000,
+                  |  "highestRent": 99000,
+                  |  "nonUKResident": "Yes",
+                  |  "propertyDetails": {
+                  |     "individual": "No"
+                  |   },
+                  |  "leaseDetails": {
+                  |    "startDateDay": 1,
+                  |    "startDateMonth": 4,
+                  |    "startDateYear": 2021,
+                  |    "endDateDay": 31,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2022,
+                  |    "leaseTerm":  {
+                  |      "years": 1,
+                  |      "days": 0,
+                  |      "daysInPartialYear": 0
+                  |     },
+                  |    "year1Rent": 99000
+                  |  }
+                  |}
+              """. stripMargin)
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{
+              |"result":[
+              |  {
+              |   "totalTax":2500,
+              |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+              |   "npv":95652,
+              |   "taxCalcs":[
+              |     {
+              |      "taxType":"rent",
+              |      "calcType":"slice",
+              |      "taxDue":0,
+              |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+              |      "bandHeading":"Rent bands (£)",
+              |      "detailFooter":"SDLT due on the rent",
+              |      "slices":[
+              |      {
+              |       "from":0,
+              |       "to":500000,
+              |       "rate":0,
+              |       "taxDue":0
+              |       },{
+              |       "from":500000,
+              |       "to":-1,
+              |       "rate":1,
+              |       "taxDue":0
+              |       }
+              |      ]
+              |     },
+              |    {
+              |     "taxType":"premium",
+              |     "calcType":"slice",
+              |     "taxDue":2500,
+              |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+              |     "bandHeading":"Premium bands (£)",
+              |     "detailFooter":"SDLT due on the premium",
+              |     "slices":[
+              |     {
+              |      "from":0,
+              |      "to":500000,
+              |      "rate":0,
+              |      "taxDue":0
+              |      },{
+              |      "from":500000,
+              |      "to":925000,
+              |      "rate":5,
+              |      "taxDue":2500
+              |      },{
+              |      "from":925000,
+              |      "to":1500000,
+              |      "rate":10,
+              |      "taxDue":0
+              |      },{
+              |      "from":1500000,
+              |      "to":-1,
+              |      "rate":12,
+              |      "taxDue":0
+              |      }
+              |     ]
+              |    }
+              |   ]
+              |  }
+              | ]
+              |}""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+
+        "residential, 30K Premium, nonUKResident, company, 100Y Lease, Additional Property (Scenario 14)" in{
+          def request: WSResponse = ws.url(
+            calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 4,
+                  |  "effectiveDateYear": 2021,
+                  |  "premium": 30000,
+                  |  "highestRent": 99000,
+                  |  "nonUKResident": "Yes",
+                  |  "propertyDetails": {
+                  |     "individual": "No"
+                  |   },
+                  |  "leaseDetails": {
+                  |    "startDateDay": 1,
+                  |    "startDateMonth": 4,
+                  |    "startDateYear": 2021,
+                  |    "endDateDay": 31,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2121,
+                  |    "leaseTerm":  {
+                  |      "years": 100,
+                  |      "days": 0,
+                  |      "daysInPartialYear": 0
+                  |     },
+                  |    "year1Rent": 99000,
+                  |    "year2Rent": 99000,
+                  |    "year3Rent": 99000,
+                  |    "year4Rent": 99000,
+                  |    "year5Rent": 99000
+                  |  }
+                  |}
+              """. stripMargin)
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{
+              |"result":[
+              |  {
+              |   "totalTax":77736,
+              |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+              |   "npv":2737887,
+              |   "taxCalcs":[
+              |     {
+              |      "taxType":"rent",
+              |      "calcType":"slice",
+              |      "taxDue":77136,
+              |      "detailHeading":"This is a breakdown of how the amount of SDLT on the rent was calculated",
+              |      "bandHeading":"Rent bands (£)",
+              |      "detailFooter":"SDLT due on the rent",
+              |      "slices":[
+              |      {
+              |       "from":0,
+              |       "to":500000,
+              |       "rate":2,
+              |       "taxDue":10000
+              |       },{
+              |       "from":500000,
+              |       "to":-1,
+              |       "rate":3,
+              |       "taxDue":67136
+              |       }
+              |      ]
+              |     },
+              |    {
+              |     "taxType":"premium",
+              |     "calcType":"slice",
+              |     "taxDue":600,
+              |     "detailHeading":"This is a breakdown of how the amount of SDLT on the premium was calculated",
+              |     "bandHeading":"Premium bands (£)",
+              |     "detailFooter":"SDLT due on the premium",
+              |     "slices":[
+              |     {
+              |      "from":0,
+              |      "to":500000,
+              |      "rate":2,
+              |      "taxDue":600
+              |      },{
+              |      "from":500000,
+              |      "to":925000,
+              |      "rate":7,
+              |      "taxDue":0
+              |      },{
+              |      "from":925000,
+              |      "to":1500000,
+              |      "rate":12,
+              |      "taxDue":0
+              |      },{
+              |      "from":1500000,
+              |      "to":-1,
+              |      "rate":14,
+              |      "taxDue":0
+              |      }
+              |     ]
+              |    }
+              |   ]
+              |  }
+              | ]
+              |}""".stripMargin)
+
           request.status shouldBe OK
           request.json shouldBe responseJson
         }
@@ -703,10 +918,8 @@ class CalculationControllerLeaseholdApril21ISpec extends UnitSpec with GuiceOneS
                       |  "nonUKResident": "Yes",
                       |  "premium": 300000,
                       |  "highestRent": 99000,
-                      |  "ownedOtherProperties": "Yes",
                       |  "propertyDetails": {
-                      |     "individual": "No",
-                      |     "twoOrMoreProperties": "No"
+                      |     "individual": "No"
                       |   },
                       |  "leaseDetails": {
                       |    "startDateDay": 1,
