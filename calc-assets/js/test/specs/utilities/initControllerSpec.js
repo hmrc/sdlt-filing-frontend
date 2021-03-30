@@ -40,7 +40,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {},
                 next : function() {}
             };
 
@@ -57,7 +56,6 @@
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
-            spyOn(mockNavigationService, 'logView');
             spyOn(mockNavigationService, 'next');
             spyOn(mockDataService, 'updateModel');
 
