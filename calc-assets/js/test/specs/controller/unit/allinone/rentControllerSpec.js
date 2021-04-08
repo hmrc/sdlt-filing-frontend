@@ -31,12 +31,10 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
-            spyOn(mockNavigationService, 'logView');
-            
+
             mockValidationService = {};
 
             controller = $controller('rentController', {
@@ -75,7 +73,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -131,7 +128,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -186,7 +182,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 

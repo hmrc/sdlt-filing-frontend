@@ -34,7 +34,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
             };
 
             mockModelValidationService = {
@@ -130,7 +129,6 @@
             };
 
             mockNavigationService = {
-                logView : function() {}
             };
 
             mockModelValidationService = {
@@ -152,7 +150,6 @@
             spyOn(mockDataMarshallingService, 'constructCalculationRequest').and.callThrough();
             spyOn(mockModelValidationService, 'validate').and.callThrough();
             spyOn(mockDataService, 'getModel').and.callThrough();
-            spyOn(mockNavigationService, 'logView');
             spyOn(mockDataService, 'updateModel');
 
             controller = $controller('resultController', {
@@ -225,7 +222,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {}
             };
 
             mockModelValidationService = {
@@ -244,8 +240,7 @@
             mockBackend = $httpBackend;
 
             spyOn(mockDataService, 'getModel').and.callThrough();
-            spyOn(mockNavigationService, 'logView');
-            
+
             controller = $controller('resultController', {
                 $scope : mockScope,
                 $location : mockLocation,
@@ -296,7 +291,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {},
                 viewDetails : function() {}
             };
 
@@ -365,7 +359,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {},
                 printView : function() {}
             };
 

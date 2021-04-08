@@ -33,7 +33,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
             };
 
             mockModelValidationService = {
@@ -44,8 +43,7 @@
 
             spyOn(mockDataService, 'updateModel');
             spyOn(mockDataService, 'getModel').and.callThrough();
-            spyOn(mockNavigationService, 'logView');
-            
+
             controller = $controller('summaryController', {
                 $scope : mockScope,
                 $location : {},
@@ -80,7 +78,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -92,7 +89,6 @@
 
                 spyOn(mockDataService, 'getModel').and.callThrough();
                 spyOn(mockDataService, 'updateModel');
-                spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
@@ -154,7 +150,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -166,7 +161,6 @@
 
                 spyOn(mockDataService, 'getModel').and.callThrough();
                 spyOn(mockDataService, 'updateModel').and.callThrough();
-                spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
@@ -226,7 +220,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -238,7 +231,6 @@
 
                 spyOn(mockDataService, 'getModel').and.callThrough();
                 spyOn(mockDataService, 'updateModel').and.callThrough();
-                spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
@@ -298,7 +290,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -310,7 +301,6 @@
 
                 spyOn(mockDataService, 'getModel').and.callThrough();
                 spyOn(mockDataService, 'updateModel').and.callThrough();
-                spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
@@ -370,7 +360,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -382,7 +371,6 @@
 
                 spyOn(mockDataService, 'getModel').and.callThrough();
                 spyOn(mockDataService, 'updateModel').and.callThrough();
-                spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockModelValidationService, 'validate').and.callThrough();
                 
@@ -442,7 +430,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -454,7 +441,6 @@
 
                 spyOn(mockDataService, 'getModel').and.callThrough();
                 spyOn(mockDataService, 'updateModel').and.callThrough();
-                spyOn(mockNavigationService, 'logView');
                 spyOn(mockNavigationService, 'next');
                 spyOn(mockModelValidationService, 'validate').and.callThrough();
                 

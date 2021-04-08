@@ -25,7 +25,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
             };
 
             spyOn(mockDataService, 'getModel');
@@ -63,7 +62,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -115,7 +113,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -172,7 +169,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -229,7 +225,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 

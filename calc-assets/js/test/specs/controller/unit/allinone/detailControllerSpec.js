@@ -25,7 +25,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
             };
 
             mockModelValidationService = {
@@ -36,8 +35,7 @@
 
 
             spyOn(mockDataService, 'getModel');
-            spyOn(mockNavigationService, 'logView');
-                        
+
             controller = $controller('detailController', {
                 $scope : mockScope,
                 $location : {},
@@ -80,7 +78,6 @@
             };
 
             mockNavigationService = {
-                logView : function() {},
                 printView : function() {}
             };
 
@@ -142,7 +139,6 @@
             };
 
             mockNavigationService = {
-                logView : function() {},
                 printView : function() {}
             };
 
@@ -211,7 +207,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
             };
 
             mockModelValidationService = {
@@ -221,8 +216,7 @@
             };
 
             spyOn(mockDataService, 'getModel');
-            spyOn(mockNavigationService, 'logView');
-            
+
             controller = $controller('detailController', {
                 $scope : mockScope,
                 $location : mockLocation,

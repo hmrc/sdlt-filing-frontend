@@ -40,7 +40,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {}
             };
 
             mockValidationService = {
@@ -56,7 +55,6 @@
             };
 
             spyOn(mockDataService, 'getModel').and.callThrough();
-            spyOn(mockNavigationService, 'logView');
             spyOn(mockDataService, 'updateModel');
 
             controller = $controller(InitFormController,{

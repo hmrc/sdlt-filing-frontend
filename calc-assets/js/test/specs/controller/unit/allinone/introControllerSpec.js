@@ -25,13 +25,11 @@
             };
 
             mockNavigationService = { 
-                logView : function() {}
             };
 
             spyOn(mockDataService, 'getModel');
             spyOn(mockDataService, 'updateModel');
-            spyOn(mockNavigationService, 'logView');
-                        
+
             controller = $controller('introController', {
                 $scope : mockScope,
                 $location : {},
@@ -59,13 +57,11 @@
             };
 
             mockNavigationService = { 
-                logView : function() {},
-                startNow : function() {} 
+                startNow : function() {}
             };
 
             spyOn(mockDataService, 'getModel');
             spyOn(mockDataService, 'updateModel');
-            spyOn(mockNavigationService, 'logView');
             spyOn(mockNavigationService, 'startNow');
                         
             controller = $controller('introController', {

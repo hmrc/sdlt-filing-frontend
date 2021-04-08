@@ -25,7 +25,6 @@
             };
 
             mockNavigationService = { 
-                logView : function() {} 
             };
 
 
@@ -65,7 +64,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
@@ -117,7 +115,6 @@
                 };
 
                 mockNavigationService = { 
-                    logView : function() {},
                     next : function() {}
                 };
 
