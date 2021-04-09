@@ -15,7 +15,7 @@
             var state = service.validate({});
             expect(state.isValid).toEqual(false);
             expect(state.hasError('currentValue')).toEqual('form-field--error');
-            expect(state.validationMessage('currentValue')).toEqual("Select 'Yes' or 'No'");
+            expect(state.validationMessage('currentValue')).toEqual("Select a value");
         });
 
         it('currentValue.mandatory shouldnt return an error when no answer is provided ', function() {
