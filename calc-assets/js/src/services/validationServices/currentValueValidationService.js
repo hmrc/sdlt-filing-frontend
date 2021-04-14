@@ -11,7 +11,7 @@
             var validator = require("../../utilities/validator")();
 
             if (validator.isNotPopulated(data.currentValue)) {
-                state.currentValue = "Select 'Yes' or 'No'";
+                state.currentValue = "Select a value";
             }
 
             return buildState(state);
