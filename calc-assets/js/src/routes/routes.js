@@ -31,8 +31,7 @@
                 title : 'Are any of the purchasers non-UK resident?',
                 templateUrl : 'non-uk-resident.html',
                 controller  : 'nonUKResidentController',
-                reloadOnSearch: false,
-                beforeApril21: Date.now() < new Date("April 1, 2021")
+                reloadOnSearch: false
             })
 
             .when('/date', {
