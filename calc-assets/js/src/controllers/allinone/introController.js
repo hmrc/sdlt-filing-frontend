@@ -13,10 +13,6 @@
             navigationService.startNow($location);
         };
 
-        var today = Date.now();
-
-        $scope.beforeApril21 = today < new Date('April 1, 2021');
-
     };
 
     app.controller('introController', ['$scope', '$location', '$anchorScroll', 'dataService' , 'navigationService', introController ]);
