@@ -24,7 +24,7 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
   dependencyOverrides += "org.scala-lang" % "scala-library" % "2.12.13"
 ) ++ JavaScriptBuild.javaScriptUiSettings
 
-lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtWeb)
+lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtDistributablesPlugin, SbtWeb)
 lazy val appDependencies: Seq[ModuleID] = AppDependencies()
 lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean]] = {
   // Semicolon-separated list of regexs matching classes to exclude
