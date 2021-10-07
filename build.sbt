@@ -19,7 +19,6 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
   excludeFilter in Assets := "js*" || "sass*",
   TwirlKeys.templateImports ++= Seq(
     "uk.gov.hmrc.govukfrontend.views.html.components._",
-    "uk.gov.hmrc.govukfrontend.views.html.helpers._"
   ),
   dependencyOverrides += "org.scala-lang" % "scala-library" % "2.12.13"
 ) ++ JavaScriptBuild.javaScriptUiSettings
