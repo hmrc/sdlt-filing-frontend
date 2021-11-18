@@ -1,16 +1,13 @@
-import sbt.{CrossVersion, Def, compilerPlugin, _}
-import sbt.Keys._
 import com.typesafe.sbt.digest.Import.digest
 import com.typesafe.sbt.web.Import.{Assets, pipelineStages}
 import com.typesafe.sbt.web.SbtWeb
 import play.sbt.PlayScala
+import sbt.Keys._
+import sbt.{CrossVersion, Def, compilerPlugin, _}
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.PublishingSettings._
-import uk.gov.hmrc.SbtAutoBuildPlugin
-import uk.gov.hmrc.versioning.SbtGitVersioning
-import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
+import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "sdltc-frontend"
 lazy val playSettings: Seq[Setting[_]] = Seq(
@@ -30,7 +27,7 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
   import scoverage.ScoverageKeys
   Seq(
     ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;models/.data/..*;view.*;config.*;.*(BuildInfo|Routes).*;journey.views.*",
-    ScoverageKeys.coverageMinimum := 80,
+    ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -55,7 +52,6 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged := true,
     pipelineStages in Assets := Seq(digest)
   )
-  .settings(playPublishingSettings: _*)
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(integrationTestSettings())
@@ -69,11 +65,3 @@ lazy val microservice = Project(appName, file("."))
     )
   )
 
-lazy val playPublishingSettings: Seq[sbt.Setting[_]] = Seq(
-
-  credentials += SbtCredentials,
-
-  publishArtifact in(Compile, packageDoc) := false,
-  publishArtifact in(Compile, packageSrc) := false
-) ++
-  publishAllArtefacts
