@@ -6,7 +6,7 @@
 ## Release Notes
 
 ### Node version
-Requires node version 4.4.5 to run locally. You can install [NVM](https://github.com/creationix/nvm) to manage local node versions.
+Requires node version 8.11.2 to run locally. You can install [NVM](https://github.com/creationix/nvm) to manage local node versions.
 
 ### Running unit tests
 To simulate the building of the application by Jenkins it is advisable to execute unit tests using the shell script:
@@ -102,9 +102,9 @@ if you have any problem try the following steps:
 
     I.``` brew uninstall node```
 
-    II.``` nvm install v4.4.5```
+    II.``` nvm install v8.11.2```
 
-    III.``` nvm use v4.4.5```
+    III.``` nvm use v8.11.2```
 
 3. To run the tests locally you will need to run a docker container using the following command (hmrc vpn connection required)
 
