@@ -52,7 +52,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
   "checkIfShared" must {
     "return true" when {
       "sharedOwnerships is Some(true)" in new Setup{
-        val propertyDetails = Some(
+        val propertyDetails: Option[PropertyDetails] = Some(
           PropertyDetails(
             individual = true,
             twoOrMoreProperties = Some(false),
@@ -67,7 +67,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
 
     "return false" when {
       "sharedOwnership is Some(false)" in new Setup {
-        val propertyDetails = Some(
+        val propertyDetails: Option[PropertyDetails] = Some(
           PropertyDetails(
             individual = true,
             twoOrMoreProperties = Some(false),
@@ -80,7 +80,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
       }
 
     "sharedOwnership is None" in new Setup{
-        val propertyDetails = Some(
+        val propertyDetails: Option[PropertyDetails] = Some(
           PropertyDetails(
             individual = true,
             twoOrMoreProperties = Some(false),
@@ -108,7 +108,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(3007, 11, 1),
         leaseTerm = LeaseTerm(
@@ -139,7 +139,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(3007, 10, 30),
         leaseTerm = LeaseTerm(
@@ -170,7 +170,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(3007, 11, 1),
         leaseTerm = LeaseTerm(
@@ -201,7 +201,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 750)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(3007, 11, 1),
         leaseTerm = LeaseTerm(
@@ -232,7 +232,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 4750)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(2077, 10, 31),
         leaseTerm = LeaseTerm(

@@ -15,7 +15,7 @@ trait LeaseholdResultFixture {
   def leaseholdResidentialAddPropJuly20OnwardsResult(
                                                       leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                                       premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
-                                                      npv:         Int, resHintAmount: Option[String] = None) =
+                                                      npv:         Int, resHintAmount: Option[String] = None): Result =
 
     Result(
       totalTax = leaseTaxDue + premTaxDue,
@@ -48,7 +48,7 @@ trait LeaseholdResultFixture {
   def leaseholdResidentialJuly20OnwardsResult(
                                                leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                                premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
-                                               npv:         Int, asPreviousResult: Boolean = false) = {
+                                               npv:         Int, asPreviousResult: Boolean = false): Result = {
     val resultheading = if(asPreviousResult) {
       Some("Result if you become eligible for a repayment of the higher rate on additional dwellings")
     } else {
@@ -96,7 +96,7 @@ trait LeaseholdResultFixture {
   def leaseholdResidentialNov17OnwardsFTBResult(
                                               leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                               premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
-                                              npv:         Int) = {
+                                              npv:         Int): Result = {
     val resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered")
 
       Result(
@@ -133,7 +133,7 @@ trait LeaseholdResultFixture {
                                               leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                               premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
                                               npv:         Int, resHintAmount: Option[String],
-                                              afterMarch2021: Boolean = false) = {
+                                              afterMarch2021: Boolean = false): Result = {
 
     val (resultHeading, resultHint, leaseDetailHeading, premDetailHeading) = if(afterMarch2021) {
       (Some("Results of calculation based on SDLT rules for the effective date entered"),
@@ -183,7 +183,7 @@ trait LeaseholdResultFixture {
   def leaseholdResidentialDec14OnwardsResult(
                                               leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                               premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
-                                              npv:         Int, asPreviousResult: Boolean = false, afterMarch2021: Boolean = false) = {
+                                              npv:         Int, asPreviousResult: Boolean = false, afterMarch2021: Boolean = false): Result = {
     val (resultHeading, resultHint, leaseDetailHeading, premDetailHeading) =
       (asPreviousResult, afterMarch2021) match {
         case (true, false) => (Some("Results based on SDLT rules before 1 April 2016"),
@@ -238,7 +238,7 @@ trait LeaseholdResultFixture {
   def leaseholdNonResidentialMar16OnwardsResult(
                                                  leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                                  premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
-                                                 npv: Int) =
+                                                 npv: Int): Result =
     Result(
       totalTax = leaseTaxDue + premTaxDue,
       resultHeading = Some("Results based on SDLT rules from 17 March 2016"),
@@ -273,7 +273,7 @@ trait LeaseholdResultFixture {
   def leaseholdResidentialMar12toDec14Result(
                                               leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                               premTaxDue:  Int, premRate: Int,
-                                              npv: Int) =
+                                              npv: Int): Result =
     Result(
       totalTax = leaseTaxDue + premTaxDue,
       resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
@@ -288,7 +288,7 @@ trait LeaseholdResultFixture {
   def leaseholdNonResidentialMar12toMar16Result(
                                                  leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                                  premTaxDue:  Int, premRate: Int,
-                                                 npv: Int) =
+                                                 npv: Int): Result =
     Result(
       totalTax = leaseTaxDue + premTaxDue,
       resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
@@ -303,7 +303,7 @@ trait LeaseholdResultFixture {
   def leaseholdNonResidentialMar12toMar16PrevResult(
                                                  leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                                  premTaxDue:  Int, premRate: Int,
-                                                 npv: Int) =
+                                                 npv: Int): Result =
     Result(
       totalTax = leaseTaxDue + premTaxDue,
       resultHeading = Some("Results based on SDLT rules before 17 March 2016"),

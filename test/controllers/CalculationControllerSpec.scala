@@ -10,7 +10,7 @@ import base.BaseSpec
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, CalculationResponse, Result}
 import org.scalamock.scalatest.MockFactory
-import org.scalatestplus.play._
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status._
 import play.api.libs.json._
@@ -18,7 +18,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import services.CalculationService
 
-class CalculationControllerSpec extends PlaySpec with MockFactory with GuiceOneAppPerSuite with BaseSpec {
+class CalculationControllerSpec extends BaseSpec with MockFactory with GuiceOneAppPerSuite {
 
   val mockComponents: MessagesControllerComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
   val mockCalculationService: CalculationService = mock[CalculationService]

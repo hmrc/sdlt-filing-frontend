@@ -46,7 +46,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
     )
   }
 
-  def baseRequestIndividual(premium: BigDecimal, effectiveDate: LocalDate, nonUKResident: Option[Boolean] = None) = Request(
+  def baseRequestIndividual(premium: BigDecimal, effectiveDate: LocalDate, nonUKResident: Option[Boolean] = None): Request = Request(
     holdingType = HoldingTypes.freehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -59,7 +59,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
     firstTimeBuyer = None
   )
 
-  def baseRequestAddProps(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def baseRequestAddProps(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.freehold,
     propertyType = PropertyTypes.nonResidential,
     effectiveDate = effectiveDate,
@@ -80,7 +80,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
     firstTimeBuyer = None
   )
 
-  def baseRequestCompany(premium: BigDecimal, effectiveDate: LocalDate, nonUKResident: Option[Boolean] = None) = Request(
+  def baseRequestCompany(premium: BigDecimal, effectiveDate: LocalDate, nonUKResident: Option[Boolean] = None): Request = Request(
     holdingType = HoldingTypes.freehold,
     propertyType = PropertyTypes.nonResidential,
     effectiveDate = effectiveDate,
@@ -101,7 +101,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
     firstTimeBuyer = None
   )
 
-  def baseRequestFTB(premium: BigDecimal, effectiveDate: LocalDate, nonUKResident: Option[Boolean] = None) = Request(
+  def baseRequestFTB(premium: BigDecimal, effectiveDate: LocalDate, nonUKResident: Option[Boolean] = None): Request = Request(
     holdingType = HoldingTypes.freehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -126,7 +126,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
                  calcDeets: CalculationDetails,
                  resultHeading: Option[String] = Some(RESULT_HEADING_GENERIC),
                  resultHint: Option[String] = None,
-                 npv: Option[Int] = None) = Result(
+                 npv: Option[Int] = None): Result = Result(
     totalTax = taxDue,
     resultHeading = resultHeading,
     resultHint = resultHint,
@@ -138,7 +138,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
                      calcDeets: CalculationDetails,
                      resultHeading: Option[String] = Some(RESULT_HEADING_GENERIC),
                      resultHint: Option[String] = None,
-                     npv: Option[Int] = None) = Result(
+                     npv: Option[Int] = None): Result = Result(
     totalTax = taxDue,
     resultHeading = resultHeading,
     resultHint = resultHint,
@@ -149,7 +149,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
   def baseCalculationDetails(taxDue: Int, slices: Seq[SliceDetails],
                              detailHeading: Option[String] = None,
                              bandHeading: Option[String] = None,
-                             detailFooter: Option[String] = None) = CalculationDetails(
+                             detailFooter: Option[String] = None): CalculationDetails = CalculationDetails(
     taxType = TaxTypes.premium,
     calcType = CalcTypes.slice,
     detailHeading = detailHeading,
@@ -163,7 +163,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
                                   prevDetailHeading: Option[String] = None,
                                   prevBandHeading: Option[String] = None,
                                   prevDetailFooter: Option[String] = None,
-                                  rate: Option[Int] = None) = CalculationDetails(
+                                  rate: Option[Int] = None): CalculationDetails = CalculationDetails(
     taxType = TaxTypes.premium,
     calcType = CalcTypes.slice,
     detailHeading = prevDetailHeading,
@@ -174,7 +174,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
     slices = Some(slices)
   )
 
-  def baseSlabCalculationDetails(taxDue: Int, rate: Int) = CalculationDetails(
+  def baseSlabCalculationDetails(taxDue: Int, rate: Int): CalculationDetails = CalculationDetails(
     taxType = TaxTypes.premium,
     calcType = CalcTypes.slab,
     detailHeading = None,

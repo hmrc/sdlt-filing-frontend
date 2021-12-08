@@ -14,7 +14,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 
   //July 20 requests
 
-  def leaseholdResidentialJuly20OnwardsFTBRequest(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialJuly20OnwardsFTBRequest(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -35,7 +35,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = Some(true)
   )
 
-  def leaseholdResidentialAddPropJuly20OnwardsRequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialAddPropJuly20OnwardsRequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -56,7 +56,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = None
   )
 
-  def leaseholdResidentialAddPropJuly20OnwardsRequestNotIndividual(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialAddPropJuly20OnwardsRequestNotIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -77,7 +77,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = None
   )
 
-  def leaseholdResidentialJuly20OnwardsCompanyRequest(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialJuly20OnwardsCompanyRequest(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -98,7 +98,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = Some(false)
   )
 
-  def leaseholdResidentialJuly20OnwardsIndividualRequest(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialJuly20OnwardsIndividualRequest(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -121,7 +121,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 
   //Nov 17 requests
 
-  def leaseholdResidentialNov17OnwardsFTBRequestShared(premium: BigDecimal, testLeaseDetails: LeaseDetails) = Request(
+  def leaseholdResidentialNov17OnwardsFTBRequestShared(premium: BigDecimal, testLeaseDetails: LeaseDetails): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = LocalDate.of(2018, 1, 1),
@@ -142,7 +142,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = Some(true)
   )
 
-  def leaseholdResidentialNov17OnwardsFTBRequest(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialNov17OnwardsFTBRequest(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -165,7 +165,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 
   //March 16 requests
 
-  def leaseholdNonResidentialMar16OnwardsRequest(premium: BigDecimal, year2Rent: BigDecimal = 200, exchangedPreMarch2016: Boolean = true) = Request(
+  def leaseholdNonResidentialMar16OnwardsRequest(premium: BigDecimal, year2Rent: BigDecimal = 200, exchangedPreMarch2016: Boolean = true): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.nonResidential,
     effectiveDate = LocalDate.of(2013, 2, 14),
@@ -194,7 +194,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 
   //Dec 14 requests
 
-  def leaseholdResidentialDec14OnwardsRequest(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialDec14OnwardsRequest(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -217,7 +217,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 
   //April 16 requests
 
-  def leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialAddPropApr16OnwardsRequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -238,7 +238,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = None
   )
 
-  def leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(premium: BigDecimal, effectiveDate: LocalDate) = Request(
+  def leaseholdResidentialAddPropApr16OnwardsRequestNotIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -261,7 +261,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 
   //March 12 requests
 
-  def leaseholdResidentialMar12toDec14Request(premium: BigDecimal) = Request(
+  def leaseholdResidentialMar12toDec14Request(premium: BigDecimal): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = LocalDate.of(2013, 2, 14),
@@ -282,7 +282,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = Some(false)
   )
 
-  def leaseholdNonResidentialMar12toMar16Request(premium: BigDecimal, year2Rent: BigDecimal = 200) = Request(
+  def leaseholdNonResidentialMar12toMar16Request(premium: BigDecimal, year2Rent: BigDecimal = 200): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.nonResidential,
     effectiveDate = LocalDate.of(2013, 2, 14),

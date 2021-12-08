@@ -14,7 +14,7 @@ class RefundEntitlementServiceSpec extends PlaySpec {
 
   val refundService = new RefundEntitlementService
 
-  val individualPropertyDetails = PropertyDetails(
+  val individualPropertyDetails: PropertyDetails = PropertyDetails(
     individual = true,
     twoOrMoreProperties = Some(false),
     replaceMainResidence = None,
@@ -22,7 +22,7 @@ class RefundEntitlementServiceSpec extends PlaySpec {
     currentValue = None
   )
 
-  val nonIndividualPropertyDetails = PropertyDetails(
+  val nonIndividualPropertyDetails: PropertyDetails = PropertyDetails(
     individual = false,
     twoOrMoreProperties = None,
     replaceMainResidence = None,
