@@ -5,12 +5,13 @@
 
 package utils
 
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play._
 import utils.CalculationUtils.{leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScope}
 
-class CalculationUtilsSpec extends UnitSpec {
+class CalculationUtilsSpec extends PlaySpec {
 
-  ".leaseholdNRSDLTOutOfScope" should {
+  ".leaseholdNRSDLTOutOfScope" must {
     "return true" when {
       "premium < 40K and first time buyer is true and shared ownership is true" in {
         leaseholdNRSDLTOutOfScope(39999, 10, 1001, true, true) shouldBe true
@@ -39,7 +40,7 @@ class CalculationUtilsSpec extends UnitSpec {
     }
   }
 
-  ".leaseholdNRSDLTInScopeForLeaseOrPremium" should {
+  ".leaseholdNRSDLTInScopeForLeaseOrPremium" must {
     "return true" when {
       "premium == 40K and first time buyer is true and shared ownership is true" in {
         leaseholdNRSDLTInScopeForLeaseOrPremium(40000, 10, 1001, true, true) shouldBe true

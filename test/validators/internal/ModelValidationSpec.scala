@@ -6,12 +6,12 @@
 package validators.internal
 
 import java.time.LocalDate
-
 import enums.{HoldingTypes, PropertyTypes}
 import models._
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play._
 
-class ModelValidationSpec extends UnitSpec {
+class ModelValidationSpec extends PlaySpec {
 
   /*
   | HoldingType | PropertyType    | EffectiveDate           | Property Details Req'd | Lease Details Req'd |
@@ -66,7 +66,7 @@ class ModelValidationSpec extends UnitSpec {
 
   import ModelValidation._
 
-  "validLeaseDetails" should{
+  "validLeaseDetails" must {
     "return a ValidationSuccess" when{
       "the Holding Type is Freehold" in{
         val model = Request(
@@ -336,7 +336,7 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
-  "validLeaseTerm" should{
+  "validLeaseTerm" must{
     "return a ValidationSuccess" when{
       "the effective date is before the lease start date" in{
         val tempLeaseDetails = LeaseDetails(
@@ -594,7 +594,7 @@ class ModelValidationSpec extends UnitSpec {
    }
   }
 
-  "validLeaseLength" should{
+  "validLeaseLength" must{
     "return a ValidationSuccess" when{
       "given a lease start date in a leap year(feb 29th) and an end date not in a leap year" in {
 
@@ -726,7 +726,7 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
-  "validPropertyDetailsStructureFreehold" should {
+  "validPropertyDetailsStructureFreehold" must {
     "Return a ValidationSuccess for a PropertyDetailsModel" when {
       "individual is 'false' and other fields are defined" in {
         val deets = PropertyDetails(
@@ -804,7 +804,7 @@ class ModelValidationSpec extends UnitSpec {
 
 
 
-  "validPropertyDetailsStructureLeasehold" should {
+  "validPropertyDetailsStructureLeasehold" must {
     "Return a ValidationSuccess for a PropertyDetailsModel" when {
       "individual is 'true' and other fields are defined" in {
         val deets = PropertyDetails(
@@ -899,7 +899,7 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
-      "allRentsBelow2000" should {
+      "allRentsBelow2000" must {
     def details(year2Rent: BigDecimal) = LeaseDetails(
       startDate = LocalDate.of(2000, 1, 31),
       endDate = LocalDate.of(2050, 1, 31),
@@ -925,7 +925,7 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
-  "validRelevantRentDetails" should {
+  "validRelevantRentDetails" must {
 
     def validLeaseDetails(year2Rent: BigDecimal) = LeaseDetails(
       startDate = LocalDate.of(2000, 12, 31),
@@ -1064,7 +1064,7 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
-  "validRelevantRentDetailsStructure" should {
+  "validRelevantRentDetailsStructure" must {
     val postMar2016Date = LocalDate.of(2016, 3, 17)
     val preMar2016Date  = LocalDate.of(2016, 3, 16)
     "return a ValidationSuccess" when {
@@ -1162,7 +1162,7 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
-  "validFirstTimeBuyer" should {
+  "validFirstTimeBuyer" must {
     "return a ValidationSuccess" when {
       "the effective date is before 22/11/2017" in{
         val request = Request(
@@ -1341,7 +1341,7 @@ class ModelValidationSpec extends UnitSpec {
     }
   }
 
-  "listValidationErrors" should {
+  "listValidationErrors" must {
     "have no errors" when {
       "holding type is freehold, non-residential and there are no lease details" in {
         val model = Request(

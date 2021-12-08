@@ -5,11 +5,12 @@
 
 package utils
 
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play._
 
-class StringUtilsSpec extends UnitSpec {
+class StringUtilsSpec extends PlaySpec {
 
-  "Calling intToMonetaryString" should {
+  "Calling intToMonetaryString" must {
     "return '1,200' for 1200" in {
       StringUtils.intToMonetaryString(1200) shouldBe "1,200"
     }

@@ -6,14 +6,15 @@
 package config
 
 import org.jsoup.Jsoup
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Content
-import uk.gov.hmrc.play.test.UnitSpec
 import views.html.error_template
 
-class SDLTCErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite  with Injecting {
+class SDLTCErrorHandlerSpec extends PlaySpec with GuiceOneAppPerSuite  with Injecting {
 
 
   implicit val mcc: MessagesControllerComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]

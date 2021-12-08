@@ -5,15 +5,17 @@
 
 package services
 
-import data.ResultText.RESULT_HEADING_GENERIC
-
 import java.time.LocalDate
+
+import data.ResultText.RESULT_HEADING_GENERIC
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
-import models._
-import uk.gov.hmrc.play.test.UnitSpec
+import models.{CalculationDetails, Result, _}
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play._
 
-class FreeholdCalculationServiceSpec extends UnitSpec {
+class FreeholdCalculationServiceSpec extends PlaySpec {
+
   val testFreeholdCalcService = new FreeholdCalculationService(new BaseCalculationService, new RefundEntitlementService)
   val july2021EffectiveDate: LocalDate = LocalDate.of(2021, 7, 1)
   val june2021EffectiveDate: LocalDate = LocalDate.of(2021, 6, 30)
@@ -187,7 +189,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
 
   "calculating freeholdResidentialApril21Onwards as an Individual" when {
 
-    "all purchasers are UK resident" should {
+    "all purchasers are UK resident" must {
       val resultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
       val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
       val bandHeading: Option[String] = Some("Purchase price bands (£)")
@@ -261,7 +263,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
 
   "calculating freeholdResidentialApril21Onwards as a Company" when {
 
-    "the company is uk resident" should {
+    "the company is uk resident" must {
       val resultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
       val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
       val bandHeading: Option[String] = Some("Purchase price bands (£)")
@@ -359,7 +361,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdResidentialAddPropJuly20Onwards" should {
+  "calculating freeholdResidentialAddPropJuly20Onwards" must {
 
     val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
     val bandHeading: Option[String] = Some("Purchase price bands (£)")
@@ -558,7 +560,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdResidentialJuly20Onwards as an Individual" should {
+  "calculating freeholdResidentialJuly20Onwards as an Individual" must {
 
     val resultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
     val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
@@ -643,7 +645,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdResidentialJuly20Onwards as a Company" should {
+  "calculating freeholdResidentialJuly20Onwards as a Company" must {
 
     val resultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
     val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
@@ -741,7 +743,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdResidentialNov17OnwardsFTB" should {
+  "calculating freeholdResidentialNov17OnwardsFTB" must {
 
     val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
     val bandHeading: Option[String] = Some("Purchase price bands (£)")
@@ -812,7 +814,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdResidentialDec14Onwards" should {
+  "calculating freeholdResidentialDec14Onwards" must {
 
     val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
     val bandHeading: Option[String] = Some("Purchase price bands (£)")
@@ -926,7 +928,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdResidentialMar12toDec14" should {
+  "calculating freeholdResidentialMar12toDec14" must {
 
     "return 0 for purchase price of 125000" in {
       val res = testFreeholdCalcService.freeholdResidentialMar12toDec14(baseRequestIndividual(125000, march2012EffectiveDate))
@@ -980,7 +982,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdNonResidentialMar16Onwards" should {
+  "calculating freeholdNonResidentialMar16Onwards" must {
     val resultHeading: Option[String] = Some("Results based on SDLT rules from 17 March 2016")
     val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated " +
       "based on the rules from 17 March 2016")
@@ -1075,7 +1077,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdNonResidentialMar12toMar16" should {
+  "calculating freeholdNonResidentialMar12toMar16" must {
 
     "return 0 for purchase price of 150000" in {
       val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequestIndividual(150000, march2012EffectiveDate))
@@ -1113,7 +1115,7 @@ class FreeholdCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculating freeholdResidentialAddPropApr16Onwards" should {
+  "calculating freeholdResidentialAddPropApr16Onwards" must {
 
     val resultHeading: Option[String] = Some("Results based on SDLT rules from 1 April 2016")
     val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated " +

@@ -6,14 +6,14 @@
 package services
 
 import java.time.LocalDate
-
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.InvalidDateException
-import models._
-import uk.gov.hmrc.play.test.UnitSpec
+import models.{CalculationDetails, CalculationResponse, Result, _}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 
-class CalculationServiceSpec extends UnitSpec with MockFactory {
+class CalculationServiceSpec extends PlaySpec with MockFactory {
 
   val april2021EffectiveDate: LocalDate = LocalDate.of(2021, 4, 1)
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
@@ -27,7 +27,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
     mockAdditionalPropertyService
   )
 
-  "CalculateTax" should {
+  "CalculateTax" must {
     val calcDetails = CalculationDetails(
       taxType = TaxTypes.premium,
       calcType = CalcTypes.slab,
@@ -465,7 +465,7 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       "given a request with an effective date of 21/3/2012" in{
         val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential,LocalDate.of(2012, 3, 21))
 
-        the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) should have message s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
+        the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
       }
     }
 
@@ -785,13 +785,13 @@ class CalculationServiceSpec extends UnitSpec with MockFactory {
       "given a request with an effective date of 21/3/2012" in{
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential,LocalDate.of(2012, 3, 21))
 
-        the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) should have message s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
+        the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
       }
     }
   }
 
-  "checkPropDetailsFTB" should{
-    "return true" when{
+  "checkPropDetailsFTB" must {
+    "return true" when {
       "the user is an individual who does not own twoOrMoreProperties and the premium < 500000"in{
          val propertyDetails = Some(PropertyDetails(
           individual = true,

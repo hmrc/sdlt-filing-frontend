@@ -5,12 +5,13 @@
 
 package enums
 
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 import play.api.libs.json._
-import uk.gov.hmrc.play.test.UnitSpec
 
-class PropertyAndHoldingTypesSpec extends UnitSpec {
+class PropertyAndHoldingTypesSpec extends PlaySpec {
 
-  "HoldingTypes" should {
+  "HoldingTypes" must {
     "read 'Leasehold' to Json" in {
       Json.fromJson[HoldingTypes.Value](JsString("Leasehold")) shouldBe JsSuccess(HoldingTypes.leasehold)
     }
@@ -27,7 +28,7 @@ class PropertyAndHoldingTypesSpec extends UnitSpec {
     }
   }
 
-  "PropertyTypes" should {
+  "PropertyTypes" must {
     "read 'Residential' to Json" in {
       Json.fromJson[PropertyTypes.Value](JsString("Residential")) shouldBe JsSuccess(PropertyTypes.residential)
     }
