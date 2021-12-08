@@ -11,7 +11,7 @@ import models.{LeaseDetails, LeaseTerm}
 
 trait LeaseDetailsFixture {
 
-  protected val testLeaseDetailsJuly2020 = LeaseDetails(
+  protected val testLeaseDetailsJuly2020: LeaseDetails = LeaseDetails(
     startDate = LocalDate.of(2020, 7, 10),
     endDate = LocalDate.of(2120, 7, 9),
     leaseTerm = LeaseTerm(
@@ -26,7 +26,7 @@ trait LeaseDetailsFixture {
     year5Rent = Some(18150)
   )
 
-  protected val testLeaseDetails = LeaseDetails(
+  protected val testLeaseDetails: LeaseDetails = LeaseDetails(
     startDate = LocalDate.of(2000, 1, 1),
     endDate = LocalDate.of(2020, 1, 1),
     leaseTerm = LeaseTerm(
@@ -41,7 +41,7 @@ trait LeaseDetailsFixture {
     year5Rent = None
   )
 
-  protected val testLeaseDetailsAllRentsUnder2000 = LeaseDetails(
+  protected val testLeaseDetailsAllRentsUnder2000: LeaseDetails = LeaseDetails(
     startDate = LocalDate.of(2000, 1, 1),
     endDate = LocalDate.of(2020, 1, 1),
     leaseTerm = LeaseTerm(

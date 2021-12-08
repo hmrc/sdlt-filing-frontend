@@ -6,13 +6,14 @@
 package models
 
 import java.time.LocalDate
-
 import enums.{HoldingTypes, PropertyTypes}
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsSuccess, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 
-class RequestSpec extends UnitSpec {
-  "LeaseTerm" should {
+class RequestSpec extends PlaySpec {
+
+  "LeaseTerm" must {
     "read from Json" in {
       val testJson = Json.parse(
         """{
@@ -27,7 +28,7 @@ class RequestSpec extends UnitSpec {
     }
   }
 
-  "LeaseDetails" should {
+  "LeaseDetails" must {
     "read from Json" when {
       "all fields are defined" in  {
         val testJson = Json.parse(
@@ -109,7 +110,7 @@ class RequestSpec extends UnitSpec {
     }
   }
 
-  "PropertyDetails" should {
+  "PropertyDetails" must {
     "read from Json with full details" in {
       val testJson = Json.parse(
         """
@@ -151,7 +152,7 @@ class RequestSpec extends UnitSpec {
     }
   }
 
-  "RelevantRentDetails" should {
+  "RelevantRentDetails" must {
     "read from Json with full details" in {
       val testJson = Json.parse(
         """
@@ -189,7 +190,7 @@ class RequestSpec extends UnitSpec {
     }
   }
 
-  "Request" should {
+  "Request" must {
     "read from full Json" in {
       val testJson = Json.parse(
         """

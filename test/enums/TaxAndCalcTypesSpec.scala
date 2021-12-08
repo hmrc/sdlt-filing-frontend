@@ -5,12 +5,13 @@
 
 package enums
 
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 
-class TaxAndCalcTypesSpec extends UnitSpec {
+class TaxAndCalcTypesSpec extends PlaySpec {
 
-  "TaxTypes" should {
+  "TaxTypes" must {
     "write 'rent' to Json" in {
       Json.toJson(TaxTypes.rent) shouldBe JsString("rent")
     }
@@ -19,7 +20,7 @@ class TaxAndCalcTypesSpec extends UnitSpec {
     }
   }
 
-  "CalcTypes" should {
+  "CalcTypes" must {
     "write 'slice' to Json" in {
       Json.toJson(CalcTypes.slice) shouldBe JsString("slice")
     }

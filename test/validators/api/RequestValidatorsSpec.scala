@@ -6,13 +6,15 @@
 package validators.api
 
 import java.time.LocalDate
+
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play._
 import play.api.libs.json._
 import testutils.JsonValidation
-import uk.gov.hmrc.play.test.UnitSpec
 
-class RequestValidatorsSpec extends UnitSpec with JsonValidation {
+class RequestValidatorsSpec extends PlaySpec with JsonValidation {
 
-  "dateReads" should {
+  "dateReads" must {
     "successfully read a date" when {
       "a full date is provided with a prefix" in {
         val testJson = Json.parse(
@@ -111,7 +113,7 @@ class RequestValidatorsSpec extends UnitSpec with JsonValidation {
     }
   }
 
-  "yesNoToBooleanReads" should {
+  "yesNoToBooleanReads" must {
     "successfully read 'Yes'" in {
       Json.fromJson[Boolean](JsString("Yes"))(RequestValidators.yesNoToBooleanReads) shouldBe JsSuccess(true)
     }

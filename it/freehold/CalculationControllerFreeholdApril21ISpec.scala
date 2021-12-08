@@ -5,15 +5,15 @@
 
 package freehold
 
+import base.BaseSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
-import play.api.http.Status._
+import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.libs.ws.{WSClient, WSResponse}
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.libs.ws._
 
-class CalculationControllerFreeholdApril21ISpec extends UnitSpec with GuiceOneServerPerSuite {
+class CalculationControllerFreeholdApril21ISpec extends BaseSpec with GuiceOneServerPerSuite {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .configure()

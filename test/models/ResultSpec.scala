@@ -6,12 +6,13 @@
 package models
 
 import enums.{CalcTypes, TaxTypes}
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 
-class ResultSpec extends UnitSpec {
+class ResultSpec extends PlaySpec {
 
-  "SliceDetails" should {
+  "SliceDetails" must {
     "write to Json successfully" when {
       "'to' field is defined" in {
         val testJson = Json.parse(
@@ -57,7 +58,7 @@ class ResultSpec extends UnitSpec {
     }
   }
 
-  "CalculationDetails" should {
+  "CalculationDetails" must {
     "write to Json successfully" when {
       "result helper texts are not defined" in {
         val testJson = Json.parse(
@@ -99,7 +100,7 @@ class ResultSpec extends UnitSpec {
     }
   }
 
-  "CalculationResponse" should {
+  "CalculationResponse" must {
     "write to Json successfully" when {
 
       "there is a single slab result" in {

@@ -6,14 +6,14 @@
 package services
 
 import java.time.LocalDate
-
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import fixtures.{LeaseholdRequestFeature, LeaseholdResultFixture}
-import models._
-import uk.gov.hmrc.play.test.UnitSpec
+import models.{CalculationDetails, Result, _}
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 
-class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeature with LeaseholdResultFixture {
+class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeature with LeaseholdResultFixture {
 
   val april2021EffectiveEndDate: LocalDate = LocalDate.of(2021, 4, 1)
   val march2021EffectiveDate: LocalDate = LocalDate.of(2021, 3, 31)
@@ -38,21 +38,21 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     val service = new LeaseholdCalculationService(new BaseCalculationService, new RefundEntitlementService)
   }
 
-  "getNPV" should {
+  "getNPV" must {
     "provide the NPV when the lease details are defined" in new PredefinedNPVSetup(1000) {
       service.getNPV("getNPVTestFunction", Some(testLeaseDetails)) shouldBe 1000
     }
     "throw the correct exception when the lease details are not defined" in new PredefinedNPVSetup(1000) {
       the[RequiredValueNotDefinedException] thrownBy
-        service.getNPV("getNPVTestFunction", None) should have message
+        service.getNPV("getNPVTestFunction", None) must have message
         "[LeaseholdCalculationService] [getNPVTestFunction] Lease details not defined when required"
     }
   }
 
-  "checkIfShared" should {
+  "checkIfShared" must {
     "return true" when {
       "sharedOwnerships is Some(true)" in new Setup{
-        val propertyDetails = Some(
+        val propertyDetails: Option[PropertyDetails] = Some(
           PropertyDetails(
             individual = true,
             twoOrMoreProperties = Some(false),
@@ -67,7 +67,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
 
     "return false" when {
       "sharedOwnership is Some(false)" in new Setup {
-        val propertyDetails = Some(
+        val propertyDetails: Option[PropertyDetails] = Some(
           PropertyDetails(
             individual = true,
             twoOrMoreProperties = Some(false),
@@ -80,7 +80,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
       }
 
     "sharedOwnership is None" in new Setup{
-        val propertyDetails = Some(
+        val propertyDetails: Option[PropertyDetails] = Some(
           PropertyDetails(
             individual = true,
             twoOrMoreProperties = Some(false),
@@ -94,7 +94,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdResidentialNov17OnwardsFTBShared" should {
+  "leaseholdResidentialNov17OnwardsFTBShared" must {
     val MAX_PREMIUM_FTB = 500000
     "return 0, 0 for purchase price of 195000, npv of 71428" in new PredefinedNPVSetup(71428) {
       val leaseTaxDue = 0
@@ -108,7 +108,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(3007, 11, 1),
         leaseTerm = LeaseTerm(
@@ -139,7 +139,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(3007, 10, 30),
         leaseTerm = LeaseTerm(
@@ -170,7 +170,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(3007, 11, 1),
         leaseTerm = LeaseTerm(
@@ -201,7 +201,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 750)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(3007, 11, 1),
         leaseTerm = LeaseTerm(
@@ -232,7 +232,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
         SliceDetails(from = 300000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 4750)
       )
 
-      val testLeaseDetails = LeaseDetails(
+      val testLeaseDetails: LeaseDetails = LeaseDetails(
         startDate = LocalDate.of(2018, 11, 1),
         endDate = LocalDate.of(2077, 10, 31),
         leaseTerm = LeaseTerm(
@@ -252,7 +252,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdResidentialAddPropJuly20Onwards" should {
+  "leaseholdResidentialAddPropJuly20Onwards" must {
 
     "return 15019, 19 for purchase price of 500000, npv of 501945" in new PredefinedNPVSetup(501945, Some(15000)) {
       val leaseTaxDue = 19
@@ -406,7 +406,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdResidentialJuly20Onwards" should {
+  "leaseholdResidentialJuly20Onwards" must {
 
     "return 19, 0 for purchase price of 499000, npv of 501945 as individual" in new PredefinedNPVSetup(501945) {
       val leaseTaxDue = 19
@@ -557,7 +557,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdResidentialNov17OnwardsFTB" should {
+  "leaseholdResidentialNov17OnwardsFTB" must {
     val MAX_PREMIUM_FTB = 500000
     "return 0, 0 for purchase price of 299999, npv of 125000" in new PredefinedNPVSetup(125000) {
       val leaseTaxDue = 0
@@ -656,7 +656,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdResidentialAddPropApr16Onwards" should{
+  "leaseholdResidentialAddPropApr16Onwards" must{
 
     "return 0, 1 for purchase price of 40000, npv of 125000" in new PredefinedNPVSetup(125100, None){
       val leaseTaxDue = 1
@@ -1090,7 +1090,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdResidentialDec14Onwards" should {
+  "leaseholdResidentialDec14Onwards" must {
 
     "return 0, 0 for purchase price of 125000, npv of 125000" in new PredefinedNPVSetup(125000) {
       val leaseTaxDue, premTaxDue = 0
@@ -1263,7 +1263,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdResidentialMar12toDec14" should {
+  "leaseholdResidentialMar12toDec14" must {
 
     "return 0, 0 for purchase price of 125000, npv of 125000" in new PredefinedNPVSetup(125000) {
       val leaseTaxDue = 0
@@ -1396,7 +1396,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdNonResidentialMar16Onwards" should {
+  "leaseholdNonResidentialMar16Onwards" must {
     "return 0, 0 for premium of 149000, npv of 150000, prevCalc is FALSE (exchanged contracts post March 2016)" in new PredefinedNPVSetup(150000) {
       val leaseTaxDue, premTaxDue = 0
       val leaseSliceDetails = Seq(
@@ -1493,7 +1493,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "leaseholdNonResidentialMar12toMar16" should {
+  "leaseholdNonResidentialMar12toMar16" must {
     "return 0, 0 for purchase price of 149000, npv of 150000 and zeroRate is TRUE" in new PredefinedNPVSetup(150000) {
       val leaseTaxDue, premTaxDue = 0
       val premRate = 0
@@ -1580,7 +1580,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "eligibleForZeroRate" should {
+  "eligibleForZeroRate" must {
 
     def testRequest(
                    premium: BigDecimal = 150000,
@@ -1663,7 +1663,7 @@ class LeaseholdCalculationServiceSpec extends UnitSpec with LeaseholdRequestFeat
     }
   }
 
-  "nonResPrevCalcRequired" should {
+  "nonResPrevCalcRequired" must {
 
     def testRequest(
                      premium: BigDecimal = 150000,

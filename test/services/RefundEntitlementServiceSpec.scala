@@ -7,14 +7,14 @@ package services
 
 import exceptions.RequiredValueNotDefinedException
 import models.PropertyDetails
-import uk.gov.hmrc.play.test.UnitSpec
-import org.scalamock.scalatest.MockFactory
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 
-class RefundEntitlementServiceSpec extends UnitSpec with MockFactory {
+class RefundEntitlementServiceSpec extends PlaySpec {
 
   val refundService = new RefundEntitlementService
 
-  val individualPropertyDetails = PropertyDetails(
+  val individualPropertyDetails: PropertyDetails = PropertyDetails(
     individual = true,
     twoOrMoreProperties = Some(false),
     replaceMainResidence = None,
@@ -22,7 +22,7 @@ class RefundEntitlementServiceSpec extends UnitSpec with MockFactory {
     currentValue = None
   )
 
-  val nonIndividualPropertyDetails = PropertyDetails(
+  val nonIndividualPropertyDetails: PropertyDetails = PropertyDetails(
     individual = false,
     twoOrMoreProperties = None,
     replaceMainResidence = None,
@@ -30,7 +30,7 @@ class RefundEntitlementServiceSpec extends UnitSpec with MockFactory {
     currentValue = None
   )
 
-  "calculateRefundEntitlement" should {
+  "calculateRefundEntitlement" must {
     "return None" when {
       "previous tax is more than current tax" in {
         refundService.calculateRefundEntitlement(100000, 100001, Some(individualPropertyDetails)) shouldBe None

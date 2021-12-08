@@ -5,11 +5,13 @@
 
 package testutils
 
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play._
 import play.api.libs.json._
-import uk.gov.hmrc.play.test.UnitSpec
+
 
 trait JsonValidation {
-  this: UnitSpec =>
+  this: PlaySpec =>
 
   def shouldHaveErrors[T](result: JsResult[T], errorPath: JsPath, expectedError: JsonValidationError): Unit = {
     shouldHaveErrors[T](result, Map(errorPath -> Seq(expectedError)))

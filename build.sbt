@@ -17,7 +17,7 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
   TwirlKeys.templateImports ++= Seq(
     "uk.gov.hmrc.govukfrontend.views.html.components._",
   ),
-  dependencyOverrides += "org.scala-lang" % "scala-library" % "2.12.13"
+  dependencyOverrides += "org.scala-lang" % "scala-library" % "2.12.15"
 ) ++ JavaScriptBuild.javaScriptUiSettings
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtDistributablesPlugin, SbtWeb)
@@ -33,14 +33,15 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
   )
 }
 
-val silencerVersion = "1.7.1"
+val silencerVersion = "1.7.7"
+maintainer := "your.name@company.org"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(plugins: _*)
   .settings(playSettings: _*)
   .settings(playSettings ++ scoverageSettings: _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.12.12")
+  .settings(scalaVersion := "2.12.15")
   .settings(majorVersion := 5)
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)

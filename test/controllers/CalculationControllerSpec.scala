@@ -5,28 +5,27 @@
 
 package controllers
 
-import akka.actor.ActorSystem
-import services.CalculationService
-import play.api.http.Status._
-import play.api.libs.json._
-import play.api.test.FakeRequest
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
+import base.BaseSpec
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, CalculationResponse, Result}
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.OneInstancePerTest
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status._
+import play.api.libs.json._
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.FakeRequest
+import services.CalculationService
 
-class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstancePerTest with WithFakeApplication{
+class CalculationControllerSpec extends BaseSpec with MockFactory with GuiceOneAppPerSuite {
 
-  val mockComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
-  val mockCalculationService = mock[CalculationService]
+  val mockComponents: MessagesControllerComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
+  val mockCalculationService: CalculationService = mock[CalculationService]
   val testCalculationController = new CalculationController(mockCalculationService, mockComponents)
-  val actorSystem = ActorSystem("actorSystem")
-  val materializer = ActorMaterializer()(actorSystem)
+  val materializer: Materializer = app.materializer
 
-  val calcDetails = CalculationDetails(
+  val calcDetails: CalculationDetails = CalculationDetails(
     taxType = TaxTypes.premium,
     calcType = CalcTypes.slab,
     taxDue = 0,
@@ -37,7 +36,7 @@ class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstan
     slices = None
   )
 
-  def createResult(msg: String) = Result(
+  def createResult(msg: String): Result = Result(
     totalTax = 0,
     resultHeading = Some(msg),
     resultHint = None,
@@ -50,8 +49,8 @@ class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstan
       "no Json data has been received" in{
         val fakeRequest = FakeRequest()
         val result = testCalculationController.calculateSDLTC(fakeRequest)
-        status(result) shouldBe BAD_REQUEST
-        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("No json data received.")
+        status(result) mustBe BAD_REQUEST
+        jsonBodyOf(await(result))(materializer) mustBe Json.toJson("No json data received.")
       }
 
       "there wasn't enough json data for it to match the request model" in {
@@ -69,8 +68,8 @@ class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstan
 
         val fakeRequest = FakeRequest().withJsonBody(incompleteJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
-        status(result) shouldBe BAD_REQUEST
-        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("Incorrect Json request body format supplied: JsError(List((/highestRent,List(JsonValidationError(List(error.path.missing),WrappedArray())))))")
+        status(result) mustBe BAD_REQUEST
+        jsonBodyOf(await(result))(materializer) mustBe Json.toJson("Incorrect Json request body format supplied: JsError(List((/highestRent,List(JsonValidationError(List(error.path.missing),WrappedArray())))))")
       }
 
       "model is invalid and contains errors" in{
@@ -116,8 +115,8 @@ class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstan
 
         val fakeRequest = FakeRequest().withJsonBody(jsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
-        status(result) shouldBe BAD_REQUEST
-        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson("Validation error: List(ValidationFailure(Effective date of '2011-07-13' is before 22 March, 2012), ValidationFailure(Lease term year: 33, Lease term day: 0, comparisonDate: 2044-07-12 does not match the difference between 2011-07-13 and 2049-12-31))")
+        status(result) mustBe BAD_REQUEST
+        jsonBodyOf(await(result))(materializer) mustBe Json.toJson("Validation error: List(ValidationFailure(Effective date of '2011-07-13' is before 22 March, 2012), ValidationFailure(Lease term year: 33, Lease term day: 0, comparisonDate: 2044-07-12 does not match the difference between 2011-07-13 and 2049-12-31))")
       }
     }
 
@@ -172,9 +171,9 @@ class CalculationControllerSpec extends UnitSpec with MockFactory with OneInstan
 
         val fakeRequest = FakeRequest().withJsonBody(completeJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
-        status(result) shouldBe OK
+        status(result) mustBe OK
         println(jsonBodyOf(await(result))(materializer))
-        jsonBodyOf(await(result))(materializer) shouldBe Json.toJson(response)
+        jsonBodyOf(await(result))(materializer) mustBe Json.toJson(response)
       }
     }
   }

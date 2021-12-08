@@ -7,13 +7,14 @@ package services
 
 import exceptions.RequiredValueNotDefinedException
 import models.PropertyDetails
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 
-class AdditionalPropertyServiceSpec extends UnitSpec {
+class AdditionalPropertyServiceSpec extends PlaySpec {
 
   val additionalPropertyService = new AdditionalPropertyService
 
-  "Additional property check" should {
+  "Additional property check" must {
     "return true for an individual with additional property and not replacing main residence" when {
       "the property is not leasehold and the premium is 40K" in {
         val propertyDetails = Some(PropertyDetails(

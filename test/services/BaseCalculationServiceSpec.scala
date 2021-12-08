@@ -6,16 +6,16 @@
 package services
 
 import java.time.LocalDate
-
-import models.{LeaseDetails, LeaseTerm, SliceDetails}
 import models.calculationtables.{Slab, SlabResult, Slice, SliceResult}
-import uk.gov.hmrc.play.test.UnitSpec
+import models.{LeaseDetails, LeaseTerm, SliceDetails}
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatestplus.play.PlaySpec
 
-class BaseCalculationServiceSpec extends UnitSpec {
+class BaseCalculationServiceSpec extends PlaySpec {
 
   val testBaseCalcService = new BaseCalculationService
 
-  "calculateTaxDueSlab" should {
+  "calculateTaxDueSlab" must {
     val slabsArray = Seq(
       Slab(threshold = 2000000, rate = 7),
       Slab(threshold = 1000000, rate = 5),
@@ -71,7 +71,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
       }
     }
 
-    "calculateTaxDueSlice" should {
+    "calculateTaxDueSlice" must {
       val sliceArray = Seq(
         Slice(from = 0, to = Some(125000), rate = 0),
         Slice(from = 125000, to = Some(250000), rate = 2),
@@ -222,7 +222,7 @@ class BaseCalculationServiceSpec extends UnitSpec {
     }
   }
 
-  "calculateNPV" should {
+  "calculateNPV" must {
     "return a result of 9661" when {
       "given 1 year, 0 partial days with rents [10000,None,None,None,None]" in {
         val leaseT = LeaseTerm(years = 1,days = 0, daysInPartialYear = 0)
