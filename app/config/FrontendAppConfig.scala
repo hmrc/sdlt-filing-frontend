@@ -33,4 +33,7 @@ class FrontendAppConfig @Inject()(config: ServicesConfig) {
   lazy val termsConditions: String = loadConfig("urls.footer.terms_and_conditions")
   lazy val govukHelp: String = loadConfig("urls.footer.help_page")
 
+  val trackingConsentUrl: String = config.getString("tracking-consent-frontend.url")
+  val gtmContainer: String = config.getString("tracking-consent-frontend.gtm.container")
+
 }

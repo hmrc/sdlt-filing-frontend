@@ -5,8 +5,7 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
-@import uk.gov.hmrc.hmrcfrontend.views.Aliases.ReportTechnicalIssue
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcReportTechnicalIssue
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.En
 @import play.api.mvc.Request
 
@@ -15,7 +14,7 @@
         govukLayout: GovukLayout,
         head: head,
         scripts: scripts,
-        problemLink: HmrcReportTechnicalIssue,
+        problemLinkHelper: HmrcReportTechnicalIssueHelper,
         accessibilityStatementConfig: AccessibilityStatementConfig
 )
 
@@ -26,7 +25,7 @@
     @contentBlock
 
     @{ if(showReportIssue) {
-            problemLink(ReportTechnicalIssue(serviceId = "sdltc-frontend", serviceCode = appConfig.contactFormServiceIdentifier, language = En))
+            problemLinkHelper()
         }
     }
 }
