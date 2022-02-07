@@ -86,6 +86,12 @@ For Mac
 sudo nginx -s stop : To stop
 sudo nginx : To start
 ```
+###Note
+If you are running *Rancher Desktop* you may need to stop this before starting *nginx*.
+
+SDLTC does not necessarily require any mongo containers to run.
+However, you can restart Rancher after nginx has been started (should you wish).
+
 Access SDLTC via nginx
 ```
 http://localhost/calculate-stamp-duty-land-tax/
@@ -106,6 +112,12 @@ if you have any problem try the following steps:
 
     III.``` nvm use v8.11.2```
 
-3. To run the tests locally you will need to run a docker container using the following command (hmrc vpn connection required)
-
-    ```docker pull artefacts.tax.service.gov.uk/chrome-with-rinetd:latest && docker run -d --rm --name chrome-with-rinetd -p 4444:4444 -p 5900:5900 -e PORT_MAPPINGS="6001->6001" -e TARGET_IP='host.docker.internal' artefacts.tax.service.gov.uk/chrome-with-rinetd:latest```
+3.  Post removal of Docker you will need to pass in your devices ipConfig address to TARGET_IP parameter (hmrc vpn connection required):
+    
+    ```docker pull artefacts.tax.service.gov.uk/chrome-with-rinetd:latest && docker run -d --rm --name chrome-with-rinetd -p 4444:4444 -p 5900:5900 -e PORT_MAPPINGS="6001->6001" -e TARGET_IP='{ipConfigAddress}' artefacts.tax.service.gov.uk/chrome-with-rinetd:latest```
+    
+    To obtain ip address (from a mac) use the following on the command line:
+    ```
+    ifconfig en0 | grep 'inet ' | awk '{print $2}'
+    ```
+    
