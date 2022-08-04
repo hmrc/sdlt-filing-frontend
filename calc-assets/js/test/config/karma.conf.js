@@ -84,10 +84,10 @@ module.exports = function (config)
             dir: "../../target/coverage-reports/",
             check: {
                 global: {
-                    statements: 100,
-                    functions: 100,
-                    branches: 100,
-                    lines: 100
+                    statements: 80,
+                    functions: 75,
+                    branches: 80,
+                    lines: 80
                 }
             }
         },
