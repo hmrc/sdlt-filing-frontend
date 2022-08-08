@@ -83,11 +83,12 @@ module.exports = function (config)
             type: "html",
             dir: "../../target/coverage-reports/",
             check: {
+                emitWarning: true,
                 global: {
-                    statements: 80,
-                    functions: 75,
-                    branches: 80,
-                    lines: 80
+                    statements: 100,
+                    functions: 100,
+                    branches: 100,
+                    lines: 100
                 }
             }
         },
