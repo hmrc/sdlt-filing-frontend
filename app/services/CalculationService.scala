@@ -107,6 +107,27 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           CalculationResponse(Seq(freeCalculationService.freeholdResidentialJuly21Onwards(request)))
         }
       }
+    } else if (request.effectiveDate.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE)){
+      if (checkFTB(request.propertyDetails, request.firstTimeBuyer, request.premium)) {
+        if (!freeholdNRSDLTOutOfScope(request.premium)) {
+          CalculationResponse(freeCalculationService.freeholdResidentialSept22OnwardsFTBNonUKRes(request))
+        } else {
+          CalculationResponse(Seq(freeCalculationService.freeholdResidentialSept22OnwardsFTB(request)))
+        }
+      } else if (additionalPropertyService.additionalPropertyRatesApply(
+        request.premium, request.propertyDetails, extractLeaseTerm(request.leaseDetails))) {
+        if (!freeholdNRSDLTOutOfScope(request.premium)) {
+          CalculationResponse(freeCalculationService.freeholdResidentialAddPropNonUKResJuly21Onwards(request))
+        } else {
+          CalculationResponse(freeCalculationService.freeholdResidentialAddPropJuly21Onwards(request))
+        }
+      } else {
+        if (!freeholdNRSDLTOutOfScope(request.premium)) {
+          CalculationResponse(freeCalculationService.freeholdResidentialJuly21OnwardsNonUKRes(request))
+        } else {
+          CalculationResponse(Seq(freeCalculationService.freeholdResidentialJuly21Onwards(request)))
+        }
+      }
     } else {
       if (checkFTB(request.propertyDetails, request.firstTimeBuyer, request.premium)) {
         if (!freeholdNRSDLTOutOfScope(request.premium)) {

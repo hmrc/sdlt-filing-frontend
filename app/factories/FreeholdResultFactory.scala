@@ -178,6 +178,7 @@ object FreeholdResultFactory {
 
   //FTB
 
+  //suitable for Post Sept 22
   def freeholdResidentialNov17OnwardsFTBResult(sliceResult: SliceResult, afterMarch2021: Boolean, prevResult: Boolean = false): Result = {
 
     val resHeading = if(afterMarch2021) {
@@ -219,6 +220,7 @@ object FreeholdResultFactory {
     )
   }
 
+  //suitable for Post Sept 22
   def freeholdResidentialJuly21OnwardsFTBResult(sliceResult: SliceResult, nonUKResident: Boolean): Result = {
     Result(
       totalTax = sliceResult.taxDue.toInt,
