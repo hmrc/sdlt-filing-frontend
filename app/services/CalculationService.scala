@@ -107,8 +107,8 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           CalculationResponse(Seq(freeCalculationService.freeholdResidentialJuly21Onwards(request)))
         }
       }
-    } else if (request.effectiveDate.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE)){
-      if (checkFTB(request.propertyDetails, request.firstTimeBuyer, request.premium)) {
+    } else if (request.effectiveDate.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE)) {
+      if (checkFTBPostSep22(request.propertyDetails, request.firstTimeBuyer, request.premium)) {
         if (!freeholdNRSDLTOutOfScope(request.premium)) {
           CalculationResponse(freeCalculationService.freeholdResidentialSept22OnwardsFTBNonUKRes(request))
         } else {
@@ -273,6 +273,14 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
   def checkFTB(propertyDetails: Option[PropertyDetails], firstTimeBuyer: Option[Boolean], premium: BigDecimal): Boolean = {
     val MAX_PREMIUM_FTB = 500000
+
+    propertyDetails.exists(propDetails =>
+      propDetails.individual && propDetails.twoOrMoreProperties.contains(false) && firstTimeBuyer.contains(true) && premium <= MAX_PREMIUM_FTB
+    )
+  }
+
+  def checkFTBPostSep22(propertyDetails: Option[PropertyDetails], firstTimeBuyer: Option[Boolean], premium: BigDecimal): Boolean = {
+    val MAX_PREMIUM_FTB = 625000
 
     propertyDetails.exists(propDetails =>
       propDetails.individual && propDetails.twoOrMoreProperties.contains(false) && firstTimeBuyer.contains(true) && premium <= MAX_PREMIUM_FTB
