@@ -14,7 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "blanket": "^1.2.3",
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
