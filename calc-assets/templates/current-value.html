@@ -24,13 +24,13 @@
             <div class="govuk-radios__item">
                 <input class="govuk-radios__input" id="currentValue-yes" data-ng-model="data.currentValue" name="currentValue" value="£500,000 or less" type="radio">
                 <label class="govuk-label govuk-radios__label" for="currentValue-yes">
-                    £500,000 or less
+                    £{{ftbLimit()}} or less
                 </label>
             </div>
             <div class="govuk-radios__item">
                 <input class="govuk-radios__input" id="currentValue-no" data-ng-model="data.currentValue" name="currentValue" value="More than £500,000" type="radio">
                 <label class="govuk-label govuk-radios__label" for="currentValue-no">
-                    More than £500,000
+                    More than £{{ftbLimit()}}
                 </label>
             </div>
         </fieldset>
