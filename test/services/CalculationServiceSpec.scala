@@ -18,6 +18,7 @@ class CalculationServiceSpec extends PlaySpec with MockFactory {
   val april2021EffectiveDate: LocalDate = LocalDate.of(2021, 4, 1)
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
   val july2021EffectiveDate: LocalDate = LocalDate.of(2021, 7, 1)
+  val sept2022EffectiveDate: LocalDate = LocalDate.of(2022, 9, 22)
   val mockLeaseholdCalculationService: LeaseholdCalculationService = mock[LeaseholdCalculationService]
   val mockFreeholdCalculationService: FreeholdCalculationService = mock[FreeholdCalculationService]
   val mockAdditionalPropertyService: AdditionalPropertyService = mock[AdditionalPropertyService]
@@ -790,7 +791,7 @@ class CalculationServiceSpec extends PlaySpec with MockFactory {
     }
   }
 
-  "checkPropDetailsFTB" must {
+  "checkFTB" must {
     "return true" when {
       "the user is an individual who does not own twoOrMoreProperties and the premium < 500000"in{
          val propertyDetails = Some(PropertyDetails(
@@ -857,6 +858,78 @@ class CalculationServiceSpec extends PlaySpec with MockFactory {
         )
         )
         testCalculationService.checkFTB(propertyDetails, firstTimeBuyer = Some(true), 500001) shouldBe false
+      }
+
+    }
+  }
+
+  "checkFTBHigherThreshold" must {
+    "return true" when {
+      "the user is an individual who does not own twoOrMoreProperties and the premium < 625000"in{
+        val propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(true),
+          sharedOwnership = None,
+          currentValue = None
+        )
+        )
+        testCalculationService.checkFTBHigherThreshold(propertyDetails, firstTimeBuyer = Some(true), 624000) shouldBe true
+      }
+    }
+
+    "return false" when{
+      "the user is not an individual regardless of premium" in{
+        val propertyDetails = Some(PropertyDetails(
+          individual = false,
+          twoOrMoreProperties = None,
+          replaceMainResidence = None,
+          sharedOwnership = None,
+          currentValue = None
+        )
+        )
+        testCalculationService.checkFTBHigherThreshold(propertyDetails, firstTimeBuyer = Some(false), 624000) shouldBe false
+      }
+
+      "the user is an individual who does not own twoOrMoreProperties but FTB is false regardless of premium"in{
+        val propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(true),
+          sharedOwnership = None,
+          currentValue = None
+        )
+        )
+        testCalculationService.checkFTBHigherThreshold(propertyDetails, firstTimeBuyer = Some(false), 625000) shouldBe false
+      }
+
+      "the user is an individual who owns twoOrMoreProperties regardless of premium" in{
+        val propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(true),
+          replaceMainResidence = Some(false),
+          sharedOwnership = None,
+          currentValue = None
+        )
+        )
+        testCalculationService.checkFTBHigherThreshold(propertyDetails, firstTimeBuyer = Some(false), 624000) shouldBe false
+      }
+
+      "the property details are not defined regardless of premium" in{
+        val propertyDetails = None
+        testCalculationService.checkFTBHigherThreshold(propertyDetails, firstTimeBuyer = Some(false), 625000) shouldBe false
+      }
+
+      "the user is an individual who does not own twoOrMoreProperties but the premium > 625000"in{
+        val propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(true),
+          sharedOwnership = None,
+          currentValue = None
+        )
+        )
+        testCalculationService.checkFTBHigherThreshold(propertyDetails, firstTimeBuyer = Some(true), 626000) shouldBe false
       }
 
     }
