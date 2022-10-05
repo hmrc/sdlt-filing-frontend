@@ -33,7 +33,7 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
   )
 }
 
-val silencerVersion = "1.7.9"
+val silencerVersion = "1.7.11"
 maintainer := "your.name@company.org"
 
 lazy val microservice = Project(appName, file("."))
