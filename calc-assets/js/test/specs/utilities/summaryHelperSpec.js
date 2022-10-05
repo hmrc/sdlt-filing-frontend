@@ -294,7 +294,7 @@
                 scope.data.individual = "Yes";
                 scope.data.mainResidence = "Yes";
                 scope.data.sharedOwnership = "Yes";
-                scope.data.currentValue = "£500,000 or less";
+                scope.data.currentValue = "atOrBelowThreshold";
                 scope.data.ownedOtherProperties = "No";
                 scope.data.twoOrMoreProperties = "No";
                 scope.data.leaseTerm.years = 1;
@@ -314,7 +314,7 @@
                 scope.data.individual = "Yes";
                 scope.data.mainResidence = "Yes";
                 scope.data.sharedOwnership = "Yes";
-                scope.data.currentValue = "£500,000 or less";
+                scope.data.currentValue = "atOrBelowThreshold";
                 scope.data.ownedOtherProperties = "No";
                 scope.data.twoOrMoreProperties = "No";
                 scope.data.leaseTerm.years = 1;
@@ -351,7 +351,7 @@
                 scope.data.individual = "Yes";
                 scope.data.mainResidence = "Yes";
                 scope.data.sharedOwnership = "Yes";
-                scope.data.currentValue = "More than £500,000";
+                scope.data.currentValue = "aboveThreshold";
                 scope.data.ownedOtherProperties = "No";
                 scope.data.twoOrMoreProperties = "No";
                 scope.data.leaseTerm.years = 1;
