@@ -984,7 +984,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         )
 
         private val res = leaseholdResidentialSept2022OnwardsNonUKFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, leaseTaxDueRefunded, leaseSliceRefundedDetails, premTaxDueRefunded, premSliceRefundedDetails, npv)
-        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsFTBSharedOwnershipRequest(424999, sept2022EffectiveDate, Some(true))) shouldBe res
+        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsSharedOwnershipFTBRequest(424999, sept2022EffectiveDate, Some(true))) shouldBe res
       }
 
       "return 0, 8500 for purchase price of 425000, npv of 689579" in new PredefinedNPVSetup(689579) {
@@ -1010,7 +1010,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         )
 
         private val res = leaseholdResidentialSept2022OnwardsNonUKFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, leaseTaxDueRefunded, leaseSliceRefundedDetails, premTaxDueRefunded, premSliceRefundedDetails, npv)
-        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsFTBSharedOwnershipRequest(425000, sept2022EffectiveDate, Some(true))) shouldBe res
+        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsSharedOwnershipFTBRequest(425000, sept2022EffectiveDate, Some(true))) shouldBe res
       }
 
       "return 0, 8501 for purchase price of 425025, npv of 689579" in new PredefinedNPVSetup(689579) {
@@ -1036,7 +1036,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         )
 
         private val res = leaseholdResidentialSept2022OnwardsNonUKFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, leaseTaxDueRefunded, leaseSliceRefundedDetails, premTaxDueRefunded, premSliceRefundedDetails, npv)
-        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsFTBSharedOwnershipRequest(425025, sept2022EffectiveDate, Some(true))) shouldBe res
+        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsSharedOwnershipFTBRequest(425025, sept2022EffectiveDate, Some(true))) shouldBe res
       }
 
       "return 0, 22499 for purchase price of 624999, npv of 689579" in new PredefinedNPVSetup(689579) {
@@ -1062,7 +1062,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         )
 
         private val res = leaseholdResidentialSept2022OnwardsNonUKFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, leaseTaxDueRefunded, leaseSliceRefundedDetails, premTaxDueRefunded, premSliceRefundedDetails, npv)
-        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsFTBSharedOwnershipRequest(624999, sept2022EffectiveDate, Some(true))) shouldBe res
+        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsSharedOwnershipFTBRequest(624999, sept2022EffectiveDate, Some(true))) shouldBe res
       }
 
       "return 0, 10000 for purchase price of 625000, npv of 689579" in new PredefinedNPVSetup(689579) {
@@ -1088,7 +1088,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         )
 
         private val res = leaseholdResidentialSept2022OnwardsNonUKFTBResult(leaseTaxDue, leaseSliceDetails, premTaxDue, premSliceDetails, leaseTaxDueRefunded, leaseSliceRefundedDetails, premTaxDueRefunded, premSliceRefundedDetails, npv)
-        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsFTBSharedOwnershipRequest(625000, sept2022EffectiveDate, Some(true))) shouldBe res
+        service.leaseholdResidentialSept22OnwardsFTBNonUKRes(leaseholdResidentialSept2022OnwardsSharedOwnershipFTBRequest(625000, sept2022EffectiveDate, Some(true))) shouldBe res
       }
     }
   }
