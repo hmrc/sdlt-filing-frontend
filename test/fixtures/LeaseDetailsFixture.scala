@@ -26,6 +26,21 @@ trait LeaseDetailsFixture {
     year5Rent = Some(18150)
   )
 
+  protected val testLeaseDetailsSept2022: LeaseDetails = LeaseDetails(
+    startDate = LocalDate.of(2020, 7, 10),
+    endDate = LocalDate.of(2120, 7, 9),
+    leaseTerm = LeaseTerm(
+      years = 100,
+      days = 0,
+      daysInPartialYear = 365
+    ),
+    year1Rent = 25000,
+    year2Rent = Some(25000),
+    year3Rent = Some(25000),
+    year4Rent = Some(25000),
+    year5Rent = Some(25000)
+  )
+
   protected val testLeaseDetails: LeaseDetails = LeaseDetails(
     startDate = LocalDate.of(2000, 1, 1),
     endDate = LocalDate.of(2020, 1, 1),

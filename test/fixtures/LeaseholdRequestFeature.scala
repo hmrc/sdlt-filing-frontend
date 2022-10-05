@@ -163,6 +163,69 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = Some(true)
   )
 
+  def leaseholdResidentialSept2022OnwardsFTBRequest(premium: BigDecimal, effectiveDate: LocalDate, nonUk: Option[Boolean] = Some(false)): Request = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = effectiveDate,
+    nonUKResident = nonUk,
+    premium = premium,
+    highestRent = 1000,
+    leaseDetails = Some(testLeaseDetailsSept2022),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = None,
+        sharedOwnership = None,
+        currentValue = None
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = Some(true)
+  )
+
+  def leaseholdResidentialSept2022OnwardsSharedOwnershipFTBRequest(premium: BigDecimal, effectiveDate: LocalDate, nonUk: Option[Boolean] = Some(false)): Request = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = effectiveDate,
+    nonUKResident = nonUk,
+    premium = premium,
+    highestRent = 1000,
+    leaseDetails = Some(testLeaseDetailsSept2022),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = Some(true),
+        sharedOwnership = Some(true),
+        currentValue = Some(true)
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = Some(true)
+  )
+
+  def leaseholdResidentialSept2022OnwardsFTBSharedOwnershipRequest(premium: BigDecimal, effectiveDate: LocalDate, nonUk: Option[Boolean] = Some(false)): Request = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = effectiveDate,
+    nonUKResident = nonUk,
+    premium = premium,
+    highestRent = 1000,
+    leaseDetails = Some(testLeaseDetailsSept2022),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(false),
+        replaceMainResidence = Some(true),
+        sharedOwnership = Some(true),
+        currentValue = Some(true)
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = Some(true)
+  )
+
   //March 16 requests
 
   def leaseholdNonResidentialMar16OnwardsRequest(premium: BigDecimal, year2Rent: BigDecimal = 200, exchangedPreMarch2016: Boolean = true): Request = Request(
