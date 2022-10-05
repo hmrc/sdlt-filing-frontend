@@ -121,7 +121,6 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
     val individual: Boolean = request.propertyDetails.exists(_.individual)
 
-    //this should be the Pst Sep 22 uk res FTB rate
     val prevResult = freeholdResidentialSept22OnwardsFTB(request, prevResult = true)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
