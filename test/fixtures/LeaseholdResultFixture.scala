@@ -127,6 +127,7 @@ trait LeaseholdResultFixture {
       )
     }
 
+  //  Sept 22 result
   def leaseholdResidentialSept2022OnwardsNonUKFTBResult(
                                                  leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
                                                  premTaxDue:  Int, premSliceDetails:  Seq[SliceDetails],
