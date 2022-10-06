@@ -115,8 +115,8 @@
         }
     };
 
-    var ftbThreshold = function(data) {
-        if(data.effectiveDate >= new Date(2022, 8, 23)) {
+    var ftbThreshold = function(value) {
+        if(value >= new Date(2022, 8, 23)) {
             return "625,000";
         } else {
             return "500,000";
@@ -220,7 +220,7 @@
                 link       : "#current-value",
                 id         : "currentValue",
                 isValid    : validatedModel.isCurrentValueValid,
-                hiddenText : "Is the current market value of the property £" + ftbThreshold(scope.data) +" or less?"
+                hiddenText : (scope.data !== undefined) ? "Is the current market value of the property £" + ftbThreshold(scope.data.effectiveDate) +" or less?" : undefined
             },
 
             {
