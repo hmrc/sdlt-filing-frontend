@@ -18,7 +18,6 @@ class CalculationServiceSpec extends PlaySpec with MockFactory {
   val april2021EffectiveDate: LocalDate = LocalDate.of(2021, 4, 1)
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
   val july2021EffectiveDate: LocalDate = LocalDate.of(2021, 7, 1)
-  val sept2022EffectiveDate: LocalDate = LocalDate.of(2022, 9, 22)
   val mockLeaseholdCalculationService: LeaseholdCalculationService = mock[LeaseholdCalculationService]
   val mockFreeholdCalculationService: FreeholdCalculationService = mock[FreeholdCalculationService]
   val mockAdditionalPropertyService: AdditionalPropertyService = mock[AdditionalPropertyService]
