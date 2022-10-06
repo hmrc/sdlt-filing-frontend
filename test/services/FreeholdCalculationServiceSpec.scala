@@ -27,6 +27,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
   val march2012EffectiveDate: LocalDate = LocalDate.of(2012, 4, 1)
   val april2016EffectiveDate: LocalDate = LocalDate.of(2016, 4, 1)
   val jan2018EffectiveDate: LocalDate = LocalDate.of(2018, 1, 1)
+  val sep2022EffectiveDate: LocalDate = LocalDate.of(2022, 9, 23)
 
   def july2020AddPropSlices(band1Tax: Int, band2Tax: Int, band3Tax: Int, band4Tax: Int): Seq[SliceDetails] = {
     Seq(
@@ -811,6 +812,164 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
       val res = testFreeholdCalcService.freeholdResidentialNov17OnwardsFTB(baseRequestFTB(500000, jan2018EffectiveDate))
 
       res shouldBe baseResult(10000, baseCalculationDetails(10000, resSlices, detailHeading, bandHeading, detailFooter))
+    }
+  }
+
+  "calculating freeholdResidentialSept22OnwardsFTB" must {
+
+    val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
+    val bandHeading: Option[String] = Some("Purchase price bands (£)")
+    val detailFooter: Option[String] = Some("Total SDLT due")
+
+    val MAX_PREMIUM_FTB = 625000
+
+    "return 0 for purchase price of 424000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTB(baseRequestFTB(424000, sep2022EffectiveDate))
+
+      res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter))
+    }
+
+
+    "return 0 for purchase price of 425000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTB(baseRequestFTB(425000, sep2022EffectiveDate))
+
+      res shouldBe baseResult(0, baseCalculationDetails(0, resSlices, detailHeading, bandHeading, detailFooter))
+    }
+
+    "return 1 for purchase price of 425025" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 1)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTB(baseRequestFTB(425025, sep2022EffectiveDate))
+
+      res shouldBe baseResult(1, baseCalculationDetails(1, resSlices, detailHeading, bandHeading, detailFooter))
+    }
+
+    "return 9950 for purchase price of 624000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 9950)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTB(baseRequestFTB(624000, sep2022EffectiveDate))
+
+      res shouldBe baseResult(9950, baseCalculationDetails(9950, resSlices, detailHeading, bandHeading, detailFooter))
+    }
+
+    "return 10000 for purchase price of 625000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 10000)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTB(baseRequestFTB(625000, sep2022EffectiveDate))
+
+      res shouldBe baseResult(10000, baseCalculationDetails(10000, resSlices, detailHeading, bandHeading, detailFooter))
+    }
+  }
+
+  "calculating freeholdResidentialSept22OnwardsFTBNonUKRes" must {
+
+    val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
+    val bandHeading: Option[String] = Some("Purchase price bands (£)")
+    val detailFooter: Option[String] = Some("Total SDLT due")
+    val nonUkHint: Option[String] = Some("The results are based on the answers you have provided and show that the non-resident rate of SDLT applies.")
+    val repaymentResult: Option[String] = Some("Result if you become eligible for a repayment of the non-resident rate of SDLT")
+    val eligibility: Option[String] = Some("If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date.")
+
+    val MAX_PREMIUM_FTB = 625000
+
+    "return 8480 or 0 if eligible for a refund, for purchase price of 424000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 2, taxDue = 8480),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 7, taxDue = 0)
+      )
+      val resSliceRefunded = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTBNonUKRes(baseRequestFTB(424000, sep2022EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(8480, baseCalculationDetails(8480, resSlices, detailHeading, bandHeading, detailFooter), resultHint = nonUkHint),
+        baseResult(0, baseCalculationDetails(0, resSliceRefunded, detailHeading, bandHeading, detailFooter), repaymentResult, eligibility)
+      )
+    }
+
+
+    "return 8500 or 0 if eligible for a refund, for purchase price of 425000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 2, taxDue = 8500),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 7, taxDue = 0)
+      )
+      val resSliceRefunded = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 0)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTBNonUKRes(baseRequestFTB(425000, sep2022EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(8500, baseCalculationDetails(8500, resSlices, detailHeading, bandHeading, detailFooter), resultHint = nonUkHint),
+        baseResult(0, baseCalculationDetails(0, resSliceRefunded, detailHeading, bandHeading, detailFooter), repaymentResult, eligibility)
+      )
+    }
+
+    "return 8501 or 1 if eligible for a refund, for purchase price of 425025" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 2, taxDue = 8500),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 7, taxDue = 1)
+      )
+      val resSliceRefunded = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 1)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTBNonUKRes(baseRequestFTB(425025, sep2022EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(8501, baseCalculationDetails(8501, resSlices, detailHeading, bandHeading, detailFooter), resultHint = nonUkHint),
+        baseResult(1, baseCalculationDetails(1, resSliceRefunded, detailHeading, bandHeading, detailFooter), repaymentResult, eligibility)
+      )
+    }
+
+    "return 22430 or 9950 if eligible for a refund, for purchase price of 624000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 2, taxDue = 8500),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 7, taxDue = 13930)
+      )
+      val resSliceRefunded = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 9950)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTBNonUKRes(baseRequestFTB(624000, sep2022EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(22430, baseCalculationDetails(22430, resSlices, detailHeading, bandHeading, detailFooter), resultHint = nonUkHint),
+        baseResult(9950, baseCalculationDetails(9950, resSliceRefunded, detailHeading, bandHeading, detailFooter), repaymentResult, eligibility)
+      )
+    }
+
+    "return 22500 or 10000 if eligible for a refund, for purchase price of 625000" in {
+      val resSlices = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 2, taxDue = 8500),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 7, taxDue = 14000)
+      )
+      val resSliceRefunded = Seq(
+        SliceDetails(from = 0, to = Some(425000), rate = 0, taxDue = 0),
+        SliceDetails(from = 425000, to = Some(MAX_PREMIUM_FTB), rate = 5, taxDue = 10000)
+      )
+      val res = testFreeholdCalcService.freeholdResidentialSept22OnwardsFTBNonUKRes(baseRequestFTB(625000, sep2022EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(22500, baseCalculationDetails(22500, resSlices, detailHeading, bandHeading, detailFooter), resultHint = nonUkHint),
+        baseResult(10000, baseCalculationDetails(10000, resSliceRefunded, detailHeading, bandHeading, detailFooter), repaymentResult, eligibility)
+      )
     }
   }
 

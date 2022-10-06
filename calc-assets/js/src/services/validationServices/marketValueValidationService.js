@@ -21,7 +21,12 @@
                     state.marketValue = "Enter the amount again - don't use any letters or characters including £";
                 }
             }
-            if(validator.isLessThanInteger(500000, data.premium)) {
+
+            if(validator.isGreaterThanOrEqualToDate(data.effectiveDate, new Date(2022, 8, 23))) {
+                if(validator.isLessThanInteger(625000, data.premium)) {
+                    state.marketValue = "Enter a value that is £625000 or less.";
+                }
+            } else if(validator.isLessThanInteger(500000, data.premium)) {
                 state.marketValue = "Enter a value that is £500000 or less.";
             }
             

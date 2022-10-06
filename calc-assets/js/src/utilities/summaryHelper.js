@@ -95,7 +95,7 @@
 
     var displayPaySDLT = function(data) {
         if(displayCurrentValue(data)) {
-            return data.currentValue === '£500,000 or less';
+            return data.currentValue === 'atOrBelowThreshold';
         } else {
             return false;
         }
@@ -112,6 +112,22 @@
         }
         else {
             return value;
+        }
+    };
+
+    var ftbThreshold = function(value) {
+        if(value >= new Date(2022, 8, 23)) {
+            return "625,000";
+        } else {
+            return "500,000";
+        }
+    };
+
+    var marketValue = function(data) {
+        if(data.currentValue === 'atOrBelowThreshold') {
+            return "£" + ftbThreshold(data) + " or less";
+        } else {
+            return "More than £" + ftbThreshold(data);
         }
     };
 
@@ -200,11 +216,11 @@
             },
             {
                 question   : displayCurrentValue(scope.data) ? "Market value" : undefined,
-                answer     : (scope.data !== undefined) ? scope.data.currentValue : undefined,
+                answer     : (scope.data !== undefined) ? marketValue(scope.data) : undefined,
                 link       : "#current-value",
                 id         : "currentValue",
                 isValid    : validatedModel.isCurrentValueValid,
-                hiddenText : "Is the current market value of the property £500,000 or less?"
+                hiddenText : (scope.data !== undefined) ? "Is the current market value of the property £" + ftbThreshold(scope.data.effectiveDate) +" or less?" : undefined
             },
 
             {

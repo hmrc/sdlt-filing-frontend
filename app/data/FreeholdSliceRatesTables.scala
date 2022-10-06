@@ -11,6 +11,7 @@ object FreeholdSliceRatesTables {
 
   //Standard Residential Rates
 
+  // This rate can be used for after Sept 22
   val freeholdResidentialJuly21OnwardsRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,       to = Some(250000),  rate = 0),
@@ -59,6 +60,7 @@ object FreeholdSliceRatesTables {
     )
   )
 
+  //this rate can be used for after Sept 22
   val freeholdResidentialJuly21OnwardsNonUKResRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,       to = Some(250000),  rate = 2),
@@ -89,6 +91,7 @@ object FreeholdSliceRatesTables {
     )
   )
 
+  //this rate can be used for after Sept 22
   val freeholdResidentialAddPropNonUKResJuly21OnwardsRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,        to = Some(250000),   rate = 5),
@@ -117,6 +120,7 @@ object FreeholdSliceRatesTables {
     )
   )
 
+  //this rate can be used for after Sept 22
   val freeholdResidentialAddPropJuly21OnwardsRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,        to = Some(250000),   rate = 3),
@@ -146,6 +150,20 @@ object FreeholdSliceRatesTables {
   )
 
   //First Time Buyer Rates (FTB)
+
+  val freeholdResidentialSep22OnwardsFTBNonUKResRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(425000),   rate = 2),
+      Slice(from = 425000,   to = Some(625000),   rate = 7)
+    )
+  )
+
+  val freeholdResidentialSep22OnwardsFTBRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(425000),   rate = 0),
+      Slice(from = 425000,   to = Some(625000),   rate = 5)
+    )
+  )
 
   val freeholdResidentialOct21OnwardsFTBNonUKResRates: SliceTable = SliceTable(
     slices = Seq(

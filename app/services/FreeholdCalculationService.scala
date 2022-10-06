@@ -117,6 +117,33 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     else res
   }
 
+  def freeholdResidentialSept22OnwardsFTBNonUKRes(request: Request): Seq[Result] = {
+
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+
+    val prevResult = freeholdResidentialSept22OnwardsFTB(request, prevResult = true)
+
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdResidentialSep22OnwardsFTBNonUKResRates.slices
+    )
+    val res = Seq(FreeholdResultFactory.freeholdResidentialJuly21OnwardsFTBResult(premiumResult, nonUKResident = true))
+
+    if(individual)
+      res :+ prevResult
+    else res
+  }
+
+  def freeholdResidentialSept22OnwardsFTB(request: Request, prevResult: Boolean = false): Result = {
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdResidentialSep22OnwardsFTBRates.slices
+    )
+    val effectDateAfter31March2021: Boolean = request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE)
+
+    FreeholdResultFactory.freeholdResidentialNov17OnwardsFTBResult(premiumResult, effectDateAfter31March2021, prevResult)
+  }
+
   def freeholdResidentialNov17OnwardsFTB(request: Request, prevResult: Boolean = false): Result = {
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,

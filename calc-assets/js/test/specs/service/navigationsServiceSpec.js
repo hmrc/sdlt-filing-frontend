@@ -429,7 +429,7 @@
             it('should set the location path to /current-value and currentValue is "Yes"', function() {
                 data = {
                     holdingType : 'Leasehold',
-                    currentValue : '£500,000 or less'
+                    currentValue : 'atOrBelowThreshold'
                 };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/market-value');
@@ -438,7 +438,7 @@
             it('should set the location path to /lease-dates and currentValue is "No"', function() {
                 data = {
                     holdingType : 'Leasehold',
-                    currentValue : 'More than £500,000'
+                    currentValue : 'aboveThreshold'
                 };
                 service.next(currentView, data, mockLocation);
                 expect(mockLocation.path()).toEqual('/lease-dates');
@@ -507,7 +507,7 @@
             it('should set the location path to /rent if sharedOwnership is "Yes" and currentValue is "Yes" and premium is provided', function() {
                 data = {
                     sharedOwnership : 'Yes',
-                    currentValue : '£500,000 or less',
+                    currentValue : 'atOrBelowThreshold',
                     premium : "250000"
                 };
                 service.next(currentView, data, mockLocation);

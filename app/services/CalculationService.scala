@@ -41,6 +41,9 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     request.effectiveDate match {
       case date if nonUKResident(request.nonUKResident) && date.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
         calculateFreeholdNonUKResidentTax(request)
+      case date if date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE) &&
+        checkFTBHigherThreshold(request.propertyDetails, request.firstTimeBuyer, premium) =>
+        CalculationResponse(Seq(freeCalculationService.freeholdResidentialSept22OnwardsFTB(request)))
       case date if date.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) &&
         checkFTB(request.propertyDetails, request.firstTimeBuyer, premium) =>
         CalculationResponse(Seq(freeCalculationService.freeholdResidentialNov17OnwardsFTB(request)))
@@ -48,7 +51,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         additionalPropertyService.additionalPropertyRatesApply(
           request.premium, request.propertyDetails, extractLeaseTerm(request.leaseDetails)) =>
         CalculationResponse(freeCalculationService.freeholdResidentialAddPropJuly20Onwards(request))
-      case date if duringNRB250HolidayPeriod(date) &&
+      case date if (duringNRB250HolidayPeriod(date) || date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE)) &&
         additionalPropertyService.additionalPropertyRatesApply(
           request.premium, request.propertyDetails, extractLeaseTerm(request.leaseDetails)) =>
         CalculationResponse(freeCalculationService.freeholdResidentialAddPropJuly21Onwards(request))
@@ -58,7 +61,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(freeCalculationService.freeholdResidentialAddPropApr16Onwards(request))
       case date if duringNRB500HolidayPeriod(date) =>
         CalculationResponse(Seq(freeCalculationService.freeholdResidentialJuly20Onwards(request)))
-      case date if duringNRB250HolidayPeriod(date) =>
+      case date if duringNRB250HolidayPeriod(date) || date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(freeCalculationService.freeholdResidentialJuly21Onwards(request)))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(freeCalculationService.freeholdResidentialDec14Onwards(request)))
@@ -95,6 +98,27 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         }
       } else if (additionalPropertyService.additionalPropertyRatesApply(
           request.premium, request.propertyDetails, extractLeaseTerm(request.leaseDetails))) {
+        if (!freeholdNRSDLTOutOfScope(request.premium)) {
+          CalculationResponse(freeCalculationService.freeholdResidentialAddPropNonUKResJuly21Onwards(request))
+        } else {
+          CalculationResponse(freeCalculationService.freeholdResidentialAddPropJuly21Onwards(request))
+        }
+      } else {
+        if (!freeholdNRSDLTOutOfScope(request.premium)) {
+          CalculationResponse(freeCalculationService.freeholdResidentialJuly21OnwardsNonUKRes(request))
+        } else {
+          CalculationResponse(Seq(freeCalculationService.freeholdResidentialJuly21Onwards(request)))
+        }
+      }
+    } else if (request.effectiveDate.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE)) {
+      if (checkFTBHigherThreshold(request.propertyDetails, request.firstTimeBuyer, request.premium)) {
+        if (!freeholdNRSDLTOutOfScope(request.premium)) {
+          CalculationResponse(freeCalculationService.freeholdResidentialSept22OnwardsFTBNonUKRes(request))
+        } else {
+          CalculationResponse(Seq(freeCalculationService.freeholdResidentialSept22OnwardsFTB(request)))
+        }
+      } else if (additionalPropertyService.additionalPropertyRatesApply(
+        request.premium, request.propertyDetails, extractLeaseTerm(request.leaseDetails))) {
         if (!freeholdNRSDLTOutOfScope(request.premium)) {
           CalculationResponse(freeCalculationService.freeholdResidentialAddPropNonUKResJuly21Onwards(request))
         } else {
@@ -145,13 +169,16 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     request.effectiveDate match {
       case date if nonUKResident(request.nonUKResident) && date.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
         calculateLeaseholdNonUKResidentTax(request)
+      case date if date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE) &&
+        checkFTBHigherThreshold(request.propertyDetails, request.firstTimeBuyer, premium) =>
+        CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialSept22OnwardsFTB(request)))
       case date if duringNRB250HolidayPeriod(date) &&
         checkFTB(request.propertyDetails, request.firstTimeBuyer, premium) =>
         CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialJuly21OnwardsFTB(request)))
       case date if date.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) &&
         checkFTB(request.propertyDetails, request.firstTimeBuyer, premium) =>
           CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialNov17OnwardsFTB(request)))
-      case date if duringNRB250HolidayPeriod(date) &&
+      case date if (duringNRB250HolidayPeriod(date) || date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE)) &&
         additionalPropertyService.additionalPropertyRatesApply(
           request.premium, request.propertyDetails, extractLeaseTerm(request.leaseDetails)) =>
         CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropJuly21Onwards(request))
@@ -165,7 +192,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropApr16Onwards(request))
       case date if duringNRB500HolidayPeriod(date) =>
         CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialJuly20Onwards(request)))
-      case date if duringNRB250HolidayPeriod(date) =>
+      case date if duringNRB250HolidayPeriod(date) || date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialJuly21Onwards(request)))
       case date if date.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialDec14Onwards(request)))
@@ -202,23 +229,43 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialJuly21Onwards(request)))
         }
       }
-    }
-    else if (duringNRB500HolidayPeriod(request.effectiveDate)) {
+    } else if (duringNRB500HolidayPeriod(request.effectiveDate)) {
+      if (additionalPropertyService.additionalPropertyRatesApply(
+        request.premium, request.propertyDetails, extractLeaseTerm(request.leaseDetails))) {
+        if (!nonUKResSDLTOutOfScope) {
+          CalculationResponse(leaseCalculationService.leaseholdResidentialApr21OnwardsNonUKResAddProp(request))
+        } else {
+          CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropJuly20Onwards(request))
+        }
+      } else {
+        if (!nonUKResSDLTOutOfScope) {
+          CalculationResponse(leaseCalculationService.leaseholdResidentialApr21OnwardsNonUKRes(request))
+        } else {
+          CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialJuly20Onwards(request)))
+        }
+      }
+    } else if (request.effectiveDate.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE)) {
         if (additionalPropertyService.additionalPropertyRatesApply(
           request.premium, request.propertyDetails, extractLeaseTerm(request.leaseDetails))) {
           if (!nonUKResSDLTOutOfScope) {
-            CalculationResponse(leaseCalculationService.leaseholdResidentialApr21OnwardsNonUKResAddProp(request))
+            CalculationResponse(leaseCalculationService.leaseholdResidentialJuly21OnwardsNonUKResAddProp(request))
           } else {
-            CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropJuly20Onwards(request))
+            CalculationResponse(leaseCalculationService.leaseholdResidentialAddPropJuly21Onwards(request))
           }
-      } else {
+        } else if (checkFTBHigherThreshold(request.propertyDetails, request.firstTimeBuyer, request.premium)) {
+          if (!nonUKResSDLTOutOfScope) {
+            CalculationResponse(leaseCalculationService.leaseholdResidentialSept22OnwardsFTBNonUKRes(request))
+          } else {
+            CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialSept22OnwardsFTB(request)))
+          }
+        } else {
           if(!nonUKResSDLTOutOfScope) {
-            CalculationResponse(leaseCalculationService.leaseholdResidentialApr21OnwardsNonUKRes(request))
+            CalculationResponse(leaseCalculationService.leaseholdResidentialJuly21OnwardsNonUKRes(request))
           } else {
-            CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialJuly20Onwards(request)))
+            CalculationResponse(Seq(leaseCalculationService.leaseholdResidentialJuly21Onwards(request)))
           }
-      }
-    } else {
+        }
+      } else {
       if (checkFTB(request.propertyDetails, request.firstTimeBuyer, request.premium)) {
         if (!nonUKResSDLTOutOfScope) {
           CalculationResponse(leaseCalculationService.leaseholdResidentialOct21OnwardsFTBNonUKRes(request))
@@ -252,6 +299,14 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
   def checkFTB(propertyDetails: Option[PropertyDetails], firstTimeBuyer: Option[Boolean], premium: BigDecimal): Boolean = {
     val MAX_PREMIUM_FTB = 500000
+
+    propertyDetails.exists(propDetails =>
+      propDetails.individual && propDetails.twoOrMoreProperties.contains(false) && firstTimeBuyer.contains(true) && premium <= MAX_PREMIUM_FTB
+    )
+  }
+
+  def checkFTBHigherThreshold(propertyDetails: Option[PropertyDetails], firstTimeBuyer: Option[Boolean], premium: BigDecimal): Boolean = {
+    val MAX_PREMIUM_FTB = 625000
 
     propertyDetails.exists(propDetails =>
       propDetails.individual && propDetails.twoOrMoreProperties.contains(false) && firstTimeBuyer.contains(true) && premium <= MAX_PREMIUM_FTB

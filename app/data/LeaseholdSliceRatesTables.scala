@@ -50,6 +50,7 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialJuly21OnwardsLeaseRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,      to = Some(250000), rate = 0),
@@ -57,6 +58,7 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialJuly21OnwardsNonUKResLeaseRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,      to = Some(250000), rate = 2),
@@ -114,6 +116,7 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialJuly21OnwardsPremiumRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,       to = Some(250000),  rate = 0),
@@ -123,6 +126,7 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialJuly21OnwardsNonUKResPremiumRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,       to = Some(250000),  rate = 2),
@@ -181,6 +185,7 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialAddPropNonUKResJuly21OnwardsPremiumRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,        to = Some(250000),   rate = 5),
@@ -190,6 +195,7 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialAddPropJuly21OnwardsPremiumRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,        to = Some(250000),   rate = 3),
@@ -236,6 +242,7 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialJuly21FTBNonUKResLeaseRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,      to = Some(250000), rate = 2),
@@ -243,6 +250,7 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialJuly21FTBLeaseRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,      to = Some(250000), rate = 0),
@@ -258,6 +266,22 @@ object LeaseholdSliceRatesTables {
   )
 
   //First Time Buyer Premium Rates (FTB)
+
+  // This rate can be used for after Sept 22
+  val leaseholdResidentialSep22OnwardsFTBNonUKResRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(425000),   rate = 2),
+      Slice(from = 425000,   to = Some(625000),   rate = 7)
+    )
+  )
+
+  // This rate can be used for after Sept 22
+  val leaseholdResidentialSep22OnwardsFTBRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(425000),   rate = 0),
+      Slice(from = 425000,   to = Some(625000),   rate = 5)
+    )
+  )
 
   val leaseholdResidentialOct21OnwardsFTBNonUKResPremiumRates: SliceTable = SliceTable(
     slices = Seq(
@@ -289,6 +313,7 @@ object LeaseholdSliceRatesTables {
 
   //Shared Ownership & First Time Buyer Rates (FTB)
 
+  // This rate can be used for after Sept 22
   val leaseholdResidentialJuly21FTBSharedLeaseRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,      to = Some(250000), rate = 0),

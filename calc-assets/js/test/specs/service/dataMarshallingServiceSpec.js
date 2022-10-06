@@ -676,7 +676,7 @@
           ftbSharedOwnership.ownedOtherProperties = "No";
           ftbSharedOwnership.mainResidence = "Yes";
           ftbSharedOwnership.sharedOwnership = "Yes";
-          ftbSharedOwnership.currentValue = "£500,000 or less";
+          ftbSharedOwnership.currentValue = "atOrBelowThreshold";
 
           var ftbSharedOwnershipResRequest = angular.copy(ftbRequest);
           ftbSharedOwnershipResRequest.firstTimeBuyer = "Yes";
@@ -692,7 +692,7 @@
           ftbSharedOwnership.ownedOtherProperties = "No";
           ftbSharedOwnership.mainResidence = "Yes";
           ftbSharedOwnership.sharedOwnership = "Yes";
-          ftbSharedOwnership.currentValue = "£500,000 or less";
+          ftbSharedOwnership.currentValue = "atOrBelowThreshold";
 
           var ftbSharedOwnershipResRequest = angular.copy(ftbRequestJuly2021);
           ftbSharedOwnershipResRequest.firstTimeBuyer = "Yes";
@@ -708,7 +708,7 @@
           ftbSharedOwnership.ownedOtherProperties = "No";
           ftbSharedOwnership.mainResidence = "Yes";
           ftbSharedOwnership.sharedOwnership = "Yes";
-          ftbSharedOwnership.currentValue = "More than £500,000";
+          ftbSharedOwnership.currentValue = "aboveThreshold";
 
           var ftbSharedOwnershipResRequest = angular.copy(ftbRequest);
           ftbSharedOwnershipResRequest.firstTimeBuyer = "No";
@@ -724,7 +724,7 @@
           ftbSharedOwnership.ownedOtherProperties = "No";
           ftbSharedOwnership.mainResidence = "Yes";
           ftbSharedOwnership.sharedOwnership = "Yes";
-          ftbSharedOwnership.currentValue = "More than £500,000";
+          ftbSharedOwnership.currentValue = "aboveThreshold";
 
           var ftbSharedOwnershipResRequest = angular.copy(ftbRequestJuly2021);
           ftbSharedOwnershipResRequest.firstTimeBuyer = "No";

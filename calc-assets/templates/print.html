@@ -19,7 +19,7 @@
 <div data-ng-repeat="res in data.result">
 
   <h1 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h1>
-  <span id="resultHint{{$index}}" class="govuk-hint">{{res.resultHint}}</span>
+  <p id="resultHint{{$index}}" class="govuk-body" ng-bind-html="res.resultHint"></p>
 
   <span class="govuk-summary-list" data-ng-if="data.holdingType === 'Freehold'">
     <h1 class="govuk-heading-l">Result of SDLT calculation</h1>
