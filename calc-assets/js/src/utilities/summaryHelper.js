@@ -125,9 +125,9 @@
 
     var marketValue = function(data) {
         if(data.currentValue === 'atOrBelowThreshold') {
-            return "£" + ftbThreshold(data) + " or less";
+            return "£" + ftbThreshold(data.effectiveDate) + " or less";
         } else {
-            return "More than £" + ftbThreshold(data);
+            return "More than £" + ftbThreshold(data.effectiveDate);
         }
     };
 
