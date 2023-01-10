@@ -11,9 +11,9 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "sdltc-frontend"
 lazy val playSettings: Seq[Setting[_]] = Seq(
-  unmanagedResourceDirectories in Assets += baseDirectory.value / "app" / "assets",
+  Assets / unmanagedResourceDirectories += baseDirectory.value / "app" / "assets",
   // Dont include the source assets in the dist package (public folder)
-  excludeFilter in Assets := "js*" || "sass*",
+  Assets / excludeFilter := "js*" || "sass*",
   TwirlKeys.templateImports ++= Seq(
     "uk.gov.hmrc.govukfrontend.views.html.components._",
   ),
@@ -33,7 +33,7 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
   )
 }
 
-val silencerVersion = "1.7.11"
+val silencerVersion = "1.7.12"
 maintainer := "your.name@company.org"
 
 lazy val microservice = Project(appName, file("."))
@@ -48,10 +48,10 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     targetJvm := "jvm-1.8",
     libraryDependencies ++= appDependencies,
-    parallelExecution in Test := false,
-    fork in Test := false,
+    Test / parallelExecution := false,
+    Test / fork := false,
     retrieveManaged := true,
-    pipelineStages in Assets := Seq(digest)
+    Assets / pipelineStages := Seq(digest)
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
