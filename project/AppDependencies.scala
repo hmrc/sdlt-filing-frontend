@@ -7,7 +7,7 @@ object AppDependencies {
     filters,
     ws,
     "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "7.12.0",
-    "uk.gov.hmrc" %% "play-frontend-hmrc"         % "4.1.0-play-28"
+    "uk.gov.hmrc" %% "play-frontend-hmrc"         % "6.2.0-play-28"
   )
 
   trait TestDependencies {
