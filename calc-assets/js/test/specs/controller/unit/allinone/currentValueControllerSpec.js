@@ -54,7 +54,7 @@
             expect(mockScope.state.hasError()).toEqual('');
         });
 
-        describe('Calling .ftbLimit() on the Current Value Controller when the date is onOrAfter 23/09/2022', function() {
+        describe('Calling .ftbLimit() on the Current Value Controller when the date is onOrAfter 23/09/2022 but before 01/04/2025', function() {
 
             beforeEach(mocks.inject(function ($controller, $rootScope) {
 
@@ -95,10 +95,56 @@
 
             }));
             it('should return 625,000', function () {
-                mockScope.data.effectiveDate = new Date(2022,8,23);
+                mockScope.data.effectiveDate = new Date(2025,1,23);
                 expect(mockScope.ftbLimit()).toEqual("625,000");
             });
         });
+
+        describe('Calling .ftbLimit() on the Current Value Controller when the date is onOrAfter 01/04/2025', function() {
+
+                    beforeEach(mocks.inject(function ($controller, $rootScope) {
+
+                        mockScope = $rootScope.$new();
+                        mockScope.getHelpSetup = function() {return true;};
+
+                        mockDataService = {
+                            getModel : function() {},
+                            updateModel : function() {}
+                        };
+
+                        mockNavigationService = {
+                            next : function() {}
+                        };
+
+                        mockValidationService = {
+                            validate : function() {
+                                return { isValid : true };
+                            }
+                        };
+
+
+                        spyOn(mockDataService, 'updateModel');
+                        spyOn(mockNavigationService, 'next');
+                        spyOn(mockValidationService, 'validate').and.callThrough();
+
+                        controller = $controller('currentValueController', {
+                            $scope : mockScope,
+                            $location : {},
+                            dataService : mockDataService,
+                            currentValueValidationService : mockValidationService,
+                            navigationService : mockNavigationService
+                        });
+
+                        mockScope.data = {
+                            holdingType: "leasehold"
+                        };
+
+                    }));
+                    it('should return 500,000', function () {
+                        mockScope.data.effectiveDate = new Date(2025,3,1);
+                        expect(mockScope.ftbLimit()).toEqual("500,000");
+                    });
+                });
 
         describe('Calling .ftbLimit() on the Current Value Controller when the date is before 23/09/2022', function() {
 

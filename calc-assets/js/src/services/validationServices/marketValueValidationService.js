@@ -22,7 +22,8 @@
                 }
             }
 
-            if(validator.isGreaterThanOrEqualToDate(data.effectiveDate, new Date(2022, 8, 23))) {
+            if(validator.isGreaterThanOrEqualToDate(data.effectiveDate, new Date(2022, 8, 23)) && validator.isLessThanDate(data.effectiveDate, new Date(2025, 3, 1)))
+            {
                 if(validator.isLessThanInteger(625000, data.premium)) {
                     state.marketValue = "Enter a value that is £625000 or less.";
                 }
