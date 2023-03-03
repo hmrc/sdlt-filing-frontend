@@ -11,9 +11,8 @@ import exceptions.InvalidDateException
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
 import data.Dates
 import utils.DateUtil
+import utils.CalculationUtils.isAfterSept2022AndBeforeApil2025
 import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, leaseholdNRSDLTOutOfScope}
-
-import java.time.LocalDate
 
 @Singleton
 class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalculationService,
@@ -319,10 +318,6 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
   def extractLeaseTerm(leaseDetails: Option[LeaseDetails]): Option[Int] = {
     leaseDetails.fold[Option[Int]](None)(leaseDets => Some(leaseDets.leaseTerm.years))
-  }
-
-  def isAfterSept2022AndBeforeApil2025(date: LocalDate) = {
-    date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE) && date.isBefore(Dates.APRIL2025_RESIDENTIAL_DATE)
   }
 
 }

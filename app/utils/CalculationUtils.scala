@@ -42,4 +42,8 @@ object CalculationUtils extends DateUtil {
   def duringNRB250HolidayPeriod(date: LocalDate): Boolean = {
     date.onOrAfter(Dates.JULY2021_RESIDENTIAL_DATE) && date.onOrBefore(Dates.SEPT2021_RESIDENTIAL_DATE)
   }
+
+  def isAfterSept2022AndBeforeApil2025(date: LocalDate) = {
+    date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE) && date.isBefore(Dates.APRIL2025_RESIDENTIAL_DATE)
+  }
 }

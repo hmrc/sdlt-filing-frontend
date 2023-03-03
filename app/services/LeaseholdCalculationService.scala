@@ -12,7 +12,7 @@ import exceptions.RequiredValueNotDefinedException
 import factories.LeaseholdResultFactory
 import models._
 import models.calculationtables.{SlabResult, Slice}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, leaseholdNRSDLTInScopeForLeaseOrPremium}
+import utils.CalculationUtils.{isAfterSept2022AndBeforeApil2025, duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, leaseholdNRSDLTInScopeForLeaseOrPremium}
 import utils.DateUtil
 import validators.internal.ModelValidation
 
@@ -567,7 +567,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   //Shared functions
 
   def leaseRatesToUse(premium: BigDecimal, effectiveDate: LocalDate, leaseTermYears: Int, highestRent: BigDecimal): Seq[Slice] = {
-    if (duringNRB250HolidayPeriod(effectiveDate) || effectiveDate.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE)) {
+    if (duringNRB250HolidayPeriod(effectiveDate) || isAfterSept2022AndBeforeApil2025(effectiveDate)) {
       if ((leaseTermYears < 7 || highestRent < 1000) && premium < 40000) {
         leaseholdResidentialJuly21OnwardsLeaseRates.slices
       } else {
