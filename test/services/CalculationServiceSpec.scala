@@ -769,7 +769,7 @@ class CalculationServiceSpec extends PlaySpec with MockFactory {
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
-      "given a request with an effective date of 24/9/2022 and the user is an individual without twoOrMoreProperties" in {
+      "given a request with an effective date of 01/04/2025 and the user is an individual without twoOrMoreProperties" in {
         val testRequest = createRequestWithPropDetails(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2025, 4, 1))
         val result = createResult("leaseholdResidential, April2025 onwards")
 
@@ -781,7 +781,7 @@ class CalculationServiceSpec extends PlaySpec with MockFactory {
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
-      "given a request with an effective date of 30/1/2023 and the user is an individual without twoOrMoreProperties" in {
+      "given a request with an effective date of 01/04/2024 and the user is an individual without twoOrMoreProperties" in {
         val testRequest = createRequestWithPropDetails(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2025, 4, 1))
         val result = createResult("leaseholdResidential, April2025 onwards")
 

@@ -95,7 +95,7 @@
 
             }));
             it('should return 625,000', function () {
-                mockScope.data.effectiveDate = new Date(2025,1,23);
+                mockScope.data.effectiveDate = new Date(2022,8,23);
                 expect(mockScope.ftbLimit()).toEqual("625,000");
             });
         });
