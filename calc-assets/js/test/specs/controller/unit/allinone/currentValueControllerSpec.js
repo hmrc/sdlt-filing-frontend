@@ -94,8 +94,12 @@
                 };
 
             }));
-            it('should return 625,000', function () {
+            it('should return 625,000 for 23 Sept 2022', function () {
                 mockScope.data.effectiveDate = new Date(2022,8,23);
+                expect(mockScope.ftbLimit()).toEqual("625,000");
+            });
+            it('should return 625,000 for 31 March 2025', function () {
+                mockScope.data.effectiveDate = new Date(2025,2,31);
                 expect(mockScope.ftbLimit()).toEqual("625,000");
             });
         });
