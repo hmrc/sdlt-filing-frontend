@@ -260,7 +260,7 @@ class CalculationServiceSpec extends PlaySpec with MockFactory {
       }
 
       "given a request with an effective date of 01/05/2025 and the user is an individual without twoOrMoreProperties" in {
-        val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2025, 4, 1))
+        val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2025, 5, 1))
         val result = createResult("freeholdResidential, April2025 onwards")
 
         (mockFreeholdCalculationService.freeholdResidentialNov17OnwardsFTB _)
@@ -271,7 +271,7 @@ class CalculationServiceSpec extends PlaySpec with MockFactory {
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
       }
 
-      "given a request with an effective date of 23/1/2023 and the user is an individual without twoOrMoreProperties" in {
+      "given a request with an effective date of 5/1/2026 and the user is an individual without twoOrMoreProperties" in {
         val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2026, 1, 5))
         val result = createResult("freeholdResidential, April2025 onwards")
 
