@@ -10,7 +10,7 @@
 
         $scope.ftbLimit = function () {
             var value;
-            if($scope.data.effectiveDate >= new Date(2022, 8, 23)) {
+            if($scope.data.effectiveDate >= new Date(2022, 8, 23) && $scope.data.effectiveDate < new Date(2025, 3, 1)) {
                 value = "625,000";
             } else {
                 value = "500,000";

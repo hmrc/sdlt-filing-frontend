@@ -116,7 +116,7 @@
     };
 
     var ftbThreshold = function(value) {
-        if(value >= new Date(2022, 8, 23)) {
+        if(value >= new Date(2022, 8, 23) && value < new Date(2025, 3, 1)) {
             return "625,000";
         } else {
             return "500,000";

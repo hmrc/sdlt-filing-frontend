@@ -23,7 +23,7 @@ object JavaScriptBuild {
   val javaScriptUiSettings = Seq(
 
     // the JavaScript application resides in "ui"
-    uiDirectory := (baseDirectory in Compile) { _ /"calc-assets" }.value,
+    uiDirectory := (Compile / baseDirectory) { _ /"calc-assets" }.value,
 
     // add "npm" and "gulp" commands in sbt
     commands ++= uiDirectory { base => Seq(Gulp.gulpCommand(base), npmCommand(base))}.value,
@@ -53,7 +53,7 @@ object JavaScriptBuild {
 
     // runs gulp before staging the application
     dist := (dist dependsOn gulpBuild).value,
-    (test in Test) := ((test in Test) dependsOn gulpTest).value,
+    (Test / test) := ((Test / test) dependsOn gulpTest).value,
 
 
     // integrate JavaScript build into play build
