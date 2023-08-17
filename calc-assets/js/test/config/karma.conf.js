@@ -1,9 +1,9 @@
 var path = require("path");
-var webdriverConfig = {
-    "hostname": "localhost",
-    "port": 4444
-};
-
+// var webdriverConfig = {
+//     "hostname": "localhost",
+//     "port": 4444
+// };
+process.env.CHROME_BIN = require('puppeteer').executablePath();
 module.exports = function (config)
 {
     config.set({
@@ -65,7 +65,7 @@ module.exports = function (config)
         // - PhantomJS
         // - IE (only Windows)
         // CLI --browsers Chrome,Firefox,Safari
-        browsers: [],
+        browsers: ['ChromeHeadless'],
 
         // If browser does not capture in given timeout [ms], kill it
         // CLI --capture-timeout 5000
@@ -93,22 +93,23 @@ module.exports = function (config)
             }
         },
 
-        customLaunchers: {
-            chrome: {
-                browserName: "chrome",
-                base: "WebDriver",
-                config: webdriverConfig,
-                debug: true
-            }
-        },
+        // customLaunchers: {
+        //     chrome: {
+        //         browserName: "chrome",
+        //         base: "WebDriver",
+        //         config: webdriverConfig,
+        //         debug: true
+        //     }
+        // },
 
         plugins: [
             "karma-coverage",
             "karma-jasmine",
-            "karma-webdriver-launcher",
+            "karma-chrome-launcher",
             "karma-junit-reporter",
             "karma-spec-reporter",
-            "karma-webpack"
+            "karma-webpack",
+            "puppeteer"
         ],
 
         webpack: {
