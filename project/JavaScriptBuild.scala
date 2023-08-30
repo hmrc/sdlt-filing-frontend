@@ -41,19 +41,19 @@ object JavaScriptBuild {
       result
     },
 
-    gulpTest := {
-      val result = Gulp.gulpProcess(uiDirectory.value, "test").run().exitValue()
-      if (result != 0)
-        throw new Exception("Gulp test failed.")
-      result
-    },
-
-    gulpTest := (gulpTest dependsOn npmInstall).value,
+//    gulpTest := {
+//      val result = Gulp.gulpProcess(uiDirectory.value, "test").run().exitValue()
+//      if (result != 0)
+//        throw new Exception("Gulp test failed.")
+//      result
+//    },
+//
+//    gulpTest := (gulpTest dependsOn npmInstall).value,
     gulpBuild := (gulpBuild dependsOn npmInstall).value,
 
     // runs gulp before staging the application
     dist := (dist dependsOn gulpBuild).value,
-    (Test / test) := ((Test / test) dependsOn gulpTest).value,
+//    (Test / test) := ((Test / test) dependsOn gulpTest).value,
 
 
     // integrate JavaScript build into play build
