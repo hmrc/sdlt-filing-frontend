@@ -57,11 +57,11 @@
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 </script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="@{routes.Assets.versioned("javascript/jquery-1.7.1.min.js")}" type="text/javascript"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular-sanitize.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular-route.js"></script>
+<script src="@{routes.Assets.versioned("javascript/angular.min.js")}"></script>
+<script src="@{routes.Assets.versioned("javascript/angular-sanitize.js")}"></script>
+<script src="@{routes.Assets.versioned("javascript/angular-route.js")}"></script>
 
 <script src="@{routes.Assets.versioned("javascript/calc.js")}"></script>
 <script src="@{routes.Assets.versioned("javascript/calc-templates.js")}"></script>
