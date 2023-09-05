@@ -113,17 +113,21 @@ module.exports = function (config)
 
         webpack: {
             module: {
-                preLoaders: [
+                rules: [
                     // instrument only testing sources with Istanbul
                     {
                         test: /\.js$/,
+                        enforce: "pre",
                         exclude: /(node_modules|libs\/|test\/)/,
-                        loader: 'istanbul-instrumenter'
+                        loader: 'istanbul-instrumenter-loader'
                     }
                 ]
             },
             resolve: {
-                root: path.join(__dirname, "../../../js/src")
+                modules: [
+                    path.join(__dirname, "../../../js/src"),
+                    "node_modules"
+                ]
             }
         },
 
