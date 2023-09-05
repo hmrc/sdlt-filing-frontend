@@ -1,7 +1,7 @@
 (function() {
     "use strict";
 
-	var angular = require("angular-wrapper");
+	var angular = require("angular");
 	require("./routes/index");
 	require("./controllers/index");
 	require("./services/index");
