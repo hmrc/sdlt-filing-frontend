@@ -46,6 +46,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
+    PlayKeys.playDefaultPort := 9953,
     targetJvm := "jvm-1.8",
     libraryDependencies ++= appDependencies,
     Test / parallelExecution := false,
