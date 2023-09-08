@@ -29,12 +29,13 @@
         if (modelValidationService.validate($scope.data).isModelValid) {
           var submission = dataMarshallingService.constructCalculationRequest($scope.data);
           $http.post("/calculate-stamp-duty-land-tax/calculate", submission).
-             success(function(data, status, headers, config) {
+             then(function(response) {
+               var data = response.data;
                $scope.data.result = data.result;
                dataService.updateModel($scope.data);
                $scope.responseReceived = true;
              }).
-             error(function(data, status, headers, config) {
+             catch(function(response) {
                $scope.errorResponse = true;
                $scope.responseReceived = true;
              });
