@@ -34,8 +34,7 @@ tmp
 .idea_modules
 bin
 node_modules
-public/javascript/calc.js
-public/javascript/calc-templates.js
+public
 .bsp
 .bsp/sbt.json
 .bloop

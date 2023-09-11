@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    var mocks = require("angular-mocks-wrapper");           
+    var mocks = require("angular-mocks");           
 
     describe('Initial Form Controller', function () {
         var InitFormController = require("../../../src/utilities/initFormController.js");

@@ -13,9 +13,9 @@
 <script>window.GOVUKFrontend.initAll();</script>
 
 <script>
-        var regex = /\/calculate-stamp-duty-land-tax\/#\//;
+        var regex = /\/calculate-stamp-duty-land-tax\/#!\//;
         if(!(document.location.href).match(regex)) {
-         window.location = document.location.href.split("/calculate-stamp-duty-land-tax",1) + "/calculate-stamp-duty-land-tax/#/";
+         window.location = document.location.href.split("/calculate-stamp-duty-land-tax",1) + "/calculate-stamp-duty-land-tax/#!/";
         }
 
         // catches page refreshes and navigating away from the service

@@ -3,7 +3,7 @@
 
     require("calc-module");
 
-    var mocks = require("angular-mocks-wrapper");
+    var mocks = require("angular-mocks");
 
     describe('Relevant Rent Controller', function () {
         
