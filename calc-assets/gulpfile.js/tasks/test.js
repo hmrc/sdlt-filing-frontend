@@ -1,9 +1,9 @@
 "use strict";
 
 var gulp = require("gulp");
-var runSequence = require("gulp4-run-sequence")
+var runSequence = require("gulp4-run-sequence");
 
-gulp.task("test", async function (cb)
+gulp.task("test", function (cb)
 {
-    runSequence("karma");
+    runSequence("karma", cb);
 });

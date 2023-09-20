@@ -2,7 +2,7 @@
 
 var config = require("../config");
 var gulp = require("gulp");
-var runSequence = require("gulp4-run-sequence")
+var runSequence = require("gulp4-run-sequence");
 var watch = require("gulp-watch");
 
 gulp.task("build-js", function (cb)
