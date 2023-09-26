@@ -3,7 +3,7 @@
 
     require("calc-module");
 
-    var mocks = require("angular-mocks");
+    var mocks = require("angular").mock;
 
     describe('Print Controller with valid data', function () {
         

@@ -3,7 +3,7 @@
 
     require("calc-module");
 
-    var mocks = require("angular-mocks");
+    var mocks = require("angular").mock;
 
     describe('Main Controller', function () {
         
