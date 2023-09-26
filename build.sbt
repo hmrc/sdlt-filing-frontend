@@ -6,7 +6,6 @@ import sbt.Keys._
 import sbt.{CrossVersion, Def, compilerPlugin, _}
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "sdltc-frontend"
@@ -33,7 +32,7 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
   )
 }
 
-val silencerVersion = "1.7.12"
+val silencerVersion = "1.17.13"
 maintainer := "your.name@company.org"
 
 lazy val microservice = Project(appName, file("."))
@@ -43,7 +42,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.12.15")
   .settings(majorVersion := 5)
-  .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
     PlayKeys.playDefaultPort := 9953,
