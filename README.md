@@ -1,7 +1,7 @@
 # SDLTC Frontend
 =============
 
-[![Build Status](https://ci-dev.tax.service.gov.uk/buildStatus/icon?job=sdltc-frontend)](https://ci-dev.tax.service.gov.uk/job/sdltc-frontend/)
+[![Build Status](https://build.tax.service.gov.uk/job/DDCT%20Live%20Services/job/Stamp%20Duty%20Land%20Tax%20Calculator/job/sdltc-frontend/)](https://build.tax.service.gov.uk/job/DDCT%20Live%20Services/job/Stamp%20Duty%20Land%20Tax%20Calculator/job/sdltc-frontend/)
 
 ## Release Notes
 
