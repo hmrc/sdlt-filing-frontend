@@ -19,7 +19,7 @@ object AppDependencies {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
         "uk.gov.hmrc"                  %% "bootstrap-test-play-28"      % "7.22.0"      % scope,
-        "com.fasterxml.jackson.module" %% "jackson-module-scala"        % "2.14.1"      % scope,
+        "com.fasterxml.jackson.module" %% "jackson-module-scala"        % "2.15.2"      % scope,
         "org.scalamock"                %% "scalamock-scalatest-support" % "3.6.0"       % scope,
         "org.mockito"                  %  "mockito-core"                % "5.5.0"       % scope,
         "org.scalatestplus"            %% "mockito-3-12"                % "3.2.10.0"    % scope,
@@ -35,7 +35,7 @@ object AppDependencies {
 
       override lazy val test = Seq(
         "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % "7.22.0"   % scope,
-        "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.14.1"   % scope,
+        "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.15.2"   % scope,
         "org.scalatestplus"            %% "mockito-3-12"           % "3.2.10.0" % scope,
         "com.vladsch.flexmark"         %  "flexmark-all"           % "0.62.2"   % scope // NB Added for scalatest
       )
