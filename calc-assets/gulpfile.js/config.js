@@ -35,7 +35,7 @@ module.exports =
         browserDisconnectTimeout: 60000,
         browserDisconnectTolerance: 10,
         browserNoActivityTimeout: 60000,
-        browsers: ['ChromeHeadless'],
+        browsers: ['ChromeJenkins'],
         captureTimeout: 60000,
         configFile: path.join(__dirname, "../js/test/config/karma.conf.js"),
         port: 6001,

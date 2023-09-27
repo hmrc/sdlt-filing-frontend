@@ -62,7 +62,15 @@ module.exports = function (config)
         // - PhantomJS
         // - IE (only Windows)
         // CLI --browsers Chrome,Firefox,Safari
-        browsers: ['ChromeHeadless'],
+        browsers: ['ChromeHeadless', 'ChromeJenkins'],
+
+        customLaunchers: {
+            ChromeJenkins: {
+                base: "ChromeHeadless",
+                flags: ['--disable-setuid-sandbox'],
+                debug: true
+            }
+        },
 
         // If browser does not capture in given timeout [ms], kill it
         // CLI --capture-timeout 5000
