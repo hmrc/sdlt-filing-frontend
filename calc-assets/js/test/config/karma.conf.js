@@ -67,7 +67,7 @@ module.exports = function (config)
         customLaunchers: {
             ChromeJenkins: {
                 base: "ChromeHeadless",
-                flags: ['--disable-setuid-sandbox'],
+                flags: ['--no-sandbox', '--disable-setuid-sandbox'],
                 debug: true
             }
         },
