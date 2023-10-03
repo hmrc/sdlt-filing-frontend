@@ -136,7 +136,7 @@
             {
                 question   : "Freehold or leasehold",
                 answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.holdingType) : undefined,
-                link       : "#holding",
+                link       : "#!holding",
                 id         : "holdingType",
                 isValid    : validatedModel.isHoldingValid,
                 hiddenText : "Is property freehold or leasehold?"
@@ -144,7 +144,7 @@
             {
                 question   : "Residential or non-residential",
                 answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.propertyType) : undefined,
-                link       : "#property",
+                link       : "#!property",
                 id         : "propertyType",
                 isValid    : validatedModel.isPropertyValid,
                 hiddenText : "Is property residential or non-residential?"
@@ -152,7 +152,7 @@
             {
                 question   : "Effective date of transaction",
                 answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.effectiveDate) : undefined,
-                link       : "#date",
+                link       : "#!date",
                 id         : "effectiveDate",
                 isValid    : validatedModel.isEffectiveDateValid,
                 hiddenText : "Effective date of your transaction?",
@@ -161,7 +161,7 @@
             {
                 question   : displayNonUKResident(scope.data) ? "Non-UK resident" : undefined,
                 answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.nonUKResident) : undefined,
-                link       : "#non-uk-resident",
+                link       : "#!non-uk-resident",
                 id         : "nonUKResident",
                 isValid    : validatedModel.isNonUKResidentValid,
                 hiddenText : "Are any of the purchasers non-UK resident?"
@@ -169,7 +169,7 @@
             {
                 question   : displayIndividual(scope.data) ? "Individual" : undefined,
                 answer     : (scope.data !== undefined) ? getDisplayValue(scope.data.individual) : undefined,
-                link       : "#purchaser",
+                link       : "#!purchaser",
                 id         : "individual",
                 isValid    : validatedModel.isIndividualValid,
                 hiddenText : "Are you purchasing the property as an individual?"
@@ -177,7 +177,7 @@
             {
                 question   : displayAdditionalProperty(scope.data) ? "Additional residential property" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.twoOrMoreProperties : undefined,
-                link       : "#additional-property",
+                link       : "#!additional-property",
                 id         : "twoOrMoreProperties",
                 isValid    : validatedModel.isTwoOrMorePropertiesValid,
                 hiddenText : "Will you own two or more properties?"
@@ -185,7 +185,7 @@
             {
                 question   : displayReplaceMainResidence(scope.data) ? "Replacing main residence" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.replaceMainResidence : undefined,
-                link       : "#additional-property",
+                link       : "#!additional-property",
                 id         : "replaceMainResidence",
                 isValid    : validatedModel.isReplaceMainResidenceValid,
                 hiddenText : "Are you replacing a main residence?"
@@ -193,7 +193,7 @@
             {
                 question   : displayOwnedOtherProperties(scope.data) ? "Owned other property" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.ownedOtherProperties : undefined,
-                link       : "#owned-other-properties",
+                link       : "#!owned-other-properties",
                 id         : "ownedOtherProperties",
                 isValid    : validatedModel.isOwnedOtherPropertiesValid,
                 hiddenText : "Have you ever owned any other property?"
@@ -201,7 +201,7 @@
             {
                 question   : displayMainResidence(scope.data) ? "Main residence" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.mainResidence : undefined,
-                link       : "#main-residence",
+                link       : "#!main-residence",
                 id         : "mainResidence",
                 isValid    : validatedModel.isMainResidenceValid,
                 hiddenText : "Will this property be your main residence?"
@@ -209,7 +209,7 @@
             {
                 question   : displaySharedOwnership(scope.data) ? "Shared ownership" : undefined,
                 answer     : (scope.data !== undefined) ? scope.data.sharedOwnership : undefined,
-                link       : "#shared-ownership",
+                link       : "#!shared-ownership",
                 id         : "sharedOwnership",
                 isValid    : validatedModel.isSharedOwnershipValid,
                 hiddenText : "Are you buying the property through a shared ownership scheme?"
@@ -217,7 +217,7 @@
             {
                 question   : displayCurrentValue(scope.data) ? "Market value" : undefined,
                 answer     : (scope.data !== undefined) ? marketValue(scope.data) : undefined,
-                link       : "#current-value",
+                link       : "#!current-value",
                 id         : "currentValue",
                 isValid    : validatedModel.isCurrentValueValid,
                 hiddenText : (scope.data !== undefined) ? "Is the current market value of the property £" + ftbThreshold(scope.data.effectiveDate) +" or less?" : undefined
@@ -226,7 +226,7 @@
             {
                 question   : displayPaySDLT(scope.data) ? "Pay SDLT" : undefined,
                 answer     : displayPaySDLT(scope.data) ? scope.data.paySDLT : undefined,
-                link       : "#market-value",
+                link       : "#!market-value",
                 id         : "market-value",
                 isValid    : validatedModel.isMarketValueValid,
                 hiddenText : "Pay SDLT"
@@ -234,7 +234,7 @@
             {
                 question   : displayFreehold(scope.data) ? "Purchase price" : undefined,
                 answer     : displayFreehold(scope.data) ? scope.data.premium : undefined,
-                link       : "#purchase-price",
+                link       : "#!purchase-price",
                 id         : "purchasePrice",
                 isValid    : validatedModel.isPurchasePriceValid,
                 hiddenText : "Purchase price?",
@@ -243,7 +243,7 @@
             {
                 question   : displayLeasehold(scope.data) ? "Start date as specified in lease" : undefined,
                 answer     : displayLeasehold(scope.data) ? scope.data.startDate : undefined,
-                link       : "#lease-dates",
+                link       : "#!lease-dates",
                 id         : "leaseStartDate",
                 isValid    : validatedModel.isStartDateValid,
                 hiddenText : "Start date as specified in lease?",
@@ -252,7 +252,7 @@
             {
                 question   : displayLeasehold(scope.data) ? "End date as specified in lease" : undefined,
                 answer     : displayLeasehold(scope.data) ? scope.data.endDate : undefined,
-                link       : "#lease-dates",
+                link       : "#!lease-dates",
                 id         : "leaseEndDate",
                 isValid    : validatedModel.isEndDateValid,
                 hiddenText : "End date as specified in lease?",
@@ -269,7 +269,7 @@
             {
                 question   : displayLeasehold(scope.data) ? "Premium" : undefined,
                 answer     : displayLeasehold(scope.data) ? scope.data.premium : undefined,
-                link       : "#premium",
+                link       : "#!premium",
                 id         : "premium",
                 isValid    : validatedModel.isPremiumValid,
                 hiddenText : "Premium payable?",
@@ -278,7 +278,7 @@
             {
                 question   : (scope.displayYearOneRent) ? "Year 1 rent" : undefined,
                 answer     : (scope.displayYearOneRent) ? scope.data.year1Rent : undefined,
-                link       : "#rent",
+                link       : "#!rent",
                 id         : "year1Rent",
                 isValid    : validatedModel.isYear1RentValid,
                 hiddenText : "Year 1 rent?",
@@ -287,7 +287,7 @@
             {
                 question   : (scope.displayYearTwoRent) ? "Year 2 rent" : undefined,
                 answer     : (scope.displayYearTwoRent) ? scope.data.year2Rent : undefined,
-                link       : "#rent",
+                link       : "#!rent",
                 id         : "year2Rent",
                 isValid    : validatedModel.isYear2RentValid,
                 hiddenText : "Year 2 rent?",
@@ -296,7 +296,7 @@
             {
                 question   : (scope.displayYearThreeRent) ? "Year 3 rent" : undefined,
                 answer     : (scope.displayYearThreeRent) ? scope.data.year3Rent : undefined,
-                link       : "#rent",
+                link       : "#!rent",
                 id         : "year3Rent",
                 isValid    : validatedModel.isYear3RentValid,
                 hiddenText : "Year 3 rent?",
@@ -305,7 +305,7 @@
             {
                 question   : (scope.displayYearFourRent) ? "Year 4 rent" : undefined,
                 answer     : (scope.displayYearFourRent) ? scope.data.year4Rent : undefined,
-                link       : "#rent",
+                link       : "#!rent",
                 id         : "year4Rent",
                 isValid    : validatedModel.isYear4RentValid,
                 hiddenText : "Year 4 rent?",
@@ -314,7 +314,7 @@
             {
                 question   : (scope.displayYearFiveRent) ? "Year 5 rent" : undefined,
                 answer     : (scope.displayYearFiveRent) ? scope.data.year5Rent : undefined,
-                link       : "#rent",
+                link       : "#!rent",
                 id         : "year5Rent",
                 isValid    : validatedModel.isYear5RentValid,
                 hiddenText : "Year 5 rent?",
@@ -332,7 +332,7 @@
             {
                 question   : (displayExchangeContracts(scope.data)) ? "Exchange of contracts before 17 March 2016" : undefined,
                 answer     : (displayExchangeContracts(scope.data)) ? scope.data.contractPre201603 : undefined,
-                link       : "#exchange-contracts",
+                link       : "#!exchange-contracts",
                 id         : "contractPre201603",
                 isValid    : validatedModel.isContractPre201603Valid,
                 hiddenText : "Exchange of contracts before 17 March 2016?"
@@ -340,7 +340,7 @@
             {
                 question   : (displayContractVaried(scope.data)) ? "Contract changed on or after 17 March 2016" : undefined,
                 answer     : (displayContractVaried(scope.data)) ? scope.data.contractVariedPost201603 : undefined,
-                link       : "#exchange-contracts",
+                link       : "#!exchange-contracts",
                 id         : "contractVariedPost201603",
                 isValid    : validatedModel.isContractVariedPost201603Valid,
                 hiddenText : "Contract changed on or after 17 March 2016?"
@@ -348,7 +348,7 @@
             {
                 question   : (displayRelevantRent(scope.data)) ? "Relevant rental figure" : undefined,
                 answer     : (displayRelevantRent(scope.data)) ? scope.data.relevantRent : undefined,
-                link       : "#relevant-rent",
+                link       : "#!relevant-rent",
                 id         : "relevantRent",
                 isValid    : validatedModel.isRelevantRentValid,
                 hiddenText : "Relevant rental figure?",
