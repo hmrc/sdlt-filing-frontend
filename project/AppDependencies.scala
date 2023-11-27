@@ -7,7 +7,7 @@ object AppDependencies {
     filters,
     ws,
     "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "7.22.0",
-    "uk.gov.hmrc" %% "play-frontend-hmrc"         % "7.20.0-play-28"
+    "uk.gov.hmrc" %% "play-frontend-hmrc"         % "7.21.0-play-28"
   )
 
   trait TestDependencies {
@@ -19,11 +19,10 @@ object AppDependencies {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
         "uk.gov.hmrc"                  %% "bootstrap-test-play-28"      % "7.22.0"      % scope,
-        "com.fasterxml.jackson.module" %% "jackson-module-scala"        % "2.15.2"      % scope,
-        "org.scalamock"                %% "scalamock-scalatest-support" % "3.6.0"       % scope,
-        "org.mockito"                  %  "mockito-core"                % "5.5.0"       % scope,
+        "com.fasterxml.jackson.module" %% "jackson-module-scala"        % "2.16.0"      % scope,
+        "org.mockito"                  %  "mockito-core"                % "5.7.0"       % scope,
         "org.scalatestplus"            %% "mockito-3-12"                % "3.2.10.0"    % scope,
-        "org.jsoup"                    %  "jsoup"                       % "1.16.1"      % scope
+        "org.jsoup"                    %  "jsoup"                       % "1.17.1"      % scope
       )
     }.test
   }
@@ -35,12 +34,32 @@ object AppDependencies {
 
       override lazy val test = Seq(
         "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % "7.22.0"   % scope,
-        "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.15.2"   % scope,
+        "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.16.0"   % scope,
         "org.scalatestplus"            %% "mockito-3-12"           % "3.2.10.0" % scope,
-        "com.vladsch.flexmark"         %  "flexmark-all"           % "0.62.2"   % scope // NB Added for scalatest
+        "com.vladsch.flexmark"         %  "flexmark-all"           % "0.64.8"   % scope // NB Added for scalatest
       )
     }.test
   }
 
-  def apply() = compile ++ Test() ++ IntegrationTest()
+  val jacksonVersion = "2.16.0"
+  val jacksonDatabindVersion = "2.16.0"
+
+  val jacksonOverrides = Seq(
+    "com.fasterxml.jackson.core" % "jackson-core",
+    "com.fasterxml.jackson.core" % "jackson-annotations",
+    "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8",
+    "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310"
+  ).map(_ % jacksonVersion)
+
+  val jacksonDatabindOverrides = Seq(
+    "com.fasterxml.jackson.core" % "jackson-databind" % jacksonDatabindVersion
+  )
+
+  val akkaSerializationJacksonOverrides = Seq(
+    "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor",
+    "com.fasterxml.jackson.module" % "jackson-module-parameter-names",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala",
+  ).map(_ % jacksonVersion)
+
+  def apply() = compile ++ jacksonDatabindOverrides ++ jacksonOverrides ++ akkaSerializationJacksonOverrides ++ Test() ++ IntegrationTest()
 }

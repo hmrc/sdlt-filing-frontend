@@ -16,7 +16,7 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
   TwirlKeys.templateImports ++= Seq(
     "uk.gov.hmrc.govukfrontend.views.html.components._",
   ),
-  dependencyOverrides += "org.scala-lang" % "scala-library" % "2.12.15"
+  dependencyOverrides += "org.scala-lang" % "scala-library" % "2.13.8"
 ) ++ JavaScriptBuild.javaScriptUiSettings
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtDistributablesPlugin, SbtWeb)
@@ -32,7 +32,6 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
   )
 }
 
-val silencerVersion = "1.17.13"
 maintainer := "your.name@company.org"
 
 lazy val microservice = Project(appName, file("."))
@@ -40,7 +39,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(playSettings: _*)
   .settings(playSettings ++ scoverageSettings: _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.12.15")
+  .settings(scalaVersion := "2.13.8")
   .settings(majorVersion := 5)
   .settings(defaultSettings(): _*)
   .settings(
@@ -58,10 +57,7 @@ lazy val microservice = Project(appName, file("."))
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     resolvers += Resolver.jcenterRepo,
-    scalacOptions += "-P:silencer:pathFilters=views;routes",
-    libraryDependencies ++= Seq(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    )
+    scalacOptions += "-Wconf:src=routes/.*:s",
+    scalacOptions += "-Wconf:cat=unused-imports&src=html/.*:s"
   )
 
