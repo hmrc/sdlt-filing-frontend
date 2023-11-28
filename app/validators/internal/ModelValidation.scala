@@ -46,6 +46,7 @@ object ModelValidation extends DateUtil{
             case _ => ValidationFailure("Lease details have been input incorrectly")
 
       }.getOrElse(ValidationFailure("No lease details provided for leasehold property"))
+      case _ => ValidationFailure("No hold type value")
     }
   }
 
@@ -89,6 +90,7 @@ object ModelValidation extends DateUtil{
         } else {
           ValidationSuccess
         }
+      case _ => ValidationFailure("No property type value")
     }
   }
 
@@ -129,6 +131,7 @@ object ModelValidation extends DateUtil{
         } else {
           ValidationSuccess
         }
+      case _ => ValidationFailure("No property type value")
     }
   }
 
@@ -197,7 +200,9 @@ object ModelValidation extends DateUtil{
             }.getOrElse {
               ValidationFailure("No lease details provided for leasehold property")
             }
+        case _ => ValidationFailure("No property type provided")
       }
+      case _ => ValidationFailure("No hold type provided")
     }
   }
 

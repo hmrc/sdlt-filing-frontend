@@ -13,6 +13,7 @@ import data.Dates
 import utils.DateUtil
 import utils.CalculationUtils.isAfterSept2022AndBeforeApril2025
 import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, leaseholdNRSDLTOutOfScope}
+import exceptions.RequiredValueNotDefinedException
 
 @Singleton
 class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalculationService,
@@ -21,17 +22,20 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
   def calculateTax(request: Request): CalculationResponse = {
     request.holdingType match {
-      case HoldingTypes.freehold  =>
+      case HoldingTypes.freehold =>
         request.propertyType match {
           case PropertyTypes.residential => calculateFreeholdResidentialTax(request)
           case PropertyTypes.nonResidential => calculateFreeholdNonResidentialTax(request)
+          case _ => throw new RequiredValueNotDefinedException("Value not defined")
         }
 
       case HoldingTypes.leasehold =>
         request.propertyType match {
           case PropertyTypes.residential => calculateLeaseholdResidentialTax(request)
           case PropertyTypes.nonResidential => calculateLeaseholdNonResidentialTax(request)
+          case _ => throw new RequiredValueNotDefinedException("Value not defined")
         }
+      case _ => throw new RequiredValueNotDefinedException("Value not defined")
     }
   }
 
