@@ -9,8 +9,10 @@ import akka.stream.Materializer
 import base.BaseSpec
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, CalculationResponse, Result}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status._
 import play.api.libs.json._
@@ -18,9 +20,9 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import services.CalculationService
 
-class CalculationControllerSpec extends BaseSpec with MockFactory with GuiceOneAppPerSuite {
+class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerSuite {
 
-  val mockComponents: MessagesControllerComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
+  val mockComponents: MessagesControllerComponents = fakeApplication().injector.instanceOf[MessagesControllerComponents]
   val mockCalculationService: CalculationService = mock[CalculationService]
   val testCalculationController = new CalculationController(mockCalculationService, mockComponents)
   val materializer: Materializer = app.materializer
@@ -164,16 +166,14 @@ class CalculationControllerSpec extends BaseSpec with MockFactory with GuiceOneA
       "given a valid json" in{
         val response = CalculationResponse(Seq(createResult("given a valid json")))
 
-        (mockCalculationService.calculateTax _)
-          .expects(*)
-          .returns(response)
-          .noMoreThanOnce()
+        when(mockCalculationService.calculateTax(any())).thenReturn(response)
 
         val fakeRequest = FakeRequest().withJsonBody(completeJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) mustBe OK
         println(jsonBodyOf(await(result))(materializer))
         jsonBodyOf(await(result))(materializer) mustBe Json.toJson(response)
+        verify(mockCalculationService, times(1)).calculateTax(any())
       }
     }
   }

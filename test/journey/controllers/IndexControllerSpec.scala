@@ -20,7 +20,7 @@ import scala.concurrent.Future
 class IndexControllerSpec extends BaseSpec with MockitoSugar with GuiceOneServerPerSuite {
 
   class Setup {
-    val mockComponents: MessagesControllerComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
+    val mockComponents: MessagesControllerComponents = fakeApplication().injector.instanceOf[MessagesControllerComponents]
     val injectedViewInstance: index = app.injector.instanceOf[journey.views.html.index]
     implicit val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
