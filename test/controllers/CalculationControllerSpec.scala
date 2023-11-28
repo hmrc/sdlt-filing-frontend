@@ -10,9 +10,8 @@ import base.BaseSpec
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, CalculationResponse, Result}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status._
 import play.api.libs.json._

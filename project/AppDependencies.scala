@@ -20,10 +20,8 @@ object AppDependencies {
       override lazy val test = Seq(
         "uk.gov.hmrc"                  %% "bootstrap-test-play-28"      % "7.22.0"      % scope,
         "com.fasterxml.jackson.module" %% "jackson-module-scala"        % "2.16.0"      % scope,
-        "org.mockito"                  %  "mockito-core"                % "5.7.0"       % scope,
-        "org.scalatestplus"            %% "mockito-3-12"                % "3.2.10.0"    % scope,
-        "org.jsoup"                    %  "jsoup"                       % "1.17.1"      % scope,
-        "com.vladsch.flexmark"         %  "flexmark-all"                % "0.64.8"      % scope // NB Added for scalatest
+        "org.mockito"                  %%  "mockito-scala"              % "1.17.30"     % scope,
+        "org.jsoup"                    %  "jsoup"                       % "1.17.1"      % scope
       )
     }.test
   }
@@ -35,9 +33,7 @@ object AppDependencies {
 
       override lazy val test = Seq(
         "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % "7.22.0"   % scope,
-        "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.16.0"   % scope,
-        "org.scalatestplus"            %% "mockito-3-12"           % "3.2.10.0" % scope,
-        "com.vladsch.flexmark"         %  "flexmark-all"           % "0.64.8"   % scope // NB Added for scalatest
+        "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.16.0"   % scope
       )
     }.test
   }
