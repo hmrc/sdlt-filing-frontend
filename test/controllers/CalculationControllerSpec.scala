@@ -6,7 +6,6 @@
 package controllers
 
 import akka.stream.Materializer
-import base.BaseSpec
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, CalculationResponse, Result}
 import org.mockito.ArgumentMatchers.any
@@ -18,6 +17,8 @@ import play.api.libs.json._
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import services.CalculationService
+import base.BaseSpec
+
 
 class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerSuite {
 

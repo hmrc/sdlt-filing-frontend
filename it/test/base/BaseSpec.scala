@@ -3,7 +3,7 @@
  *
  */
 
-package base
+package test.base
 
 import java.nio.charset.Charset
 

@@ -3,15 +3,15 @@
  *
  */
 
-package leasehold
+package test.leasehold
 
-import base.BaseSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSResponse}
+import test.base.BaseSpec
 
 class CalculationControllerLeaseholdApril21ISpec extends BaseSpec with GuiceOneServerPerSuite {
 

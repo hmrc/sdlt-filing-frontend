@@ -15,6 +15,8 @@ object AppDependencies {
     lazy val test: Seq[ModuleID] = Seq.empty
   }
 
+  val itDependencies: Seq[ModuleID] = Seq()
+
   object Test {
     def apply() = new TestDependencies {
       override lazy val test = Seq(

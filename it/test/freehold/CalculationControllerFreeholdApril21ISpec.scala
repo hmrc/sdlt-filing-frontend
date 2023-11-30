@@ -3,15 +3,15 @@
  *
  */
 
-package freehold
+package test.freehold
 
-import base.BaseSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.libs.ws._
+import test.base.BaseSpec
 
 class CalculationControllerFreeholdApril21ISpec extends BaseSpec with GuiceOneServerPerSuite {
 

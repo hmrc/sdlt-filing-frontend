@@ -5,10 +5,15 @@ import play.sbt.PlayScala
 import sbt.Keys._
 import sbt.{CrossVersion, Def, compilerPlugin, _}
 import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "sdltc-frontend"
+
+ThisBuild / majorVersion := 5
+ThisBuild / scalaVersion := "2.13.8"
+
 lazy val playSettings: Seq[Setting[_]] = Seq(
   Assets / unmanagedResourceDirectories += baseDirectory.value / "app" / "assets",
   // Dont include the source assets in the dist package (public folder)
@@ -39,8 +44,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(playSettings: _*)
   .settings(playSettings ++ scoverageSettings: _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.13.8")
-  .settings(majorVersion := 5)
   .settings(defaultSettings(): _*)
   .settings(
     PlayKeys.playDefaultPort := 9953,
@@ -53,11 +56,16 @@ lazy val microservice = Project(appName, file("."))
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-  .settings(integrationTestSettings())
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     resolvers += Resolver.jcenterRepo,
     scalacOptions += "-Wconf:src=routes/.*:s",
     scalacOptions += "-Wconf:cat=unused-imports&src=html/.*:s"
   )
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings)
+  .settings(libraryDependencies ++= AppDependencies.itDependencies)
 
