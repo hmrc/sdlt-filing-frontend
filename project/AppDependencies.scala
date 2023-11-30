@@ -28,18 +28,6 @@ object AppDependencies {
     }.test
   }
 
-  object IntegrationTest {
-    def apply() = new TestDependencies {
-
-      override lazy val scope: String = "it"
-
-      override lazy val test = Seq(
-        "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % "8.1.0"   % scope,
-        "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.16.0"   % scope
-      )
-    }.test
-  }
-
   val jacksonVersion = "2.16.0"
   val jacksonDatabindVersion = "2.16.0"
 
@@ -60,5 +48,5 @@ object AppDependencies {
     "com.fasterxml.jackson.module" %% "jackson-module-scala",
   ).map(_ % jacksonVersion)
 
-  def apply() = compile ++ jacksonDatabindOverrides ++ jacksonOverrides ++ akkaSerializationJacksonOverrides ++ Test() ++ IntegrationTest()
+  def apply() = compile ++ jacksonDatabindOverrides ++ jacksonOverrides ++ akkaSerializationJacksonOverrides ++ Test()
 }

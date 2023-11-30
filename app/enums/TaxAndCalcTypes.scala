@@ -11,12 +11,12 @@ object TaxTypes extends Enumeration {
   val rent = Value
   val premium = Value
 
-  implicit val writes = Writes.enumNameWrites
+  implicit val writes: Writes[Value] = Writes.enumNameWrites
 }
 
 object CalcTypes extends Enumeration {
   val slice = Value
   val slab = Value
 
-  implicit val writes = Writes.enumNameWrites
+  implicit val writes: Writes[Value] = Writes.enumNameWrites
 }

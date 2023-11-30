@@ -6,16 +6,14 @@
 package models
 
 import java.time.LocalDate
-
 import enums.{HoldingTypes, PropertyTypes}
 import validators.api.RequestValidators
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads, __}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.__
 import RequestValidators.{multiFieldDateReads, yesNoToBooleanReads}
 
 object RelevantRentDetails {
-  implicit val reads = (
+  implicit val reads: Reads[RelevantRentDetails] = (
     (__ \ "contractPre201603").readNullable[Boolean](yesNoToBooleanReads) and
     (__ \ "contractVariedPost201603").readNullable[Boolean](yesNoToBooleanReads) and
     (__ \ "relevantRent").readNullable[BigDecimal]
@@ -23,11 +21,11 @@ object RelevantRentDetails {
 }
 
 object LeaseTerm {
-  implicit val reads = Json.reads[LeaseTerm]
+  implicit val reads: Reads[LeaseTerm] = Json.reads[LeaseTerm]
 }
 
 object LeaseDetails {
-  implicit val reads = (
+  implicit val reads: Reads[LeaseDetails] = (
      __.read[LocalDate](multiFieldDateReads("startDate")) and
      __.read[LocalDate](multiFieldDateReads("endDate")) and
     (__ \ "leaseTerm").read[LeaseTerm] and
@@ -40,7 +38,7 @@ object LeaseDetails {
 }
 
 object PropertyDetails {
-  implicit val reads = (
+  implicit val reads: Reads[PropertyDetails] = (
     (__ \ "individual").read[Boolean](yesNoToBooleanReads) and
     (__ \ "twoOrMoreProperties").readNullable[Boolean](yesNoToBooleanReads) and
     (__ \ "replaceMainResidence").readNullable[Boolean](yesNoToBooleanReads) and
@@ -50,7 +48,7 @@ object PropertyDetails {
 }
 
 object Request {
-  implicit val reads = (
+  implicit val reads: Reads[Request] = (
     (__ \ "holdingType").read[HoldingTypes.Value] and
     (__ \ "propertyType").read[PropertyTypes.Value] and
      __.read[LocalDate](multiFieldDateReads("effectiveDate")) and

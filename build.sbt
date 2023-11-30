@@ -12,7 +12,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 val appName = "sdltc-frontend"
 
 ThisBuild / majorVersion := 5
-ThisBuild / scalaVersion := "2.13.8"
+ThisBuild / scalaVersion := "2.13.12"
 
 lazy val playSettings: Seq[Setting[_]] = Seq(
   Assets / unmanagedResourceDirectories += baseDirectory.value / "app" / "assets",
@@ -21,7 +21,6 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
   TwirlKeys.templateImports ++= Seq(
     "uk.gov.hmrc.govukfrontend.views.html.components._",
   ),
-  dependencyOverrides += "org.scala-lang" % "scala-library" % "2.13.8"
 ) ++ JavaScriptBuild.javaScriptUiSettings
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtDistributablesPlugin, SbtWeb)
@@ -49,23 +48,21 @@ lazy val microservice = Project(appName, file("."))
     PlayKeys.playDefaultPort := 9953,
     targetJvm := "jvm-1.8",
     libraryDependencies ++= appDependencies,
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     Test / parallelExecution := false,
     Test / fork := false,
     retrieveManaged := true,
     Assets / pipelineStages := Seq(digest)
   )
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     resolvers += Resolver.jcenterRepo,
-    scalacOptions += "-Wconf:src=routes/.*:s",
-    scalacOptions += "-Wconf:cat=unused-imports&src=html/.*:s"
+    scalacOptions ++= Seq("-Wconf:src=routes/.*:s", "-Wconf:cat=unused-imports&src=html/.*:s")
   )
 
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
-  .settings(DefaultBuildSettings.itSettings)
+  .settings(DefaultBuildSettings.itSettings, libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
   .settings(libraryDependencies ++= AppDependencies.itDependencies)
 

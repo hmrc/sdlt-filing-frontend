@@ -26,7 +26,7 @@ object HoldingTypes extends Enumeration {
   }
 
 
-  implicit val reads = lowerCaseReads
+  implicit val reads: Reads[HoldingTypes.Value] = lowerCaseReads
 }
 
 object PropertyTypes extends Enumeration {
@@ -43,6 +43,6 @@ object PropertyTypes extends Enumeration {
     }
   }
 
-  implicit val reads = propertyReads
+  implicit val reads: Reads[PropertyTypes.Value] = propertyReads
 }
 
