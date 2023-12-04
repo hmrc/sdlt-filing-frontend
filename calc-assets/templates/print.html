@@ -120,11 +120,5 @@
 </div>
 
 <div class="form-group">
-  <button class="govuk-button" onCLick="#print" attributes = Map("id" -> "printButton")>Print</button>
-  <script @CSPNonce.attr>
-        document.getElementById("printButton").addEventListener("click", function() {
-          event.preventDefault()
-          window.print()
-        });
-     </script>
+  <button class="govuk-button" onCLick="javascript:window.print();">Print</button>
 </div>
