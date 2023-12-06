@@ -2,13 +2,20 @@
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-            <li data-ng-if="state.hasError('contractPre201603')"><a id="contractPre201603PageErrMsg" href="#return-false" onclick="return false;" data-ng-click="jumpTo('contract-pre-201603-yes')">{{state.validationMessage('contractPre201603')}}</a>
+            <li data-ng-if="state.hasError('contractPre201603')"><a id="contractPre201603PageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('contract-pre-201603-yes')">{{state.validationMessage('contractPre201603')}}</a>
                 <script @CSPNonce.attr>
                     document.getElementById("contractPre201603PageErrMsg").addEventListener("click", function() {
-                    event.preventDefault()
-                    });
-                 </script></li>
-            <li data-ng-if="state.hasError('contractVariedPost201603')"><a id="contractVariedPost201603PageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('contract-varied-post-201603-yes')">{{state.validationMessage('contractVariedPost201603')}}</a></li>
+                    return false;
+                    }, false);
+                 </script>
+            </li>
+            <li data-ng-if="state.hasError('contractVariedPost201603')"><a id="contractVariedPost201603PageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('contract-varied-post-201603-yes')">{{state.validationMessage('contractVariedPost201603')}}</a>
+                <script @CSPNonce.attr>
+                    document.getElementById("contractVariedPost201603PageErrMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+                 </script>
+            </li>
         </ul>
     </div>
 </div>

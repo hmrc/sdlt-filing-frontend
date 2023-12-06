@@ -2,7 +2,13 @@
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-          <li data-ng-if="state.hasError('startDate')"><a id="leaseStartDatePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('leaseStartDateDay')">{{state.validationMessage('startDate')}}</a></li>
+          <li data-ng-if="state.hasError('startDate')"><a id="leaseStartDatePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('leaseStartDateDay')">{{state.validationMessage('startDate')}}</a>
+              <script @CSPNonce.attr>
+                    document.getElementById("leaseStartDatePageErrMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+              </script>
+          </li>
           <li data-ng-if="state.hasError('endDate')"><a id="leaseEndDatePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('leaseEndDateDay')">{{state.validationMessage('endDate')}}</a></li>
         </ul>
     </div>

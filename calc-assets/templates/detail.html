@@ -29,6 +29,12 @@
   </tbody>
 </table>
 <div>
-  <p class="govuk-body">You can <a class="govuk-link" data-ng-click="printView()" id="print-calculation" href="javascript:return false">print your calculation</a>.</p>
+  <p class="govuk-body">You can <a class="govuk-link" data-ng-click="printView()" id="print-calculation" href="#">print your calculation
+    <script @CSPNonce.attr>
+      document.getElementById("print-calculation").addEventListener("click", function() {
+      return false;
+      }, false);
+    </script>
+  </a>.</p>
   <p class="govuk-body">Go to the <a class="govuk-link" id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax" title="opens in a new window" rel="external" target="_blank">GOV.UK</a> homepage for SDLT.</p>
 </div>
