@@ -9,7 +9,13 @@
                     }, false);
               </script>
           </li>
-          <li data-ng-if="state.hasError('endDate')"><a id="leaseEndDatePageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('leaseEndDateDay')">{{state.validationMessage('endDate')}}</a></li>
+          <li data-ng-if="state.hasError('endDate')"><a id="leaseEndDatePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('leaseEndDateDay')">{{state.validationMessage('endDate')}}</a>
+              <script @CSPNonce.attr>
+                    document.getElementById("leaseEndDatePageErrMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+              </script>
+          </li>
         </ul>
     </div>
 </div>
