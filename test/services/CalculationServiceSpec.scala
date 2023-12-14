@@ -10,15 +10,12 @@
 
 package services
 
-import base.BaseSpec
-
 import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.InvalidDateException
 import models.{CalculationDetails, CalculationResponse, Result, _}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.reset
-import org.mockito.{ArgumentMatchers, Mockito, MockitoSugar}
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
