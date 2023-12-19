@@ -12,11 +12,10 @@
 @()(implicit request: Request[_]))
 
 <script @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
-<script>@CSPNonce.attr window.GOVUKFrontend.initAll();</script>
 
-<script>
+<script
 
-        @CSPNonce.attr
+        @CSPNonce.attr>
         var regex = /\/calculate-stamp-duty-land-tax\/#!\//;
         if(!(document.location.href).match(regex)) {
          window.location = document.location.href.split("/calculate-stamp-duty-land-tax",1) + "/calculate-stamp-duty-land-tax/#!/";
@@ -28,9 +27,9 @@
         };
 </script>
 
-<script>
+<script
 
-        @CSPNonce.attr
+        @CSPNonce.attr>
         (function() {
          if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
           var d = document,
@@ -42,9 +41,9 @@
         })();
 </script>
 
-<script>
+<script
 
-        @CSPNonce.attr
+        @CSPNonce.attr>
         function setCookie (name, value, duration, domain) {
          var secure = window.location.protocol.indexOf('https') ? '' : '; secure'
          var cookieDomain = ""
@@ -61,8 +60,8 @@
         }
 </script>
 
-<script>
-        @CSPNonce.attr
+<script
+        @CSPNonce.attr>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 </script>
 
