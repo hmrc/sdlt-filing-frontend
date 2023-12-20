@@ -17,8 +17,8 @@ import views.html.error_template
 class SDLTCErrorHandlerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
 
-  implicit val mcc: MessagesControllerComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
-  implicit val appConfig: FrontendAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
+  implicit val mcc: MessagesControllerComponents = fakeApplication().injector.instanceOf[MessagesControllerComponents]
+  implicit val appConfig: FrontendAppConfig = fakeApplication().injector.instanceOf[FrontendAppConfig]
 
   def contentAsString(of: Content): String = of.body
 

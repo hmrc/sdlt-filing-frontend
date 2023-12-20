@@ -17,7 +17,7 @@ object SliceDetails {
     }
   }
 
-  implicit val writes = (
+  implicit val writes: OWrites[SliceDetails] = (
     (__ \ "from").write[Int] and
       (__ \ "to").write[Option[Int]](toWrites) and
       (__ \ "rate").write[Int] and
@@ -26,15 +26,15 @@ object SliceDetails {
 }
 
 object CalculationDetails {
-  implicit val writes = Json.writes[CalculationDetails]
+  implicit val writes: OWrites[CalculationDetails] = Json.writes[CalculationDetails]
 }
 
 object Result {
-  implicit val writes = Json.writes[Result]
+  implicit val writes: OWrites[Result] = Json.writes[Result]
 }
 
 object CalculationResponse {
-  implicit val writes = Json.writes[CalculationResponse]
+  implicit val writes: OWrites[CalculationResponse] = Json.writes[CalculationResponse]
 }
 
 

@@ -5,22 +5,22 @@
 
 package journey.controllers
 
-import base.BaseSpec
 import config.FrontendAppConfig
 import journey.views.html.index
+import org.mockito.MockitoSugar
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.Status._
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
+import base.BaseSpec
 
 import scala.concurrent.Future
 
 class IndexControllerSpec extends BaseSpec with MockitoSugar with GuiceOneServerPerSuite {
 
   class Setup {
-    val mockComponents: MessagesControllerComponents = fakeApplication.injector.instanceOf[MessagesControllerComponents]
+    val mockComponents: MessagesControllerComponents = fakeApplication().injector.instanceOf[MessagesControllerComponents]
     val injectedViewInstance: index = app.injector.instanceOf[journey.views.html.index]
     implicit val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 

@@ -3,7 +3,7 @@
  *
  */
 
-package base
+package test.base
 
 import java.nio.charset.Charset
 
@@ -17,6 +17,7 @@ import play.api.mvc.Result
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions
+import scala.language.postfixOps
 
 trait BaseSpec extends AnyWordSpec with Matchers with OptionValues {
 

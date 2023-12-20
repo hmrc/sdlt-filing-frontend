@@ -5,10 +5,15 @@ import play.sbt.PlayScala
 import sbt.Keys._
 import sbt.{CrossVersion, Def, compilerPlugin, _}
 import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "sdltc-frontend"
+
+ThisBuild / majorVersion := 5
+ThisBuild / scalaVersion := "2.13.12"
+
 lazy val playSettings: Seq[Setting[_]] = Seq(
   Assets / unmanagedResourceDirectories += baseDirectory.value / "app" / "assets",
   // Dont include the source assets in the dist package (public folder)
@@ -16,7 +21,6 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
   TwirlKeys.templateImports ++= Seq(
     "uk.gov.hmrc.govukfrontend.views.html.components._",
   ),
-  dependencyOverrides += "org.scala-lang" % "scala-library" % "2.12.15"
 ) ++ JavaScriptBuild.javaScriptUiSettings
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtDistributablesPlugin, SbtWeb)
@@ -32,7 +36,6 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
   )
 }
 
-val silencerVersion = "1.17.13"
 maintainer := "your.name@company.org"
 
 lazy val microservice = Project(appName, file("."))
@@ -40,28 +43,26 @@ lazy val microservice = Project(appName, file("."))
   .settings(playSettings: _*)
   .settings(playSettings ++ scoverageSettings: _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.12.15")
-  .settings(majorVersion := 5)
   .settings(defaultSettings(): _*)
   .settings(
     PlayKeys.playDefaultPort := 9953,
     targetJvm := "jvm-1.8",
     libraryDependencies ++= appDependencies,
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     Test / parallelExecution := false,
     Test / fork := false,
     retrieveManaged := true,
     Assets / pipelineStages := Seq(digest)
   )
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-  .settings(integrationTestSettings())
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     resolvers += Resolver.jcenterRepo,
-    scalacOptions += "-P:silencer:pathFilters=views;routes",
-    libraryDependencies ++= Seq(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    )
+    scalacOptions ++= Seq("-Wconf:src=routes/.*:s", "-Wconf:cat=unused-imports&src=html/.*:s")
   )
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings, libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
+  .settings(libraryDependencies ++= AppDependencies.itDependencies)
 
