@@ -41,9 +41,10 @@
           </div>
         </dl>
         <div class="govuk-body govuk-!-margin-top-3">
-          <a class="govuk-link" id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="#">View calculation</a>
+          <a class="govuk-link" id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="#detail">View calculation</a>
           <script>
                     document.getElementById("detailCalc{{$index}}").addEventListener("click", function() {
+                    event.preventDefault()
                     return false;
                     }, false);
               </script>
