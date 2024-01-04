@@ -119,6 +119,7 @@
             <a class="govuk-link" id="detailCalc{{$parent.$parent.$index+''+$index}}" data-ng-if="taxCalc.calcType === 'slice'" data-ng-click="viewDetails($parent.$parent.$index, $index)" href="#" title="view detailed calculation">View calculation</a>
             <script>
                     document.getElementById("detailCalc{{$parent.$parent.$index+''+$index}}").addEventListener("click", function() {
+                    event.preventDefault()
                     return false;
                     }, false);
               </script>
@@ -131,6 +132,7 @@
   <p class="govuk-body">You can <a class="govuk-link" data-ng-click="printView()" id="print-calculation" href="#">print your calculation</a>
     <script>
       document.getElementById("print-calculation").addEventListener("click", function() {
+      event.preventDefault()
       return false;
       }, false);
     </script>.</p>
