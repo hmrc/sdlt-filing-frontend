@@ -3,7 +3,7 @@
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
           <li data-ng-if="state.hasError('premium')"><a id="purchasePricePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('premium')">{{state.validationMessage('premium')}}</a>
-              <script >
+              <script>
                     document.getElementById("purchasePricePageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);

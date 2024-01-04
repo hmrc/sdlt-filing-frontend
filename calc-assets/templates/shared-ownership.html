@@ -3,7 +3,7 @@
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             <li data-ng-if="state.hasError('sharedOwnership')"><a id="sharedOwnershipPageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('sharedOwnership-yes')">{{state.validationMessage('sharedOwnership')}}</a>
-                <script >
+                <script>
                     document.getElementById("sharedOwnershipPageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);

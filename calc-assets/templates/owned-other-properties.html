@@ -3,7 +3,7 @@
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             <li data-ng-if="state.hasError('ownedOtherProperties')"><a id="ownedOtherPropertiesPageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('ownedOtherProperties-yes')">{{state.validationMessage('ownedOtherProperties')}}</a>
-                <script >
+                <script>
                     document.getElementById("ownedOtherPropertiesPageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);

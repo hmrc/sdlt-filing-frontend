@@ -3,7 +3,7 @@
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             <li data-ng-if="state.hasError('nonUKResident')"><a id="nonUKResidentErrorMsg" href="#" onclick="return false;" data-ng-click="jumpTo('nonUKResident-yes')">{{state.validationMessage('nonUKResident')}}</a>
-                <script >
+                <script>
                     document.getElementById("nonUKResidentErrorMsg").addEventListener("click", function() {
                     return false;
                     }, false);
