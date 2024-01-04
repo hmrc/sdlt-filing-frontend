@@ -3,7 +3,7 @@
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             <li data-ng-if="state.hasError('mainResidence')"><a id="mainResidencePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('mainResidence-yes')">{{state.validationMessage('mainResidence')}}</a>
-                <script @CSPNonce.attr>
+                <script >
                     document.getElementById("mainResidencePageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);

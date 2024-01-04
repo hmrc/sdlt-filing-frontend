@@ -3,14 +3,14 @@
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             <li data-ng-if="state.hasError('twoOrMoreProperties')"><a id="twoOrMorePropertiesPageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('twoOrMoreYes')">{{state.validationMessage('twoOrMoreProperties')}}</a>
-                <script @CSPNonce.attr>
+                <script >
                     document.getElementById("twoOrMorePropertiesPageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);
                  </script>
             </li>
             <li data-ng-if="state.hasError('replaceMainResidence')"><a id="replaceMainResidencePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('mainResidenceYes')">{{state.validationMessage('replaceMainResidence')}}</a>
-                <script @CSPNonce.attr>
+                <script >
                     document.getElementById("replaceMainResidencePageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);

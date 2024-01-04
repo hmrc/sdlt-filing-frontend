@@ -3,7 +3,7 @@
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             <li data-ng-if="state.hasError('effectiveDate')"><a id="effectiveDatePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('effectiveDateDay')">{{state.validationMessage('effectiveDate')}}</a>
-                <script @CSPNonce.attr>
+                <script >
                     document.getElementById("effectiveDatePageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);
