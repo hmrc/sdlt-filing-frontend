@@ -120,9 +120,9 @@
             {{taxCalc.taxDue | calcCurrency:"£"}}
           </dd>
           <dd class="govuk-summary-list__actions">
-            <a class="govuk-link" id="detailCalc{{$parent.$parent.$index+''+$index}}" data-ng-if="taxCalc.calcType === 'slice'" data-ng-click="viewDetails($parent.$parent.$index, $index)" href="#" title="view detailed calculation">View calculation</a>
+            <a class="govuk-link" id="detailCalc{{$parent.$parent.$index+''+$index}}" data-ng-if="taxCalc.calcType === 'slice'" data-ng-click="viewDetails($parent.$parent.$index, $index)" href="#!/detail" title="view detailed calculation">View calculation</a>
             <script>
-                document.addEventListener("DOMContentLoaded", function() {
+                document.addEventListener('load', function() {
                 document.getElementById("detailCalc{{$parent.$parent.$index+''+$index}}").addEventListener("click", function() {
                 event.preventDefault()
                 return false;
