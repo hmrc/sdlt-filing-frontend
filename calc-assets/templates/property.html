@@ -4,7 +4,7 @@
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             <li data-ng-if="state.hasError('propertyType')">
-                <a id="propertyTypePageErrMsg" href="" onclick="return false;" data-ng-click="jumpTo('residential')">
+                <a id="propertyTypePageErrMsg" href="" data-ng-click="jumpTo('residential')">
                     {{state.validationMessage('propertyType')}}
                 </a>
                 <script>
