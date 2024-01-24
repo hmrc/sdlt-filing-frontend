@@ -3,7 +3,7 @@
 
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-            <li data-ng-if="state.hasError('holdingType')"><a id="holdingTypePageErrMsg" href="#holding-free" onclick="return false;" data-ng-click="jumpTo('holding-free')">{{state.validationMessage('holdingType')}}</a>
+            <li data-ng-if="state.hasError('holdingType')"><a id="holdingTypePageErrMsg" href="" data-ng-click="jumpTo('holding-free')">{{state.validationMessage('holdingType')}}</a>
                 <script>
                     document.getElementById("holdingTypePageErrMsg").addEventListener("click", function() {
                     return false;

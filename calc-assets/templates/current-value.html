@@ -2,7 +2,7 @@
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-            <li data-ng-if="state.hasError('currentValue')"><a id="currentValuePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('currentValue-yes')">{{state.validationMessage('currentValue')}}</a>
+            <li data-ng-if="state.hasError('currentValue')"><a id="currentValuePageErrMsg" href="" data-ng-click="jumpTo('currentValue-yes')">{{state.validationMessage('currentValue')}}</a>
                 <script>
                     document.getElementById("currentValuePageErrMsg").addEventListener("click", function() {
                     return false;

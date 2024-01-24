@@ -2,14 +2,14 @@
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-            <li data-ng-if="state.hasError('paySDLT')"><a id="paySDLTPageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('paySDLTUpfront')">{{state.validationMessage('paySDLT')}}</a>
+            <li data-ng-if="state.hasError('paySDLT')"><a id="paySDLTPageErrMsg" href="" data-ng-click="jumpTo('paySDLTUpfront')">{{state.validationMessage('paySDLT')}}</a>
                 <script>
                     document.getElementById("paySDLTPageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);
               </script>
             </li>
-            <li data-ng-if="state.hasError('marketValue')"><a id="marketValuePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('marketPropValue')">{{state.validationMessage('marketValue')}}</a>
+            <li data-ng-if="state.hasError('marketValue')"><a id="marketValuePageErrMsg" href="" data-ng-click="jumpTo('marketPropValue')">{{state.validationMessage('marketValue')}}</a>
                 <script>
                     document.getElementById("marketValuePageErrMsg").addEventListener("click", function() {
                     return false;

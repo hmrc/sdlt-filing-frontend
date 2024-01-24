@@ -2,14 +2,14 @@
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-            <li data-ng-if="state.hasError('twoOrMoreProperties')"><a id="twoOrMorePropertiesPageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('twoOrMoreYes')">{{state.validationMessage('twoOrMoreProperties')}}</a>
+            <li data-ng-if="state.hasError('twoOrMoreProperties')"><a id="twoOrMorePropertiesPageErrMsg" href="" data-ng-click="jumpTo('twoOrMoreYes')">{{state.validationMessage('twoOrMoreProperties')}}</a>
                 <script>
                     document.getElementById("twoOrMorePropertiesPageErrMsg").addEventListener("click", function() {
                     return false;
                     }, false);
                  </script>
             </li>
-            <li data-ng-if="state.hasError('replaceMainResidence')"><a id="replaceMainResidencePageErrMsg" href="#" onclick="return false;" data-ng-click="jumpTo('mainResidenceYes')">{{state.validationMessage('replaceMainResidence')}}</a>
+            <li data-ng-if="state.hasError('replaceMainResidence')"><a id="replaceMainResidencePageErrMsg" href="" data-ng-click="jumpTo('mainResidenceYes')">{{state.validationMessage('replaceMainResidence')}}</a>
                 <script>
                     document.getElementById("replaceMainResidencePageErrMsg").addEventListener("click", function() {
                     return false;
