@@ -41,7 +41,13 @@
           </div>
         </dl>
         <div class="govuk-body govuk-!-margin-top-3">
-          <a class="govuk-link" id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="javascript:return false">View calculation</a>
+          <a class="govuk-link" id="detailCalc{{$index}}" data-ng-click="viewDetails($index, 0)" title="view detailed calculation" href="#">View calculation</a>
+          <script>
+                    document.getElementById("detailCalc{{$index}}").addEventListener("click", function() {
+                    event.preventDefault()
+                    return false;
+                    }, false);
+              </script>
         </div>
       </span>
       <dl class="govuk-summary-list" data-ng-if="res.taxCalcs[0].calcType === 'slab'">
@@ -110,14 +116,28 @@
             {{taxCalc.taxDue | calcCurrency:"£"}}
           </dd>
           <dd class="govuk-summary-list__actions">
-            <a class="govuk-link" id="detailCalc{{$parent.$parent.$index+''+$index}}" data-ng-if="taxCalc.calcType === 'slice'" data-ng-click="viewDetails($parent.$parent.$index, $index)" href="javascript:return false" title="view detailed calculation">View calculation</a>
+            <a class="govuk-link" id="detailCalc{{$parent.$parent.$index+''+$index}}" data-ng-if="taxCalc.calcType === 'slice'" data-ng-click="viewDetails($parent.$parent.$index, $index)" href="#!/detail" title="view detailed calculation">View calculation</a>
+            <script>
+                document.addEventListener('load', function() {
+                document.getElementById("detailCalc{{$parent.$parent.$index+''+$index}}").addEventListener("click", function() {
+                event.preventDefault()
+                return false;
+                }, false);
+                })
+             </script>
           </dd>
         </div>
       </dl>
     </span>
   </div>
 
-  <p class="govuk-body">You can <a class="govuk-link" data-ng-click="printView()" id="print-calculation" href="javascript:return false">print your calculation</a>.</p>
+  <p class="govuk-body">You can <a class="govuk-link" data-ng-click="printView()" id="print-calculation" href="#">print your calculation</a>
+    <script>
+      document.getElementById("print-calculation").addEventListener("click", function() {
+      event.preventDefault()
+      return false;
+      }, false);
+    </script>.</p>
   <p class="govuk-body">Or you can <a class="govuk-link" id="startAgain" href="/calculate-stamp-duty-land-tax">start again</a>.</p>
   <p class="govuk-body">Go to the <a class="govuk-link" id="gov-home" href="https://www.gov.uk/stamp-duty-land-tax">GOV.UK</a> homepage for SDLT.</p>
 

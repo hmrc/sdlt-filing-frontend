@@ -2,11 +2,41 @@
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-          <li data-ng-if="state.hasError('year1Rent')"><a id="year1RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year1Rent')">{{state.validationMessage('year1Rent')}}</a></li>
-          <li data-ng-if="state.hasError('year2Rent')"><a id="year2RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year2Rent')">{{state.validationMessage('year2Rent')}}</a></li>
-          <li data-ng-if="state.hasError('year3Rent')"><a id="year3RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year3Rent')">{{state.validationMessage('year3Rent')}}</a></li>
-          <li data-ng-if="state.hasError('year4Rent')"><a id="year4RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year4Rent')">{{state.validationMessage('year4Rent')}}</a></li>
-          <li data-ng-if="state.hasError('year5Rent')"><a id="year5RentPageErrMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('year5Rent')">{{state.validationMessage('year5Rent')}}</a></li>
+          <li data-ng-if="state.hasError('year1Rent')"><a id="year1RentPageErrMsg" href="" data-ng-click="jumpTo('year1Rent')">{{state.validationMessage('year1Rent')}}</a>
+              <script>
+                    document.getElementById("year1RentPageErrMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+              </script>
+          </li>
+          <li data-ng-if="state.hasError('year2Rent')"><a id="year2RentPageErrMsg" href="" data-ng-click="jumpTo('year2Rent')">{{state.validationMessage('year2Rent')}}</a>
+              <script>
+                    document.getElementById("year2RentPageErrMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+              </script>
+          </li>
+          <li data-ng-if="state.hasError('year3Rent')"><a id="year3RentPageErrMsg" href="" data-ng-click="jumpTo('year3Rent')">{{state.validationMessage('year3Rent')}}</a>
+              <script>
+                    document.getElementById("year3RentPageErrMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+              </script>
+          </li>
+          <li data-ng-if="state.hasError('year4Rent')"><a id="year4RentPageErrMsg" href="" data-ng-click="jumpTo('year4Rent')">{{state.validationMessage('year4Rent')}}</a>
+              <script>
+                    document.getElementById("year4RentPageErrMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+              </script>
+          </li>
+          <li data-ng-if="state.hasError('year5Rent')"><a id="year5RentPageErrMsg" href="" data-ng-click="jumpTo('year5Rent')">{{state.validationMessage('year5Rent')}}</a>
+              <script>
+                    document.getElementById("year5RentPageErrMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+              </script>
+          </li>
         </ul>
     </div>
 </div>

@@ -2,7 +2,13 @@
     <h2 class="govuk-error-summary__title" id="errorSummary">There is a problem</h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-            <li data-ng-if="state.hasError('nonUKResident')"><a id="nonUKResidentErrorMsg" href="javascript:return false" onclick="return false;" data-ng-click="jumpTo('nonUKResident-yes')">{{state.validationMessage('nonUKResident')}}</a></li>
+            <li data-ng-if="state.hasError('nonUKResident')"><a id="nonUKResidentErrorMsg" href="" data-ng-click="jumpTo('nonUKResident-yes')">{{state.validationMessage('nonUKResident')}}</a>
+                <script>
+                    document.getElementById("nonUKResidentErrorMsg").addEventListener("click", function() {
+                    return false;
+                    }, false);
+              </script>
+            </li>
         </ul>
     </div>
 </div>
