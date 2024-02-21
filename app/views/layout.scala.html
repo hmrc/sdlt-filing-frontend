@@ -14,7 +14,10 @@
 @this(
         appConfig: FrontendAppConfig,
         hmrcStandardPage: HmrcStandardPage,
+        head:head,
+        scripts: scripts,
         problemLinkHelper: HmrcReportTechnicalIssueHelper,
+        accessibilityStatementConfig: AccessibilityStatementConfig
 )
 
 @(pageTitle: Option[String] = None,
@@ -34,9 +37,10 @@
             serviceUrl = None,
             ),
         templateOverrides = TemplateOverrides(
-            beforeContentBlock =beforeContentBlock,
+            additionalHeadBlock = Some(head()),
+            beforeContentBlock =  beforeContentBlock,
+            additionalScriptsBlock = Some(scripts())
             ),
     pageTitle = pageTitle,
-    isWelshTranslationAvailable = true
     )
 )(content)
