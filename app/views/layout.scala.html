@@ -8,18 +8,17 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.En
 @import play.api.mvc.Request
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 
 @this(
         appConfig: FrontendAppConfig,
-        govukLayout: GovukLayout,
-        head: head,
-        scripts: scripts,
+        hmrcStandardPage: HmrcStandardPage,
         problemLinkHelper: HmrcReportTechnicalIssueHelper,
-        accessibilityStatementConfig: AccessibilityStatementConfig
 )
 
 @(pageTitle: Option[String] = None,
-        beforeContentBlock: Option[Html] = None, showReportIssue: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+        beforeContentBlock: Option[Html] = None, showReportIssue: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @content = {
     @contentBlock
@@ -29,16 +28,15 @@
         }
     }
 }
-
-@govukLayout(
+@hmrcStandardPage(
+    HmrcStandardPageParams(
+        serviceURLs = ServiceURLs(
+            serviceUrl = None,
+            ),
+        templateOverrides = TemplateOverrides(
+            beforeContentBlock =beforeContentBlock,
+            ),
     pageTitle = pageTitle,
-    headBlock = Some(head()),
-    beforeContentBlock = beforeContentBlock,
-    footerItems = Seq(
-        FooterItem(href = Some(appConfig.cookies), text = Some(messages("footer.links.cookies.text"))),
-        FooterItem(href = accessibilityStatementConfig.url, text = Some(messages("footer.links.accessibility.text"))),
-        FooterItem(href = Some(appConfig.privacy), text = Some(messages("footer.links.privacy_policy.text"))),
-        FooterItem(href = Some(appConfig.termsConditions), text = Some(messages("footer.links.terms_and_conditions.text"))),
-        FooterItem(href = Some(appConfig.govukHelp), text = Some(messages("footer.links.help_page.text")))
-    ),
-    scriptsBlock = Some(scripts()))(content)
+    isWelshTranslationAvailable = true
+    )
+)(content)
