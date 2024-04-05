@@ -6,8 +6,8 @@ object AppDependencies {
   val compile = Seq(
     filters,
     ws,
-    "uk.gov.hmrc" %% "bootstrap-frontend-play-28"         % "8.1.0",
-    "uk.gov.hmrc" %% "play-frontend-hmrc-play-28"         % "8.5.0"
+    "uk.gov.hmrc" %% "bootstrap-frontend-play-30"         % "8.5.0",
+    "uk.gov.hmrc" %% "play-frontend-hmrc-play-30"         % "8.5.0"
   )
 
   trait TestDependencies {
@@ -20,9 +20,9 @@ object AppDependencies {
   object Test {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
-        "uk.gov.hmrc"                  %% "bootstrap-test-play-28"      % "8.1.0"       % scope,
-        "org.mockito"                  %% "mockito-scala"               % "1.17.30"     % scope,
-        "org.jsoup"                    %  "jsoup"                       % "1.17.1"      % scope
+        "uk.gov.hmrc"                  %% "bootstrap-test-play-30"      % "8.5.0"       % scope,
+        "org.mockito"                  %% "mockito-scala"               % "1.17.31"     % scope,
+        "org.jsoup"                    %  "jsoup"                       % "1.17.2"      % scope
       )
     }.test
   }

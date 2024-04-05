@@ -12,7 +12,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 val appName = "sdltc-frontend"
 
 ThisBuild / majorVersion := 5
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.13"
 
 lazy val playSettings: Seq[Setting[_]] = Seq(
   Assets / unmanagedResourceDirectories += baseDirectory.value / "app" / "assets",
@@ -46,7 +46,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     PlayKeys.playDefaultPort := 9953,
-    targetJvm := "jvm-1.8",
     libraryDependencies ++= appDependencies,
     libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     Test / parallelExecution := false,

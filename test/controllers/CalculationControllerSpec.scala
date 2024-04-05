@@ -5,7 +5,7 @@
 
 package controllers
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, CalculationResponse, Result}
 import org.mockito.ArgumentMatchers.any
@@ -71,7 +71,7 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
         val fakeRequest = FakeRequest().withJsonBody(incompleteJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) mustBe BAD_REQUEST
-        jsonBodyOf(await(result))(materializer) mustBe Json.toJson("Incorrect Json request body format supplied: JsError(List((/highestRent,List(JsonValidationError(List(error.path.missing),ArraySeq())))))")
+        jsonBodyOf(await(result))(materializer) mustBe Json.toJson("Incorrect Json request body format supplied: JsError(List((/highestRent,List(JsonValidationError(List(error.path.missing),List())))))")
       }
 
       "model is invalid and contains errors" in{
