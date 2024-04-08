@@ -5,13 +5,13 @@ ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" 
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.21")
+addSbtPlugin("org.playframework" % "sbt-plugin" % "3.0.2")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "2.5.0")
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "3.20.0")
+addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "3.21.0")
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.0.10")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.0.11")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.4")
 
