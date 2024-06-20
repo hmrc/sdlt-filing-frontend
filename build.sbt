@@ -2,10 +2,10 @@ import com.typesafe.sbt.digest.Import.digest
 import com.typesafe.sbt.web.Import.{Assets, pipelineStages}
 import com.typesafe.sbt.web.SbtWeb
 import play.sbt.PlayScala
-import sbt.Keys._
-import sbt.{CrossVersion, Def, compilerPlugin, _}
-import uk.gov.hmrc.DefaultBuildSettings._
+import sbt.Keys.*
+import sbt.{Def, *}
 import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.*
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
@@ -14,7 +14,7 @@ val appName = "sdltc-frontend"
 ThisBuild / majorVersion := 5
 ThisBuild / scalaVersion := "2.13.13"
 
-lazy val playSettings: Seq[Setting[_]] = Seq(
+lazy val playSettings: Seq[Setting[?]] = Seq(
   Assets / unmanagedResourceDirectories += baseDirectory.value / "app" / "assets",
   // Dont include the source assets in the dist package (public folder)
   Assets / excludeFilter := "js*" || "sass*",
@@ -25,7 +25,7 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtDistributablesPlugin, SbtWeb)
 lazy val appDependencies: Seq[ModuleID] = AppDependencies()
-lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean]] = {
+lazy val scoverageSettings: Seq[Def.Setting[? >: String & Double & Boolean]] = {
   // Semicolon-separated list of regexs matching classes to exclude
   import scoverage.ScoverageKeys
   Seq(
@@ -39,11 +39,11 @@ lazy val scoverageSettings: Seq[Def.Setting[_ >: String with Double with Boolean
 maintainer := "your.name@company.org"
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(plugins: _*)
-  .settings(playSettings: _*)
-  .settings(playSettings ++ scoverageSettings: _*)
-  .settings(scalaSettings: _*)
-  .settings(defaultSettings(): _*)
+  .enablePlugins(plugins *)
+  .settings(playSettings *)
+  .settings((playSettings ++ scoverageSettings) *)
+  .settings(scalaSettings *)
+  .settings(defaultSettings() *)
   .settings(
     PlayKeys.playDefaultPort := 9953,
     libraryDependencies ++= appDependencies,
@@ -64,4 +64,3 @@ lazy val it = project
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
   .settings(DefaultBuildSettings.itSettings(), libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
   .settings(libraryDependencies ++= AppDependencies.itDependencies)
-
