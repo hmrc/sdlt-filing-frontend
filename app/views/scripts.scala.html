@@ -9,7 +9,7 @@
 
 @this(appConfig: FrontendAppConfig)
 
-@()(implicit request: Request[_])
+@()(implicit request: RequestHeader)
 
 <script @CSPNonce.attr src='@{routes.Assets.versioned("javascript/jquery-3.7.1.min.js")}' type="text/javascript"></script>
 
