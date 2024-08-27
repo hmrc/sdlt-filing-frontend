@@ -3,9 +3,9 @@ import com.typesafe.sbt.web.Import.{Assets, pipelineStages}
 import com.typesafe.sbt.web.SbtWeb
 import play.sbt.PlayScala
 import sbt.Keys.*
-import sbt.{Def, *}
+import sbt.{Def,*}
 import uk.gov.hmrc.DefaultBuildSettings
-import uk.gov.hmrc.DefaultBuildSettings.*
+import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings,*}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
