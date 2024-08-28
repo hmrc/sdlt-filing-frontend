@@ -41,3 +41,4 @@ public
 .metals
 project/.bloop
 project/metals.sbt
+.npm-debug.log

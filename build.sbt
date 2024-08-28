@@ -3,16 +3,16 @@ import com.typesafe.sbt.web.Import.{Assets, pipelineStages}
 import com.typesafe.sbt.web.SbtWeb
 import play.sbt.PlayScala
 import sbt.Keys.*
-import sbt.{Def, *}
+import sbt.{Def,*}
 import uk.gov.hmrc.DefaultBuildSettings
-import uk.gov.hmrc.DefaultBuildSettings.*
+import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings,*}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "sdltc-frontend"
 
 ThisBuild / majorVersion := 5
-ThisBuild / scalaVersion := "2.13.13"
+ThisBuild / scalaVersion := "2.13.14"
 
 lazy val playSettings: Seq[Setting[?]] = Seq(
   Assets / unmanagedResourceDirectories += baseDirectory.value / "app" / "assets",

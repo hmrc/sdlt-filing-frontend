@@ -14,6 +14,9 @@ import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Content
 import views.html.error_template
 
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext}
+
 class SDLTCErrorHandlerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
 
@@ -27,10 +30,11 @@ class SDLTCErrorHandlerSpec extends PlaySpec with GuiceOneAppPerSuite with Injec
     "retrieve the correct messages" in {
       implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
       val errorTemplate: error_template = inject[error_template]
-      val errorHandler = new SDLTCErrorHandler(mcc.messagesApi, errorTemplate, appConfig)
-      val result = errorHandler.internalServerErrorTemplate
-      val document = Jsoup.parse(contentAsString(result))
-
+      val ec = inject[ExecutionContext]
+      val errorHandler = new SDLTCErrorHandler(mcc.messagesApi, errorTemplate, appConfig, ec)
+      val futureResult = errorHandler.internalServerErrorTemplate
+      val htmlContent = Await.result(futureResult, 5.seconds)
+      val document = Jsoup.parse(contentAsString(htmlContent))
       document.title() should be("Sorry, there is a problem with the service - 500")
       document.getElementsByTag("h1").text() should be("Sorry, there is a problem with the service")
       document.select(".govuk-grid-column-two-thirds p").first().text() should be("Try again later.")
