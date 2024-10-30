@@ -283,13 +283,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       }
     }
 
-
-
-
-
-
-
-
     "select the freeholdResidential additional property function" when {
       "given a request with an effective date of 08/07/2020,the user is an individual without twoOrMoreProperties but the premium is >500000" in {
         val testRequest = createRequestWithPropDetails(HoldingTypes.freehold, PropertyTypes.residential, july2020EffectiveDate, BigDecimal(500001))
@@ -420,13 +413,26 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2025, 4, 1))
         val result = createResultInSeq("freeholdResidential, April2025 onwards")
 
-        when(mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
+        when(mockFreeholdCalculationService.freeholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
-        verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropApr16Onwards(testRequest)
+        verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropApril25Onwards(testRequest)
+
+      }
+      "given a request with an effective date of 31/10/2024 and additional property eligibility check returns true" in{
+        val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2024, 10, 31))
+        val result = createResultInSeq("freeholdResidential, Oct24BeforeApril25")
+
+        when(mockFreeholdCalculationService.freeholdResidentialAddPropOct24BeforeApril25(testRequest)).thenReturn(result)
+
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropOct24BeforeApril25(testRequest)
 
       }
     }
@@ -468,7 +474,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(1)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
       }
     }
 
@@ -825,7 +831,35 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       }
     }
 
+    "select the leaseholdResidential additional property function for Oct24 Before April25 " when {
+      "given a request with an effective date of 31/10/2024 and additional property rates check true" in{
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2024, 10, 31))
+        val result = createResultInSeq("leaseholdResidential, Oct24 Before April25")
 
+        when(mockLeaseholdCalculationService.leaseholdResidentialAddPropOct24BeforeApril25(testRequest)).thenReturn(result)
+
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialAddPropOct24BeforeApril25(testRequest)
+      }
+    }
+
+    "select the leaseholdResidential additional property function for April25 Onwards" when {
+      "given a request with an effective date of 02/04/2025 and additional property rates check true" in {
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2025, 4, 1))
+        val result = createResultInSeq("leaseholdResidential, April25 Onwards")
+
+        when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
+
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialAddPropApril25Onwards(testRequest)
+      }
+    }
 
     "select the leaseholdResidential additional property function for April2025 onwards" when {
       "given a request with an effective date of 30/11/2020,the user is an individual without twoOrMoreProperties but the premium is >500000" in {
@@ -845,34 +879,28 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2025, 4, 1))
         val result = createResultInSeq("leaseholdResidential, July2020 onwards")
 
-        when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
-        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialAddPropApr16Onwards(testRequest)
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialAddPropApril25Onwards(testRequest)
       }
 
       "given a request with an effective date of 08/7/2020 and additional property rates check true" in{
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2025, 7, 30))
         val result = createResultInSeq("leaseholdResidential, July2020 onwards")
 
-        when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
-        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialAddPropApr16Onwards(testRequest)
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialAddPropApril25Onwards(testRequest)
       }
     }
-
-
-
-
-
-
 
     "select the leaseholdResidential additional property function for April2016 onwards" when {
       "given a request with an effective date of 30/11/2019,the user is an individual without twoOrMoreProperties but the premium is >500000" in {
@@ -1057,12 +1085,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       }
     }
 
-
-
-
-
-
-
     "select the leaseholdResidential function for Sept2022 to Ap April2025" when {
       "given a request with an effective date of 23/9/2022" in{
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential,LocalDate.of(2023, 9, 23))
@@ -1089,7 +1111,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(1)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialDec14Onwards(testRequest)
       }

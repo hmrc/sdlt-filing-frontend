@@ -28,6 +28,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
   val april2016EffectiveDate: LocalDate = LocalDate.of(2016, 4, 1)
   val jan2018EffectiveDate: LocalDate = LocalDate.of(2018, 1, 1)
   val sep2022EffectiveDate: LocalDate = LocalDate.of(2022, 9, 23)
+  val oct2024EffectiveDate: LocalDate = LocalDate.of(2024, 10, 31)
 
   def july2020AddPropSlices(band1Tax: Int, band2Tax: Int, band3Tax: Int, band4Tax: Int): Seq[SliceDetails] = {
     Seq(
@@ -557,6 +558,185 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
           prevSliceCalculationDetails(138750, currentSlices, detailHeading, bandHeading, detailFooter),
           currentResultHeading,
           currentResultHint)
+      )
+    }
+  }
+
+  "calculating freeholdResidentialAddPropOct24BeforeApril25" must {
+
+    val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
+    val bandHeading: Option[String] = Some("Purchase price bands (£)")
+    val detailFooter: Option[String] = Some("Total SDLT due")
+
+    val addPropResultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
+    val currentResultHeading: Option[String] = Some("Result if you become eligible for a repayment of the higher rate on additional dwellings")
+    val currentResultHint: Option[String] = Some("If you dispose of your previous main residence within 3 years you may be eligible for a refund." +
+      " You must apply for any repayment within 12 months of disposing of your old main residence.")
+
+    val hintMessage: String = "The results are based on the answers you have provided and show that the higher rate on additional dwellings applies." +
+      s" If you dispose of your previous main residence within 3 years you may be eligible for a refund of"
+
+    val addPropsSlices = Seq(
+      SliceDetails(from = 0, to = Some(250000), rate = 5, taxDue = 12500),
+      SliceDetails(from = 250000, to = Some(925000), rate = 10, taxDue = 67500),
+      SliceDetails(from = 925000, to = Some(1500000), rate = 15, taxDue = 86250),
+      SliceDetails(from = 1500000, to = None, rate = 17, taxDue = 17000)
+    )
+    val currentSlices = Seq(
+      SliceDetails(from = 0, to = Some(250000), rate = 0, taxDue = 0),
+      SliceDetails(from = 250000, to = Some(925000), rate = 5, taxDue = 33750),
+      SliceDetails(from = 925000, to = Some(1500000), rate = 10, taxDue = 57500),
+      SliceDetails(from = 1500000, to = None, rate = 12, taxDue = 12000)
+    )
+    "return add props: 183250, current: 103250 for purchase price of 1600000" in {
+      val res = testFreeholdCalcService.freeholdResidentialAddPropOct24BeforeApril25(baseRequestAddProps(1600000, oct2024EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(183250,
+          baseCalculationDetails(183250, addPropsSlices, detailHeading, bandHeading, detailFooter),
+          addPropResultHeading,
+          Some(hint(hintMessage, "£80,000"))),
+
+        basePrevResult(103250,
+          prevSliceCalculationDetails(103250, currentSlices, detailHeading, bandHeading, detailFooter),
+          currentResultHeading,
+          currentResultHint)
+      )
+    }
+  }
+
+  "calculating freeholdResidentialAddPropNonUKResOct24BeforeApril25" must {
+
+    val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
+    val bandHeading: Option[String] = Some("Purchase price bands (£)")
+    val detailFooter: Option[String] = Some("Total SDLT due")
+
+    val addPropResultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
+    val currentResultHeading: Option[String] = Some("Result if you become eligible for a repayment of the higher rate on additional dwellings")
+    val currentResultHint: Option[String] = Some("If you dispose of your previous main residence within 3 years you may be eligible for a refund." +
+      " You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.")
+
+    val hintMessage: String = "The results are based on the answers you have provided and show that the higher rate on additional dwellings applies." +
+      s" If you dispose of your previous main residence within 3 years you may be eligible for a refund of"
+    val nonRessidentRefund: String = ".<br /><br />You may also be eligible for a refund of the non-resident rate"
+
+    val addPropsSlices = Seq(
+      SliceDetails(from = 0, to = Some(250000), rate = 7, taxDue = 17500),
+      SliceDetails(from = 250000, to = Some(925000), rate = 12, taxDue = 81000),
+      SliceDetails(from = 925000, to = Some(1500000), rate = 17, taxDue = 12750),
+      SliceDetails(from = 1500000, to = None, rate = 19, taxDue = 0)
+    )
+    val currentSlices = Seq(
+      SliceDetails(from = 0, to = Some(250000), rate = 2, taxDue = 5000),
+      SliceDetails(from = 250000, to = Some(925000), rate = 7, taxDue = 47250),
+      SliceDetails(from = 925000, to = Some(1500000), rate = 12, taxDue = 9000),
+      SliceDetails(from = 1500000, to = None, rate = 14, taxDue = 0)
+    )
+    "return add props: 111250, current: 61250 for purchase price of 1000000" in {
+      val res = testFreeholdCalcService.freeholdResidentialAddPropNonUKResOct24BeforeApril25(baseRequestAddProps(1000000, oct2024EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(111250,
+          baseCalculationDetails(111250, addPropsSlices, detailHeading, bandHeading, detailFooter),
+          addPropResultHeading,
+          Some(hint(hintMessage, "£50,000"+nonRessidentRefund))),
+
+        basePrevResult(61250,
+          prevSliceCalculationDetails(61250, currentSlices, detailHeading, bandHeading, detailFooter),
+          currentResultHeading,
+          (currentResultHint))
+      )
+    }
+  }
+
+  "calculating freeholdResidentialAddPropApril25Onwards" must {
+
+    val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
+    val bandHeading: Option[String] = Some("Purchase price bands (£)")
+    val detailFooter: Option[String] = Some("Total SDLT due")
+
+    val addPropResultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
+    val currentResultHeading: Option[String] = Some("Result if you become eligible for a repayment of the higher rate on additional dwellings")
+    val currentResultHint: Option[String] = Some("If you dispose of your previous main residence within 3 years you may be eligible for a refund." +
+      " You must apply for any repayment within 12 months of disposing of your old main residence.")
+
+    val hintMessage: String = "The results are based on the answers you have provided and show that the higher rate on additional dwellings applies." +
+      s" If you dispose of your previous main residence within 3 years you may be eligible for a refund of"
+
+    val addPropsSlices = Seq(
+      SliceDetails(from = 0,        to = Some(125000),   rate = 5, taxDue = 6250),
+      SliceDetails(from = 125000,   to = Some(250000),   rate = 7, taxDue = 8750),
+      SliceDetails(from = 250000,   to = Some(925000),   rate = 10, taxDue = 67500),
+      SliceDetails(from = 925000,   to = Some(1500000),  rate = 15, taxDue = 86250),
+      SliceDetails(from = 1500000,  to = None,           rate = 17, taxDue = 17000)
+    )
+
+    val currentSlices = Seq(
+      SliceDetails(from = 0,       to = Some(125000),  rate = 0, taxDue = 0),
+      SliceDetails(from = 125000,  to = Some(250000),  rate = 2, taxDue = 2500),
+      SliceDetails(from = 250000,  to = Some(925000),  rate = 5, taxDue = 33750),
+      SliceDetails(from = 925000,  to = Some(1500000), rate = 10, taxDue = 57500),
+      SliceDetails(from = 1500000, to = None,          rate = 12, taxDue = 12000)
+    )
+    "return add props: 185750, current: 105750 for purchase price of 1600000" in {
+      val res = testFreeholdCalcService.freeholdResidentialAddPropApril25Onwards(baseRequestAddProps(1600000, oct2024EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(185750,
+          baseCalculationDetails(185750, addPropsSlices, detailHeading, bandHeading, detailFooter),
+          addPropResultHeading,
+          Some(hint(hintMessage, "£80,000"))),
+
+        basePrevResult(105750,
+          prevSliceCalculationDetails(105750, currentSlices, detailHeading, bandHeading, detailFooter),
+          currentResultHeading,
+          currentResultHint)
+      )
+    }
+  }
+
+  "calculating freeholdResidentialAddPropNonUKResApril25Onwards" must {
+
+    val detailHeading: Option[String] = Some("This is a breakdown of how the total amount of SDLT was calculated")
+    val bandHeading: Option[String] = Some("Purchase price bands (£)")
+    val detailFooter: Option[String] = Some("Total SDLT due")
+
+    val addPropResultHeading: Option[String] = Some("Results of calculation based on SDLT rules for the effective date entered")
+    val currentResultHeading: Option[String] = Some("Result if you become eligible for a repayment of the higher rate on additional dwellings")
+    val currentResultHint: Option[String] = Some("If you dispose of your previous main residence within 3 years you may be eligible for a refund." +
+      " You must apply for any repayment within 12 months of disposing of your old main residence.<br /><br />You may also be eligible for a refund of the non-resident rate.")
+
+    val hintMessage: String = "The results are based on the answers you have provided and show that the higher rate on additional dwellings applies." +
+      s" If you dispose of your previous main residence within 3 years you may be eligible for a refund of"
+    val nonRessidentRefund: String = ".<br /><br />You may also be eligible for a refund of the non-resident rate"
+
+    val addPropsSlices = Seq(
+      SliceDetails(from = 0,        to = Some(125000),   rate = 7, taxDue = 8750),
+      SliceDetails(from = 125000,   to = Some(250000),   rate = 9, taxDue = 11250),
+      SliceDetails(from = 250000,   to = Some(925000),   rate = 12, taxDue = 81000),
+      SliceDetails(from = 925000,   to = Some(1500000),  rate = 17, taxDue = 12750),
+      SliceDetails(from = 1500000,  to = None,           rate = 19, taxDue = 0)
+    )
+    val currentSlices = Seq(
+      SliceDetails(from = 0,       to = Some(125000),  rate = 2, taxDue = 2500),
+      SliceDetails(from = 125000,  to = Some(250000),  rate = 4, taxDue = 5000),
+      SliceDetails(from = 250000,  to = Some(925000),  rate = 7, taxDue = 47250),
+      SliceDetails(from = 925000,  to = Some(1500000), rate = 12, taxDue = 9000),
+      SliceDetails(from = 1500000, to = None,          rate = 14, taxDue = 0)
+    )
+    "return add props: 113750, current: 63750 for purchase price of 1000000" in {
+      val res = testFreeholdCalcService.freeholdResidentialAddPropNonUKResApril25Onwards(baseRequestAddProps(1000000, oct2024EffectiveDate))
+
+      res shouldBe Seq(
+        baseResult(113750,
+          baseCalculationDetails(113750, addPropsSlices, detailHeading, bandHeading, detailFooter),
+          addPropResultHeading,
+          Some(hint(hintMessage, "£50,000"+nonRessidentRefund))),
+
+        basePrevResult(63750,
+          prevSliceCalculationDetails(63750, currentSlices, detailHeading, bandHeading, detailFooter),
+          currentResultHeading,
+          (currentResultHint))
       )
     }
   }

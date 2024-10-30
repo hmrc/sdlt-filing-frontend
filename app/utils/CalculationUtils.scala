@@ -46,4 +46,12 @@ object CalculationUtils extends DateUtil {
   def isAfterSept2022AndBeforeApril2025(date: LocalDate) = {
     date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE) && date.isBefore(Dates.APRIL2025_RESIDENTIAL_DATE)
   }
+
+  def isAfterOct2024AndBeforeApril2025(date: LocalDate): Boolean = {
+    date.onOrAfter(Dates.OCT2024_RESIDENTIAL_DATE) && date.isBefore(Dates.APRIL2025_RESIDENTIAL_DATE)
+  }
+
+  def isAfterSep2022AndBeforeOct24(date: LocalDate): Boolean = {
+    date.onOrAfter(Dates.SEPT2022_RESIDENTIAL_DATE) && date.isBefore(Dates.OCT2024_RESIDENTIAL_DATE)
+  }
 }

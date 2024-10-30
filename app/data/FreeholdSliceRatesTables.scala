@@ -149,6 +149,44 @@ object FreeholdSliceRatesTables {
     )
   )
 
+  val freeholdResidentialAddPropOct24BeforeApr25PremiumRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(250000),   rate = 5),
+      Slice(from = 250000,   to = Some(925000),   rate = 10),
+      Slice(from = 925000,   to = Some(1500000),  rate = 15),
+      Slice(from = 1500000,  to = None,           rate = 17)
+    )
+  )
+
+  val freeholdResidentialAddPropNonUKResOct24BeforeApr25PremiumRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(250000),   rate = 7),
+      Slice(from = 250000,   to = Some(925000),   rate = 12),
+      Slice(from = 925000,   to = Some(1500000),  rate = 17),
+      Slice(from = 1500000,  to = None,           rate = 19)
+    )
+  )
+
+  val freeholdResidentialAddPropApr25OnwardsPremiumRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(125000),   rate = 5),
+      Slice(from = 125000,   to = Some(250000),   rate = 7),
+      Slice(from = 250000,   to = Some(925000),   rate = 10),
+      Slice(from = 925000,   to = Some(1500000),  rate = 15),
+      Slice(from = 1500000,  to = None,           rate = 17)
+    )
+  )
+
+  val freeholdResidentialAddPropNonUKResApr25OnwardsPremiumRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(125000),   rate = 7),
+      Slice(from = 125000,   to = Some(250000),   rate = 9),
+      Slice(from = 250000,   to = Some(925000),   rate = 12),
+      Slice(from = 925000,   to = Some(1500000),  rate = 17),
+      Slice(from = 1500000,  to = None,           rate = 19)
+    )
+  )
+
   //First Time Buyer Rates (FTB)
 
   val freeholdResidentialSep22OnwardsFTBNonUKResRates: SliceTable = SliceTable(
