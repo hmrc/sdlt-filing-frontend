@@ -351,4 +351,87 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     firstTimeBuyer = None
   )
 
+  def leaseholdResidentialAddPropOct24BeforeApril25RequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = effectiveDate,
+    nonUKResident = None,
+    premium = premium,
+    highestRent = 125000,
+    leaseDetails = Some(testLeaseDetailsOct2024),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(true),
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = None
+  )
+
+  def leaseholdResidentialAddPropOct24BeforeApril25NonUKResRequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = effectiveDate,
+    nonUKResident = None,
+    premium = premium,
+    highestRent = 99000,
+    leaseDetails = Some(testLeaseDetailsOct2024NonUKRes),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(true),
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = None
+  )
+
+  def leaseholdResidentialAddPropApril25OnwardsRequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = effectiveDate,
+    nonUKResident = None,
+    premium = premium,
+    highestRent = 125000,
+    leaseDetails = Some(testLeaseDetailsApril2025),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(true),
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = None
+  )
+
+  def leaseholdResidentialAddPropApril25OnwardsNonUKResRequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.residential,
+    effectiveDate = effectiveDate,
+    nonUKResident = None,
+    premium = premium,
+    highestRent = 99000,
+    leaseDetails = Some(testLeaseDetailsApril25OnwardsNonUKRes),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(true),
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
+      )
+    ),
+    relevantRentDetails = None,
+    firstTimeBuyer = None
+  )
 }

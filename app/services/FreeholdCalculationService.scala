@@ -221,6 +221,48 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     }
   }
 
+  def freeholdResidentialAddPropOct24BeforeApril25(request: Request): Seq[Result] = {
+    val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdResidentialAddPropOct24BeforeApr25PremiumRates.slices
+    )
+
+    val prevResult = freeholdResidentialJuly21Onwards(request, asPreviousResult = true)
+    val prevPrem = prevResult.taxCalcs.headOption.map(_.taxDue).get
+
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(currentPremiumResult.taxDue, prevPrem, request.propertyDetails)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+
+    if(individual) {
+      Seq(
+        FreeholdResultFactory.freeholdResidentialAddPropJuly20OnwardsResult(currentPremiumResult, refundEntitlement),
+        prevResult)
+    } else {
+      Seq(FreeholdResultFactory.freeholdResidentialAddPropJuly20OnwardsResult(currentPremiumResult, refundEntitlement))
+    }
+  }
+
+  def freeholdResidentialAddPropApril25Onwards(request: Request): Seq[Result] = {
+    val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdResidentialAddPropApr25OnwardsPremiumRates.slices
+    )
+
+    val prevResult = freeholdResidentialDec14Onwards(request, asPreviousResult = true)
+    val prevPrem = prevResult.taxCalcs.headOption.map(_.taxDue).get
+
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(currentPremiumResult.taxDue, prevPrem, request.propertyDetails)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+
+    if(individual) {
+      Seq(
+        FreeholdResultFactory.freeholdResidentialAddPropJuly20OnwardsResult(currentPremiumResult, refundEntitlement),
+        prevResult)
+    } else {
+      Seq(FreeholdResultFactory.freeholdResidentialAddPropJuly20OnwardsResult(currentPremiumResult, refundEntitlement))
+    }
+  }
+
   //NRSDLT
 
   def freeholdResidentialOct21OnwardsNonUKRes(request: Request): Seq[Result] = {
@@ -369,7 +411,65 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
   }
+  def freeholdResidentialAddPropNonUKResOct24BeforeApril25(request: Request): Seq[Result] = {
+    val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdResidentialAddPropNonUKResOct24BeforeApr25PremiumRates.slices
+    )
+    val prevResult = freeholdResidentialAddPropNonUKResOct24BeforeApril25Prev(request)
+    val prevPrem = prevResult.taxCalcs.headOption.map(_.taxDue).get
 
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(currentPremiumResult.taxDue, prevPrem, request.propertyDetails)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+
+    if(individual) {
+      Seq(
+        FreeholdResultFactory.freeholdResidentialAddPropJuly21OnwardsResultNonUKRes(currentPremiumResult, refundEntitlement),
+        prevResult)
+    } else {
+      Seq(FreeholdResultFactory.freeholdResidentialAddPropJuly21OnwardsResultNonUKRes(currentPremiumResult, refundEntitlement))
+    }
+  }
+
+  private def freeholdResidentialAddPropNonUKResOct24BeforeApril25Prev(request: Request): Result = {
+
+    val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdResidentialJuly21OnwardsNonUKResRates.slices
+    )
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+    FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
+  }
+
+  def freeholdResidentialAddPropNonUKResApril25Onwards(request: Request): Seq[Result] = {
+    val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdResidentialAddPropNonUKResApr25OnwardsPremiumRates.slices
+    )
+    val prevResult = freeholdResidentialAddPropNonUKResApril25OnwardsPrev(request)
+    val prevPrem = prevResult.taxCalcs.headOption.map(_.taxDue).get
+
+    val refundEntitlement = refundEntitlementService.calculateRefundEntitlement(currentPremiumResult.taxDue, prevPrem, request.propertyDetails)
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+
+    if(individual) {
+      Seq(
+        FreeholdResultFactory.freeholdResidentialAddPropJuly21OnwardsResultNonUKRes(currentPremiumResult, refundEntitlement),
+        prevResult)
+    } else {
+      Seq(FreeholdResultFactory.freeholdResidentialAddPropJuly21OnwardsResultNonUKRes(currentPremiumResult, refundEntitlement))
+    }
+  }
+
+  private def freeholdResidentialAddPropNonUKResApril25OnwardsPrev(request: Request): Result = {
+
+    val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdResidentialOct21OnwardsNonUKResRates.slices
+    )
+    val individual: Boolean = request.propertyDetails.exists(_.individual)
+    FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
+  }
   def freeholdResidentialAddPropNonUKResApril21Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,

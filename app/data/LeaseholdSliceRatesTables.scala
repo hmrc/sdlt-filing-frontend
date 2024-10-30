@@ -205,6 +205,44 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  val leaseholdResidentialAddPropOct24BeforeApr25PremiumRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(250000),   rate = 5),
+      Slice(from = 250000,   to = Some(925000),   rate = 10),
+      Slice(from = 925000,   to = Some(1500000),  rate = 15),
+      Slice(from = 1500000,  to = None,           rate = 17)
+    )
+  )
+
+  val leaseholdResidentialAddPropNonUKResOct24BeforeApr25PremiumRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(250000),   rate = 7),
+      Slice(from = 250000,   to = Some(925000),   rate = 12),
+      Slice(from = 925000,   to = Some(1500000),  rate = 17),
+      Slice(from = 1500000,  to = None,           rate = 19)
+    )
+  )
+
+  val leaseholdResidentialAddPropApr25OnwardsPremiumRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(125000),   rate = 5),
+      Slice(from = 125000,   to = Some(250000),   rate = 7),
+      Slice(from = 250000,   to = Some(925000),   rate = 10),
+      Slice(from = 925000,   to = Some(1500000),  rate = 15),
+      Slice(from = 1500000,  to = None,           rate = 17)
+    )
+  )
+
+  val leaseholdResidentialAddPropNonUKResApr25OnwardsPremiumRates: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0,        to = Some(125000),   rate = 7),
+      Slice(from = 125000,   to = Some(250000),   rate = 9),
+      Slice(from = 250000,   to = Some(925000),   rate = 12),
+      Slice(from = 925000,   to = Some(1500000),  rate = 17),
+      Slice(from = 1500000,  to = None,           rate = 19)
+    )
+  )
+
   val leaseholdResidentialAddPropNonUKResApr21OnwardsPremiumRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,        to = Some(500000),   rate = 5),
