@@ -9,17 +9,19 @@
 @this(layout: layout)
 
 @()(implicit request: Request[_], messages: Messages)
+@backLinkHtml = {
+    <a href="#" class="govuk-back-link" id="link-back">Back</a>
+}
 
-@layout(pageTitle = Some("Stamp Duty Land Tax Calculator")){
+@layout(pageTitle = Some("Stamp Duty Land Tax Calculator"), beforeContentBlock = Some(backLinkHtml)){
     <!--[if lt IE 8]><html class="no-js lte-ie8" lang="en"><![endif]-->
     <!--[if gte IE 8]><!-->
     <html lang="en" class="no-js" data-ng-app="calc" data-ng-controller="mainController" ng-csp="no-unsafe-eval">
     <!--<![endif]-->
 
-    <main id="wrapper" role="main">
         <div id="content">
             <span id="startOfContent" tabindex="-1"></span>
-            <a href="#" class="govuk-back-link" id="link-back">Back</a>
+            
             <script @CSPNonce.attr>
                 document.getElementById("link-back").addEventListener("click", function() {
                 event.preventDefault()
@@ -32,7 +34,6 @@
                 </div>
             </div>
         </div>
-    </main>
 
     <div id="global-app-error" class="app-error hidden"></div>
 }

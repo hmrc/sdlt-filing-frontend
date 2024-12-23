@@ -18,11 +18,11 @@
 
 <div data-ng-repeat="res in data.result">
 
-  <h1 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h1>
+  <h2 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h2>
   <p id="resultHint{{$index}}" class="govuk-body" ng-bind-html="res.resultHint"></p>
 
   <span class="govuk-summary-list" data-ng-if="data.holdingType === 'Freehold'">
-    <h1 class="govuk-heading-l">Result of SDLT calculation</h1>
+    <h2 class="govuk-heading-m">Result of SDLT calculation</h2>
     <dl class="govuk-summary-list" data-ng-if="res.taxCalcs[0].calcType === 'slice'">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
@@ -87,7 +87,7 @@
     </dl>
   </span>
   <span class="govuk-summary-list" data-ng-if="data.holdingType === 'Leasehold'">
-      <h1 class="govuk-heading-l">Result of SDLT calculation</h1>
+      <h2 class="govuk-heading-m">Result of SDLT calculation</h2>
       <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">

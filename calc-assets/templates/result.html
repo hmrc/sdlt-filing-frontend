@@ -8,7 +8,14 @@
     <p class="govuk-body">You can try <a class="govuk-link" id="errorStartAgain" href="/calculate-stamp-duty-land-tax">restarting your calculation</a>.</p>
   </div>
   <div data-ng-repeat="res in data.result" data-ng-if="errorResponse === false">
-    <h1 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="res.resultHeading !== undefined">{{res.resultHeading}}</h1>
+    <div data-ng-if="res.resultHeading !== undefined">
+      <h1 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="$first">
+          {{res.resultHeading}}
+      </h1>
+      <h2 class="govuk-heading-l" id="resultHeading{{$index}}" data-ng-if="!$first">
+          {{res.resultHeading}}
+      </h2>
+  </div>
     <p id="resultHint{{$index}}" class="govuk-body" ng-bind-html="res.resultHint"></p>
 
     <span class="govuk-summary-list" data-ng-if="data.holdingType === 'Freehold'">
