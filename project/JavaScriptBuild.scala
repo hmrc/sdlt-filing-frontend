@@ -29,7 +29,7 @@ object JavaScriptBuild {
     commands ++= uiDirectory { base => Seq(Gulp.gulpCommand(base), npmCommand(base))}.value,
 
     npmInstall := {
-      val result = Gulp.npmProcess(uiDirectory.value, "install").run().exitValue()
+      val result = Gulp.npmProcess(uiDirectory.value, "ci").run().exitValue()
       if (result != 0)
         throw new Exception("Npm install failed.")
       result
