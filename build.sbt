@@ -55,7 +55,7 @@ lazy val microservice = Project(appName, file("."))
   )
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
-    resolvers += Resolver.jcenterRepo,
+    resolvers ++= Seq(),
     scalacOptions ++= Seq("-Wconf:src=routes/.*:s", "-Wconf:cat=unused-imports&src=html/.*:s")
   )
 
