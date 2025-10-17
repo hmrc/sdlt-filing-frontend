@@ -47,3 +47,26 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+purchaserSurnameOrCompanyName.title = Purchaser (1) surname or company name
+purchaserSurnameOrCompanyName.heading = Purchaser (1) surname or company name
+purchaserSurnameOrCompanyName.checkYourAnswersLabel = Purchaser (1) surname or company name
+purchaserSurnameOrCompanyName.error.required = Enter Purchaser (1) surname or company name
+purchaserSurnameOrCompanyName.error.length = Purchaser (1) surname or company name must be 100 characters or less
+purchaserSurnameOrCompanyName.change.hidden = Purchaser (1) surname or company name
+
+purchaserIsIndividual.title = Is Purchaser (1) an individual?
+purchaserIsIndividual.heading = Is Purchaser (1) an individual?
+purchaserIsIndividual.checkYourAnswersLabel = Is Purchaser (1) an individual?
+purchaserIsIndividual.error.required = Select yes if Is Purchaser (1) an individual?
+purchaserIsIndividual.change.hidden = Is Purchaser (1) an individual?
+
+returnTaskList.title = returnTaskList
+returnTaskList.heading = returnTaskList
+
+
+tasklist.prelimQuestion.details = Prelim Questions
+tasklist.prelimQuestion.heading = Prelim Questions
+tasklist.complete = Complete
+tasklist.notStarted = Not Started
+

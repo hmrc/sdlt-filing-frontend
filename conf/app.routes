@@ -2,7 +2,7 @@
 
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
-GET         /                                            controllers.IndexController.onPageLoad()
+GET         /                                            controllers.IndexController.onPageLoad(returnId: Option[String] ?= None)
 
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
@@ -19,3 +19,15 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad()
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
+
+GET        /purchaser/surname-or-company-name                        controllers.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /purchaser/surname-or-company-name                        controllers.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
+GET        /purchaser/surname-or-company-name/change                 controllers.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /purchaser/surname-or-company-name/change                 controllers.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /purchaser/is-individual                        controllers.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST       /purchaser/is-individual                         controllers.PurchaserIsIndividualController.onSubmit(mode: Mode = NormalMode)
+GET        /change/purchaser/is-individual                   controllers.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST       /change/purchaser/is-individual                   controllers.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
+
+GET        /returnTaskList                       controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
