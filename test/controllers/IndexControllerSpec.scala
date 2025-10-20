@@ -17,28 +17,120 @@
 package controllers
 
 import base.SpecBase
+import models.UserAnswers
+import org.mockito.ArgumentMatchers.{any, argThat}
+import org.mockito.Mockito.{verify, when}
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import views.html.IndexView
+import play.api.test.Helpers.*
+import repositories.SessionRepository
 
-class IndexControllerSpec extends SpecBase {
+import scala.concurrent.Future
+
+class IndexControllerSpec extends SpecBase with MockitoSugar {
 
   "Index Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "onPageLoad" - {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      "must redirect to ReturnTaskListController when returnId is not provided and no return id stored in UserAnswers" in {
 
-      running(application) {
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-        val result = route(application, request).value
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
 
-        val view = application.injector.instanceOf[IndexView]
+        running(application) {
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
-        status(result) mustEqual OK
+          val result = route(application, request).value
 
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+          verify(mockSessionRepository).set(any[UserAnswers])
+        }
+      }
+
+      "must create UserAnswers with returnId as None when returnId is not provided" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          val captor = org.mockito.ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(captor.capture())
+
+          val savedUserAnswers = captor.getValue
+          savedUserAnswers.id must not be empty
+          savedUserAnswers.returnId mustBe None
+        }
+      }
+
+      "must redirect to ReturnTaskListController with returnId when returnId is provided" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val returnId = "test-return-id"
+
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad(Some(returnId)).url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad(Some(returnId)).url
+          verify(mockSessionRepository).set(any[UserAnswers])
+        }
+      }
+
+      "must create UserAnswers with returnId when returnId is provided" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val returnId = "test-return-id"
+
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad(Some(returnId)).url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          verify(mockSessionRepository).set(argThat((ua: UserAnswers) =>
+            ua.returnId.contains(returnId)
+          ))
+        }
       }
     }
   }

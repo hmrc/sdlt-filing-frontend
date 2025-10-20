@@ -27,6 +27,8 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case PurchaserSurnameOrCompanyNamePage =>
+      _ => controllers.routes.PurchaserIsIndividualController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
