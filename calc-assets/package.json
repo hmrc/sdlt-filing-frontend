@@ -17,7 +17,7 @@
     "angular": "1.8.3",
     "angular-route": "1.8.3",
     "angular-sanitize": "1.8.3",
-    "gulp": "^5.0.0",
+    "gulp": "^5.0.1",
     "gulp-angular-templatecache": "^3.0.1",
     "gulp-jshint": "^2.1.0",
     "gulp-jshint-xml-file-reporter": "^0.5.1",
@@ -44,6 +44,6 @@
   "dependencies": {
     "angular-mocks": "1.8.3",
     "gulp-replace": "^1.1.4",
-    "puppeteer": "~24.1.1"
+    "puppeteer": "~24.25.0"
   }
 }
