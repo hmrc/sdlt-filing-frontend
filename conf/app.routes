@@ -20,10 +20,10 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
-GET        /purchaser/surname-or-company-name                        controllers.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /purchaser/surname-or-company-name                        controllers.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
-GET        /purchaser/surname-or-company-name/change                 controllers.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /purchaser/surname-or-company-name/change                 controllers.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
+GET        /preliminary-questions/purchaser-name                        controllers.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /preliminary-questions/purchaser-name                        controllers.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
+GET        /preliminary-questions/purchaser-name/change                 controllers.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /preliminary-questions/purchaser-name/change                 controllers.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /purchaser/is-individual                        controllers.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)
 POST       /purchaser/is-individual                         controllers.PurchaserIsIndividualController.onSubmit(mode: Mode = NormalMode)

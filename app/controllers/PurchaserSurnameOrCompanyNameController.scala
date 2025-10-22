@@ -52,14 +52,25 @@ class PurchaserSurnameOrCompanyNameController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      val individualOrBusiness: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
+        case Some(value) => if(value) "Individual" else "Business"
+        case _ => ""
+      }
+
+      Ok(view(preparedForm, mode, individualOrBusiness))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
+      val individualOrBusiness: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
+        case Some(individual) => if(individual) "Individual" else "Business"
+        case _ => ""
+      }
+
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors, mode, individualOrBusiness))),
 
         value =>
           for {

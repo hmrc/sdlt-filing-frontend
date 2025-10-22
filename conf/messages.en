@@ -1,4 +1,4 @@
-service.name = sdlt-filing-frontend
+service.name = Stamp Taxes Online
 
 site.back = Back
 site.remove = Remove
@@ -10,6 +10,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.save.continue = Save and Continue
 
 date.day = Day
 date.month = Month
@@ -48,12 +49,25 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-purchaserSurnameOrCompanyName.title = Purchaser (1) surname or company name
-purchaserSurnameOrCompanyName.heading = Purchaser (1) surname or company name
-purchaserSurnameOrCompanyName.checkYourAnswersLabel = Purchaser (1) surname or company name
-purchaserSurnameOrCompanyName.error.required = Enter Purchaser (1) surname or company name
-purchaserSurnameOrCompanyName.error.length = Purchaser (1) surname or company name must be 100 characters or less
-purchaserSurnameOrCompanyName.change.hidden = Purchaser (1) surname or company name
+purchaser.individual.title = What is the purchaser's name? - Preliminary question
+purchaser.individual.heading = What is the purchaser's name?
+purchaser.individual.p = Purchaser full name
+purchaser.individual.checkYourAnswersLabel = What is the purchaser's name?
+purchaser.individual.error.required = Enter Purchaser (1) surname or company name
+purchaser.individual.error.length = Purchaser (1) surname or company name must be 100 characters or less
+purchaser.individual.change.hidden = Purchaser (1) surname or company name
+
+purchaser.business.title = What is the purchaser's name? - Preliminary question
+purchaser.business.heading = What is the business name?
+purchaser.business.p = Business name
+purchaser.business.checkYourAnswersLabel = What is the business name?
+purchaser.business.error.required = Enter Purchaser (1) surname or company name
+purchaser.business.error.length = Purchaser (1) surname or company name must be 100 characters or less
+purchaser.business.change.hidden = Purchaser (1) surname or company name
+
+purchaser.name.form.maxLength.error = Max length
+purchaser.name.form.regex.error = Invalid Error
+purchaser.name.form.no.input.error = Nothing has been added
 
 purchaserIsIndividual.title = Is Purchaser (1) an individual?
 purchaserIsIndividual.heading = Is Purchaser (1) an individual?

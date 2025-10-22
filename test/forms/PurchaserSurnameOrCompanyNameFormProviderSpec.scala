@@ -21,9 +21,10 @@ import play.api.data.FormError
 
 class PurchaserSurnameOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "purchaserSurnameOrCompanyName.error.required"
-  val lengthKey = "purchaserSurnameOrCompanyName.error.length"
-  val maxLength = 100
+  val requiredKey = "purchaser.name.form.no.input.error"
+  val lengthKey = "purchaser.name.form.maxLength.error"
+  val invalidKey = "purchaser.name.form.regex.error"
+  val maxLength = 56
 
   val form = new PurchaserSurnameOrCompanyNameFormProvider()()
 
@@ -31,23 +32,51 @@ class PurchaserSurnameOrCompanyNameFormProviderSpec extends StringFieldBehaviour
 
     val fieldName = "purchaserSurnameOrCompanyName"
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      stringsWithMaxLength(maxLength)
-    )
+    "must bind valid form data" in {
+      val validNames = Seq(
+        "Mr test",
+        "Business test name",
+        "Business are us",
+        "Business@business.com",
+        "(555) 123-4567"
+      )
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
+      validNames.foreach { validName =>
+        val result = form.bind(Map(fieldName -> validName))
+        result.errors must be(empty)
+      }
+    }
+
+    "must not bind strings longer than 56 characters" in {
+      val longName = "a" * 57
+      val result = form.bind(Map(fieldName -> longName))
+      result.errors must contain(FormError(fieldName, lengthKey, Seq(maxLength)))
+    }
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+
+    "must reject invalid name formats" in {
+      val invalidNames= Seq(
+        "Hello #world",
+        "Price: $50",
+        "A < B",
+        "File \\ path",
+        "José",
+        "\"Line1\\nLine2\""
+      )
+
+      invalidNames.foreach { invalidName =>
+        val result = form.bind(Map("purchaserSurnameOrCompanyName" -> invalidName))
+        result.errors must contain(
+          FormError("purchaserSurnameOrCompanyName", invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
+        )
+      }
+    }
+
   }
 }

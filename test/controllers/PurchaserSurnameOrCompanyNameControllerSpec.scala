@@ -23,11 +23,11 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.PurchaserSurnameOrCompanyNamePage
+import pages.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.PurchaserSurnameOrCompanyNameView
 
@@ -42,11 +42,18 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
 
   lazy val purchaserSurnameOrCompanyNameRoute = routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
 
+  val business = "Business"
+  val individual = "Individual"
+
+  val individualUserAnswers = UserAnswers(userAnswersId).set(PurchaserIsIndividualPage, true).success.value
+  val businessUserAnswers = UserAnswers(userAnswersId).set(PurchaserIsIndividualPage, false).success.value
+
   "PurchaserSurnameOrCompanyName Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET and individual has been answered" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      val application = applicationBuilder(userAnswers = Some(individualUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
@@ -56,13 +63,13 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, individual)(request, messages(application)).toString
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when the question has previously been answered and individual has been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId, None).set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
+      val userAnswers = individualUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -74,7 +81,42 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, individual)(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET and business has been answered" in {
+
+
+      val application = applicationBuilder(userAnswers = Some(businessUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode, business)(request, messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered and business has been answered" in {
+
+      val userAnswers = businessUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
+
+        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, business)(request, messages(application)).toString
       }
     }
 
@@ -104,9 +146,9 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request and errors when invalid data is submitted and individual has been answered" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(individualUserAnswers)).build()
 
       running(application) {
         val request =
@@ -120,7 +162,7 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, individual)(request, messages(application)).toString
       }
     }
 
