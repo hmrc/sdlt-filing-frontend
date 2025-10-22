@@ -39,13 +39,13 @@ class IndexController @Inject() (
       case Some(id) => {
         val userAnswers = UserAnswers(id = request.userId, returnId = Some(id))
         sessionRepository.set(userAnswers).map { _ =>
-          Results.Redirect(routes.ReturnTaskListController.onPageLoad(Some(id)))
+          Results.Redirect(routes.BeforeStartReturnController.onPageLoad())
         }
       }
       case _ =>  {
         val userAnswers = UserAnswers(id = request.userId, returnId = None)
           sessionRepository.set(userAnswers).map { _ =>
-          Results.Redirect(routes.ReturnTaskListController.onPageLoad())
+          Results.Redirect(routes.BeforeStartReturnController.onPageLoad())
         }
       }
   }
