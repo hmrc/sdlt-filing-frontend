@@ -16,9 +16,10 @@
 
 package pages
 
+import models.prelimQuestions.BusinessOrIndividualRequest
 import play.api.libs.json.JsPath
 
-case object PurchaserIsIndividualPage extends QuestionPage[Boolean] {
+case object PurchaserIsIndividualPage extends QuestionPage[BusinessOrIndividualRequest] {
 
   override def path: JsPath = JsPath \ toString
 
