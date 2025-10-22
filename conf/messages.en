@@ -84,3 +84,9 @@ tasklist.prelimQuestion.heading = Prelim Questions
 tasklist.complete = Complete
 tasklist.notStarted = Not Started
 
+
+beforeStartReturn.title = Before you start a new Stamp Tax return – Preliminary questions – Stamp Taxes Online – GOV.UK
+beforeStartReturn.heading = Before you start a new Stamp Tax return
+beforeStartReturn.paragraph.p1 = To start a new return, you must answer some preliminary questions.
+beforeStartReturn.paragraph.p2 = Your answers will help you complete and identify your return in the future. Once completed, you can add multiple purchasers and vendors.
+beforeStartReturn.paragraph.p3 = Stamp Taxes Online provides a Unique Transaction Reference number (UTRN) upon successful submission of this return.
