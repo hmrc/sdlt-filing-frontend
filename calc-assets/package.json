@@ -36,10 +36,10 @@
     "karma-jasmine": "^1.1.2",
     "karma-junit-reporter": "^2.0.1",
     "karma-spec-reporter": "^0.0.36",
-    "karma-webpack": "^3.0.5",
+    "karma-webpack": "^4.0.2",
     "mkdirp": "~0.5.6",
     "require-dir": "^1.2.0",
-    "webpack": "^3.12.0"
+    "webpack": "^4.46.0"
   },
   "dependencies": {
     "angular-mocks": "1.8.3",
