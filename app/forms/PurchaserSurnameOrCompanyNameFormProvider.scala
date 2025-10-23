@@ -23,9 +23,12 @@ import play.api.data.Form
 
 class PurchaserSurnameOrCompanyNameFormProvider @Inject() extends Mappings {
 
+  private val formRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
+
   def apply(): Form[String] =
     Form(
-      "purchaserSurnameOrCompanyName" -> text("purchaserSurnameOrCompanyName.error.required")
-        .verifying(maxLength(100, "purchaserSurnameOrCompanyName.error.length"))
+      "purchaserSurnameOrCompanyName" -> text("purchaser.name.form.no.input.error")
+        .verifying(maxLength(56, "purchaser.name.form.maxLength.error"))
+        .verifying(regexp(formRegex, "purchaser.name.form.regex.error"))
     )
 }
