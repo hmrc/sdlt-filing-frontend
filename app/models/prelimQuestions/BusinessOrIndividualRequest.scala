@@ -25,8 +25,8 @@ sealed trait BusinessOrIndividualRequest
 
 object BusinessOrIndividualRequest extends Enumerable.Implicits {
 
-  case object Option1 extends WithName("option1") with BusinessOrIndividualRequest
-  case object Option2 extends WithName("option2") with BusinessOrIndividualRequest
+  case object Option1 extends WithName("Individual") with BusinessOrIndividualRequest
+  case object Option2 extends WithName("Business") with BusinessOrIndividualRequest
 
   val values: Seq[BusinessOrIndividualRequest] = Seq(
     Option1,
