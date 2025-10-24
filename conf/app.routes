@@ -31,3 +31,8 @@ GET        /change/purchaser/is-individual                   controllers.Purchas
 POST       /change/purchaser/is-individual                   controllers.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
 
 GET        /returnTaskList                       controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
+
+GET        /preliminary-questions/transaction-type                       controllers.TransactionTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /preliminary-questions/transaction-type                       controllers.TransactionTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /change/preliminary-questions/transaction-type                controllers.TransactionTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change/preliminary-questions/transaction-type                controllers.TransactionTypeController.onSubmit(mode: Mode = CheckMode)
