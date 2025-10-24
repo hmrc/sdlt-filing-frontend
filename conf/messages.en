@@ -6,6 +6,7 @@ site.change = Change
 site.no = No
 site.yes = Yes
 site.continue = Continue
+site.saveAndContinue = Save and continue
 site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
@@ -78,9 +79,18 @@ purchaserIsIndividual.change.hidden = Is Purchaser (1) an individual?
 returnTaskList.title = returnTaskList
 returnTaskList.heading = returnTaskList
 
-
 tasklist.prelimQuestion.details = Prelim Questions
 tasklist.prelimQuestion.heading = Prelim Questions
 tasklist.complete = Complete
 tasklist.notStarted = Not Started
 
+transactionType.title = What type of transaction is this? - Preliminary question
+transactionType.heading = What type of transaction is this?
+transactionType.residential = Residential property purchase
+transactionType.nonResidentialMixed = Non-residential or mixed property purchase
+transactionType.grantOrAssignment = Grant or assignment of a lease
+transactionType.transferOfRights = Transfer of rights
+transactionType.otherTransaction = Other transaction type
+transactionType.checkYourAnswersLabel = Transaction type
+transactionType.error.required = Select the option that best describes your transaction
+transactionType.change.hidden = Change transaction type
