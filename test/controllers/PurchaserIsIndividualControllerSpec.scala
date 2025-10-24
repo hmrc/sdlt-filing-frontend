@@ -96,7 +96,7 @@ class PurchaserIsIndividualControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, purchaserIsIndividualRoute)
-            .withFormUrlEncodedBody(("purchaserIsIndividual", "Individual"))
+            .withFormUrlEncodedBody(("value", "Individual"))
 
         val result = route(application, request).value
 
