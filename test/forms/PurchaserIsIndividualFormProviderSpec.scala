@@ -42,5 +42,10 @@ class PurchaserIsIndividualFormProviderSpec extends OptionFieldBehaviours{
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "must not bind invalid values" in {
+      val result = form.bind(Map(fieldName -> "InvalidOption"))
+      result.errors must contain only FormError(fieldName, invalidKey)
+    }
   }
 }
