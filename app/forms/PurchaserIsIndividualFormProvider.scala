@@ -25,6 +25,6 @@ class PurchaserIsIndividualFormProvider @Inject() extends Mappings {
 
   def apply(): Form[BusinessOrIndividualRequest] =
     Form(
-      "purchaserIsIndividual" -> enumerable[BusinessOrIndividualRequest]("purchaserIsIndividual.error.required")
+      "value" -> enumerable[BusinessOrIndividualRequest]("purchaserIsIndividual.error.required")
     )
 }

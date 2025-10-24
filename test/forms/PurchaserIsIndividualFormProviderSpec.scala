@@ -22,21 +22,19 @@ import play.api.data.FormError
 
 class PurchaserIsIndividualFormProviderSpec extends OptionFieldBehaviours{
 
-  val requiredKey = "purchaserIsIndividual.error.required"
-  val invalidKey = "error.boolean"
-
   val form = new PurchaserIsIndividualFormProvider()()
 
-  ".purchaserIsIndividual" - {
+  ".value" - {
 
-    val fieldName = "purchaserIsIndividual"
+    val fieldName = "value"
     val requiredKey = "purchaserIsIndividual.error.required"
+    val invalidKey = "purchaserIsIndividual.error.invalid"
 
     behave like optionsField[BusinessOrIndividualRequest](
       form,
       fieldName,
       validValues = BusinessOrIndividualRequest.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(
