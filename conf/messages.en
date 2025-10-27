@@ -69,7 +69,7 @@ purchaser.name.form.maxLength.error = Max length
 purchaser.name.form.regex.error = Invalid Error
 purchaser.name.form.no.input.error = Nothing has been added
 
-purchaserIsIndividual.title = Who is making the purchase? – Preliminary questions – Stamp Taxes Online – GOV.UK
+purchaserIsIndividual.title = Who is making the purchase? – Preliminary questions
 purchaserIsIndividual.heading = Who is making the purchase?
 purchaserIsIndividual.individual = An individual
 purchaserIsIndividual.business = A business
