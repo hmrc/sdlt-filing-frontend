@@ -81,9 +81,6 @@ class PurchaserIsIndividualControllerSpec extends SpecBase with MockitoSugar {
           contentAsString(result) mustEqual
             view(form.fill(option), NormalMode)(request, messages(application)).toString
         }
-
-        // Clean up between iterations
-        application.stop()
       }
     }
 
