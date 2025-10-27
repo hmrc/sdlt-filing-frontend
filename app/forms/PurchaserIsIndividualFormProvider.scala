@@ -17,14 +17,17 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.prelimQuestions.BusinessOrIndividualRequest
 import play.api.data.Form
 
 class PurchaserIsIndividualFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(): Form[BusinessOrIndividualRequest] =
     Form(
-      "purchaserIsIndividual" -> boolean("purchaserIsIndividual.error.required")
+      "value" -> enumerable[BusinessOrIndividualRequest](
+        requiredKey = "purchaserIsIndividual.error.required",
+        invalidKey  = "purchaserIsIndividual.error.invalid"
+      )
     )
 }

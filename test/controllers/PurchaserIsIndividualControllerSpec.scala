@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import forms.PurchaserIsIndividualFormProvider
 import models.{NormalMode, UserAnswers}
+import models.prelimQuestions.BusinessOrIndividualRequest
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -62,19 +63,24 @@ class PurchaserIsIndividualControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId ,None).set(PurchaserIsIndividualPage, true).success.value
+      BusinessOrIndividualRequest.values.foreach { option =>
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val userAnswers = UserAnswers(userAnswersId, None)
+          .set(PurchaserIsIndividualPage, option)
+          .success
+          .value
 
-      running(application) {
-        val request = FakeRequest(GET, purchaserIsIndividualRoute)
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        val view = application.injector.instanceOf[PurchaserIsIndividualView]
+        running(application) {
+          val request = FakeRequest(GET, purchaserIsIndividualRoute)
+          val view = application.injector.instanceOf[PurchaserIsIndividualView]
+          val result = route(application, request).value
 
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(form.fill(option), NormalMode)(request, messages(application)).toString
+        }
       }
     }
 
@@ -93,14 +99,16 @@ class PurchaserIsIndividualControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, purchaserIsIndividualRoute)
-            .withFormUrlEncodedBody(("purchaserIsIndividual", "true"))
+        BusinessOrIndividualRequest.values.foreach { option =>
+          val request =
+            FakeRequest(POST, purchaserIsIndividualRoute)
+              .withFormUrlEncodedBody(("value", option.toString))
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardRoute.url
+        }
       }
     }
 
