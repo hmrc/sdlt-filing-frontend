@@ -30,6 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.PurchaserSurnameOrCompanyNameView
+import models.prelimQuestions.BusinessOrIndividualRequest
 
 import scala.concurrent.Future
 
@@ -45,8 +46,8 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
   val business = "Business"
   val individual = "Individual"
 
-  val individualUserAnswers = UserAnswers(userAnswersId).set(PurchaserIsIndividualPage, true).success.value
-  val businessUserAnswers = UserAnswers(userAnswersId).set(PurchaserIsIndividualPage, false).success.value
+  val individualUserAnswers = UserAnswers(userAnswersId).set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
+  val businessUserAnswers = UserAnswers(userAnswersId).set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option2).success.value
 
   "PurchaserSurnameOrCompanyName Controller" - {
 

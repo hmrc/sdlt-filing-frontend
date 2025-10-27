@@ -53,7 +53,7 @@ class PurchaserSurnameOrCompanyNameController @Inject()(
       }
 
       val individualOrBusiness: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
-        case Some(value) => if(value) "Individual" else "Business"
+        case Some(value) => if(value.toString == "Individual") "Individual" else "Business"
         case _ => ""
       }
 
@@ -64,7 +64,7 @@ class PurchaserSurnameOrCompanyNameController @Inject()(
     implicit request =>
 
       val individualOrBusiness: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
-        case Some(individual) => if(individual) "Individual" else "Business"
+        case Some(value) => if(value.toString == "Individual") "Individual" else "Business"
         case _ => ""
       }
 
