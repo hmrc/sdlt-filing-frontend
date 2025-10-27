@@ -49,7 +49,7 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-purchaser.individual.title = What is the purchaser's name? - Preliminary question
+purchaser.individual.title = What is the purchaser's name? - Preliminary questions
 purchaser.individual.heading = What is the purchaser's name?
 purchaser.individual.p = Purchaser full name
 purchaser.individual.checkYourAnswersLabel = What is the purchaser's name?
@@ -57,7 +57,7 @@ purchaser.individual.error.required = Enter Purchaser (1) surname or company nam
 purchaser.individual.error.length = Purchaser (1) surname or company name must be 100 characters or less
 purchaser.individual.change.hidden = Purchaser (1) surname or company name
 
-purchaser.business.title = What is the purchaser's name? - Preliminary question
+purchaser.business.title = What is the purchaser's name? - Preliminary questions
 purchaser.business.heading = What is the business name?
 purchaser.business.p = Business name
 purchaser.business.checkYourAnswersLabel = What is the business name?
@@ -83,7 +83,7 @@ tasklist.prelimQuestion.heading = Prelim Questions
 tasklist.complete = Complete
 tasklist.notStarted = Not Started
 
-transactionType.title = What type of transaction is this? - Preliminary question
+transactionType.title = What type of transaction is this? - Preliminary questions
 transactionType.heading = What type of transaction is this?
 transactionType.residential = Residential property purchase
 transactionType.nonResidentialMixed = Non-residential or mixed property purchase
