@@ -34,7 +34,7 @@ class IndexControllerSpec extends SpecBase with MockitoSugar {
 
     "onPageLoad" - {
 
-      "must redirect to ReturnTaskListController when returnId is not provided and no return id stored in UserAnswers" in {
+      "must redirect to BeforeStartReturnController when returnId is not provided and no return id stored in UserAnswers" in {
 
         val mockSessionRepository = mock[SessionRepository]
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -51,7 +51,7 @@ class IndexControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.BeforeStartReturnController.onPageLoad().url
           verify(mockSessionRepository).set(any[UserAnswers])
         }
       }
@@ -83,7 +83,7 @@ class IndexControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to ReturnTaskListController with returnId when returnId is provided" in {
+      "must redirect to BeforeStartReturnController with returnId when returnId is provided" in {
 
         val mockSessionRepository = mock[SessionRepository]
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -102,7 +102,7 @@ class IndexControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad(Some(returnId)).url
+          redirectLocation(result).value mustEqual routes.BeforeStartReturnController.onPageLoad().url
           verify(mockSessionRepository).set(any[UserAnswers])
         }
       }
