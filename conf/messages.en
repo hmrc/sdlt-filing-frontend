@@ -94,7 +94,7 @@ transactionType.checkYourAnswersLabel = Transaction type
 transactionType.error.required = Select the option that best describes your transaction
 transactionType.change.hidden = Change transaction type
 
-beforeStartReturn.title = Before you start a new Stamp Tax return – Preliminary questions – Stamp Taxes Online – GOV.UK
+beforeStartReturn.title = Before you start a new Stamp Tax return – Preliminary questions
 beforeStartReturn.heading = Before you start a new Stamp Tax return
 beforeStartReturn.paragraph.p1 = To start a new return, you must answer some preliminary questions.
 beforeStartReturn.paragraph.p2 = Your answers will help you complete and identify your return in the future. Once completed, you can add multiple purchasers and vendors.
