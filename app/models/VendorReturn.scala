@@ -18,11 +18,21 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class FullReturn(
-                         prelimReturn: Option[PrelimReturn],
-                         vendorReturn: Option[VendorReturn]
+//replace with vendor model when clarified
+
+case class VendorReturn(
+                       stornId: String,
+                       purchaserIsCompany: String,
+                       surNameOrCompanyName: String,
+                       houseNumber: Option[Int],
+                       addressLine1: String,
+                       addressLine2: Option[String],
+                       addressLine3: Option[String],
+                       addressLine4: Option[String],
+                       postcode: Option[String],
+                       transactionType: String
                        )
 
-object FullReturn {
-  implicit val format: OFormat[FullReturn] = Json.format[FullReturn]
+object VendorReturn {
+  implicit val format: OFormat[VendorReturn] = Json.format[VendorReturn]
 }

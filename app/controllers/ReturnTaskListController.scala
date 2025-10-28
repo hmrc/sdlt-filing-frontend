@@ -24,7 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.PrelimTaskList
+import viewmodels.tasklist.{PrelimTaskList, VendorTaskList}
 import views.html.ReturnTaskListView
 
 import scala.concurrent.ExecutionContext
@@ -43,7 +43,7 @@ class ReturnTaskListController @Inject()(
       for {
         fullReturn <- fullReturnService.getFullReturn(returnId)
       } yield {
-        val sections = List(Some(PrelimTaskList.build(fullReturn))).flatten
+        val sections = List(Some(PrelimTaskList.build(fullReturn)), Some(VendorTaskList.build(fullReturn))).flatten
         Ok(view(sections: _*))
       }
   }
