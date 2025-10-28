@@ -30,6 +30,8 @@ class Navigator @Inject()() {
     case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.routes.PurchaserIsIndividualController.onPageLoad(NormalMode)
     case TransactionTypePage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case PurchaserIsIndividualPage =>
+      _ => controllers.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

@@ -14,17 +14,22 @@
  * limitations under the License.
  *@
 
+@import models.prelimQuestions.BusinessOrIndividualRequest
+@import views.html.components.h1
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    h1: h1
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("purchaserIsIndividual.title"))) {
+
+    @h1(messages("purchaserIsIndividual.heading"))
 
     @formHelper(action = routes.PurchaserIsIndividualController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -33,14 +38,18 @@
         }
 
         @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("purchaserIsIndividual"),
-                legend = LegendViewModel(messages("purchaserIsIndividual.heading")).asPageHeading()
-            )
-        )
+            Radios(
+                fieldset = None,
+                name = form("value").name,
+                items = BusinessOrIndividualRequest.options map (item => item.copy(checked = form("value").value.isDefined && form("value").value == item.value)),
+                errorMessage = if(form("value").hasErrors) Some(ErrorMessage(
+                    content = Text(messages(form("value").error.get.message, form("value").error.get.args: _*)),
+                    visuallyHiddenText = Some(messages("error.prefix"))
+                )) else None
+            ))
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.save.continue"))
         )
     }
 }
