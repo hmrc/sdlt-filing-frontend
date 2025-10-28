@@ -12,7 +12,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 val appName = "sdltc-frontend"
 
 ThisBuild / majorVersion := 5
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "2.13.17"
 
 lazy val playSettings: Seq[Setting[?]] = Seq(
   Assets / unmanagedResourceDirectories += baseDirectory.value / "app" / "assets",
