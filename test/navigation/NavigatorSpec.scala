@@ -35,10 +35,10 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad()
       }
 
-      "go from purchaser name or company name to individual purchaser page" in {
+      "go from individual/business page to name page" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(PurchaserSurnameOrCompanyNamePage, NormalMode, UserAnswers("id")) mustBe routes.PurchaserIsIndividualController.onPageLoad(mode = NormalMode)
+        navigator.nextPage(PurchaserIsIndividualPage, NormalMode, UserAnswers("id")) mustBe routes.PurchaserSurnameOrCompanyNameController.onPageLoad(mode = NormalMode)
       }
     }
 

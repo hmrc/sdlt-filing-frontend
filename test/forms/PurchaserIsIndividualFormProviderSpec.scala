@@ -16,23 +16,24 @@
 
 package forms
 
-import forms.behaviours.BooleanFieldBehaviours
+import forms.behaviours.OptionFieldBehaviours
+import models.prelimQuestions.BusinessOrIndividualRequest
 import play.api.data.FormError
 
-class PurchaserIsIndividualFormProviderSpec extends BooleanFieldBehaviours {
-
-  val requiredKey = "purchaserIsIndividual.error.required"
-  val invalidKey = "error.boolean"
+class PurchaserIsIndividualFormProviderSpec extends OptionFieldBehaviours{
 
   val form = new PurchaserIsIndividualFormProvider()()
 
-  ".purchaserIsIndividual" - {
+  ".value" - {
 
-    val fieldName = "purchaserIsIndividual"
+    val fieldName = "value"
+    val requiredKey = "purchaserIsIndividual.error.required"
+    val invalidKey = "purchaserIsIndividual.error.invalid"
 
-    behave like booleanField(
+    behave like optionsField[BusinessOrIndividualRequest](
       form,
       fieldName,
+      validValues = BusinessOrIndividualRequest.values,
       invalidError = FormError(fieldName, invalidKey)
     )
 
@@ -41,5 +42,10 @@ class PurchaserIsIndividualFormProviderSpec extends BooleanFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "must not bind invalid values" in {
+      val result = form.bind(Map(fieldName -> "InvalidOption"))
+      result.errors must contain only FormError(fieldName, invalidKey)
+    }
   }
 }
