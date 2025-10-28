@@ -20,6 +20,12 @@ Run SDLTC Frontend App on port 9953 from the console at /sdltc-frontend level wi
 ```
 sbt run
 ```
+
+If the above fails it may be necessary to clean and then run
+```
+sbt clean compile dist
+```
+
 you can then access the service in a browser at:
 ```
 http://localhost:9953/calculate-stamp-duty-land-tax
@@ -45,5 +51,23 @@ if you have any problem try the following steps:
     II.``` nvm install v21.6.2```
 
     III.``` nvm use v21.6.2```
+
+## Maintaining Libraries and Reproducible Builds
+
+
+### Building and Assembling the Project:
+- When building and assembling the project, we solely rely on the provided package-lock.json.
+- This means using the npm ci command instead of npm install.
+
+### npm ci:
+
+- Installs dependencies based on the package-lock.json file.
+- Ensures that the exact versions specified in package-lock.json are installed.
+
+### Updating Libraries:
+- When we want to update libraries, we do so consciously.
+- Run npm install to update the dependencies according to the version ranges specified in package.json.
+- After updating, test the project to ensure everything works correctly with the new versions.
+- Once satisfied, we commit the updated package-lock.json file into version control.
 
     
