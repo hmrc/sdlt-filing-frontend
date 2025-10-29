@@ -18,8 +18,6 @@ package controllers
 
 import controllers.actions.*
 import forms.PurchaserSurnameOrCompanyNameFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
@@ -29,6 +27,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PurchaserSurnameOrCompanyNameView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserSurnameOrCompanyNameController @Inject()(

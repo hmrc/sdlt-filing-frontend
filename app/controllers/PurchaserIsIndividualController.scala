@@ -16,9 +16,8 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.PurchaserIsIndividualFormProvider
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.PurchaserIsIndividualPage
@@ -28,6 +27,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.PurchaserIsIndividualView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserIsIndividualController @Inject()(

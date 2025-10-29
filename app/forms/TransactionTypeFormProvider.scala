@@ -19,8 +19,8 @@ package forms
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import play.api.data.Form
 import models.TransactionType
+import play.api.data.Form
 
 class TransactionTypeFormProvider @Inject() extends Mappings {
 
