@@ -16,9 +16,10 @@
 
 package config
 
-import models.address._
+import models.address.*
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.mvc.{Call, RequestHeader}
+import uk.gov.hmrc.http.StringContextOps
 
 import javax.inject.Inject
 
@@ -35,7 +36,7 @@ class AddressLookupConfiguration @Inject()(implicit appConfig: FrontendAppConfig
     AddressLookupConfigurationModel(
       version = 2,
       options = AddressLookupOptionsModel(
-        continueUrl = appConfig.host + continueRoute.url,
+        continueUrl = appConfig.sdltLookupHost + continueRoute.url,
         signOutHref = Some(appConfig.feedbackUrl),
         phaseFeedbackLink = Some(appConfig.feedbackUrl),
         deskProServiceName = Some(appConfig.contactFormServiceIdentifier),
