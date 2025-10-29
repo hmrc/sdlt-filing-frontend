@@ -17,7 +17,7 @@
 package viewmodels.taskList
 
 import base.SpecBase
-import models.{FullReturn, PrelimReturn}
+import models.{FullReturn, PrelimReturn, VendorReturn}
 import viewmodels.tasklist.{TLCannotStart, TLCompleted, TLFailed, TLInProgress, TLNotStarted, TaskListRowBuilder}
 
 class TaskListRowBuilderSpec extends SpecBase {
@@ -35,8 +35,21 @@ class TaskListRowBuilderSpec extends SpecBase {
     transactionType = "O"
   )
 
-  private val fullReturnComplete = FullReturn(Some(validPrelimReturn))
-  private val fullReturnIncomplete = FullReturn(None)
+  private val validVendorReturn = VendorReturn(
+    stornId = "12345",
+    purchaserIsCompany = "YES",
+    surNameOrCompanyName = "Test Company",
+    houseNumber = Some(23),
+    addressLine1 = "Test Street",
+    addressLine2 = None,
+    addressLine3 = None,
+    addressLine4 = None,
+    postcode = Some("TE23 5TT"),
+    transactionType = "O"
+  )
+
+  private val fullReturnComplete = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
+  private val fullReturnIncomplete = FullReturn(None, None)
 
   "TaskListRowBuilder" - {
 

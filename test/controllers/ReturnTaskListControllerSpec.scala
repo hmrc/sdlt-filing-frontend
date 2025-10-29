@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import models.{FullReturn, PrelimReturn}
+import models.{FullReturn, PrelimReturn, VendorReturn}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -37,7 +37,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must return OK and the correct view when no returnId is provided" in {
 
         val mockFullReturnService = mock[FullReturnService]
-        val mockFullReturn = new FullReturn(None)
+        val mockFullReturn = new FullReturn(None, None)
 
         when(mockFullReturnService.getFullReturn(eqTo(None))(any(), any()))
           .thenReturn(Future.successful(mockFullReturn))
@@ -72,7 +72,21 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           transactionType = "O",
           postcode = None
         )
-        val mockFullReturn = new FullReturn(Some(mockPrelimReturn))
+
+        val mockVendorReturn = new VendorReturn(
+          stornId = "id",
+          purchaserIsCompany = "YES",
+          surNameOrCompanyName = "Test",
+          houseNumber = Some(34),
+          addressLine1 = "test address",
+          addressLine2 = None,
+          addressLine3 = None,
+          addressLine4 = None,
+          transactionType = "O",
+          postcode = None
+        )
+        
+        val mockFullReturn = new FullReturn(Some(mockPrelimReturn), Some(mockVendorReturn))
         val testReturnId = Some("123456")
 
         when(mockFullReturnService.getFullReturn(eqTo(testReturnId))(any(), any()))
@@ -108,7 +122,21 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           transactionType = "O",
           postcode = None
         )
-        val mockFullReturn = new FullReturn(Some(mockPrelimReturn))
+        
+        val mockVendorReturn = new VendorReturn(
+          stornId = "id",
+          purchaserIsCompany = "YES",
+          surNameOrCompanyName = "Test",
+          houseNumber = Some(34),
+          addressLine1 = "test address",
+          addressLine2 = None,
+          addressLine3 = None,
+          addressLine4 = None,
+          transactionType = "O",
+          postcode = None
+        )
+        
+        val mockFullReturn = new FullReturn(Some(mockPrelimReturn), Some(mockVendorReturn))
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(mockFullReturn))
@@ -130,7 +158,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must return OK and show prelim questions section as 'Not Started' when fullReturn has no prelimReturn" in {
 
         val mockFullReturnService = mock[FullReturnService]
-        val mockFullReturn = new FullReturn(None)
+        val mockFullReturn = new FullReturn(None, None)
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(mockFullReturn))
@@ -190,7 +218,20 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           transactionType = "O",
           postcode = None
         )
-        val mockFullReturn = new FullReturn(Some(mockPrelimReturn))
+        
+        val mockVendorReturn = new VendorReturn(
+          stornId = "id",
+          purchaserIsCompany = "YES",
+          surNameOrCompanyName = "Test",
+          houseNumber = Some(34),
+          addressLine1 = "test address",
+          addressLine2 = None,
+          addressLine3 = None,
+          addressLine4 = None,
+          transactionType = "O",
+          postcode = None
+        )
+        val mockFullReturn = new FullReturn(Some(mockPrelimReturn), Some(mockVendorReturn))
         val testReturnId = Some("TEST-123")
 
         when(mockFullReturnService.getFullReturn(eqTo(testReturnId))(any(), any()))

@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.StubConnector
-import models.PrelimReturn
+import models.{PrelimReturn, VendorReturn}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -37,22 +37,29 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
 
     "getFullReturn" - {
 
-      "must return FullReturn with Some(prelimReturn) when returnId is provided" in {
+      "must return FullReturn with Some(prelimReturn) & Some(vendorReturn) when returnId is provided" in {
         val mockStubConnector = mock[StubConnector]
         val mockPrelimReturn = mock[PrelimReturn]
+        val mockVendorReturn = mock[VendorReturn]
         val testReturnId = "123456"
 
         when(mockStubConnector.stubPremlimQuestions(eqTo(testReturnId))(any(), any()))
           .thenReturn(Future.successful(mockPrelimReturn))
+
+        when(mockStubConnector.stubVendorQuestions(eqTo(testReturnId))(any(), any()))
+          .thenReturn(Future.successful(mockVendorReturn))
 
         val service = new FullReturnService(mockStubConnector)
         val result = service.getFullReturn(Some(testReturnId)).futureValue
 
         result.prelimReturn mustBe Some(mockPrelimReturn)
         verify(mockStubConnector, times(1)).stubPremlimQuestions(eqTo(testReturnId))(any(), any())
+
+        result.vendorReturn mustBe Some(mockVendorReturn)
+        verify(mockStubConnector, times(1)).stubVendorQuestions(eqTo(testReturnId))(any(), any())
       }
 
-      "must return FullReturn with None when returnId is not provided" in {
+      "must return FullReturn with None & None when returnId is not provided" in {
         val mockStubConnector = mock[StubConnector]
 
         val service = new FullReturnService(mockStubConnector)
@@ -79,18 +86,23 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
         verify(mockStubConnector, times(1)).stubPremlimQuestions(eqTo(testReturnId))(any(), any())
       }
 
-      "must call getPrelimQuestions with correct returnId" in {
+      "must call getPrelimQuestions & getVendorQuestions with correct returnId" in {
         val mockStubConnector = mock[StubConnector]
         val mockPrelimReturn = mock[PrelimReturn]
+        val mockVendorReturn = mock[VendorReturn]
         val testReturnId = "TEST-ID-789"
 
         when(mockStubConnector.stubPremlimQuestions(eqTo(testReturnId))(any(), any()))
           .thenReturn(Future.successful(mockPrelimReturn))
 
+        when(mockStubConnector.stubVendorQuestions(eqTo(testReturnId))(any(), any()))
+          .thenReturn(Future.successful(mockVendorReturn))
+
         val service = new FullReturnService(mockStubConnector)
         service.getFullReturn(Some(testReturnId)).futureValue
 
         verify(mockStubConnector, times(1)).stubPremlimQuestions(eqTo(testReturnId))(any(), any())
+        verify(mockStubConnector, times(1)).stubVendorQuestions(eqTo(testReturnId))(any(), any())
       }
     }
 

@@ -36,7 +36,21 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
     "transactionType" -> "O"
   )
 
+  private val validVendorReturnJson = Json.obj(
+    "stornId" -> "12345",
+    "purchaserIsCompany" -> "YES",
+    "surNameOrCompanyName" -> "Test Company",
+    "houseNumber" -> 23,
+    "addressLine1" -> "Test Street",
+    "addressLine2" -> JsNull,
+    "addressLine3" -> JsNull,
+    "addressLine4" -> JsNull,
+    "postcode" -> "TE23 5TT",
+    "transactionType" -> "O"
+  )
+
   private val validPrelimReturn = Json.fromJson[PrelimReturn](validPrelimReturnJson).asOpt.get
+  private val validVendorReturn = Json.fromJson[VendorReturn](validVendorReturnJson).asOpt.get
 
   "FullReturn" - {
 
@@ -124,7 +138,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
 
       "must serialize FullReturn with Some(prelimReturn)" in {
-        val fullReturn = FullReturn(Some(validPrelimReturn))
+        val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
 
         val json = Json.toJson(fullReturn)
 
@@ -133,7 +147,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
 
       "must serialize FullReturn with None prelimReturn" in {
-        val fullReturn = FullReturn(None)
+        val fullReturn = FullReturn(None, None)
 
         val json = Json.toJson(fullReturn)
 
@@ -147,7 +161,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
 
       "must produce valid JSON structure" in {
-        val fullReturn = FullReturn(Some(validPrelimReturn))
+        val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
 
         val json = Json.toJson(fullReturn)
 
@@ -163,7 +177,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
 
       "must serialize and deserialize with Some(prelimReturn)" in {
-        val fullReturn = FullReturn(Some(validPrelimReturn))
+        val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
 
         val json = Json.toJson(fullReturn)
         val result = Json.fromJson[FullReturn](json).asEither.value
@@ -173,7 +187,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
 
       "must serialize and deserialize with None prelimReturn" in {
-        val fullReturn = FullReturn(None)
+        val fullReturn = FullReturn(None, None)
 
         val json = Json.toJson(fullReturn)
         val result = Json.fromJson[FullReturn](json).asEither.value
@@ -186,42 +200,42 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
     "case class" - {
 
       "must create instance with Some(prelimReturn)" in {
-        val fullReturn = FullReturn(Some(validPrelimReturn))
+        val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
 
         fullReturn.prelimReturn mustBe Some(validPrelimReturn)
       }
 
       "must create instance with None prelimReturn" in {
-        val fullReturn = FullReturn(None)
+        val fullReturn = FullReturn(None, None)
 
         fullReturn.prelimReturn mustBe None
       }
 
       "must support equality" in {
-        val fullReturn1 = FullReturn(None)
-        val fullReturn2 = FullReturn(None)
+        val fullReturn1 = FullReturn(None, None)
+        val fullReturn2 = FullReturn(None, None)
 
         fullReturn1 mustEqual fullReturn2
       }
 
       "must support equality with Some values" in {
-        val fullReturn1 = FullReturn(Some(validPrelimReturn))
-        val fullReturn2 = FullReturn(Some(validPrelimReturn))
+        val fullReturn1 = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
+        val fullReturn2 = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
 
         fullReturn1 mustEqual fullReturn2
       }
 
       "must support copy" in {
-        val fullReturn1 = FullReturn(None)
-        val fullReturn2 = fullReturn1.copy(prelimReturn = Some(validPrelimReturn))
+        val fullReturn1 = FullReturn(None, None)
+        val fullReturn2 = fullReturn1.copy(prelimReturn = Some(validPrelimReturn), vendorReturn = Some(validVendorReturn))
 
         fullReturn2.prelimReturn mustBe defined
         fullReturn1.prelimReturn must not be defined
       }
 
       "must not be equal when prelimReturn differs" in {
-        val fullReturn1 = FullReturn(None)
-        val fullReturn2 = FullReturn(Some(validPrelimReturn))
+        val fullReturn1 = FullReturn(None, None)
+        val fullReturn2 = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
 
         fullReturn1 must not equal fullReturn2
       }
