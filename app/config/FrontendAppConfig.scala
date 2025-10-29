@@ -25,6 +25,7 @@ import play.api.mvc.RequestHeader
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val host: String    = configuration.get[String]("host")
+  val sdltLookupHost: String    = configuration.get[String]("sdlt-address-lookup-host")
   val appName: String = configuration.get[String]("appName")
   lazy val sdltStubUrl: String = baseUrl("stamp-duty-land-tax-stub")
 
