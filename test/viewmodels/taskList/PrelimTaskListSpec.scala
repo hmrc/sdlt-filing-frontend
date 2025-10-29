@@ -40,15 +40,18 @@ class PrelimTaskListSpec extends SpecBase {
   
   private val validVendorReturn = VendorReturn(
     stornId = "12345",
-    purchaserIsCompany = "YES",
-    surNameOrCompanyName = "Test Company",
-    houseNumber = Some(23),
+    returnResourceRef = "124",
+    title = "Mr",
+    forename1 = "Test",
+    forename2 = Some("Man"),
+    surName = "Test",
+    houseNumber = Some(1),
     addressLine1 = "Test Street",
     addressLine2 = Some("Apartment 5"),
     addressLine3 = None,
     addressLine4 = None,
     postcode = Some("TE23 5TT"),
-    transactionType = "O"
+    isRepresentedByAgent = "No"
   )
 
   "PrelimTaskList" - {

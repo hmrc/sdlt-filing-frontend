@@ -38,15 +38,18 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
   private val validVendorReturnJson = Json.obj(
     "stornId" -> "12345",
-    "purchaserIsCompany" -> "YES",
-    "surNameOrCompanyName" -> "Test Company",
-    "houseNumber" -> 23,
+    "returnResourceRef" -> "124",
+    "title" -> "Mr",
+    "forename1" -> "Test",
+    "forename2" -> "Man",
+    "surName" -> "Test",
+    "houseNumber" -> 1,
     "addressLine1" -> "Test Street",
-    "addressLine2" -> JsNull,
+    "addressLine2" -> "Apartment 5",
     "addressLine3" -> JsNull,
     "addressLine4" -> JsNull,
     "postcode" -> "TE23 5TT",
-    "transactionType" -> "O"
+    "isRepresentedByAgent" -> "No"
   )
 
   private val validPrelimReturn = Json.fromJson[PrelimReturn](validPrelimReturnJson).asOpt.get

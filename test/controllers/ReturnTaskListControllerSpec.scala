@@ -74,16 +74,19 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         )
 
         val mockVendorReturn = new VendorReturn(
-          stornId = "id",
-          purchaserIsCompany = "YES",
-          surNameOrCompanyName = "Test",
-          houseNumber = Some(34),
-          addressLine1 = "test address",
-          addressLine2 = None,
+          stornId = "12345",
+          returnResourceRef = "124",
+          title = "Mr",
+          forename1 = "Test",
+          forename2 = Some("Man"),
+          surName = "Test",
+          houseNumber = Some(1),
+          addressLine1 = "Test Street",
+          addressLine2 = Some("Apartment 5"),
           addressLine3 = None,
           addressLine4 = None,
-          transactionType = "O",
-          postcode = None
+          postcode = Some("TE23 5TT"),
+          isRepresentedByAgent = "No"
         )
         
         val mockFullReturn = new FullReturn(Some(mockPrelimReturn), Some(mockVendorReturn))
@@ -124,16 +127,19 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         )
         
         val mockVendorReturn = new VendorReturn(
-          stornId = "id",
-          purchaserIsCompany = "YES",
-          surNameOrCompanyName = "Test",
-          houseNumber = Some(34),
-          addressLine1 = "test address",
-          addressLine2 = None,
+          stornId = "12345",
+          returnResourceRef = "124",
+          title = "Mr",
+          forename1 = "Test",
+          forename2 = Some("Man"),
+          surName = "Test",
+          houseNumber = Some(1),
+          addressLine1 = "Test Street",
+          addressLine2 = Some("Apartment 5"),
           addressLine3 = None,
           addressLine4 = None,
-          transactionType = "O",
-          postcode = None
+          postcode = Some("TE23 5TT"),
+          isRepresentedByAgent = "No"
         )
         
         val mockFullReturn = new FullReturn(Some(mockPrelimReturn), Some(mockVendorReturn))
@@ -220,17 +226,21 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         )
         
         val mockVendorReturn = new VendorReturn(
-          stornId = "id",
-          purchaserIsCompany = "YES",
-          surNameOrCompanyName = "Test",
-          houseNumber = Some(34),
-          addressLine1 = "test address",
-          addressLine2 = None,
+          stornId = "12345",
+          returnResourceRef = "124",
+          title = "Mr",
+          forename1 = "Test",
+          forename2 = Some("Man"),
+          surName = "Test",
+          houseNumber = Some(1),
+          addressLine1 = "Test Street",
+          addressLine2 = Some("Apartment 5"),
           addressLine3 = None,
           addressLine4 = None,
-          transactionType = "O",
-          postcode = None
+          postcode = Some("TE23 5TT"),
+          isRepresentedByAgent = "No"
         )
+        
         val mockFullReturn = new FullReturn(Some(mockPrelimReturn), Some(mockVendorReturn))
         val testReturnId = Some("TEST-123")
 
