@@ -172,5 +172,72 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
         }
       }
     }
+    
+    "getVendorQuestions" - {
+
+      "must call stubConnector.stubVendorQuestions with correct returnId" in {
+        val mockStubConnector = mock[StubConnector]
+        val mockVendorReturn = mock[VendorReturn]
+        val testReturnId = "123456"
+
+        when(mockStubConnector.stubVendorQuestions(eqTo(testReturnId))(any(), any()))
+          .thenReturn(Future.successful(mockVendorReturn))
+
+        val service = new FullReturnService(mockStubConnector)
+        val result = service.getVendorQuestions(testReturnId).futureValue
+
+        result mustBe mockVendorReturn
+        verify(mockStubConnector, times(1)).stubVendorQuestions(eqTo(testReturnId))(any(), any())
+      }
+
+      "must return VendorReturn from connector" in {
+        val mockStubConnector = mock[StubConnector]
+        val mockVendorReturn = mock[VendorReturn]
+        val testReturnId = "TEST-123"
+
+        when(mockStubConnector.stubVendorQuestions(eqTo(testReturnId))(any(), any()))
+          .thenReturn(Future.successful(mockVendorReturn))
+
+        val service = new FullReturnService(mockStubConnector)
+        val result = service.getVendorQuestions(testReturnId).futureValue
+
+        result mustBe mockVendorReturn
+      }
+
+      "must handle connector failure" in {
+        val mockStubConnector = mock[StubConnector]
+        val testReturnId = "123456"
+
+        when(mockStubConnector.stubVendorQuestions(eqTo(testReturnId))(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Connection error")))
+
+        val service = new FullReturnService(mockStubConnector)
+
+        whenReady(service.getVendorQuestions(testReturnId).failed) { exception =>
+          exception mustBe a[RuntimeException]
+          exception.getMessage mustBe "Connection error"
+        }
+
+        verify(mockStubConnector, times(1)).stubVendorQuestions(eqTo(testReturnId))(any(), any())
+      }
+
+      "must handle different returnId formats" in {
+        val mockStubConnector = mock[StubConnector]
+        val mockVendorReturn = mock[VendorReturn]
+        val returnIds = List("123", "ABC-123", "test-return-id")
+
+        returnIds.foreach { testReturnId =>
+          when(mockStubConnector.stubVendorQuestions(eqTo(testReturnId))(any(), any()))
+            .thenReturn(Future.successful(mockVendorReturn))
+
+          val service = new FullReturnService(mockStubConnector)
+          val result = service.getVendorQuestions(testReturnId).futureValue
+
+          result mustBe mockVendorReturn
+          verify(mockStubConnector, times(1)).stubVendorQuestions(eqTo(testReturnId))(any(), any())
+          reset(mockStubConnector)
+        }
+      }
+    }
   }
 }
