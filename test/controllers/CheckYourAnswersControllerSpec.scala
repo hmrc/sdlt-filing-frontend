@@ -17,43 +17,268 @@
 package controllers
 
 import base.SpecBase
+import connectors.StubConnector
+import models.{ReturnId, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
+import play.api.libs.json.{JsNull, JsObject, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
+import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 import views.html.CheckYourAnswersView
 
-class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+import java.time.Instant
+import scala.concurrent.Future
+
+class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
+
+  private val mockSessionRepository = mock[SessionRepository]
+  private val mockStubConnector = mock[StubConnector]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSessionRepository)
+  }
 
   "Check Your Answers Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "onPageLoad" - {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      "must redirect to BeforeStartReturnController when the UserAnswers data is empty" in {
 
-      running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-        val result = route(application, request).value
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
-        val view = application.injector.instanceOf[CheckYourAnswersView]
-        val list = SummaryListViewModel(Seq.empty)
+        running(application) {
+          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.BeforeStartReturnController.onPageLoad().url
+        }
+      }
+
+      "must return OK and the correct view when UserAnswers contains valid data" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = None,
+          data = Json.obj(
+            "purchaserIsIndividual" -> "YES",
+            "purchaserSurnameOrCompanyName" -> "Test Company",
+            "purchaserAddress" -> Json.obj(
+              "houseNumber" -> JsNull,
+              "line1" -> "Test Street",
+              "line2" -> JsNull,
+              "line3" -> JsNull,
+              "line4" -> JsNull,
+              "line5" -> JsNull ,
+              "postcode" ->  JsNull,
+              "country" -> JsNull,
+              "addressValidated" -> false
+            ),
+            "transactionType" -> "O"
+          ),
+          lastUpdated = Instant.now
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[CheckYourAnswersView]
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must redirect to Journey Recovery when no existing data is found" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "onSubmit" - {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      "must redirect to ReturnTaskListController when all required data is present and valid" in {
 
-      running(application) {
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = None,
+          data = Json.obj(
+            "purchaserIsIndividual" -> "YES",
+            "purchaserSurnameOrCompanyName" -> "Test Company",
+            "purchaserAddress" -> Json.obj(
+              "houseNumber" -> JsNull,
+              "line1" -> "Test Street",
+              "line2" -> JsNull,
+              "line3" -> JsNull,
+              "line4" -> JsNull,
+              "line5" -> JsNull ,
+              "postcode" ->  JsNull,
+              "country" -> JsNull,
+              "addressValidated" -> false
+            ),
+            "transactionType" -> "O"
+          ),
+          lastUpdated = Instant.now
+        )
 
-        val result = route(application, request).value
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        when(mockStubConnector.stubPrelimReturnId(any())(any(),any())).thenReturn(Future.successful(ReturnId("12345")))
+
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StubConnector].toInstance(mockStubConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad(Some("12345")).url
+        }
+      }
+
+      "must redirect back to CheckYourAnswersController when required data is missing or invalid" in {
+
+        val incompleteData = Json.obj(
+          "purchaserIsIndividual" -> "Individual"
+          // Missing other required fields
+        )
+
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          data = incompleteData
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        when(mockStubConnector.stubPrelimReturnId(any())(any(), any())).thenReturn(Future.successful(ReturnId("12345")))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StubConnector].toInstance(mockStubConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must redirect to CheckYourAnswersController when returnId is an empty string" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = None,
+          data = Json.obj(
+            "purchaserIsIndividual" -> "YES",
+            "purchaserSurnameOrCompanyName" -> "Test Company",
+            "purchaserAddress" -> Json.obj(
+              "houseNumber" -> JsNull,
+              "line1" -> "Test Street",
+              "line2" -> JsNull,
+              "line3" -> JsNull,
+              "line4" -> JsNull,
+              "line5" -> JsNull,
+              "postcode" -> JsNull,
+              "country" -> JsNull,
+              "addressValidated" -> false
+            ),
+            "transactionType" -> "O"
+          ),
+          lastUpdated = Instant.now
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        when(mockStubConnector.stubPrelimReturnId(any())(any(), any())).thenReturn(Future.successful(ReturnId("")))
+
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StubConnector].toInstance(mockStubConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must redirect to JourneyRecoveryController when session repository returns no data" in {
+
+        val userAnswers = None
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(userAnswers))
+
+        val application = applicationBuilder(userAnswers = userAnswers)
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StubConnector].toInstance(mockStubConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must redirect to JourneyRecoveryController when no existing data is found" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
     }
   }

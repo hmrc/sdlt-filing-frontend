@@ -12,7 +12,8 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
+GET         /preliminary-questions/check-answers                          controllers.CheckYourAnswersController.onPageLoad()
+POST        /preliminary-questions/check-answers                          controllers.CheckYourAnswersController.onSubmit()
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
