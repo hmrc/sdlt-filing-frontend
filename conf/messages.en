@@ -10,7 +10,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
-site.save.continue = Save and Continue
+site.save.continue = Save and continue
 
 app.title = Stamp Taxes Online
 
