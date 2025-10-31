@@ -10,7 +10,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
-site.save.continue = Save and Continue
+site.save.continue = Save and continue
 
 app.title = Stamp Taxes Online
 
@@ -122,7 +122,7 @@ addressLookup.prelimQuestionsAddress.editPage.submitLabel               = Contin
 addressLookup.prelimQuestionsAddress.confirmPage.title                  = Review and confirm the address of the land or property - Preliminary questions
 addressLookup.prelimQuestionsAddress.confirmPage.heading                = Review and confirm the address of the land or property
 addressLookup.prelimQuestionsAddress.confirmPage.changeLinkText         = Edit this address
-addressLookup.prelimQuestionsAddress.confirmPage.submitLabel            = Continue address
+addressLookup.prelimQuestionsAddress.confirmPage.submitLabel            = Confirm address
 
 addressLookup.prelimQuestionsAddress.countryPicker.title                = Find your home address - Preliminary questions
 addressLookup.prelimQuestionsAddress.countryPicker.heading              = Find your home address

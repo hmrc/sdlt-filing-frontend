@@ -55,7 +55,8 @@ class AddressLookupConfiguration @Inject()(implicit appConfig: FrontendAppConfig
         ),
         manualAddressEntryConfig = ManualAddressEntryConfig(
           mandatoryFields = mandatoryFieldsConfigModel
-        )
+        ),
+        pageHeadingStyle = "govuk-heading-l"
       ),
       labels = AddressMessageLanguageModel(
         en = AddressMessagesModel.forJourney(journeyId.toString, english, useUkMode, optName),

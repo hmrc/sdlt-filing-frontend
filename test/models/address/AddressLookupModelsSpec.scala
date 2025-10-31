@@ -173,14 +173,16 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
       ukMode = Some(true),
       selectPageConfig = selectConfig,
       confirmPageConfig = confirmConfig,
-      manualAddressEntryConfig = manualAddressEntryConfig
+      manualAddressEntryConfig = manualAddressEntryConfig,
+      pageHeadingStyle = "govuk-heading-l"
     )
 
     val minimalOptions = AddressLookupOptionsModel(
       continueUrl = "/continue",
       selectPageConfig = AddressLookupSelectConfigModel(),
       confirmPageConfig = AddressLookupConfirmConfigModel(),
-      manualAddressEntryConfig = ManualAddressEntryConfig(mandatoryFields = MandatoryFieldsConfigModel())
+      manualAddressEntryConfig = ManualAddressEntryConfig(mandatoryFields = MandatoryFieldsConfigModel()),
+      pageHeadingStyle = "govuk-heading-l"
     )
 
     ".writes" - {

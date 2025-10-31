@@ -30,7 +30,8 @@ case class AddressLookupOptionsModel(continueUrl: String,
                                      ukMode: Option[Boolean] = None,
                                      selectPageConfig: AddressLookupSelectConfigModel,
                                      confirmPageConfig: AddressLookupConfirmConfigModel,
-                                     manualAddressEntryConfig: ManualAddressEntryConfig
+                                     manualAddressEntryConfig: ManualAddressEntryConfig,
+                                     pageHeadingStyle: String
                                     )
 
 object AddressLookupOptionsModel {
