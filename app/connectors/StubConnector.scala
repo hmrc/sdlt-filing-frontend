@@ -17,12 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.PrelimReturn
+import models.{PrelimReturn, VendorReturn}
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps}
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,6 +41,16 @@ class StubConnector @Inject()(val http: HttpClientV2,
       .execute[PrelimReturn]
       .recover{
         case e => throw logResponse(e, "stubPrelimQuestions")
+      }
+  }
+
+  def stubVendorQuestions(returnId: String)(implicit hc: HeaderCarrier,
+                                             request: Request[_]): Future[VendorReturn] = {
+    //Make sure to verify this is correct URL path
+    http.get(url"$sdltStubUrl/stamp-duty-land-tax-stub/vendor/returns?returnId=$returnId")
+      .execute[VendorReturn]
+      .recover {
+        case e => throw logResponse(e, "stubVendorQuestions")
       }
   }
 

@@ -85,6 +85,8 @@ returnTaskList.heading = returnTaskList
 
 tasklist.prelimQuestion.details = Prelim Questions
 tasklist.prelimQuestion.heading = Prelim Questions
+tasklist.vendorQuestion.details = Vendor Questions
+tasklist.vendorQuestion.heading = Vendor Questions
 tasklist.complete = Complete
 tasklist.notStarted = Not Started
 

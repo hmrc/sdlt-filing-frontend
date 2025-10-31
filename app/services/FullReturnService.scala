@@ -17,7 +17,7 @@
 package services
 
 import connectors.StubConnector
-import models.{FullReturn, PrelimReturn}
+import models.{FullReturn, PrelimReturn, VendorReturn}
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,9 +35,10 @@ class FullReturnService @Inject()(stubConnector: StubConnector)(implicit ec: Exe
       case Some(id) => {
         for {
           prelimReturn <- getPrelimQuestions(id)
-        } yield new FullReturn(Some(prelimReturn))
+          vendorReturn <- getVendorQuestions(id)
+        } yield new FullReturn(Some(prelimReturn), Some(vendorReturn))
       }
-      case _ => Future(new FullReturn(None))
+      case _ => Future(new FullReturn(None, None))
     }
   }
 
@@ -47,5 +48,9 @@ class FullReturnService @Inject()(stubConnector: StubConnector)(implicit ec: Exe
     stubConnector.stubPremlimQuestions(returnId)
   }
 
+  def getVendorQuestions(returnId: String)(implicit hc: HeaderCarrier, request: Request[_]): Future[VendorReturn] = {
+    logger.info("[getVendorQuestions] Getting vendor questions")
+    stubConnector.stubVendorQuestions(returnId)
+  }
   
 }

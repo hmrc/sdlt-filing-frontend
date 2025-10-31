@@ -19,7 +19,8 @@ package models
 import play.api.libs.json.{Json, OFormat}
 
 case class FullReturn(
-                         prelimReturn: Option[PrelimReturn]
+                         prelimReturn: Option[PrelimReturn],
+                         vendorReturn: Option[VendorReturn]
                        )
 
 object FullReturn {
