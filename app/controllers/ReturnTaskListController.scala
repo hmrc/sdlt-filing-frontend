@@ -38,10 +38,22 @@ class ReturnTaskListController @Inject()(
                                        view: ReturnTaskListView
                                      ) (implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
+  //See sdlt-team-1 Slack channel canvas page for breakdown on the role of the controller and its functionality
+
   def onPageLoad(returnId: Option[String] = None): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       for {
         fullReturn <- fullReturnService.getFullReturn(returnId)
+        
+        /*
+        Controller needs to place every section (prelim, vendor, etc) within each relevant part after pulling the full return in from the stub/backend
+        Functions and heavy lifting to be done in ReturnTaskListService
+        Take from full return, push into mongo session
+
+        Call getFullReturn, full return then pulled from stub, which will have all data so far that's same as getReturn endpoint
+        Make sure to update mongo session with all data pulled back from get full return
+        */
+
       } yield {
         val sections = List(Some(PrelimTaskList.build(fullReturn)), Some(VendorTaskList.build(fullReturn))).flatten
         Ok(view(sections: _*))

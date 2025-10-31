@@ -22,15 +22,18 @@ import play.api.libs.json.{Json, OFormat}
 
 case class VendorReturn(
                        stornId: String,
-                       purchaserIsCompany: String,
-                       surNameOrCompanyName: String,
+                       returnResourceRef: String,
+                       title: String,
+                       forename1: String,
+                       forename2: Option[String],
+                       surName: String,
                        houseNumber: Option[Int],
                        addressLine1: String,
                        addressLine2: Option[String],
                        addressLine3: Option[String],
                        addressLine4: Option[String],
                        postcode: Option[String],
-                       transactionType: String
+                       isRepresentedByAgent: String
                        )
 
 object VendorReturn {

@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package forms
+package services
 
-import javax.inject.Inject
+class ReturnTaskListService {
 
-import forms.mappings.Mappings
-import models.TransactionType
-import play.api.data.Form
-
-class TransactionTypeFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[TransactionType] =
-    Form(
-      "value" -> enumerable[TransactionType]("transactionType.error.required")
-    )
+  //All functions within the ReturnTaskListController to be executed and built here.
+  
 }

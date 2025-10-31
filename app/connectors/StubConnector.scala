@@ -46,8 +46,8 @@ class StubConnector @Inject()(val http: HttpClientV2,
 
   def stubVendorQuestions(returnId: String)(implicit hc: HeaderCarrier,
                                              request: Request[_]): Future[VendorReturn] = {
-    //replace URL with vendor stub url
-    http.get(url"$sdltStubUrl/stamp-duty-land-tax-stub/prelim/returns?returnId=$returnId")
+    //Make sure to verify this is correct URL path
+    http.get(url"$sdltStubUrl/stamp-duty-land-tax-stub/vendor/returns?returnId=$returnId")
       .execute[VendorReturn]
       .recover {
         case e => throw logResponse(e, "stubVendorQuestions")

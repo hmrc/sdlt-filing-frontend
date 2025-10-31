@@ -18,8 +18,6 @@ package controllers
 
 import controllers.actions.*
 import forms.TransactionTypeFormProvider
-
-import javax.inject.Inject
 import models.{Mode, TransactionType}
 import navigation.Navigator
 import pages.TransactionTypePage
@@ -30,6 +28,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.TransactionTypeView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionTypeController @Inject()(
