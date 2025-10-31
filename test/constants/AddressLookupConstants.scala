@@ -115,7 +115,8 @@ object AddressLookupConstants {
       ),
       manualAddressEntryConfig = ManualAddressEntryConfig(
         mandatoryFields = testMandatoryFieldsConfigModel
-      )
+      ),
+      pageHeadingStyle = "govuk-heading-l"
     ),
     labels = AddressMessageLanguageModel(
       en = AddressMessagesModel(

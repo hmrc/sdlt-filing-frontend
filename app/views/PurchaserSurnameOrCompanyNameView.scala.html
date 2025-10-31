@@ -15,7 +15,7 @@
  *@
 
 @import viewmodels.InputWidth._
-
+@import viewmodels.LabelSize.Large
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
@@ -39,7 +39,7 @@
             @govukInput(
                 InputViewModel(
                     field = form("purchaserSurnameOrCompanyName"),
-                    label = LabelViewModel(messages( (key + ".checkYourAnswersLabel"))).asPageHeading()
+                    label = LabelViewModel(messages( (key + ".checkYourAnswersLabel"))).asPageHeading(size = Large)
                 )
                 .withWidth(Full)
                 .withHint(
