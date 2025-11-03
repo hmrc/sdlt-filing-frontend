@@ -16,10 +16,10 @@
 
 package viewmodels.taskList
 
-
 import base.SpecBase
 import config.FrontendAppConfig
-import models.{FullReturn, PrelimReturn, VendorReturn}
+import constants.FullReturnConstants
+import models.*
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -30,38 +30,9 @@ import viewmodels.tasklist.{TLCannotStart, TLCompleted, TLFailed, TLInProgress, 
 import scala.concurrent.ExecutionContext
 
 class TaskListSectionSpec extends SpecBase {
-
-  private val validPrelimReturn = PrelimReturn(
-    stornId = "12345",
-    purchaserIsCompany = "YES",
-    surNameOrCompanyName = "Test Company",
-    houseNumber = Some(23),
-    addressLine1 = "Test Street",
-    addressLine2 = None,
-    addressLine3 = None,
-    addressLine4 = None,
-    postcode = Some("TE23 5TT"),
-    transactionType = "O"
-  )
-
-  private val validVendorReturn = VendorReturn(
-    stornId = "12345",
-    returnResourceRef = "124",
-    title = "Mr",
-    forename1 = "Test",
-    forename2 = Some("Man"),
-    surName = "Test",
-    houseNumber = Some(1),
-    addressLine1 = "Test Street",
-    addressLine2 = Some("Apartment 5"),
-    addressLine3 = None,
-    addressLine4 = None,
-    postcode = Some("TE23 5TT"),
-    isRepresentedByAgent = "No"
-  )
-
-  private val fullReturnComplete = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-  private val fullReturnIncomplete = FullReturn(None, None)
+  
+  private val fullReturnComplete = FullReturnConstants.completeFullReturn
+  private val fullReturnIncomplete = FullReturnConstants.incompleteFullReturn
 
   "TaskListSection" - {
 
@@ -127,7 +98,7 @@ class TaskListSectionSpec extends SpecBase {
 
     "sections" - {
 
-      "must return list with prelim section when prelimReturn is present" in {
+      "must return list with sections when FullReturn has data" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -139,12 +110,12 @@ class TaskListSectionSpec extends SpecBase {
 
           val result = TaskListSections.sections(fullReturnComplete)
 
-          result.size mustBe 1
+          result.size mustBe 2 // PrelimTaskList and VendorTaskList
           result.head mustBe a[TaskListSection]
         }
       }
 
-      "must return list with prelim section when prelimReturn is absent" in {
+      "must return list with sections when FullReturn is minimal" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -156,7 +127,7 @@ class TaskListSectionSpec extends SpecBase {
 
           val result = TaskListSections.sections(fullReturnIncomplete)
 
-          result.size mustBe 1
+          result.size mustBe 2
           result.head mustBe a[TaskListSection]
         }
       }
@@ -175,6 +146,25 @@ class TaskListSectionSpec extends SpecBase {
 
           result must not be empty
           result.forall(_ != null) mustBe true
+        }
+      }
+
+      "must create sections with correct structure" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          implicit val hc: HeaderCarrier = HeaderCarrier()
+          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
+          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+
+          val result = TaskListSections.sections(fullReturnComplete)
+
+          result.foreach { section =>
+            section.heading must not be empty
+            section.rows must not be empty
+          }
         }
       }
     }
@@ -227,6 +217,23 @@ class TaskListSectionSpec extends SpecBase {
           val allCompleteResult = TaskListSections.allComplete(fullReturnComplete)
 
           allCompleteResult mustBe sectionsResult.forall(_.isComplete)
+        }
+      }
+
+      "must handle empty FullReturn correctly" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          implicit val hc: HeaderCarrier = HeaderCarrier()
+          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
+          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+
+          val emptyFullReturn = FullReturn()
+          val result = TaskListSections.allComplete(emptyFullReturn)
+
+          result mustBe a[Boolean]
         }
       }
     }
@@ -283,6 +290,15 @@ class TaskListSectionSpec extends SpecBase {
       modified.messageKey mustBe original.messageKey
       modified.url mustBe original.url
       modified.tagId mustBe original.tagId
+    }
+
+    "must support copy with canEdit" in {
+      val original = TaskListSectionRow("test", "/url", "tag", TLCompleted, canEdit = false)
+      val modified = original.copy(canEdit = true)
+
+      modified.canEdit mustBe true
+      modified.messageKey mustBe original.messageKey
+      modified.status mustBe original.status
     }
   }
 

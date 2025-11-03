@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{PrelimReturn, VendorReturn}
+import models.{FullReturn, PrelimReturn, VendorReturn}
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -35,23 +35,18 @@ class StubConnector @Inject()(val http: HttpClientV2,
 
   lazy val sdltStubUrl: String = config.baseUrl("stamp-duty-land-tax-stub")
 
-  def stubPremlimQuestions(returnId: String)(implicit hc: HeaderCarrier,
-                                             request: Request[_]): Future[PrelimReturn] = {
-    http.get(url"$sdltStubUrl/stamp-duty-land-tax-stub/prelim/returns?returnId=$returnId")
-      .execute[PrelimReturn]
-      .recover{
-        case e => throw logResponse(e, "stubPrelimQuestions")
-      }
-  }
-
-  def stubVendorQuestions(returnId: String)(implicit hc: HeaderCarrier,
-                                             request: Request[_]): Future[VendorReturn] = {
-    //Make sure to verify this is correct URL path
-    http.get(url"$sdltStubUrl/stamp-duty-land-tax-stub/vendor/returns?returnId=$returnId")
-      .execute[VendorReturn]
-      .recover {
-        case e => throw logResponse(e, "stubVendorQuestions")
-      }
+  def stubGetFullReturn(returnId: Option[String] = None)(implicit hc: HeaderCarrier,
+                                                         request: Request[_]): Future[FullReturn] = {
+    returnId match {
+      case Some(id) =>
+        http.get(url"$sdltStubUrl/stamp-duty-land-tax-stub/full-return/returns?returnId=$id")
+          .execute[FullReturn]
+          .recover{
+            case e => throw logResponse(e, "stubFullReturns")
+          }
+      case None =>
+        Future.failed(new IllegalArgumentException("returnId is required for stubGetFullReturn"))
+    }
   }
 
   private def logResponse(e: Throwable, method: String): Throwable = {

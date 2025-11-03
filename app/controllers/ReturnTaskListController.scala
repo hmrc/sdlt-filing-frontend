@@ -21,13 +21,15 @@ import controllers.actions.*
 
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
 import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.tasklist.{PrelimTaskList, VendorTaskList}
 import views.html.ReturnTaskListView
+import models.{NormalMode, UserAnswers}
+import repositories.SessionRepository
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnTaskListController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -35,28 +37,29 @@ class ReturnTaskListController @Inject()(
                                        fullReturnService: FullReturnService,
                                        getData: DataRetrievalAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: ReturnTaskListView
+                                       view: ReturnTaskListView,
+                                       sessionRepository: SessionRepository
                                      ) (implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
-
-  //See sdlt-team-1 Slack channel canvas page for breakdown on the role of the controller and its functionality
 
   def onPageLoad(returnId: Option[String] = None): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-      for {
-        fullReturn <- fullReturnService.getFullReturn(returnId)
-        
-        /*
-        Controller needs to place every section (prelim, vendor, etc) within each relevant part after pulling the full return in from the stub/backend
-        Functions and heavy lifting to be done in ReturnTaskListService
-        Take from full return, push into mongo session
+ 
+      val effectiveReturnId = returnId.orElse(request.userAnswers.flatMap(_.returnId))
 
-        Call getFullReturn, full return then pulled from stub, which will have all data so far that's same as getReturn endpoint
-        Make sure to update mongo session with all data pulled back from get full return
-        */
-
-      } yield {
-        val sections = List(Some(PrelimTaskList.build(fullReturn)), Some(VendorTaskList.build(fullReturn))).flatten
-        Ok(view(sections: _*))
+      effectiveReturnId.fold(
+        Future.successful(Redirect(controllers.routes.BeforeStartReturnController.onPageLoad()))
+      ) { id =>
+        for {
+          fullReturn <- fullReturnService.getFullReturn(Some(id))
+          userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn))
+          _ <- sessionRepository.set(userAnswers)
+        } yield {
+          val sections = List(
+            Some(PrelimTaskList.build(fullReturn)),
+            Some(VendorTaskList.build(fullReturn))
+          ).flatten
+          Ok(view(sections: _*))
+        }
       }
   }
 }

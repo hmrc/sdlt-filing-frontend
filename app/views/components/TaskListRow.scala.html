@@ -28,9 +28,23 @@
 
 <li class="govuk-task-list__item govuk-task-list__item--with-link">
     <div class="govuk-task-list__name-and-hint">
-        <a class="govuk-link govuk-task-list__link" href="@url" aria-describedby="@{tagId}" id="task-list-link-@{message.toLowerCase().replace(" ", "-")}">
-            <span>@{message}</span>
-        </a>
+
+        @{
+            (status, canEdit) match {
+                case (TLCannotStart, _) => {
+                        <span>{message}</span>
+                }
+                case (TLCompleted, false) => {
+                        <span>{message}</span>
+                }
+                case _ => {
+                        <a class="govuk-link govuk-task-list__link" href={url} aria-describedby={tagId} id={s"task-list-link-${message.toLowerCase().replace(" ", "-")}"}>
+                        <span>{message}</span>
+                        </a>
+                }
+            }
+        }
+
     </div>
     <div class="govuk-task-list__status" id="@{tagId}">
     @{
@@ -43,7 +57,7 @@
                 govukTag(Tag(Text(messages("tasklist.inProgress")), classes = "app-task-list__task-completed govuk-tag--blue no-wrap", attributes = Map("id" -> {"status-" + tagId})))
             case TLCompleted =>
                 govukTag(Tag(Text(messages("tasklist.complete")), classes = "app-task-list__task-completed no-wrap", attributes = Map("id" -> {"status-" + tagId})))
-            case `TLFailed` =>
+            case TLFailed =>
                 govukTag(Tag(Text(messages("tasklist.failed")), classes = "app-task-list__task-completed govuk-tag--red no-wrap", attributes = Map("id" -> {"status-" + tagId})))
         }
     }

@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import queries.{Gettable, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -26,6 +26,7 @@ import scala.util.{Failure, Success, Try}
 final case class UserAnswers(
                               id: String,
                               returnId: Option[String] = None,
+                              fullReturn: Option[FullReturn] = None,
                               data: JsObject = Json.obj(),
                               lastUpdated: Instant = Instant.now
                             ) {
@@ -75,6 +76,7 @@ object UserAnswers {
     (
       (__ \ "_id").read[String] and
       (__ \ "returnId").readNullable[String] and
+      (__ \ "fullReturn").readNullable[FullReturn] and
       (__ \ "data").read[JsObject] and
       (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
     ) (UserAnswers.apply _)
@@ -87,9 +89,10 @@ object UserAnswers {
     (
       (__ \ "_id").write[String] and
       (__ \ "returnId").writeNullable[String] and
+      (__ \ "fullReturn").writeNullable[FullReturn] and
       (__ \ "data").write[JsObject] and
       (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-    ) (ua => (ua.id, ua.returnId, ua.data, ua.lastUpdated))
+    ) (ua => (ua.id, ua.returnId, ua.fullReturn, ua.data, ua.lastUpdated))
   }
 
   implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)

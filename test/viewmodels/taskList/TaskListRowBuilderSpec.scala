@@ -17,6 +17,7 @@
 package viewmodels.taskList
 
 import base.SpecBase
+import constants.FullReturnConstants
 import models.{FullReturn, PrelimReturn, VendorReturn}
 import viewmodels.tasklist.{TLCannotStart, TLCompleted, TLFailed, TLInProgress, TLNotStarted, TaskListRowBuilder}
 
@@ -51,8 +52,8 @@ class TaskListRowBuilderSpec extends SpecBase {
     isRepresentedByAgent = "No"
   )
 
-  private val fullReturnComplete = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-  private val fullReturnIncomplete = FullReturn(None, None)
+  private val fullReturnComplete = FullReturnConstants.completeFullReturn
+  private val fullReturnIncomplete = FullReturnConstants.incompleteFullReturn
 
   "TaskListRowBuilder" - {
 
@@ -111,7 +112,7 @@ class TaskListRowBuilderSpec extends SpecBase {
           messageKey = _ => "test.key",
           url = _ => _ => "/test",
           tagId = "testId",
-          checks = fr => Seq(fr.prelimReturn.isDefined),
+          checks = fr => Seq(fr.transaction.isDefined),
           prerequisites = _ => Seq()
         )
 
@@ -370,7 +371,7 @@ class TaskListRowBuilderSpec extends SpecBase {
 
       "must use messageKey from FullReturn" in {
         val builder = TaskListRowBuilder(
-          messageKey = fr => if (fr.prelimReturn.isDefined) "complete.key" else "incomplete.key",
+          messageKey = fr => if (fr.transaction.isDefined) "complete.key" else "incomplete.key",
           url = _ => _ => "/test",
           tagId = "testId",
           checks = _ => Seq(true),

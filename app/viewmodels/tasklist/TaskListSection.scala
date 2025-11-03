@@ -38,7 +38,8 @@ object TaskListSections {
                                        hc: HeaderCarrier,
                                        ec: ExecutionContext,
                                        request: Request[_]) = List(
-    Some(PrelimTaskList.build(fullReturn))
+    Some(PrelimTaskList.build(fullReturn)),
+    Some(VendorTaskList.build(fullReturn))
   ).flatten
   def allComplete(fullReturn: FullReturn)
                  (implicit messagesApi: Messages, appConfig: FrontendAppConfig, hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Boolean =

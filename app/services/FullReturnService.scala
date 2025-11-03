@@ -17,7 +17,7 @@
 package services
 
 import connectors.StubConnector
-import models.{FullReturn, PrelimReturn, VendorReturn}
+import models.FullReturn
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,29 +28,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class FullReturnService @Inject()(stubConnector: StubConnector)(implicit ec: ExecutionContext) {
   
   val logger: Logger = LoggerFactory.getLogger(getClass)
-
-  def getFullReturn(returnId: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Future[FullReturn] = {
-    logger.info("[getFullReturn] Getting full return")
-    returnId match {
-      case Some(id) => {
-        for {
-          prelimReturn <- getPrelimQuestions(id)
-          vendorReturn <- getVendorQuestions(id)
-        } yield new FullReturn(Some(prelimReturn), Some(vendorReturn))
-      }
-      case _ => Future(new FullReturn(None, None))
-    }
+  
+  def getFullReturn(returnId: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_]): Future[FullReturn] = {
+    logger.info("[getFullReturnBE] Getting Full Return")
+    stubConnector.stubGetFullReturn(returnId)
   }
-
-
-  def getPrelimQuestions(returnId: String)(implicit hc: HeaderCarrier, request: Request[_]): Future[PrelimReturn] = {
-    logger.info("[getPrelimQuestions] Getting prelim questions")
-    stubConnector.stubPremlimQuestions(returnId)
-  }
-
-  def getVendorQuestions(returnId: String)(implicit hc: HeaderCarrier, request: Request[_]): Future[VendorReturn] = {
-    logger.info("[getVendorQuestions] Getting vendor questions")
-    stubConnector.stubVendorQuestions(returnId)
-  }
+  
   
 }
