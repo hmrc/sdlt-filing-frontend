@@ -18,14 +18,15 @@ package connectors
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import models.PrelimReturn
+import constants.FullReturnConstants
+import models.FullReturn
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsNull, JsValue, Json}
+import play.api.libs.json.{JsNull, JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.*
 import utils.WireMockHelper
@@ -56,42 +57,30 @@ class StubConnectorISpec
 
   private val testReturnId = "123456"
 
-  // Complete JSON with all required fields
-  private val prelimReturnJson: JsValue = Json.obj(
-    "stornId" -> testReturnId,
-    "purchaserIsCompany" -> "YES",
-    "surNameOrCompanyName" -> "Test Company",
-    "houseNumber" -> 23,
-    "addressLine1" -> "Test Street",
-    "addressLine2" -> JsNull,
-    "addressLine3" -> JsNull,
-    "addressLine4" -> JsNull,
-    "postcode" -> "TE23 5TT",
-    "transactionType" -> "O"
-  )
+  private val fullReturnJson: JsValue = Json.toJson(FullReturnConstants.completeFullReturn)
 
   "StubConnector Integration Tests" - {
 
-    "stubPremlimQuestions" - {
+    "stubGetFullReturn" - {
 
-      "must return PrelimReturn when the stub returns 200 OK" in {
+      "must return FullReturn when the stub returns 200 OK" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(prelimReturnJson.toString())
+                .withBody(fullReturnJson.toString())
             )
         )
 
-        val result = connector.stubPremlimQuestions(testReturnId).futureValue
+        val result = connector.stubGetFullReturn(Some(testReturnId)).futureValue
 
-        result mustBe a[PrelimReturn]
+        result mustBe a[FullReturn]
 
         server.verify(
-          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
         )
       }
@@ -100,21 +89,13 @@ class StubConnectorISpec
         val differentReturnIds = List("ABC-123", "TEST-789", "12345")
 
         differentReturnIds.foreach { returnId =>
-          val customJson = Json.obj(
+          val customJson = fullReturnJson.as[JsObject] ++ Json.obj(
             "stornId" -> returnId,
-            "purchaserIsCompany" -> "YES",
-            "surNameOrCompanyName" -> "Test Company",
-            "houseNumber" -> 23,
-            "addressLine1" -> "Test Street",
-            "addressLine2" -> JsNull,
-            "addressLine3" -> JsNull,
-            "addressLine4" -> JsNull,
-            "postcode" -> "TE23 5TT",
-            "transactionType" -> "O"
+            "returnResourceRef" -> s"RRF-$returnId"
           )
 
           server.stubFor(
-            get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+            get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
               .withQueryParam("returnId", equalTo(returnId))
               .willReturn(
                 aResponse()
@@ -124,12 +105,12 @@ class StubConnectorISpec
               )
           )
 
-          val result = connector.stubPremlimQuestions(returnId).futureValue
+          val result = connector.stubGetFullReturn(Some(returnId)).futureValue
 
-          result mustBe a[PrelimReturn]
+          result mustBe a[FullReturn]
 
           server.verify(
-            getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+            getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
               .withQueryParam("returnId", equalTo(returnId))
           )
         }
@@ -137,7 +118,7 @@ class StubConnectorISpec
 
       "must throw BadRequestException when stub returns 400 Bad Request" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
@@ -146,19 +127,19 @@ class StubConnectorISpec
             )
         )
 
-        val result = connector.stubPremlimQuestions(testReturnId).failed.futureValue
+        val result = connector.stubGetFullReturn(Some(testReturnId)).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
         result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
 
         server.verify(
-          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
         )
       }
 
       "must throw NotFoundException when stub returns 404 Not Found" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo("NONEXISTENT"))
             .willReturn(
               aResponse()
@@ -167,19 +148,19 @@ class StubConnectorISpec
             )
         )
 
-        val result = connector.stubPremlimQuestions("NONEXISTENT").failed.futureValue
+        val result = connector.stubGetFullReturn(Some("NONEXISTENT")).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
         result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
 
         server.verify(
-          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
         )
       }
 
       "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
@@ -188,19 +169,19 @@ class StubConnectorISpec
             )
         )
 
-        val result = connector.stubPremlimQuestions(testReturnId).failed.futureValue
+        val result = connector.stubGetFullReturn(Some(testReturnId)).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
         result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
 
         server.verify(
-          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
         )
       }
 
       "must throw UpstreamErrorResponse when stub returns 502 Bad Gateway" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
@@ -209,7 +190,7 @@ class StubConnectorISpec
             )
         )
 
-        val result = connector.stubPremlimQuestions(testReturnId).failed.futureValue
+        val result = connector.stubGetFullReturn(Some(testReturnId)).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
         result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 502
@@ -217,7 +198,7 @@ class StubConnectorISpec
 
       "must throw UpstreamErrorResponse when stub returns 503 Service Unavailable" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
@@ -226,7 +207,7 @@ class StubConnectorISpec
             )
         )
 
-        val result = connector.stubPremlimQuestions(testReturnId).failed.futureValue
+        val result = connector.stubGetFullReturn(Some(testReturnId)).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
         result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 503
@@ -234,27 +215,27 @@ class StubConnectorISpec
 
       "must include correct headers in the request" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(prelimReturnJson.toString())
+                .withBody(fullReturnJson.toString())
             )
         )
 
-        connector.stubPremlimQuestions(testReturnId).futureValue
+        connector.stubGetFullReturn(Some(testReturnId)).futureValue
 
         server.verify(
-          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withHeader("User-Agent", equalTo("sdlt-filing-frontend"))
         )
       }
 
       "must handle connection errors when service is unavailable" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
@@ -262,44 +243,31 @@ class StubConnectorISpec
             )
         )
 
-        val result = connector.stubPremlimQuestions(testReturnId).failed.futureValue
+        val result = connector.stubGetFullReturn(Some(testReturnId)).failed.futureValue
 
         result mustBe a[Throwable]
       }
 
-      "must correctly parse JSON response into PrelimReturn model" in {
-        val detailedPrelimReturnJson = Json.obj(
-          "stornId" -> "TEST-123",
-          "purchaserIsCompany" -> "NO",
-          "surNameOrCompanyName" -> "John Doe",
-          "houseNumber" -> 23,
-          "addressLine1" -> "Test Street",
-          "addressLine2" -> "Apartment 5",
-          "addressLine3" -> JsNull,
-          "addressLine4" -> JsNull,
-          "postcode" -> "TE23 5TT",
-          "transactionType" -> "R"
-        )
-
+      "must correctly parse JSON response into FullReturn model" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo("TEST-123"))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(detailedPrelimReturnJson.toString())
+                .withBody(fullReturnJson.toString())
             )
         )
 
-        val result = connector.stubPremlimQuestions("TEST-123").futureValue
+        val result = connector.stubGetFullReturn(Some("TEST-123")).futureValue
 
-        result mustBe a[PrelimReturn]
+        result mustBe a[FullReturn]
       }
 
       "must handle malformed JSON response" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
@@ -309,49 +277,55 @@ class StubConnectorISpec
             )
         )
 
-        val result = connector.stubPremlimQuestions(testReturnId).failed.futureValue
+        val result = connector.stubGetFullReturn(Some(testReturnId)).failed.futureValue
 
         result mustBe a[JsonParseException]
       }
 
       "must make GET request to correct endpoint" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(prelimReturnJson.toString())
+                .withBody(fullReturnJson.toString())
             )
         )
 
-        connector.stubPremlimQuestions(testReturnId).futureValue
+        connector.stubGetFullReturn(Some(testReturnId)).futureValue
 
         server.verify(
           1,
-          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
         )
       }
 
       "must not make multiple requests for a single call" in {
         server.stubFor(
-          get(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          get(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
             .withQueryParam("returnId", equalTo(testReturnId))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(prelimReturnJson.toString())
+                .withBody(fullReturnJson.toString())
             )
         )
 
-        connector.stubPremlimQuestions(testReturnId).futureValue
+        connector.stubGetFullReturn(Some(testReturnId)).futureValue
 
         server.verify(
           1,
-          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/prelim/returns"))
+          getRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/full-return/returns"))
         )
+      }
+
+      "must throw exception when returnId is None" in {
+        val result = connector.stubGetFullReturn(None).failed.futureValue
+
+        result mustBe a[IllegalArgumentException]
       }
     }
   }

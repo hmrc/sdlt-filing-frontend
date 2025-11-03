@@ -64,7 +64,7 @@ class TaskListRowViewSpec extends SpecBase {
         }
       }
 
-      "must include tag id attribute" in {
+      "must render as span (not link) when status is TLCannotStart" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -75,8 +75,12 @@ class TaskListRowViewSpec extends SpecBase {
           val html = view("Test Task", "/test-url", "myCustomTag", TLCannotStart)
           val doc = Jsoup.parse(html.toString())
 
-          val tag = doc.getElementById("task-list-link-test-task")
-          tag.text() mustBe "Test Task"
+          // Link should not exist
+          Option(doc.getElementById("task-list-link-test-task")) mustBe None
+
+          // But the text should still be visible as a span
+          doc.text() must include("Test Task")
+          doc.select("a.govuk-task-list__link") mustBe empty
         }
       }
     }
@@ -175,7 +179,27 @@ class TaskListRowViewSpec extends SpecBase {
         }
       }
 
-      "must render message as link when canEdit is false" in {
+      "must render message as link when canEdit is true" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+          val view = application.injector.instanceOf[TaskListRow]
+
+          val html = view("Test Task", "/test-url", "myCustomTag", TLCompleted, canEdit = true)
+          val doc = Jsoup.parse(html.toString())
+
+          val link = doc.getElementById("task-list-link-test-task")
+          link must not be null
+          link.attr("href") mustBe "/test-url"
+          link.text() must include("Test Task")
+
+          doc.select("a.govuk-task-list__link") must not be empty
+        }
+      }
+
+      "must render message as span when canEdit is false" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -184,22 +208,6 @@ class TaskListRowViewSpec extends SpecBase {
           val view = application.injector.instanceOf[TaskListRow]
 
           val html = view("Test Task", "/test-url", "testTagId", TLCompleted)
-          val doc = Jsoup.parse(html.toString())
-
-          val link = doc.select("a.govuk-link").first()
-          link.text() must include("Test Task")
-        }
-      }
-
-      "must render message as span when canEdit is true" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          val view = application.injector.instanceOf[TaskListRow]
-
-          val html = view("Test Task", "/test-url", "testTagId", TLCompleted, canEdit = true)
           val doc = Jsoup.parse(html.toString())
 
           val nameDiv = doc.select("div.govuk-task-list__name-and-hint").first()

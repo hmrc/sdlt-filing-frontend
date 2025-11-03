@@ -18,6 +18,7 @@ package viewmodels.taskList
 
 import base.SpecBase
 import config.FrontendAppConfig
+import constants.FullReturnConstants
 import models.{FullReturn, NormalMode, PrelimReturn, VendorReturn}
 import play.api.i18n.Messages
 import play.api.test.Helpers.*
@@ -25,34 +26,8 @@ import viewmodels.tasklist.{PrelimTaskList, TLCompleted, TLNotStarted, TaskListS
 
 class PrelimTaskListSpec extends SpecBase {
 
-  private val validPrelimReturn = PrelimReturn(
-    stornId = "12345",
-    purchaserIsCompany = "YES",
-    surNameOrCompanyName = "Test Company",
-    houseNumber = Some(23),
-    addressLine1 = "Test Street",
-    addressLine2 = Some("Apartment 5"),
-    addressLine3 = None,
-    addressLine4 = None,
-    postcode = Some("TE23 5TT"),
-    transactionType = "O"
-  )
-  
-  private val validVendorReturn = VendorReturn(
-    stornId = "12345",
-    returnResourceRef = "124",
-    title = "Mr",
-    forename1 = "Test",
-    forename2 = Some("Man"),
-    surName = "Test",
-    houseNumber = Some(1),
-    addressLine1 = "Test Street",
-    addressLine2 = Some("Apartment 5"),
-    addressLine3 = None,
-    addressLine4 = None,
-    postcode = Some("TE23 5TT"),
-    isRepresentedByAgent = "No"
-  )
+  private val fullReturnComplete = FullReturnConstants.completeFullReturn
+  private val fullReturnIncomplete = FullReturnConstants.incompleteFullReturn
 
   "PrelimTaskList" - {
 
@@ -65,8 +40,7 @@ class PrelimTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-          val result = PrelimTaskList.build(fullReturn)
+          val result = PrelimTaskList.build(fullReturnComplete)
 
           result mustBe a[TaskListSection]
           result.heading mustBe messagesInstance("tasklist.prelimQuestion.heading")
@@ -95,8 +69,7 @@ class PrelimTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-          val result = PrelimTaskList.build(fullReturn)
+          val result = PrelimTaskList.build(fullReturnComplete)
 
           result.rows.size mustBe 1
         }
@@ -111,8 +84,7 @@ class PrelimTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-          val result = PrelimTaskList.buildPrelimRow(fullReturn)
+          val result = PrelimTaskList.buildPrelimRow(fullReturnComplete).build(fullReturnComplete)
 
           result mustBe a[TaskListSectionRow]
         }
@@ -124,8 +96,7 @@ class PrelimTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-          val result = PrelimTaskList.buildPrelimRow(fullReturn)
+          val result = PrelimTaskList.buildPrelimRow(fullReturnComplete)
 
           result.tagId mustBe "prelimQuestionDetailRow"
         }
@@ -138,8 +109,7 @@ class PrelimTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-          val result = PrelimTaskList.buildPrelimRow(fullReturn)
+          val result = PrelimTaskList.buildPrelimRow(fullReturnComplete).build(fullReturnComplete)
 
           messagesInstance(result.messageKey) mustBe messagesInstance("tasklist.prelimQuestion.details")
         }
@@ -151,8 +121,7 @@ class PrelimTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-          val result = PrelimTaskList.buildPrelimRow(fullReturn)
+          val result = PrelimTaskList.buildPrelimRow(fullReturnComplete).build(fullReturnComplete)
 
           result.url mustBe controllers.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
         }
@@ -164,8 +133,7 @@ class PrelimTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-          val result = PrelimTaskList.buildPrelimRow(fullReturn)
+          val result = PrelimTaskList.buildPrelimRow(fullReturnComplete).build(fullReturnComplete)
 
           result.status mustBe TLCompleted
         }
@@ -178,7 +146,7 @@ class PrelimTaskListSpec extends SpecBase {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val fullReturn = FullReturn(None, None)
-          val result = PrelimTaskList.buildPrelimRow(fullReturn)
+          val result = PrelimTaskList.buildPrelimRow(fullReturn).build(fullReturnComplete)
 
           result.status mustBe TLNotStarted
         }
@@ -194,8 +162,7 @@ class PrelimTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(Some(validPrelimReturn), Some(validVendorReturn))
-          val section = PrelimTaskList.build(fullReturn)
+          val section = PrelimTaskList.build(fullReturnComplete)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.prelimQuestion.heading")

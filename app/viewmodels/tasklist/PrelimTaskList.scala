@@ -31,20 +31,24 @@ object PrelimTaskList {
     TaskListSection(
       heading = messages("tasklist.prelimQuestion.heading"),
       rows = Seq(
-        buildPrelimRow(fullReturn)
+        buildPrelimRow(fullReturn).build(fullReturn)
       )
     )
 
-  def buildPrelimRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildPrelimRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
     TaskListRowBuilder(
+      canEdit = {
+        case TLCompleted => false
+        case _ => true
+      },
       messageKey = _ => "tasklist.prelimQuestion.details",
       url = _ => _ => {
         controllers.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
       },
       tagId = "prelimQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.prelimReturn.isDefined),
+      checks = scheme => Seq(fullReturn.returnResourceRef.isDefined),
       prerequisites = _ => Seq()
-    ).build(fullReturn)
+    )
   }
 
 }

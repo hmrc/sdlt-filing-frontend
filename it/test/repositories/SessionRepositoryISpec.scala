@@ -17,7 +17,8 @@
 package repositories
 
 import config.FrontendAppConfig
-import models.UserAnswers
+import constants.FullReturnConstants
+import models.{FullReturn, UserAnswers}
 import org.mockito.Mockito.when
 import org.mongodb.scala.model.Filters
 import org.scalactic.source.Position
@@ -47,10 +48,11 @@ class SessionRepositoryISpec
 
   private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
+  private val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
 
   private val testReturnId = "123456"
   private val userAnswers = UserAnswers("id", data = Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
-  private val userAnswersWithReturnId = UserAnswers("id", Some(testReturnId), Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
+  private val userAnswersWithReturnId = UserAnswers("id", Some(testReturnId), Some(fullReturn), Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
 
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1L

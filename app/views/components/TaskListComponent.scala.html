@@ -27,7 +27,7 @@
 <ul class="govuk-task-list">
 @for((section, idx) <- sections.zipWithIndex) {
     @for(row <- section.rows) {
-        @taskListRow(messages(row.messageKey), row.url, row.tagId, row.status)
+        @taskListRow(messages(row.messageKey), row.url, row.tagId, row.status, row.canEdit)
     }
 }
 
