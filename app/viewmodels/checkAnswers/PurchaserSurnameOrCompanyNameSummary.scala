@@ -18,26 +18,44 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.PurchaserSurnameOrCompanyNamePage
+import pages.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object PurchaserSurnameOrCompanyNameSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserSurnameOrCompanyNamePage).map {
-      answer =>
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
+    
+    val typeOfPurchaser = answers.flatMap(_.get(PurchaserIsIndividualPage)) match {
+      case Some(value) => if(value.toString == "Individual") "purchaser" else "business"
+      case _ => "default"
+    }
 
+    answers.flatMap(_.get(PurchaserSurnameOrCompanyNamePage)).map {
+      answer =>
         SummaryListRowViewModel(
-          key     = "purchaserSurnameOrCompanyName.checkYourAnswersLabel",
+          key     = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.${typeOfPurchaser}",
           value   = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaserSurnameOrCompanyName.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserSurnameOrCompanyName.link.message")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.${typeOfPurchaser}",
+        value = value
+      )
     }
+  }
 }

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package services
+package models
 
-class ReturnTaskListService {
+import play.api.libs.json.{Json, OFormat}
 
-  //All functions within the ReturnTaskListController to be executed and built here.
+final case class ReturnId(returnId: String)
 
+object ReturnId {
+  implicit val format: OFormat[ReturnId] = Json.format[ReturnId]
 }

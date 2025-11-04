@@ -17,16 +17,20 @@
 package controllers
 
 import com.google.inject.Inject
+import connectors.StubConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.PurchaserAddressPage
+import models.{PrelimReturn, PrelimSessionQuestions, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.{PrelimAddressSummary, PurchaserIsIndividualSummary, PurchaserSurnameOrCompanyNameSummary, TransactionTypeSummary}
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.*
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -34,6 +38,7 @@ class CheckYourAnswersController @Inject()(
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             sessionRepository: SessionRepository,
+                                            stubConnector: StubConnector,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CheckYourAnswersView
                                           )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -44,11 +49,52 @@ class CheckYourAnswersController @Inject()(
       for {
         result <- sessionRepository.get(request.userAnswers.id)
       } yield {
-        val list = SummaryListViewModel(
-          rows = Seq.empty
-        )
 
-        Ok(view(list))
+        val isDataEmpty = result.exists(_.data.value.isEmpty)
+
+        if (isDataEmpty) {
+          Redirect(controllers.routes.BeforeStartReturnController.onPageLoad())
+        } else {
+          val summaryList = SummaryListViewModel(
+            rows = Seq(
+              PurchaserIsIndividualSummary.row(result),
+              PurchaserSurnameOrCompanyNameSummary.row(result),
+              PrelimAddressSummary.row(result),
+              TransactionTypeSummary.row(result)
+            )
+          )
+
+          Ok(view(summaryList))
+        }
+      }
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      sessionRepository.get(request.userAnswers.id).flatMap {
+        case Some(userAnswers) =>
+          userAnswers.data.validate[PrelimSessionQuestions] match {
+            case JsSuccess(sessionData, _) =>
+
+              for {
+                prelimReturn <- PrelimReturn.from(Some(userAnswers))
+                returnId <- stubConnector.stubPrelimReturnId(prelimReturn)
+                _ <- sessionRepository.set(userAnswers.copy(returnId = Some(returnId.returnId)))
+              } yield {
+                if (returnId.returnId.nonEmpty) {
+                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad(returnId = Some(returnId.returnId)))
+                } else {
+                  Redirect(controllers.routes.CheckYourAnswersController.onPageLoad())
+                }
+              }
+
+            case JsError(_) =>
+              Future.successful(Redirect(controllers.routes.CheckYourAnswersController.onPageLoad()))
+          }
+
+        case None =>
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
   }
 }

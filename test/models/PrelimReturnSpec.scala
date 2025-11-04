@@ -16,10 +16,14 @@
 
 package models
 
-import org.scalatest.{EitherValues, OptionValues}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.libs.json._
+import org.scalatest.matchers.should.Matchers.shouldBe
+import org.scalatest.{EitherValues, OptionValues}
+import play.api.libs.json.*
+
+import java.time.Instant
+implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
 class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues {
 
@@ -337,5 +341,70 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         prelimReturn1 must not equal prelimReturn2
       }
     }
+
+    ".from" - {
+      "must convert into PrelimReturn when all data present" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = None,
+          data = Json.obj(
+            "purchaserIsIndividual" -> "YES",
+            "purchaserSurnameOrCompanyName" -> "Test Company",
+            "purchaserAddress" -> Json.obj(
+              "houseNumber" -> 23,
+              "line1" -> "Test Street",
+              "line2" -> "Apartment 5",
+              "line3" -> "Building A",
+              "line4" -> "District B",
+              "line5" -> "District C",
+              "postcode" -> "TE23 5TT",
+              "country" -> Json.obj(
+                "code" -> "GB",
+                "name" -> "UK"
+              ),
+              "addressValidated" -> false
+            ),
+            "transactionType" -> "O"
+          ),
+          lastUpdated = Instant.now
+        )
+
+        val prelimReturn = PrelimReturn.from(Some(userAnswers))
+
+        prelimReturn.map { value =>
+          value shouldBe (completePrelimReturn)
+        }
+      }
+
+      "must convert into PrelimReturn when only required data is present" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = None,
+          data = Json.obj(
+            "purchaserIsIndividual" -> "YES",
+            "purchaserSurnameOrCompanyName" -> "Test Company",
+            "purchaserAddress" -> Json.obj(
+              "houseNumber" -> JsNull,
+              "line1" -> "Test Street",
+              "line2" -> JsNull,
+              "line3" -> JsNull,
+              "line4" -> JsNull,
+              "line5" -> JsNull ,
+              "postcode" ->  JsNull,
+              "country" -> JsNull,
+              "addressValidated" -> false
+            ),
+            "transactionType" -> "O"
+          ),
+          lastUpdated = Instant.now
+        )
+
+        val prelimReturn = PrelimReturn.from(Some(userAnswers))
+
+        prelimReturn.map{ value =>
+          value shouldBe(minimalPrelimReturn)
+        }
+      }
+      }
+    }
   }
-}

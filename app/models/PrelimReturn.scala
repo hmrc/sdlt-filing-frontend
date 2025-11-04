@@ -18,6 +18,8 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
+import scala.concurrent.Future
+
 case class PrelimReturn(
                        stornId: String,
                        purchaserIsCompany: String,
@@ -33,4 +35,21 @@ case class PrelimReturn(
 
 object PrelimReturn {
   implicit val format: OFormat[PrelimReturn] = Json.format[PrelimReturn]
+
+  def from(userAnswers: Option[UserAnswers]): Future[PrelimReturn] = {
+    val prelimSessionQuestions: PrelimSessionQuestions = userAnswers.get.data.as[PrelimSessionQuestions]
+    Future.successful(PrelimReturn(
+      stornId = userAnswers.get.id,
+      purchaserIsCompany = prelimSessionQuestions.purchaserIsIndividual,
+      surNameOrCompanyName = prelimSessionQuestions.purchaserSurnameOrCompanyName,
+      houseNumber = prelimSessionQuestions.purchaserAddress.houseNumber,
+      addressLine1 = prelimSessionQuestions.purchaserAddress.line1,
+      addressLine2 = prelimSessionQuestions.purchaserAddress.line2,
+      addressLine3 = prelimSessionQuestions.purchaserAddress.line3,
+      addressLine4 = prelimSessionQuestions.purchaserAddress.line4,
+      postcode = prelimSessionQuestions.purchaserAddress.postcode,
+      transactionType = prelimSessionQuestions.transactionType
+    )
+    )
+  }
 }
