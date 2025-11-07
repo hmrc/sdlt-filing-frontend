@@ -222,7 +222,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.BeforeStartReturnController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url)
 
           verify(mockFullReturnService, never()).getFullReturn(any())(any(), any())
           verify(mockSessionRepository, never()).set(any[UserAnswers])

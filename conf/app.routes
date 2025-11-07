@@ -12,8 +12,8 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /preliminary-questions/check-answers                          controllers.CheckYourAnswersController.onPageLoad()
-POST        /preliminary-questions/check-answers                          controllers.CheckYourAnswersController.onSubmit()
+GET         /preliminary-questions/check-answers                          controllers.preliminary.CheckYourAnswersController.onPageLoad()
+POST        /preliminary-questions/check-answers                          controllers.preliminary.CheckYourAnswersController.onSubmit()
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -21,24 +21,24 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
-GET        /preliminary-questions/purchaser-name                        controllers.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /preliminary-questions/purchaser-name                        controllers.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
-GET        /preliminary-questions/purchaser-name/change                 controllers.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /preliminary-questions/purchaser-name/change                 controllers.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
+GET        /preliminary-questions/purchaser-name                        controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /preliminary-questions/purchaser-name                        controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
+GET        /preliminary-questions/purchaser-name/change                 controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /preliminary-questions/purchaser-name/change                 controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /preliminary-questions/who-is-making-the-purchase            controllers.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)
-POST       /preliminary-questions/who-is-making-the-purchase            controllers.PurchaserIsIndividualController.onSubmit(mode: Mode = NormalMode)
-GET        /change/preliminary-questions/who-is-making-the-purchase     controllers.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/preliminary-questions/who-is-making-the-purchase     controllers.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
+GET        /preliminary-questions/who-is-making-the-purchase            controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST       /preliminary-questions/who-is-making-the-purchase            controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = NormalMode)
+GET        /change/preliminary-questions/who-is-making-the-purchase     controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST       /change/preliminary-questions/who-is-making-the-purchase     controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
 
 GET        /returnTaskList                       controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
 
-GET        /preliminary-questions/before-you-start                       controllers.BeforeStartReturnController.onPageLoad()
+GET        /preliminary-questions/before-you-start                       controllers.preliminary.BeforeStartReturnController.onPageLoad()
 
-GET        /preliminary-questions/transaction-type                       controllers.TransactionTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /preliminary-questions/transaction-type                       controllers.TransactionTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /change/preliminary-questions/transaction-type                controllers.TransactionTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/preliminary-questions/transaction-type                controllers.TransactionTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /preliminary-questions/transaction-type                       controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /preliminary-questions/transaction-type                       controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /change/preliminary-questions/transaction-type                controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change/preliminary-questions/transaction-type                controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = CheckMode)
 
 
 GET         /preliminary-questions/address                          controllers.preliminary.PrelimAddressController.redirectToAddressLookup(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)

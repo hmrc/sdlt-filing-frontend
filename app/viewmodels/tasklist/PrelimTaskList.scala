@@ -43,7 +43,7 @@ object PrelimTaskList {
       },
       messageKey = _ => "tasklist.prelimQuestion.details",
       url = _ => _ => {
-        controllers.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
+        controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
       },
       tagId = "prelimQuestionDetailRow",
       checks = scheme => Seq(fullReturn.returnResourceRef.isDefined),

@@ -18,9 +18,10 @@ package connectors
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import models.{PrelimReturn, ReturnId}
+import models.ReturnId
 import constants.FullReturnConstants
 import models.FullReturn
+import models.prelimQuestions.PrelimReturn
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

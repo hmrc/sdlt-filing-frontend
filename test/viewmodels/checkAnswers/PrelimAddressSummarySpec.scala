@@ -19,7 +19,7 @@ package viewmodels.checkAnswers
 import base.SpecBase
 import controllers.preliminary.routes
 import models.address.{Address, Country}
-import pages.PurchaserAddressPage
+import pages.preliminary.PurchaserAddressPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

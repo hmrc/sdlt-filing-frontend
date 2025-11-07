@@ -17,6 +17,7 @@
 package generators
 
 import models.*
+import models.prelimQuestions.TransactionType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 

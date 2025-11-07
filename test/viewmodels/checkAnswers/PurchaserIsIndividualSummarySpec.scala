@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.CheckMode
 import models.prelimQuestions.BusinessOrIndividualRequest
-import pages.PurchaserIsIndividualPage
+import pages.preliminary.PurchaserIsIndividualPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -48,7 +48,7 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
           htmlContent mustEqual msgs("purchaserIsIndividual.individual.value")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserIsIndividual.change.hidden")
         }
@@ -74,7 +74,7 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
           htmlContent mustEqual msgs("purchaserIsIndividual.business.value")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserIsIndividual.change.hidden")
         }
@@ -96,7 +96,7 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
-          htmlContent must include(routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
+          htmlContent must include(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
           htmlContent must include(msgs("purchaserIsIndividual.link.message"))
 
           result.actions mustBe None
@@ -116,7 +116,7 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
-          htmlContent must include(routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
+          htmlContent must include(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
           htmlContent must include(msgs("purchaserIsIndividual.link.message"))
 
           result.actions mustBe None
@@ -135,7 +135,7 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
         val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
 
-        result.actions.get.items.head.href mustEqual routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
       }
     }
   }

@@ -17,7 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{PrelimReturn, ReturnId, FullReturn, VendorReturn}
+import models.prelimQuestions.PrelimReturn
+import models.{ReturnId, FullReturn, VendorReturn}
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue

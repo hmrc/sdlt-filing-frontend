@@ -25,7 +25,7 @@ import models.UserAnswers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
-import pages.PurchaserAddressPage
+import pages.preliminary.PurchaserAddressPage
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import repositories.SessionRepository

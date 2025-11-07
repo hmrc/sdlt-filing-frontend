@@ -62,7 +62,7 @@ class PrelimAddressController @Inject() (
         for {
           address <- addressLookupService.getAddressById(id)
           updated <- addressLookupService.saveAddressDetails(address)
-        } yield if(updated) Redirect(routes.TransactionTypeController.onPageLoad(NormalMode)) else Redirect(routes.JourneyRecoveryController.onPageLoad())
+        } yield if(updated) Redirect(controllers.preliminary.routes.TransactionTypeController.onPageLoad(NormalMode)) else Redirect(routes.JourneyRecoveryController.onPageLoad())
   }
 
   def addressLookupCallbackChange(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -70,7 +70,7 @@ class PrelimAddressController @Inject() (
       for {
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address)
-      } yield if(updated) Redirect(routes.CheckYourAnswersController.onPageLoad()) else Redirect(routes.JourneyRecoveryController.onPageLoad())
+      } yield if(updated) Redirect(controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()) else Redirect(routes.JourneyRecoveryController.onPageLoad())
   }
   
   

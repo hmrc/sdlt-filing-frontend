@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.CheckMode
 import models.prelimQuestions.BusinessOrIndividualRequest
-import pages.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -50,7 +50,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           textContent mustEqual "Smith"
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserSurnameOrCompanyName.change.hidden")
         }
@@ -75,7 +75,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           textContent mustEqual "ACME Corp"
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserSurnameOrCompanyName.change.hidden")
         }
@@ -135,7 +135,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
         val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-        result.actions.get.items.head.href mustEqual routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
       }
     }
   }
