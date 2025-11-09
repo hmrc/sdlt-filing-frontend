@@ -18,8 +18,11 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class ReturnId(returnId: String)
+case class GetReturnByRefRequest(
+                                  returnResourceRef: String,
+                                  storn: String
+                                )
 
-object ReturnId {
-  implicit val format: OFormat[ReturnId] = Json.format[ReturnId]
+object GetReturnByRefRequest {
+  implicit val format: OFormat[GetReturnByRefRequest] = Json.format[GetReturnByRefRequest]
 }

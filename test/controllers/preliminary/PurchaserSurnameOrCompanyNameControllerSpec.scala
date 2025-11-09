@@ -47,8 +47,8 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
   val business = "Business"
   val individual = "Individual"
 
-  val individualUserAnswers = UserAnswers(userAnswersId).set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
-  val businessUserAnswers = UserAnswers(userAnswersId).set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option2).success.value
+  val individualUserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
+  val businessUserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option2).success.value
 
   "PurchaserSurnameOrCompanyName Controller" - {
 

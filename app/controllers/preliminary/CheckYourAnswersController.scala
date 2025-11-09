@@ -17,7 +17,7 @@
 package controllers.preliminary
 
 import com.google.inject.Inject
-import connectors.StubConnector
+import connectors.StampDutyLandTaxConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.prelimQuestions.{PrelimReturn, PrelimSessionQuestions}
 import models.UserAnswers
@@ -39,7 +39,7 @@ class CheckYourAnswersController @Inject()(
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             sessionRepository: SessionRepository,
-                                            stubConnector: StubConnector,
+                                            backendConnector: StampDutyLandTaxConnector,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CheckYourAnswersView
                                           )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -80,11 +80,11 @@ class CheckYourAnswersController @Inject()(
 
               for {
                 prelimReturn <- PrelimReturn.from(Some(userAnswers))
-                returnId <- stubConnector.stubPrelimReturnId(prelimReturn)
-                _ <- sessionRepository.set(userAnswers.copy(returnId = Some(returnId.returnId)))
+                returnId <- backendConnector.createReturn(prelimReturn)
+                _ <- sessionRepository.set(userAnswers.copy(returnId = Some(returnId.returnResourceRef)))
               } yield {
-                if (returnId.returnId.nonEmpty) {
-                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad(returnId = Some(returnId.returnId)))
+                if (returnId.returnResourceRef.nonEmpty) {
+                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
                 } else {
                   Redirect(controllers.preliminary.routes.CheckYourAnswersController.onPageLoad())
                 }

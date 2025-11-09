@@ -37,13 +37,13 @@ class IndexController @Inject() (
   def onPageLoad(returnId: Option[String] = None): Action[AnyContent] = identify.async { implicit request =>
     returnId match
       case Some(id) => {
-        val userAnswers = UserAnswers(id = request.userId, returnId = Some(id))
+        val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), storn = request.storn)
         sessionRepository.set(userAnswers).map { _ =>
           Results.Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
         }
       }
       case _ =>  {
-        val userAnswers = UserAnswers(id = request.userId, returnId = None)
+        val userAnswers = UserAnswers(id = request.userId, returnId = None, storn = request.storn)
           sessionRepository.set(userAnswers).map { _ =>
           Results.Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
         }

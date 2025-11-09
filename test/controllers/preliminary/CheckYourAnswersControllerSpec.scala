@@ -17,9 +17,9 @@
 package controllers.preliminary
 
 import base.SpecBase
-import connectors.StubConnector
+import connectors.StampDutyLandTaxConnector
 import controllers.routes
-import models.{ReturnId, UserAnswers}
+import models.{CreateReturnResult, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
 
   private val mockSessionRepository = mock[SessionRepository]
-  private val mockStubConnector = mock[StubConnector]
+  private val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -72,6 +72,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val userAnswers = UserAnswers(
           id = "12345",
           returnId = None,
+          storn = "TESTSTORN",
           data = Json.obj(
             "purchaserIsIndividual" -> "YES",
             "purchaserSurnameOrCompanyName" -> "Test Company",
@@ -130,6 +131,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         val userAnswers = UserAnswers(
           id = "12345",
+          storn = "TESTSTORN",
           returnId = None,
           data = Json.obj(
             "purchaserIsIndividual" -> "YES",
@@ -152,13 +154,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
-        when(mockStubConnector.stubPrelimReturnId(any())(any(),any())).thenReturn(Future.successful(ReturnId("12345")))
+        when(mockBackendConnector.createReturn(any())(any(),any())).thenReturn(Future.successful(CreateReturnResult("12345")))
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .overrides(bind[StubConnector].toInstance(mockStubConnector))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
           .build()
 
         running(application) {
@@ -167,7 +169,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad(Some("12345")).url
+          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
@@ -180,16 +182,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         val userAnswers = UserAnswers(
           id = userAnswersId,
+          storn = "TESTSTORN",
           data = incompleteData
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
-        when(mockStubConnector.stubPrelimReturnId(any())(any(), any())).thenReturn(Future.successful(ReturnId("12345")))
+        when(mockBackendConnector.createReturn(any())(any(), any())).thenReturn(Future.successful(CreateReturnResult("12345")))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .overrides(bind[StubConnector].toInstance(mockStubConnector))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
           .build()
 
         running(application) {
@@ -207,6 +210,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val userAnswers = UserAnswers(
           id = "12345",
           returnId = None,
+          storn = "TESTSTORN",
           data = Json.obj(
             "purchaserIsIndividual" -> "YES",
             "purchaserSurnameOrCompanyName" -> "Test Company",
@@ -228,13 +232,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
-        when(mockStubConnector.stubPrelimReturnId(any())(any(), any())).thenReturn(Future.successful(ReturnId("")))
+        when(mockBackendConnector.createReturn(any())(any(), any())).thenReturn(Future.successful(CreateReturnResult("")))
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .overrides(bind[StubConnector].toInstance(mockStubConnector))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
           .build()
 
         running(application) {
@@ -255,7 +259,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         val application = applicationBuilder(userAnswers = userAnswers)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .overrides(bind[StubConnector].toInstance(mockStubConnector))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
           .build()
 
         running(application) {

@@ -66,7 +66,7 @@ class PurchaserIsIndividualControllerSpec extends SpecBase with MockitoSugar {
 
       BusinessOrIndividualRequest.values.foreach { option =>
 
-        val userAnswers = UserAnswers(userAnswersId, None)
+        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", None)
           .set(PurchaserIsIndividualPage, option)
           .success
           .value

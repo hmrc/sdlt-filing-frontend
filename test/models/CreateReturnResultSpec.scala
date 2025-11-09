@@ -20,31 +20,32 @@ import org.scalatest.EitherValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{JsObject, Json, Reads, Writes}
+import models.CreateReturnResult
 
-class ReturnIdSpec extends AnyFreeSpec with Matchers with EitherValues {
+class CreateReturnResultSpec extends AnyFreeSpec with Matchers with EitherValues {
 
-  "ReturnIdSpec" - {
+  "CreateReturnResultSpec" - {
 
-    def validReturnIdJson: JsObject = Json.obj("returnId" -> "12345")
+    def validCreateReturnResultJson: JsObject = Json.obj("returnResourceRef" -> "12345")
 
-    def inValidReturnIdJson: JsObject = Json.obj("returnId" -> true)
+    def inValidCreateReturnResultJson: JsObject = Json.obj("returnResourceRef" -> true)
 
-    def validReturnId = ReturnId("12345")
+    def validCreateReturnResult = CreateReturnResult("12345")
 
     ".reads" - {
 
       "must be found implicitly" in {
-        implicitly[Reads[ReturnId]]
+        implicitly[Reads[CreateReturnResult]]
       }
 
       "must deserialize valid JSON" in {
-        val result = Json.fromJson[ReturnId](validReturnIdJson).asEither.value
+        val result = Json.fromJson[CreateReturnResult](validCreateReturnResultJson).asEither.value
 
-        result mustBe ReturnId("12345")
+        result mustBe CreateReturnResult("12345")
       }
 
       "must fail when field has wrong type" in {
-        val result = Json.fromJson[ReturnId](inValidReturnIdJson).asEither
+        val result = Json.fromJson[CreateReturnResult](inValidCreateReturnResultJson).asEither
 
         result.isLeft mustBe true
       }
@@ -53,23 +54,23 @@ class ReturnIdSpec extends AnyFreeSpec with Matchers with EitherValues {
     ".writes" - {
       
       "must be found implicitly" in {
-        implicitly[Writes[ReturnId]]
+        implicitly[Writes[CreateReturnResult]]
       }
 
-      "must serialize Purchaser" in {
-        val json = Json.toJson(validReturnId)
+      "must serialize" in {
+        val json = Json.toJson(validCreateReturnResult)
 
-        (json \ "returnId").as[String] mustBe "12345"
+        (json \ "returnResourceRef").as[String] mustBe "12345"
       }
     }
 
     ".formats" - {
 
       "must round-trip" in {
-        val json = Json.toJson(validReturnId)
-        val result = Json.fromJson[ReturnId](json).asEither.value
+        val json = Json.toJson(validCreateReturnResult)
+        val result = Json.fromJson[CreateReturnResult](json).asEither.value
 
-        result mustEqual validReturnId
+        result mustEqual validCreateReturnResult
       }
     }
   }

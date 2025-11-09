@@ -277,7 +277,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
 
     "saveAddressDetails" - {
 
-      val emptyUserAnswers = UserAnswers("test-id")
+      val emptyUserAnswers = UserAnswers("test-id", storn = "TESTSTORN")
 
       "must save address to session repository when successful" in {
         val mockConnector = mock[AddressLookupConnector]

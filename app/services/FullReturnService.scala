@@ -16,8 +16,9 @@
 
 package services
 
-import connectors.StubConnector
-import models.FullReturn
+import connectors.StampDutyLandTaxConnector
+import models.{FullReturn, GetReturnByRefRequest}
+import org.checkerframework.checker.units.qual.s
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
@@ -25,13 +26,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FullReturnService @Inject()(stubConnector: StubConnector)(implicit ec: ExecutionContext) {
+class FullReturnService @Inject()(stubConnector: StampDutyLandTaxConnector)(implicit ec: ExecutionContext) {
   
   val logger: Logger = LoggerFactory.getLogger(getClass)
   
-  def getFullReturn(returnId: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_]): Future[FullReturn] = {
+  def getFullReturn(getReturnByRefRequest: GetReturnByRefRequest)(implicit hc: HeaderCarrier, request: Request[_]): Future[FullReturn] = {
     logger.info("[getFullReturnBE] Getting Full Return")
-    stubConnector.stubGetFullReturn(returnId)
+    stubConnector.getFullReturn(getReturnByRefRequest)
   }
   
   

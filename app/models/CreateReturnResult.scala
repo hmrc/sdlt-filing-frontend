@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package models.requests
+package models
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import play.api.libs.json.{Json, OFormat}
 
-case class OptionalDataRequest[A] (request: Request[A], userId: String, storn: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+case class CreateReturnResult(
+                               returnResourceRef: String
+                             )
 
-case class DataRequest[A] (request: Request[A], userId: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+object CreateReturnResult {
+  implicit val format: OFormat[CreateReturnResult] = Json.format[CreateReturnResult]
+}

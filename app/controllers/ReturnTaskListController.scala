@@ -26,7 +26,7 @@ import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.tasklist.{PrelimTaskList, VendorTaskList}
 import views.html.ReturnTaskListView
-import models.{NormalMode, UserAnswers}
+import models.{GetReturnByRefRequest, NormalMode, UserAnswers}
 import repositories.SessionRepository
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,8 +50,8 @@ class ReturnTaskListController @Inject()(
         Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
       ) { id =>
         for {
-          fullReturn <- fullReturnService.getFullReturn(Some(id))
-          userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn))
+          fullReturn <- fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.storn))
+          userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
           _ <- sessionRepository.set(userAnswers)
         } yield {
           val sections = List(

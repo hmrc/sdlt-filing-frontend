@@ -38,7 +38,7 @@ trait SpecBase
 
   val userAnswersId: String = "id"
 
-  def emptyUserAnswers : UserAnswers = UserAnswers(userAnswersId, None)
+  def emptyUserAnswers : UserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", None)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

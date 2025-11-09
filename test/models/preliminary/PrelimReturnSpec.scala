@@ -348,6 +348,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
       "must convert into PrelimReturn when all data present" in {
         val userAnswers = UserAnswers(
           id = "12345",
+          storn = "TESTSTORN",
           returnId = None,
           data = Json.obj(
             "purchaserIsIndividual" -> "YES",
@@ -381,6 +382,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
       "must convert into PrelimReturn when only required data is present" in {
         val userAnswers = UserAnswers(
           id = "12345",
+          storn = "TESTSTORN",
           returnId = None,
           data = Json.obj(
             "purchaserIsIndividual" -> "YES",

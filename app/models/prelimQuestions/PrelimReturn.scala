@@ -40,7 +40,7 @@ object PrelimReturn {
   def from(userAnswers: Option[UserAnswers]): Future[PrelimReturn] = {
     val prelimSessionQuestions: PrelimSessionQuestions = userAnswers.get.data.as[PrelimSessionQuestions]
     Future.successful(PrelimReturn(
-      stornId = userAnswers.get.id,
+      stornId = userAnswers.get.storn,
       purchaserIsCompany = prelimSessionQuestions.purchaserIsIndividual,
       surNameOrCompanyName = prelimSessionQuestions.purchaserSurnameOrCompanyName,
       houseNumber = prelimSessionQuestions.purchaserAddress.houseNumber,

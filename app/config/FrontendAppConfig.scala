@@ -108,6 +108,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
     if (stubAddressLookup) {
       s"$sdltStubUrl/stamp-duty-land-tax-stub/prelim-questions/address-lookup/init"
     } else { s"$addressLookupFrontendUrl/api/v2/init"}
-    
+
+  val stubBool: Boolean = configuration.get("backend-feature-stub")
     
 }

@@ -24,6 +24,7 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -35,18 +36,40 @@ class AuthenticatedIdentifierAction @Inject()(
                                                override val authConnector: AuthConnector,
                                                config: FrontendAppConfig,
                                                val parser: BodyParsers.Default
-                                             )
-                                             (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions {
+                                             )(implicit val executionContext: ExecutionContext)
+  extends IdentifierAction with AuthorisedFunctions {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    authorised().retrieve(Retrievals.internalId and Retrievals.allEnrolments) {
+      case Some(internalId) ~ enrolments =>
 
-    authorised().retrieve(Retrievals.internalId) {
-      _.map {
-        internalId => block(IdentifierRequest(request, internalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
-    } recover {
+        val sdltEnrol: Option[Enrolment] =
+          enrolments.getEnrolment("IR-SDLT-AGENT")
+            .orElse(enrolments.getEnrolment("IR-SDLT-ORG"))
+
+        sdltEnrol match {
+          case Some(enrol) =>
+            val stornIdOpt: Option[String] = enrol.getIdentifier("STORN").map(_.value)
+
+            stornIdOpt match {
+              case Some(stornId) =>
+                block(IdentifierRequest(request, internalId, storn = stornId))
+              case None =>
+                //to do get error page for this 
+                Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+            }
+
+          case None =>
+            //to do get error page for this 
+            Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+        }
+
+      case None ~ _ =>
+        Future.failed(new UnauthorizedException("Unable to retrieve internal Id"))
+    }.recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
       case _: AuthorisationException =>
@@ -55,10 +78,10 @@ class AuthenticatedIdentifierAction @Inject()(
   }
 }
 
-class SessionIdentifierAction @Inject()(
+
+  class SessionIdentifierAction @Inject()(
                                          val parser: BodyParsers.Default
-                                       )
-                                       (implicit val executionContext: ExecutionContext) extends IdentifierAction {
+                                       )(implicit val executionContext: ExecutionContext) extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
@@ -66,7 +89,7 @@ class SessionIdentifierAction @Inject()(
 
     hc.sessionId match {
       case Some(session) =>
-        block(IdentifierRequest(request, session.value))
+        block(IdentifierRequest(request, session.value, session.value))
       case None =>
         Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }
