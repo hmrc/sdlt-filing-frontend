@@ -22,6 +22,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
+import pages.vendor.{VendorOrBusinessNamePage, WhoIsTheVendorPage}
 
 @Singleton
 class Navigator @Inject()() {
@@ -32,6 +33,10 @@ class Navigator @Inject()() {
     case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
     case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case WhoIsTheVendorPage =>
+      _ => controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(NormalMode)
+    case VendorOrBusinessNamePage =>
+      _ => routes.ReturnTaskListController.onPageLoad() // TODO DTR-1010: Change this to the new page created for VR-2
 
     case _ => _ => routes.IndexController.onPageLoad()
   }

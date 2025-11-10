@@ -16,6 +16,7 @@
 
 package models
 
+import models.vendor.VendorReturn
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}

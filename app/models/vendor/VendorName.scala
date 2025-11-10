@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-package generators
+package models.vendor
 
-import models.*
-import models.prelimQuestions.TransactionType
-import models.vendor.whoIsTheVendor
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import play.api.libs.json.{Json, OFormat}
 
-trait ModelGenerators {
+case class VendorName(forename1: Option[String], forename2: Option[String], name: String)
 
-  implicit lazy val arbitrarywhoIsTheVendor: Arbitrary[whoIsTheVendor] =
-    Arbitrary {
-      Gen.oneOf(whoIsTheVendor.values.toSeq)
-    }
-
-  implicit lazy val arbitraryTransactionType: Arbitrary[TransactionType] =
-    Arbitrary {
-      Gen.oneOf(TransactionType.values.toSeq)
-    }
-  
+object VendorName {
+  implicit val format: OFormat[VendorName] = Json.format[VendorName]
 }

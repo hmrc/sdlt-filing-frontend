@@ -21,6 +21,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
+import pages.vendor.{VendorOrBusinessNamePage, WhoIsTheVendorPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -52,6 +53,14 @@ class NavigatorSpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(TransactionTypePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      }
+
+      "go from WhoIsTheVendor page to Vendor or Business name" in {
+        navigator.nextPage(WhoIsTheVendorPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(mode = NormalMode)
+      }
+
+      "go from Vendor or Business name page to ReturnTaskList" in {
+        navigator.nextPage(VendorOrBusinessNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
       }
     }
 

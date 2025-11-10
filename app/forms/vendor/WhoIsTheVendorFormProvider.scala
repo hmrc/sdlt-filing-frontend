@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms.vendor
 
-import models.*
-import models.prelimQuestions.TransactionType
+import forms.mappings.Mappings
 import models.vendor.whoIsTheVendor
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.{Arbitrary, Gen}
+import play.api.data.Form
 
-trait ModelGenerators {
+import javax.inject.Inject
 
-  implicit lazy val arbitrarywhoIsTheVendor: Arbitrary[whoIsTheVendor] =
-    Arbitrary {
-      Gen.oneOf(whoIsTheVendor.values.toSeq)
-    }
+class WhoIsTheVendorFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryTransactionType: Arbitrary[TransactionType] =
-    Arbitrary {
-      Gen.oneOf(TransactionType.values.toSeq)
-    }
-  
+  def apply(): Form[whoIsTheVendor] =
+    Form(
+      "value" -> enumerable[whoIsTheVendor]("whoIsTheVendor.error.required")
+    )
 }
