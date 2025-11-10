@@ -18,8 +18,9 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import pages._
-import models._
+import pages.*
+import models.*
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -32,25 +33,25 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad()
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
       }
 
       "go from individual/business page to Purchaser or Company name" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(PurchaserIsIndividualPage, NormalMode, UserAnswers("id")) mustBe routes.PurchaserSurnameOrCompanyNameController.onPageLoad(mode = NormalMode)
+        navigator.nextPage(PurchaserIsIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(mode = NormalMode)
       }
 
       "go from Purchase/business name page to address lookup" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(PurchaserSurnameOrCompanyNamePage, NormalMode, UserAnswers("id")) mustBe controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
+        navigator.nextPage(PurchaserSurnameOrCompanyNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
       }
 
       "go from transaction type page to check your answers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(TransactionTypePage, NormalMode, UserAnswers("id")) mustBe routes.CheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionTypePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
       }
     }
 
@@ -59,7 +60,7 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe routes.CheckYourAnswersController.onPageLoad()
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
       }
     }
   }

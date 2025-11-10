@@ -17,7 +17,8 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{FullReturn, PrelimReturn}
+import models.FullReturn
+import models.prelimQuestions.PrelimReturn
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier

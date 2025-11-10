@@ -35,7 +35,7 @@
     <p class="govuk-body">
     @govukButton(
         ButtonViewModel(messages("site.startAgain"))
-        .asLink(routes.PurchaserSurnameOrCompanyNameController.onPageLoad(mode = NormalMode).url)
+        .asLink(controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(mode = NormalMode).url)
     )
     </p>
 }

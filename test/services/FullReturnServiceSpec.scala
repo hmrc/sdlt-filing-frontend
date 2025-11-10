@@ -17,9 +17,9 @@
 package services
 
 import base.SpecBase
-import connectors.StubConnector
-import constants.FullReturnConstants._
-import models.FullReturn
+import connectors.StampDutyLandTaxConnector
+import constants.FullReturnConstants.*
+import models.{FullReturn, GetReturnByRefRequest}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -33,79 +33,65 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   implicit val request: FakeRequest[_] = FakeRequest()
+  val testReturnId = "123456"
+  val testStorn = "12345690"
+  val testGetReturnByRefRequest: GetReturnByRefRequest = GetReturnByRefRequest(returnResourceRef = testReturnId, storn = testStorn)
 
   "FullReturnService" - {
 
     "getFullReturn" - {
 
       "must return FullReturn when returnId is provided" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("123456")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        val result = service.getFullReturn(testReturnId).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe completeFullReturn
         result.stornId mustBe Some("STORN123456")
         result.returnResourceRef mustBe Some("RRF-2024-001")
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId))(any(), any())
-      }
-
-      "must return FullReturn when returnId is None" in {
-        val mockStubConnector = mock[StubConnector]
-
-        when(mockStubConnector.stubGetFullReturn(eqTo(None))(any(), any()))
-          .thenReturn(Future.successful(emptyFullReturn))
-
-        val service = new FullReturnService(mockStubConnector)
-        val result = service.getFullReturn(None).futureValue
-
-        result mustBe emptyFullReturn
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(None))(any(), any())
+        verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any())
       }
 
       "must handle connector failure gracefully when returnId is provided" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("123456")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Connector failed")))
 
-        val service = new FullReturnService(mockStubConnector)
+        val service = new FullReturnService(mockBackendConnector)
 
-        whenReady(service.getFullReturn(testReturnId).failed) { exception =>
+        whenReady(service.getFullReturn(testGetReturnByRefRequest).failed) { exception =>
           exception mustBe a[RuntimeException]
           exception.getMessage mustBe "Connector failed"
         }
 
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId))(any(), any())
+        verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any())
       }
 
-      "must call stubGetFullReturn with correct returnId" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("TEST-ID-789")
+      "must call.getFullReturn() with correct returnId" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        service.getFullReturn(testReturnId).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        service.getFullReturn(testGetReturnByRefRequest).futureValue
 
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId))(any(), any())
+        verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any())
       }
 
       "must return FullReturn with complete data from connector" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("TEST-123")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        val result = service.getFullReturn(testReturnId).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe completeFullReturn
         result.sdltOrganisation mustBe defined
@@ -115,14 +101,13 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
       }
 
       "must return FullReturn with minimal data from connector" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("MIN-123")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(minimalFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        val result = service.getFullReturn(testReturnId).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe minimalFullReturn
         result.stornId mustBe defined
@@ -132,14 +117,13 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
       }
 
       "must return incomplete FullReturn from connector" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("INC-123")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(incompleteFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        val result = service.getFullReturn(testReturnId).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe incompleteFullReturn
         result.stornId mustBe defined
@@ -147,59 +131,59 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
       }
 
       "must handle different returnId formats" in {
-        val mockStubConnector = mock[StubConnector]
-        val returnIds = List(Some("123"), Some("ABC-123"), Some("test-return-id"), None)
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+        val returnIds = List(
+          testGetReturnByRefRequest.copy(returnResourceRef = "123"),
+          testGetReturnByRefRequest.copy(returnResourceRef = "ABC-123"),
+          testGetReturnByRefRequest.copy(returnResourceRef = "test-return-id"))
 
         returnIds.foreach { testReturnId =>
-          when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+          when(mockBackendConnector.getFullReturn(eqTo(testReturnId))(any(), any()))
             .thenReturn(Future.successful(completeFullReturn))
 
-          val service = new FullReturnService(mockStubConnector)
+          val service = new FullReturnService(mockBackendConnector)
           val result = service.getFullReturn(testReturnId).futureValue
 
           result mustBe completeFullReturn
-          verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId))(any(), any())
-          reset(mockStubConnector)
+          verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testReturnId))(any(), any())
+          reset(mockBackendConnector)
         }
       }
 
       "must pass HeaderCarrier to connector" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("123456")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val testHc = HeaderCarrier(sessionId = Some(uk.gov.hmrc.http.SessionId("test-session")))
 
-        when(mockStubConnector.stubGetFullReturn(any())(any(), any()))
+        when(mockBackendConnector.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        service.getFullReturn(testReturnId)(testHc, request).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        service.getFullReturn(testGetReturnByRefRequest)(testHc, request).futureValue
 
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId))(eqTo(testHc), any())
+        verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(eqTo(testHc), any())
       }
 
       "must pass Request to connector" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("123456")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val testRequest = FakeRequest("GET", "/test")
 
-        when(mockStubConnector.stubGetFullReturn(any())(any(), any()))
+        when(mockBackendConnector.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        service.getFullReturn(testReturnId)(hc, testRequest).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        service.getFullReturn(testGetReturnByRefRequest)(hc, testRequest).futureValue
 
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId))(any(), eqTo(testRequest))
+        verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(any(), eqTo(testRequest))
       }
 
       "must handle empty FullReturn from connector" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("EMPTY-123")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(emptyFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        val result = service.getFullReturn(testReturnId).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe emptyFullReturn
         result.stornId must not be defined
@@ -208,56 +192,54 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
       }
 
       "must propagate connector exceptions" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("123456")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val testException = new RuntimeException("Connection timeout")
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.failed(testException))
 
-        val service = new FullReturnService(mockStubConnector)
+        val service = new FullReturnService(mockBackendConnector)
 
-        whenReady(service.getFullReturn(testReturnId).failed) { exception =>
+        whenReady(service.getFullReturn(testGetReturnByRefRequest).failed) { exception =>
           exception mustBe testException
         }
 
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId))(any(), any())
+        verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any())
       }
 
       "must call connector exactly once per invocation" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId = Some("123456")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
-        service.getFullReturn(testReturnId).futureValue
+        val service = new FullReturnService(mockBackendConnector)
+        service.getFullReturn(testGetReturnByRefRequest).futureValue
 
-        verify(mockStubConnector, times(1)).stubGetFullReturn(any())(any(), any())
-        verifyNoMoreInteractions(mockStubConnector)
+        verify(mockBackendConnector, times(1)).getFullReturn(any())(any(), any())
+        verifyNoMoreInteractions(mockBackendConnector)
       }
 
       "must handle multiple sequential calls" in {
-        val mockStubConnector = mock[StubConnector]
-        val testReturnId1 = Some("123456")
-        val testReturnId2 = Some("789012")
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+        val testReturnId1 = testGetReturnByRefRequest.copy(returnResourceRef = "123")
+        val testReturnId2 = testGetReturnByRefRequest.copy(returnResourceRef = "1234")
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId1))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testReturnId1))(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
-        when(mockStubConnector.stubGetFullReturn(eqTo(testReturnId2))(any(), any()))
+        when(mockBackendConnector.getFullReturn(eqTo(testReturnId2))(any(), any()))
           .thenReturn(Future.successful(minimalFullReturn))
 
-        val service = new FullReturnService(mockStubConnector)
+        val service = new FullReturnService(mockBackendConnector)
 
         val result1 = service.getFullReturn(testReturnId1).futureValue
         val result2 = service.getFullReturn(testReturnId2).futureValue
 
         result1 mustBe completeFullReturn
         result2 mustBe minimalFullReturn
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId1))(any(), any())
-        verify(mockStubConnector, times(1)).stubGetFullReturn(eqTo(testReturnId2))(any(), any())
+        verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testReturnId1))(any(), any())
+        verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testReturnId2))(any(), any())
       }
     }
   }

@@ -25,7 +25,7 @@ import models.UserAnswers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
-import pages.PurchaserAddressPage
+import pages.preliminary.PurchaserAddressPage
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import repositories.SessionRepository
@@ -277,7 +277,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
 
     "saveAddressDetails" - {
 
-      val emptyUserAnswers = UserAnswers("test-id")
+      val emptyUserAnswers = UserAnswers("test-id", storn = "TESTSTORN")
 
       "must save address to session repository when successful" in {
         val mockConnector = mock[AddressLookupConnector]

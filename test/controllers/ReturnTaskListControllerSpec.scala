@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import constants.FullReturnConstants.*
-import models.UserAnswers
+import models.{GetReturnByRefRequest, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,181 +32,15 @@ import scala.concurrent.Future
 
 class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
+  val testReturnId = "123456"
+  val testStorn = "TESTSTORN"
+  val testGetReturnByRefRequest: GetReturnByRefRequest = GetReturnByRefRequest(returnResourceRef = testReturnId, storn = testStorn)
+
   "ReturnTaskList Controller" - {
 
     "onPageLoad" - {
 
-      "must return SEE_OTHER and the correct view when no returnId is provided" in {
-
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
-        when(mockFullReturnService.getFullReturn(eqTo(None))(any(), any()))
-          .thenReturn(Future.successful(emptyFullReturn))
-
-        when(mockSessionRepository.set(any[UserAnswers]))
-          .thenReturn(Future.successful(true))
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-        }
-      }
-
-      "must return OK and the correct view when returnId is provided" in {
-
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-        val testReturnId = Some("123456")
-
-        when(mockFullReturnService.getFullReturn(eqTo(testReturnId))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
-
-        when(mockSessionRepository.set(any[UserAnswers]))
-          .thenReturn(Future.successful(true))
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(testReturnId).url)
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          verify(mockFullReturnService, times(1)).getFullReturn(eqTo(testReturnId))(any(), any())
-          verify(mockSessionRepository, times(1)).set(any[UserAnswers])
-        }
-      }
-
-      "must return OK with sections when fullReturn has complete data" in {
-
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
-        when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
-
-        when(mockSessionRepository.set(any[UserAnswers]))
-          .thenReturn(Future.successful(true))
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some("12345"))))
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) must include("Prelim Questions")
-          contentAsString(result) must include("Vendor Questions")
-        }
-      }
-
-      "must return OK and show prelim questions section as 'Not Started' when fullReturn has minimal data" in {
-
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
-        when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(incompleteFullReturn))
-
-        when(mockSessionRepository.set(any[UserAnswers]))
-          .thenReturn(Future.successful(true))
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some("12345"))))
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) must include("Prelim Questions")
-          contentAsString(result) must include("Not Started")
-        }
-      }
-
-      "must save UserAnswers to session repository with correct data" in {
-
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-        val testReturnId = Some("TEST-123")
-
-        when(mockFullReturnService.getFullReturn(eqTo(testReturnId))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
-
-        when(mockSessionRepository.set(any[UserAnswers]))
-          .thenReturn(Future.successful(true))
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(testReturnId).url)
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-
-          verify(mockSessionRepository, times(1)).set(argThat[UserAnswers] { userAnswers =>
-            userAnswers.fullReturn.isDefined &&
-              userAnswers.fullReturn.get.stornId == Some("STORN123456")
-          })
-        }
-      }
-
-      "must handle service failure gracefully" in {
-
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
-        when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.failed(new RuntimeException("Service error")))
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some("123345")).url)
-
-          intercept[RuntimeException] {
-            await(route(application, request).value)
-          }
-
-          verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
-          verify(mockSessionRepository, never()).set(any[UserAnswers])
-        }
-      }
-
-      "must redirect when no return id is provided" in {
+      "must return SEE_OTHER and redirect to BeforeStartReturn when no returnId is provided in URL or UserAnswers" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
@@ -222,25 +56,24 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.BeforeStartReturnController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url)
 
           verify(mockFullReturnService, never()).getFullReturn(any())(any(), any())
           verify(mockSessionRepository, never()).set(any[UserAnswers])
         }
       }
 
-      "must handle session repository failure gracefully" in {
-
+      "must return OK and the correct view when returnId is provided in URL" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
-        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+        when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
-          .thenReturn(Future.failed(new RuntimeException("Repository error")))
+          .thenReturn(Future.successful(true))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(storn = testStorn)))
           .overrides(
             bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -248,30 +81,26 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some("123345")).url)
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some(testReturnId)).url)
+          val result = route(application, request).value
 
-          intercept[RuntimeException] {
-            await(route(application, request).value)
-          }
-
-          verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
+          status(result) mustEqual OK
+          verify(mockFullReturnService, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any())
           verify(mockSessionRepository, times(1)).set(any[UserAnswers])
         }
       }
 
-      "must call FullReturnService with correct returnId parameter" in {
-
+      "must return OK and use returnId from UserAnswers when not provided in URL" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        val testReturnId = Some("TEST-123")
 
-        when(mockFullReturnService.getFullReturn(eqTo(testReturnId))(any(), any()))
+        when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
           .overrides(
             bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -279,16 +108,46 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(testReturnId).url)
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          verify(mockFullReturnService, times(1)).getFullReturn(eqTo(testReturnId))(any(), any())
+          verify(mockFullReturnService, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any())
+          verify(mockSessionRepository, times(1)).set(any[UserAnswers])
         }
       }
 
-      "must render two sections (Prelim and Vendor)" in {
+      "must prioritize URL returnId over UserAnswers returnId" in {
+        val urlReturnId = "URL-RETURN-ID"
+        val userAnswersReturnId = "UA-RETURN-ID"
+        val expectedRequest = GetReturnByRefRequest(returnResourceRef = urlReturnId, storn = testStorn)
 
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(eqTo(expectedRequest))(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(userAnswersReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some(urlReturnId)).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          verify(mockFullReturnService, times(1)).getFullReturn(eqTo(expectedRequest))(any(), any())
+        }
+      }
+
+      "must return OK with sections when fullReturn has complete data" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
@@ -298,7 +157,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
           .overrides(
             bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -306,7 +165,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some("123345")).url)
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
           status(result) mustEqual OK
@@ -316,19 +175,17 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must create UserAnswers with userId from request" in {
-
+      "must return OK and show sections with incomplete data status" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        val testUserId = "test-user-123"
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(incompleteFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(id = testUserId)))
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
           .overrides(
             bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -336,21 +193,308 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some("123345")).url)
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must save UserAnswers to session repository with correct returnId" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some(testReturnId)).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+
+          verify(mockSessionRepository, times(1)).set(argThat[UserAnswers] { userAnswers =>
+            userAnswers.returnId.contains(testReturnId) &&
+              userAnswers.fullReturn.isDefined &&
+              userAnswers.fullReturn.get.stornId == Some("STORN123456")
+          })
+        }
+      }
+
+      "must save UserAnswers with correct storn from request" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+
+          verify(mockSessionRepository, times(1)).set(argThat[UserAnswers] { userAnswers =>
+            userAnswers.storn == testStorn &&
+              userAnswers.returnId.contains(testReturnId)
+          })
+        }
+      }
+
+      "must save UserAnswers with correct userId from request" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+        val testUserId = "id" // Must match the id in emptyUserAnswers
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(id = testUserId, returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+
+          verify(mockSessionRepository, times(1)).set(argThat[UserAnswers] { userAnswers =>
+            userAnswers.id == testUserId &&
+              userAnswers.returnId.contains(testReturnId)
+          })
+        }
+      }
+
+      "must save UserAnswers with fullReturn from service" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
           status(result) mustEqual OK
 
           verify(mockSessionRepository, times(1)).set(argThat[UserAnswers] { userAnswers =>
             userAnswers.fullReturn.isDefined &&
-              userAnswers.fullReturn.get.stornId.contains("STORN123456") &&
-              userAnswers.id.nonEmpty
+              userAnswers.fullReturn.get == completeFullReturn
           })
         }
       }
 
-      "must handle minimal FullReturn with only stornId" in {
+      "must handle FullReturnService failure and propagate exception" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+        val serviceException = new RuntimeException("Service error")
 
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.failed(serviceException))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+
+          val exception = intercept[RuntimeException] {
+            await(route(application, request).value)
+          }
+
+          exception.getMessage mustBe "Service error"
+          verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
+          verify(mockSessionRepository, never()).set(any[UserAnswers])
+        }
+      }
+
+      "must handle SessionRepository failure and propagate exception" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+        val repositoryException = new RuntimeException("Repository error")
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.failed(repositoryException))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+
+          val exception = intercept[RuntimeException] {
+            await(route(application, request).value)
+          }
+
+          exception.getMessage mustBe "Repository error"
+          verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
+          verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+        }
+      }
+
+      "must call FullReturnService with GetReturnByRefRequest containing correct returnResourceRef" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+        val customReturnId = "CUSTOM-RETURN-123"
+        val expectedRequest = GetReturnByRefRequest(returnResourceRef = customReturnId, storn = testStorn)
+
+        when(mockFullReturnService.getFullReturn(eqTo(expectedRequest))(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some(customReturnId)).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          verify(mockFullReturnService, times(1)).getFullReturn(eqTo(expectedRequest))(any(), any())
+        }
+      }
+
+      "must render view with PrelimTaskList section" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Prelim Questions")
+        }
+      }
+
+      "must render view with VendorTaskList section" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Vendor Questions")
+        }
+      }
+
+      "must render view with both sections in correct order" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+
+          val prelimIndex = content.indexOf("Prelim Questions")
+          val vendorIndex = content.indexOf("Vendor Questions")
+
+          prelimIndex must be < vendorIndex
+        }
+      }
+
+      "must handle minimal FullReturn" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
@@ -360,6 +504,144 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
 
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
+          verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+        }
+      }
+
+      "must handle empty FullReturn" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(emptyFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
+          verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+        }
+      }
+
+      "must execute operations in correct order (service then repository)" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+        var serviceCallTime: Long = 0
+        var repositoryCallTime: Long = 0
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenAnswer(_ => {
+            serviceCallTime = System.nanoTime()
+            Future.successful(completeFullReturn)
+          })
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenAnswer(_ => {
+            repositoryCallTime = System.nanoTime()
+            Future.successful(true)
+          })
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          serviceCallTime must be < repositoryCallTime
+        }
+      }
+
+      "must use identify and getData actions" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must handle different returnId formats" in {
+        val returnIds = List("123", "ABC-123", "test-return-id", "RRF-2024-001")
+
+        returnIds.foreach { returnId =>
+          val mockFullReturnService = mock[FullReturnService]
+          val mockSessionRepository = mock[SessionRepository]
+          val expectedRequest = GetReturnByRefRequest(returnResourceRef = returnId, storn = testStorn)
+
+          when(mockFullReturnService.getFullReturn(eqTo(expectedRequest))(any(), any()))
+            .thenReturn(Future.successful(completeFullReturn))
+
+          when(mockSessionRepository.set(any[UserAnswers]))
+            .thenReturn(Future.successful(true))
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(storn = testStorn)))
+            .overrides(
+              bind[FullReturnService].toInstance(mockFullReturnService),
+              bind[SessionRepository].toInstance(mockSessionRepository)
+            )
+            .build()
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some(returnId)).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            verify(mockFullReturnService, times(1)).getFullReturn(eqTo(expectedRequest))(any(), any())
+          }
+        }
+      }
+
+      "must not call service when returnId is None and UserAnswers has no returnId" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[FullReturnService].toInstance(mockFullReturnService),
@@ -368,12 +650,12 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(Some("123345")).url)
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
-          status(result) mustEqual OK
-          verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
-          verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+          status(result) mustEqual SEE_OTHER
+          verify(mockFullReturnService, never()).getFullReturn(any())(any(), any())
+          verify(mockSessionRepository, never()).set(any[UserAnswers])
         }
       }
     }

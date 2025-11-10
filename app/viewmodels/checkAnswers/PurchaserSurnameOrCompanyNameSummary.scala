@@ -18,7 +18,7 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -41,7 +41,7 @@ object PurchaserSurnameOrCompanyNameSummary  {
           key     = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.${typeOfPurchaser}",
           value   = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaserSurnameOrCompanyName.change.hidden"))
           )
         )
@@ -49,7 +49,7 @@ object PurchaserSurnameOrCompanyNameSummary  {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserSurnameOrCompanyName.link.message")}</a>""")
+          s"""<a href="${controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserSurnameOrCompanyName.link.message")}</a>""")
       )
 
       SummaryListRowViewModel(

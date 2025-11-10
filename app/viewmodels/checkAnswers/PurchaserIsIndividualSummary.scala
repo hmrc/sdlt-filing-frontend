@@ -18,7 +18,7 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, NormalMode, UserAnswers}
-import pages.PurchaserIsIndividualPage
+import pages.preliminary.PurchaserIsIndividualPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -43,7 +43,7 @@ object PurchaserIsIndividualSummary {
         key = "purchaserIsIndividual.checkYourAnswersLabel",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("purchaserIsIndividual.change.hidden"))
         )
       )
@@ -51,7 +51,7 @@ object PurchaserIsIndividualSummary {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserIsIndividual.link.message")}</a>""")
+          s"""<a href="${controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserIsIndividual.link.message")}</a>""")
       )
 
       SummaryListRowViewModel(

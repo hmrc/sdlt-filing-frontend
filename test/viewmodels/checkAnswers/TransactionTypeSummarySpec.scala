@@ -18,8 +18,9 @@ package viewmodels.checkAnswers
 
 import base.SpecBase
 import controllers.routes
-import models.{CheckMode, TransactionType}
-import pages.TransactionTypePage
+import models.CheckMode
+import models.prelimQuestions.TransactionType
+import pages.preliminary.TransactionTypePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -49,7 +50,7 @@ class TransactionTypeSummarySpec extends SpecBase {
           htmlContent mustEqual msgs(s"transactionType.${TransactionType.Residential}")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual routes.TransactionTypeController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transactionType.change.hidden")
         }
@@ -116,7 +117,7 @@ class TransactionTypeSummarySpec extends SpecBase {
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
-          htmlContent must include(routes.TransactionTypeController.onPageLoad(CheckMode).url)
+          htmlContent must include(controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
           htmlContent must include(msgs("transactionType.link.message"))
 
           result.actions mustBe None
@@ -136,7 +137,7 @@ class TransactionTypeSummarySpec extends SpecBase {
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
-          htmlContent must include(routes.TransactionTypeController.onPageLoad(CheckMode).url)
+          htmlContent must include(controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
           htmlContent must include(msgs("transactionType.link.message"))
 
           result.actions mustBe None
@@ -156,7 +157,7 @@ class TransactionTypeSummarySpec extends SpecBase {
 
         val result = TransactionTypeSummary.row(Some(userAnswers))
 
-        result.actions.get.items.head.href mustEqual routes.TransactionTypeController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url
       }
     }
   }

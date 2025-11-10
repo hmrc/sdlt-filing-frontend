@@ -18,7 +18,7 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, NormalMode, UserAnswers}
-import pages.TransactionTypePage
+import pages.preliminary.TransactionTypePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -42,7 +42,7 @@ object TransactionTypeSummary  {
           key     = "transactionType.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
-            ActionItemViewModel("site.change", routes.TransactionTypeController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("transactionType.change.hidden"))
           )
         )
@@ -50,7 +50,7 @@ object TransactionTypeSummary  {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${routes.TransactionTypeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("transactionType.link.message")}</a>""")
+          s"""<a href="${controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("transactionType.link.message")}</a>""")
       )
 
       SummaryListRowViewModel(

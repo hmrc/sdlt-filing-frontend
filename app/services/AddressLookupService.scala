@@ -20,7 +20,7 @@ import config.AddressLookupConfiguration
 import connectors.AddressLookupConnector
 import models.address.{Address, AddressLookupJourneyIdentifier, MandatoryFieldsConfigModel}
 import models.requests.DataRequest
-import pages.PurchaserAddressPage
+import pages.preliminary.PurchaserAddressPage
 import play.api.http.HeaderNames.LOCATION
 import play.api.http.HttpVerbs.GET
 import play.api.mvc.{Call, Request}

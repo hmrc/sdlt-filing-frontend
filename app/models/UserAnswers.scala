@@ -25,6 +25,7 @@ import scala.util.{Failure, Success, Try}
 
 final case class UserAnswers(
                               id: String,
+                              storn: String,
                               returnId: Option[String] = None,
                               fullReturn: Option[FullReturn] = None,
                               data: JsObject = Json.obj(),
@@ -75,6 +76,7 @@ object UserAnswers {
 
     (
       (__ \ "_id").read[String] and
+      (__ \ "storn").read[String] and
       (__ \ "returnId").readNullable[String] and
       (__ \ "fullReturn").readNullable[FullReturn] and
       (__ \ "data").read[JsObject] and
@@ -88,11 +90,12 @@ object UserAnswers {
 
     (
       (__ \ "_id").write[String] and
+      (__ \ "storn").write[String] and
       (__ \ "returnId").writeNullable[String] and
       (__ \ "fullReturn").writeNullable[FullReturn] and
       (__ \ "data").write[JsObject] and
       (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-    ) (ua => (ua.id, ua.returnId, ua.fullReturn, ua.data, ua.lastUpdated))
+    ) (ua => (ua.id, ua.storn, ua.returnId, ua.fullReturn, ua.data, ua.lastUpdated))
   }
 
   implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)

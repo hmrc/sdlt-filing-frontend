@@ -51,8 +51,8 @@ class SessionRepositoryISpec
   private val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
 
   private val testReturnId = "123456"
-  private val userAnswers = UserAnswers("id", data = Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
-  private val userAnswersWithReturnId = UserAnswers("id", Some(testReturnId), Some(fullReturn), Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
+  private val userAnswers = UserAnswers("id",  storn = "TESTSTORN", data = Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
+  private val userAnswersWithReturnId = UserAnswers("id", storn = "TESTSTORN", Some(testReturnId), Some(fullReturn), Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
 
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1L
