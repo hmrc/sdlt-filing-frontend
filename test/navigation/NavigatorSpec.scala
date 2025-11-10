@@ -21,6 +21,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
+import pages.vendor.WhoIsTheVendorPage
 
 class NavigatorSpec extends SpecBase {
 
@@ -54,6 +55,11 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(TransactionTypePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
       }
     }
+
+    "go from WhoIsTheVendor page to ReturnTaskList" in {
+      navigator.nextPage(WhoIsTheVendorPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+    }
+
 
     "in Check mode" - {
 
