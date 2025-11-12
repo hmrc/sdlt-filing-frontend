@@ -59,8 +59,8 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(WhoIsTheVendorPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(mode = NormalMode)
       }
 
-      "go from Vendor or Business name page to ReturnTaskList" in {
-        navigator.nextPage(VendorOrBusinessNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+      "go from Vendor or Business name page to Confirm Vendor Address Page" in {
+        navigator.nextPage(VendorOrBusinessNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(mode = NormalMode)
       }
     }
 

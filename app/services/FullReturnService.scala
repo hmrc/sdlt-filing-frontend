@@ -34,6 +34,5 @@ class FullReturnService @Inject()(stubConnector: StampDutyLandTaxConnector)(impl
     logger.info("[getFullReturnBE] Getting Full Return")
     stubConnector.getFullReturn(getReturnByRefRequest)
   }
-  
-  
+
 }
