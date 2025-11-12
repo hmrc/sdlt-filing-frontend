@@ -14,47 +14,48 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.preliminary
 
 import controllers.routes
 import models.{CheckMode, NormalMode, UserAnswers}
-import pages.preliminary.TransactionTypePage
+import pages.preliminary.PurchaserIsIndividualPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object TransactionTypeSummary  {
+object PurchaserIsIndividualSummary {
 
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
-    answers.flatMap(_.get(TransactionTypePage)).map {
-      answer =>
+    answers.flatMap(_.get(PurchaserIsIndividualPage)).map { answer =>
 
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"transactionType.$answer"))
-          )
-        )
-
-        SummaryListRowViewModel(
-          key     = "transactionType.checkYourAnswersLabel",
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("transactionType.change.hidden"))
-          )
-        )
-    }.getOrElse{
+      val answerText = answer.toString match {
+        case "Individual" => messages("purchaserIsIndividual.individual.value")
+        case _  => messages("purchaserIsIndividual.business.value")
+      }
 
       val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("transactionType.link.message")}</a>""")
+        HtmlContent(answerText)
       )
 
       SummaryListRowViewModel(
-        key = "transactionType.checkYourAnswersLabel",
+        key = "purchaserIsIndividual.checkYourAnswersLabel",
+        value = value,
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("purchaserIsIndividual.change.hidden"))
+        )
+      )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserIsIndividual.link.message")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaserIsIndividual.checkYourAnswersLabel",
         value = value
       )
     }

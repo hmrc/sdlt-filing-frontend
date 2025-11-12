@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.preliminary
 
 import base.SpecBase
 import controllers.preliminary.routes
@@ -23,6 +23,7 @@ import pages.preliminary.PurchaserAddressPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.preliminary.PrelimAddressSummary
 
 class PrelimAddressSummarySpec extends SpecBase {
 

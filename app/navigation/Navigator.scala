@@ -22,7 +22,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{VendorOrBusinessNamePage, WhoIsTheVendorPage}
+import pages.vendor.{AgentNamePage, WhoIsTheVendorPage, VendorOrBusinessNamePage}
 
 @Singleton
 class Navigator @Inject()() {
@@ -34,6 +34,8 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case AgentNamePage =>
+      _ => routes.ReturnTaskListController.onPageLoad() //Change this to the address lookup
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(NormalMode)
     case VendorOrBusinessNamePage =>
@@ -41,7 +43,7 @@ class Navigator @Inject()() {
 
     //TODO - implement below once page is merged into main
 //    case ConfirmVendorAddressPage => _ => routes.VendorRepresentedByAgentController.onPageLoad()
-    
+
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

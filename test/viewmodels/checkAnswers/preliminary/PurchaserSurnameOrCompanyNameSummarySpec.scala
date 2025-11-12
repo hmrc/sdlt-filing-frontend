@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.preliminary
 
 import base.SpecBase
 import controllers.routes
@@ -24,6 +24,7 @@ import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNa
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import viewmodels.checkAnswers.preliminary.PurchaserSurnameOrCompanyNameSummary
 
 class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
