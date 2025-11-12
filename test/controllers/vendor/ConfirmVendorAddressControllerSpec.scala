@@ -89,10 +89,15 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
           .thenReturn(Future.successful(minimalFullReturnWithNoVendors))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(
-          storn = testStorn,
-          returnId = Some(testReturnId)
-        )))
+        val userAnswersWithName = emptyUserAnswers
+          .copy(storn = testStorn, returnId = Some(testReturnId))
+          .set(VendorOrBusinessNamePage, VendorName(
+            forename1 = None,
+            forename2 = None,
+            name = "Acme Ltd"
+          )).get
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
           .overrides(
             bind[StampDutyLandTaxConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)

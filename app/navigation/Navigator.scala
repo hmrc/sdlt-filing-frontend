@@ -37,7 +37,7 @@ class Navigator @Inject()() {
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(NormalMode)
     case VendorOrBusinessNamePage =>
-      _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode) // TODO DTR-1010: Change this to the new page created for VR-2
+      _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
 
     //TODO - implement below once page is merged into main
 //    case ConfirmVendorAddressPage => _ => routes.VendorRepresentedByAgentController.onPageLoad()
