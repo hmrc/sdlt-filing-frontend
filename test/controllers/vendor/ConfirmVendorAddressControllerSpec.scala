@@ -17,20 +17,18 @@
 package controllers.vendor
 
 import base.SpecBase
-import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.{completeFullReturn, completeFullReturnMultipleVendors, completeVendor, minimalFullReturn}
 import controllers.routes
 import forms.vendor.ConfirmVendorAddressFormProvider
 import models.vendor.{ConfirmVendorAddress, VendorName}
-import models.{FullReturn, GetReturnByRefRequest, NormalMode, ReturnInfo, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendor.{ConfirmVendorAddressPage, VendorOrBusinessNamePage}
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -43,23 +41,22 @@ import scala.concurrent.Future
 class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
   private val mockSessionRepository = mock[SessionRepository]
-  private val mockConnector = mock[StampDutyLandTaxConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockSessionRepository, mockConnector)
+    reset(mockSessionRepository)
   }
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val confirmVendorAddressRoute: String = controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode).url
+  lazy val confirmVendorAddressRoute: String =
+    controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode).url
 
   private val formProvider = new ConfirmVendorAddressFormProvider()
   private val form = formProvider()
 
   private val testReturnId = "123456"
   private val testStorn = "TESTSTORN"
-  private val testGetReturnByRefRequest: GetReturnByRefRequest = GetReturnByRefRequest(returnResourceRef = testReturnId, storn = testStorn)
 
   private def uaWithVendorName(
                                 vn: VendorName,
@@ -79,69 +76,52 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
   "ConfirmVendorAddressController.onPageLoad" - {
 
     "when there are no complete vendors" - {
-
       "must redirect to AddressLookup for current vendor" in {
-        val minimalFullReturnWithNoVendors = minimalFullReturn.copy(
-          vendor = None
-        )
-
-        when(mockConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(minimalFullReturnWithNoVendors))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        val minimalFullReturnWithNoVendors = minimalFullReturn.copy(vendor = None)
 
         val userAnswersWithName = emptyUserAnswers
-          .copy(storn = testStorn, returnId = Some(testReturnId))
-          .set(VendorOrBusinessNamePage, VendorName(
-            forename1 = None,
-            forename2 = None,
-            name = "Acme Ltd"
-          )).get
+          .copy(
+            storn = testStorn,
+            returnId = Some(testReturnId),
+            fullReturn = Some(minimalFullReturnWithNoVendors)
+          )
+          .set(VendorOrBusinessNamePage, VendorName(None, None, "Acme Ltd")).get
 
         val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
-          .overrides(
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
           val request = FakeRequest(GET, confirmVendorAddressRoute)
-          val result = route(application, request).value
+          val result = route(application, request).get
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
             controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup().url
-          //TODO replace with the below once the next page is deployed
-          //              Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(mode))
         }
       }
     }
 
     "when there are complete vendors" - {
-      "must return OK and the correct view for a GET" in {
-        when(mockConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
 
+      "must return OK and the correct view for a GET" in {
         val userAnswers = uaWithVendorName(testVendorName)
+          .copy(fullReturn = Some(completeFullReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
           val request = FakeRequest(GET, confirmVendorAddressRoute)
-
-          val result = route(application, request).value
+          val result = route(application, request).get
 
           val view = application.injector.instanceOf[ConfirmVendorAddressView]
 
           status(result) mustEqual OK
-
           contentAsString(result) mustEqual
-            view(form,
+            view(
+              form,
               expectedName,
               completeVendor.address1,
               completeVendor.address2,
@@ -154,22 +134,16 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
       }
 
       "must return OK and the correct view for a GET where there are multiple vendors" in {
-        when(mockConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturnMultipleVendors))
-
         val userAnswers = uaWithVendorName(testVendorName)
+          .copy(fullReturn = Some(completeFullReturnMultipleVendors))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
           val request = FakeRequest(GET, confirmVendorAddressRoute)
-
-          val result = route(application, request).value
+          val result = route(application, request).get
 
           val view = application.injector.instanceOf[ConfirmVendorAddressView]
 
@@ -190,26 +164,19 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must populate the view correctly on a GET when the question has previously been answered" in {
         val userAnswers = uaWithVendorName(testVendorName, _.set(ConfirmVendorAddressPage, ConfirmVendorAddress.Yes).get)
-
-        when(mockConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
           val request = FakeRequest(GET, confirmVendorAddressRoute)
+          val result = route(application, request).get
 
           val view = application.injector.instanceOf[ConfirmVendorAddressView]
 
-          val result = route(application, request).value
-
           status(result) mustEqual OK
-
           contentAsString(result) mustEqual
             view(
               form.fill(ConfirmVendorAddress.Yes),
@@ -224,6 +191,38 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
         }
       }
     }
+
+    "must redirect to Return Task List when no VendorOrBusinessNamePage is present" in {
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, confirmVendorAddressRoute)
+        val result = route(application, request).get
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery when no fullReturn is present" in {
+      val userAnswers = uaWithVendorName(testVendorName)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, confirmVendorAddressRoute)
+        val result = route(application, request).get
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
   }
 
   "ConfirmVendorAddressController.onSubmit" - {
@@ -232,17 +231,14 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must redirect to the next page when user selects Yes" in {
         val userAnswers = uaWithVendorName(testVendorName)
+          .copy(fullReturn = Some(completeFullReturn))
 
-        when(mockConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
-
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -250,7 +246,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
           val request = FakeRequest(POST, confirmVendorAddressRoute)
             .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.Yes.toString)
 
-          val result = route(application, request).value
+          val result = route(application, request).get
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual onwardRoute.url
@@ -259,24 +255,19 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must redirect to Address Lookup when user selects No" in {
         val userAnswers = uaWithVendorName(testVendorName)
+          .copy(fullReturn = Some(completeFullReturn))
 
-        when(mockConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
-
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
-          )
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
           val request = FakeRequest(POST, confirmVendorAddressRoute)
             .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.No.toString)
 
-          val result = route(application, request).value
+          val result = route(application, request).get
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -285,13 +276,10 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
       }
 
       "must return a Bad Request and errors when invalid data is submitted" in {
-        when(mockConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
-
         val userAnswers = uaWithVendorName(testVendorName)
+          .copy(fullReturn = Some(completeFullReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockConnector))
           .build()
 
         running(application) {
@@ -301,7 +289,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
           val boundForm = form.bind(Map("value" -> "invalid value"))
           val view = application.injector.instanceOf[ConfirmVendorAddressView]
 
-          val result = route(application, request).value
+          val result = route(application, request).get
 
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual
@@ -324,7 +312,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request = FakeRequest(GET, confirmVendorAddressRoute)
-        val result = route(application, request).value
+        val result = route(application, request).get
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
@@ -338,7 +326,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
         val request = FakeRequest(POST, confirmVendorAddressRoute)
           .withFormUrlEncodedBody(("value", ConfirmVendorAddress.values.head.toString))
 
-        val result = route(application, request).value
+        val result = route(application, request).get
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url

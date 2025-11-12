@@ -48,91 +48,87 @@ class ConfirmVendorAddressController @Inject()(
 
   val form: Form[ConfirmVendorAddress] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers.returnId match {
-        case Some(returnId) =>
-          backendConnector
-            .getFullReturn(GetReturnByRefRequest(returnResourceRef = returnId, storn = request.userAnswers.storn))
-            .map { fullReturn =>
+      val userAnswers = request.userAnswers
+
+      userAnswers.get(VendorOrBusinessNamePage) match {
+        case None =>
+          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+
+        case Some(vn) =>
+          val vendorOrBusinessName = Seq(vn.forename1, vn.forename2, Some(vn.name))
+            .flatten.mkString(" ").trim.replaceAll(" +", " ")
+
+          userAnswers.fullReturn match {
+            case None =>
+              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+
+            case Some(fullReturn) =>
               val vendors = fullReturn.vendor.getOrElse(Seq.empty)
 
-              request.userAnswers.get(VendorOrBusinessNamePage) match {
-                case None =>
-                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+              if (vendors.isEmpty) {
+                Redirect(controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup())
+                //TODO replace with the route once the next page is merged
+                //              Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(mode))
+              } else {
+                val mainId = fullReturn.returnInfo.flatMap(_.mainVendorID).getOrElse("")
+                val mainVendor = vendors.find(_.vendorID.contains(mainId)).orElse(vendors.headOption).getOrElse(models.Vendor())
+                val line1 = mainVendor.address1
+                val line2 = mainVendor.address2
+                val line3 = mainVendor.address3
+                val line4 = mainVendor.address4
+                val postcode = mainVendor.postcode
+                val preparedForm = userAnswers.get(ConfirmVendorAddressPage).fold(form)(form.fill)
 
-                case Some(vn) =>
-                  val vendorOrBusinessName = Seq(vn.forename1, vn.forename2, Some(vn.name)).flatten.mkString(" ").trim.replaceAll(" +", " ")
-
-                  if (vendors.isEmpty) {
-                    Redirect(controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup())
-                    //TODO
-                    //replace with the below once the next page is deployed
-                    //              Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(mode))
-                  } else {
-                    val mainId = fullReturn.returnInfo.flatMap(_.mainVendorID).getOrElse("")
-                    val mainVendor = vendors.find(_.vendorID.contains(mainId)).orElse(vendors.headOption).getOrElse(models.Vendor())
-                    val line1 = mainVendor.address1
-                    val line2 = mainVendor.address2
-                    val line3 = mainVendor.address3
-                    val line4 = mainVendor.address4
-                    val postcode = mainVendor.postcode
-                    val preparedForm = request.userAnswers.get(ConfirmVendorAddressPage).fold(form)(form.fill)
-
-                    Ok(view(preparedForm, vendorOrBusinessName, line1, line2, line3, line4, postcode, mode))
-                  }
+                Ok(view(preparedForm, vendorOrBusinessName, line1, line2, line3, line4, postcode, mode))
               }
-            }
-
-        case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          }
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers.returnId match {
-        case Some(returnId) =>
-          backendConnector
-            .getFullReturn(GetReturnByRefRequest(returnResourceRef = returnId, storn = request.userAnswers.storn))
-            .flatMap { fullReturn =>
-              request.userAnswers.get(VendorOrBusinessNamePage) match {
-                case None =>
-                  Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+      val userAnswers = request.userAnswers
 
-                case Some(vn) =>
-                  val vendorOrBusinessName = Seq(vn.forename1, vn.forename2, Some(vn.name)).flatten.mkString(" ").trim.replaceAll(" +", " ")
+      userAnswers.get(VendorOrBusinessNamePage) match {
+        case None =>
+          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
 
-                  val mainId = fullReturn.returnInfo.flatMap(_.mainVendorID).getOrElse("")
-                  val mainVendor = fullReturn.vendor.getOrElse(Seq.empty).find(_.vendorID.contains(mainId))
-                    .orElse(fullReturn.vendor.flatMap(_.headOption))
-                    .getOrElse(models.Vendor())
-                  val line1 = mainVendor.address1
-                  val line2 = mainVendor.address2
-                  val line3 = mainVendor.address3
-                  val line4 = mainVendor.address4
-                  val postcode = mainVendor.postcode
+        case Some(vn) =>
+          val vendorOrBusinessName = Seq(vn.forename1, vn.forename2, Some(vn.name))
+            .flatten.mkString(" ").trim.replaceAll(" +", " ")
 
-                  form.bindFromRequest().fold(
-                    formWithErrors =>
-                      Future.successful(
-                        BadRequest(view(formWithErrors, vendorOrBusinessName, line1, line2, line3, line4, postcode, mode))
-                      ),
-                    value =>
-                      for {
-                        updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmVendorAddressPage, value))
-                        _ <- sessionRepository.set(updatedAnswers)
-                      } yield {
-                        value match {
-                          case ConfirmVendorAddress.Yes => Redirect(navigator.nextPage(ConfirmVendorAddressPage, mode, updatedAnswers))
-                          case ConfirmVendorAddress.No => Redirect(controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup())
-                        }
-                      }
-                  )
-              }
-            }
-            .recover { case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) }
+          userAnswers.fullReturn match {
+            case None =>
+              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
-        case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            case Some(fullReturn) =>
+              val mainId = fullReturn.returnInfo.flatMap(_.mainVendorID).getOrElse("")
+              val mainVendor = fullReturn.vendor.getOrElse(Seq.empty).find(_.vendorID.contains(mainId))
+                .orElse(fullReturn.vendor.flatMap(_.headOption))
+                .getOrElse(models.Vendor())
+              val line1 = mainVendor.address1
+              val line2 = mainVendor.address2
+              val line3 = mainVendor.address3
+              val line4 = mainVendor.address4
+              val postcode = mainVendor.postcode
+
+              form.bindFromRequest().fold(
+                formWithErrors =>
+                  BadRequest(view(formWithErrors, vendorOrBusinessName, line1, line2, line3, line4, postcode, mode)),
+                value =>
+                  val updatedAnswers = userAnswers.set(ConfirmVendorAddressPage, value).get
+                  sessionRepository.set(updatedAnswers)
+
+                  value match {
+                    case ConfirmVendorAddress.Yes => Redirect(navigator.nextPage(ConfirmVendorAddressPage, mode, updatedAnswers))
+                    case ConfirmVendorAddress.No => Redirect(controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup())
+                    //TODO replace with the route once the next page is merged
+                    //              Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(mode))
+                  }
+              )
+          }
       }
   }
 }
