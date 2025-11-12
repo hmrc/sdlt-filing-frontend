@@ -19,7 +19,8 @@ package controllers.vendor
 import base.SpecBase
 import controllers.routes
 import forms.vendor.WhoIsTheVendorFormProvider
-import models.{NormalMode, UserAnswers, whoIsTheVendor}
+import models.vendor.whoIsTheVendor
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

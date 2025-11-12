@@ -17,7 +17,7 @@
 package forms.vendor
 
 import forms.mappings.Mappings
-import models.whoIsTheVendor
+import models.vendor.whoIsTheVendor
 import play.api.data.Form
 
 import javax.inject.Inject

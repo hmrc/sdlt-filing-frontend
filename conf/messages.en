@@ -157,3 +157,24 @@ whoIsTheVendor.Business = A business
 whoIsTheVendor.checkYourAnswersLabel = Who is the vendor? – About the vendor
 whoIsTheVendor.error.required = Select vendor
 whoIsTheVendor.change.hidden = whoIsTheVendor
+
+vendor.individual.title = What is the vendor’s full name? – About the vendor
+vendor.individual.caption = About the vendor
+vendor.individual.heading = What is the vendor’s full name?
+vendor.individual.firstName = First name
+vendor.individual.middleName = Middle name(s)
+vendor.individual.surname = Surname
+vendor.individual.checkYourAnswersLabel = vendorOrBusinessName
+vendor.individual.error.length.firstName = Vendor’s first name must be 14 characters or less
+vendor.individual.error.length.middleName = Vendor’s middle name(s) must be 14 characters or less
+vendor.individual.change.hidden = Vendor name
+
+vendor.business.title = What is the vendor’s full name? – About the vendor
+vendor.business.caption = About the vendor
+vendor.business.heading = What is the business name?
+vendor.business.checkYourAnswersLabel = vendorOrBusinessName
+vendor.business.change.hidden = Business name
+
+vendor.name.error.length = Vendor’s name must be 56 characters or less
+vendor.name.form.regex.error = Invalid Error
+vendor.name.error.required = Nothing has been provided

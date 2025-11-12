@@ -16,7 +16,7 @@
 
 package pages.vendor
 
-import models.whoIsTheVendor
+import models.vendor.whoIsTheVendor
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

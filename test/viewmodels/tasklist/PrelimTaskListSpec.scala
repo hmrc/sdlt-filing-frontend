@@ -20,7 +20,8 @@ import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants
 import models.prelimQuestions.PrelimReturn
-import models.{FullReturn, NormalMode, VendorReturn}
+import models.vendor.VendorReturn
+import models.{FullReturn, NormalMode}
 import play.api.i18n.Messages
 import play.api.test.Helpers.*
 import viewmodels.tasklist.{PrelimTaskList, TLCompleted, TLNotStarted, TaskListSection, TaskListSectionRow}
