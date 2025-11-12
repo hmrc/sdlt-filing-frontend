@@ -35,7 +35,7 @@
 
 @import models.vendor.ConfirmVendorAddress
 
-@layout(pageTitle = title(form, messages("confirmVendorAddress.title"))) {
+@layout(pageTitle = title(form, messages("confirmVendorAddress.title", vendorOrBusinessName))) {
 
     @formHelper(action = controllers.vendor.routes.ConfirmVendorAddressController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
