@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.preliminary
 
 import base.SpecBase
 import controllers.routes
@@ -24,6 +24,7 @@ import pages.preliminary.TransactionTypePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.preliminary.TransactionTypeSummary
 
 class TransactionTypeSummarySpec extends SpecBase {
 
