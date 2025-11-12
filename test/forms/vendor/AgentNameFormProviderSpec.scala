@@ -48,8 +48,8 @@ class AgentNameFormProviderSpec extends StringFieldBehaviours {
       )
     }
 
-    "must not bind strings longer than 56 characters" in {
-      val longName = "a" * 57
+    "must not bind strings longer than 28 characters" in {
+      val longName = "a" * 29
       val result = form.bind(Map(fieldName -> longName))
       result.errors must contain(FormError(fieldName, lengthKey, Seq(maxLength)))
     }
