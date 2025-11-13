@@ -68,9 +68,7 @@ class ConfirmVendorAddressController @Inject()(
               val vendors = fullReturn.vendor.getOrElse(Seq.empty)
 
               if (vendors.isEmpty) {
-                Redirect(controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup())
-                //TODO replace with the route once the next page is merged
-                //              Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(mode))
+                Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
               } else {
                 val mainId = fullReturn.returnInfo.flatMap(_.mainVendorID).getOrElse("")
                 val mainVendor = vendors.find(_.vendorID.contains(mainId)).orElse(vendors.headOption).getOrElse(models.Vendor())
@@ -123,9 +121,7 @@ class ConfirmVendorAddressController @Inject()(
 
                   value match {
                     case ConfirmVendorAddress.Yes => Redirect(navigator.nextPage(ConfirmVendorAddressPage, mode, updatedAnswers))
-                    case ConfirmVendorAddress.No => Redirect(controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup())
-                    //TODO replace with the route once the next page is merged
-                    //              Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(mode))
+                    case ConfirmVendorAddress.No => Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
                   }
               )
           }

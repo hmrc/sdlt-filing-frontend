@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.preliminary
+package controllers.vendor
 
 /*
  * Copyright 2025 HM Revenue & Customs
@@ -33,20 +33,23 @@ package controllers.preliminary
  */
 
 import base.SpecBase
+import models.{NormalMode, UserAnswers}
 import models.address.{Address, Country}
-import models.NormalMode
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
+import repositories.SessionRepository
 import services.AddressLookupService
 
+import java.time.Instant
 import scala.concurrent.Future
 
-class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
+class VendorAddressControllerSpec extends SpecBase with MockitoSugar {
 
   val testAddress: Address = Address(
     "16 Coniston Court",
@@ -61,24 +64,43 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
 
   val testAddressLookupCall: Call = Call("GET", "http://localhost:9028/lookup-address/journey")
 
-  lazy val redirectToAddressLookupRoute = controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup().url
-  lazy val redirectToAddressLookupChangeRoute = controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup(changeRoute = Some("change")).url
-  lazy val addressLookupCallbackRoute = controllers.preliminary.routes.PrelimAddressController.addressLookupCallback(id = "test-id").url
-  lazy val addressLookupCallbackChangeRoute = controllers.preliminary.routes.PrelimAddressController.addressLookupCallbackChange("test-id").url
+  lazy val redirectToAddressLookupRoute = controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor().url
+  lazy val redirectToAddressLookupChangeRoute = controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(changeRoute = Some("change")).url
+  lazy val addressLookupCallbackRoute = controllers.vendor.routes.VendorAddressController.addressLookupCallbackVendor(id = "test-id").url
+  lazy val addressLookupCallbackChangeRoute = controllers.vendor.routes.VendorAddressController.addressLookupCallbackChangeVendor("test-id").url
 
-  "PrelimAddressController" - {
+  val testUserAnswers = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("test-return-id"),
+    fullReturn = None,
+    data = Json.obj(
+      "vendorCurrent" -> Json.obj(
+        "whoIsTheVendor" -> "Business",
+        "vendorOrBusinessName" -> Json.obj(
+          "name" -> "test"
+        )
+      )
+    ),
+    lastUpdated = Instant.now
+  )
+
+  "VendorAddressController" - {
 
     "redirectToAddressLookup" - {
 
       "must redirect to address lookup service when no changeRoute is provided" in {
         val mockAddressLookupService = mock[AddressLookupService]
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswers)))
 
         when(mockAddressLookupService.getJourneyUrl(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(testAddressLookupCall))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
           .overrides(
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
+            bind[AddressLookupService].toInstance(mockAddressLookupService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -91,7 +113,7 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustEqual testAddressLookupCall.url
 
           verify(mockAddressLookupService, times(1))
-            .getJourneyUrl(any(), eqTo(controllers.preliminary.routes.PrelimAddressController.addressLookupCallback()), eqTo(true), any(), any())(any(), any(), any())
+            .getJourneyUrl(any(), eqTo(controllers.vendor.routes.VendorAddressController.addressLookupCallbackVendor()), eqTo(true), any(), any())(any(), any(), any())
         }
       }
 
@@ -100,10 +122,13 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockAddressLookupService.getJourneyUrl(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(testAddressLookupCall))
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswers)))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
           .overrides(
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
+            bind[AddressLookupService].toInstance(mockAddressLookupService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -116,7 +141,7 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustEqual testAddressLookupCall.url
 
           verify(mockAddressLookupService, times(1))
-            .getJourneyUrl(any(), eqTo(controllers.preliminary.routes.PrelimAddressController.addressLookupCallbackChange()), eqTo(true), any(), any())(any(), any(), any())
+            .getJourneyUrl(any(), eqTo(controllers.vendor.routes.VendorAddressController.addressLookupCallbackChangeVendor()), eqTo(true), any(), any())(any(), any(), any())
         }
       }
 
@@ -141,13 +166,16 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
 
       "must handle service failure when getting journey URL" in {
         val mockAddressLookupService = mock[AddressLookupService]
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswers)))
 
         when(mockAddressLookupService.getJourneyUrl(any(), any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Service unavailable")))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
           .overrides(
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
+            bind[AddressLookupService].toInstance(mockAddressLookupService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -166,7 +194,7 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
 
     "addressLookupCallback" - {
 
-      "must redirect to TransactionTypeController when address is successfully saved" in {
+      "must redirect when address is successfully saved" in {
         val mockAddressLookupService = mock[AddressLookupService]
 
         when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
@@ -186,14 +214,14 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
         }
       }
 
-      "must redirect to CheckYourAnswers when address save fails" in {
+      "must redirect to Journey Recovery when address save fails" in {
         val mockAddressLookupService = mock[AddressLookupService]
 
         when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
@@ -304,13 +332,13 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
             .build()
 
           running(application) {
-            val callbackRoute = controllers.preliminary.routes.PrelimAddressController.addressLookupCallback(addressId).url
+            val callbackRoute = controllers.vendor.routes.VendorAddressController.addressLookupCallbackVendor(addressId).url
             val request = FakeRequest(GET, callbackRoute)
 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(NormalMode).url
+            redirectLocation(result).value mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }
@@ -340,14 +368,14 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.preliminary.routes.CheckYourAnswersController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
         }
       }
 
-      "must redirect to CheckYourAnswers when address save fails" in {
+      "must redirect to Journey Recovery when address save fails" in {
         val mockAddressLookupService = mock[AddressLookupService]
 
         when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
@@ -451,20 +479,20 @@ class PrelimAddressControllerSpec extends SpecBase with MockitoSugar {
           when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
             .thenReturn(Future.successful(true))
 
-          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy()))
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
             .overrides(
               bind[AddressLookupService].toInstance(mockAddressLookupService)
             )
             .build()
 
           running(application) {
-            val callbackChangeRoute = controllers.preliminary.routes.PrelimAddressController.addressLookupCallbackChange(addressId).url
+            val callbackChangeRoute = controllers.vendor.routes.VendorAddressController.addressLookupCallbackChangeVendor(addressId).url
             val request = FakeRequest(GET, callbackChangeRoute)
 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.preliminary.routes.CheckYourAnswersController.onPageLoad().url
+            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }
