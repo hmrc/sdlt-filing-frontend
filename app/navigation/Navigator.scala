@@ -32,12 +32,17 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode)
     case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
-    case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-    case AgentNamePage => _ => routes.ReturnTaskListController.onPageLoad() //Change this to the address lookup
+    case TransactionTypePage =>
+      _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case AgentNamePage =>
+      _ => routes.ReturnTaskListController.onPageLoad() //Change this to the address lookup
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(NormalMode)
     case VendorOrBusinessNamePage =>
-      _ => routes.ReturnTaskListController.onPageLoad() // TODO DTR-1010: Change this to the new page created for VR-2
+      _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
+
+    //TODO - implement below once page is merged into main
+//    case ConfirmVendorAddressPage => _ => routes.VendorRepresentedByAgentController.onPageLoad()
 
     case _ => _ => routes.IndexController.onPageLoad()
   }

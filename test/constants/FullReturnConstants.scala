@@ -150,6 +150,42 @@ object FullReturnConstants {
     nextVendorID = None
   )
 
+  val completeVendor2: Vendor = Vendor(
+    vendorID = Some("VEN002"),
+    returnID = Some("RET123456780"),
+    title = Some("Mr"),
+    forename1 = Some("John"),
+    forename2 = Some("Randall"),
+    name = Some("Tarley"),
+    houseNumber = Some("11"),
+    address1 = Some("Park Road"),
+    address2 = Some("Paddington"),
+    address3 = Some("London"),
+    address4 = None,
+    postcode = Some("W12 1BL"),
+    isRepresentedByAgent = Some("false"),
+    vendorResourceRef = Some("VEN-REF-002"),
+    nextVendorID = None
+  )
+
+  val completeVendor3: Vendor = Vendor(
+    vendorID = Some("VEN003"),
+    returnID = Some("RET123456711"),
+    title = Some("Mrs"),
+    forename1 = Some("Elizabeth"),
+    forename2 = Some("Jane"),
+    name = Some("Thompson"),
+    houseNumber = Some("9"),
+    address1 = Some("Forest Lane"),
+    address2 = Some("Southend"),
+    address3 = Some("Essex"),
+    address4 = None,
+    postcode = Some("SS1 1LB"),
+    isRepresentedByAgent = Some("true"),
+    vendorResourceRef = Some("VEN-REF-003"),
+    nextVendorID = None
+  )
+
   val completeLand: Land = Land(
     landID = Some("LND001"),
     returnID = Some("RET123456789"),
@@ -372,6 +408,25 @@ object FullReturnConstants {
     purchaser = Some(Seq(completePurchaser1, completePurchaser2)),
     companyDetails = Some(completeCompanyDetails),
     vendor = Some(Seq(completeVendor)),
+    land = Some(Seq(completeLand)),
+    transaction = Some(completeTransaction),
+    returnAgent = Some(Seq(completeReturnAgent)),
+    agent = Some(completeAgent),
+    lease = Some(completeLease),
+    taxCalculation = Some(completeTaxCalculation),
+    submission = Some(completeSubmission),
+    submissionErrorDetails = Some(completeSubmissionErrorDetails),
+    residency = Some(completeResidency)
+  )
+
+  val completeFullReturnMultipleVendors: FullReturn = FullReturn(
+    stornId = Some("STORN123456"),
+    returnResourceRef = Some("RRF-2024-001"),
+    sdltOrganisation = Some(completeSdltOrganisation),
+    returnInfo = Some(completeReturnInfo),
+    purchaser = Some(Seq(completePurchaser1, completePurchaser2)),
+    companyDetails = Some(completeCompanyDetails),
+    vendor = Some(Seq(completeVendor, completeVendor2, completeVendor3)),
     land = Some(Seq(completeLand)),
     transaction = Some(completeTransaction),
     returnAgent = Some(Seq(completeReturnAgent)),

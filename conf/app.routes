@@ -50,6 +50,11 @@ POST       /about-the-vendor/agent-name                             controllers.
 GET        /change/about-the-vendor/agent-name                      controllers.vendor.AgentNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /change/about-the-vendor/agent-name                      controllers.vendor.AgentNameController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-vendor/confirm-vendor-address                       controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-vendor/confirm-vendor-address                       controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change/about-the-vendor/confirm-vendor-address                controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change/about-the-vendor/confirm-vendor-address                controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-vendor/who-is-the-vendor                           controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-vendor/who-is-the-vendor                           controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = NormalMode)
 GET        /change/about-the-vendor/who-is-the-vendor                    controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = CheckMode)
