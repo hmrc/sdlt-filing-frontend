@@ -21,6 +21,7 @@ import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.prelimQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
 import models.{CheckMode, Mode, NormalMode}
+import pages.preliminary.PurchaserAddressPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.AddressLookupService
@@ -42,7 +43,7 @@ class PrelimAddressController @Inject() (
   def redirectToAddressLookup(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val journeyId = prelimQuestionsAddress
-      val addressConfig = MandatoryFieldsConfigModel(line1 = Some(true), town = Some(true), postcode = Some(true))
+      val addressConfig = MandatoryFieldsConfigModel(addressLine1 = Some(true), town = Some(true), postcode = Some(true))
 
       if(changeRoute.isDefined) {
         addressLookupService.getJourneyUrl(journeyId,
@@ -61,7 +62,7 @@ class PrelimAddressController @Inject() (
     implicit request =>
         for {
           address <- addressLookupService.getAddressById(id)
-          updated <- addressLookupService.saveAddressDetails(address)
+          updated <- addressLookupService.saveAddressDetails(address, PurchaserAddressPage)
         } yield if(updated) Redirect(controllers.preliminary.routes.TransactionTypeController.onPageLoad(NormalMode)) else Redirect(routes.JourneyRecoveryController.onPageLoad())
   }
 
@@ -69,7 +70,7 @@ class PrelimAddressController @Inject() (
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
-        updated <- addressLookupService.saveAddressDetails(address)
+        updated <- addressLookupService.saveAddressDetails(address, PurchaserAddressPage)
       } yield if(updated) Redirect(controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()) else Redirect(routes.JourneyRecoveryController.onPageLoad())
   }
   

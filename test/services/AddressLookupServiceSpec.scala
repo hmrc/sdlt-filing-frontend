@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import pages.preliminary.PurchaserAddressPage
+import pages.vendor.VendorAddressPage
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import repositories.SessionRepository
@@ -52,9 +53,9 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
 
   val testCall: Call = Call("GET", "http://localhost:9028/lookup-address/journey")
 
-  val testMandatoryFieldsConfigModel = MandatoryFieldsConfigModel(line1 = Some(true),
-    line2 = Some(true),
-    line3 = Some(true),
+  val testMandatoryFieldsConfigModel = MandatoryFieldsConfigModel(addressLine1 = Some(true),
+    addressLine2 = Some(true),
+    addressLine3 = Some(true),
     town = Some(true),
     postcode = Some(true))
 
@@ -279,7 +280,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
 
       val emptyUserAnswers = UserAnswers("test-id", storn = "TESTSTORN")
 
-      "must save address to session repository when successful" in {
+      "must save address to session repository when successful for PurchaserAddressPage" in {
         val mockConnector = mock[AddressLookupConnector]
         val mockAlfConfig = mock[AddressLookupConfiguration]
         val mockSessionRepository = mock[SessionRepository]
@@ -291,7 +292,25 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
           .thenReturn(Future.successful(true))
 
         val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
-        val result = service.saveAddressDetails(testAddress)(dataRequest, ec).futureValue
+        val result = service.saveAddressDetails(testAddress, PurchaserAddressPage)(dataRequest, ec).futureValue
+
+        result mustBe true
+        verify(mockSessionRepository, times(1)).set(any())
+      }
+
+      "must save address to session repository when successful for VendorAddressPage" in {
+        val mockConnector = mock[AddressLookupConnector]
+        val mockAlfConfig = mock[AddressLookupConfiguration]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val dataRequest = DataRequest(FakeRequest(), "test-id", emptyUserAnswers)
+        val updatedAnswers = emptyUserAnswers.set(VendorAddressPage, testAddress).success.value
+
+        when(mockSessionRepository.set(eqTo(updatedAnswers)))
+          .thenReturn(Future.successful(true))
+
+        val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
+        val result = service.saveAddressDetails(testAddress, VendorAddressPage)(dataRequest, ec).futureValue
 
         result mustBe true
         verify(mockSessionRepository, times(1)).set(any())
@@ -308,7 +327,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
           .thenReturn(Future.successful(false))
 
         val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
-        val result = service.saveAddressDetails(testAddress)(dataRequest, ec).futureValue
+        val result = service.saveAddressDetails(testAddress, PurchaserAddressPage)(dataRequest, ec).futureValue
 
         result mustBe false
         verify(mockSessionRepository, times(1)).set(any())
@@ -326,7 +345,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
 
         val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
 
-        whenReady(service.saveAddressDetails(testAddress)(dataRequest, ec).failed) { exception =>
+        whenReady(service.saveAddressDetails(testAddress, PurchaserAddressPage)(dataRequest, ec).failed) { exception =>
           exception mustBe a[RuntimeException]
           exception.getMessage mustBe "Database connection failed"
         }
@@ -347,7 +366,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
           .thenReturn(Future.successful(true))
 
         val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
-        val result = service.saveAddressDetails(testAddress)(dataRequest, ec).futureValue
+        val result = service.saveAddressDetails(testAddress, PurchaserAddressPage)(dataRequest, ec).futureValue
 
         result mustBe true
         verify(mockSessionRepository, times(1)).set(any())
@@ -373,7 +392,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
             .thenReturn(Future.successful(true))
 
           val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
-          val result = service.saveAddressDetails(address)(dataRequest, ec).futureValue
+          val result = service.saveAddressDetails(address, PurchaserAddressPage)(dataRequest, ec).futureValue
 
           result mustBe true
           verify(mockSessionRepository, times(1)).set(any())
@@ -392,7 +411,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
           .thenReturn(Future.successful(true))
 
         val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
-        val result = service.saveAddressDetails(testAddress)(dataRequest, ec).futureValue
+        val result = service.saveAddressDetails(testAddress, PurchaserAddressPage)(dataRequest, ec).futureValue
 
         result mustBe true
       }

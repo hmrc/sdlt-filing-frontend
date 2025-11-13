@@ -97,7 +97,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup().url
+            controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor().url
         }
       }
     }
@@ -271,7 +271,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup().url
+            controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor().url
         }
       }
 

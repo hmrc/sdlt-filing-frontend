@@ -56,9 +56,9 @@ object AddressLookupConstants {
   )
 
   val testMandatoryFieldsConfigModel: MandatoryFieldsConfigModel = MandatoryFieldsConfigModel(
-    line1 = Some(true),
-    line2 = Some(true),
-    line3 = Some(true),
+    addressLine1 = Some(true),
+    addressLine2 = Some(true),
+    addressLine3 = Some(true),
     town = Some(true),
     postcode = Some(true)
   )

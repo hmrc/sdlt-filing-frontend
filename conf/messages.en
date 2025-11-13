@@ -194,3 +194,37 @@ vendor.business.change.hidden = Business name
 vendor.name.error.length = Vendor’s name must be 56 characters or less
 vendor.name.form.regex.error = Invalid Error
 vendor.name.error.required = Nothing has been provided
+
+
+# Vendor Address Lookup
+addressLookup.vendorQuestionsAddress.lookupPage.title                   = Find {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.lookupPage.heading                 = Find {0}’s address
+addressLookup.vendorQuestionsAddress.lookupPage.filterLabel             = Property name or number (optional)
+addressLookup.vendorQuestionsAddress.lookupPage.submitLabel             = Continue
+addressLookup.vendorQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
+
+addressLookup.vendorQuestionsAddress.selectPage.title                   = Choose {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.selectPage.heading                 = Choose {0}’s address
+addressLookup.vendorQuestionsAddress.selectPage.editAddressLinkText     = Enter address manually
+addressLookup.vendorQuestionsAddress.selectPage.submitLabel             = Continue
+
+addressLookup.vendorQuestionsAddress.editPage.title                     = Enter {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.editPage.heading                   = Enter {0}’s address
+addressLookup.vendorQuestionsAddress.editPage.line1Label                = Address line 1
+addressLookup.vendorQuestionsAddress.editPage.line2Label                = Address line 2 (optional)
+addressLookup.vendorQuestionsAddress.editPage.line3Label                = Address line 3 (optional)
+addressLookup.vendorQuestionsAddress.editPage.postcodeLabel             = Postcode
+addressLookup.vendorQuestionsAddress.editPage.countryLabel              = County (optional)
+addressLookup.vendorQuestionsAddress.editPage.submitLabel               = Continue
+
+addressLookup.vendorQuestionsAddress.confirmPage.title                  = Review and confirm {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.confirmPage.heading                = Review and confirm {0}’s address
+addressLookup.vendorQuestionsAddress.confirmPage.changeLinkText         = Edit this address
+addressLookup.vendorQuestionsAddress.confirmPage.submitLabel            = Confirm address
+
+addressLookup.vendorQuestionsAddress.countryPicker.title                = Find {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.countryPicker.heading              = Find {0}’s address
+
+purchaserAddress.checkYourAnswersLabel = Property address
+purchaserAddress.change.hidden = Property address
+purchaserAddress.link.message = Enter property address

@@ -18,9 +18,9 @@ package models.address
 
 import play.api.libs.json.{Json, Writes}
 
-case class MandatoryFieldsConfigModel(line1: Option[Boolean] = None,
-                                      line2: Option[Boolean] = None,
-                                      line3: Option[Boolean] = None,
+case class MandatoryFieldsConfigModel(addressLine1: Option[Boolean] = None,
+                                      addressLine2: Option[Boolean] = None,
+                                      addressLine3: Option[Boolean] = None,
                                       town: Option[Boolean] = None,
                                       postcode: Option[Boolean] = None
                                      )

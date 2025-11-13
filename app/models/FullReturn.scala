@@ -118,7 +118,7 @@ object CompanyDetails {
 
 case class Vendor(
                    vendorID: Option[String] = None,
-                   returnID: Option[String] = None, // Used in backend
+                   returnID: Option[String] = None,
                    title: Option[String] = None,
                    forename1: Option[String] = None,
                    forename2: Option[String] = None,

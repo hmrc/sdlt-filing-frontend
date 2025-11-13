@@ -158,7 +158,7 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
     val selectConfig = AddressLookupSelectConfigModel(showSearchAgainLink = Some(true))
     val confirmConfig = AddressLookupConfirmConfigModel(showChangeLinkcontinueUrl = Some(true))
     val manualAddressEntryConfig = ManualAddressEntryConfig(mandatoryFields = MandatoryFieldsConfigModel(
-      line1 = Some(true), line2 = Some(true), line3 = Some(true), town = Some(true), postcode = Some(true)
+      addressLine1 = Some(true), addressLine2 = Some(true), addressLine3 = Some(true), town = Some(true), postcode = Some(true)
     ))
 
     val completeOptions = AddressLookupOptionsModel(
@@ -1364,9 +1364,9 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
   "MandatoryFieldsConfigModel" - {
 
     val completeConfig: MandatoryFieldsConfigModel = MandatoryFieldsConfigModel(
-      line1 = Some(true),
-      line2 = Some(true),
-      line3 = Some(true),
+      addressLine1 = Some(true),
+      addressLine2 = Some(true),
+      addressLine3 = Some(true),
       town = Some(true),
       postcode = Some(true)
     )
@@ -1382,9 +1382,9 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
       "must serialize messages with all fields" in {
         val json = Json.toJson(completeConfig)
 
-        (json \ "line1").asOpt[Boolean] mustBe Some(true)
-        (json \ "line2").asOpt[Boolean] mustBe Some(true)
-        (json \ "line3").asOpt[Boolean] mustBe Some(true)
+        (json \ "addressLine1").asOpt[Boolean] mustBe Some(true)
+        (json \ "addressLine2").asOpt[Boolean] mustBe Some(true)
+        (json \ "addressLine3").asOpt[Boolean] mustBe Some(true)
         (json \ "town").asOpt[Boolean] mustBe Some(true)
         (json \ "postcode").asOpt[Boolean] mustBe Some(true)
       }
@@ -1399,17 +1399,17 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
     "case class" - {
 
       "must create instance with all fields" in {
-        completeConfig.line1 mustBe Some(true)
-        completeConfig.line2 mustBe Some(true)
-        completeConfig.line3 mustBe Some(true)
+        completeConfig.addressLine1 mustBe Some(true)
+        completeConfig.addressLine2 mustBe Some(true)
+        completeConfig.addressLine3 mustBe Some(true)
         completeConfig.town mustBe Some(true)
         completeConfig.postcode mustBe Some(true)
       }
 
       "must create instance with no fields" in {
-        minimalConfig.line1 must not be defined
-        minimalConfig.line2 must not be defined
-        minimalConfig.line3 must not be defined
+        minimalConfig.addressLine1 must not be defined
+        minimalConfig.addressLine2 must not be defined
+        minimalConfig.addressLine3 must not be defined
         minimalConfig.town must not be defined
         minimalConfig.postcode must not be defined
       }
@@ -1422,15 +1422,15 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
       }
 
       "must support copy with modifications" in {
-        val modified = completeConfig.copy(line1 = Some(false))
+        val modified = completeConfig.copy(addressLine1 = Some(false))
 
-        modified.line1 mustBe Some(false)
-        modified.line2 mustBe completeConfig.line2
+        modified.addressLine1 mustBe Some(false)
+        modified.addressLine2 mustBe completeConfig.addressLine2
       }
 
       "must not be equal when fields differ" in {
         val messages1 = completeConfig
-        val messages2 = completeConfig.copy(line1 = Some(false))
+        val messages2 = completeConfig.copy(addressLine1 = Some(false))
 
         messages1 must not equal messages2
       }

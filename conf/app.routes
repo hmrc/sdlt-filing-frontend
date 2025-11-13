@@ -60,6 +60,11 @@ POST       /about-the-vendor/who-is-the-vendor                           control
 GET        /change/about-the-vendor/who-is-the-vendor                    controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = CheckMode)
 POST       /change/about-the-vendor/who-is-the-vendor                    controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = CheckMode)
 
+GET         /about-the-vendor/address                                    controllers.vendor.VendorAddressController.redirectToAddressLookupVendor(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-vendor/address-return                             controllers.vendor.VendorAddressController.addressLookupCallbackVendor(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-vendor/address-return/change                      controllers.vendor.VendorAddressController.addressLookupCallbackChangeVendor(id: String ?= "", mode: Mode = NormalMode)
+
+
 GET        /about-the-vendor/vendor-name                        controllers.vendor.VendorOrBusinessNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-vendor/vendor-name                        controllers.vendor.VendorOrBusinessNameController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-vendor/vendor-name/change                  controllers.vendor.VendorOrBusinessNameController.onPageLoad(mode: Mode = CheckMode)

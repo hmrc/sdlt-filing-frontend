@@ -24,6 +24,7 @@ import pages.preliminary.PurchaserAddressPage
 import play.api.http.HeaderNames.LOCATION
 import play.api.http.HttpVerbs.GET
 import play.api.mvc.{Call, Request}
+import queries.Settable
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggingUtil
@@ -51,10 +52,10 @@ class AddressLookupService @Inject()(addressLookupConnector: AddressLookupConnec
       mandatoryFieldsConfigModel = mandatoryFieldsConfigModel))
   }
   
-  def saveAddressDetails(address: Address)
+  def saveAddressDetails(address: Address, page: Settable[Address])
                         (implicit request: DataRequest[_], ec: ExecutionContext): Future[Boolean] = {
     for {
-      updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserAddressPage, address))
+      updatedAnswers <- Future.fromTry(request.userAnswers.set(page, address))
       result <- sessionRepository.set(updatedAnswers)
     } yield result
   }
