@@ -228,3 +228,14 @@ addressLookup.vendorQuestionsAddress.countryPicker.heading              = Find {
 purchaserAddress.checkYourAnswersLabel = Property address
 purchaserAddress.change.hidden = Property address
 purchaserAddress.link.message = Enter property address
+
+vendorRepresentedByAgent.title = Is the vendor represented by an agent? - About the vendor
+vendorRepresentedByAgent.heading = Is {0} represented by an agent?
+vendorRepresentedByAgent.caption = About the vendor
+vendorRepresentedByAgent.theVendor = the vendor
+vendorRepresentedByAgent.checkYourAnswersLabel = Represented by an agent
+vendorRepresentedByAgent.error.required = Please select an option
+vendorRepresentedByAgent.change.hidden = VendorRepresentedByAgent
+
+genericError.title = Generic Error (Content TBC)
+genericError.heading = Generic Error (Content TBC)
