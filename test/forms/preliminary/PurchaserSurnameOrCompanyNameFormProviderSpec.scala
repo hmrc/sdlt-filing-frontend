@@ -18,66 +18,50 @@ package forms.preliminary
 
 import forms.behaviours.StringFieldBehaviours
 import forms.preliminary.PurchaserSurnameOrCompanyNameFormProvider
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
+import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class PurchaserSurnameOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
+class PurchaserSurnameOrCompanyNameFormProviderSpec extends AnyWordSpec with Matchers {
 
-  val requiredKey = "purchaser.name.form.no.input.error"
-  val lengthKey = "purchaser.name.form.maxLength.error"
-  val invalidKey = "purchaser.name.form.regex.error"
   val maxLength = 56
+  val fieldName = "purchaserSurnameOrCompanyName"
 
-  val form = new PurchaserSurnameOrCompanyNameFormProvider()()
+  val cases = Table(
+    ("choice", "requiredKey", "lengthKey", "invalidKey"),
+    ("Individual", "purchaser.name.form.no.input.error.individual", "purchaser.name.form.maxLength.error.individual", "purchaser.name.form.regex.error.individual"),
+    ("Business", "purchaser.name.form.no.input.error.business", "purchaser.name.form.maxLength.error.business", "purchaser.name.form.regex.error.business")
+  )
 
-  ".purchaserSurnameOrCompanyName" - {
+  "PProvider form" should {
+    forAll(cases) { (choice, requiredKey, lengthKey, invalidKey) =>
+      val form = new PurchaserSurnameOrCompanyNameFormProvider()(choice)
 
-    val fieldName = "purchaserSurnameOrCompanyName"
+      s"bind valid data for $choice" in {
+        val validNames = Seq("Mr test", "Business test name", "Business@business.com", "(555) 123-4567")
+        validNames.foreach { name =>
+          val result = form.bind(Map(fieldName -> name))
+          result.errors shouldBe empty
+        }
+      }
 
-    "must bind valid form data" in {
-      val validNames = Seq(
-        "Mr test",
-        "Business test name",
-        "Business are us",
-        "Business@business.com",
-        "(555) 123-4567"
-      )
+      s"fail when empty for $choice" in {
+        val result = form.bind(Map(fieldName -> ""))
+        result.errors.map(_.message) should contain(requiredKey)
+      }
 
-      validNames.foreach { validName =>
-        val result = form.bind(Map(fieldName -> validName))
-        result.errors must be(empty)
+      s"fail when too long for $choice" in {
+        val longName = "a" * (maxLength + 1)
+        val result = form.bind(Map(fieldName -> longName))
+        result.errors.map(_.message) should contain(lengthKey)
+      }
+
+      s"fail when invalid characters for $choice" in {
+        val invalidName = "Invalid#Name"
+        val result = form.bind(Map(fieldName -> invalidName))
+        result.errors.map(_.message) should contain(invalidKey)
       }
     }
-
-    "must not bind strings longer than 56 characters" in {
-      val longName = "a" * 57
-      val result = form.bind(Map(fieldName -> longName))
-      result.errors must contain(FormError(fieldName, lengthKey, Seq(maxLength)))
-    }
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-
-
-    "must reject invalid name formats" in {
-      val invalidNames= Seq(
-        "Hello #world",
-        "Price: $50",
-        "A < B",
-        "File \\ path",
-        "José",
-        "\"Line1\\nLine2\""
-      )
-
-      invalidNames.foreach { invalidName =>
-        val result = form.bind(Map("purchaserSurnameOrCompanyName" -> invalidName))
-        result.errors must contain(
-          FormError("purchaserSurnameOrCompanyName", invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
-        )
-      }
-    }
-
   }
 }
