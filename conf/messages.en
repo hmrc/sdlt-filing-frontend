@@ -106,11 +106,10 @@ tasklist.notStarted = Not Started
 
 transactionType.title = What type of transaction is this? - Preliminary questions
 transactionType.heading = What type of transaction is this?
-transactionType.residential = Residential property purchase
-transactionType.nonResidentialMixed = Non-residential or mixed property purchase
-transactionType.grantOrAssignment = Grant or assignment of a lease
-transactionType.transferOfRights = Transfer of rights
-transactionType.otherTransaction = Other transaction type
+transactionType.conveyanceTransfer = F - Conveyance/transfer
+transactionType.grantOfLease = L - Grant of lease
+transactionType.conveyanceTransferLease = A - Conveyance/transfer with lease involvement
+transactionType.otherTransaction = O - Other
 transactionType.checkYourAnswersLabel = Transaction type
 transactionType.error.required = Select the type of transaction
 transactionType.change.hidden = Change transaction type

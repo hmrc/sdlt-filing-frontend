@@ -40,7 +40,7 @@ class TransactionTypeSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(TransactionTypePage, TransactionType.Residential).success.value
+            .set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
 
           val result = TransactionTypeSummary.row(Some(userAnswers))
 
@@ -48,7 +48,7 @@ class TransactionTypeSummarySpec extends SpecBase {
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           // Check for the actual resolved message, not the key
-          htmlContent mustEqual msgs(s"transactionType.${TransactionType.Residential}")
+          htmlContent mustEqual msgs(s"transactionType.${TransactionType.ConveyanceTransfer}")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url
@@ -65,9 +65,10 @@ class TransactionTypeSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val transactionTypes = Seq(
-            TransactionType.Residential,
-            TransactionType.GrantOrAssignment,
-            TransactionType.NonResidentialMixed
+            TransactionType.ConveyanceTransfer,
+            TransactionType.GrantOfLease,
+            TransactionType.ConveyanceTransferLease,
+            TransactionType.OtherTransaction
           )
 
           transactionTypes.foreach { transactionType =>
@@ -91,7 +92,7 @@ class TransactionTypeSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(TransactionTypePage, TransactionType.Residential).success.value
+            .set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
 
           val result = TransactionTypeSummary.row(Some(userAnswers))
 
@@ -154,7 +155,7 @@ class TransactionTypeSummarySpec extends SpecBase {
         implicit val msgs: Messages = messages(application)
 
         val userAnswers = emptyUserAnswers
-          .set(TransactionTypePage, TransactionType.Residential).success.value
+          .set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
 
         val result = TransactionTypeSummary.row(Some(userAnswers))
 
