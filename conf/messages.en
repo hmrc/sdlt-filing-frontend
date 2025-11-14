@@ -245,3 +245,33 @@ vendorRepresentedByAgent.change.hidden = VendorRepresentedByAgent
 
 genericError.title = Generic Error (Content TBC)
 genericError.heading = Generic Error (Content TBC)
+
+
+# Vendor Agent Address Lookup
+addressLookup.vendorAgentQuestionsAddress.lookupPage.title                   = Find {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.lookupPage.heading                 = Find {0}’s address
+addressLookup.vendorAgentQuestionsAddress.lookupPage.filterLabel             = Property name or number (optional)
+addressLookup.vendorAgentQuestionsAddress.lookupPage.submitLabel             = Continue
+addressLookup.vendorAgentQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
+
+addressLookup.vendorAgentQuestionsAddress.selectPage.title                   = Choose {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.selectPage.heading                 = Choose {0}’s address
+addressLookup.vendorAgentQuestionsAddress.selectPage.editAddressLinkText     = Enter address manually
+addressLookup.vendorAgentQuestionsAddress.selectPage.submitLabel             = Continue
+
+addressLookup.vendorAgentQuestionsAddress.editPage.title                     = Enter {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.editPage.heading                   = Enter {0}’s address
+addressLookup.vendorAgentQuestionsAddress.editPage.line1Label                = Address line 1
+addressLookup.vendorAgentQuestionsAddress.editPage.line2Label                = Address line 2 (optional)
+addressLookup.vendorAgentQuestionsAddress.editPage.line3Label                = Address line 3 (optional)
+addressLookup.vendorAgentQuestionsAddress.editPage.postcodeLabel             = Postcode
+addressLookup.vendorAgentQuestionsAddress.editPage.countryLabel              = County (optional)
+addressLookup.vendorAgentQuestionsAddress.editPage.submitLabel               = Continue
+
+addressLookup.vendorAgentQuestionsAddress.confirmPage.title                  = Review and confirm {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.confirmPage.heading                = Review and confirm {0}’s address
+addressLookup.vendorAgentQuestionsAddress.confirmPage.changeLinkText         = Edit this address
+addressLookup.vendorAgentQuestionsAddress.confirmPage.submitLabel            = Confirm address
+
+addressLookup.vendorAgentQuestionsAddress.countryPicker.title                = Find {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.countryPicker.heading              = Find {0}’s address

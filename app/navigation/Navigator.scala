@@ -32,10 +32,12 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode)
     case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
-    case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case VendorRepresentedByAgentPage =>
       _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
-    case AgentNamePage => _ => routes.ReturnTaskListController.onPageLoad() //Change this to the address lookup
+    case TransactionTypePage =>
+      _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case AgentNamePage =>
+      _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(NormalMode)
     case VendorOrBusinessNamePage =>

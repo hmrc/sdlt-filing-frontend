@@ -76,3 +76,7 @@ GET        /change/about-the-vendor/vendor-agent                controllers.vend
 POST       /change/about-the-vendor/vendor-agent                 controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = CheckMode)
 
 GET        /generic-error                                      controllers.GenericErrorController.onPageLoad()
+
+GET         /about-the-vendor/agent-address-lookup                                    controllers.vendor.VendorAgentAddressController.redirectToAddressLookupVendorAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-vendor/agent-address-return                             controllers.vendor.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-vendor/agent-address-return/change                      controllers.vendor.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
