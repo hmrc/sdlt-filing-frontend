@@ -25,14 +25,13 @@ sealed trait TransactionType
 
 object TransactionType extends Enumerable.Implicits {
 
-  case object Residential extends WithName("residential") with TransactionType
-  case object NonResidentialMixed extends WithName("nonResidentialMixed") with TransactionType
-  case object GrantOrAssignment extends WithName("grantOrAssignment") with TransactionType
-  case object TransferOfRights extends WithName("transferOfRights") with TransactionType
+  case object ConveyanceTransfer extends WithName("conveyanceTransfer") with TransactionType
+  case object GrantOfLease extends WithName("grantOfLease") with TransactionType
+  case object ConveyanceTransferLease extends WithName("conveyanceTransferLease") with TransactionType
   case object OtherTransaction extends WithName("otherTransaction") with TransactionType
 
   val values: Seq[TransactionType] = Seq(
-    Residential, NonResidentialMixed, GrantOrAssignment, TransferOfRights, OtherTransaction
+    ConveyanceTransfer, GrantOfLease, ConveyanceTransferLease, OtherTransaction
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
