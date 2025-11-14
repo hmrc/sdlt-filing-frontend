@@ -73,8 +73,14 @@ purchaserSurnameOrCompanyName.checkYourAnswersLabel.default = Purchaser / Busine
 purchaserSurnameOrCompanyName.link.message = Enter purchaser name
 
 purchaser.name.form.maxLength.error = Max length
+purchaser.name.form.maxLength.error.individual = The purchaser’s surname must be 56 characters or less
+purchaser.name.form.maxLength.error.business = The business name must be 56 characters or less
 purchaser.name.form.regex.error = Invalid Error
+purchaser.name.form.regex.error.individual = The purchaser’s surname must only include letters a to z, and special characters such as hyphens, spaces and apostrophes
+purchaser.name.form.regex.error.business = The business name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 purchaser.name.form.no.input.error = Nothing has been added
+purchaser.name.form.no.input.error.individual = Enter the purchaser’s surname
+purchaser.name.form.no.input.error.business = Enter the business name
 
 purchaserIsIndividual.title = Who is making the purchase? - Preliminary questions
 purchaserIsIndividual.heading = Who is making the purchase?
@@ -83,7 +89,7 @@ purchaserIsIndividual.individual.value = Individual
 purchaserIsIndividual.business = A business
 purchaserIsIndividual.business.value = Business
 purchaserIsIndividual.checkYourAnswersLabel = Purchaser type
-purchaserIsIndividual.error.required = Please select an option
+purchaserIsIndividual.error.required = Select who is making the purchase
 purchaserIsIndividual.error.invalid = Invalid selection
 purchaserIsIndividual.change.hidden = Purchaser type
 purchaserIsIndividual.link.message = Enter purchaser type
@@ -106,7 +112,7 @@ transactionType.grantOrAssignment = Grant or assignment of a lease
 transactionType.transferOfRights = Transfer of rights
 transactionType.otherTransaction = Other transaction type
 transactionType.checkYourAnswersLabel = Transaction type
-transactionType.error.required = Select the option that best describes your transaction
+transactionType.error.required = Select the type of transaction
 transactionType.change.hidden = Change transaction type
 transactionType.link.message = Enter transaction type
 

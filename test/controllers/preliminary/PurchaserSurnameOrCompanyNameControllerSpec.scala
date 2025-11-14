@@ -40,7 +40,6 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PurchaserSurnameOrCompanyNameFormProvider()
-  val form = formProvider()
 
   lazy val purchaserSurnameOrCompanyNameRoute = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
 
@@ -50,11 +49,13 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
   val individualUserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
   val businessUserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option2).success.value
 
+  
   "PurchaserSurnameOrCompanyName Controller" - {
+   
 
     "must return OK and the correct view for a GET and individual has been answered" in {
 
-
+      val form = formProvider("Individual")
       val application = applicationBuilder(userAnswers = Some(individualUserAnswers)).build()
 
       running(application) {
@@ -70,7 +71,8 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
     }
 
     "must populate the view correctly on a GET when the question has previously been answered and individual has been answered" in {
-
+      val form = formProvider("Individual")
+      
       val userAnswers = individualUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -89,7 +91,7 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
 
     "must return OK and the correct view for a GET and business has been answered" in {
 
-
+      val form = formProvider("Business")
       val application = applicationBuilder(userAnswers = Some(businessUserAnswers)).build()
 
       running(application) {
@@ -105,6 +107,7 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
     }
 
     "must populate the view correctly on a GET when the question has previously been answered and business has been answered" in {
+      val form = formProvider("Business")
 
       val userAnswers = businessUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
 
@@ -149,6 +152,7 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
     }
 
     "must return a Bad Request and errors when invalid data is submitted and individual has been answered" in {
+      val form = formProvider("Individual")
 
       val application = applicationBuilder(userAnswers = Some(individualUserAnswers)).build()
 
