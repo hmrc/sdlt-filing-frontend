@@ -69,3 +69,10 @@ GET        /about-the-vendor/vendor-name                        controllers.vend
 POST       /about-the-vendor/vendor-name                        controllers.vendor.VendorOrBusinessNameController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-vendor/vendor-name/change                  controllers.vendor.VendorOrBusinessNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-vendor/vendor-name/change                  controllers.vendor.VendorOrBusinessNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-vendor/vendor-agent                        controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-vendor/vendor-agent                        controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = NormalMode)
+GET        /change/about-the-vendor/vendor-agent                controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = CheckMode)
+POST       /change/about-the-vendor/vendor-agent                 controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = CheckMode)
+
+GET        /generic-error                                      controllers.GenericErrorController.onPageLoad()

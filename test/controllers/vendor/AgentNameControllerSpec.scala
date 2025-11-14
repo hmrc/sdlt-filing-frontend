@@ -162,7 +162,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnauthorisedController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.GenericErrorController.onPageLoad().url
       }
     }
 
@@ -182,7 +182,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnauthorisedController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.GenericErrorController.onPageLoad().url
       }
     }
 
@@ -202,7 +202,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnauthorisedController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.GenericErrorController.onPageLoad().url
       }
     }
 
@@ -221,7 +221,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.UnauthorisedController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.GenericErrorController.onPageLoad().url
       }
     }
 

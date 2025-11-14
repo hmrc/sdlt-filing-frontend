@@ -38,10 +38,10 @@ class AgentChecksService {
         case (true, true, true, true) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         case (true, false, true, false) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         case (false, _, true, false) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        case (true, true, true, false) => Redirect(controllers.routes.UnauthorisedController.onPageLoad())
-        case (false, _, true, true) => Redirect(controllers.routes.UnauthorisedController.onPageLoad())
-        case (true, false, true, true) => Redirect(controllers.routes.UnauthorisedController.onPageLoad())
-        case (true, true, false, _) => Redirect(controllers.routes.UnauthorisedController.onPageLoad())
+        case (true, true, true, false) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
+        case (false, _, true, true) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
+        case (true, false, true, true) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
+        case (true, true, false, _) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
       }
     }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }

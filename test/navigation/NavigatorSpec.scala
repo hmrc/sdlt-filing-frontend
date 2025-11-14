@@ -21,7 +21,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, WhoIsTheVendorPage, VendorOrBusinessNamePage}
+import pages.vendor.{AgentNamePage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -65,6 +65,10 @@ class NavigatorSpec extends SpecBase {
 
       "go from Vendor or Business name page to Confirm Vendor Address Page" in {
         navigator.nextPage(VendorOrBusinessNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(mode = NormalMode)
+      }
+
+      "go from VendorRepresentedByAgentPage to Agent Name page" in {
+        navigator.nextPage(VendorRepresentedByAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
       }
     }
 

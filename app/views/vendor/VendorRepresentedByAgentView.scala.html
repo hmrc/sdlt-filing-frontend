@@ -1,0 +1,60 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels.LegendSize.Large
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton
+)
+
+@(form: Form[_], mode: Mode, vendorName: Option[String])(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("vendorRepresentedByAgent.title"))) {
+
+    @formHelper(action = controllers.vendor.routes.VendorRepresentedByAgentController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        <div class="govuk-caption-l">@messages("vendorRepresentedByAgent.caption")</div>
+
+        @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(messages("vendorRepresentedByAgent.heading", vendorName.getOrElse(messages("vendorRepresentedByAgent.theVendor")))).asPageHeading(size = Large),
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
+    }
+}
