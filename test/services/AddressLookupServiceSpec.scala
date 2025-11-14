@@ -26,7 +26,7 @@ import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import pages.preliminary.PurchaserAddressPage
-import pages.vendor.VendorAddressPage
+import pages.vendor.{VendorAddressPage, VendorAgentAddressPage}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import repositories.SessionRepository
@@ -311,6 +311,24 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
 
         val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
         val result = service.saveAddressDetails(testAddress, VendorAddressPage)(dataRequest, ec).futureValue
+
+        result mustBe true
+        verify(mockSessionRepository, times(1)).set(any())
+      }
+
+      "must save address to session repository when successful for VendorAgentAddressPage" in {
+        val mockConnector = mock[AddressLookupConnector]
+        val mockAlfConfig = mock[AddressLookupConfiguration]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val dataRequest = DataRequest(FakeRequest(), "test-id", emptyUserAnswers)
+        val updatedAnswers = emptyUserAnswers.set(VendorAgentAddressPage, testAddress).success.value
+
+        when(mockSessionRepository.set(eqTo(updatedAnswers)))
+          .thenReturn(Future.successful(true))
+
+        val service = new AddressLookupService(mockConnector, mockAlfConfig, mockSessionRepository)
+        val result = service.saveAddressDetails(testAddress, VendorAgentAddressPage)(dataRequest, ec).futureValue
 
         result mustBe true
         verify(mockSessionRepository, times(1)).set(any())

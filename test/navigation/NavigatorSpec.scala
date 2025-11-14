@@ -55,8 +55,8 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(TransactionTypePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
       }
 
-      "go from agent name page to task list" in { // Change this to go to address lookup
-        navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+      "go from agent name page to agent address lookup" in {
+        navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
       }
 
       "go from WhoIsTheVendor page to Vendor or Business name" in {
