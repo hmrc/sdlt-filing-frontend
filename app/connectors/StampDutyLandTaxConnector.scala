@@ -18,7 +18,8 @@ package connectors
 
 import config.FrontendAppConfig
 import models.prelimQuestions.PrelimReturn
-import models.{CreateReturnResult, FullReturn, GetReturnByRefRequest}
+import models.vendor._
+import models._
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -78,6 +79,127 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][createReturn]")
       }
   }
+
+  def createVendor(vendorRequest: CreateVendorRequest)(implicit hc: HeaderCarrier,
+                                               request: Request[_]): Future[CreateVendorReturn] = {
+    http.post(url"$activeBase/filing/create/vendor")
+      .withBody(Json.toJson(vendorRequest))
+      .execute[Either[UpstreamErrorResponse, CreateVendorReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][createVendor]")
+      }
+  }
+
+  def updateVendor(updateVendorRequest: UpdateVendorRequest)(implicit hc: HeaderCarrier,
+                                                       request: Request[_]): Future[UpdateVendorReturn] = {
+    http.post(url"$activeBase/filing/update/vendor")
+      .withBody(Json.toJson(updateVendorRequest))
+      .execute[Either[UpstreamErrorResponse, UpdateVendorReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateVendor]")
+      }
+  }
+
+  def deleteVendor(deleteVendorRequest: DeleteVendorRequest)(implicit hc: HeaderCarrier,
+                                                             request: Request[_]): Future[DeleteVendorReturn] = {
+    http.post(url"$activeBase/filing/delete/vendor")
+      .withBody(Json.toJson(deleteVendorRequest))
+      .execute[Either[UpstreamErrorResponse, DeleteVendorReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteVendor]")
+      }
+  }
+
+  def createReturnAgent(createReturnAgentRequest: CreateReturnAgentRequest)(implicit hc: HeaderCarrier,
+                                                       request: Request[_]): Future[CreateReturnAgentReturn] = {
+    http.post(url"$activeBase/filing/create/return-agent")
+      .withBody(Json.toJson(createReturnAgentRequest))
+      .execute[Either[UpstreamErrorResponse, CreateReturnAgentReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][createReturnAgent]")
+      }
+  }
+
+  def updateReturnAgent(updateReturnAgentRequest: UpdateReturnAgentRequest)(implicit hc: HeaderCarrier,
+                                                             request: Request[_]): Future[UpdateReturnAgentReturn] = {
+    http.post(url"$activeBase/filing/update/return-agent")
+      .withBody(Json.toJson(updateReturnAgentRequest))
+      .execute[Either[UpstreamErrorResponse, UpdateReturnAgentReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateReturnAgent]")
+      }
+  }
+
+  def deleteReturnAgent(deleteReturnAgentRequest: DeleteReturnAgentRequest)(implicit hc: HeaderCarrier,
+                                                             request: Request[_]): Future[DeleteReturnAgentReturn] = {
+    http.post(url"$activeBase/filing/delete/return-agent")
+      .withBody(Json.toJson(deleteReturnAgentRequest))
+      .execute[Either[UpstreamErrorResponse, DeleteReturnAgentReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteReturnAgent]")
+      }
+  }
+
+  def updateReturnVersion(updateReturnVersionRequest: ReturnVersionUpdateRequest)(implicit hc: HeaderCarrier,
+                                                                            request: Request[_]): Future[ReturnVersionUpdateReturn] = {
+    http.post(url"$activeBase/filing/update/return-version")
+      .withBody(Json.toJson(updateReturnVersionRequest))
+      .execute[Either[UpstreamErrorResponse, ReturnVersionUpdateReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateReturnVersion]")
+      }
+  }
+
+
 
   private def logResponse(e: Throwable, method: String): Throwable = {
     logger.error(s"[$method] Error occurred: ${e.getMessage}", e)
