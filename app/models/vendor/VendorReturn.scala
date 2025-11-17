@@ -18,24 +18,83 @@ package models.vendor
 
 import play.api.libs.json.{Json, OFormat}
 
-//replace with vendor model when clarified
-
-case class VendorReturn(
+case class CreateVendorRequest(
                        stornId: String,
                        returnResourceRef: String,
-                       title: String,
-                       forename1: String,
-                       forename2: Option[String],
-                       surName: String,
-                       houseNumber: Option[Int],
+                       title: Option[String] = None,
+                       forename1: Option[String] = None,
+                       forename2: Option[String] = None,
+                       name: String,
+                       houseNumber: Option[Int] = None,
                        addressLine1: String,
-                       addressLine2: Option[String],
-                       addressLine3: Option[String],
-                       addressLine4: Option[String],
-                       postcode: Option[String],
+                       addressLine2: Option[String] = None,
+                       addressLine3: Option[String] = None,
+                       addressLine4: Option[String] = None,
+                       postcode: Option[String] = None,
                        isRepresentedByAgent: String
                        )
 
-object VendorReturn {
-  implicit val format: OFormat[VendorReturn] = Json.format[VendorReturn]
+object CreateVendorRequest {
+  implicit val format: OFormat[CreateVendorRequest] = Json.format[CreateVendorRequest]
+}
+//mite not need this just have it so that it returns a 201 from the backend?
+
+case class CreateVendorReturn(
+                                vendorResourceRef: String,
+                                vendorId: String
+                              )
+
+object CreateVendorReturn {
+  implicit val format: OFormat[CreateVendorReturn] = Json.format[CreateVendorReturn]
+}
+
+
+case class UpdateVendorRequest(
+                                stornId: String,
+                                returnResourceRef: String,
+                                title: Option[String] = None,
+                                forename1: Option[String] = None,
+                                forename2: Option[String] = None,
+                                name: String,
+                                houseNumber: Option[Int] = None,
+                                addressLine1: String,
+                                addressLine2: Option[String] = None,
+                                addressLine3: Option[String] = None,
+                                addressLine4: Option[String] = None,
+                                postcode: Option[String] = None,
+                                isRepresentedByAgent: String,
+                                vendorResourceRef: String,
+                                nextVendorId: Option[String] = None
+                              )
+
+object UpdateVendorRequest {
+  implicit val format: OFormat[UpdateVendorRequest] = Json.format[UpdateVendorRequest]
+}
+
+case class UpdateVendorReturn(
+                                updated: Boolean
+                              )
+
+object UpdateVendorReturn {
+  implicit val format: OFormat[UpdateVendorReturn] = Json.format[UpdateVendorReturn]
+}
+
+
+
+case class DeleteVendorRequest(
+                               storn: String,
+                               vendorResourceRef: String,
+                               vendorId: String
+                             )
+
+object DeleteVendorRequest {
+  implicit val format: OFormat[DeleteVendorRequest] = Json.format[DeleteVendorRequest]
+}
+
+case class DeleteVendorReturn(
+                               deleted: Boolean
+                             )
+
+object DeleteVendorReturn {
+  implicit val format: OFormat[DeleteVendorReturn] = Json.format[DeleteVendorReturn]
 }
