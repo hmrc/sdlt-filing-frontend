@@ -118,7 +118,7 @@ transactionType.link.message = Enter transaction type
 # Prelim Questions Address Lookup
 addressLookup.prelimQuestionsAddress.lookupPage.title                   = Find the address of the land or property - Preliminary questions
 addressLookup.prelimQuestionsAddress.lookupPage.heading                 = Find the address of the land or property
-addressLookup.prelimQuestionsAddress.lookupPage.filterLabel             = Property name or number (optional)
+addressLookup.prelimQuestionsAddress.lookupPage.filterLabel             = Property name or number
 addressLookup.prelimQuestionsAddress.lookupPage.submitLabel             = Continue
 addressLookup.prelimQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
 
@@ -130,10 +130,10 @@ addressLookup.prelimQuestionsAddress.selectPage.submitLabel             = Contin
 addressLookup.prelimQuestionsAddress.editPage.title                     = Enter the address of the land or property - Preliminary questions
 addressLookup.prelimQuestionsAddress.editPage.heading                   = Enter the address of the land or property
 addressLookup.prelimQuestionsAddress.editPage.line1Label                = Address line 1
-addressLookup.prelimQuestionsAddress.editPage.line2Label                = Address line 2 (optional)
-addressLookup.prelimQuestionsAddress.editPage.line3Label                = Address line 3 (optional)
+addressLookup.prelimQuestionsAddress.editPage.line2Label                = Address line 2
+addressLookup.prelimQuestionsAddress.editPage.line3Label                = Address line 3
 addressLookup.prelimQuestionsAddress.editPage.postcodeLabel             = Postcode
-addressLookup.prelimQuestionsAddress.editPage.countryLabel              = County (optional)
+addressLookup.prelimQuestionsAddress.editPage.countryLabel              = County
 addressLookup.prelimQuestionsAddress.editPage.submitLabel               = Continue
 
 addressLookup.prelimQuestionsAddress.confirmPage.title                  = Review and confirm the address of the land or property - Preliminary questions
@@ -204,7 +204,7 @@ vendor.name.error.required = Nothing has been provided
 # Vendor Address Lookup
 addressLookup.vendorQuestionsAddress.lookupPage.title                   = Find {0}’s address - About the Vendor
 addressLookup.vendorQuestionsAddress.lookupPage.heading                 = Find {0}’s address
-addressLookup.vendorQuestionsAddress.lookupPage.filterLabel             = Property name or number (optional)
+addressLookup.vendorQuestionsAddress.lookupPage.filterLabel             = Property name or number
 addressLookup.vendorQuestionsAddress.lookupPage.submitLabel             = Continue
 addressLookup.vendorQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
 
@@ -216,10 +216,10 @@ addressLookup.vendorQuestionsAddress.selectPage.submitLabel             = Contin
 addressLookup.vendorQuestionsAddress.editPage.title                     = Enter {0}’s address - About the Vendor
 addressLookup.vendorQuestionsAddress.editPage.heading                   = Enter {0}’s address
 addressLookup.vendorQuestionsAddress.editPage.line1Label                = Address line 1
-addressLookup.vendorQuestionsAddress.editPage.line2Label                = Address line 2 (optional)
-addressLookup.vendorQuestionsAddress.editPage.line3Label                = Address line 3 (optional)
+addressLookup.vendorQuestionsAddress.editPage.line2Label                = Address line 2
+addressLookup.vendorQuestionsAddress.editPage.line3Label                = Address line 3
 addressLookup.vendorQuestionsAddress.editPage.postcodeLabel             = Postcode
-addressLookup.vendorQuestionsAddress.editPage.countryLabel              = County (optional)
+addressLookup.vendorQuestionsAddress.editPage.countryLabel              = County
 addressLookup.vendorQuestionsAddress.editPage.submitLabel               = Continue
 
 addressLookup.vendorQuestionsAddress.confirmPage.title                  = Review and confirm {0}’s address - About the Vendor
@@ -249,7 +249,7 @@ genericError.heading = Generic Error (Content TBC)
 # Vendor Agent Address Lookup
 addressLookup.vendorAgentQuestionsAddress.lookupPage.title                   = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.lookupPage.heading                 = Find {0}’s address
-addressLookup.vendorAgentQuestionsAddress.lookupPage.filterLabel             = Property name or number (optional)
+addressLookup.vendorAgentQuestionsAddress.lookupPage.filterLabel             = Property name or number
 addressLookup.vendorAgentQuestionsAddress.lookupPage.submitLabel             = Continue
 addressLookup.vendorAgentQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
 
@@ -261,10 +261,10 @@ addressLookup.vendorAgentQuestionsAddress.selectPage.submitLabel             = C
 addressLookup.vendorAgentQuestionsAddress.editPage.title                     = Enter {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.editPage.heading                   = Enter {0}’s address
 addressLookup.vendorAgentQuestionsAddress.editPage.line1Label                = Address line 1
-addressLookup.vendorAgentQuestionsAddress.editPage.line2Label                = Address line 2 (optional)
-addressLookup.vendorAgentQuestionsAddress.editPage.line3Label                = Address line 3 (optional)
+addressLookup.vendorAgentQuestionsAddress.editPage.line2Label                = Address line 2
+addressLookup.vendorAgentQuestionsAddress.editPage.line3Label                = Address line 3
 addressLookup.vendorAgentQuestionsAddress.editPage.postcodeLabel             = Postcode
-addressLookup.vendorAgentQuestionsAddress.editPage.countryLabel              = County (optional)
+addressLookup.vendorAgentQuestionsAddress.editPage.countryLabel              = County
 addressLookup.vendorAgentQuestionsAddress.editPage.submitLabel               = Continue
 
 addressLookup.vendorAgentQuestionsAddress.confirmPage.title                  = Review and confirm {0}’s address - About the Vendor
