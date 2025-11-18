@@ -82,8 +82,7 @@ class VendorRepresentedByAgentController @Inject()(
             if (value) {
               Redirect(navigator.nextPage(VendorRepresentedByAgentPage, mode, updatedAnswers))
             } else {
-              //TODO update to CYA page when created
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+              Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
             }
           }
       )

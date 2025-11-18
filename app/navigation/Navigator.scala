@@ -50,6 +50,7 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
+    case WhoIsTheVendorPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case _ => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
   }
 

@@ -274,3 +274,15 @@ addressLookup.vendorAgentQuestionsAddress.confirmPage.submitLabel            = C
 
 addressLookup.vendorAgentQuestionsAddress.countryPicker.title                = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.countryPicker.heading              = Find {0}’s address
+
+vendor.checkYourAnswers.title = Check your answers – About the vendor
+vendor.checkYourAnswers.heading = Check your answers
+vendor.checkYourAnswers.vendorType.label = Vendor type
+vendor.checkYourAnswers.individual = Individual
+vendor.checkYourAnswers.company = Company
+vendor.checkYourAnswers.vendorName.label = Vendor name
+vendor.checkYourAnswers.vendorName.nameMissing = Enter vendor name
+vendor.checkYourAnswers.vendorAddress = Vendor address
+vendor.checkYourAnswers.representedByAgent.label = Represented by an agent
+vendor.checkYourAnswers.representedByAgent.yes = Yes
+vendor.checkYourAnswers.representedByAgent.no = No
