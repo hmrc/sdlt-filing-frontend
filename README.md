@@ -15,6 +15,30 @@ To simulate the building of the application by Jenkins it is advisable to execut
 build-test.sh
 ```
 
+### All tests and checks
+
+> `sbt runAllChecks`
+
+This is a sbt command alias specific to this project. It will run
+
+- clean
+- compile
+- unit tests
+- integration tests
+- and produce a coverage report.
+
+You can view the coverage report in the browser by pasting the generated url.
+
+#### Installing sbt plugin to check for library updates.
+To check for dependency updates locally you will need to create this file locally ~/.sbt/1.0/plugins/sbt-updates.sbt
+and paste - addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.3") - into the file.
+Then run:
+
+> `sbt dependencyUpdates `
+
+To view library update suggestions - this does not cover sbt plugins.
+It is not advised to install the plugin for the project.
+
 ### Running the SDLTC Frontend
 Run SDLTC Frontend App on port 9953 from the console at /sdltc-frontend level with:  
 ```
