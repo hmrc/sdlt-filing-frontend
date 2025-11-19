@@ -76,7 +76,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
     fullReturn = None,
     data = Json.obj(
       "vendorCurrent" -> Json.obj(
-        "whoIsTheVendor" -> "Business",
+        "whoIsTheVendor" -> "Company",
         "agentName" -> "test"
       )
     ),

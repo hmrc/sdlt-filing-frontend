@@ -17,30 +17,30 @@
 package controllers.vendor
 
 import controllers.actions.*
-import forms.vendor.VendorOrBusinessNameFormProvider
+import forms.vendor.VendorOrCompanyNameFormProvider
 import models.Mode
 import models.vendor.VendorName
 import navigation.Navigator
-import pages.vendor.{VendorOrBusinessNamePage, WhoIsTheVendorPage}
+import pages.vendor.{VendorOrCompanyNamePage, WhoIsTheVendorPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.vendor.VendorOrBusinessNameView
+import views.html.vendor.VendorOrCompanyNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class VendorOrBusinessNameController @Inject()(
+class VendorOrCompanyNameController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
                                         navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: VendorOrBusinessNameFormProvider,
+                                        formProvider: VendorOrCompanyNameFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: VendorOrBusinessNameView
+                                        view: VendorOrCompanyNameView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -48,37 +48,37 @@ class VendorOrBusinessNameController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       
-      val vendorOrBusiness: String = request.userAnswers.get(WhoIsTheVendorPage) match {
-        case Some(value) => if (value.toString == "Individual") "Individual" else "Business"
+      val vendorOrCompany: String = request.userAnswers.get(WhoIsTheVendorPage) match {
+        case Some(value) => if (value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
       
-      val preparedForm = request.userAnswers.get(VendorOrBusinessNamePage) match {
+      val preparedForm = request.userAnswers.get(VendorOrCompanyNamePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, vendorOrBusiness))
+      Ok(view(preparedForm, mode, vendorOrCompany))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val vendorOrBusiness: String = request.userAnswers.get(WhoIsTheVendorPage) match {
-        case Some(value) => if (value.toString == "Individual") "Individual" else "Business"
+      val vendorOrCompany: String = request.userAnswers.get(WhoIsTheVendorPage) match {
+        case Some(value) => if (value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
       
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, vendorOrBusiness))),
+          Future.successful(BadRequest(view(formWithErrors, mode, vendorOrCompany))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorOrBusinessNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorOrCompanyNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            Redirect(navigator.nextPage(VendorOrBusinessNamePage, mode, updatedAnswers))
+            Redirect(navigator.nextPage(VendorOrCompanyNamePage, mode, updatedAnswers))
           }
       )
   }

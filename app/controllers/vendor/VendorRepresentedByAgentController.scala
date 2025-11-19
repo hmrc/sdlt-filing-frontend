@@ -21,7 +21,7 @@ import controllers.routes
 import forms.vendor.VendorRepresentedByAgentFormProvider
 import models.*
 import navigation.Navigator
-import pages.vendor.{VendorOrBusinessNamePage, VendorRepresentedByAgentPage}
+import pages.vendor.{VendorOrCompanyNamePage, VendorRepresentedByAgentPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
@@ -51,7 +51,7 @@ class VendorRepresentedByAgentController @Inject()(
     implicit request =>
 
       val vendorName: Option[String] = request.userAnswers
-        .get(VendorOrBusinessNamePage)
+        .get(VendorOrCompanyNamePage)
         .map(_.name)
 
       val preparedForm = request.userAnswers.get(VendorRepresentedByAgentPage) match {
@@ -67,7 +67,7 @@ class VendorRepresentedByAgentController @Inject()(
     implicit request =>
 
       val vendorName: Option[String] = request.userAnswers
-        .get(VendorOrBusinessNamePage)
+        .get(VendorOrCompanyNamePage)
         .map(_.name)
 
       form.bindFromRequest().fold(

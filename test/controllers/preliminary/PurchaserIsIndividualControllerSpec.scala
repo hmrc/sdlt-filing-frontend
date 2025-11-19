@@ -19,7 +19,7 @@ package controllers.preliminary
 import base.SpecBase
 import controllers.routes
 import forms.preliminary.PurchaserIsIndividualFormProvider
-import models.prelimQuestions.BusinessOrIndividualRequest
+import models.prelimQuestions.CompanyOrIndividualRequest
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -64,7 +64,7 @@ class PurchaserIsIndividualControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      BusinessOrIndividualRequest.values.foreach { option =>
+      CompanyOrIndividualRequest.values.foreach { option =>
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", None)
           .set(PurchaserIsIndividualPage, option)
@@ -100,7 +100,7 @@ class PurchaserIsIndividualControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
       running(application) {
-        BusinessOrIndividualRequest.values.foreach { option =>
+        CompanyOrIndividualRequest.values.foreach { option =>
           val request =
             FakeRequest(POST, purchaserIsIndividualRoute)
               .withFormUrlEncodedBody(("value", option.toString))

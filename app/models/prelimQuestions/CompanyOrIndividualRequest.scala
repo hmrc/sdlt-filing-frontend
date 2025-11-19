@@ -21,14 +21,14 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait BusinessOrIndividualRequest
+sealed trait CompanyOrIndividualRequest
 
-object BusinessOrIndividualRequest extends Enumerable.Implicits {
+object CompanyOrIndividualRequest extends Enumerable.Implicits {
 
-  case object Option1 extends WithName("Individual") with BusinessOrIndividualRequest
-  case object Option2 extends WithName("Business") with BusinessOrIndividualRequest
+  case object Option1 extends WithName("Company") with CompanyOrIndividualRequest
+  case object Option2 extends WithName("Individual") with CompanyOrIndividualRequest
 
-  val values: Seq[BusinessOrIndividualRequest] = Seq(
+  val values: Seq[CompanyOrIndividualRequest] = Seq(
     Option1,
     Option2
   )
@@ -37,8 +37,8 @@ object BusinessOrIndividualRequest extends Enumerable.Implicits {
     RadioItem(
       content = Text(
         value match {
-          case Option1 => messages("purchaserIsIndividual.individual")
-          case Option2 => messages("purchaserIsIndividual.business")
+          case Option1 => messages("purchaserIsIndividual.company")
+          case Option2 => messages("purchaserIsIndividual.individual")
         }
       ),
       value = Some(value.toString),
@@ -46,6 +46,6 @@ object BusinessOrIndividualRequest extends Enumerable.Implicits {
     )
   }
 
-  implicit val enumerable: Enumerable[BusinessOrIndividualRequest] =
+  implicit val enumerable: Enumerable[CompanyOrIndividualRequest] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

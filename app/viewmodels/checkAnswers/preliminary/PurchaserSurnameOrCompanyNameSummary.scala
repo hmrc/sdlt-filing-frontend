@@ -31,7 +31,7 @@ object PurchaserSurnameOrCompanyNameSummary  {
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
     
     val typeOfPurchaser = answers.flatMap(_.get(PurchaserIsIndividualPage)) match {
-      case Some(value) => if(value.toString == "Individual") "purchaser" else "business"
+      case Some(value) => if(value.toString == "Individual") "purchaser" else "company"
       case _ => "default"
     }
 

@@ -54,7 +54,7 @@ class VendorAddressController @Inject()(
 
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          val vendorName = (userAnswers.data \ "vendorCurrent" \ "vendorOrBusinessName" \ "name").asOpt[String]
+          val vendorName = (userAnswers.data \ "vendorCurrent" \ "vendorOrCompanyName" \ "name").asOpt[String]
           vendorName match {
             case Some(name) =>
               val callback = if (changeRoute.isDefined) {

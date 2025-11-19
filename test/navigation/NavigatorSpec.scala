@@ -21,7 +21,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
+import pages.vendor.{AgentNamePage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -37,13 +37,13 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
       }
 
-      "go from individual/business page to Purchaser or Company name" in {
+      "go from individual/company page to Purchaser or Company name" in {
 
         case object UnknownPage extends Page
         navigator.nextPage(PurchaserIsIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(mode = NormalMode)
       }
 
-      "go from Purchase/business name page to address lookup" in {
+      "go from Purchase/company name page to address lookup" in {
 
         case object UnknownPage extends Page
         navigator.nextPage(PurchaserSurnameOrCompanyNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
@@ -59,12 +59,12 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
       }
 
-      "go from WhoIsTheVendor page to Vendor or Business name" in {
-        navigator.nextPage(WhoIsTheVendorPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(mode = NormalMode)
+      "go from WhoIsTheVendor page to Vendor or Company name" in {
+        navigator.nextPage(WhoIsTheVendorPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(mode = NormalMode)
       }
 
-      "go from Vendor or Business name page to Confirm Vendor Address Page" in {
-        navigator.nextPage(VendorOrBusinessNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(mode = NormalMode)
+      "go from Vendor or Company name page to Confirm Vendor Address Page" in {
+        navigator.nextPage(VendorOrCompanyNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(mode = NormalMode)
       }
 
       "go from VendorRepresentedByAgentPage to Agent Name page" in {

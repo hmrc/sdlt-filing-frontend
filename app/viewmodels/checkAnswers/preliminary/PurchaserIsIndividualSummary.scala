@@ -31,7 +31,7 @@ object PurchaserIsIndividualSummary {
 
       val answerText = answer.toString match {
         case "Individual" => messages("purchaserIsIndividual.individual.value")
-        case _  => messages("purchaserIsIndividual.business.value")
+        case _  => messages("purchaserIsIndividual.company.value")
       }
 
       val value = ValueViewModel(
