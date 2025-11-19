@@ -16,8 +16,7 @@
 
 package viewmodels.checkAnswers.preliminary
 
-import controllers.routes
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.preliminary.PurchaserIsIndividualPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
