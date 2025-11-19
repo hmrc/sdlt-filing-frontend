@@ -50,8 +50,14 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
+    case VendorOrBusinessNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+    case AgentNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case WhoIsTheVendorPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
-    case _ => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case VendorRepresentedByAgentPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+    case PurchaserIsIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case PurchaserSurnameOrCompanyNamePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

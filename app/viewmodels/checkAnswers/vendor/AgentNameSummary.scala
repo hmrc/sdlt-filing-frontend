@@ -20,23 +20,35 @@ import models.{CheckMode, UserAnswers}
 import pages.vendor.AgentNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object AgentNameSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AgentNamePage).map {
-      answer =>
 
-        SummaryListRowViewModel(
-          key     = "agentName.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("agentName.change.hidden"))
-          )
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(AgentNamePage)).map { answer =>
+
+      SummaryListRowViewModel(
+        key = "vendor.checkYourAnswers.agentName.label",
+        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("purchaserIsIndividual.change.hidden"))
         )
+      )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendor.checkYourAnswers.agentName.agentMissing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "vendor.checkYourAnswers.agentName.label",
+        value = value
+      )
     }
 }

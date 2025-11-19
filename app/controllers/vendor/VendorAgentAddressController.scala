@@ -87,7 +87,7 @@ class VendorAgentAddressController @Inject()(
         updated <- addressLookupService.saveAddressDetails(address, VendorAgentAddressPage)
       } yield if(updated) {
         //change this when we have the next page
-        Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode))
+        Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }
@@ -99,8 +99,7 @@ class VendorAgentAddressController @Inject()(
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, VendorAgentAddressPage)
       } yield if(updated) {
-        //change this when we have the check your answers page
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }

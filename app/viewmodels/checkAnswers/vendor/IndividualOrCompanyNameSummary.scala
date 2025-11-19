@@ -42,12 +42,12 @@ object IndividualOrCompanyNameSummary  {
       answer =>
         if (vendorOrBusiness == "Individual") {
           val vendorName = (answer.forename1, answer.forename2) match {
-            case (Some(forename),Some(forename2)) => forename + forename2 + answer.name
-            case (Some(forename), _) => forename + answer.name
-            case (_, Some(forename2)) => forename2 + answer.name
+            case (Some(forename),Some(forename2)) => forename + " " + forename2 + " " + answer.name
+            case (Some(forename), _) => forename + " " + answer.name
+            case (_, Some(forename2)) => forename2 + " " + answer.name
             case _ => answer.name
           }
-        SummaryListRowViewModel(
+          SummaryListRowViewModel(
           key     = s"vendor.checkYourAnswers.vendorName.label",
           value   = ValueViewModel(HtmlFormat.escape(vendorName).toString),
           actions = Seq(

@@ -286,3 +286,7 @@ vendor.checkYourAnswers.vendorAddress = Vendor address
 vendor.checkYourAnswers.representedByAgent.label = Represented by an agent
 vendor.checkYourAnswers.representedByAgent.yes = Yes
 vendor.checkYourAnswers.representedByAgent.no = No
+vendor.checkYourAnswers.agentName.label = Agent name
+vendor.checkYourAnswers.agentName.agentMissing = Enter agent name
+vendor.checkYourAnswers.agentAddress = Agent address
+vendor.checkYourAnswers.agentName.agentAddressMissing = Enter agent address

@@ -21,14 +21,14 @@ import connectors.StampDutyLandTaxConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
 import models.prelimQuestions.{PrelimReturn, PrelimSessionQuestions}
+import pages.vendor.VendorRepresentedByAgentPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.preliminary.{PrelimAddressSummary, PurchaserIsIndividualSummary, PurchaserSurnameOrCompanyNameSummary, TransactionTypeSummary}
-import viewmodels.checkAnswers.vendor.{IndividualOrCompanyNameSummary, RepresentedByAnAgentSummary, VendorAddressSummary, VendorTypeSummary}
+import viewmodels.checkAnswers.vendor.{AgentAddressSummary, AgentNameSummary, IndividualOrCompanyNameSummary, RepresentedByAnAgentSummary, VendorAddressSummary, VendorTypeSummary}
 import viewmodels.govuk.summarylist.*
 import views.html.vendor.VendorCheckYourAnswersView
 
@@ -53,22 +53,38 @@ class VendorCheckYourAnswersController @Inject()(
       } yield {
 
         val isDataEmpty = result.exists(_.data.value.isEmpty)
+        (isDataEmpty, result) match {
+          case (true, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+          case (_, Some(userAnswers)) =>
+            val showAgentCYA: Option[Boolean] = userAnswers
+              .get(VendorRepresentedByAgentPage)
+              .map(_.self)
 
-        if (isDataEmpty) {
-          Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-        } else {
-          val summaryList = SummaryListViewModel(
-            rows = Seq(
-              VendorTypeSummary.row(result),
-              IndividualOrCompanyNameSummary.row(result),
-              VendorAddressSummary.row(result),
-              RepresentedByAnAgentSummary.row(result)
+            val showAgentCYACheck = showAgentCYA match {
+              case Some(true) => true
+              case _ => false
+            }
+            val baseRows = Seq(
+              VendorTypeSummary.row(Some(userAnswers)),
+              IndividualOrCompanyNameSummary.row(Some(userAnswers)),
+              VendorAddressSummary.row(Some(userAnswers)),
+              RepresentedByAnAgentSummary.row(Some(userAnswers))
             )
-          )
+            val agentRows = if (showAgentCYACheck) {
+              Seq(
+                AgentNameSummary.row(Some(userAnswers)),
+                AgentAddressSummary.row(Some(userAnswers))
+              )
+            } else {
+              Seq.empty
+            }
 
-          Ok(view(summaryList))
+            val summaryList = SummaryListViewModel(rows = baseRows ++ agentRows)
+            Ok(view(summaryList))
+          case (false, None) =>  Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         }
       }
+
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {

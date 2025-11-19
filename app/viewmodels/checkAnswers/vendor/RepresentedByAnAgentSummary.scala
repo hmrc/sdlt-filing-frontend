@@ -33,9 +33,10 @@ object RepresentedByAnAgentSummary  {
     answers.flatMap(_.get(VendorRepresentedByAgentPage)).map {
       answer =>
 
-        val answerText = answer.toString match {
-          case "Yes" => messages("vendor.checkYourAnswers.representedByAgent.yes")
-          case _ => messages("vendor.checkYourAnswers.representedByAgent.no")
+        val answerText = if (answer) {
+          messages("vendor.checkYourAnswers.representedByAgent.yes")
+        } else {
+          messages("vendor.checkYourAnswers.representedByAgent.no")
         }
 
         val value = ValueViewModel(
