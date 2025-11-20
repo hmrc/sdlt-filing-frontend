@@ -68,7 +68,7 @@ purchaser.name.form.regex.error = Invalid Error
 
 purchaser.company.title = What is the purchaser’s name? - Preliminary questions
 purchaser.company.heading = What is the company name?
-purchaser.company.p = Company name
+purchaser.company.name = Company name
 purchaser.company.checkYourAnswersLabel = What is the company name?
 purchaser.company.error.required = Enter Purchaser (1) surname or company name
 purchaser.company.error.length = Purchaser (1) surname or company name must be 100 characters or less

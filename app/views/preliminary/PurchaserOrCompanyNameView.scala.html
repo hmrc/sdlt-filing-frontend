@@ -61,16 +61,12 @@
                     .withWidth(Full)
                 )
             } else {
+                <h1 class="govuk-heading-l">@messages(key + ".heading")</h1>
+
                 @govukInput(
                     InputViewModel(
                         field = form("name"),
-                        label =  LabelViewModel(
-                            HtmlContent(
-                                Html(
-                                    s"""<h1 class="govuk-heading-l">${messages(key + ".heading")}</h1>"""
-                                )
-                            )
-                        )
+                        label = LabelViewModel(messages(key + ".name")).withCssClass(className = "govuk-visually-hidden")
                     )
                     .withWidth(Full)
                 )
