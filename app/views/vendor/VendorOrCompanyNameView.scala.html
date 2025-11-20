@@ -30,7 +30,7 @@
 
 @defining(if(vendorOrCompany == "Individual") "vendor.individual" else "vendor.company") { key =>
 
-    @layout(pageTitle = title(form, (key + ".title"))) {
+    @layout(pageTitle = title(form, key + ".title")) {
 
         @formHelper(action = controllers.vendor.routes.VendorOrCompanyNameController.onSubmit(mode)) {
 
@@ -47,21 +47,21 @@
                 @govukInput(
                     InputViewModel(
                         field = form("forename1"),
-                        label = LabelViewModel(messages((key + ".firstName"))).withCssClass(className = "govuk-hint")
+                        label = LabelViewModel(messages(key + ".firstName")).withCssClass(className = "govuk-hint")
                     )
                     .withWidth(Full)
                 )
                 @govukInput(
                     InputViewModel(
                     field = form("forename2"),
-                    label = LabelViewModel(messages((key + ".middleName"))).withCssClass(className = "govuk-hint")
+                    label = LabelViewModel(messages(key + ".middleName")).withCssClass(className = "govuk-hint")
                     )
                     .withWidth(Full)
                 )
                 @govukInput(
                     InputViewModel(
                         field = form("name"),
-                        label = LabelViewModel(messages((key + ".surname"))).withCssClass(className = "govuk-hint")
+                        label = LabelViewModel(messages(key + ".surname")).withCssClass(className = "govuk-hint")
                     )
                     .withWidth(Full)
                 )

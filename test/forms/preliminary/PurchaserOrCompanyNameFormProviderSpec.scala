@@ -16,51 +16,72 @@
 
 package forms.preliminary
 
-import forms.behaviours.StringFieldBehaviours
 import forms.preliminary.PurchaserOrCompanyNameFormProvider
-import org.scalatest.wordspec.AnyWordSpec
+import models.prelimQuestions.PurchaserName
 import org.scalatest.matchers.should.Matchers
-import play.api.data.FormError
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.data.FormError
 
 class PurchaserOrCompanyNameFormProviderSpec extends AnyWordSpec with Matchers {
 
   val maxLength = 56
-  val fieldName = "purchaserOrCompanyName"
+  val nameRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 
   val cases = Table(
     ("choice", "requiredKey", "lengthKey", "invalidKey"),
     ("Individual", "purchaser.name.form.no.input.error.individual", "purchaser.name.form.maxLength.error.individual", "purchaser.name.form.regex.error.individual"),
-    ("Company", "purchaser.name.form.no.input.error.company", "purchaser.name.form.maxLength.error.company", "purchaser.name.form.regex.error.company")
+    ("Company",   "purchaser.name.form.no.input.error.company",    "purchaser.name.form.maxLength.error.company",    "purchaser.name.form.regex.error.company")
   )
 
-  "Provider form" should {
+  "PurchaserOrCompanyNameFormProvider" should {
+
     forAll(cases) { (choice, requiredKey, lengthKey, invalidKey) =>
+
       val form = new PurchaserOrCompanyNameFormProvider()(choice)
 
       s"bind valid data for $choice" in {
-        val validNames = Seq("Mr test", "Company test name", "Company@company.com", "(555) 123-4567")
-        validNames.foreach { name =>
-          val result = form.bind(Map(fieldName -> name))
-          result.errors shouldBe empty
-        }
+        val result = form.bind(
+          Map(
+            "forename1" -> "John",
+            "forename2" -> "A",
+            "name"      -> "Valid Co Ltd"
+          )
+        )
+
+        result.errors shouldBe empty
+        result.value shouldBe Some(PurchaserName(Some("John"), Some("A"), "Valid Co Ltd"))
       }
 
-      s"fail when empty for $choice" in {
-        val result = form.bind(Map(fieldName -> ""))
-        result.errors.map(_.message) should contain(requiredKey)
+      s"fail when 'name' is empty for $choice" in {
+        val result = form.bind(Map("forename1" -> "", "forename2" -> "", "name" -> ""))
+
+        result.errors should contain(FormError("name", requiredKey))
       }
 
-      s"fail when too long for $choice" in {
+      s"fail when 'name' exceeds max length for $choice" in {
         val longName = "a" * (maxLength + 1)
-        val result = form.bind(Map(fieldName -> longName))
-        result.errors.map(_.message) should contain(lengthKey)
+
+        val result = form.bind(Map("forename1" -> "", "forename2" -> "", "name" -> longName))
+
+        result.errors should contain(
+          FormError("name", lengthKey, Seq(maxLength))
+        )
       }
 
-      s"fail when invalid characters for $choice" in {
-        val invalidName = "Invalid#Name"
-        val result = form.bind(Map(fieldName -> invalidName))
-        result.errors.map(_.message) should contain(invalidKey)
+      s"fail when 'name' contains invalid characters for $choice" in {
+        val result = form.bind(Map("forename1" -> "", "forename2" -> "", "name" -> "Invalid#Name"))
+
+        result.errors should contain(
+          FormError("name", invalidKey, Seq(nameRegex))
+        )
+      }
+
+      s"allow optional forename fields for $choice" in {
+        val result = form.bind(Map("forename1" -> "", "forename2" -> "", "name" -> "Valid"))
+
+        result.errors shouldBe empty
+        result.value shouldBe Some(PurchaserName(None, None, "Valid"))
       }
     }
   }

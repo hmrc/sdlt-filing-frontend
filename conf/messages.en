@@ -53,11 +53,18 @@ unauthorised.heading = You can’t access this service with this account
 
 purchaser.individual.title = What is the purchaser’s name? - Preliminary questions
 purchaser.individual.heading = What is the purchaser’s name?
-purchaser.individual.p = Purchaser full name
+purchaser.individual.firstName = First name
+purchaser.individual.middleName = Middle name(s)
+purchaser.individual.surname = Surname
 purchaser.individual.checkYourAnswersLabel = What is the purchaser’s name?
+
 purchaser.individual.error.required = Enter Purchaser (1) surname or company name
-purchaser.individual.error.length = Purchaser (1) surname or company name must be 100 characters or less
-purchaser.individual.change.hidden = Purchaser (1) surname or company name
+purchaser.individual.error.length = Purchaser (1) or company name must be 100 characters or less
+purchaser.individual.change.hidden = Purchaser (1) or company name
+purchaser.individual.error.length.firstName = Purchaser’s first name must be 14 characters or less
+purchaser.individual.error.length.middleName = Purchaser’s middle name(s) must be 14 characters or less
+purchaser.name.error.length = Purchaser’s name must be 56 characters or less
+purchaser.name.form.regex.error = Invalid Error
 
 purchaser.company.title = What is the purchaser’s name? - Preliminary questions
 purchaser.company.heading = What is the company name?

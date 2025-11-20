@@ -19,7 +19,7 @@ package viewmodels.checkAnswers.preliminary
 import base.SpecBase
 import controllers.routes
 import models.CheckMode
-import models.prelimQuestions.CompanyOrIndividualRequest
+import models.prelimQuestions.{CompanyOrIndividualRequest, PurchaserName}
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserOrCompanyNamePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
@@ -41,7 +41,7 @@ class PurchaserOrCompanyNameSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers
             .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
-            .set(PurchaserOrCompanyNamePage, "Smith").success.value
+            .set(PurchaserOrCompanyNamePage, PurchaserName(None, None, "Smith")).success.value
 
           val result = PurchaserOrCompanyNameSummary.row(Some(userAnswers))
 
@@ -66,7 +66,7 @@ class PurchaserOrCompanyNameSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers
             .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
-            .set(PurchaserOrCompanyNamePage, "ACME Corp").success.value
+            .set(PurchaserOrCompanyNamePage, PurchaserName(None, None, "ACME Corp")).success.value
 
           val result = PurchaserOrCompanyNameSummary.row(Some(userAnswers))
 
@@ -90,7 +90,7 @@ class PurchaserOrCompanyNameSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserOrCompanyNamePage, "Test Name").success.value
+            .set(PurchaserOrCompanyNamePage, PurchaserName(Some("Test"), None, "Name")).success.value
 
           val result = PurchaserOrCompanyNameSummary.row(Some(userAnswers))
 
@@ -110,7 +110,7 @@ class PurchaserOrCompanyNameSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers
             .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
-            .set(PurchaserOrCompanyNamePage, "O'Brien & Sons <Ltd>").success.value
+            .set(PurchaserOrCompanyNamePage, PurchaserName(None, None, "O'Brien & Sons <Ltd>")).success.value
 
           val result = PurchaserOrCompanyNameSummary.row(Some(userAnswers))
 
@@ -132,7 +132,7 @@ class PurchaserOrCompanyNameSummarySpec extends SpecBase {
 
         val userAnswers = emptyUserAnswers
           .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
-          .set(PurchaserOrCompanyNamePage, "Smith").success.value
+          .set(PurchaserOrCompanyNamePage, PurchaserName(Some("John"), None, "Smith")).success.value
 
         val result = PurchaserOrCompanyNameSummary.row(Some(userAnswers))
 

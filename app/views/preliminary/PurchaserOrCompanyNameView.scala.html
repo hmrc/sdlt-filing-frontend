@@ -28,7 +28,7 @@
 
 @defining(if(companyOrIndividual == "Individual") "purchaser.individual" else "purchaser.company") { key =>
 
-    @layout(pageTitle = title(form, (key + ".title"))) {
+    @layout(pageTitle = title(form, key + ".title")) {
 
         @formHelper(action = controllers.preliminary.routes.PurchaserOrCompanyNameController.onSubmit(mode)) {
 
@@ -42,21 +42,21 @@
                 @govukInput(
                     InputViewModel(
                         field = form("forename1"),
-                        label = LabelViewModel(messages((key + ".firstName"))).withCssClass(className = "govuk-hint")
+                        label = LabelViewModel(messages(key + ".firstName")).withCssClass(className = "govuk-hint")
                     )
                     .withWidth(Full)
                 )
                 @govukInput(
                     InputViewModel(
                         field = form("forename2"),
-                        label = LabelViewModel(messages((key + ".middleName"))).withCssClass(className = "govuk-hint")
+                        label = LabelViewModel(messages(key + ".middleName")).withCssClass(className = "govuk-hint")
                     )
                     .withWidth(Full)
                 )
                 @govukInput(
                     InputViewModel(
                         field = form("name"),
-                        label = LabelViewModel(messages((key + ".surname"))).withCssClass(className = "govuk-hint")
+                        label = LabelViewModel(messages(key + ".surname")).withCssClass(className = "govuk-hint")
                     )
                     .withWidth(Full)
                 )
@@ -67,8 +67,7 @@
                         label =  LabelViewModel(
                             HtmlContent(
                                 Html(
-                                    s"""<span class="govuk-caption-l">${messages(key + ".caption")}</span>
-                                            <h1 class="govuk-heading-l">${messages(key + ".heading")}</h1>"""
+                                    s"""<h1 class="govuk-heading-l">${messages(key + ".heading")}</h1>"""
                                 )
                             )
                         )
