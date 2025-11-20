@@ -32,10 +32,10 @@ class PurchaserOrCompanyNameFormProvider @Inject() extends Mappings {
       mapping(
         "forename1" -> optionalText()
           .verifying(optionalMaxLength(14, "purchaser.individual.error.length.firstName"))
-          .verifying(optionalRegexp(formRegex, regexErrorKey(individualOrCompany))),
+          .verifying(optionalRegexp(formRegex, "purchaser.first.name.form.regex.error.individual")),
         "forename2" -> optionalText()
           .verifying(optionalMaxLength(14, "purchaser.individual.error.length.middleName"))
-          .verifying(optionalRegexp(formRegex, regexErrorKey(individualOrCompany))),
+          .verifying(optionalRegexp(formRegex, "purchaser.middle.name.form.regex.error.individual")),
         "name" -> text(errorKey(individualOrCompany))
           .verifying(maxLength(56, maxLengthErrorKey(individualOrCompany)))
           .verifying(regexp(formRegex, regexErrorKey(individualOrCompany)))
@@ -57,7 +57,7 @@ class PurchaserOrCompanyNameFormProvider @Inject() extends Mappings {
 
 
   private def regexErrorKey(choice: String): String = choice match {
-    case "Individual" => "purchaser.name.form.regex.error.individual"
+    case "Individual" => "purchaser.surname.form.regex.error.individual"
     case "Company" => "purchaser.name.form.regex.error.company"
     case _ => "purchaser.name.form.regex.error"
   }

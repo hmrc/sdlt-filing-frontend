@@ -30,7 +30,7 @@ class PurchaserOrCompanyNameFormProviderSpec extends AnyWordSpec with Matchers {
 
   val cases = Table(
     ("choice", "requiredKey", "lengthKey", "invalidKey"),
-    ("Individual", "purchaser.name.form.no.input.error.individual", "purchaser.name.form.maxLength.error.individual", "purchaser.name.form.regex.error.individual"),
+    ("Individual", "purchaser.name.form.no.input.error.individual", "purchaser.name.form.maxLength.error.individual", "purchaser.surname.form.regex.error.individual"),
     ("Company",   "purchaser.name.form.no.input.error.company",    "purchaser.name.form.maxLength.error.company",    "purchaser.name.form.regex.error.company")
   )
 
