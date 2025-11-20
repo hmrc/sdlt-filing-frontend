@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.vendor
 
 import models.vendor.VendorName
 import org.scalatest.EitherValues
