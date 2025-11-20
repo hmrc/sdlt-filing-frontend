@@ -47,7 +47,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
   private val completePrelimReturn = PrelimReturn(
     stornId = "12345",
     purchaserIsCompany = "YES",
-    surNameOrCompanyName = "Test Company",
+    purchaserOrCompanyName = "Test Company",
     houseNumber = Some(23),
     addressLine1 = "Test Street",
     addressLine2 = Some("Apartment 5"),
@@ -60,7 +60,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
   private val minimalPrelimReturn = PrelimReturn(
     stornId = "12345",
     purchaserIsCompany = "YES",
-    surNameOrCompanyName = "Test Company",
+    purchaserOrCompanyName = "Test Company",
     houseNumber = None,
     addressLine1 = "Test Street",
     addressLine2 = None,

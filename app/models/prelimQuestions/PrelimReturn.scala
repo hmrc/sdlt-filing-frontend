@@ -24,7 +24,7 @@ import scala.concurrent.Future
 case class PrelimReturn(
                        stornId: String,
                        purchaserIsCompany: String,
-                       surNameOrCompanyName: String,
+                       purchaserOrCompanyName: String,
                        houseNumber: Option[Int],
                        addressLine1: String,
                        addressLine2: Option[String],
@@ -42,7 +42,7 @@ object PrelimReturn {
     Future.successful(PrelimReturn(
       stornId = userAnswers.get.storn,
       purchaserIsCompany = prelimSessionQuestions.purchaserIsIndividual,
-      surNameOrCompanyName = prelimSessionQuestions.purchaserSurnameOrCompanyName,
+      purchaserOrCompanyName = prelimSessionQuestions.purchaserOrCompanyName,
       houseNumber = prelimSessionQuestions.purchaserAddress.houseNumber,
       addressLine1 = prelimSessionQuestions.purchaserAddress.line1,
       addressLine2 = prelimSessionQuestions.purchaserAddress.line2,

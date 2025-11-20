@@ -17,22 +17,34 @@
 package forms.preliminary
 
 import forms.mappings.Mappings
+import models.prelimQuestions.PurchaserName
 import play.api.data.Form
+import play.api.data.Forms._
 
 import javax.inject.Inject
-import models.requests.DataRequest
 
-class PurchaserSurnameOrCompanyNameFormProvider @Inject() extends Mappings {
+class PurchaserOrCompanyNameFormProvider @Inject() extends Mappings {
 
   private val formRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 
-  def apply(individualOrCompany:String): Form[String] =
+  def apply(individualOrCompany: String): Form[PurchaserName] =
     Form(
-      "purchaserSurnameOrCompanyName" -> text(errorKey(individualOrCompany))
-          .verifying(maxLength(56, maxLengthErrorKey(individualOrCompany)))
-          .verifying(regexp(formRegex, regexErrorKey(individualOrCompany)))
+      mapping(
+        "forename1" -> optionalText()
+          .verifying(optionalMaxLength(14, "vendor.individual.error.length.firstName"))
+          .verifying(optionalRegexp(formRegex, "vendor.name.form.regex.error")),
+        "forename2" -> optionalText()
+          .verifying(optionalMaxLength(14, "vendor.individual.error.length.middleName"))
+          .verifying(optionalRegexp(formRegex, "vendor.name.form.regex.error")),
+        "name" -> text("vendor.name.error.required")
+          .verifying(maxLength(56, "vendor.name.error.length"))
+          .verifying(regexp(formRegex, "vendor.name.form.regex.error"))
+      )(PurchaserName.apply)(o => Some(Tuple.fromProductTyped(o)))
+    )
 
-  )
+//"purchaserOrCompanyName" -> text(errorKey(individualOrCompany))
+//  .verifying(maxLength(56, maxLengthErrorKey(individualOrCompany)))
+//  .verifying(regexp(formRegex, regexErrorKey(individualOrCompany)))
 
   private def errorKey(choice: String): String = choice match {
     case "Individual" => "purchaser.name.form.no.input.error.individual"
@@ -53,6 +65,4 @@ class PurchaserSurnameOrCompanyNameFormProvider @Inject() extends Mappings {
     case "Company" => "purchaser.name.form.regex.error.company"
     case _ => "purchaser.name.form.regex.error"
   }
-
-
 }

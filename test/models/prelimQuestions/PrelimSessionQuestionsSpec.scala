@@ -28,7 +28,7 @@ class PrelimSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
   object TestData {
     def prelimSessionQuestionsJsonComplete: JsObject = Json.obj(
       "purchaserIsIndividual" -> "Company",
-      "purchaserSurnameOrCompanyName" -> "Apple",
+      "purchaserOrCompanyName" -> "Apple",
       "purchaserAddress" -> Json.obj(
         "houseNumber" -> 1,
         "line1" -> "Street 1",
@@ -48,7 +48,7 @@ class PrelimSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
 
     def prelimSessionQuestionsJsonWithNoOptional: JsObject = Json.obj(
       "purchaserIsIndividual" -> "Company",
-      "purchaserSurnameOrCompanyName" -> "Apple",
+      "purchaserOrCompanyName" -> "Apple",
       "purchaserAddress" -> Json.obj(
         "houseNumber" -> JsNull,
         "line1" -> "Street 1",
@@ -78,7 +78,7 @@ class PrelimSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
         val expectedResult: PrelimSessionQuestions =
           PrelimSessionQuestions(
             purchaserIsIndividual = "Company",
-            purchaserSurnameOrCompanyName = "Apple",
+            purchaserOrCompanyName = "Apple",
             purchaserAddress = PrelimSessionAddress(
               houseNumber = Some(1),
               line1 = "Street 1",
@@ -105,7 +105,7 @@ class PrelimSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
         val expectedResult: PrelimSessionQuestions =
           PrelimSessionQuestions(
             purchaserIsIndividual = "Company",
-            purchaserSurnameOrCompanyName = "Apple",
+            purchaserOrCompanyName = "Apple",
             purchaserAddress = PrelimSessionAddress(
               houseNumber = None,
               line1 = "Street 1",

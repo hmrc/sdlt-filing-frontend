@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import pages.*
 import models.*
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserOrCompanyNamePage, TransactionTypePage}
 import pages.vendor.{AgentNamePage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 class NavigatorSpec extends SpecBase {
@@ -40,13 +40,13 @@ class NavigatorSpec extends SpecBase {
       "go from individual/company page to Purchaser or Company name" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(PurchaserIsIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(mode = NormalMode)
+        navigator.nextPage(PurchaserIsIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(mode = NormalMode)
       }
 
       "go from Purchase/company name page to address lookup" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(PurchaserSurnameOrCompanyNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
+        navigator.nextPage(PurchaserOrCompanyNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
       }
 
       "go from transaction type page to check your answers" in {

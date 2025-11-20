@@ -21,10 +21,10 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
-GET        /preliminary-questions/purchaser-name                        controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /preliminary-questions/purchaser-name                        controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
-GET        /preliminary-questions/purchaser-name/change                 controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /preliminary-questions/purchaser-name/change                 controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
+GET        /preliminary-questions/purchaser-name                        controllers.preliminary.PurchaserOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /preliminary-questions/purchaser-name                        controllers.preliminary.PurchaserOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
+GET        /preliminary-questions/purchaser-name/change                 controllers.preliminary.PurchaserOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /preliminary-questions/purchaser-name/change                 controllers.preliminary.PurchaserOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /preliminary-questions/who-is-making-the-purchase            controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)
 POST       /preliminary-questions/who-is-making-the-purchase            controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = NormalMode)

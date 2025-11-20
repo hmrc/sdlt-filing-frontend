@@ -124,7 +124,7 @@ class PrelimTaskListSpec extends SpecBase {
 
           val result = PrelimTaskList.buildPrelimRow(fullReturnComplete).build(fullReturnComplete)
 
-          result.url mustBe controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
+          result.url mustBe controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(NormalMode).url
         }
       }
 
@@ -169,7 +169,7 @@ class PrelimTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.prelimQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.prelimQuestion.details")
           row.status mustBe TLCompleted
-          row.url mustBe controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
+          row.url mustBe controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(NormalMode).url
         }
       }
 
@@ -187,7 +187,7 @@ class PrelimTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.prelimQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.prelimQuestion.details")
           row.status mustBe TLNotStarted
-          row.url mustBe controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
+          row.url mustBe controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(NormalMode).url
         }
       }
     }

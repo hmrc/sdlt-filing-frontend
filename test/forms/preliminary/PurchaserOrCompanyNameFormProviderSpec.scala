@@ -17,16 +17,16 @@
 package forms.preliminary
 
 import forms.behaviours.StringFieldBehaviours
-import forms.preliminary.PurchaserSurnameOrCompanyNameFormProvider
+import forms.preliminary.PurchaserOrCompanyNameFormProvider
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class PurchaserSurnameOrCompanyNameFormProviderSpec extends AnyWordSpec with Matchers {
+class PurchaserOrCompanyNameFormProviderSpec extends AnyWordSpec with Matchers {
 
   val maxLength = 56
-  val fieldName = "purchaserSurnameOrCompanyName"
+  val fieldName = "purchaserOrCompanyName"
 
   val cases = Table(
     ("choice", "requiredKey", "lengthKey", "invalidKey"),
@@ -34,9 +34,9 @@ class PurchaserSurnameOrCompanyNameFormProviderSpec extends AnyWordSpec with Mat
     ("Company", "purchaser.name.form.no.input.error.company", "purchaser.name.form.maxLength.error.company", "purchaser.name.form.regex.error.company")
   )
 
-  "PProvider form" should {
+  "Provider form" should {
     forAll(cases) { (choice, requiredKey, lengthKey, invalidKey) =>
-      val form = new PurchaserSurnameOrCompanyNameFormProvider()(choice)
+      val form = new PurchaserOrCompanyNameFormProvider()(choice)
 
       s"bind valid data for $choice" in {
         val validNames = Seq("Mr test", "Company test name", "Company@company.com", "(555) 123-4567")

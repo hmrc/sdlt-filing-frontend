@@ -67,10 +67,10 @@ purchaser.company.error.required = Enter Purchaser (1) surname or company name
 purchaser.company.error.length = Purchaser (1) surname or company name must be 100 characters or less
 purchaser.company.change.hidden = Purchaser (1) surname or company name
 
-purchaserSurnameOrCompanyName.checkYourAnswersLabel.purchaser = Purchaser name
-purchaserSurnameOrCompanyName.checkYourAnswersLabel.company = Company name
-purchaserSurnameOrCompanyName.checkYourAnswersLabel.default = Purchaser / Company name
-purchaserSurnameOrCompanyName.link.message = Enter purchaser name
+purchaserOrCompanyName.checkYourAnswersLabel.purchaser = Purchaser name
+purchaserOrCompanyName.checkYourAnswersLabel.company = Company name
+purchaserOrCompanyName.checkYourAnswersLabel.default = Purchaser / Company name
+purchaserOrCompanyName.link.message = Enter purchaser name
 
 purchaser.name.form.maxLength.error = Max length
 purchaser.name.form.maxLength.error.individual = The purchaser’s surname must be 56 characters or less

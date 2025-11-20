@@ -17,29 +17,29 @@
 package controllers.preliminary
 
 import controllers.actions.*
-import forms.preliminary.PurchaserSurnameOrCompanyNameFormProvider
+import forms.preliminary.PurchaserOrCompanyNameFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserOrCompanyNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.preliminary.PurchaserSurnameOrCompanyNameView
+import views.html.preliminary.PurchaserOrCompanyNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PurchaserSurnameOrCompanyNameController @Inject()(
+class PurchaserOrCompanyNameController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
                                         navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: PurchaserSurnameOrCompanyNameFormProvider,
+                                        formProvider: PurchaserOrCompanyNameFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: PurchaserSurnameOrCompanyNameView
+                                        view: PurchaserOrCompanyNameView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
@@ -49,9 +49,12 @@ class PurchaserSurnameOrCompanyNameController @Inject()(
         case Some(value) => if(value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
-      val preparedForm = request.userAnswers.get(PurchaserSurnameOrCompanyNamePage) match {
-        case None => formProvider(individualOrCompany)
-        case Some(value) => formProvider(individualOrCompany).fill(value)
+
+      val form = formProvider(individualOrCompany)
+
+      val preparedForm = request.userAnswers.get(PurchaserOrCompanyNamePage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
       }
 
       Ok(view(preparedForm, mode, individualOrCompany))
@@ -71,9 +74,9 @@ class PurchaserSurnameOrCompanyNameController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserSurnameOrCompanyNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserOrCompanyNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(PurchaserSurnameOrCompanyNamePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(PurchaserOrCompanyNamePage, mode, updatedAnswers))
       )
   }
 }

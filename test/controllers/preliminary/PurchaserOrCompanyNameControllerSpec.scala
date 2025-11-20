@@ -18,30 +18,30 @@ package controllers.preliminary
 
 import base.SpecBase
 import controllers.routes
-import forms.preliminary.PurchaserSurnameOrCompanyNameFormProvider
+import forms.preliminary.PurchaserOrCompanyNameFormProvider
 import models.prelimQuestions.CompanyOrIndividualRequest
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserOrCompanyNamePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.preliminary.PurchaserSurnameOrCompanyNameView
+import views.html.preliminary.PurchaserOrCompanyNameView
 
 import scala.concurrent.Future
 
-class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
+class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new PurchaserSurnameOrCompanyNameFormProvider()
+  val formProvider = new PurchaserOrCompanyNameFormProvider()
 
-  lazy val purchaserSurnameOrCompanyNameRoute: String = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
+  lazy val purchaserOrCompanyNameRoute: String = controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(NormalMode).url
 
   val company = "Company"
   val individual = "Individual"
@@ -50,7 +50,7 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
   val individualUserAnswers: UserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
 
   
-  "PurchaserSurnameOrCompanyName Controller" - {
+  "PurchaserOrCompanyName Controller" - {
    
 
     "must return OK and the correct view for a GET and individual has been answered" in {
@@ -59,11 +59,11 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
       val application = applicationBuilder(userAnswers = Some(individualUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, individual)(request, messages(application)).toString
@@ -73,14 +73,14 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
     "must populate the view correctly on a GET when the question has previously been answered and individual has been answered" in {
       val form = formProvider("Individual")
       
-      val userAnswers = individualUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
+      val userAnswers = individualUserAnswers.set(PurchaserOrCompanyNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
 
-        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
 
         val result = route(application, request).value
 
@@ -95,11 +95,11 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
       val application = applicationBuilder(userAnswers = Some(companyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, company)(request, messages(application)).toString
@@ -109,14 +109,14 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
     "must populate the view correctly on a GET when the question has previously been answered and company has been answered" in {
       val form = formProvider("Company")
 
-      val userAnswers = companyUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
+      val userAnswers = companyUserAnswers.set(PurchaserOrCompanyNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
 
-        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
 
         val result = route(application, request).value
 
@@ -141,8 +141,8 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserSurnameOrCompanyNameRoute)
-            .withFormUrlEncodedBody(("purchaserSurnameOrCompanyName", "answer"))
+          FakeRequest(POST, purchaserOrCompanyNameRoute)
+            .withFormUrlEncodedBody(("purchaserOrCompanyName", "answer"))
 
         val result = route(application, request).value
 
@@ -158,12 +158,12 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserSurnameOrCompanyNameRoute)
+          FakeRequest(POST, purchaserOrCompanyNameRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
 
         val result = route(application, request).value
 
@@ -177,7 +177,7 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
 
         val result = route(application, request).value
 
@@ -192,7 +192,7 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserSurnameOrCompanyNameRoute)
+          FakeRequest(POST, purchaserOrCompanyNameRoute)
             .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
