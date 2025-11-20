@@ -36,7 +36,7 @@ object AgentNameSummary  {
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("purchaserIsIndividual.change.hidden"))
+            .withVisuallyHiddenText(messages("agentName.change.hidden"))
         )
       )
     }.getOrElse {

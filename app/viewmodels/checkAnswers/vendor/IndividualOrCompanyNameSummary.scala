@@ -36,8 +36,6 @@ object IndividualOrCompanyNameSummary  {
       case _ => ""
     }
 
-
-
     answers.flatMap(_.get(VendorOrBusinessNamePage)).map {
       answer =>
         if (vendorOrBusiness == "Individual") {

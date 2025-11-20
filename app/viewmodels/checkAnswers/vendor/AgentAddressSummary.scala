@@ -53,7 +53,7 @@ object AgentAddressSummary {
       )
 
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.agentAddress",
+        key = "vendor.checkYourAnswers.agentAddress.label",
         value = value,
         actions = Seq(
           ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url)
@@ -68,7 +68,7 @@ object AgentAddressSummary {
       )
       
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.agentAddress",
+        key = "vendor.checkYourAnswers.agentAddress.label",
         value = value
       )
     }

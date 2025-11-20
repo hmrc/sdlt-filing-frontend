@@ -36,12 +36,11 @@ class AgentNameSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(AgentNamePage, "Smith").success.value
+          val userAnswers = emptyUserAnswers.set(AgentNamePage, "Smith").success.value
 
-          val result = AgentNameSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = AgentNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("agentName.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.agentName.label")
 
           val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
           textContent mustEqual "Smith"
@@ -63,7 +62,7 @@ class AgentNameSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(AgentNamePage, "O'Brien & Sons <Ltd>").success.value
 
-          val result = AgentNameSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = AgentNameSummary.row(Some(userAnswers))
 
           val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
           textContent must include("O&amp;#x27;Brien")
@@ -84,7 +83,7 @@ class AgentNameSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(AgentNamePage, "Smith").success.value
 
-        val result = AgentNameSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = AgentNameSummary.row(Some(userAnswers))
 
         result.actions.get.items.head.href mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url
       }

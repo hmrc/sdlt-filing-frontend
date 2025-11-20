@@ -19,7 +19,6 @@ package viewmodels.checkAnswers.vendor
 import controllers.preliminary.routes
 import models.UserAnswers
 import models.address.{Address, Country}
-import pages.preliminary.PurchaserAddressPage
 import pages.vendor.VendorAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -55,7 +54,7 @@ object VendorAddressSummary {
       )
 
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.vendorAddress",
+        key = "vendor.checkYourAnswers.vendorAddress.label",
         value = value,
         actions = Seq(
           ActionItemViewModel("site.change", controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change")).url)
@@ -66,11 +65,11 @@ object VendorAddressSummary {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url}" class="govuk-link">${messages("purchaserAddress.link.message")}</a>""")
+          s"""<a href="${controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change")).url}" class="govuk-link">${messages("vendor.checkYourAnswers.vendorAddress.addressMissing")}</a>""")
       )
       
       SummaryListRowViewModel(
-        key = "purchaserAddress.checkYourAnswersLabel",
+        key = "vendor.checkYourAnswers.vendorAddress.label",
         value = value
       )
     }

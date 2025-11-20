@@ -55,11 +55,11 @@ object RepresentedByAnAgentSummary  {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("transactionType.link.message")}</a>""")
+          s"""<a href="${controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendor.checkYourAnswers.representedByAgent.agentMissing")}</a>""")
       )
 
       SummaryListRowViewModel(
-        key = "transactionType.checkYourAnswersLabel",
+        key = "vendor.checkYourAnswers.representedByAgent.label",
         value = value
       )
     }

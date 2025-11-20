@@ -51,11 +51,11 @@ object VendorTypeSummary {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserIsIndividual.link.message")}</a>""")
+          s"""<a href="${controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendor.checkYourAnswers.vendorTypeMissing")}</a>""")
       )
 
       SummaryListRowViewModel(
-        key = "purchaserIsIndividual.checkYourAnswersLabel",
+        key = "vendor.checkYourAnswers.vendorType.label",
         value = value
       )
     }
