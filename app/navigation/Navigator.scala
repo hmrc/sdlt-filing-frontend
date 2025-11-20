@@ -22,7 +22,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, WhoIsTheVendorPage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage}
+import pages.vendor.{AgentNamePage, VendorAgentsReferencePage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 @Singleton
 class Navigator @Inject()() {
@@ -42,6 +42,9 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(NormalMode)
     case VendorOrBusinessNamePage =>
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
+      // TODO: Should navigate to Check Your Answers Page
+    case VendorAgentsReferencePage =>
+      _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
 
     //TODO - implement below once page is merged into main
 //    case ConfirmVendorAddressPage => _ => routes.VendorRepresentedByAgentController.onPageLoad()

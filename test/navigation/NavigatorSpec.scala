@@ -21,7 +21,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
+import pages.vendor.{AgentNamePage, VendorAgentsReferencePage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -69,6 +69,11 @@ class NavigatorSpec extends SpecBase {
 
       "go from VendorRepresentedByAgentPage to Agent Name page" in {
         navigator.nextPage(VendorRepresentedByAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
+      }
+
+      // TODO: Should navigate to Check Your Answers Page
+      "go from Screen VR-3ds to Agent Reference page" in {
+        navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
       }
     }
 

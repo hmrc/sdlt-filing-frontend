@@ -274,3 +274,12 @@ addressLookup.vendorAgentQuestionsAddress.confirmPage.submitLabel            = C
 
 addressLookup.vendorAgentQuestionsAddress.countryPicker.title                = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.countryPicker.heading              = Find {0}’s address
+
+vendorAgentsReference.title = What is the agent’s reference number? – About the vendor
+vendorAgentsReference.caption = About the vendor
+vendorAgentsReference.heading = What is {0}’s reference for this return?
+vendorAgentsReference.checkYourAnswersLabel = Agent’s Reference
+vendorAgentsReference.error.required = Enter {0}’s agent reference number
+vendorAgentsReference.error.length = Agent’s reference must be 14 characters or less
+vendorAgentsReference.change.hidden = Agent’s Reference
+vendorAgentsReference.error.invalid = Agent’s Reference is invalid
