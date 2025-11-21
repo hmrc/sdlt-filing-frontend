@@ -25,11 +25,11 @@ sealed trait whoIsTheVendor
 
 object whoIsTheVendor extends Enumerable.Implicits {
 
-  case object Business extends WithName("Business") with whoIsTheVendor
+  case object Company extends WithName("Company") with whoIsTheVendor
   case object Individual extends WithName("Individual") with whoIsTheVendor
 
   val values: Seq[whoIsTheVendor] = Seq(
-     Business, Individual
+    Company, Individual
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {

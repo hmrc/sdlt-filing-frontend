@@ -16,11 +16,11 @@
 
 package pages.preliminary
 
-import models.prelimQuestions.BusinessOrIndividualRequest
+import models.prelimQuestions.CompanyOrIndividualRequest
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object PurchaserIsIndividualPage extends QuestionPage[BusinessOrIndividualRequest] {
+case object PurchaserIsIndividualPage extends QuestionPage[CompanyOrIndividualRequest] {
 
   override def path: JsPath = JsPath \ toString
 

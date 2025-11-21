@@ -45,29 +45,32 @@ class PurchaserSurnameOrCompanyNameController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val individualOrBusiness: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
-        case Some(value) => if(value.toString == "Individual") "Individual" else "Business"
+      val individualOrCompany: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
+        case Some(value) => if(value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
+
+      val form = formProvider(individualOrCompany)
+
       val preparedForm = request.userAnswers.get(PurchaserSurnameOrCompanyNamePage) match {
-        case None => formProvider(individualOrBusiness)
-        case Some(value) => formProvider(individualOrBusiness).fill(value)
+        case Some(value) => form.fill(value)
+        case None        => form
       }
 
-      Ok(view(preparedForm, mode, individualOrBusiness))
+      Ok(view(preparedForm, mode, individualOrCompany))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val individualOrBusiness: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
-        case Some(value) => if(value.toString == "Individual") "Individual" else "Business"
+      val individualOrCompany: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
+        case Some(value) => if(value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
 
-      formProvider(individualOrBusiness).bindFromRequest().fold(
+      formProvider(individualOrCompany).bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, individualOrBusiness))),
+          Future.successful(BadRequest(view(formWithErrors, mode, individualOrCompany))),
 
         value =>
           for {

@@ -23,7 +23,7 @@ import forms.vendor.VendorRepresentedByAgentFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.{VendorOrBusinessNamePage, VendorRepresentedByAgentPage}
+import pages.vendor.{VendorOrCompanyNamePage, VendorRepresentedByAgentPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -72,7 +72,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent))
 
           val vendorName: String = userAnswers
-            .get(VendorOrBusinessNamePage)
+            .get(VendorOrCompanyNamePage)
             .map(_.name)
             .getOrElse("the vendor")
 
@@ -105,7 +105,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
           val vendorName: String = userAnswers
-            .get(VendorOrBusinessNamePage)
+            .get(VendorOrCompanyNamePage)
             .map(_.name)
             .getOrElse("the vendor")
 
@@ -140,7 +140,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             .set(VendorRepresentedByAgentPage, true).success.value
 
           val vendorName: String = userAnswers
-            .get(VendorOrBusinessNamePage)
+            .get(VendorOrCompanyNamePage)
             .map(_.name)
             .getOrElse("the vendor")
 

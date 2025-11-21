@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.prelimQuestions.BusinessOrIndividualRequest
+@import models.prelimQuestions.CompanyOrIndividualRequest
 @import views.html.components.h1
 @this(
     layout: templates.Layout,
@@ -41,7 +41,7 @@
             Radios(
                 fieldset = None,
                 name = form("value").name,
-                items = BusinessOrIndividualRequest.options map (item => item.copy(checked = form("value").value.isDefined && form("value").value == item.value)),
+                items = CompanyOrIndividualRequest.options map (item => item.copy(checked = form("value").value.isDefined && form("value").value == item.value)),
                 errorMessage = if(form("value").hasErrors) Some(ErrorMessage(
                     content = Text(messages(form("value").error.get.message, form("value").error.get.args: _*)),
                     visuallyHiddenText = Some(messages("error.prefix"))

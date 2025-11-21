@@ -31,7 +31,7 @@ object PurchaserSurnameOrCompanyNameSummary  {
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
     
     val typeOfPurchaser = answers.flatMap(_.get(PurchaserIsIndividualPage)) match {
-      case Some(value) => if(value.toString == "Individual") "purchaser" else "business"
+      case Some(value) => if(value.toString == "Individual") "purchaser" else "company"
       case _ => "default"
     }
 
@@ -49,11 +49,12 @@ object PurchaserSurnameOrCompanyNameSummary  {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserSurnameOrCompanyName.link.message")}</a>""")
+          s"""<a href="${controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}"
+             |class="govuk-link">${messages("purchaserSurnameOrCompanyName.link.message")}</a>""".stripMargin)
       )
 
       SummaryListRowViewModel(
-        key = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.${typeOfPurchaser}",
+        key = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.$typeOfPurchaser",
         value = value
       )
     }

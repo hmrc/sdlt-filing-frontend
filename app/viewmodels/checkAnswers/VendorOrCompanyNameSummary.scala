@@ -18,25 +18,25 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.vendor.VendorOrBusinessNamePage
+import pages.vendor.VendorOrCompanyNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object VendorOrBusinessNameSummary  {
+object VendorOrCompanyNameSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(VendorOrBusinessNamePage).map {
+    answers.get(VendorOrCompanyNamePage).map {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "vendorOrBusinessName.checkYourAnswersLabel",
+          key     = "vendorOrCompanyName.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlFormat.escape(answer.name).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendorOrBusinessName.change.hidden"))
+            ActionItemViewModel("site.change", controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("vendorOrCompanyName.change.hidden"))
           )
         )
     }

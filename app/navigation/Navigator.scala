@@ -22,7 +22,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, WhoIsTheVendorPage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage}
+import pages.vendor.{AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 @Singleton
 class Navigator @Inject()() {
@@ -39,12 +39,11 @@ class Navigator @Inject()() {
     case AgentNamePage =>
       _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case WhoIsTheVendorPage =>
-      _ => controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(NormalMode)
-    case VendorOrBusinessNamePage =>
+      _ => controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
+    case VendorOrCompanyNamePage =>
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
-
-    //TODO - implement below once page is merged into main
-//    case ConfirmVendorAddressPage => _ => routes.VendorRepresentedByAgentController.onPageLoad()
+    case ConfirmVendorAddressPage =>
+      _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
 
     case _ => _ => routes.IndexController.onPageLoad()
   }

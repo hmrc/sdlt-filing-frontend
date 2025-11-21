@@ -24,7 +24,7 @@
 
 @(
         form: Form[_],
-        vendorOrBusinessName: String,
+        vendorOrCompanyName: String,
         line1: Option[String] = None,
         line2: Option[String] = None,
         line3: Option[String] = None,
@@ -35,7 +35,7 @@
 
 @import models.vendor.ConfirmVendorAddress
 
-@layout(pageTitle = title(form, messages("confirmVendorAddress.title", vendorOrBusinessName))) {
+@layout(pageTitle = title(form, messages("confirmVendorAddress.title", vendorOrCompanyName))) {
 
     @formHelper(action = controllers.vendor.routes.ConfirmVendorAddressController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -45,7 +45,7 @@
 
         <h1 class="govuk-heading-l">
             <span class="govuk-caption-l">@messages("confirmVendorAddress.label")</span>
-            @messages("confirmVendorAddress.heading", vendorOrBusinessName)
+            @messages("confirmVendorAddress.heading", vendorOrCompanyName)
         </h1>
 
         <p class="govuk-body">
@@ -57,7 +57,7 @@
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("confirmVendorAddress.isAddress", vendorOrBusinessName)).asPageSubHeading(),
+                legend = LegendViewModel(messages("confirmVendorAddress.isAddress", vendorOrCompanyName)).asPageSubHeading(),
                 items  = ConfirmVendorAddress.options
             )
         )

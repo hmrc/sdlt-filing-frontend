@@ -19,7 +19,7 @@ package controllers.preliminary
 import base.SpecBase
 import controllers.routes
 import forms.preliminary.PurchaserSurnameOrCompanyNameFormProvider
-import models.prelimQuestions.BusinessOrIndividualRequest
+import models.prelimQuestions.CompanyOrIndividualRequest
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -41,17 +41,15 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
 
   val formProvider = new PurchaserSurnameOrCompanyNameFormProvider()
 
-  lazy val purchaserSurnameOrCompanyNameRoute = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
+  lazy val purchaserSurnameOrCompanyNameRoute: String = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
 
-  val business = "Business"
+  val company = "Company"
   val individual = "Individual"
 
-  val individualUserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
-  val businessUserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option2).success.value
+  val companyUserAnswers: UserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
+  val individualUserAnswers: UserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
 
-  
   "PurchaserSurnameOrCompanyName Controller" - {
-   
 
     "must return OK and the correct view for a GET and individual has been answered" in {
 
@@ -89,10 +87,10 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
       }
     }
 
-    "must return OK and the correct view for a GET and business has been answered" in {
+    "must return OK and the correct view for a GET and company has been answered" in {
 
-      val form = formProvider("Business")
-      val application = applicationBuilder(userAnswers = Some(businessUserAnswers)).build()
+      val form = formProvider("Company")
+      val application = applicationBuilder(userAnswers = Some(companyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
@@ -102,14 +100,14 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, business)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, company)(request, messages(application)).toString
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered and business has been answered" in {
-      val form = formProvider("Business")
+    "must populate the view correctly on a GET when the question has previously been answered and company has been answered" in {
+      val form = formProvider("Company")
 
-      val userAnswers = businessUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
+      val userAnswers = companyUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -121,7 +119,7 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, business)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, company)(request, messages(application)).toString
       }
     }
 

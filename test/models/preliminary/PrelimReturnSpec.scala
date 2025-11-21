@@ -409,6 +409,6 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
           value shouldBe(minimalPrelimReturn)
         }
       }
-      }
     }
   }
+}
