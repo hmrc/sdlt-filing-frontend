@@ -22,7 +22,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, WhoIsTheVendorPage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage}
+import pages.vendor.{AgentNamePage, ConfirmVendorAddressPage, VendorAgentsContactDetailsPage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 @Singleton
 class Navigator @Inject()() {
@@ -32,16 +32,21 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode)
     case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
-    case VendorRepresentedByAgentPage =>
-      _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-    case AgentNamePage =>
-      _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrBusinessNameController.onPageLoad(NormalMode)
     case VendorOrBusinessNamePage =>
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
+    case VendorRepresentedByAgentPage =>
+      _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
+    case AgentNamePage =>
+      _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
+
+    //TODO update to about-the-vendor/agent-reference-number
+    case VendorAgentsContactDetailsPage =>
+      _ => routes.ReturnTaskListController.onPageLoad()
+
 
     //TODO - implement below once page is merged into main
 //    case ConfirmVendorAddressPage => _ => routes.VendorRepresentedByAgentController.onPageLoad()

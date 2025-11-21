@@ -21,7 +21,7 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
+import pages.vendor.{AgentNamePage, VendorAgentsContactDetailsPage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -69,6 +69,11 @@ class NavigatorSpec extends SpecBase {
 
       "go from VendorRepresentedByAgentPage to Agent Name page" in {
         navigator.nextPage(VendorRepresentedByAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
+      }
+
+      //TODO change from return task list controller to vendor agent reference number page once created
+      "go from VendorAgentsContactDetailsPage to return task list controller" in {
+        navigator.nextPage(VendorAgentsContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
       }
     }
 
