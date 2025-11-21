@@ -391,8 +391,8 @@ object Residency {
 
 
 case class FullReturn (
-                  stornId: Option[String] = None,
-                  returnResourceRef: Option[String] = None,
+                  stornId: String,
+                  returnResourceRef: String,
                   sdltOrganisation: Option[SdltOrganisation] = None,
                   returnInfo: Option[ReturnInfo] = None,
                   purchaser: Option[Seq[Purchaser]] = None,

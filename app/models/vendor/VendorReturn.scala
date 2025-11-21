@@ -16,7 +16,10 @@
 
 package models.vendor
 
+import models.UserAnswers
 import play.api.libs.json.{Json, OFormat}
+
+import scala.concurrent.Future
 
 case class CreateVendorRequest(
                        stornId: String,
@@ -84,11 +87,29 @@ object UpdateVendorReturn {
 case class DeleteVendorRequest(
                                storn: String,
                                vendorResourceRef: String,
-                               vendorId: String
+                               returnResourceRef: String
                              )
 
 object DeleteVendorRequest {
   implicit val format: OFormat[DeleteVendorRequest] = Json.format[DeleteVendorRequest]
+
+  def from(userAnswers: UserAnswers, vendorResourceRef: String): Future[DeleteVendorRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        fullReturn.vendor
+          .flatMap(_.find(_.vendorResourceRef.contains(vendorResourceRef))) match {
+          case Some(_) => Future.successful(DeleteVendorRequest(
+            storn = fullReturn.stornId,
+            vendorResourceRef = vendorResourceRef,
+            returnResourceRef = fullReturn.returnResourceRef
+          ))
+          case None =>
+            Future.failed(new NoSuchElementException("Vendor not found"))
+        }
+      case None =>
+        Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class DeleteVendorReturn(

@@ -51,8 +51,8 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
         val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe completeFullReturn
-        result.stornId mustBe Some("STORN123456")
-        result.returnResourceRef mustBe Some("RRF-2024-001")
+        result.stornId mustBe "STORN123456"
+        result.returnResourceRef mustBe "RRF-2024-001"
         verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any())
       }
 
@@ -110,8 +110,6 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
         val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe minimalFullReturn
-        result.stornId mustBe defined
-        result.returnResourceRef mustBe defined
         result.sdltOrganisation mustBe defined
         result.returnInfo mustBe defined
       }
@@ -126,8 +124,7 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
         val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe incompleteFullReturn
-        result.stornId mustBe defined
-        result.returnResourceRef must not be defined
+        result.returnInfo must not be defined
       }
 
       "must handle different returnId formats" in {
@@ -186,8 +183,7 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
         val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe emptyFullReturn
-        result.stornId must not be defined
-        result.returnResourceRef must not be defined
+        result.returnInfo must not be defined
         result.sdltOrganisation must not be defined
       }
 
