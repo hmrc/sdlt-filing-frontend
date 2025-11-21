@@ -352,7 +352,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
           returnId = None,
           data = Json.obj(
             "purchaserIsIndividual" -> "YES",
-            "surNameOrCompanyName" -> "Test Company",
+            "purchaserSurnameOrCompanyName" -> "Test Company",
             "purchaserAddress" -> Json.obj(
               "houseNumber" -> 23,
               "line1" -> "Test Street",
@@ -386,7 +386,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
           returnId = None,
           data = Json.obj(
             "purchaserIsIndividual" -> "YES",
-            "surNameOrCompanyName" -> "Test Company",
+            "purchaserSurnameOrCompanyName" -> "Test Company",
             "purchaserAddress" -> Json.obj(
               "houseNumber" -> JsNull,
               "line1" -> "Test Street",
@@ -409,6 +409,6 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
           value shouldBe(minimalPrelimReturn)
         }
       }
-      }
     }
   }
+}
