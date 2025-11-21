@@ -21,16 +21,16 @@ import play.api.mvc.Call
 import controllers.routes
 import pages.*
 import models.*
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, WhoIsTheVendorPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage}
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
+import pages.vendor.{AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 @Singleton
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case PurchaserIsIndividualPage =>
-      _ => controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(NormalMode)
-    case PurchaserOrCompanyNamePage =>
+      _ => controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode)
+    case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
     case VendorRepresentedByAgentPage =>
       _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
@@ -42,9 +42,8 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
     case VendorOrCompanyNamePage =>
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
-
-    //TODO - implement below once page is merged into main
-//    case ConfirmVendorAddressPage => _ => routes.VendorRepresentedByAgentController.onPageLoad()
+    case ConfirmVendorAddressPage =>
+      _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
 
     case _ => _ => routes.IndexController.onPageLoad()
   }

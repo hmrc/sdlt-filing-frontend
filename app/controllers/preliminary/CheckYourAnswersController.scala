@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.preliminary.{PrelimAddressSummary, PurchaserIsIndividualSummary, PurchaserOrCompanyNameSummary, TransactionTypeSummary}
+import viewmodels.checkAnswers.preliminary.{PrelimAddressSummary, PurchaserIsIndividualSummary, PurchaserSurnameOrCompanyNameSummary, TransactionTypeSummary}
 import viewmodels.govuk.summarylist.*
 import views.html.preliminary.CheckYourAnswersView
 
@@ -59,7 +59,7 @@ class CheckYourAnswersController @Inject()(
           val summaryList = SummaryListViewModel(
             rows = Seq(
               PurchaserIsIndividualSummary.row(result),
-              PurchaserOrCompanyNameSummary.row(result),
+              PurchaserSurnameOrCompanyNameSummary.row(result),
               PrelimAddressSummary.row(result),
               TransactionTypeSummary.row(result)
             )

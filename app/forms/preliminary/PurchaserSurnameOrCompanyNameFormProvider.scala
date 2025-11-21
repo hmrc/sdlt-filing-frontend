@@ -17,30 +17,21 @@
 package forms.preliminary
 
 import forms.mappings.Mappings
-import models.prelimQuestions.PurchaserName
 import play.api.data.Form
 import play.api.data.Forms._
 
 import javax.inject.Inject
 
-class PurchaserOrCompanyNameFormProvider @Inject() extends Mappings {
+class PurchaserSurnameOrCompanyNameFormProvider @Inject() extends Mappings {
 
   private val formRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 
-  def apply(individualOrCompany: String): Form[PurchaserName] =
+  def apply(individualOrCompany: String): Form[String] =
     Form(
-      mapping(
-        "forename1" -> optionalText()
-          .verifying(optionalMaxLength(14, "purchaser.individual.error.length.firstName"))
-          .verifying(optionalRegexp(formRegex, "purchaser.first.name.form.regex.error.individual")),
-        "forename2" -> optionalText()
-          .verifying(optionalMaxLength(14, "purchaser.individual.error.length.middleName"))
-          .verifying(optionalRegexp(formRegex, "purchaser.middle.name.form.regex.error.individual")),
-        "name" -> text(errorKey(individualOrCompany))
+        "purchaserSurnameOrCompanyName" -> text(errorKey(individualOrCompany))
           .verifying(maxLength(56, maxLengthErrorKey(individualOrCompany)))
           .verifying(regexp(formRegex, regexErrorKey(individualOrCompany)))
-      )(PurchaserName.apply)(o => Some(Tuple.fromProductTyped(o)))
-    )
+      )
 
   private def errorKey(choice: String): String = choice match {
     case "Individual" => "purchaser.name.form.no.input.error.individual"
@@ -57,7 +48,7 @@ class PurchaserOrCompanyNameFormProvider @Inject() extends Mappings {
 
 
   private def regexErrorKey(choice: String): String = choice match {
-    case "Individual" => "purchaser.surname.form.regex.error.individual"
+    case "Individual" => "purchaser.name.form.regex.error.individual"
     case "Company" => "purchaser.name.form.regex.error.company"
     case _ => "purchaser.name.form.regex.error"
   }

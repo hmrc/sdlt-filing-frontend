@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.preliminary
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserOrCompanyNamePage}
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -26,7 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object PurchaserOrCompanyNameSummary  {
+object PurchaserSurnameOrCompanyNameSummary  {
 
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
     
@@ -35,37 +35,26 @@ object PurchaserOrCompanyNameSummary  {
       case _ => "default"
     }
 
-    answers.flatMap(_.get(PurchaserOrCompanyNamePage)).map { answer =>
-
-      val displayName =
-        Seq(answer.forename1, answer.forename2, Some(answer.name))
-          .flatten
-          .mkString(" ")
-
-      SummaryListRowViewModel(
-        key = s"purchaserOrCompanyName.checkYourAnswersLabel.$typeOfPurchaser",
-        value = ValueViewModel(HtmlFormat.escape(displayName).toString),
-        actions = Seq(
-          ActionItemViewModel(
-            "site.change",
-            controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(CheckMode).url
-          ).withVisuallyHiddenText(messages("purchaserOrCompanyName.change.hidden"))
+    answers.flatMap(_.get(PurchaserSurnameOrCompanyNamePage)).map {
+      answer =>
+        SummaryListRowViewModel(
+          key     = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.${typeOfPurchaser}",
+          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("purchaserSurnameOrCompanyName.change.hidden"))
+          )
         )
-      )
     }.getOrElse {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${
-            controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(CheckMode).url
-          }" class="govuk-link">${
-            messages("purchaserOrCompanyName.link.message")
-          }</a>"""
-        )
+          s"""<a href="${controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}"
+             |class="govuk-link">${messages("purchaserSurnameOrCompanyName.link.message")}</a>""".stripMargin)
       )
 
       SummaryListRowViewModel(
-        key = s"purchaserOrCompanyName.checkYourAnswersLabel.$typeOfPurchaser",
+        key = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.$typeOfPurchaser",
         value = value
       )
     }

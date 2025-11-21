@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, Reads}
 
 case class PrelimSessionQuestions(
                                    purchaserIsIndividual: String,
-                                   purchaserOrCompanyName: String,
+                                   purchaserSurnameOrCompanyName: String,
                                    purchaserAddress: PrelimSessionAddress,
                                    transactionType: String
                           )

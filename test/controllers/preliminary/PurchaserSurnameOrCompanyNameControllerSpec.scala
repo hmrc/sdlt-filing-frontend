@@ -18,30 +18,30 @@ package controllers.preliminary
 
 import base.SpecBase
 import controllers.routes
-import forms.preliminary.PurchaserOrCompanyNameFormProvider
-import models.prelimQuestions.{CompanyOrIndividualRequest, PurchaserName}
+import forms.preliminary.PurchaserSurnameOrCompanyNameFormProvider
+import models.prelimQuestions.CompanyOrIndividualRequest
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserOrCompanyNamePage}
+import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.preliminary.PurchaserOrCompanyNameView
+import views.html.preliminary.PurchaserSurnameOrCompanyNameView
 
 import scala.concurrent.Future
 
-class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
+class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new PurchaserOrCompanyNameFormProvider()
+  val formProvider = new PurchaserSurnameOrCompanyNameFormProvider()
 
-  lazy val purchaserOrCompanyNameRoute: String = controllers.preliminary.routes.PurchaserOrCompanyNameController.onPageLoad(NormalMode).url
+  lazy val purchaserSurnameOrCompanyNameRoute: String = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
 
   val company = "Company"
   val individual = "Individual"
@@ -49,9 +49,7 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
   val companyUserAnswers: UserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
   val individualUserAnswers: UserAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
 
-  
-  "PurchaserOrCompanyName Controller" - {
-   
+  "PurchaserSurnameOrCompanyName Controller" - {
 
     "must return OK and the correct view for a GET and individual has been answered" in {
 
@@ -59,11 +57,11 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(individualUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, individual)(request, messages(application)).toString
@@ -73,19 +71,19 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
     "must populate the view correctly on a GET when the question has previously been answered and individual has been answered" in {
       val form = formProvider("Individual")
       
-      val userAnswers = individualUserAnswers.set(PurchaserOrCompanyNamePage, PurchaserName(None, None, "answer")).success.value
+      val userAnswers = individualUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
 
-        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(PurchaserName(None, None, "answer")), NormalMode, individual)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, individual)(request, messages(application)).toString
       }
     }
 
@@ -95,11 +93,11 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(companyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, company)(request, messages(application)).toString
@@ -109,19 +107,19 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
     "must populate the view correctly on a GET when the question has previously been answered and company has been answered" in {
       val form = formProvider("Company")
 
-      val userAnswers = companyUserAnswers.set(PurchaserOrCompanyNamePage, PurchaserName(None, None, "answer")).success.value
+      val userAnswers = companyUserAnswers.set(PurchaserSurnameOrCompanyNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
 
-        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(PurchaserName(None, None, "answer")), NormalMode, company)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, company)(request, messages(application)).toString
       }
     }
 
@@ -141,8 +139,8 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserOrCompanyNameRoute)
-            .withFormUrlEncodedBody(("name", "answer"))
+          FakeRequest(POST, purchaserSurnameOrCompanyNameRoute)
+            .withFormUrlEncodedBody(("purchaserSurnameOrCompanyName", "answer"))
 
         val result = route(application, request).value
 
@@ -158,12 +156,12 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserOrCompanyNameRoute)
+          FakeRequest(POST, purchaserSurnameOrCompanyNameRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[PurchaserOrCompanyNameView]
+        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
 
         val result = route(application, request).value
 
@@ -177,7 +175,7 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserOrCompanyNameRoute)
+        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
 
         val result = route(application, request).value
 
@@ -192,7 +190,7 @@ class PurchaserOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserOrCompanyNameRoute)
+          FakeRequest(POST, purchaserSurnameOrCompanyNameRoute)
             .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value

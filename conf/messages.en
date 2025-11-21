@@ -51,12 +51,10 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-purchaser.individual.title = What is the purchaser’s name? - Preliminary questions
-purchaser.individual.heading = What is the purchaser’s name?
-purchaser.individual.firstName = First name
-purchaser.individual.middleName = Middle name(s)
+purchaser.individual.title = What is the purchaser’s surname? - Preliminary questions
+purchaser.individual.heading = What is the purchaser’s surname?
 purchaser.individual.surname = Surname
-purchaser.individual.checkYourAnswersLabel = What is the purchaser’s name?
+purchaser.individual.checkYourAnswersLabel = What is the purchaser’s surname?
 
 purchaser.individual.error.required = Enter Purchaser (1) surname or company name
 purchaser.individual.error.length = Purchaser (1) or company name must be 100 characters or less
@@ -74,22 +72,20 @@ purchaser.company.error.required = Enter Purchaser (1) surname or company name
 purchaser.company.error.length = Purchaser (1) surname or company name must be 100 characters or less
 purchaser.company.change.hidden = Purchaser (1) surname or company name
 
-purchaserOrCompanyName.checkYourAnswersLabel.purchaser = Purchaser name
-purchaserOrCompanyName.checkYourAnswersLabel.company = Company name
-purchaserOrCompanyName.checkYourAnswersLabel.default = Purchaser / Company name
-purchaserOrCompanyName.link.message = Enter purchaser name
+purchaserSurnameOrCompanyName.checkYourAnswersLabel.purchaser = Purchaser surname
+purchaserSurnameOrCompanyName.checkYourAnswersLabel.company = Company name
+purchaserSurnameOrCompanyName.checkYourAnswersLabel.default = Purchaser / Company name
+purchaserSurnameOrCompanyName.link.message = Enter purchaser name
 
 purchaser.name.form.maxLength.error = Max length
 purchaser.name.form.maxLength.error.individual = The purchaser’s surname must be 56 characters or less
-purchaser.name.form.maxLength.error.company = The company name must be 56 characters or less
+purchaser.name.form.maxLength.error.company = The company’s name must be 56 characters or less
 purchaser.name.form.regex.error = Invalid Error
-purchaser.first.name.form.regex.error.individual = The purchaser’s first name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes
-purchaser.middle.name.form.regex.error.individual = The purchaser’s middle name(s) must only include letters a to z, and special characters such as hyphens, spaces and apostrophes
-purchaser.surname.form.regex.error.individual = The purchaser’s surname must only include letters a to z, and special characters such as hyphens, spaces and apostrophes
-purchaser.name.form.regex.error.company = The company name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
+purchaser.name.form.regex.error.individual = The purchaser’s surname must only include letters a to z, and special characters such as hyphens, spaces and apostrophes
+purchaser.name.form.regex.error.company = The company’s name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 purchaser.name.form.no.input.error = Nothing has been added
 purchaser.name.form.no.input.error.individual = Enter the purchaser’s surname
-purchaser.name.form.no.input.error.company = Enter the company name
+purchaser.name.form.no.input.error.company = Enter the company’s name
 
 purchaserIsIndividual.title = Who is making the purchase? - Preliminary questions
 purchaserIsIndividual.heading = Who is making the purchase?

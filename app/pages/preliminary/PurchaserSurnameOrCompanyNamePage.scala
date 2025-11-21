@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.prelimQuestions
+package pages.preliminary
 
-import play.api.libs.json.{Json, OFormat}
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class PurchaserName(forename1: Option[String], forename2: Option[String], name: String)
+case object PurchaserSurnameOrCompanyNamePage extends QuestionPage[String] {
 
-object PurchaserName {
-  implicit val format: OFormat[PurchaserName] = Json.format[PurchaserName]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "purchaserSurnameOrCompanyName"
 }

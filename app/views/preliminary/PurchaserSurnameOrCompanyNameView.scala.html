@@ -30,7 +30,7 @@
 
     @layout(pageTitle = title(form, key + ".title")) {
 
-        @formHelper(action = controllers.preliminary.routes.PurchaserOrCompanyNameController.onSubmit(mode)) {
+        @formHelper(action = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onSubmit(mode)) {
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -41,22 +41,8 @@
 
                 @govukInput(
                     InputViewModel(
-                        field = form("forename1"),
-                        label = LabelViewModel(messages(key + ".firstName")).withCssClass(className = "govuk-hint")
-                    )
-                    .withWidth(Full)
-                )
-                @govukInput(
-                    InputViewModel(
-                        field = form("forename2"),
-                        label = LabelViewModel(messages(key + ".middleName")).withCssClass(className = "govuk-hint")
-                    )
-                    .withWidth(Full)
-                )
-                @govukInput(
-                    InputViewModel(
-                        field = form("name"),
-                        label = LabelViewModel(messages(key + ".surname")).withCssClass(className = "govuk-hint")
+                        field = form("purchaserSurnameOrCompanyName"),
+                        label = LabelViewModel(messages(key + ".surname")).withCssClass(className = "govuk-visually-hidden")
                     )
                     .withWidth(Full)
                 )
@@ -65,7 +51,7 @@
 
                 @govukInput(
                     InputViewModel(
-                        field = form("name"),
+                        field = form("purchaserSurnameOrCompanyName"),
                         label = LabelViewModel(messages(key + ".name")).withCssClass(className = "govuk-visually-hidden")
                     )
                     .withWidth(Full)
