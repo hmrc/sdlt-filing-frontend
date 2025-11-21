@@ -80,3 +80,6 @@ GET        /generic-error                                      controllers.Gener
 GET         /about-the-vendor/agent-address-lookup                                    controllers.vendor.VendorAgentAddressController.redirectToAddressLookupVendorAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
 GET         /about-the-vendor/agent-address-return                             controllers.vendor.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)
 GET         /about-the-vendor/agent-address-return/change                      controllers.vendor.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
+
+GET         /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onPageLoad()
+POST        /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onSubmit()

@@ -226,7 +226,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           verify(mockSessionRepository, times(1)).set(argThat[UserAnswers] { userAnswers =>
             userAnswers.returnId.contains(testReturnId) &&
               userAnswers.fullReturn.isDefined &&
-              userAnswers.fullReturn.get.stornId == Some("STORN123456")
+              userAnswers.fullReturn.get.stornId == "STORN123456"
           })
         }
       }

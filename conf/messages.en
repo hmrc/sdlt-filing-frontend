@@ -160,7 +160,8 @@ confirmVendorAddress.heading = Confirm {0}’s address
 confirmVendorAddress.isAddress = Is this {0}’s address?
 confirmVendorAddress.error.required = Please select an option
 
-aboutTheVendor.caption = About the vendor
+aboutTheVendor.common.caption = About the vendor
+aboutTheVendor.common.theVendor = the vendor
 
 agentName.title = What is the agent’s name?
 agentName.heading = What is the agent’s name?
@@ -274,3 +275,7 @@ addressLookup.vendorAgentQuestionsAddress.confirmPage.submitLabel            = C
 
 addressLookup.vendorAgentQuestionsAddress.countryPicker.title                = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.countryPicker.heading              = Find {0}’s address
+
+removeVendor.title = Are you sure you want to remove the vendor?
+removeVendor.heading = Are you sure you want to remove {0}?
+removeVendor.error.required = Select Yes if you want to remove the vendor

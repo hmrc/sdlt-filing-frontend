@@ -14,35 +14,42 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
-@import viewmodels.LabelSize.Large
+@import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
+    govukRadios: GovukRadios,
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], vendorName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("agentName.title"), Some(messages("aboutTheVendor.common.caption")))) {
+@layout(pageTitle = title(form, messages("removeVendor.title"), Some(messages("aboutTheVendor.common.caption")))) {
 
-    @formHelper(action = controllers.vendor.routes.AgentNameController.onSubmit(mode)) {
+    @formHelper(action = controllers.vendor.routes.RemoveVendorController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         <span class="govuk-caption-l">@messages("aboutTheVendor.common.caption")</span>
-        @govukInput(
-            InputViewModel(
-                field = form("agentName"),
-                label = LabelViewModel(messages("agentName.heading")).asPageHeading(size = Large)
+        @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(messages("removeVendor.heading", vendorName.getOrElse(messages("aboutTheVendor.common.theVendor")))).asPageHeading(size = Large),
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
             )
-            .withWidth(Full)
-            .withHint(HintViewModel(HtmlContent(Html(messages("agentName.hint")))))
         )
 
         @govukButton(

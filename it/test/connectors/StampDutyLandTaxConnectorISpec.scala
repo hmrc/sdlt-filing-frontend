@@ -119,7 +119,7 @@ class StampDutyLandTaxConnectorISpec
         val result = connector.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe a[FullReturn]
-        result.stornId mustBe Some("STORN123456")
+        result.stornId mustBe "STORN123456"
 
         server.verify(
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/receive/full-return"))
@@ -315,8 +315,8 @@ class StampDutyLandTaxConnectorISpec
         val result = connector.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe a[FullReturn]
-        result.stornId mustBe Some("STORN123456")
-        result.returnResourceRef mustBe Some("RRF-2024-001")
+        result.stornId mustBe "STORN123456"
+        result.returnResourceRef mustBe "RRF-2024-001"
       }
 
       "must handle malformed JSON response" in {

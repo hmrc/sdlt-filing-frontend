@@ -31,7 +31,7 @@ class AgentChecksService {
       val mainVendorExists = mainVendor.isDefined
       val mainVendorIsRepresentedByAgent = mainVendor.flatMap(_.isRepresentedByAgent).exists(_.equals("true"))
 
-      // TODO Change return task list routes to vendor CYA, and unauthorised routes to the actual error routes
+      // TODO Change return task list routes to vendor CYA
       (returnAgentExists, isAgentTypeVendor, mainVendorExists, mainVendorIsRepresentedByAgent) match {
         case (false, _, false, _) => continueRoute
         case (true, false, false, _) => continueRoute

@@ -18,6 +18,8 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
+import scala.concurrent.Future
+
 case class ReturnVersionUpdateRequest(
                                      storn: String,
                                      returnResourceRef: String,
@@ -26,6 +28,22 @@ case class ReturnVersionUpdateRequest(
 
 object ReturnVersionUpdateRequest {
   implicit val format: OFormat[ReturnVersionUpdateRequest] = Json.format[ReturnVersionUpdateRequest]
+
+  def from(userAnswers: UserAnswers): Future[ReturnVersionUpdateRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        fullReturn.returnInfo.flatMap(_.version) match {
+          case Some(version) => Future.successful(ReturnVersionUpdateRequest(
+            storn = userAnswers.storn,
+            returnResourceRef = fullReturn.returnResourceRef,
+            currentVersion = version
+          ))
+          case None =>
+            Future.failed(new NoSuchElementException("Return version not found"))
+        }
+      case None => Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class ReturnVersionUpdateReturn(

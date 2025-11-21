@@ -46,7 +46,7 @@ object PrelimTaskList {
         controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode).url
       },
       tagId = "prelimQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.returnResourceRef.isDefined),
+      checks = scheme => Seq(fullReturn.returnInfo.isDefined),
       prerequisites = _ => Seq()
     )
   }

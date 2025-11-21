@@ -19,6 +19,7 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants
+import constants.FullReturnConstants.emptyFullReturn
 import models.*
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
@@ -230,7 +231,6 @@ class TaskListSectionSpec extends SpecBase {
           implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
           implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
-          val emptyFullReturn = FullReturn()
           val result = TaskListSections.allComplete(emptyFullReturn)
 
           result mustBe a[Boolean]

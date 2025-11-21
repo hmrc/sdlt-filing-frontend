@@ -91,8 +91,8 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val result = connector.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe completeFullReturn
-        result.stornId mustBe Some("STORN123456")
-        result.returnResourceRef mustBe Some("RRF-2024-001")
+        result.stornId mustBe "STORN123456"
+        result.returnResourceRef mustBe "RRF-2024-001"
       }
 
       "must use stub URL when stubBool is true" in {
@@ -258,8 +258,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val result = connector.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe minimalFullReturn
-        result.stornId mustBe defined
-        result.returnResourceRef mustBe defined
+        result.returnInfo mustBe defined
       }
 
       "must return incomplete FullReturn" in {
@@ -279,8 +278,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val result = connector.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe incompleteFullReturn
-        result.stornId mustBe defined
-        result.returnResourceRef must not be defined
+        result.returnInfo must not be defined
       }
 
       "must return empty FullReturn" in {
@@ -300,7 +298,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val result = connector.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result mustBe emptyFullReturn
-        result.stornId must not be defined
+        result.returnInfo must not be defined
       }
 
       "must call withBody on request builder with correct JSON" in {
@@ -879,7 +877,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val testRequest = DeleteVendorRequest(
           storn = "12345",
           vendorResourceRef = "VRF-001",
-          vendorId = "VID-001"
+          returnResourceRef = "RRF-2024-001"
         )
         val expectedResult = DeleteVendorReturn(deleted = true)
 
@@ -905,7 +903,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val testRequest = DeleteVendorRequest(
           storn = "12345",
           vendorResourceRef = "VRF-001",
-          vendorId = "VID-001"
+          returnResourceRef = "RRF-2024-001"
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Internal Server Error", 500)
 
@@ -931,7 +929,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val testRequest = DeleteVendorRequest(
           storn = "12345",
           vendorResourceRef = "VRF-001",
-          vendorId = "VID-001"
+          returnResourceRef = "RRF-2024-001"
         )
         val expectedResult = DeleteVendorReturn(deleted = true)
 

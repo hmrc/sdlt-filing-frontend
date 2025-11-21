@@ -16,10 +16,12 @@
 
 package models
 
+import constants.FullReturnConstants.completeFullReturn
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues {
 
@@ -33,6 +35,16 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
     storn = "12345",
     returnResourceRef = "RRF-2024-001",
     currentVersion = "1.0"
+  )
+
+  private val minimalFullReturn = FullReturn(
+    stornId = "12345",
+    returnResourceRef = "RRF-2024-001",
+    returnInfo = Some(
+      ReturnInfo(
+        version = Some("1.0")
+      )
+    )
   )
 
   private val validReturnVersionUpdateReturnJsonTrue = Json.obj(
@@ -288,6 +300,50 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
         v1.currentVersion mustBe "1.0"
         v2.currentVersion mustBe "2.5.1"
         v3.currentVersion mustBe "10"
+      }
+    }
+
+    ".from" - {
+
+      "must convert into ReturnVersionUpdateRequest when required data is present" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(minimalFullReturn)
+        )
+
+        val result = ReturnVersionUpdateRequest.from(userAnswers)
+        result.map { value =>
+          value mustBe returnVersionUpdateRequest
+        }
+      }
+
+      "must fail to convert when version is not found" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(minimalFullReturn.copy(
+            returnInfo = Some(ReturnInfo(version = None))
+          ))
+        )
+
+        val result = ReturnVersionUpdateRequest.from(userAnswers)
+        result.map { value =>
+          value mustBe a[NoSuchElementException]
+        }
+      }
+
+      "must fail to convert when full return is not found" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = None
+        )
+
+        val result = ReturnVersionUpdateRequest.from(userAnswers)
+        result.map { value =>
+          value mustBe a[NoSuchElementException]
+        }
       }
     }
   }
