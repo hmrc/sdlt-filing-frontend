@@ -50,7 +50,8 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
     data = Json.obj(
       "vendorCurrent" -> Json.obj(
         "whoIsTheVendor" -> "Business",
-        "agentName" -> "test"
+        "agentName" -> "test",
+        "representedByAgent" -> false,
       )
     ))
 
@@ -59,7 +60,8 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
       "vendorCurrent" -> Json.obj(
         "whoIsTheVendor" -> "Business",
         "agentName" -> "test",
-       "doYouKnowYourAgentReference" -> "yes"
+       "doYouKnowYourAgentReference" -> "yes",
+  "representedByAgent" -> true,
       )
     ))
 
@@ -111,7 +113,8 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
       )
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn), data = Json.obj(
         "vendorCurrent" -> Json.obj(
-          "agentName" -> "test"
+          "agentName" -> "test",
+          "representedByAgent" -> true,
         )
       )
       )
@@ -143,7 +146,8 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
           data = Json.obj(
             "vendorCurrent" -> Json.obj(
-              "agentName" -> "test"
+              "agentName" -> "test",
+              "representedByAgent" -> true,
 
             )
           )
@@ -175,11 +179,12 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         data = Json.obj(
           "vendorCurrent" -> Json.obj(
             "agentName" -> "test",
-      "doYouKnowYourAgentReference" -> "yes"
+      "doYouKnowYourAgentReference" -> "yes",
+            "representedByAgent" -> true,
+
           )
         )
       )
-
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -203,8 +208,25 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
+        returnAgent = None,
+        vendor = None
+      )
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
+        data = Json.obj(
+          "vendorCurrent" -> Json.obj(
+            "agentName" -> "test",
+
+            "doYouKnowYourAgentReference" -> "yes",
+            "representedByAgent" -> true
+
+
+          )
+        )
+      )
+
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersYesWithAgentSelectionKnown))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -225,7 +247,23 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithAgentSelectionKnown)).build()
+      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
+        returnAgent = None,
+        vendor = None
+      )
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
+        data = Json.obj(
+          "vendorCurrent" -> Json.obj(
+            "agentName" -> "test",
+
+            "doYouKnowYourAgentReference" -> "yes",
+            "representedByAgent" -> true
+          )
+        )
+      )
+
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -239,7 +277,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, agentsName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "test")(request, messages(application)).toString
       }
     }
 

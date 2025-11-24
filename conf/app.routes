@@ -65,10 +65,10 @@ GET         /about-the-vendor/address-return                             control
 GET         /about-the-vendor/address-return/change                      controllers.vendor.VendorAddressController.addressLookupCallbackChangeVendor(id: String ?= "", mode: Mode = NormalMode)
 
 
-GET        /about-the-vendor/vendor-name                        controllers.vendor.VendorOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /about-the-vendor/vendor-name                        controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
-GET        /about-the-vendor/vendor-name/change                  controllers.vendor.VendorOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /about-the-vendor/vendor-name/change                  controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-vendor/vendor-name                        controllers.vendor.VendorOrBusinessNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-vendor/vendor-name                        controllers.vendor.VendorOrBusinessNameController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-vendor/vendor-name/change                  controllers.vendor.VendorOrBusinessNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/vendor-name/change                  controllers.vendor.VendorOrBusinessNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /about-the-vendor/vendor-agent                        controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-vendor/vendor-agent                        controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = NormalMode)

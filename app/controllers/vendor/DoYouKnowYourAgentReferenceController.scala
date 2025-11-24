@@ -21,7 +21,7 @@ import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
 import models.{Mode, NormalMode}
 import models.vendor.DoYouKnowYourAgentReference
 import navigation.Navigator
-import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage}
+import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage, VendorRepresentedByAgentPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -51,16 +51,16 @@ class DoYouKnowYourAgentReferenceController @Inject()(
     implicit request =>
       val userAnswers = request.userAnswers
 
-      userAnswers.get(AgentNamePage) match {
-        case None =>
+      userAnswers.get(VendorRepresentedByAgentPage) match {
+        case Some(false)=>
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        case Some(agentName) =>
+        case Some(true) =>
 
           val preparedForm = request.userAnswers.get(DoYouKnowYourAgentReferencePage) match {
             case None => form
             case Some(value) => form.fill(value)
           }
-
+          val agentName = userAnswers.get(AgentNamePage).getOrElse("")
           val continueRoute = Ok(view(preparedForm, mode, agentName))
           agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
         case _ =>
@@ -73,11 +73,11 @@ class DoYouKnowYourAgentReferenceController @Inject()(
 
       val userAnswers = request.userAnswers
 
-      userAnswers.get(AgentNamePage) match {
-        case None =>
-          Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
-        case Some(agentName) =>
+      userAnswers.get(VendorRepresentedByAgentPage) match {
 
+        case Some(true) =>
+
+          val agentName = userAnswers.get(AgentNamePage).getOrElse("")
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, agentName))),
@@ -90,6 +90,8 @@ class DoYouKnowYourAgentReferenceController @Inject()(
 
 
           )
+        case _ =>
+          Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
   }
 }
