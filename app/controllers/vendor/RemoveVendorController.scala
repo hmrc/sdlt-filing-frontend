@@ -48,10 +48,13 @@ class RemoveVendorController @Inject()(
       val tempVendorId = Some("VEN001")
       tempVendorId.map { vendorId =>
 
-        val vendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorID.contains(vendorId))))
-        val vendorName: Option[String] = vendor.flatMap(_.name)
+        val maybeVendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorID.contains(vendorId))))
+        val vendorFullName: Option[String] = maybeVendor.flatMap(vendor => vendor.name.map { name =>
+            Seq(vendor.forename1, vendor.forename2, Some(name))
+              .flatten.mkString(" ").trim.replaceAll(" +", " ")
+        })
 
-        Ok(view(form, vendorName))
+        Ok(view(form, vendorFullName))
       }.getOrElse(
         // TODO DTR-1028 redirect to overview
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
@@ -64,13 +67,16 @@ class RemoveVendorController @Inject()(
       val tempVendorId = Some("VEN001")
       tempVendorId.map { vendorId =>
 
-        val vendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorID.contains(vendorId))))
-        val vendorResourceRef = vendor.flatMap(_.vendorResourceRef).getOrElse("")
-        val vendorName: Option[String] = vendor.flatMap(_.name)
+        val maybeVendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorID.contains(vendorId))))
+        val vendorResourceRef = maybeVendor.flatMap(_.vendorResourceRef).getOrElse("")
+        val vendorFullName: Option[String] = maybeVendor.flatMap(vendor => vendor.name.map { name =>
+          Seq(vendor.forename1, vendor.forename2, Some(name))
+            .flatten.mkString(" ").trim.replaceAll(" +", " ")
+        })
 
         form.bindFromRequest().fold(
           formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, vendorName))),
+            Future.successful(BadRequest(view(formWithErrors, vendorFullName))),
           value =>
             if (value) {
               (for {
