@@ -17,6 +17,7 @@
 package controllers.vendor
 
 import base.SpecBase
+import constants.FullReturnConstants
 import controllers.routes
 import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
 import models.prelimQuestions.TransactionType
@@ -26,7 +27,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage}
+import pages.vendor.{VendorOrBusinessNamePage, AgentNamePage, DoYouKnowYourAgentReferencePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -53,7 +54,6 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
       )
     ))
 
-
   val userAnswersYesWithAgentSelectionKnown: UserAnswers = emptyUserAnswers.copy(
     data = Json.obj(
       "vendorCurrent" -> Json.obj(
@@ -79,11 +79,44 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
     def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
 
-    "must return OK and the correct view for a GET" in {
-      // val userAnswersWithAgentName = emptyUserAnswers.set(AgentNamePage, "Test Agent").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithAgentSelectionKnown)).build()
+    "onPageLoad" - {
+      "when no existing data is found" - {
 
-      // val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        "must redirect to Journey Recovery for a GET if no existing data is found" in {
+
+          val application = applicationBuilder(userAnswers = None).build()
+
+          running(application) {
+            val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          }
+        }
+      }
+    }
+
+    "must return OK and the correct view when non-vendor returnAgent exists and no vendor"  in {
+
+      val multipleReturnAgents = Seq(
+        FullReturnConstants.completeReturnAgent.copy(agentType = Some("SOLICITOR")),
+        FullReturnConstants.completeReturnAgent.copy(agentType = Some("AGENT")),
+        FullReturnConstants.completeReturnAgent.copy(agentType = Some(""))
+      )
+      val fullReturn = FullReturnConstants.completeFullReturn.copy(
+        returnAgent = Some(multipleReturnAgents),
+        vendor = None
+      )
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn), data = Json.obj(
+        "vendorCurrent" -> Json.obj(
+          "agentName" -> "test"
+        )
+      )
+      )
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
 
@@ -93,17 +126,60 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
         val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
 
-        implicit val messages: Messages =
-          application.injector.instanceOf[MessagesApi].preferred(request)
         status(result) mustEqual OK
-        def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
-        contentAsString(result) mustEqual view(form, NormalMode, agentsName)(request, customMessages(application,request)).toString
+        //def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
+        contentAsString(result) mustEqual view(form, NormalMode, "test")(request, messages(application)).toString
       }
     }
 
+    "continue route" - {
+
+      "must return OK and correct view when no returnAgent and no vendor" in {
+
+        val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = None,
+          vendor = None
+        )
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
+          data = Json.obj(
+            "vendorCurrent" -> Json.obj(
+              "agentName" -> "test"
+
+            )
+          )
+        )
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(form, NormalMode, "test")(request, messages(application)).toString
+        }
+      }
+      }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = userAnswersWithAgentSelectionKnown.set(DoYouKnowYourAgentReferencePage, DoYouKnowYourAgentReference.Yes).success.value
+      // val userAnswers = userAnswersWithAgentSelectionKnown.set(DoYouKnowYourAgentReferencePage, DoYouKnowYourAgentReference.Yes).success.value
+
+      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
+        returnAgent = None,
+        vendor = None
+      )
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
+        data = Json.obj(
+          "vendorCurrent" -> Json.obj(
+            "agentName" -> "test",
+      "doYouKnowYourAgentReference" -> "yes"
+          )
+        )
+      )
+
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -139,7 +215,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         val request =
           FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
             .withFormUrlEncodedBody(("value", DoYouKnowYourAgentReference.values.head.toString))
-            
+
         val result = route(application, request).value
 
         status(result) mustEqual  SEE_OTHER

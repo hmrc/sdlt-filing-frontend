@@ -18,13 +18,14 @@ package controllers.vendor
 
 import controllers.actions.*
 import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
-import models.{Mode,NormalMode}
+import models.{Mode, NormalMode}
 import models.vendor.DoYouKnowYourAgentReference
 import navigation.Navigator
 import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.vendor.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.DoYouKnowYourAgentReferenceView
 
@@ -39,6 +40,7 @@ class DoYouKnowYourAgentReferenceController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: DoYouKnowYourAgentReferenceFormProvider,
+                                       agentChecksService: AgentChecksService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: DoYouKnowYourAgentReferenceView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -59,7 +61,8 @@ class DoYouKnowYourAgentReferenceController @Inject()(
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, mode, agentName))
+          val continueRoute = Ok(view(preparedForm, mode, agentName))
+          agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
         case _ =>
           Redirect(controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode)) // TODO: This will need to redirect to CYA page
       }
