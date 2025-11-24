@@ -57,7 +57,7 @@ class Navigator @Inject()() {
 
           case Some(DoYouKnowYourAgentReference.No) =>
             // TODO: This will need to redirect to CYA page
-            controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+            controllers.routes.ReturnTaskListController.onPageLoad()
           // TODO: This will need to redirect to CYA page
           case _ =>
             routes.IndexController.onPageLoad()
