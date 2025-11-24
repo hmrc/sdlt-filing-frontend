@@ -23,7 +23,7 @@ import play.api.data.Forms.*
 
 import javax.inject.Inject
 
-class VendorOrBusinessNameFormProvider @Inject() extends Mappings {
+class VendorOrCompanyNameFormProvider @Inject() extends Mappings {
 
   private val formRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 

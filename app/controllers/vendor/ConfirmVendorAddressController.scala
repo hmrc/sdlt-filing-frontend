@@ -22,7 +22,7 @@ import forms.vendor.ConfirmVendorAddressFormProvider
 import models.vendor.ConfirmVendorAddress
 import models.{GetReturnByRefRequest, Mode}
 import navigation.Navigator
-import pages.vendor.{ConfirmVendorAddressPage, VendorOrBusinessNamePage}
+import pages.vendor.{ConfirmVendorAddressPage, VendorOrCompanyNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -52,12 +52,12 @@ class ConfirmVendorAddressController @Inject()(
     implicit request =>
       val userAnswers = request.userAnswers
 
-      userAnswers.get(VendorOrBusinessNamePage) match {
+      userAnswers.get(VendorOrCompanyNamePage) match {
         case None =>
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
 
         case Some(vn) =>
-          val vendorOrBusinessName = Seq(vn.forename1, vn.forename2, Some(vn.name))
+          val vendorOrCompanyName = Seq(vn.forename1, vn.forename2, Some(vn.name))
             .flatten.mkString(" ").trim.replaceAll(" +", " ")
 
           userAnswers.fullReturn match {
@@ -79,7 +79,7 @@ class ConfirmVendorAddressController @Inject()(
                 val postcode = mainVendor.postcode
                 val preparedForm = userAnswers.get(ConfirmVendorAddressPage).fold(form)(form.fill)
 
-                Ok(view(preparedForm, vendorOrBusinessName, line1, line2, line3, line4, postcode, mode))
+                Ok(view(preparedForm, vendorOrCompanyName, line1, line2, line3, line4, postcode, mode))
               }
           }
       }
@@ -89,12 +89,12 @@ class ConfirmVendorAddressController @Inject()(
     implicit request =>
       val userAnswers = request.userAnswers
 
-      userAnswers.get(VendorOrBusinessNamePage) match {
+      userAnswers.get(VendorOrCompanyNamePage) match {
         case None =>
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
 
         case Some(vn) =>
-          val vendorOrBusinessName = Seq(vn.forename1, vn.forename2, Some(vn.name))
+          val vendorOrCompanyName = Seq(vn.forename1, vn.forename2, Some(vn.name))
             .flatten.mkString(" ").trim.replaceAll(" +", " ")
 
           userAnswers.fullReturn match {
@@ -114,7 +114,7 @@ class ConfirmVendorAddressController @Inject()(
 
               form.bindFromRequest().fold(
                 formWithErrors =>
-                  BadRequest(view(formWithErrors, vendorOrBusinessName, line1, line2, line3, line4, postcode, mode)),
+                  BadRequest(view(formWithErrors, vendorOrCompanyName, line1, line2, line3, line4, postcode, mode)),
                 value =>
                   val updatedAnswers = userAnswers.set(ConfirmVendorAddressPage, value).get
                   sessionRepository.set(updatedAnswers)

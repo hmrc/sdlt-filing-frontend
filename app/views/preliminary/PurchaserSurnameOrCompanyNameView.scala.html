@@ -24,11 +24,11 @@
         govukButton: GovukButton,
         p: components.p
 )
-@(form: Form[_], mode: Mode, businessOrIndividual: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, companyOrIndividual: String)(implicit request: Request[_], messages: Messages)
 
-@defining(if(businessOrIndividual == "Business") "purchaser.business" else "purchaser.individual") { key =>
+@defining(if(companyOrIndividual == "Individual") "purchaser.individual" else "purchaser.company") { key =>
 
-    @layout(pageTitle = title(form, (key + ".title"))) {
+    @layout(pageTitle = title(form, key + ".title")) {
 
         @formHelper(action = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onSubmit(mode)) {
 
@@ -36,21 +36,27 @@
                 @govukErrorSummary(ErrorSummaryViewModel(form))
             }
 
-            @govukInput(
-                InputViewModel(
-                    field = form("purchaserSurnameOrCompanyName"),
-                    label = LabelViewModel(messages( (key + ".checkYourAnswersLabel"))).asPageHeading(size = Large)
-                )
-                .withWidth(Full)
-                .withHint(
-                    HintViewModel(
-                        HtmlContent(
-                        Html(messages(key + ".p"))
-                    )
-                    )
-                )
-            )
+            @if(companyOrIndividual == "Individual") {
+                <h1 class="govuk-heading-l">@messages(key + ".heading")</h1>
 
+                @govukInput(
+                    InputViewModel(
+                        field = form("purchaserSurnameOrCompanyName"),
+                        label = LabelViewModel(messages(key + ".surname")).withCssClass(className = "govuk-visually-hidden")
+                    )
+                    .withWidth(Full)
+                )
+            } else {
+                <h1 class="govuk-heading-l">@messages(key + ".heading")</h1>
+
+                @govukInput(
+                    InputViewModel(
+                        field = form("purchaserSurnameOrCompanyName"),
+                        label = LabelViewModel(messages(key + ".name")).withCssClass(className = "govuk-visually-hidden")
+                    )
+                    .withWidth(Full)
+                )
+            }
 
             @govukButton(
                 ButtonViewModel(messages("site.save.continue"))

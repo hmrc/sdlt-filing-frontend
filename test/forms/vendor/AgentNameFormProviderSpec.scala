@@ -36,9 +36,9 @@ class AgentNameFormProviderSpec extends StringFieldBehaviours {
     "must bind valid form data" in {
       val validNames = Seq(
         "Mr test",
-        "Business test name",
-        "Business are us",
-        "Business@business.com",
+        "Company test name",
+        "Company are us",
+        "Company@company.com",
         "(555) 123-4567"
       )
 

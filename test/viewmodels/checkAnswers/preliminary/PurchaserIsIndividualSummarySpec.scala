@@ -19,7 +19,7 @@ package viewmodels.checkAnswers.preliminary
 import base.SpecBase
 import controllers.routes
 import models.CheckMode
-import models.prelimQuestions.BusinessOrIndividualRequest
+import models.prelimQuestions.CompanyOrIndividualRequest
 import pages.preliminary.PurchaserIsIndividualPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
@@ -39,14 +39,14 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
+          val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
 
           val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserIsIndividual.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("purchaserIsIndividual.individual.value")
+          htmlContent mustEqual msgs("purchaserIsIndividual.company.value")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
@@ -56,23 +56,23 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
       }
     }
 
-    "when purchaser type is Business" - {
+    "when purchaser type is Company" - {
 
-      "must return a summary list row with Business text and change link" in {
+      "must return a summary list row with Company text and change link" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option2).success.value
+          val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
 
           val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserIsIndividual.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("purchaserIsIndividual.business.value")
+          htmlContent mustEqual msgs("purchaserIsIndividual.individual.value")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
@@ -132,7 +132,7 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
       running(application) {
         implicit val msgs: Messages = messages(application)
 
-        val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
+        val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
 
         val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
 

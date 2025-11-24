@@ -18,41 +18,38 @@ package forms.preliminary
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.data.Forms._
 
 import javax.inject.Inject
-import models.requests.DataRequest
 
 class PurchaserSurnameOrCompanyNameFormProvider @Inject() extends Mappings {
 
   private val formRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 
-  def apply(individualOrBusiness:String): Form[String] =
+  def apply(individualOrCompany: String): Form[String] =
     Form(
-      "purchaserSurnameOrCompanyName" -> text(errorKey(individualOrBusiness))
-          .verifying(maxLength(56, maxLengthErrorKey(individualOrBusiness)))
-          .verifying(regexp(formRegex, regexErrorKey(individualOrBusiness)))
-
-  )
+        "purchaserSurnameOrCompanyName" -> text(errorKey(individualOrCompany))
+          .verifying(maxLength(56, maxLengthErrorKey(individualOrCompany)))
+          .verifying(regexp(formRegex, regexErrorKey(individualOrCompany)))
+      )
 
   private def errorKey(choice: String): String = choice match {
     case "Individual" => "purchaser.name.form.no.input.error.individual"
-    case "Business" => "purchaser.name.form.no.input.error.business"
+    case "Company" => "purchaser.name.form.no.input.error.company"
     case _ => "p.name.form.no.input.error"
   }
 
 
   private def maxLengthErrorKey(choice: String): String = choice match {
     case "Individual" => "purchaser.name.form.maxLength.error.individual"
-    case "Business" => "purchaser.name.form.maxLength.error.business"
+    case "Company" => "purchaser.name.form.maxLength.error.company"
     case _ => "purchaser.name.form.maxLength.error"
   }
 
 
   private def regexErrorKey(choice: String): String = choice match {
     case "Individual" => "purchaser.name.form.regex.error.individual"
-    case "Business" => "purchaser.name.form.regex.error.business"
+    case "Company" => "purchaser.name.form.regex.error.company"
     case _ => "purchaser.name.form.regex.error"
   }
-
-
 }

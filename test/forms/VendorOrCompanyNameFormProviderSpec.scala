@@ -17,10 +17,10 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import forms.vendor.VendorOrBusinessNameFormProvider
+import forms.vendor.VendorOrCompanyNameFormProvider
 import play.api.data.FormError
 
-class VendorOrBusinessNameFormProviderSpec extends StringFieldBehaviours {
+class VendorOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "vendor.name.error.required"
   val nameLengthKey = "vendor.name.error.length"
@@ -31,9 +31,9 @@ class VendorOrBusinessNameFormProviderSpec extends StringFieldBehaviours {
   val firstNameMaxLength = 14
   val middleNameMaxLength = 14
 
-  val form = new VendorOrBusinessNameFormProvider()()
+  val form = new VendorOrCompanyNameFormProvider()()
 
-  ".vendorOrBusinessName" - {
+  ".vendorOrCompanyName" - {
 
     val mandatoryFieldName = "name"
     val optionalFirstName = "forename1"
@@ -43,9 +43,9 @@ class VendorOrBusinessNameFormProviderSpec extends StringFieldBehaviours {
       "must bind valid form data" in {
         val validNames = Seq(
           "Mr test",
-          "Business test name",
-          "Business are us",
-          "Business@business.com",
+          "Company test name",
+          "Company are us",
+          "Company@company.com",
           "(555) 123-4567"
         )
 
@@ -91,7 +91,7 @@ class VendorOrBusinessNameFormProviderSpec extends StringFieldBehaviours {
       "must bind valid form data" in {
         val validNames = Seq(
           "Mr test",
-          "Business",
+          "Company",
           "Pokemon",
           "Middle Name",
         )
@@ -137,7 +137,7 @@ class VendorOrBusinessNameFormProviderSpec extends StringFieldBehaviours {
       "must bind valid form data" in {
         val validNames = Seq(
           "Mr test",
-          "Business",
+          "Company",
           "Pokemon",
           "Middle Name",
         )
