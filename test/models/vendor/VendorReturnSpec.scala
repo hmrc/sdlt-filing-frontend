@@ -16,10 +16,13 @@
 
 package models.vendor
 
+import models.{FullReturn, UserAnswers, Vendor}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues {
 
@@ -37,15 +40,27 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
   private val validDeleteVendorRequestJson = Json.obj(
     "storn" -> "12345",
     "vendorResourceRef" -> "VRF-001",
-    "vendorId" -> "VID-001"
+    "returnResourceRef" -> "RRF-2024-001"
   )
 
   private val deleteVendorRequest = DeleteVendorRequest(
     storn = "12345",
     vendorResourceRef = "VRF-001",
-    vendorId = "VID-001"
+    returnResourceRef = "RRF-2024-001"
   )
 
+  private val minimalFullReturn = FullReturn(
+    stornId = "12345",
+    returnResourceRef = "RRF-2024-001",
+    vendor = Some(
+      Seq(
+        Vendor(
+          vendorID = Some("VEN-001"),
+          vendorResourceRef = Some("VRF-001")
+        )
+      )
+    )
+  )
 
   private val validUpdateVendorReturnJsonTrue = Json.obj(
     "updated" -> true
@@ -882,7 +897,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
         result.storn mustBe "12345"
         result.vendorResourceRef mustBe "VRF-001"
-        result.vendorId mustBe "VID-001"
+        result.returnResourceRef mustBe "RRF-2024-001"
       }
 
       "must fail to deserialize when storn is missing" in {
@@ -901,8 +916,8 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         result.isLeft mustBe true
       }
 
-      "must fail to deserialize when vendorId is missing" in {
-        val json = validDeleteVendorRequestJson - "vendorId"
+      "must fail to deserialize when returnResourceRef is missing" in {
+        val json = validDeleteVendorRequestJson - "returnResourceRef"
 
         val result = Json.fromJson[DeleteVendorRequest](json).asEither
 
@@ -925,8 +940,8 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         result.isLeft mustBe true
       }
 
-      "must fail to deserialize when vendorId has invalid type" in {
-        val json = validDeleteVendorRequestJson ++ Json.obj("vendorId" -> 456)
+      "must fail to deserialize when returnResourceRef has invalid type" in {
+        val json = validDeleteVendorRequestJson ++ Json.obj("returnResourceRef" -> 456)
 
         val result = Json.fromJson[DeleteVendorRequest](json).asEither
 
@@ -953,14 +968,14 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
         (json \ "storn").as[String] mustBe "12345"
         (json \ "vendorResourceRef").as[String] mustBe "VRF-001"
-        (json \ "vendorId").as[String] mustBe "VID-001"
+        (json \ "returnResourceRef").as[String] mustBe "RRF-2024-001"
       }
 
       "must produce valid JSON structure" in {
         val json = Json.toJson(deleteVendorRequest)
 
         json mustBe a[JsObject]
-        json.as[JsObject].keys must contain allOf("storn", "vendorResourceRef", "vendorId")
+        json.as[JsObject].keys must contain allOf("storn", "vendorResourceRef", "returnResourceRef")
       }
     }
 
@@ -983,7 +998,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
       "must create instance with all fields" in {
         deleteVendorRequest.storn mustBe "12345"
         deleteVendorRequest.vendorResourceRef mustBe "VRF-001"
-        deleteVendorRequest.vendorId mustBe "VID-001"
+        deleteVendorRequest.returnResourceRef mustBe "RRF-2024-001"
       }
 
       "must support equality" in {
@@ -998,12 +1013,12 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
         modified.storn mustBe "54321"
         modified.vendorResourceRef mustBe deleteVendorRequest.vendorResourceRef
-        modified.vendorId mustBe deleteVendorRequest.vendorId
+        modified.returnResourceRef mustBe deleteVendorRequest.returnResourceRef
       }
 
       "must not be equal when fields differ" in {
         val vendorRequest1 = deleteVendorRequest
-        val vendorRequest2 = deleteVendorRequest.copy(vendorId = "VID-002")
+        val vendorRequest2 = deleteVendorRequest.copy(returnResourceRef = "RRF-2024-002")
 
         vendorRequest1 must not equal vendorRequest2
       }
@@ -1016,6 +1031,51 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         )
 
         vendorRequest1 must not equal vendorRequest2
+      }
+    }
+
+    ".from" - {
+
+      "must convert into DeleteVendorRequest when required data is present" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(minimalFullReturn)
+        )
+        val vendorResourceRef = "VRF-001"
+        
+        val result = DeleteVendorRequest.from(userAnswers, vendorResourceRef)
+        result.map { value =>
+          value mustBe deleteVendorRequest
+        }
+      }
+      
+      "must fail to convert when vendor is not found" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(minimalFullReturn)
+        )
+        val vendorResourceRef = "VRF-000"
+
+        val result = DeleteVendorRequest.from(userAnswers, vendorResourceRef)
+        result.map { value =>
+          value mustBe a[NoSuchElementException]
+        }
+      }
+
+      "must fail to convert when full return is not found" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = None
+        )
+        val vendorResourceRef = "VRF-001"
+
+        val result = DeleteVendorRequest.from(userAnswers, vendorResourceRef)
+        result.map { value =>
+          value mustBe a[NoSuchElementException]
+        }
       }
     }
   }

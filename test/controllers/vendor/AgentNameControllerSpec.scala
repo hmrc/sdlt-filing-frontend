@@ -127,7 +127,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to task list there is no return agent and main vendor is not represented by agent" in { // Change to redirect to CYA
-      val fullReturn = FullReturn(
+      val fullReturn = completeFullReturn.copy(
         returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
         returnAgent = None,
         vendor = Some(Seq(Vendor(vendorID = Some("123"), isRepresentedByAgent = Some("false"))))

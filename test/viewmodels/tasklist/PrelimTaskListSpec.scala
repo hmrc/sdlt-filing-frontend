@@ -19,6 +19,7 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants
+import constants.FullReturnConstants.emptyFullReturn
 import models.prelimQuestions.PrelimReturn
 import models.{FullReturn, NormalMode}
 import play.api.i18n.Messages
@@ -55,8 +56,7 @@ class PrelimTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(None, None)
-          val result = PrelimTaskList.build(fullReturn)
+          val result = PrelimTaskList.build(emptyFullReturn)
 
           result mustBe a[TaskListSection]
           result.heading mustBe messagesInstance("tasklist.prelimQuestion.heading")
@@ -146,8 +146,7 @@ class PrelimTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(None, None)
-          val result = PrelimTaskList.buildPrelimRow(fullReturn).build(fullReturnComplete)
+          val result = PrelimTaskList.buildPrelimRow(emptyFullReturn).build(fullReturnComplete)
 
           result.status mustBe TLNotStarted
         }
@@ -180,8 +179,7 @@ class PrelimTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val fullReturn = FullReturn(None, None)
-          val section = PrelimTaskList.build(fullReturn)
+          val section = PrelimTaskList.build(emptyFullReturn)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.prelimQuestion.heading")

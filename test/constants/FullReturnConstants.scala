@@ -401,8 +401,8 @@ object FullReturnConstants {
   )
 
   val completeFullReturn: FullReturn = FullReturn(
-    stornId = Some("STORN123456"),
-    returnResourceRef = Some("RRF-2024-001"),
+    stornId = "STORN123456",
+    returnResourceRef = "RRF-2024-001",
     sdltOrganisation = Some(completeSdltOrganisation),
     returnInfo = Some(completeReturnInfo),
     purchaser = Some(Seq(completePurchaser1, completePurchaser2)),
@@ -420,8 +420,8 @@ object FullReturnConstants {
   )
 
   val completeFullReturnMultipleVendors: FullReturn = FullReturn(
-    stornId = Some("STORN123456"),
-    returnResourceRef = Some("RRF-2024-001"),
+    stornId = "STORN123456",
+    returnResourceRef = "RRF-2024-001",
     sdltOrganisation = Some(completeSdltOrganisation),
     returnInfo = Some(completeReturnInfo),
     purchaser = Some(Seq(completePurchaser1, completePurchaser2)),
@@ -440,8 +440,8 @@ object FullReturnConstants {
 
   // Minimal/Incomplete version for testing
   val incompleteFullReturn: FullReturn = FullReturn(
-    stornId = Some("STORN123456"),
-    returnResourceRef = None,
+    stornId = "STORN123456",
+    returnResourceRef = "RRF-2024-001",
     sdltOrganisation = None,
     returnInfo = None,
     purchaser = None,
@@ -459,12 +459,15 @@ object FullReturnConstants {
   )
 
   // Empty version for testing
-  val emptyFullReturn: FullReturn = FullReturn()
+  val emptyFullReturn: FullReturn = FullReturn(
+    stornId = "STORN123456",
+    returnResourceRef = "RRF-2024-001"
+  )
 
   // Version with just basic info
   val minimalFullReturn: FullReturn = FullReturn(
-    stornId = Some("STORN123456"),
-    returnResourceRef = Some("RRF-2024-001"),
+    stornId = "STORN123456",
+    returnResourceRef = "RRF-2024-001",
     sdltOrganisation = Some(completeSdltOrganisation),
     returnInfo = Some(completeReturnInfo)
   )

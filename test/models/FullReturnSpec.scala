@@ -652,8 +652,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       "must deserialize valid JSON with all fields" in {
         val result = Json.fromJson[FullReturn](validFullReturnJson).asEither.value
 
-        result.stornId mustBe Some("STORN123456")
-        result.returnResourceRef mustBe Some("RRF-2024-001")
+        result.stornId mustBe "STORN123456"
+        result.returnResourceRef mustBe "RRF-2024-001"
         result.sdltOrganisation mustBe defined
         result.returnInfo mustBe defined
         result.purchaser mustBe defined
@@ -662,37 +662,41 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must deserialize valid JSON with minimal fields" in {
         val json = Json.obj(
-          "stornId" -> "STORN123456"
+          "stornId" -> "STORN123456",
+          "returnResourceRef" -> "RRF-2024-001",
         )
 
         val result = Json.fromJson[FullReturn](json).asEither.value
 
-        result.stornId mustBe Some("STORN123456")
-        result.returnResourceRef must not be defined
+        result.stornId mustBe "STORN123456"
+        result.returnResourceRef mustBe "RRF-2024-001"
         result.sdltOrganisation must not be defined
       }
 
       "must deserialize valid JSON with None values" in {
         val json = Json.obj(
-          "stornId" -> JsNull,
-          "returnResourceRef" -> JsNull,
+          "stornId" -> "STORN123456",
+          "returnResourceRef" -> "RRF-2024-001",
           "sdltOrganisation" -> JsNull
         )
 
         val result = Json.fromJson[FullReturn](json).asEither.value
 
-        result.stornId must not be defined
-        result.returnResourceRef must not be defined
+        result.stornId mustBe "STORN123456"
+        result.returnResourceRef mustBe "RRF-2024-001"
         result.sdltOrganisation must not be defined
       }
 
       "must deserialize successfully when fields are missing and set to None" in {
-        val json = Json.obj()
+        val json = Json.obj(
+          "stornId" -> "STORN123456",
+          "returnResourceRef" -> "RRF-2024-001"
+        )
 
         val result = Json.fromJson[FullReturn](json).asEither.value
 
-        result.stornId must not be defined
-        result.returnResourceRef must not be defined
+        result.stornId mustBe "STORN123456"
+        result.returnResourceRef mustBe "RRF-2024-001"
         result.sdltOrganisation must not be defined
         result.returnInfo must not be defined
       }
@@ -719,6 +723,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       "must fail to deserialize when nested object has invalid type for known field" in {
         val json = Json.obj(
           "stornId" -> "STORN123456",
+          "returnResourceRef" -> "RRF-2024-001",
           "sdltOrganisation" -> Json.obj(
             "isReturnUser" -> 123
           )
@@ -732,6 +737,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       "must fail to deserialize when sequence contains invalid objects" in {
         val json = Json.obj(
           "stornId" -> "STORN123456",
+          "returnResourceRef" -> "RRF-2024-001",
           "purchaser" -> Json.arr(
             Json.obj("purchaserID" -> 123)
           )
@@ -745,6 +751,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       "must deserialize with empty sequences" in {
         val json = Json.obj(
           "stornId" -> "STORN123456",
+          "returnResourceRef" -> "RRF-2024-001",
           "purchaser" -> Json.arr(),
           "vendor" -> Json.arr()
         )
@@ -760,6 +767,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       "must deserialize with multiple items in sequences" in {
         val json = Json.obj(
           "stornId" -> "STORN123456",
+          "returnResourceRef" -> "RRF-2024-001",
           "purchaser" -> Json.arr(validPurchaserJson, validPurchaserJson),
           "vendor" -> Json.arr(validVendorJson, validVendorJson)
         )
@@ -779,8 +787,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must serialize FullReturn with all fields" in {
         val fullReturn = FullReturn(
-          stornId = Some("STORN123456"),
-          returnResourceRef = Some("RRF-2024-001"),
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
           sdltOrganisation = Some(validSdltOrganisation),
           returnInfo = Some(validReturnInfo),
           purchaser = Some(Seq(validPurchaser)),
@@ -798,7 +806,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
 
       "must serialize FullReturn with None values" in {
-        val fullReturn = FullReturn()
+        val fullReturn = FullReturn(stornId = "STORN123456", returnResourceRef = "RRF-2024-001")
 
         val json = Json.toJson(fullReturn)
 
@@ -807,7 +815,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must serialize FullReturn with Some nested objects" in {
         val fullReturn = FullReturn(
-          stornId = Some("STORN123456"),
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
           sdltOrganisation = Some(validSdltOrganisation)
         )
 
@@ -820,6 +829,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must serialize FullReturn with sequences" in {
         val fullReturn = FullReturn(
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
           purchaser = Some(Seq(validPurchaser, validPurchaser)),
           vendor = Some(Seq(validVendor))
         )
@@ -832,6 +843,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must serialize FullReturn with empty sequences" in {
         val fullReturn = FullReturn(
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
           purchaser = Some(Seq.empty),
           vendor = Some(Seq.empty)
         )
@@ -844,8 +857,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must produce valid JSON structure" in {
         val fullReturn = FullReturn(
-          stornId = Some("STORN123456"),
-          returnResourceRef = Some("RRF-2024-001")
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001"
         )
 
         val json = Json.toJson(fullReturn)
@@ -862,8 +875,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must serialize and deserialize with all fields" in {
         val fullReturn = FullReturn(
-          stornId = Some("STORN123456"),
-          returnResourceRef = Some("RRF-2024-001"),
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
           sdltOrganisation = Some(validSdltOrganisation),
           returnInfo = Some(validReturnInfo),
           purchaser = Some(Seq(validPurchaser)),
@@ -877,31 +890,22 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
 
       "must serialize and deserialize with None values" in {
-        val fullReturn = FullReturn()
-
-        val json = Json.toJson(fullReturn)
-        val result = Json.fromJson[FullReturn](json).asEither.value
-
-        result mustEqual fullReturn
-      }
-
-      "must serialize and deserialize with partial fields" in {
         val fullReturn = FullReturn(
-          stornId = Some("STORN123456"),
-          returnResourceRef = Some("RRF-2024-001")
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001"
         )
 
         val json = Json.toJson(fullReturn)
         val result = Json.fromJson[FullReturn](json).asEither.value
 
         result mustEqual fullReturn
-        result.stornId mustBe Some("STORN123456")
-        result.returnResourceRef mustBe Some("RRF-2024-001")
         result.sdltOrganisation must not be defined
       }
 
       "must round-trip with sequences" in {
         val fullReturn = FullReturn(
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
           purchaser = Some(Seq(validPurchaser)),
           vendor = Some(Seq(validVendor))
         )
@@ -919,68 +923,80 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must create instance with all fields" in {
         val fullReturn = FullReturn(
-          stornId = Some("STORN123456"),
-          returnResourceRef = Some("RRF-2024-001"),
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
           sdltOrganisation = Some(validSdltOrganisation),
           returnInfo = Some(validReturnInfo)
         )
 
-        fullReturn.stornId mustBe Some("STORN123456")
-        fullReturn.returnResourceRef mustBe Some("RRF-2024-001")
+        fullReturn.stornId mustBe "STORN123456"
+        fullReturn.returnResourceRef mustBe "RRF-2024-001"
         fullReturn.sdltOrganisation mustBe Some(validSdltOrganisation)
         fullReturn.returnInfo mustBe Some(validReturnInfo)
       }
 
       "must create instance with None values" in {
-        val fullReturn = FullReturn()
+        val fullReturn = FullReturn(
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001"
+        )
 
-        fullReturn.stornId mustBe None
-        fullReturn.returnResourceRef mustBe None
         fullReturn.sdltOrganisation mustBe None
       }
 
       "must support equality" in {
-        val fullReturn1 = FullReturn()
-        val fullReturn2 = FullReturn()
+        val fullReturn1 = FullReturn(
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001"
+        )
+        val fullReturn2 = FullReturn(
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001"
+        )
 
         fullReturn1 mustEqual fullReturn2
       }
 
       "must support equality with Some values" in {
         val fullReturn1 = FullReturn(
-          stornId = Some("STORN123456"),
-          returnResourceRef = Some("RRF-2024-001")
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
+          sdltOrganisation = Some(validSdltOrganisation)
         )
         val fullReturn2 = FullReturn(
-          stornId = Some("STORN123456"),
-          returnResourceRef = Some("RRF-2024-001")
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
+          sdltOrganisation = Some(validSdltOrganisation)
         )
 
         fullReturn1 mustEqual fullReturn2
       }
 
       "must support copy" in {
-        val fullReturn1 = FullReturn()
+        val fullReturn1 = FullReturn(
+          stornId = "",
+          returnResourceRef = ""
+        )
         val fullReturn2 = fullReturn1.copy(
-          stornId = Some("STORN123456"),
-          returnResourceRef = Some("RRF-2024-001")
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001"
         )
 
-        fullReturn2.stornId mustBe Some("STORN123456")
-        fullReturn2.returnResourceRef mustBe Some("RRF-2024-001")
-        fullReturn1.stornId must not be defined
-        fullReturn1.returnResourceRef must not be defined
+        fullReturn2.stornId mustBe "STORN123456"
+        fullReturn2.returnResourceRef mustBe "RRF-2024-001"
+        fullReturn1.stornId.isBlank mustBe true
+        fullReturn1.returnResourceRef.isBlank mustBe true
       }
 
       "must not be equal when fields differ" in {
-        val fullReturn1 = FullReturn(stornId = Some("STORN123456"))
-        val fullReturn2 = FullReturn(stornId = Some("STORN789012"))
+        val fullReturn1 = FullReturn(stornId = "STORN123456", returnResourceRef = "RRF-2024-000")
+        val fullReturn2 = FullReturn(stornId = "STORN789012", returnResourceRef = "RRF-2024-000")
 
         fullReturn1 must not equal fullReturn2
       }
 
       "must support copy with nested objects" in {
-        val fullReturn1 = FullReturn(stornId = Some("STORN123456"))
+        val fullReturn1 = FullReturn(stornId = "STORN123456", returnResourceRef = "RRF-2024-000")
         val fullReturn2 = fullReturn1.copy(sdltOrganisation = Some(validSdltOrganisation))
 
         fullReturn2.sdltOrganisation mustBe defined
@@ -988,7 +1004,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
 
       "must support copy with sequences" in {
-        val fullReturn1 = FullReturn(stornId = Some("STORN123456"))
+        val fullReturn1 = FullReturn(stornId = "STORN123456", returnResourceRef = "RRF-2024-000")
         val fullReturn2 = fullReturn1.copy(
           purchaser = Some(Seq(validPurchaser)),
           vendor = Some(Seq(validVendor))
