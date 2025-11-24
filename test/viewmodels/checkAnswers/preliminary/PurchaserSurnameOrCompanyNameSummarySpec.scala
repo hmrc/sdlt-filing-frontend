@@ -19,7 +19,7 @@ package viewmodels.checkAnswers.preliminary
 import base.SpecBase
 import controllers.routes
 import models.CheckMode
-import models.prelimQuestions.BusinessOrIndividualRequest
+import models.prelimQuestions.CompanyOrIndividualRequest
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
@@ -40,12 +40,12 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
+            .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
             .set(PurchaserSurnameOrCompanyNamePage, "Smith").success.value
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserSurnameOrCompanyName.checkYourAnswersLabel.purchaser")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.purchaser")
 
           val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
           textContent mustEqual "Smith"
@@ -53,11 +53,11 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserSurnameOrCompanyName.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.name.change.hidden")
         }
       }
 
-      "must return a summary list row with business label when purchaser is Business" in {
+      "must return a summary list row with company label when purchaser is Company" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -65,12 +65,12 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option2).success.value
+            .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
             .set(PurchaserSurnameOrCompanyNamePage, "ACME Corp").success.value
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserSurnameOrCompanyName.checkYourAnswersLabel.business")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.company")
 
           val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
           textContent mustEqual "ACME Corp"
@@ -78,7 +78,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserSurnameOrCompanyName.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.name.change.hidden")
         }
       }
 
@@ -94,7 +94,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserSurnameOrCompanyName.checkYourAnswersLabel.default")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.default")
 
           val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
           textContent mustEqual "Test Name"
@@ -109,7 +109,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
+            .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
             .set(PurchaserSurnameOrCompanyNamePage, "O'Brien & Sons <Ltd>").success.value
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
@@ -131,7 +131,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
         implicit val msgs: Messages = messages(application)
 
         val userAnswers = emptyUserAnswers
-          .set(PurchaserIsIndividualPage, BusinessOrIndividualRequest.Option1).success.value
+          .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
           .set(PurchaserSurnameOrCompanyNamePage, "Smith").success.value
 
         val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))

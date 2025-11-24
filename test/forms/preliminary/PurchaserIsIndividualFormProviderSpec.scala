@@ -18,7 +18,7 @@ package forms.preliminary
 
 import forms.behaviours.OptionFieldBehaviours
 import forms.preliminary.PurchaserIsIndividualFormProvider
-import models.prelimQuestions.BusinessOrIndividualRequest
+import models.prelimQuestions.CompanyOrIndividualRequest
 import play.api.data.FormError
 
 class PurchaserIsIndividualFormProviderSpec extends OptionFieldBehaviours{
@@ -31,10 +31,10 @@ class PurchaserIsIndividualFormProviderSpec extends OptionFieldBehaviours{
     val requiredKey = "purchaserIsIndividual.error.required"
     val invalidKey = "purchaserIsIndividual.error.invalid"
 
-    behave like optionsField[BusinessOrIndividualRequest](
+    behave like optionsField[CompanyOrIndividualRequest](
       form,
       fieldName,
-      validValues = BusinessOrIndividualRequest.values,
+      validValues = CompanyOrIndividualRequest.values,
       invalidError = FormError(fieldName, invalidKey)
     )
 

@@ -31,29 +31,30 @@ object PurchaserSurnameOrCompanyNameSummary  {
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
     
     val typeOfPurchaser = answers.flatMap(_.get(PurchaserIsIndividualPage)) match {
-      case Some(value) => if(value.toString == "Individual") "purchaser" else "business"
+      case Some(value) => if(value.toString == "Individual") "purchaser" else "company"
       case _ => "default"
     }
 
     answers.flatMap(_.get(PurchaserSurnameOrCompanyNamePage)).map {
       answer =>
         SummaryListRowViewModel(
-          key     = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.${typeOfPurchaser}",
+          key     = s"purchaser.name.checkYourAnswersLabel.${typeOfPurchaser}",
           value   = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserSurnameOrCompanyName.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.name.change.hidden"))
           )
         )
     }.getOrElse {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserSurnameOrCompanyName.link.message")}</a>""")
+          s"""<a href="${controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}"
+             |class="govuk-link">${messages("purchaser.name.link.message")}</a>""".stripMargin)
       )
 
       SummaryListRowViewModel(
-        key = s"purchaserSurnameOrCompanyName.checkYourAnswersLabel.${typeOfPurchaser}",
+        key = s"purchaser.name.checkYourAnswersLabel.$typeOfPurchaser",
         value = value
       )
     }

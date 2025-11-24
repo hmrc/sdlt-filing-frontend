@@ -22,16 +22,16 @@ import play.api.libs.json.{Json, OFormat}
 import scala.concurrent.Future
 
 case class PrelimReturn(
-                       stornId: String,
-                       purchaserIsCompany: String,
-                       surNameOrCompanyName: String,
-                       houseNumber: Option[Int],
-                       addressLine1: String,
-                       addressLine2: Option[String],
-                       addressLine3: Option[String],
-                       addressLine4: Option[String],
-                       postcode: Option[String],
-                       transactionType: String
+                         stornId: String,
+                         purchaserIsCompany: String,
+                         surNameOrCompanyName: String,
+                         houseNumber: Option[Int],
+                         addressLine1: String,
+                         addressLine2: Option[String],
+                         addressLine3: Option[String],
+                         addressLine4: Option[String],
+                         postcode: Option[String],
+                         transactionType: String
                        )
 
 object PrelimReturn {
@@ -54,3 +54,4 @@ object PrelimReturn {
     )
   }
 }
+

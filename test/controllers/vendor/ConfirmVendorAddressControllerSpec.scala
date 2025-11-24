@@ -27,7 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.{ConfirmVendorAddressPage, VendorOrBusinessNamePage}
+import pages.vendor.{ConfirmVendorAddressPage, VendorOrCompanyNamePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -63,7 +63,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
                                 extraAnswers: UserAnswers => UserAnswers = identity
                               ): UserAnswers = {
     val base = emptyUserAnswers.copy(storn = testStorn, returnId = Some(testReturnId))
-    extraAnswers(base).set(VendorOrBusinessNamePage, vn).get
+    extraAnswers(base).set(VendorOrCompanyNamePage, vn).get
   }
 
   private val expectedName = "Jane Elizabeth Johnson"
@@ -85,7 +85,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
             returnId = Some(testReturnId),
             fullReturn = Some(minimalFullReturnWithNoVendors)
           )
-          .set(VendorOrBusinessNamePage, VendorName(None, None, "Acme Ltd")).get
+          .set(VendorOrCompanyNamePage, VendorName(None, None, "Acme Ltd")).get
 
         val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -192,7 +192,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
-    "must redirect to Return Task List when no VendorOrBusinessNamePage is present" in {
+    "must redirect to Return Task List when no VendorOrCompanyNamePage is present" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))

@@ -31,7 +31,7 @@ class PurchaserSurnameOrCompanyNameFormProviderSpec extends AnyWordSpec with Mat
   val cases = Table(
     ("choice", "requiredKey", "lengthKey", "invalidKey"),
     ("Individual", "purchaser.name.form.no.input.error.individual", "purchaser.name.form.maxLength.error.individual", "purchaser.name.form.regex.error.individual"),
-    ("Business", "purchaser.name.form.no.input.error.business", "purchaser.name.form.maxLength.error.business", "purchaser.name.form.regex.error.business")
+    ("Company", "purchaser.name.form.no.input.error.company", "purchaser.name.form.maxLength.error.company", "purchaser.name.form.regex.error.company")
   )
 
   "PProvider form" should {
@@ -39,7 +39,7 @@ class PurchaserSurnameOrCompanyNameFormProviderSpec extends AnyWordSpec with Mat
       val form = new PurchaserSurnameOrCompanyNameFormProvider()(choice)
 
       s"bind valid data for $choice" in {
-        val validNames = Seq("Mr test", "Business test name", "Business@business.com", "(555) 123-4567")
+        val validNames = Seq("Mr test", "Company test name", "Company@company.com", "(555) 123-4567")
         validNames.foreach { name =>
           val result = form.bind(Map(fieldName -> name))
           result.errors shouldBe empty

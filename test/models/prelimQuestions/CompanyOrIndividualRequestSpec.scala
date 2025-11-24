@@ -22,28 +22,28 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class BusinessOrIndividualRequestSpec extends SpecBase with ScalaCheckPropertyChecks {
+class CompanyOrIndividualRequestSpec extends SpecBase with ScalaCheckPropertyChecks {
 
-  "BusinessOrIndividualRequest" - {
+  "CompanyOrIndividualRequest" - {
 
     "must deserialise valid values" in {
-      val gen = Gen.oneOf(BusinessOrIndividualRequest.values)
+      val gen = Gen.oneOf(CompanyOrIndividualRequest.values)
 
       forAll(gen) { option =>
-        JsString(option.toString).validate[BusinessOrIndividualRequest].asOpt.value mustEqual option
+        JsString(option.toString).validate[CompanyOrIndividualRequest].asOpt.value mustEqual option
       }
     }
 
     "must fail to deserialise invalid values" in {
-      val gen = arbitrary[String] suchThat (!BusinessOrIndividualRequest.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!CompanyOrIndividualRequest.values.map(_.toString).contains(_))
 
       forAll(gen) { invalidValue =>
-          JsString(invalidValue).validate[BusinessOrIndividualRequest] mustEqual(JsError("error.invalid"))
+          JsString(invalidValue).validate[CompanyOrIndividualRequest] mustEqual(JsError("error.invalid"))
       }
     }
 
     "must serialise values correctly" in {
-      val gen = Gen.oneOf(BusinessOrIndividualRequest.values)
+      val gen = Gen.oneOf(CompanyOrIndividualRequest.values)
 
       forAll(gen) { option =>
         Json.toJson(option) mustEqual JsString(option.toString)
@@ -52,7 +52,7 @@ class BusinessOrIndividualRequestSpec extends SpecBase with ScalaCheckPropertyCh
 
     "must fail to deserialise whitespace or empty strings" in {
       Seq("", " ", "\t").foreach { invalidInput =>
-        JsString(invalidInput).validate[BusinessOrIndividualRequest] mustEqual JsError("error.invalid")
+        JsString(invalidInput).validate[CompanyOrIndividualRequest] mustEqual JsError("error.invalid")
       }
     }
   }
