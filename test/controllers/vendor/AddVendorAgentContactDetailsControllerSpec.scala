@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.vendor
 
 import base.SpecBase
+import constants.FullReturnConstants.completeFullReturn
+import controllers.vendor.routes
 import forms.vendor.AddVendorAgentContactDetailsFormProvider
 import models.vendor.AddVendorAgentContactDetails
 import models.{NormalMode, UserAnswers}
@@ -24,8 +26,9 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.AddVendorAgentContactDetailsPage
+import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -33,9 +36,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.vendor.AddVendorAgentContactDetailsView
-import controllers.vendor.routes
-import org.scalatest.matchers.must.Matchers
-import pages.vendor.AgentNamePage
 
 import scala.concurrent.Future
 
@@ -59,7 +59,11 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = emptyUserAnswers.set(AgentNamePage, "Mary Brown").success.value
+      val fullReturn = completeFullReturn.copy(returnAgent = None, vendor = None)
+
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
+        .set(AgentNamePage, "Mary Brown").success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -76,7 +80,9 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers
+      val fullReturn = completeFullReturn.copy(returnAgent = None, vendor = None)
+
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
         .set(AgentNamePage, "Mary Brown").success.value
         .set(AddVendorAgentContactDetailsPage, true).success.value
 
