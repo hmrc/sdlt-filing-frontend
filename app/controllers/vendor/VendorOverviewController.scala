@@ -148,7 +148,7 @@ class VendorOverviewController @Inject()(
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorOverviewRemovePage, vendorId))
         _ <- sessionRepository.set(updatedAnswers)
-      } yield Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode))
+      } yield Redirect(controllers.vendor.routes.RemoveVendorController.onPageLoad())
     }
 
 

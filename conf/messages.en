@@ -11,6 +11,7 @@ site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.save.continue = Save and continue
+site.success = Success
 
 app.title = Stamp Taxes Online
 
@@ -285,7 +286,7 @@ vendor.vendor-overview.error                                             = Choos
 vendor.vendor-overview.pagination.previous                               = Previous
 vendor.vendor-overview.pagination.next                                   = Next
 vendor.vendor-overview.summaryInfo.text                                  = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
-
+vendor.vendor-overview.vendorRemoved                                     = You have removed {0}
 
 
 vendor.vendor-before-start.title = Before you start - About the Vendor
