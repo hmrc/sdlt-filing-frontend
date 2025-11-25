@@ -92,6 +92,16 @@ GET     /about-the-vendor/before-you-start                          controllers.
 GET         /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onPageLoad()
 POST        /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onSubmit()
 
+GET         /about-the-vendor/agent-address-lookup                                    controllers.vendor.VendorAgentAddressController.redirectToAddressLookupVendorAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-vendor/agent-address-return                             controllers.vendor.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-vendor/agent-address-return/change                      controllers.vendor.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
+
+GET        /about-the-vendor/enter-agent-contact-details                       controllers.vendor.AddVendorAgentContactDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-vendor/enter-agent-contact-details                       controllers.vendor.AddVendorAgentContactDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-vendor/enter-agent-contact-details/change                controllers.vendor.AddVendorAgentContactDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/enter-agent-contact-details/change                controllers.vendor.AddVendorAgentContactDetailsController.onSubmit(mode: Mode = CheckMode)
+
+
 GET        /about-the-purchaser/before-you-start                       controllers.purchaser.PurchaserBeforeYouStartController.onPageLoad()
 
 GET        /about-the-purchaser/confirm-purchaser-name                       controllers.purchaser.ConfirmNameOfThePurchaserController.onPageLoad(mode: Mode = NormalMode)

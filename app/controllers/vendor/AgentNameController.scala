@@ -48,6 +48,7 @@ class AgentNameController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val agentName = request.userAnswers.get(AgentNamePage).getOrElse("Mary Brown") //TODO remove hardcoded name
       val preparedForm = request.userAnswers.get(AgentNamePage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -58,7 +59,7 @@ class AgentNameController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
+      val agentName = request.userAnswers.get(AgentNamePage).getOrElse("Mary Brown") //TODO remove hardcoded name
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
