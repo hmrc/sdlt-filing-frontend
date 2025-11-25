@@ -22,15 +22,16 @@ import models.vendor.AddVendorAgentContactDetails
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendor.AddVendorAgentContactDetailsPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
-//import views.html.AddVendorAgentContactDetailsView
 import views.html.vendor.AddVendorAgentContactDetailsView
 import controllers.vendor.routes
 import org.scalatest.matchers.must.Matchers
@@ -38,14 +39,21 @@ import pages.vendor.AgentNamePage
 
 import scala.concurrent.Future
 
-class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSugar {
+class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSessionRepository)
+  }
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val addVendorAgentContactDetailsRoute = controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
+  lazy val addVendorAgentContactDetailsRoute: String = controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
   val formProvider = new AddVendorAgentContactDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   "AddVendorAgentContactDetails Controller" - {
 
@@ -70,7 +78,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
       val userAnswers = emptyUserAnswers
         .set(AgentNamePage, "Mary Brown").success.value
-        .set(AddVendorAgentContactDetailsPage, AddVendorAgentContactDetails.values.head).success.value
+        .set(AddVendorAgentContactDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -82,15 +90,13 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(AddVendorAgentContactDetails.values.head), NormalMode, "Mary Brown")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, "Mary Brown")(request, messages(application)).toString
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the Agent Contact Details View when 'Yes' is selected" in {
 
       val userAnswersWithAgentName = emptyUserAnswers.set(AgentNamePage, "Mary Brown").success.value
-
-      val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -105,12 +111,40 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, addVendorAgentContactDetailsRoute)
-            .withFormUrlEncodedBody(("value", AddVendorAgentContactDetails.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        //TODO - add proper route here when completed
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the Agent Contact Details View when 'No' is selected" in {
+
+      val userAnswersWithAgentName = emptyUserAnswers.set(AgentNamePage, "Mary Brown").success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersWithAgentName))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addVendorAgentContactDetailsRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        //TODO - add proper route here when completed
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

@@ -30,13 +30,11 @@
 
 @layout(pageTitle = title(form, messages("addVendorAgentContactDetails.title", agentName))) {
 
-
     @formHelper(action = controllers.vendor.routes.AddVendorAgentContactDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-
 
             <h1 class="govuk-heading-l">
                 <span class="govuk-caption-l">@messages("addVendorAgentContactDetails.hint")</span>

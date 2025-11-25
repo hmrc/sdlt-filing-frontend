@@ -19,7 +19,7 @@ package controllers.vendor
 import controllers.JourneyRecoveryController
 import controllers.actions.*
 import forms.vendor.AddVendorAgentContactDetailsFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,19 +48,15 @@ class AddVendorAgentContactDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      // val agentName = request.userAnswers.get(AgentNamePage).getOrElse("Mary Brown") //TODO remove hardcoded name once page before is ready
+      request.userAnswers.get(AgentNamePage) match {
+        case None =>
+          Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode))
 
-      val agentName: String = request.userAnswers.get(AgentNamePage).map()
-
-//        request.userAnswers.get(AgentNamePage) match {
-//        case None =>
-//          Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode))
-//
-//        case Some(agentName) =>
-//          val preparedForm = request.userAnswers.get(AddVendorAgentContactDetailsPage) match {
-//            case None => form
-//            case Some(value) => form.fill(value)
-//          }
+        case Some(agentName) =>
+          val preparedForm = request.userAnswers.get(AddVendorAgentContactDetailsPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
 
           Ok(view(preparedForm, mode, agentName))
       }
@@ -70,10 +66,9 @@ class AddVendorAgentContactDetailsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      //val agentName = request.userAnswers.get(AgentNamePage).getOrElse("Mary Brown") //TODO remove hardcoded name once page before is ready
       request.userAnswers.get(AgentNamePage) match {
         case None =>
-          Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode)))
+          Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)))
 
         case Some(agentName) =>
           form.bindFromRequest().fold(
@@ -86,11 +81,12 @@ class AddVendorAgentContactDetailsController @Inject()(
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
                 if (value) {
+                  //TODO route for when completed
                  // Redirect(navigator.nextPage(VendorAgentsContactDetailsPage, mode, updatedAnswers))
                   Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
                 } else {
                   Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-                  //TODO this needs to be updated
+                  //TODO route for when completed
                   //Redirect(navigator.nextPage(DoYouKnowYourAgentReferencePage, mode, updatedAnswers))
                 }
               }

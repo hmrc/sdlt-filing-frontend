@@ -16,25 +16,31 @@
 
 package forms
 
-import forms.behaviours.OptionFieldBehaviours
+import forms.behaviours.{BooleanFieldBehaviours, OptionFieldBehaviours}
 import forms.vendor.AddVendorAgentContactDetailsFormProvider
 import models.vendor.AddVendorAgentContactDetails
 import play.api.data.FormError
 
-class AddVendorAgentContactDetailsFormProviderSpec extends OptionFieldBehaviours {
+class AddVendorAgentContactDetailsFormProviderSpec extends BooleanFieldBehaviours {
 
+  val requiredKey = "addVendorAgentContactDetails.error.required"
+  val invalidKey = "error.boolean"
+  
   val form = new AddVendorAgentContactDetailsFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "addVendorAgentContactDetails.error.required"
 
-    behave like optionsField[AddVendorAgentContactDetails](
+    "must bind true and false values correctly" in {
+      form.bind(Map(fieldName -> "true")).get mustBe true
+      form.bind(Map(fieldName -> "false")).get mustBe false
+    }
+
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = AddVendorAgentContactDetails.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(
