@@ -27,7 +27,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.{VendorOrBusinessNamePage, AgentNamePage, DoYouKnowYourAgentReferencePage}
+import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -55,24 +55,6 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
       )
     ))
 
-  val userAnswersYesWithAgentSelectionKnown: UserAnswers = emptyUserAnswers.copy(
-    data = Json.obj(
-      "vendorCurrent" -> Json.obj(
-        "whoIsTheVendor" -> "Business",
-        "agentName" -> "test",
-       "doYouKnowYourAgentReference" -> "yes",
-  "representedByAgent" -> true,
-      )
-    ))
-
-  val userAnswersWithAgentSelectionUnknown: UserAnswers = emptyUserAnswers.copy(
-    data = Json.obj(
-      "vendorCurrent" -> Json.obj(
-        "whoIsTheVendor" -> "Business",
-        "agentName" -> "test",
-        "doYouKnowYourAgentReference" -> "no"
-      )
-    ))
   val formProvider = new DoYouKnowYourAgentReferenceFormProvider()
   val form = formProvider()
 
@@ -97,41 +79,6 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
             redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
           }
         }
-      }
-    }
-
-    "must return OK and the correct view when non-vendor returnAgent exists and no vendor"  in {
-
-      val multipleReturnAgents = Seq(
-        FullReturnConstants.completeReturnAgent.copy(agentType = Some("SOLICITOR")),
-        FullReturnConstants.completeReturnAgent.copy(agentType = Some("AGENT")),
-        FullReturnConstants.completeReturnAgent.copy(agentType = Some(""))
-      )
-      val fullReturn = FullReturnConstants.completeFullReturn.copy(
-        returnAgent = Some(multipleReturnAgents),
-        vendor = None
-      )
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn), data = Json.obj(
-        "vendorCurrent" -> Json.obj(
-          "agentName" -> "test",
-          "representedByAgent" -> true,
-        )
-      )
-      )
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-
-        val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
-
-        status(result) mustEqual OK
-        //def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
-        contentAsString(result) mustEqual view(form, NormalMode, "test")(request, messages(application)).toString
       }
     }
 
@@ -165,7 +112,43 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           contentAsString(result) mustEqual view(form, NormalMode, "test")(request, messages(application)).toString
         }
       }
+    }
+
+       "must return OK and the correct view when non-vendor returnAgent exists and no vendor" in {
+
+        val multipleReturnAgents = Seq(
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("SOLICITOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("AGENT")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some(""))
+        )
+        val fullReturn = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = Some(multipleReturnAgents),
+          vendor = None
+        )
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn), data = Json.obj(
+          "vendorCurrent" -> Json.obj(
+            "agentName" -> "test",
+            "representedByAgent" -> true,
+          )
+        )
+        )
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
+
+          status(result) mustEqual OK
+          //def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
+          contentAsString(result) mustEqual view(form, NormalMode, "test")(request, messages(application)).toString
+        }
       }
+
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
@@ -202,7 +185,240 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "check your answers route" - {
+
+      "must redirect to check your answers when returnAgent.agentType is VENDOR and main vendor is represented by an agent" in {
+
+        val multipleReturnAgents = Seq(
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("SOLICITOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("VENDOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some(""))
+        )
+
+        val multipleVendors = Seq(
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN002"), isRepresentedByAgent = Some("false")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN001"), isRepresentedByAgent = Some("true")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN003"), isRepresentedByAgent = Some("false"))
+        )
+
+        val fullReturn = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = Some(multipleReturnAgents),
+          vendor = Some(multipleVendors),
+          returnInfo = Some(FullReturnConstants.completeReturnInfo.copy(mainVendorID = Some("VEN001")))
+        )
+
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
+          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test","doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+          )
+
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "must redirect to check your answers with non-vendor returnAgent and main vendor is NOT represented by an agent" in {
+
+        val multipleReturnAgents = Seq(
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("SOLICITOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("AGENT")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some(""))
+        )
+
+        val multipleVendors = Seq(
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN002"), isRepresentedByAgent = Some("false")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN001"), isRepresentedByAgent = Some("false")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN003"), isRepresentedByAgent = Some("true"))
+        )
+
+        val fullReturn = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = Some(multipleReturnAgents),
+          vendor = Some(multipleVendors),
+          returnInfo = Some(FullReturnConstants.completeReturnInfo.copy(mainVendorID = Some("VEN001")))
+        )
+
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
+          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test","doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+        )
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "must redirect to check your answers when returnAgent doesn't exist and main vendor is NOT represented by an agent" in {
+
+        val multipleVendors = Seq(
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN002"), isRepresentedByAgent = Some("false")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN001"), isRepresentedByAgent = Some("false")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN003"), isRepresentedByAgent = Some("true"))
+        )
+
+        val fullReturn = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = None,
+          vendor = Some(multipleVendors),
+          returnInfo = Some(FullReturnConstants.completeReturnInfo.copy(mainVendorID = Some("VEN001")))
+        )
+
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
+          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test","doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+        )
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+    }
+
+    "error route" - {
+
+      "must redirect to error page when returnAgent VENDOR exists and main vendor is NOT represented by an agent" in {
+
+        val multipleReturnAgents = Seq(
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("SOLICITOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("VENDOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some(""))
+        )
+
+        val multipleVendors = Seq(
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN002"), isRepresentedByAgent = Some("true")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN001"), isRepresentedByAgent = Some("false")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN003"), isRepresentedByAgent = Some("false"))
+        )
+
+        val fullReturn = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = Some(multipleReturnAgents),
+          returnInfo = Some(FullReturnConstants.completeReturnInfo.copy(mainVendorID = Some("VEN001"))),
+          vendor = Some(multipleVendors)
+        )
+
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
+          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test","doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+        )
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.GenericErrorController.onPageLoad().url
+        }
+      }
+
+      "must redirect to error page when no returnAgent exists and main vendor is represented by an agent" in {
+
+        val multipleVendors = Seq(
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN002"), isRepresentedByAgent = Some("true")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN001"), isRepresentedByAgent = Some("true")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN003"), isRepresentedByAgent = Some("false"))
+        )
+
+        val fullReturn = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = None,
+          returnInfo = Some(FullReturnConstants.completeReturnInfo.copy(mainVendorID = Some("VEN001"))),
+          vendor = Some(multipleVendors)
+        )
+
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
+          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test", "doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+        )
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.GenericErrorController.onPageLoad().url
+        }
+      }
+
+      "must redirect to error page when non-vendor returnAgent exists and main vendor is represented by an agent" in {
+
+        val multipleReturnAgents = Seq(
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("SOLICITOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("AGENT")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some(""))
+        )
+
+        val multipleVendors = Seq(
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN002"), isRepresentedByAgent = Some("true")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN001"), isRepresentedByAgent = Some("true")),
+          FullReturnConstants.completeVendor.copy(vendorID = Some("VEN003"), isRepresentedByAgent = Some("false"))
+        )
+
+        val fullReturn = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = Some(multipleReturnAgents),
+          returnInfo = Some(FullReturnConstants.completeReturnInfo.copy(mainVendorID = Some("VEN001"))),
+          vendor = Some(multipleVendors)
+        )
+
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
+          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test", "doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+        )
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.GenericErrorController.onPageLoad().url
+        }
+      }
+
+      "must redirect to error page when VENDOR returnAgent exists and no vendor present" in {
+
+        val multipleReturnAgents = Seq(
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("SOLICITOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some("VENDOR")),
+          FullReturnConstants.completeReturnAgent.copy(agentType = Some(""))
+        )
+
+        val fullReturn = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = Some(multipleReturnAgents),
+          returnInfo = Some(FullReturnConstants.completeReturnInfo.copy(mainVendorID = Some("VEN001"))),
+          vendor = None
+        )
+
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
+          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test", "doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+        )
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.GenericErrorController.onPageLoad().url
+        }
+      }
+    }
+
+    "onSubmit" - {
+
+    "must redirect to the next page when 'yes' is selected" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -216,10 +432,8 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         data = Json.obj(
           "vendorCurrent" -> Json.obj(
             "agentName" -> "test",
-
             "doYouKnowYourAgentReference" -> "yes",
             "representedByAgent" -> true
-
 
           )
         )
@@ -244,40 +458,46 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
+      //TODO update to CYA route
+      "must redirect to check your answers when 'no' is selected" in {
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+      }
 
-      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-        returnAgent = None,
-        vendor = None
-      )
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
-        data = Json.obj(
-          "vendorCurrent" -> Json.obj(
-            "agentName" -> "test",
+    "when invalid data is submitted" - {
 
-            "doYouKnowYourAgentReference" -> "yes",
-            "representedByAgent" -> true
+      "must return a Bad Request and errors when invalid data is submitted" in {
+
+        val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
+          returnAgent = None,
+          vendor = None
+        )
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
+          data = Json.obj(
+            "vendorCurrent" -> Json.obj(
+              "agentName" -> "test",
+
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true
+            )
           )
         )
-      )
 
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        running(application) {
+          val request =
+            FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
+              .withFormUrlEncodedBody(("DoYouKnowYourAgentReference", "invalid value"), ("agentName", "test"))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
-            .withFormUrlEncodedBody(("DoYouKnowYourAgentReference", "invalid value"), ("agentName", "test"))
+          val boundForm = form.bind(Map("DoYouKnowYourAgentReference" -> "invalid value"))
 
-        val boundForm = form.bind(Map("DoYouKnowYourAgentReference" -> "invalid value"))
+          val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
 
-        val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
+          val result = route(application, request).value
 
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "test")(request, messages(application)).toString
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(boundForm, NormalMode, "test")(request, messages(application)).toString
+        }
       }
     }
 
@@ -310,6 +530,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
+    }
     }
   }
 }
