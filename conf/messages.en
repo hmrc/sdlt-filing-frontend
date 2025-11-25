@@ -299,7 +299,7 @@ vendor.vendor-before-start.bullet1 = the vendor’s name
 vendor.vendor-before-start.bullet2 = the vendor’s address
 vendor.vendor-before-start.bullet3 = if the vendor has an agent
 
-vendorAgentsReference.title = What is the agent’s reference number? – About the vendor
+vendorAgentsReference.title = What is the agent’s reference for this return? - About the vendor
 vendorAgentsReference.caption = About the vendor
 vendorAgentsReference.heading = What is {0}’s reference for this return?
 vendorAgentsReference.checkYourAnswersLabel = Agent’s Reference

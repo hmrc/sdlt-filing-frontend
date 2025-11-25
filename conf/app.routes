@@ -89,10 +89,10 @@ GET     /about-the-vendor/vendor-overview/remove-vendor/:vendorId             co
 
 GET     /about-the-vendor/before-you-start                          controllers.vendor.VendorBeforeYouStartController.onPageLoad()
 
-GET        /about-the-vendor/agent-reference-number                        controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /about-the-vendor/agent-reference-number                        controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /about-the-vendor/agent-reference-number/change                  controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST       /about-the-vendor/agent-reference-number/change                  controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-vendor/enter-agent-reference-number                        controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-vendor/enter-agent-reference-number                        controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-vendor/enter-agent-reference-number/change                  controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/enter-agent-reference-number/change                  controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onPageLoad()
 POST        /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onSubmit()
