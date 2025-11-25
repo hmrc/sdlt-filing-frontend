@@ -271,6 +271,33 @@ addressLookup.vendorAgentQuestionsAddress.confirmPage.submitLabel            = C
 addressLookup.vendorAgentQuestionsAddress.countryPicker.title                = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.countryPicker.heading              = Find {0}’s address
 
+vendor.vendor-overview.title                                             = Vendor Overview - About the Vendor
+vendor.vendor-overview.heading                                           = Vendor Overview
+vendor.vendor-overview.limitReached                                      = To add a new vendor, you must remove a purchaser or vendor
+vendor.vendor-overview.no-vendors                                        = You do not have any vendors added.
+vendor.vendor-overview.vendor-list                                       = You do not have any vendors added.
+vendor.vendor-overview.no-vendor.sub-heading-with-vendors                = Do you need to add another vendor?
+vendor.vendor-overview.no-vendor.sub-heading-no-vendors                  = Do you need to add another vendor?
+vendor.vendor-overview.no-vendor.heading-no-vendors                      = You do not have any vendors added.
+vendor.vendor-overview.Yes                                               = Yes
+vendor.vendor-overview.No                                                = No
+vendor.vendor-overview.error                                             = Choose an option
+vendor.vendor-overview.pagination.previous                               = Previous
+vendor.vendor-overview.pagination.next                                   = Next
+vendor.vendor-overview.summaryInfo.text                                  = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
+
+
+
+vendor.vendor-before-start.title = Before you start - About the Vendor
+vendor.vendor-before-start.heading = About the vendor
+vendor.vendor-before-start.p1 = Within this section of the return, you will need to tell us details about the vendor selling the property or land.
+vendor.vendor-before-start.p2 = We will ask for:
+vendor.vendor-before-start.bullet1 = the vendor’s name
+vendor.vendor-before-start.bullet2 = the vendor’s address
+vendor.vendor-before-start.bullet3 = if the vendor has an agent
+
+
+
 removeVendor.title = Are you sure you want to remove the vendor?
 removeVendor.heading = Are you sure you want to remove {0}?
 removeVendor.error.required = Select Yes if you want to remove the vendor

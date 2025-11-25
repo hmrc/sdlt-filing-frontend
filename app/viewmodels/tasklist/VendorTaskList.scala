@@ -36,6 +36,12 @@ object VendorTaskList {
     )
 
   def buildVendorRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+
+    val url = fullReturn.vendor match {
+      case Some(list) if list.nonEmpty => controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+      case _ => controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
+    }
+
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
@@ -43,8 +49,7 @@ object VendorTaskList {
       },
       messageKey = _ => "tasklist.vendorQuestion.details",
       url = _ => _ => {
-        //change url when ready
-        controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
+        url
       },
       tagId = "venderQuestionDetailRow",
       checks = scheme => Seq(fullReturn.vendor.exists(_.nonEmpty)),
