@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models.address
+package forms.purchaser
 
-object AddressLookupJourneyIdentifier extends Enumeration {
-  val prelimQuestionsAddress: Value = Value
-  val vendorQuestionsAddress: Value = Value
-  val vendorAgentQuestionsAddress: Value = Value
-  val purchaserQuestionsAddress: Value = Value
+import forms.mappings.Mappings
+import models.purchaser.WhoIsMakingThePurchase
+import play.api.data.Form
+
+import javax.inject.Inject
+
+class WhoIsMakingThePurchaseFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[WhoIsMakingThePurchase] =
+    Form(
+      "value" -> enumerable[WhoIsMakingThePurchase]("whoIsMakingThePurchase.error.required")
+    )
 }
-

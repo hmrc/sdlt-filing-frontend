@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms
+package forms.vendor
 
 import forms.behaviours.StringFieldBehaviours
 import forms.vendor.VendorOrCompanyNameFormProvider

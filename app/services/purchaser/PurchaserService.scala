@@ -1,0 +1,76 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package services.purchaser
+
+import models.UserAnswers
+import models.*
+import models.purchaser.*
+import models.address.*
+import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage}
+
+import scala.util.Try
+
+class PurchaserService {
+
+  private def createPurchaserName(purchaser: Purchaser): Option[NameOfPurchaser] = {
+    purchaser.companyName match {
+      case Some(companyName) =>
+        Some(NameOfPurchaser(
+          forename1 = None,
+          forename2 = None,
+          name = companyName
+        ))
+
+      case None =>
+        purchaser.surname.map { surname =>
+          NameOfPurchaser(
+            forename1 = purchaser.forename1,
+            forename2 = purchaser.forename2,
+            name = surname
+          )
+        }
+    }
+  }
+
+  def populatePurchaserNameInSession(
+                                      purchaserCheck: String,
+                                      userAnswers: UserAnswers
+                                    ): Try[UserAnswers] = {
+    val confirmName = if (purchaserCheck == "Yes") ConfirmNameOfThePurchaser.Yes else ConfirmNameOfThePurchaser.No
+    
+    val purchaserOpt: Option[Purchaser] = userAnswers.fullReturn
+      .flatMap(_.purchaser)
+      .flatMap(_.headOption)
+
+    purchaserOpt match {
+      case Some(purchaser) if purchaserCheck == "Yes" && purchaser.purchaserID.isDefined =>
+        createPurchaserName(purchaser) match {
+          case Some(purchaserName) =>
+            for {
+              withName <- userAnswers.set(NameOfPurchaserPage, purchaserName)
+              withConfirm <- withName.set(ConfirmNameOfThePurchaserPage, confirmName)
+            } yield withConfirm
+
+          case None =>
+            userAnswers.set(ConfirmNameOfThePurchaserPage, confirmName)
+        }
+
+      case _ =>
+        userAnswers.set(ConfirmNameOfThePurchaserPage, confirmName)
+    }
+  }
+}

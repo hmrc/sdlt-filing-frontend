@@ -24,7 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
 import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.{PrelimTaskList, VendorTaskList}
+import viewmodels.tasklist._
 import views.html.ReturnTaskListView
 import models.{GetReturnByRefRequest, NormalMode, UserAnswers}
 import repositories.SessionRepository
@@ -56,7 +56,8 @@ class ReturnTaskListController @Inject()(
         } yield {
           val sections = List(
             Some(PrelimTaskList.build(fullReturn)),
-            Some(VendorTaskList.build(fullReturn))
+            Some(VendorTaskList.build(fullReturn)),
+            Some(PurchaserTaskList.build(fullReturn))
           ).flatten
           Ok(view(sections: _*))
         }

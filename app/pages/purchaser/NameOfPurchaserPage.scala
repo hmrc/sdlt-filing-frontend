@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package models.address
+package pages.purchaser
 
-object AddressLookupJourneyIdentifier extends Enumeration {
-  val prelimQuestionsAddress: Value = Value
-  val vendorQuestionsAddress: Value = Value
-  val vendorAgentQuestionsAddress: Value = Value
-  val purchaserQuestionsAddress: Value = Value
+import models.purchaser.NameOfPurchaser
+import pages.QuestionPage
+import play.api.libs.json.JsPath
+
+case object NameOfPurchaserPage extends QuestionPage[NameOfPurchaser] {
+
+  override def path: JsPath = JsPath \ "purchaserCurrent" \ toString
+
+  override def toString: String = "nameOfPurchaser"
 }
-
