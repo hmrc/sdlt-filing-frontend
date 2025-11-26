@@ -50,25 +50,27 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
   lazy val vendorAgentsReferenceRoute: String = controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode).url
 
   // TODO DTR-1022: Change the names and values if incorrect
-  val userAnswersWithAgentReferenceKnown:UserAnswers =
+  val userAnswersWithAgentReferenceKnown: UserAnswers =
     UserAnswers(
       userAnswersId,
       storn = "TESTSTORN",
       data = Json.obj(
         "vendorCurrent" -> Json.obj(
           "whoIsTheVendor" -> "Company",
+          "representedByAgent" -> true,
           "agentName" -> "test",
           "doYouKnowYourAgentReference" -> "yes"
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
     )
 
-  val userAnswersWithAgentReferenceUnknown:UserAnswers =
+  val userAnswersWithAgentReferenceUnknown: UserAnswers =
     UserAnswers(
       userAnswersId, storn = "TESTSTORN",
       data = Json.obj(
         "vendorCurrent" -> Json.obj(
           "whoIsTheVendor" -> "Company",
+          "representedByAgent" -> true,
           "agentName" -> "test",
           "doYouKnowYourAgentReference" -> "no"
         )),
@@ -81,18 +83,31 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       storn = "TESTSTORN",
       data = Json.obj(
         "vendorCurrent" -> Json.obj(
-        "whoIsTheVendor" -> "Company",
-        "agentName" -> "test"
+          "whoIsTheVendor" -> "Company",
+          "representedByAgent" -> true,
+          "agentName" -> "test"
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
     )
 
-  val userAnswersWithoutAgentName:UserAnswers =
+  val userAnswersWithoutAgentName: UserAnswers =
     UserAnswers(userAnswersId,
       storn = "TESTSTORN",
       data = Json.obj(
         "vendorCurrent" -> Json.obj(
-          "whoIsTheVendor" -> "Company"
+          "whoIsTheVendor" -> "Company",
+          "representedByAgent" -> true
+        )),
+      fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
+    )
+
+  val userAnswersNotRepresentedByAgent: UserAnswers =
+    UserAnswers(userAnswersId,
+      storn = "TESTSTORN",
+      data = Json.obj(
+        "vendorCurrent" -> Json.obj(
+          "whoIsTheVendor" -> "Company",
+          "representedByAgent" -> false
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
     )
@@ -231,15 +246,28 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           }
         }
       }
-    }
 
+      "when representedByAgent is false" in {
+
+        val application =
+          applicationBuilder(userAnswers = Some(userAnswersNotRepresentedByAgent)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, vendorAgentsReferenceRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          // TODO: This should navigate to CYA page
+          redirectLocation(result).value mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
+
+        }
+      }
+    }
+    
     "must redirect to Return Task List for a GET if no agent name is found" in {
 
-      val userAnswersWithoutAgentName = completeFullReturn.copy(returnAgent = None)
-
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(userAnswersWithoutAgentName))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutAgentName)).build()
 
       running(application) {
         val request = FakeRequest(GET, vendorAgentsReferenceRoute)

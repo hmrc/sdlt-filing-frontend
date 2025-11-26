@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.vendor.VendorAgentsReferenceFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.vendor.{AgentNamePage, VendorAgentsReferencePage}
+import pages.vendor.{AgentNamePage, VendorAgentsReferencePage, VendorRepresentedByAgentPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -50,29 +50,36 @@ class VendorAgentsReferenceController @Inject()(
 
       val userAnswers = request.userAnswers
 
-      userAnswers.get(AgentNamePage) match {
-        case None =>
-          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      val isRepresentedByAgent:Boolean = userAnswers.get(VendorRepresentedByAgentPage).getOrElse(false)
 
-        case Some(agentName) =>
-          val doYouKnowYourAgentReference: Option[String] = Some("yes")
+      if (isRepresentedByAgent) {
+        userAnswers.get(AgentNamePage) match {
+          case None =>
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
 
-          doYouKnowYourAgentReference match {
-            case Some(value) if value == "yes" =>
-              val form = formProvider(agentName)
+          case Some(agentName) =>
+            val doYouKnowYourAgentReference: Option[String] = Some("yes")
 
-              val preparedForm = request.userAnswers.get(VendorAgentsReferencePage) match {
-                case None => form
-                case Some(value) => form.fill(value)
-              }
+            doYouKnowYourAgentReference match {
+              case Some(value) if value == "yes" =>
+                val form = formProvider(agentName)
 
-              val continueRoute = Ok(view(preparedForm, agentName, mode))
-              agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
-              
-            case _ =>
-              Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)) // TODO: This will need to redirect to CYA page
-          }
+                val preparedForm = request.userAnswers.get(VendorAgentsReferencePage) match {
+                  case None => form
+                  case Some(value) => form.fill(value)
+                }
+
+                val continueRoute = Ok(view(preparedForm, agentName, mode))
+                agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
+
+              case _ =>
+                Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)) // TODO: This will need to redirect to CYA page
+            }
+        }
+      } else {
+        Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)) // TODO: This will need to redirect to CYA page
       }
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
