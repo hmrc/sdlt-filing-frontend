@@ -97,6 +97,8 @@ tasklist.prelimQuestion.details = Prelim Questions
 tasklist.prelimQuestion.heading = Prelim Questions
 tasklist.vendorQuestion.details = Vendor Questions
 tasklist.vendorQuestion.heading = Vendor Questions
+tasklist.purchaserQuestion.details = Purchaser Questions
+tasklist.purchaserQuestion.heading = Purchaser Questions
 tasklist.complete = Complete
 tasklist.notStarted = Not Started
 
@@ -302,3 +304,77 @@ vendor.vendor-before-start.bullet3 = if the vendor has an agent
 removeVendor.title = Are you sure you want to remove the vendor?
 removeVendor.heading = Are you sure you want to remove {0}?
 removeVendor.error.required = Select Yes if you want to remove the vendor
+
+
+
+
+# Purchaser Messages
+
+purchaser.caption = About the purchaser
+
+purchaser.beforeYourStart.title = Before you start - About the purchaser
+purchaser.beforeYourStart.heading = About the purchaser
+purchaser.beforeYourStart.p1 = In this section, you need to tell us about the purchaser of the land or property.
+purchaser.beforeYourStart.p2 = We will ask for:
+purchaser.beforeYourStart.bullet1 = the purchaser’s name
+purchaser.beforeYourStart.bullet2 = the purchaser’s address
+purchaser.beforeYourStart.bullet3 = a valid form of ID
+purchaser.beforeYourStart.bullet4 = if they’re connected to the vendor
+purchaser.beforeYourStart.p3 = You can also provide:
+purchaser.beforeYourStart.bullet5 = the purchaser’s phone number
+
+purchaser.nameOfThePurchaser.Yes = Yes
+purchaser.nameOfThePurchaser.No = No
+
+purchaser.confirmNameOfPurchaser.title = Is this the name of the purchaser? – About the purchaser
+purchaser.confirmNameOfPurchaser.company.heading = Is {0} the name of the purchaser?
+purchaser.confirmNameOfPurchaser.individual.heading = Is {0} the surname of the purchaser?
+
+purchaser.whoIsMakingThePurchase.title = Who is making the purchase? – About the purchaser
+purchaser.whoIsMakingThePurchase.heading = Who is making the purchase?
+purchaser.whoIsMakingThePurchase.Company = A company
+purchaser.whoIsMakingThePurchase.Company.hintText = This means any form of organisation, such as a company, council or charity
+purchaser.whoIsMakingThePurchase.Individual = An individual
+purchaser.whoIsMakingThePurchase.Individual.hintText = This means a person liable to pay Stamp Duty Land Tax (SDLT)
+purchaser.whoIsMakingThePurchase.checkYourAnswersLabel = Who is making the purchase?
+purchaser.whoIsMakingThePurchase.error.required = Select an answers
+purchaser.whoIsMakingThePurchase.change.hidden = Who is making the purchase?
+
+purchaser.company.nameOfThePurchaser.title = What is the purchaser’s name? – About the purchaser
+purchaser.company.nameOfThePurchaser.heading = What is the company’s name?
+
+purchaser.individual.nameOfThePurchaser.title = What is the purchaser’s name? – About the purchaser
+purchaser.individual.nameOfThePurchaser.heading = What is the purchaser’s full name?
+purchaser.individual.nameOfThePurchaser.firstName = First name
+purchaser.individual.nameOfThePurchaser.middleName = Middle names
+purchaser.individual.nameOfThePurchaser.surname = Surname
+
+# Purchaser Address Lookup
+addressLookup.purchaserQuestionsAddress.lookupPage.title                   = Find {0}’s address - About the purchaser
+addressLookup.purchaserQuestionsAddress.lookupPage.heading                 = Find {0}’s address
+addressLookup.purchaserQuestionsAddress.lookupPage.filterLabel             = Property name or number
+addressLookup.purchaserQuestionsAddress.lookupPage.submitLabel             = Continue
+addressLookup.purchaserQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
+
+addressLookup.purchaserQuestionsAddress.selectPage.title                   = Choose {0}’s address - About the purchaser
+addressLookup.purchaserQuestionsAddress.selectPage.heading                 = Choose {0}’s address
+addressLookup.purchaserQuestionsAddress.selectPage.editAddressLinkText     = Enter address manually
+addressLookup.purchaserQuestionsAddress.selectPage.submitLabel             = Continue
+
+addressLookup.purchaserQuestionsAddress.editPage.title                     = Enter {0}’s address - About the purchaser
+addressLookup.purchaserQuestionsAddress.editPage.heading                   = Enter {0}’s address
+addressLookup.purchaserQuestionsAddress.editPage.line1Label                = Address line 1
+addressLookup.purchaserQuestionsAddress.editPage.line2Label                = Address line 2
+addressLookup.purchaserQuestionsAddress.editPage.line3Label                = Address line 3
+addressLookup.purchaserQuestionsAddress.editPage.postcodeLabel             = Postcode
+addressLookup.purchaserQuestionsAddress.editPage.countryLabel              = County
+addressLookup.purchaserQuestionsAddress.editPage.submitLabel               = Continue
+
+addressLookup.purchaserQuestionsAddress.confirmPage.title                  = Review and confirm {0}’s address - About the purchaser
+addressLookup.purchaserQuestionsAddress.confirmPage.heading                = Review and confirm {0}’s address
+addressLookup.purchaserQuestionsAddress.confirmPage.changeLinkText         = Edit this address
+addressLookup.purchaserQuestionsAddress.confirmPage.submitLabel            = Confirm address
+
+addressLookup.purchaserQuestionsAddress.countryPicker.title                = Find {0}’s address - About the purchaser
+addressLookup.purchaserQuestionsAddress.countryPicker.heading              = Find {0}’s address
+

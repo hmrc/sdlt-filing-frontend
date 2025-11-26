@@ -91,3 +91,25 @@ GET     /about-the-vendor/before-you-start                          controllers.
 
 GET         /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onPageLoad()
 POST        /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onSubmit()
+
+GET        /about-the-purchaser/before-you-start                       controllers.purchaser.PurchaserBeforeYouStartController.onPageLoad()
+
+GET        /about-the-purchaser/confirm-purchaser-name                       controllers.purchaser.ConfirmNameOfThePurchaserController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/confirm-purchaser-name                       controllers.purchaser.ConfirmNameOfThePurchaserController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/confirm-purchaser-name/change                controllers.purchaser.ConfirmNameOfThePurchaserController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/confirm-purchaser-name/change                controllers.purchaser.ConfirmNameOfThePurchaserController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-purchaser/who-is-making-the-purchase                   controllers.purchaser.WhoIsMakingThePurchaseController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/who-is-making-the-purchase                   controllers.purchaser.WhoIsMakingThePurchaseController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/who-is-making-the-purchase/change            controllers.purchaser.WhoIsMakingThePurchaseController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/who-is-making-the-purchase/change            controllers.purchaser.WhoIsMakingThePurchaseController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-purchaser/purchaser-name                       controllers.purchaser.NameOfPurchaserController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/purchaser-name                       controllers.purchaser.NameOfPurchaserController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/purchaser-name/change                controllers.purchaser.NameOfPurchaserController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/purchaser-name/change                controllers.purchaser.NameOfPurchaserController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/purchaser-address-lookup            controllers.purchaser.PurchaserAddressController.redirectToAddressLookupPurchaser(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-purchaser/purchaser-address-return            controllers.purchaser.PurchaserAddressController.addressLookupCallbackPurchaser(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-purchaser/purchaser-address-return/change     controllers.purchaser.PurchaserAddressController.addressLookupCallbackChangePurchaser(id: String ?= "", mode: Mode = NormalMode)
+

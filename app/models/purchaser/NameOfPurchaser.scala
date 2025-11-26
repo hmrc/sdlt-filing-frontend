@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models.address
+package models.purchaser
 
-object AddressLookupJourneyIdentifier extends Enumeration {
-  val prelimQuestionsAddress: Value = Value
-  val vendorQuestionsAddress: Value = Value
-  val vendorAgentQuestionsAddress: Value = Value
-  val purchaserQuestionsAddress: Value = Value
+import models.purchaser.NameOfPurchaser
+import play.api.libs.json.*
+
+case class NameOfPurchaser(forename1: Option[String], forename2: Option[String], name: String)
+
+object NameOfPurchaser {
+  implicit val format: OFormat[NameOfPurchaser] = Json.format[NameOfPurchaser]
 }
-

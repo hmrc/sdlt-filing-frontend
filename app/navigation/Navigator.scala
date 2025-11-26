@@ -23,6 +23,9 @@ import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.vendor.{AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
+import pages.preliminary._
+import pages.purchaser._
+import pages.vendor._
 
 @Singleton
 class Navigator @Inject()() {
@@ -44,9 +47,23 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
     case ConfirmVendorAddressPage =>
       _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
-
+    case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
   }
+
+  private def isPurchaserSection(page: Page): Boolean = page match {
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage => true
+    case _ => false
+  }
+
+  private def purchaserRoutes(page: Page): UserAnswers => Call = page match {
+    case WhoIsMakingThePurchasePage =>
+      _ => controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+    case NameOfPurchaserPage =>
+      _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+    case _ => _ => routes.IndexController.onPageLoad()
+  }
+
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
