@@ -76,7 +76,7 @@ class NavigatorSpec extends SpecBase {
               )
             ))
 
-          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionNoKnown) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionNoKnown) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
 
         "go from WhoIsTheVendor page to Vendor or Company name" in {
