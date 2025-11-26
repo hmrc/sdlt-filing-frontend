@@ -36,27 +36,24 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-            <h1 class="govuk-heading-l">
-                <span class="govuk-caption-l">@messages("addVendorAgentContactDetails.hint")</span>
-                @messages("addVendorAgentContactDetails.heading", agentName)
-            </h1>
 
-            @govukRadios(
-                RadiosViewModel(
-                    field = form("value"),
-                    legend = LegendViewModel(""),
-                    items = Seq(
-                        RadioItem(
-                            value = Some("true"),
-                            content = Text(messages("site.yes"))
-                        ),
-                        RadioItem(
-                            value = Some("false"),
-                            content = Text(messages("site.no"))
-                        )
+        <span class="govuk-caption-l">@messages("aboutTheVendor.common.caption")</span>
+        @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(messages("addVendorAgentContactDetails.heading", agentName)).asPageHeading(size = Large),
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
                     )
-                ).withHint(HintViewModel(HtmlContent(Html(messages("addVendorAgentContactDetails.hint.radio", agentName)))))
-            )
+                )
+            ).withHint(HintViewModel(HtmlContent(Html(messages("addVendorAgentContactDetails.hint.radio", agentName)))))
+        )
 
         @govukButton(
             ButtonViewModel(messages("site.save.continue"))

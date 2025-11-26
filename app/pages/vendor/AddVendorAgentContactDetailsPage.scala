@@ -16,7 +16,6 @@
 
 package pages.vendor
 
-import models.vendor.AddVendorAgentContactDetails
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

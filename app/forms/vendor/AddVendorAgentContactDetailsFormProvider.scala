@@ -17,7 +17,6 @@
 package forms.vendor
 
 import forms.mappings.Mappings
-import models.vendor.AddVendorAgentContactDetails
 import play.api.data.Form
 
 import javax.inject.Inject

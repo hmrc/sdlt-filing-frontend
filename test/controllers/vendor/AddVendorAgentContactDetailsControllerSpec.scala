@@ -18,15 +18,12 @@ package controllers.vendor
 
 import base.SpecBase
 import constants.FullReturnConstants.completeFullReturn
-import controllers.vendor.routes
 import forms.vendor.AddVendorAgentContactDetailsFormProvider
-import models.vendor.AddVendorAgentContactDetails
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage}
 import play.api.data.Form
@@ -48,7 +45,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
     reset(mockSessionRepository)
   }
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   lazy val addVendorAgentContactDetailsRoute: String = controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
@@ -100,6 +97,20 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
       }
     }
 
+    "redirect to Vendor Agent Name Page when the agent name data is missing for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, addVendorAgentContactDetailsRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+      }
+    }
+
     "must redirect to the Agent Contact Details View when 'Yes' is selected" in {
 
       val userAnswersWithAgentName = emptyUserAnswers.set(AgentNamePage, "Mary Brown").success.value
@@ -123,7 +134,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
         status(result) mustEqual SEE_OTHER
         //TODO - add proper route here when completed
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
@@ -197,7 +208,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, addVendorAgentContactDetailsRoute)
-            .withFormUrlEncodedBody(("value", AddVendorAgentContactDetails.values.head.toString))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
@@ -206,5 +217,21 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+//    "redirect to Vendor Agent Name Page when the agent name data is missing for POST" in {
+//
+//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+//
+//      running(application) {
+//        val request =
+//          FakeRequest(POST, addVendorAgentContactDetailsRoute)
+//            .withFormUrlEncodedBody(("value", "true"))
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual SEE_OTHER
+//        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+//      }
+//    }
+    }
   }
-}

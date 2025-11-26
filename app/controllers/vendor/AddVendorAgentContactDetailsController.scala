@@ -42,7 +42,7 @@ class AddVendorAgentContactDetailsController @Inject()(
                                        formProvider: AddVendorAgentContactDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: AddVendorAgentContactDetailsView,
-                                       agentChecksService: AgentChecksService,
+                                       agentChecksService: AgentChecksService
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -59,7 +59,7 @@ class AddVendorAgentContactDetailsController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          
+
           val continueRoute = Ok(view(preparedForm, mode, agentName))
           agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
       }
@@ -85,12 +85,10 @@ class AddVendorAgentContactDetailsController @Inject()(
               } yield {
                 if (value) {
                   //TODO route for when completed
-                 // Redirect(navigator.nextPage(VendorAgentsContactDetailsPage, mode, updatedAnswers))
-                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                  Redirect(navigator.nextPage(AddVendorAgentContactDetailsPage, mode, updatedAnswers))
                 } else {
+                  //TODO DTR-1333 redirect to: Do you want to add a reference page 
                   Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-                  //TODO route for when completed
-                  //Redirect(navigator.nextPage(DoYouKnowYourAgentReferencePage, mode, updatedAnswers))
                 }
               }
           )

@@ -212,7 +212,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -336,7 +336,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
+            redirectLocation(result).value mustEqual controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }

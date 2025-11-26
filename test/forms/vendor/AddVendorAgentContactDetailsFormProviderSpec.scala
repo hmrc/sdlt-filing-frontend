@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package forms
+package forms.vendor
 
 import forms.behaviours.{BooleanFieldBehaviours, OptionFieldBehaviours}
 import forms.vendor.AddVendorAgentContactDetailsFormProvider
-import models.vendor.AddVendorAgentContactDetails
 import play.api.data.FormError
 
 class AddVendorAgentContactDetailsFormProviderSpec extends BooleanFieldBehaviours {

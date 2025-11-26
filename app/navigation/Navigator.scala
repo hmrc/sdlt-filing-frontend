@@ -47,10 +47,8 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
     case ConfirmVendorAddressPage =>
       _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
-
-    //case AddVendorAgentContactDetailsPage =>
-    //after the page before mine
-
+    case AddVendorAgentContactDetailsPage =>
+      _ => controllers.routes.ReturnTaskListController.onPageLoad() //TODO DTR-1019 Redirect to Vendor Agent contact details page
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
   }
