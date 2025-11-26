@@ -54,15 +54,13 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         "representedByAgent" -> false,
       )
     ))
+  val agentName: Option[String] = userAnswersWithAgentSelectionKnown.get(AgentNamePage)
 
   val formProvider = new DoYouKnowYourAgentReferenceFormProvider()
   val form = formProvider()
 
-  "DoYouKnowYourAgentReference Controller" - {
-    val agentsName: String = userAnswersWithAgentSelectionKnown.get(AgentNamePage).get
-
+  "DoYouKnowYourAgentReference Controller" - { 
     def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
-
     "onPageLoad" - {
       "when no existing data is found" - {
 
@@ -101,7 +99,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
+        
         running(application) {
           val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
           val result = route(application, request).value
@@ -109,7 +107,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, NormalMode, "test")(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, NormalMode, agentName)(request, messages(application)).toString
         }
       }
     }
@@ -127,7 +125,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn), data = Json.obj(
           "vendorCurrent" -> Json.obj(
-            "agentName" -> "test",
+            "agentName" -> "test",  
             "representedByAgent" -> true,
           )
         )
@@ -145,7 +143,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
           status(result) mustEqual OK
           //def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          contentAsString(result) mustEqual view(form, NormalMode, "test")(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, NormalMode, agentName)(request, messages(application)).toString
         }
       }
 
@@ -180,7 +178,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         implicit val messages: Messages =
           application.injector.instanceOf[MessagesApi].preferred(request)
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(DoYouKnowYourAgentReference.Yes), NormalMode, agentsName)(request, customMessages(application, request)).toString
+        contentAsString(result) mustEqual view(form.fill(DoYouKnowYourAgentReference.Yes), NormalMode, agentName)(request, customMessages(application, request)).toString
 
       }
     }
@@ -496,7 +494,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, NormalMode, "test")(request, messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, NormalMode, agentName)(request, messages(application)).toString
         }
       }
     }

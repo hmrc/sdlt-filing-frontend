@@ -27,7 +27,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, agentName: String )(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, agentName: Option[String] )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("doYouKnowYourAgentReference.title"))) {
 
@@ -39,18 +39,18 @@
 
 <label class="govuk-label">
     <span class="govuk-caption-l">@messages("doYouKnowYourAgentReference.caption")</span>
-    <span class="govuk-heading-l">@messages("doYouKnowYourAgentReference.heading", agentName)</span>
+    <span class="govuk-heading-l">@messages("doYouKnowYourAgentReference.heading", agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent")))</span>
 </label>
 
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
 
-legend = LegendViewModel(messages("doYouKnowYourAgentReference.heading",agentName)).withCssClass("govuk-visually-hidden"),
-
+legend = LegendViewModel(messages("doYouKnowYourAgentReference.heading",agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent")))).withCssClass("govuk-visually-hidden"),
                 items  = DoYouKnowYourAgentReference.options
-).withHint(HintViewModel(HtmlContent(Html(messages("doYouKnowYourAgentReference.p", agentName)))))
-        )
+).withHint(HintViewModel(HtmlContent(Html(messages("doYouKnowYourAgentReference.p", agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent"))))))
+                            )
+                     )
 
 
         @govukButton(

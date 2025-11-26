@@ -18,7 +18,7 @@ package controllers.vendor
 
 import controllers.actions.*
 import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
-import models.{Mode, NormalMode}
+import models.{Mode, NormalMode, UserAnswers}
 import models.vendor.DoYouKnowYourAgentReference
 import navigation.Navigator
 import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage, VendorRepresentedByAgentPage}
@@ -45,39 +45,38 @@ class DoYouKnowYourAgentReferenceController @Inject()(
                                        view: DoYouKnowYourAgentReferenceView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form = formProvider()  
+  protected def tempKnowsAgentDetails(userAnswers: UserAnswers): Boolean = true
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      
       val userAnswers = request.userAnswers
+      val agentName: Option[String] = request.userAnswers.get(AgentNamePage)
+      val agentNameExists = agentName.isDefined
+      val isRepresentedByAgent = request.userAnswers.get(VendorRepresentedByAgentPage).getOrElse(false)
 
-      userAnswers.get(VendorRepresentedByAgentPage) match {
-        case Some(false)=>
-          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        case Some(true) =>
+      val knowsAgentDetails = tempKnowsAgentDetails(request.userAnswers)
 
-          val preparedForm = request.userAnswers.get(DoYouKnowYourAgentReferencePage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-          val agentName = userAnswers.get(AgentNamePage).getOrElse("")
-          val continueRoute = Ok(view(preparedForm, mode, agentName))
-          agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
-        case _ =>
-          Redirect(controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode)) // TODO: This will need to redirect to CYA page
+      if (!knowsAgentDetails || !isRepresentedByAgent) {
+        //TODO update to check your answers once created
+        Redirect(controllers.routes.IndexController.onPageLoad())
+      } else if (!agentNameExists) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } else {
+        val preparedForm = request.userAnswers.get(DoYouKnowYourAgentReferencePage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        val continueRoute = Ok(view(preparedForm, mode, agentName))
+        agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val userAnswers = request.userAnswers
-
-      userAnswers.get(VendorRepresentedByAgentPage) match {
-
-        case Some(true) =>
-
-          val agentName = userAnswers.get(AgentNamePage).getOrElse("")
+          val agentName: Option[String]  = request.userAnswers.get(AgentNamePage)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, agentName))),
@@ -88,11 +87,8 @@ class DoYouKnowYourAgentReferenceController @Inject()(
                 _ <- sessionRepository.set(updatedAnswers)
               } yield  Redirect(navigator.nextPage(DoYouKnowYourAgentReferencePage, mode, updatedAnswers))
 
-
           )
-        case _ =>
-          Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
-      }
+       
   }
 }
 
