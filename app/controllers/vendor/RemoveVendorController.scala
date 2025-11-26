@@ -21,6 +21,7 @@ import controllers.actions.*
 import forms.vendor.RemoveVendorFormProvider
 import models.vendor.DeleteVendorRequest
 import models.ReturnVersionUpdateRequest
+import pages.vendor.VendorOverviewRemovePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -44,11 +45,9 @@ class RemoveVendorController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      // TODO DTR-1028 get the vendorId from the vendorCurrent.removeVendorId
-      val tempVendorId = Some("VEN001")
-      tempVendorId.map { vendorId =>
+      request.userAnswers.get(VendorOverviewRemovePage).map { vendorResourceRef =>
 
-        val maybeVendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorID.contains(vendorId))))
+        val maybeVendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorResourceRef.contains(vendorResourceRef))))
         val vendorFullName: Option[String] = maybeVendor.flatMap(vendor => vendor.name.map { name =>
             Seq(vendor.forename1, vendor.forename2, Some(name))
               .flatten.mkString(" ").trim.replaceAll(" +", " ")
@@ -56,19 +55,15 @@ class RemoveVendorController @Inject()(
 
         Ok(view(form, vendorFullName))
       }.getOrElse(
-        // TODO DTR-1028 redirect to overview
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
       )
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      // TODO DTR-1028 get the vendorId from the vendorCurrent.removeVendorId
-      val tempVendorId = Some("VEN001")
-      tempVendorId.map { vendorId =>
+      request.userAnswers.get(VendorOverviewRemovePage).map { vendorResourceRef =>
 
-        val maybeVendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorID.contains(vendorId))))
-        val vendorResourceRef = maybeVendor.flatMap(_.vendorResourceRef).getOrElse("")
+        val maybeVendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorResourceRef.contains(vendorResourceRef))))
         val vendorFullName: Option[String] = maybeVendor.flatMap(vendor => vendor.name.map { name =>
           Seq(vendor.forename1, vendor.forename2, Some(name))
             .flatten.mkString(" ").trim.replaceAll(" +", " ")
@@ -85,22 +80,18 @@ class RemoveVendorController @Inject()(
                 deleteVendorRequest <- DeleteVendorRequest.from(request.userAnswers, vendorResourceRef) if returnVersion.updated
                 deleteVendorReturn <- backendConnector.deleteVendor(deleteVendorRequest) if returnVersion.updated
               } yield {
-                  // TODO DTR-1028 redirect to overview
-                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad()).flashing("vendorDeleted" -> "true")
+                Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad()).flashing("vendorDeleted" -> vendorFullName.getOrElse(""))
               }).recover {
                 case _ =>
-                  // TODO DTR-1028 redirect to overview
-                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                  Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
               }
             }
             else {
-              // TODO DTR-1028 redirect to overview
-              Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+              Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad()))
             }
         )
       }.getOrElse(
-        // TODO DTR-1028 redirect to overview
-        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+        Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad()))
       )
   }
 }

@@ -504,7 +504,7 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
 
     "removeVendor" - {
 
-      "must set vendorId in session and redirect to WhoIsTheVendor" in {
+      "must set vendorId in session and redirect to Remove Vendor" in {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -521,7 +521,7 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual routes.RemoveVendorController.onPageLoad().url
 
           verify(mockSessionRepository, times(1)).set(any())
         }
@@ -548,7 +548,7 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
+            redirectLocation(result).value mustEqual routes.RemoveVendorController.onPageLoad().url
           }
         }
       }

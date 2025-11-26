@@ -29,7 +29,8 @@
         p: Paragraph,
         govukRadios: GovukRadios,
         hmrcPageHeading: HmrcPageHeading,
-        h1: h1
+        h1: h1,
+        govukNotificationBanner: GovukNotificationBanner
 )
 @(
         maybeSummaryList:   Option[SummaryList],
@@ -55,6 +56,17 @@
                         content = Text(messages("vendor.vendor-overview.limitReached"))
                     )
                 )
+            )
+        )
+    }
+
+    @request.flash.get("vendorDeleted").map { vendorName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("vendor.vendor-overview.vendorRemoved", if(!vendorName.isBlank) then vendorName else messages("aboutTheVendor.common.theVendor"))}</h3>"""),
+                bannerType = Some("success"),
+                role = Some("alert")
             )
         )
     }

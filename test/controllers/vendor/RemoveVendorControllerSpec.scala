@@ -26,6 +26,7 @@ import models.{ReturnInfo, ReturnVersionUpdateReturn, UserAnswers, Vendor}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.vendor.VendorOverviewRemovePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -45,12 +46,40 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(
-        userAnswers = Some(
-          emptyUserAnswers
-//            .set(VendorOverviewRemovePage, "VEN001").success.value TODO DTR-1028 uncomment these lines to set the removeVendorId
-        )
-      ).build()
+      val vendorResourceRef = "VEN-REF-001"
+
+      val fullReturn = completeFullReturn.copy(
+        vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"), forename1 = Some("John"), forename2 = Some("Michael"), name = Some("Smith"))))
+      )
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
+        .set(VendorOverviewRemovePage, vendorResourceRef).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, removeVendorRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RemoveVendorView]
+
+        val fullName = "John Michael Smith"
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, Some(fullName))(request, messages(application)).toString
+        contentAsString(result) must include(fullName)
+      }
+    }
+
+    "must return OK and the correct view for a GET when vendor is not found" in {
+
+      val fullReturn = completeFullReturn.copy(
+        vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-000"))))
+      )
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
+        .set(VendorOverviewRemovePage, "VEN-REF-001").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, removeVendorRoute)
@@ -64,8 +93,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    // TODO DTR-1028 include test and change to redirect to overview
-    "must redirect to vendor overview for a GET when removeVendorId is not set" ignore {
+    "must redirect to vendor overview for a GET when removeVendorId is not set" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -77,7 +105,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
       }
     }
 
@@ -85,13 +113,13 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
       val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-      val vendorId = "VEN001"
+      val vendorResourceRef = "VEN-REF-001"
       val fullReturn = completeFullReturn.copy(
         returnInfo = Some(ReturnInfo(version = Some("1.00"))),
-        vendor = Some(Seq(Vendor(vendorID = Some(vendorId), vendorResourceRef = Some("VEN-REF-001"))))
+        vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"), forename1 = Some("John"), name = Some("Smith"))))
       )
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-//        .set(VendorOverviewRemovePage, vendorId).success.value
+        .set(VendorOverviewRemovePage, vendorResourceRef).success.value
 
       when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
         .thenReturn(Future.successful(ReturnVersionUpdateReturn(true)))
@@ -113,21 +141,21 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-        flash(result).get("vendorDeleted") mustBe Some("true")
+        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+        flash(result).get("vendorDeleted") mustBe Some("John Smith")
       }
     }
 
     "must fail to delete and redirect to vendor overview" - {
       "when Yes is selected and version is not found" in {
 
-        val vendorId = "VEN-001"
+        val vendorResourceRef = "VEN-REF-001"
         val fullReturn = completeFullReturn.copy(
           returnInfo = Some(ReturnInfo(version = None)),
-          vendor = Some(Seq(Vendor(vendorID = Some(vendorId), vendorResourceRef = Some("VEN-REF-001"))))
+          vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"))))
         )
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-//          .set(VendorOverviewRemovePage, vendorId).success.value
+          .set(VendorOverviewRemovePage, vendorResourceRef).success.value
 
         val application =
           applicationBuilder(userAnswers = Some(userAnswers))
@@ -141,7 +169,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
         }
       }
 
@@ -151,10 +179,10 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
         val fullReturn = completeFullReturn.copy(
           returnInfo = Some(ReturnInfo(version = Some("1.00"))),
-          vendor = None
+          vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-000"))))
         )
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-//          .set(VendorOverviewRemovePage, "VEN001").success.value
+          .set(VendorOverviewRemovePage, "VEN-REF-001").success.value
 
         when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
           .thenReturn(Future.successful(ReturnVersionUpdateReturn(true)))
@@ -174,7 +202,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
         }
       }
 
@@ -182,13 +210,13 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        val vendorId = "VEN-001"
+        val vendorResourceRef = "VEN-REF-001"
         val fullReturn = completeFullReturn.copy(
           returnInfo = Some(ReturnInfo(version = Some("1.00"))),
-          vendor = Some(Seq(Vendor(vendorID = Some(vendorId), vendorResourceRef = Some("VEN-REF-001"))))
+          vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"))))
         )
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-//          .set(VendorOverviewRemovePage, vendorId).success.value
+          .set(VendorOverviewRemovePage, vendorResourceRef).success.value
 
         when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
           .thenReturn(Future.failed(UpstreamErrorResponse("Bad Request", 400)))
@@ -208,7 +236,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
         }
       }
 
@@ -216,13 +244,13 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        val vendorId = "VEN001"
+        val vendorResourceRef = "VEN-REF-001"
         val fullReturn = completeFullReturn.copy(
           returnInfo = Some(ReturnInfo(version = Some("1.00"))),
-          vendor = Some(Seq(Vendor(vendorID = Some(vendorId), vendorResourceRef = Some("VEN-REF-001"))))
+          vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"))))
         )
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-//          .set(VendorOverviewRemovePage, vendorId).success.value
+          .set(VendorOverviewRemovePage, vendorResourceRef).success.value
 
         when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
           .thenReturn(Future.successful(ReturnVersionUpdateReturn(true)))
@@ -244,7 +272,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
         }
       }
     }
@@ -252,7 +280,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
     "must redirect to vendor overview when No is selected" in {
 
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn))
-//        .set(VendorOverviewRemovePage, "VEN001").success.value
+        .set(VendorOverviewRemovePage, "VEN-REF-001").success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -266,12 +294,11 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
       }
     }
 
-    // TODO DTR-1028 include test and change to redirect to overview
-    "must redirect to vendor overview for a POST when removeVendorId is not set" ignore {
+    "must redirect to vendor overview for a POST when removeVendorId is not set" in {
 
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn))
 
@@ -287,7 +314,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
       }
     }
 
@@ -296,7 +323,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(
         userAnswers = Some(
           emptyUserAnswers
-//          .set(VendorOverviewRemovePage, "VEN001").success.value
+            .set(VendorOverviewRemovePage, "VEN-REF-001").success.value
         )
       ).build()
 
