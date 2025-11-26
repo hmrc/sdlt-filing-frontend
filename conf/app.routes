@@ -122,3 +122,8 @@ GET         /about-the-purchaser/purchaser-address-lookup            controllers
 GET         /about-the-purchaser/purchaser-address-return            controllers.purchaser.PurchaserAddressController.addressLookupCallbackPurchaser(id: String ?= "", mode: Mode = NormalMode)
 GET         /about-the-purchaser/purchaser-address-return/change     controllers.purchaser.PurchaserAddressController.addressLookupCallbackChangePurchaser(id: String ?= "", mode: Mode = NormalMode)
 
+
+GET         /about-the-vendor/add-agent-reference-number                        controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/add-agent-reference-number                          controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/change/add-agent-reference-number                    controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/change/add-agent-reference-number                   controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = CheckMode)

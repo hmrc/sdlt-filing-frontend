@@ -22,7 +22,8 @@ import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
-import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
+import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage, DoYouKnowYourAgentReferencePage}
+import play.api.libs.json.Json
 
 class NavigatorSpec extends SpecBase {
 
@@ -41,6 +42,41 @@ class NavigatorSpec extends SpecBase {
 
         "go from agent name page to agent address lookup" in {
           navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
+        }
+
+        "go from DoYouKnowYourAgentReference Page to agent address lookup for yes value" in {
+          val userAnswersWithAgentSelectionYesKnown: UserAnswers = emptyUserAnswers.copy(
+            data = Json.obj(
+
+              "vendorCurrent" -> Json.obj(
+                "id" -> "id",
+                "storn" -> "TESTSTORN",
+                "whoIsTheVendor" -> "Business",
+                "agentName" -> "test",
+                "doYouKnowYourAgentReference" -> "yes"
+
+              )
+            ))
+
+          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionYesKnown) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+
+        }
+
+        "go from DoYouKnowYourAgentReference Page to same page when value is no" in {
+          val userAnswersWithAgentSelectionNoKnown: UserAnswers = emptyUserAnswers.copy(
+            data = Json.obj(
+
+              "vendorCurrent" -> Json.obj(
+                "id" -> "id",
+                "storn" -> "TESTSTORN",
+                "whoIsTheVendor" -> "Business",
+                "agentName" -> "test",
+                "doYouKnowYourAgentReference" -> "no"
+
+              )
+            ))
+
+          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionNoKnown) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
         }
 
         "go from WhoIsTheVendor page to Vendor or Company name" in {
