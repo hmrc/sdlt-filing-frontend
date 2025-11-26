@@ -45,20 +45,17 @@ class DoYouKnowYourAgentReferenceController @Inject()(
                                        view: DoYouKnowYourAgentReferenceView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()  
-  protected def tempKnowsAgentDetails(userAnswers: UserAnswers): Boolean = true
-
+  val form = formProvider()
+  
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      
-      val userAnswers = request.userAnswers
+         
       val agentName: Option[String] = request.userAnswers.get(AgentNamePage)
       val agentNameExists = agentName.isDefined
       val isRepresentedByAgent = request.userAnswers.get(VendorRepresentedByAgentPage).getOrElse(false)
 
-      val knowsAgentDetails = tempKnowsAgentDetails(request.userAnswers)
-
-      if (!knowsAgentDetails || !isRepresentedByAgent) {
+   
+      if (!isRepresentedByAgent) {
         //TODO update to check your answers once created
         Redirect(controllers.routes.IndexController.onPageLoad())
       } else if (!agentNameExists) {
