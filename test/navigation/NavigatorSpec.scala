@@ -76,7 +76,7 @@ class NavigatorSpec extends SpecBase {
 
         //TODO change from return task list controller to vendor agent reference number page once created
         "go from VendorAgentsContactDetailsPage to return task list controller" in {
-          navigator.nextPage(VendorAgentsContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+          navigator.nextPage(VendorAgentsContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(mode = NormalMode)
         }
 
         "go from AddVendorAgentContactDetailsPage to Vendor Agents Contact Detail page" in {

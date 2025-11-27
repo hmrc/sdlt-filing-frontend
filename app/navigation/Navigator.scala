@@ -49,8 +49,7 @@ class Navigator @Inject()() {
     case AddVendorAgentContactDetailsPage =>
       _ => controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode)
     case VendorAgentsContactDetailsPage =>
-      _ => routes.ReturnTaskListController.onPageLoad() //TODO update to Do you want to add a reference number
-      _ => controllers.routes.ReturnTaskListController.onPageLoad() //TODO DTR-1019 Redirect to Vendor Agent contact details page
+      _ => controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode)
     case DoYouKnowYourAgentReferencePage =>
       _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
     // TODO: Should navigate to Check Your Answers Page
