@@ -21,8 +21,6 @@ import play.api.mvc.Call
 import controllers.routes
 import pages.*
 import models.*
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 import pages.preliminary._
 import pages.purchaser._
 import pages.vendor._
@@ -47,6 +45,8 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
     case ConfirmVendorAddressPage =>
       _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
+    case AddVendorAgentContactDetailsPage =>
+      _ => controllers.routes.ReturnTaskListController.onPageLoad() //TODO DTR-1019 Redirect to Vendor Agent contact details page
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
   }
@@ -63,7 +63,6 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
     case _ => _ => routes.IndexController.onPageLoad()
   }
-
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()

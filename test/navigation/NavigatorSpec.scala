@@ -21,8 +21,8 @@ import controllers.routes
 import pages.*
 import models.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -60,65 +60,69 @@ class NavigatorSpec extends SpecBase {
         }
       }
 
-      "purchaser routes" - {
-
-        "go from WhoIsMakingThePurchasePage to NameOfPurchaser page" in {
-          navigator.nextPage(WhoIsMakingThePurchasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode = NormalMode)
+        "go from AddVendorAgentContactDetailsPage to Vendor Agents Contact Detail page" in {
+          navigator.nextPage(AddVendorAgentContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
-
-        "go from NameOfPurchaserPage to address lookup" in {
-          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
-        }
-      }
     }
 
-    "in Check mode" - {
+    "purchaser routes" - {
 
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      "go from WhoIsMakingThePurchasePage to NameOfPurchaser page" in {
+        navigator.nextPage(WhoIsMakingThePurchasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode = NormalMode)
       }
 
-      "must go from any purchaser page to CheckYourAnswers" in {
-        navigator.nextPage(WhoIsMakingThePurchasePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-        navigator.nextPage(NameOfPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-      }
-
-      "must go from any vendor page to CheckYourAnswers" in {
-        navigator.nextPage(WhoIsTheVendorPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-        navigator.nextPage(VendorOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-        navigator.nextPage(VendorRepresentedByAgentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-        navigator.nextPage(AgentNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-      }
-
-      "must go from any preliminary page to CheckYourAnswers" in {
-        navigator.nextPage(PurchaserIsIndividualPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-        navigator.nextPage(PurchaserSurnameOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-        navigator.nextPage(TransactionTypePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      "go from NameOfPurchaserPage to address lookup" in {
+        navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
       }
     }
+  }
 
-    "isPurchaserSection helper" - {
+  "in Check mode" - {
 
-      "must return true for purchaser section pages" in {
-        val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+    "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+      case object UnknownPage extends Page
+      navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    }
 
-        navigator.nextPage(WhoIsMakingThePurchasePage, NormalMode, userAnswers) mustBe
-          controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+    "must go from any purchaser page to CheckYourAnswers" in {
+      navigator.nextPage(WhoIsMakingThePurchasePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      navigator.nextPage(NameOfPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    }
 
-        navigator.nextPage(NameOfPurchaserPage, NormalMode, userAnswers) mustBe
-          controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
-      }
+    "must go from any vendor page to CheckYourAnswers" in {
+      navigator.nextPage(WhoIsTheVendorPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      navigator.nextPage(VendorOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      navigator.nextPage(VendorRepresentedByAgentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      navigator.nextPage(AgentNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    }
 
-      "must return false for non-purchaser section pages" in {
-        val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+    "must go from any preliminary page to CheckYourAnswers" in {
+      navigator.nextPage(PurchaserIsIndividualPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      navigator.nextPage(PurchaserSurnameOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      navigator.nextPage(TransactionTypePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
 
-        navigator.nextPage(WhoIsTheVendorPage, NormalMode, userAnswers) mustBe
-          controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
+  "isPurchaserSection helper" - {
 
-        navigator.nextPage(AgentNamePage, NormalMode, userAnswers) mustBe
-          controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
-      }
+    "must return true for purchaser section pages" in {
+      val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+
+      navigator.nextPage(WhoIsMakingThePurchasePage, NormalMode, userAnswers) mustBe
+        controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+
+      navigator.nextPage(NameOfPurchaserPage, NormalMode, userAnswers) mustBe
+        controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+    }
+
+    "must return false for non-purchaser section pages" in {
+      val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+
+      navigator.nextPage(WhoIsTheVendorPage, NormalMode, userAnswers) mustBe
+        controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
+
+      navigator.nextPage(AgentNamePage, NormalMode, userAnswers) mustBe
+        controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     }
   }
 }

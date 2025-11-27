@@ -299,14 +299,17 @@ vendor.vendor-before-start.bullet1 = the vendor’s name
 vendor.vendor-before-start.bullet2 = the vendor’s address
 vendor.vendor-before-start.bullet3 = if the vendor has an agent
 
-
-
 removeVendor.title = Are you sure you want to remove the vendor?
 removeVendor.heading = Are you sure you want to remove {0}?
 removeVendor.error.required = Select Yes if you want to remove the vendor
 
-
-
+addVendorAgentContactDetails.title                                           = Do you want to add contact details for the agent? – About the vendor
+addVendorAgentContactDetails.hint.radio                                      = We’ll only use these details to contact {0} about this return
+addVendorAgentContactDetails.hint                                            = About the vendor
+addVendorAgentContactDetails.heading                                         = Do you want to add contact details for {0}?
+addVendorAgentContactDetails.checkYourAnswersLabel                           = Do you want to add vendor agent contact details?
+addVendorAgentContactDetails.error.required                                  = Please select an option
+addVendorAgentContactDetails.change.hidden                                   = AddVendorAgentContactDetails
 
 # Purchaser Messages
 
