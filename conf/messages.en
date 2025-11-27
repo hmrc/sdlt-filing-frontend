@@ -381,3 +381,16 @@ addressLookup.purchaserQuestionsAddress.confirmPage.submitLabel            = Con
 addressLookup.purchaserQuestionsAddress.countryPicker.title                = Find {0}’s address - About the purchaser
 addressLookup.purchaserQuestionsAddress.countryPicker.heading              = Find {0}’s address
 
+
+
+# About the vendor
+doYouKnowYourAgentReference.title = Do you want to add a reference for this return? - About the vendor
+doYouKnowYourAgentReference.caption = About the vendor
+doYouKnowYourAgentReference.theAgent = the agent
+doYouKnowYourAgentReference.heading = Do you want to add a reference for {0}?
+doYouKnowYourAgentReference.yes = Yes
+doYouKnowYourAgentReference.no = No
+doYouKnowYourAgentReference.checkYourAnswersLabel = doYouKnowYourAgentReference
+doYouKnowYourAgentReference.error.required = Select doYouKnowYourAgentReference
+doYouKnowYourAgentReference.change.hidden = DoYouKnowYourAgentReference
+doYouKnowYourAgentReference.p = This is the unique number or code that {0} will use to locate the return in their records.
