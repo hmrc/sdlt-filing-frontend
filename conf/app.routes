@@ -28,8 +28,8 @@ POST       /preliminary-questions/purchaser-name/change                 controll
 
 GET        /preliminary-questions/who-is-making-the-purchase            controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)
 POST       /preliminary-questions/who-is-making-the-purchase            controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = NormalMode)
-GET        /change/preliminary-questions/who-is-making-the-purchase     controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/preliminary-questions/who-is-making-the-purchase     controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
+GET        /preliminary-questions/who-is-making-the-purchase/change     controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST       /preliminary-questions/who-is-making-the-purchase/change     controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
 
 GET        /returnTaskList                       controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
 
@@ -37,8 +37,8 @@ GET        /preliminary-questions/before-you-start                       control
 
 GET        /preliminary-questions/transaction-type                       controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /preliminary-questions/transaction-type                       controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /change/preliminary-questions/transaction-type                controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/preliminary-questions/transaction-type                controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /preliminary-questions/transaction-type/change                controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /preliminary-questions/transaction-type/change                controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = CheckMode)
 
 
 GET         /preliminary-questions/address                               controllers.preliminary.PrelimAddressController.redirectToAddressLookup(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
@@ -47,18 +47,18 @@ GET         /preliminary-questions/address-return/change                 control
 
 GET        /about-the-vendor/agent-name                             controllers.vendor.AgentNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-vendor/agent-name                             controllers.vendor.AgentNameController.onSubmit(mode: Mode = NormalMode)
-GET        /change/about-the-vendor/agent-name                      controllers.vendor.AgentNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/about-the-vendor/agent-name                      controllers.vendor.AgentNameController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-vendor/agent-name/change                      controllers.vendor.AgentNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/agent-name/change                      controllers.vendor.AgentNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /about-the-vendor/confirm-vendor-address                       controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-vendor/confirm-vendor-address                       controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /change/about-the-vendor/confirm-vendor-address                controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/about-the-vendor/confirm-vendor-address                controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-vendor/confirm-vendor-address/change                controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/confirm-vendor-address/change                controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /about-the-vendor/who-is-the-vendor                           controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-vendor/who-is-the-vendor                           controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = NormalMode)
-GET        /change/about-the-vendor/who-is-the-vendor                    controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/about-the-vendor/who-is-the-vendor                    controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-vendor/who-is-the-vendor/change                    controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/who-is-the-vendor/change                    controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-vendor/address                                    controllers.vendor.VendorAddressController.redirectToAddressLookupVendor(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
 GET         /about-the-vendor/address-return                             controllers.vendor.VendorAddressController.addressLookupCallbackVendor(id: String ?= "", mode: Mode = NormalMode)
@@ -72,8 +72,8 @@ POST       /about-the-vendor/vendor-name/change                  controllers.ven
 
 GET        /about-the-vendor/vendor-agent                        controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-vendor/vendor-agent                        controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = NormalMode)
-GET        /change/about-the-vendor/vendor-agent                controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/about-the-vendor/vendor-agent                 controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-vendor/vendor-agent/change                controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/vendor-agent/change                 controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = CheckMode)
 
 GET        /generic-error                                      controllers.GenericErrorController.onPageLoad()
 
@@ -88,6 +88,11 @@ GET     /about-the-vendor/vendor-overview/change-vendor/:vendorId             co
 GET     /about-the-vendor/vendor-overview/remove-vendor/:vendorId             controllers.vendor.VendorOverviewController.removeVendor(vendorId: String)
 
 GET     /about-the-vendor/before-you-start                          controllers.vendor.VendorBeforeYouStartController.onPageLoad()
+
+GET        /about-the-vendor/agent-reference-number                        controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-vendor/agent-reference-number                        controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-vendor/agent-reference-number/change                  controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/agent-reference-number/change                  controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onPageLoad()
 POST        /about-the-vendor/remove-vendor                        controllers.vendor.RemoveVendorController.onSubmit()

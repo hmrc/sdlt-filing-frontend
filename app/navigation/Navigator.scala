@@ -62,6 +62,9 @@ class Navigator @Inject()() {
           case _ =>
             routes.IndexController.onPageLoad()
         }
+    // TODO: Should navigate to Check Your Answers Page
+    case VendorAgentsReferencePage =>
+      _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
 
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
@@ -79,7 +82,6 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
     case _ => _ => routes.IndexController.onPageLoad()
   }
-
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
