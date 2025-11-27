@@ -25,7 +25,7 @@ import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNa
 import pages.preliminary._
 import pages.purchaser._
 import pages.vendor._
-import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorOrBusinessNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
+import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 @Singleton
 class Navigator @Inject()() {
