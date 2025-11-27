@@ -21,11 +21,9 @@ import play.api.mvc.Call
 import controllers.routes
 import pages.*
 import models.*
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.preliminary._
 import pages.purchaser._
 import pages.vendor._
-import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
 
 @Singleton
 class Navigator @Inject()() {

@@ -59,14 +59,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(VendorRepresentedByAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
         }
       }
-      "go from VendorRepresentedByAgentPage to Agent Name page" in {
-        navigator.nextPage(VendorRepresentedByAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
-      }
 
-      "go from AddVendorAgentContactDetailsPage to Vendor Agents Contact Detail page" in {
-        navigator.nextPage(AddVendorAgentContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
-      }
-
+        "go from AddVendorAgentContactDetailsPage to Vendor Agents Contact Detail page" in {
+          navigator.nextPage(AddVendorAgentContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        }
     }
 
     "purchaser routes" - {
