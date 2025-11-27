@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import forms.vendor.VendorAgentsReferenceFormProvider
 import constants.FullReturnConstants.completeFullReturn
+import models.vendor.DoYouKnowYourAgentReference
 import models.{NormalMode, ReturnAgent, ReturnInfo, UserAnswers, Vendor}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -49,7 +50,6 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val vendorAgentsReferenceRoute: String = controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode).url
 
-  // TODO DTR-1022: Change the names and values if incorrect
   val userAnswersWithAgentReferenceKnown: UserAnswers =
     UserAnswers(
       userAnswersId,
@@ -117,8 +117,6 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
   def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
 
   "VendorAgentsReference Controller" - {
-    // TODO DTR-1022: Change the names and values if incorrect
-
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithAgentReferenceKnown)).build()
@@ -219,7 +217,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       val testScenarios =
         Table(
           ("doYouKnowYourAgentReference", "userAnswers"),
-          (Some("no"), userAnswersWithAgentReferenceUnknown),
+          (Some(DoYouKnowYourAgentReference.No), userAnswersWithAgentReferenceUnknown),
           (None, userAnswersWithoutAgentReferenceEmptyAnswer)
         )
 
@@ -230,13 +228,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
             applicationBuilder(userAnswers = Some(userAnswers)).build()
 
           running(application) {
-            val request =
-              value match {
-                case Some(v) =>
-                  FakeRequest(POST, vendorAgentsReferenceRoute).withFormUrlEncodedBody(("value", v))
-                case None =>
-                  FakeRequest(POST, vendorAgentsReferenceRoute).withFormUrlEncodedBody()
-              }
+            val request = FakeRequest(GET, vendorAgentsReferenceRoute)
 
             val result = route(application, request).value
 

@@ -18,13 +18,11 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import pages.*
 import models.*
+import pages.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorAgentsReferencePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage}
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
-import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, ConfirmVendorAddressPage, VendorOrCompanyNamePage, VendorRepresentedByAgentPage, WhoIsTheVendorPage, DoYouKnowYourAgentReferencePage}
-import play.api.libs.json.Json
+import pages.purchaser.{NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import pages.vendor.*
 
 class NavigatorSpec extends SpecBase {
 
@@ -39,40 +37,6 @@ class NavigatorSpec extends SpecBase {
       }
 
       "vendor routes" - {
-
-        "go from agent name page to agent address lookup" in {
-          navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
-        }
-
-        "go from DoYouKnowYourAgentReference Page to agent address lookup for yes value" in {
-          val userAnswersWithAgentSelectionYes: UserAnswers = emptyUserAnswers.copy(
-            data = Json.obj(
-              "vendorCurrent" -> Json.obj(
-                "id" -> "id",
-                "storn" -> "TESTSTORN",
-                "whoIsTheVendor" -> "Business",
-                "agentName" -> "test",
-                "doYouKnowYourAgentReference" -> "yes"
-                 )
-             )
-          )
-          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionYes) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
-        }
-
-        "go from DoYouKnowYourAgentReference Page to same page when value is no" in {
-          val userAnswersWithAgentSelectionNo: UserAnswers = emptyUserAnswers.copy(
-            data = Json.obj(
-              "vendorCurrent" -> Json.obj(
-                "id" -> "id",
-                "storn" -> "TESTSTORN",
-                "whoIsTheVendor" -> "Business",
-                "agentName" -> "test",
-                "doYouKnowYourAgentReference" -> "no"
-                 )
-             )
-          )
-          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionNo) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
-        }
 
         "go from WhoIsTheVendor page to Vendor or Company name" in {
           navigator.nextPage(WhoIsTheVendorPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(mode = NormalMode)
@@ -90,12 +54,20 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(VendorRepresentedByAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
         }
 
+        "go from Agent name page to agent address lookup" in {
+          navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
+        }
+
         "go from AddVendorAgentContactDetailsPage to Vendor Agents Contact Detail page" in {
           navigator.nextPage(AddVendorAgentContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
 
+        "go from DoYouKnowYourAgentReference Page to Agent Reference page" in {
+          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
+        }
+
         // TODO: Should navigate to Check Your Answers Page
-        "go from Screen VR-3ds to Agent Reference page" in {
+        "go from Agent Reference page to CYA page" in {
           navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
         }
       }
