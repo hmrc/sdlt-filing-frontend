@@ -45,38 +45,33 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from DoYouKnowYourAgentReference Page to agent address lookup for yes value" in {
-          val userAnswersWithAgentSelectionYesKnown: UserAnswers = emptyUserAnswers.copy(
+          val userAnswersWithAgentSelectionYes: UserAnswers = emptyUserAnswers.copy(
             data = Json.obj(
-
               "vendorCurrent" -> Json.obj(
                 "id" -> "id",
                 "storn" -> "TESTSTORN",
                 "whoIsTheVendor" -> "Business",
                 "agentName" -> "test",
                 "doYouKnowYourAgentReference" -> "yes"
-
-              )
-            ))
-
-          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionYesKnown) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
-
+                 )
+             )
+          )
+          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionYes) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
 
         "go from DoYouKnowYourAgentReference Page to same page when value is no" in {
-          val userAnswersWithAgentSelectionNoKnown: UserAnswers = emptyUserAnswers.copy(
+          val userAnswersWithAgentSelectionNo: UserAnswers = emptyUserAnswers.copy(
             data = Json.obj(
-
               "vendorCurrent" -> Json.obj(
                 "id" -> "id",
                 "storn" -> "TESTSTORN",
                 "whoIsTheVendor" -> "Business",
                 "agentName" -> "test",
                 "doYouKnowYourAgentReference" -> "no"
-
-              )
-            ))
-
-          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionNoKnown) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+                 )
+             )
+          )
+          navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, userAnswersWithAgentSelectionNo) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
 
         "go from WhoIsTheVendor page to Vendor or Company name" in {
