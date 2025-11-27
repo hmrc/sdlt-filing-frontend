@@ -37,17 +37,13 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-<label class="govuk-label">
-    <span class="govuk-caption-l">@messages("doYouKnowYourAgentReference.caption")</span>
-    <span class="govuk-heading-l">@messages("doYouKnowYourAgentReference.heading", agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent")))</span>
-</label>
 
+    <span class="govuk-caption-l">@messages("doYouKnowYourAgentReference.caption")</span>
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-
-legend = LegendViewModel(messages("doYouKnowYourAgentReference.heading",agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent")))).withCssClass("govuk-visually-hidden"),
-                items  = DoYouKnowYourAgentReference.options
+             legend = LegendViewModel(messages("doYouKnowYourAgentReference.heading",agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent")))).asPageHeading(size = Large),
+             items  = DoYouKnowYourAgentReference.options
 ).withHint(HintViewModel(HtmlContent(Html(messages("doYouKnowYourAgentReference.p", agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent"))))))
                             )
                      )
