@@ -161,7 +161,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
         status(result) mustEqual SEE_OTHER
         //TODO - add proper route here when completed
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode).url
       }
     }
 

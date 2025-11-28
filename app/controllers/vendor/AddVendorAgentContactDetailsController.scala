@@ -87,7 +87,7 @@ class AddVendorAgentContactDetailsController @Inject()(
                   Redirect(navigator.nextPage(AddVendorAgentContactDetailsPage, mode, updatedAnswers))
                 } else {
                   //TODO DTR-1333 redirect to: Do you want to add a reference page 
-                  Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                  Redirect(controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode))
                 }
               }
           )
