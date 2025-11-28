@@ -16,15 +16,15 @@
 
 package navigation
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.Call
 import controllers.routes
-import pages.*
 import models.*
-import models.vendor.*
+import pages.*
 import pages.preliminary.*
 import pages.purchaser.*
 import pages.vendor.*
+import play.api.mvc.Call
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class Navigator @Inject()() {
@@ -49,19 +49,10 @@ class Navigator @Inject()() {
     case AddVendorAgentContactDetailsPage =>
       _ => controllers.routes.ReturnTaskListController.onPageLoad() //TODO DTR-1019 Redirect to Vendor Agent contact details page
     case DoYouKnowYourAgentReferencePage =>
-      userAnswers =>
-        userAnswers.get(DoYouKnowYourAgentReferencePage) match {
-          case Some(DoYouKnowYourAgentReference.Yes) =>
-            // TODO: This will need to redirect to CYA page
-            controllers.routes.ReturnTaskListController.onPageLoad()
-
-          case Some(DoYouKnowYourAgentReference.No) =>
-            // TODO: This will need to redirect to CYA page
-            controllers.routes.ReturnTaskListController.onPageLoad()
-          // TODO: This will need to redirect to CYA page
-          case _ =>
-            routes.IndexController.onPageLoad()
-        }
+      _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
+    // TODO: Should navigate to Check Your Answers Page
+    case VendorAgentsReferencePage =>
+      _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
 
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
@@ -79,7 +70,6 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
     case _ => _ => routes.IndexController.onPageLoad()
   }
-
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
