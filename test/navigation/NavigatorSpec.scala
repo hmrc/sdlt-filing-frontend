@@ -83,8 +83,6 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AddVendorAgentContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(mode = NormalMode)
         }
 
-      }
-
         "go from DoYouKnowYourAgentReference Page to Agent Reference page" in {
           navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
         }
@@ -97,14 +95,15 @@ class NavigatorSpec extends SpecBase {
 
       "purchaser routes" - {
         "go from WhoIsMakingThePurchasePage to NameOfPurchaser page" in {
-        navigator.nextPage(WhoIsMakingThePurchasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode = NormalMode)
-      }
+          navigator.nextPage(WhoIsMakingThePurchasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode = NormalMode)
+        }
 
         "go from NameOfPurchaserPage to address lookup" in {
-        navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        }
       }
+
       }
-    }
 
     "in Check mode" - {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
