@@ -133,7 +133,6 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        //TODO - add proper route here when completed
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -160,7 +159,6 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        //TODO - add proper route here when completed
         redirectLocation(result).value mustEqual controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode).url
       }
     }
