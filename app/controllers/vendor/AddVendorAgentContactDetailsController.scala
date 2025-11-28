@@ -84,7 +84,6 @@ class AddVendorAgentContactDetailsController @Inject()(
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
                 if (value) {
-                  //TODO route for when completed
                   Redirect(navigator.nextPage(AddVendorAgentContactDetailsPage, mode, updatedAnswers))
                 } else {
                   //TODO DTR-1333 redirect to: Do you want to add a reference page 

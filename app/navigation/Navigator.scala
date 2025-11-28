@@ -34,20 +34,22 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode)
     case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
-    case VendorRepresentedByAgentPage =>
-      _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-    case AgentNamePage =>
-      _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
     case VendorOrCompanyNamePage =>
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
     case ConfirmVendorAddressPage =>
       _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
+    case VendorRepresentedByAgentPage =>
+      _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
+    case AgentNamePage =>
+      _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case AddVendorAgentContactDetailsPage =>
-      _ => controllers.routes.ReturnTaskListController.onPageLoad() //TODO DTR-1019 Redirect to Vendor Agent contact details page
+      _ => controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode)
+    case VendorAgentsContactDetailsPage =>
+      _ => controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode)
     case DoYouKnowYourAgentReferencePage =>
       _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
     // TODO: Should navigate to Check Your Answers Page

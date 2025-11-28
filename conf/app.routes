@@ -128,6 +128,11 @@ GET         /about-the-purchaser/purchaser-address-return            controllers
 GET         /about-the-purchaser/purchaser-address-return/change     controllers.purchaser.PurchaserAddressController.addressLookupCallbackChangePurchaser(id: String ?= "", mode: Mode = NormalMode)
 
 
+GET        /about-the-vendor/enter-agent-contact-details                      controllers.vendor.VendorAgentsContactDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-vendor/enter-agent-contact-details                      controllers.vendor.VendorAgentsContactDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-vendor/enter-agent-contact-details/change               controllers.vendor.VendorAgentsContactDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-vendor/enter-agent-contact-details/change               controllers.vendor.VendorAgentsContactDetailsController.onSubmit(mode: Mode = CheckMode)
+
 GET         /about-the-vendor/add-agent-reference-number                        controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-vendor/add-agent-reference-number                          controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-vendor/change/add-agent-reference-number                    controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
