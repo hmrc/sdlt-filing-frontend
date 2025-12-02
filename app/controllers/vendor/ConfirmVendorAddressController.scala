@@ -19,10 +19,11 @@ package controllers.vendor
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.vendor.ConfirmVendorAddressFormProvider
+import models.address.Address
 import models.vendor.ConfirmVendorAddress
 import models.{GetReturnByRefRequest, Mode}
 import navigation.Navigator
-import pages.vendor.{ConfirmVendorAddressPage, VendorOrCompanyNamePage}
+import pages.vendor.{ConfirmVendorAddressPage, VendorAddressPage, VendorOrCompanyNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -119,9 +120,21 @@ class ConfirmVendorAddressController @Inject()(
                   val updatedAnswers = userAnswers.set(ConfirmVendorAddressPage, value).get
                   sessionRepository.set(updatedAnswers)
 
-                  value match {
-                    case ConfirmVendorAddress.Yes => Redirect(navigator.nextPage(ConfirmVendorAddressPage, mode, updatedAnswers))
-                    case ConfirmVendorAddress.No => Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
+                  (value, line1) match {
+                    case (ConfirmVendorAddress.Yes, Some(addressLine1)) =>
+                      val address = Address(
+                        line1 = addressLine1,
+                        line2 = line2,
+                        line3 = line3,
+                        line4 = line4,
+                        postcode = postcode
+                      )
+                      val updatedAnswersWithAddress = updatedAnswers.set(VendorAddressPage, address).get
+                      sessionRepository.set(updatedAnswersWithAddress)
+
+                      Redirect(navigator.nextPage(ConfirmVendorAddressPage, mode, updatedAnswersWithAddress))
+                    case (ConfirmVendorAddress.Yes, None) => Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
+                    case (ConfirmVendorAddress.No, _) => Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
                   }
               )
           }
