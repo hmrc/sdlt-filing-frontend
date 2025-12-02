@@ -21,7 +21,7 @@ import constants.FullReturnConstants.{completeFullReturn, completeFullReturnMult
 import controllers.routes
 import forms.vendor.ConfirmVendorAddressFormProvider
 import models.vendor.{ConfirmVendorAddress, VendorName}
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers, Vendor}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -229,7 +229,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
     "when there are complete vendors" - {
 
-      "must redirect to the next page when user selects Yes" in {
+      "must redirect to the next page when user selects Yes and Address line 1 is present" in {
         val userAnswers = uaWithVendorName(testVendorName)
           .copy(fullReturn = Some(completeFullReturn))
 
@@ -250,6 +250,48 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+
+      "must redirect to address lookup when user selects Yes and Address line 1 is not present" in {
+
+        val noAddressLine1Vendor: Vendor = Vendor(
+          vendorID = Some("VEN001"),
+          returnID = Some("RET123456789"),
+          title = Some("Mrs"),
+          forename1 = Some("Jane"),
+          forename2 = Some("Elizabeth"),
+          name = Some("Johnson"),
+          houseNumber = Some("15"),
+          address2 = Some("Mayfair"),
+          address3 = Some("London"),
+          address4 = None,
+          postcode = Some("W1K 1LB"),
+          isRepresentedByAgent = Some("true"),
+          vendorResourceRef = Some("VEN-REF-001"),
+          nextVendorID = None
+        )
+
+        val userAnswers = uaWithVendorName(testVendorName)
+          .copy(fullReturn = Some(completeFullReturn.copy(vendor = Some(Seq(noAddressLine1Vendor)))))
+
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, confirmVendorAddressRoute)
+            .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.Yes.toString)
+
+          val result = route(application, request).get
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor().url
         }
       }
 
