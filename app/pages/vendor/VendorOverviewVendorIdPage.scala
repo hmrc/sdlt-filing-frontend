@@ -23,5 +23,5 @@ import play.api.libs.json.JsPath
 case object VendorOverviewVendorIdPage extends QuestionPage[String] {
   override def path: JsPath = JsPath \ "vendorCurrent"\ toString
 
-  override def toString: String = "vendorId"
+  override def toString: String = "vendorID"
 }
