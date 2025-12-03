@@ -18,7 +18,7 @@ package controllers.vendor
 
 import controllers.actions.*
 import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
-import models.{Mode, NormalMode, UserAnswers}
+import models.Mode
 import models.vendor.DoYouKnowYourAgentReference
 import navigation.Navigator
 import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage, VendorRepresentedByAgentPage}
@@ -82,7 +82,13 @@ class DoYouKnowYourAgentReferenceController @Inject()(
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowYourAgentReferencePage, value))
                 _ <- sessionRepository.set(updatedAnswers)
-              } yield  Redirect(navigator.nextPage(DoYouKnowYourAgentReferencePage, mode, updatedAnswers))
+              } yield {
+                if (value.toString.equals("yes")) {
+                  Redirect(navigator.nextPage(DoYouKnowYourAgentReferencePage, mode, updatedAnswers))
+                } else {
+                  Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+                }
+              }
 
           )
        

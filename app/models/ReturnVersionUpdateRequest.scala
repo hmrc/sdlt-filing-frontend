@@ -47,7 +47,7 @@ object ReturnVersionUpdateRequest {
 }
 
 case class ReturnVersionUpdateReturn(
-                                       updated: Boolean
+                                       newVersion: Option[Int]
                                      )
 
 object ReturnVersionUpdateReturn {

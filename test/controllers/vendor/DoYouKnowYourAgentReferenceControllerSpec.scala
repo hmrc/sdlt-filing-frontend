@@ -59,7 +59,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
   val formProvider = new DoYouKnowYourAgentReferenceFormProvider()
   val form = formProvider()
 
-  "DoYouKnowYourAgentReference Controller" - { 
+  "DoYouKnowYourAgentReference Controller" - {
     def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
     "onPageLoad" - {
       "when no existing data is found" - {
@@ -217,7 +217,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
         }
       }
 
@@ -252,7 +252,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
         }
       }
 
@@ -280,7 +280,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
         }
       }
 

@@ -60,7 +60,7 @@ class AgentChecksServiceSpec extends SpecBase {
         }
       }
 
-      "must redirect to task list when agent is type VENDOR and main vendor is represented by agent" in { // Change to redirect to CYA
+      "must redirect to VendorCYA when agent is type VENDOR and main vendor is represented by agent" in {
         val fullReturn = completeFullReturn.copy(
           returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
           returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR")))),
@@ -73,11 +73,11 @@ class AgentChecksServiceSpec extends SpecBase {
 
         running(application) {
           val result = service.checkMainVendorAgentRepresentedByAgent(userAnswers, continueRoute)
-          redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.ReturnTaskListController.onPageLoad().url)
+          redirectLocation(Future.successful(result)) mustBe Some(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url)
         }
       }
 
-      "must redirect to task list when agent is not type VENDOR and main vendor is not represented by agent" in { // Change to redirect to CYA
+      "must redirect to VendorCYA when agent is not type VENDOR and main vendor is not represented by agent" in { // Change to redirect to CYA
         val fullReturn = completeFullReturn.copy(
           returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
           returnAgent = Some(Seq(ReturnAgent(agentType = Some("SOLICITOR")))),
@@ -90,11 +90,11 @@ class AgentChecksServiceSpec extends SpecBase {
 
         running(application) {
           val result = service.checkMainVendorAgentRepresentedByAgent(userAnswers, continueRoute)
-          redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.ReturnTaskListController.onPageLoad().url)
+          redirectLocation(Future.successful(result)) mustBe Some(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url)
         }
       }
 
-      "must redirect to task list there is no return agent and main vendor is not represented by agent" in { // Change to redirect to CYA
+      "must redirect to VendorCYA there is no return agent and main vendor is not represented by agent" in {
         val fullReturn = completeFullReturn.copy(
           returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
           returnAgent = None,
@@ -106,7 +106,7 @@ class AgentChecksServiceSpec extends SpecBase {
 
         running(application) {
           val result = service.checkMainVendorAgentRepresentedByAgent(userAnswers, continueRoute)
-          redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.ReturnTaskListController.onPageLoad().url)
+          redirectLocation(Future.successful(result)) mustBe Some(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url)
         }
       }
 

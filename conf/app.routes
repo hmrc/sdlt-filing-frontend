@@ -137,3 +137,6 @@ GET         /about-the-vendor/add-agent-reference-number                        
 POST        /about-the-vendor/add-agent-reference-number                          controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-vendor/change/add-agent-reference-number                    controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendor/change/add-agent-reference-number                   controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-vendor/check-answers                          controllers.vendor.VendorCheckYourAnswersController.onPageLoad()
+POST        /about-the-vendor/check-answers                          controllers.vendor.VendorCheckYourAnswersController.onSubmit()

@@ -33,7 +33,7 @@ package controllers.vendor
  */
 
 import base.SpecBase
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import models.address.{Address, Country}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
@@ -338,6 +338,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual SEE_OTHER
             redirectLocation(result).value mustEqual controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
+
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }
         }
@@ -366,7 +367,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -490,7 +491,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+            redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }

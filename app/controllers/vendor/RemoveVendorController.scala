@@ -77,8 +77,8 @@ class RemoveVendorController @Inject()(
               (for {
                 updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
                 returnVersion <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-                deleteVendorRequest <- DeleteVendorRequest.from(request.userAnswers, vendorResourceRef) if returnVersion.updated
-                deleteVendorReturn <- backendConnector.deleteVendor(deleteVendorRequest) if returnVersion.updated
+                deleteVendorRequest <- DeleteVendorRequest.from(request.userAnswers, vendorResourceRef) if returnVersion.newVersion.isDefined
+                deleteVendorReturn <- backendConnector.deleteVendor(deleteVendorRequest) if returnVersion.newVersion.isDefined
               } yield {
                 Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad()).flashing("vendorDeleted" -> vendorFullName.getOrElse(""))
               }).recover {

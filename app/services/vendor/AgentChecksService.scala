@@ -30,14 +30,13 @@ class AgentChecksService {
       val mainVendor = fullReturn.vendor.flatMap(_.find(_.vendorID == mainVendorId))
       val mainVendorExists = mainVendor.isDefined
       val mainVendorIsRepresentedByAgent = mainVendor.flatMap(_.isRepresentedByAgent).exists(_.equals("true"))
-
-      // TODO Change return task list routes to vendor CYA
+      
       (returnAgentExists, isAgentTypeVendor, mainVendorExists, mainVendorIsRepresentedByAgent) match {
         case (false, _, false, _) => continueRoute
         case (true, false, false, _) => continueRoute
-        case (true, true, true, true) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        case (true, false, true, false) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        case (false, _, true, false) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        case (true, true, true, true) => Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+        case (true, false, true, false) => Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+        case (false, _, true, false) => Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
         case (true, true, true, false) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
         case (false, _, true, true) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
         case (true, false, true, true) => Redirect(controllers.routes.GenericErrorController.onPageLoad())

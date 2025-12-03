@@ -24,7 +24,7 @@ import pages.vendor._
 import scala.util.Try
 
 class PopulateVendorService {
-  
+
   def populateVendorInSession(
                                vendor: Vendor,
                                id: String,
@@ -46,13 +46,13 @@ class PopulateVendorService {
           postcode = vendor.postcode
         )
 
-        val representedByAgent = vendor.isRepresentedByAgent.contains("YES")
+        val whoIsTheVen = if (vendorName.forename1.isDefined || vendorName.forename2.isDefined) whoIsTheVendor.Individual else whoIsTheVendor.Company
 
         for {
-          withName <- userAnswers.set(VendorOrCompanyNamePage, vendorName)
+          whoIsTheVendorPage <- userAnswers.set(WhoIsTheVendorPage, whoIsTheVen)
+          withName <- whoIsTheVendorPage.set(VendorOrCompanyNamePage, vendorName)
           withAddress <- withName.set(VendorAddressPage, address)
-          withVendorId <- withAddress.set(VendorOverviewVendorIdPage, vendorId)
-          finalAnswers <- withVendorId.set(VendorRepresentedByAgentPage, representedByAgent)
+          finalAnswers <- withAddress.set(VendorOverviewVendorIdPage, vendorId)
         } yield finalAnswers
 
       case _ =>
