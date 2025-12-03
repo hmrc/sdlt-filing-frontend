@@ -1,0 +1,14 @@
+
+GET        /intro                            controllers.scalabuild.StartGuidanceController.onPageLoad()
+
+GET        /holding                          controllers.scalabuild.FreeholdOrLeaseholdController.onPageLoad()
+POST       /holding                          controllers.scalabuild.FreeholdOrLeaseholdController.onSubmit()
+
+GET        /property                         controllers.scalabuild.ResidentialOrNonResidentialController.onPageLoad()
+POST       /property                         controllers.scalabuild.ResidentialOrNonResidentialController.onSubmit()
+
+GET        /date                             controllers.scalabuild.EffectiveDateController.onPageLoad()
+POST       /date                             controllers.scalabuild.EffectiveDateController.onSubmit()
+
+GET       /non-uk-resident                  controllers.scalabuild.NonUkResidentController.onPageLoad()
+POST      /non-uk-resident                  controllers.scalabuild.NonUkResidentController.onSubmit()

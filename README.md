@@ -94,4 +94,10 @@ if you have any problem try the following steps:
 - After updating, test the project to ensure everything works correctly with the new versions.
 - Once satisfied, we commit the updated package-lock.json file into version control.
 
+### Running the SDLTC Frontend Rebuild
+Run SDLTC Frontend App on port 9953 from the console at /sdltc-frontend level with:
+```
+sbt run -Dapplication.router=scalabuild.Routes
+```
+You will be able to access the first page at http://localhost:9953/calculate-stamp-duty-land-tax/intro
     

@@ -1,0 +1,36 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.En
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
+
+@this(
+        appConfig: FrontendAppConfig,
+        hmrcStandardPage: HmrcStandardPage,
+        problemLinkHelper: HmrcReportTechnicalIssueHelper,
+        accessibilityStatementConfig: AccessibilityStatementConfig,
+        govukBackLink : GovukBackLink
+)
+
+@(pageTitle: Option[String] = None,
+beforeContentBlock: Option[Html] = None, showBackLink: Boolean = true)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
+
+
+@content = {
+    @contentBlock
+
+<div class="govuk-!-margin-bottom-1 govuk-!-margin-top-8">
+    @problemLinkHelper()
+</div>
+}
+@hmrcStandardPage(HmrcStandardPageParams(backLink = if(showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None))(content)
+

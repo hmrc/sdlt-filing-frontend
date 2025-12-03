@@ -1,0 +1,41 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.ResidentialOrNonResidentialController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @govukRadios(
+        RadiosViewModel(
+            field  = form("value"),
+            legend = LegendViewModel(messages("propertyType.heading")).asPageHeading(),
+            items  = PropertyType.options
+            )
+            .inline()
+            .withHint(Hint(content = HtmlContent(messages("propertyType.hint"))))
+        )
+
+        @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
+
+        }
+}

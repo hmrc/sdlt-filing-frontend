@@ -1,0 +1,10 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@this()
+
+@(text: String, id: Option[String] = None)
+
+<h1 class="govuk-heading-xl" @id.map{id => id="@id"}>@text</h1>

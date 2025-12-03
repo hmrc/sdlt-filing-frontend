@@ -1,0 +1,38 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ */
+
+package forms.scalabuild
+
+import base.ScalaSpecBase
+import models.scalabuild.Tenancy
+import play.api.data.FormError
+
+class FreeholdOrLeaseholdFormProviderSpec extends ScalaSpecBase {
+
+  val form = new FreeholdOrLeaseholdFormProvider().apply()
+
+  "bind Freehold" in {
+    val data = Map(("value", "Freehold"))
+    val result = form.bind(data)
+    result.value.value mustBe Tenancy.Freehold
+    result.errors mustBe empty
+  }
+
+  "bind Leasehold" in {
+    val data = Map(("value", "Leasehold"))
+    val result = form.bind(data)
+    result.value.value mustBe Tenancy.Leasehold
+    result.errors mustBe empty
+  }
+
+  "return errors on invalid values" in {
+    val invalidError = FormError("value", List("error.invalid"), List())
+    val data = Map(("value", "Invalid value"))
+    val result = form.bind(data)
+    result.errors mustBe Seq(invalidError)
+  }
+
+}
+

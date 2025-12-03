@@ -1,0 +1,54 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    govukDetails : GovukDetails
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.NonUkResidentController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+    }
+
+    @govukRadios(
+        RadiosViewModel.yesNo(
+        field = form("nonUKResident"),
+        legend = LegendViewModel(messages("nonUkResident.heading")).asPageHeading()
+        )
+        .inline()
+    )
+
+    @govukDetails(
+        Details(
+                summary = Text(messages("nonUkResident.details.title")),
+                content = HtmlContent(
+                         s"""<p><b>${messages("nonUkResident.details.d1")}</b></p>
+                         |   <p>${messages("nonUkResident.details.d1.p1")}</p>
+                         |   <p><b>${messages("nonUkResident.details.d2")}</b></p>
+                         |   <p> ${messages("nonUkResident.details.d2.p1")}</p>
+                         |   <p>${messages("nonUkResident.details.d2.p2")}</p>
+                         |   <p>${messages("nonUkResident.details.d2.p3")}</p>""".stripMargin
+                        )
+                )
+    )
+
+    @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
+
+    }
+}

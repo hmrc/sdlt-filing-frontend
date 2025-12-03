@@ -1,0 +1,41 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@this(
+    layout: templates.Layout,
+    govukButton: GovukButton,
+)
+@()(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+    <h1 class="govuk-heading-xl">@messages("startGuidance.heading")</h1>
+
+    <p class="govuk-body">@messages("startGuidance.content.l1")</p>
+
+    <ul id="list" class="govuk-list govuk-list--bullet" >
+     <li>@messages("startGuidance.bullet.b1")</li>
+     <li>@messages("startGuidance.bullet.b2")</li>
+     <li>@messages("startGuidance.bullet.b3")</li>
+     <li>@messages("startGuidance.bullet.b4")</li>
+     <li>@messages("startGuidance.bullet.b5")</li>
+     <li>@messages("startGuidance.bullet.b6")</li>
+    </ul>
+
+    <p class="govuk-body">
+     @messages("startGuidance.content.l2")<a href=https://www.gov.uk/guidance/stamp-duty-land-tax-corporate-bodies" class="govuk-link"> check the guidance </a>@messages("startGuidance.content.l3")
+    </p>
+
+    <p class="govuk-body">
+     @messages("startGuidance.content.l4")<a href=https://www.gov.uk/guidance/stamp-duty-land-tax-corporate-bodies" class="govuk-link"> different rules for a corporate body </a>@messages("startGuidance.content.l5")
+    </p>
+
+    @govukButton(ButtonViewModel(
+        content = Text("Start now"),
+        id = "start"
+    )
+    .asStartButton()
+    .asLink(controllers.scalabuild.routes.FreeholdOrLeaseholdController.onPageLoad().url))
+
+}

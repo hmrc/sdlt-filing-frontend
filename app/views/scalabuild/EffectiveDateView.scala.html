@@ -1,0 +1,41 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import components.{Paragraph,PageHeading}
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukDateInput: GovukDateInput,
+    govukButton: GovukButton,
+    pageHeading: PageHeading,
+    paragraph: Paragraph
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.EffectiveDateController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("effectiveDate" -> "effectiveDateDay")))
+    }
+    @pageHeading(messages("effectiveDate.heading"), id = Some("effectiveDate"))
+    @paragraph(messages("effectiveDate.hint.h1"), classes = "govuk-hint", id = Some("effectiveDate-hint"))
+    @paragraph(messages("effectiveDate.hint.h2"), classes = "govuk-hint", id = Some("exampleDate-hint"))
+
+        @govukDateInput(
+            DateViewModel(
+            field  = form("effectiveDate"),
+            legend = LegendViewModel(messages("effectiveDate.heading")).asVisuallyHidden()
+            )
+        )
+
+        @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
+
+        }
+}

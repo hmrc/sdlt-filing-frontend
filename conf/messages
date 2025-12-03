@@ -1,6 +1,11 @@
 service.name=Stamp Duty Land Tax Calculator
 service.homePageUrl=/calculate-stamp-duty-land-tax
 
+site.continue = Continue
+site.saveAndContinue = Save and continue
+site.yes = Yes
+site.no = No
+
 calc.error.badRequest400.title=Bad request - 400
 calc.error.badRequest400.heading=Bad request
 calc.error.badRequest400.message=Please check that you have entered the correct web address.
@@ -16,3 +21,48 @@ footer.links.cookies.text=Cookies
 footer.links.privacy_policy.text=Privacy policy
 footer.links.terms_and_conditions.text=Terms and conditions
 footer.links.help_page.text=Help using GOV.UK
+
+startGuidance.heading = Calculate Stamp Duty Land Tax (SDLT)
+startGuidance.content.l1 = This calculator can be used for property purchases that are:
+startGuidance.bullet.b1 = for first-time buyers
+startGuidance.bullet.b2 = replacing main residence
+startGuidance.bullet.b3 = additional property
+startGuidance.bullet.b4 = residential or non-residential
+startGuidance.bullet.b5 = freehold or leasehold
+startGuidance.bullet.b6 = for non-UK residents purchasing residential property
+startGuidance.content.l2 = The calculator will work out the SDLT payable for most transactions. You should
+startGuidance.content.l3 = if you are uncertain about how SDLT applies to your purchase or if you believe it may qualify for a relief.
+startGuidance.content.l4 = There are
+startGuidance.content.l5 = purchasing residential property for more than £500,000.
+
+
+tenancy.heading = Is your transaction Freehold or Leasehold?
+tenancy.error.required = Select ''Freehold'' or ''Leasehold''
+tenancy.hint = Choose ''Freehold'' if it’s a freehold transaction or you’re acquiring an existing lease. Choose ''Leasehold'' if it’s a new lease.
+
+propertyType.heading = Is the transaction residential or non-residential?
+propertyType.hint = If it's a mixed transaction, choose 'Non-residential'.
+propertyType.Residential = Residential
+propertyType.NonResidential = Non-Residential
+propertyType.error.required = Select ''Residential'' or ''Non-residential''
+
+effectiveDate.heading = Effective date of your transaction
+effectiveDate.hint.h1 = This is usually the completion date.
+effectiveDate.hint.h2 = For example, 31 3 2014.
+date.day = Day
+date.month = Month
+date.year = Year
+effectiveDate.error.required.all = You must complete the effective date field
+effectiveDate.error.required.two = Effective Date must include {0} and {1}
+effectiveDate.error.required = Effective Date must include {0}
+effectiveDate.error.invalid = Please enter a valid date
+
+nonUkResident.heading = Are any of the purchasers non-UK resident?
+nonUkResident.details.title = What we mean by non-UK resident
+nonUkResident.details.d1 = Non-UK resident as an individual
+nonUkResident.details.d1.p1 = You are treated as non-UK resident for Stamp Duty Land Tax (SDLT) if you are not present in the UK for 183 days or more in the 12 months before the effective date of the purchase.
+nonUkResident.details.d2 = Non-UK resident as a company
+nonUkResident.details.d2.p1 = Corporate purchasers will be non-UK resident if they are not UK resident for Corporation Tax purposes on the purchase date.
+nonUkResident.details.d2.p2 = Special rules apply for UK resident companies which are under the direct or indirect control of persons who are not resident in the UK.
+nonUkResident.details.d2.p3 = Special rules also apply for trusts and settlements.
+nonUkResident.error.required = You must complete the effective date field

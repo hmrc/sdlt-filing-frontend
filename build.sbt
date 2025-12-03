@@ -2,10 +2,11 @@ import com.typesafe.sbt.digest.Import.digest
 import com.typesafe.sbt.web.Import.{Assets, pipelineStages}
 import com.typesafe.sbt.web.SbtWeb
 import play.sbt.PlayScala
+import play.sbt.routes.RoutesKeys
 import sbt.Keys.*
-import sbt.{Def,*}
+import sbt.{Def, *}
 import uk.gov.hmrc.DefaultBuildSettings
-import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings,*}
+import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings, *}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
@@ -20,6 +21,7 @@ lazy val playSettings: Seq[Setting[?]] = Seq(
   Assets / excludeFilter := "js*" || "sass*",
   TwirlKeys.templateImports ++= Seq(
     "uk.gov.hmrc.govukfrontend.views.html.components._",
+    "viewmodels.scalabuild.govuk.all._"
   ),
 ) ++ JavaScriptBuild.javaScriptUiSettings
 
