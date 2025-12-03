@@ -110,18 +110,14 @@
                 }
             }
             case None => {
-                @h1(messages("vendor.vendor-overview.no-vendor.heading-no-vendors"))
+                @p("vendor.vendor-overview.no-vendor.p1")
 
-                @govukRadios(
-                    RadiosViewModel.yesNo(
-                        field = form("value"),
-                        legend = LegendViewModel(messages("vendor.vendor-overview.no-vendor.sub-heading-no-vendors")).asPageHeading(size = Medium)
-                    )
-                )
-
+                <p class="govuk-body">
                 @govukButton(
-                    ButtonViewModel(messages("site.continue"))
+                    ButtonViewModel(messages("vendor.vendor-overview.no-vendor.button"))
+                    .asLink(controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url)
                 )
+                </p>
             }
         }
     }
