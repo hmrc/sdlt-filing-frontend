@@ -7,6 +7,7 @@ package viewmodels.scalabuild.govuk
 
 import play.api.data.Field
 import play.api.i18n.Messages
+import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
@@ -115,6 +116,44 @@ trait RadiosFluency {
         fieldset = fieldset,
         items = items
       ).inline()
+    }
+    def yesNoItemsWithConditionalHtml(
+                                       field: Field,
+                                       conditionalYesHtml: Option[Html] = None,
+                                       conditionalNoHtml: Option[Html] = None,
+                                       yesText: String = "site.yes",
+                                       noText: String = "site.no",
+                                       yesId: String = "",
+                                       noId: String = "-no"
+                                     )(implicit messages: Messages): Seq[RadioItem] = Seq(
+      RadioItem(
+        id = Some(field.id+yesId),
+        value = Some("true"),
+        content = Text(messages(yesText)),
+        conditionalHtml = conditionalYesHtml
+      ),
+      RadioItem(
+        id = Some(field.id+noId),
+        value = Some("false"),
+        content = Text(messages(noText)),
+        conditionalHtml = conditionalNoHtml
+      )
+    )
+
+    def yesNoWithConditionalHtml(
+                                  field: Field,
+                                  legend: Legend,
+                                  items: Seq[RadioItem],
+                                  // will be appended to the end of input Id's to allow for custom Id's needed in AT's
+                                  yesId: String = "",
+                                  noId: String = "-no"
+                                )(implicit messages: Messages): Radios = {
+
+      apply(
+        field = field,
+        fieldset = FieldsetViewModel(legend),
+        items = items
+      )
     }
   }
 

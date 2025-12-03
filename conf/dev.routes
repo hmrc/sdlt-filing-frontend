@@ -19,7 +19,9 @@ POST      /purchaser                         controllers.scalabuild.IsPurchaserI
 GET       /additional-property               controllers.scalabuild.IsAdditionalPropertyController.onPageLoad()
 POST      /additional-property               controllers.scalabuild.IsAdditionalPropertyController.onSubmit()
 
-
+    # remove after finished
+GET       /additional-property-double        controllers.scalabuild.AdditionalPropAndReplaceController.onPageLoad()
+POST      /additional-property-double        controllers.scalabuild.AdditionalPropAndReplaceController.onSubmit()
 
 GET       /replace-main-residence            controllers.scalabuild.ReplaceMainResidenceController.onPageLoad()
 POST      /replace-main-residence            controllers.scalabuild.ReplaceMainResidenceController.onSubmit()
