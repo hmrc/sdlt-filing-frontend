@@ -80,7 +80,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
     "forename1" -> "A",
     "forename2" -> "B",
     "name" -> "Test",
-    "houseNumber" -> 23,
+    "houseNumber" -> "23",
     "addressLine1" -> "Test Street",
     "addressLine2" -> "Apartment 5",
     "addressLine3" -> "Building A",
@@ -107,7 +107,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
     forename1 = Some("A"),
     forename2 = Some("B"),
     name = "Test",
-    houseNumber = Some(23),
+    houseNumber = Some("23"),
     addressLine1 = "Test Street",
     addressLine2 = Some("Apartment 5"),
     addressLine3 = Some("Building A"),
@@ -135,7 +135,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
     "forename1" -> "A",
     "forename2" -> "B",
     "name" -> "Test",
-    "houseNumber" -> 23,
+    "houseNumber" -> "23",
     "addressLine1" -> "Test Street",
     "addressLine2" -> "Apartment 5",
     "addressLine3" -> "Building A",
@@ -159,7 +159,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
     forename1 = Some("A"),
     forename2 = Some("B"),
     name = "Test",
-    houseNumber = Some(23),
+    houseNumber = Some("23"),
     addressLine1 = "Test Street",
     addressLine2 = Some("Apartment 5"),
     addressLine3 = Some("Building A"),
@@ -193,7 +193,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         result.forename1 mustBe Some("A")
         result.forename2 mustBe Some("B")
         result.name mustBe "Test"
-        result.houseNumber mustBe Some(23)
+        result.houseNumber mustBe Some("23")
         result.addressLine1 mustBe "Test Street"
         result.addressLine2 mustBe Some("Apartment 5")
         result.addressLine3 mustBe Some("Building A")
@@ -278,7 +278,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
 
       "must fail to deserialize when houseNumber has invalid type" in {
-        val json = validCreateVendorRequestJsonComplete ++ Json.obj("houseNumber" -> "invalid")
+        val json = validCreateVendorRequestJsonComplete ++ Json.obj("houseNumber" -> 123)
 
         val result = Json.fromJson[CreateVendorRequest](json).asEither
 
@@ -317,7 +317,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         (json \ "forename1").as[String] mustBe "A"
         (json \ "forename2").as[String] mustBe "B"
         (json \ "name").as[String] mustBe "Test"
-        (json \ "houseNumber").asOpt[Int] mustBe Some(23)
+        (json \ "houseNumber").asOpt[String] mustBe Some("23")
         (json \ "addressLine1").as[String] mustBe "Test Street"
         (json \ "addressLine2").asOpt[String] mustBe Some("Apartment 5")
         (json \ "addressLine3").asOpt[String] mustBe Some("Building A")
@@ -401,7 +401,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
       "must create instance with all fields" in {
         completeCreateVendorRequest.stornId mustBe "12345"
-        completeCreateVendorRequest.houseNumber mustBe Some(23)
+        completeCreateVendorRequest.houseNumber mustBe Some("23")
         completeCreateVendorRequest.addressLine2 mustBe Some("Apartment 5")
       }
 
@@ -427,11 +427,11 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
       "must support copy with modifications" in {
         val modified = minimalCreateVendorRequest.copy(
-          houseNumber = Some(99),
+          houseNumber = Some("99"),
           postcode = Some("AB12 3CD")
         )
 
-        modified.houseNumber mustBe Some(99)
+        modified.houseNumber mustBe Some("99")
         modified.postcode mustBe Some("AB12 3CD")
         modified.stornId mustBe minimalCreateVendorRequest.stornId
       }
@@ -445,7 +445,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
       "must not be equal when optional fields differ" in {
         val vendorReturn1 = minimalCreateVendorRequest
-        val vendorReturn2 = minimalCreateVendorRequest.copy(houseNumber = Some(100))
+        val vendorReturn2 = minimalCreateVendorRequest.copy(houseNumber = Some("100"))
 
         vendorReturn1 must not equal vendorReturn2
       }
@@ -469,7 +469,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         result.forename1 mustBe Some("A")
         result.forename2 mustBe Some("B")
         result.name mustBe "Test"
-        result.houseNumber mustBe Some(23)
+        result.houseNumber mustBe Some("23")
         result.addressLine1 mustBe "Test Street"
         result.addressLine2 mustBe Some("Apartment 5")
         result.addressLine3 mustBe Some("Building A")
@@ -576,7 +576,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
       }
 
       "must fail to deserialize when houseNumber has invalid type" in {
-        val json = validUpdateVendorRequestJsonComplete ++ Json.obj("houseNumber" -> "invalid")
+        val json = validUpdateVendorRequestJsonComplete ++ Json.obj("houseNumber" -> 123)
 
         val result = Json.fromJson[UpdateVendorRequest](json).asEither
 
@@ -615,7 +615,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         (json \ "forename1").as[String] mustBe "A"
         (json \ "forename2").as[String] mustBe "B"
         (json \ "name").as[String] mustBe "Test"
-        (json \ "houseNumber").asOpt[Int] mustBe Some(23)
+        (json \ "houseNumber").asOpt[String] mustBe Some("23")
         (json \ "addressLine1").as[String] mustBe "Test Street"
         (json \ "addressLine2").asOpt[String] mustBe Some("Apartment 5")
         (json \ "addressLine3").asOpt[String] mustBe Some("Building A")
@@ -705,7 +705,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
       "must create instance with all fields" in {
         completeUpdateVendorRequest.stornId mustBe "12345"
-        completeUpdateVendorRequest.houseNumber mustBe Some(23)
+        completeUpdateVendorRequest.houseNumber mustBe Some("23")
         completeUpdateVendorRequest.addressLine2 mustBe Some("Apartment 5")
         completeUpdateVendorRequest.vendorResourceRef mustBe "VRF-001"
         completeUpdateVendorRequest.nextVendorId mustBe Some("VID-002")
@@ -734,12 +734,12 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
       "must support copy with modifications" in {
         val modified = minimalUpdateVendorRequest.copy(
-          houseNumber = Some(99),
+          houseNumber = Some("99"),
           postcode = Some("AB12 3CD"),
           nextVendorId = Some("VID-003")
         )
 
-        modified.houseNumber mustBe Some(99)
+        modified.houseNumber mustBe Some("99")
         modified.postcode mustBe Some("AB12 3CD")
         modified.nextVendorId mustBe Some("VID-003")
         modified.stornId mustBe minimalUpdateVendorRequest.stornId
@@ -754,7 +754,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
       "must not be equal when optional fields differ" in {
         val vendorRequest1 = minimalUpdateVendorRequest
-        val vendorRequest2 = minimalUpdateVendorRequest.copy(houseNumber = Some(100))
+        val vendorRequest2 = minimalUpdateVendorRequest.copy(houseNumber = Some("100"))
 
         vendorRequest1 must not equal vendorRequest2
       }

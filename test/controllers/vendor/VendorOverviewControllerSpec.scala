@@ -421,7 +421,7 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
 
     "changeVendor" - {
 
-      "must populate session and redirect to WhoIsTheVendor when vendor found" in {
+      "must populate session and redirect to VendorCYA when vendor found" in {
         val mockPopulateVendorService = mock[PopulateVendorService]
         val mockSessionRepository = mock[SessionRepository]
 
@@ -442,7 +442,7 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
 
           verify(mockPopulateVendorService, times(1)).populateVendorInSession(eqTo(testVendor), eqTo("REF001"), any())
           verify(mockSessionRepository, times(1)).set(any())

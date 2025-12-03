@@ -42,8 +42,7 @@ class PopulateVendorServiceSpec extends SpecBase {
           address2 = Some("Flat 4B"),
           address3 = Some("London"),
           address4 = Some("Greater London"),
-          postcode = Some("SW1A 1AA"),
-          isRepresentedByAgent = Some("YES")
+          postcode = Some("SW1A 1AA")
         )
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
@@ -69,7 +68,6 @@ class PopulateVendorServiceSpec extends SpecBase {
         ))
 
         updatedAnswers.get(VendorOverviewVendorIdPage) mustBe Some("VEN001")
-        updatedAnswers.get(VendorRepresentedByAgentPage) mustBe Some(true)
       }
 
       "must successfully populate session with minimal vendor data (only required fields)" in {
@@ -109,15 +107,13 @@ class PopulateVendorServiceSpec extends SpecBase {
         ))
 
         updatedAnswers.get(VendorOverviewVendorIdPage) mustBe Some("VEN002")
-        updatedAnswers.get(VendorRepresentedByAgentPage) mustBe Some(false)
       }
 
       "must set isRepresentedByAgent to false when not YES" in {
         val vendor = Vendor(
           vendorID = Some("VEN003"),
           name = Some("Smith"),
-          address1 = Some("123 High Street"),
-          isRepresentedByAgent = Some("NO")
+          address1 = Some("123 High Street")
         )
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
@@ -125,15 +121,13 @@ class PopulateVendorServiceSpec extends SpecBase {
         val result = service.populateVendorInSession(vendor, "VEN-REF-003", userAnswers)
 
         result mustBe a[Success[_]]
-        result.get.get(VendorRepresentedByAgentPage) mustBe Some(false)
       }
 
       "must set isRepresentedByAgent to false when value is random string" in {
         val vendor = Vendor(
           vendorID = Some("VEN004"),
           name = Some("Smith"),
-          address1 = Some("123 High Street"),
-          isRepresentedByAgent = Some("RANDOM")
+          address1 = Some("123 High Street")
         )
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
@@ -141,15 +135,13 @@ class PopulateVendorServiceSpec extends SpecBase {
         val result = service.populateVendorInSession(vendor, "VEN-REF-004", userAnswers)
 
         result mustBe a[Success[_]]
-        result.get.get(VendorRepresentedByAgentPage) mustBe Some(false)
       }
 
       "must fail when address1 is missing" in {
         val vendor = Vendor(
           vendorID = Some("VEN005"),
           name = Some("Smith"),
-          address1 = None,
-          isRepresentedByAgent = Some("YES")
+          address1 = None
         )
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
@@ -165,8 +157,7 @@ class PopulateVendorServiceSpec extends SpecBase {
         val vendor = Vendor(
           vendorID = Some("VEN006"),
           name = None,
-          address1 = Some("123 High Street"),
-          isRepresentedByAgent = Some("YES")
+          address1 = Some("123 High Street")
         )
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
@@ -181,8 +172,7 @@ class PopulateVendorServiceSpec extends SpecBase {
         val vendor = Vendor(
           vendorID = None,
           name = Some("Smith"),
-          address1 = Some("123 High Street"),
-          isRepresentedByAgent = Some("YES")
+          address1 = Some("123 High Street")
         )
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
@@ -199,8 +189,7 @@ class PopulateVendorServiceSpec extends SpecBase {
           forename1 = Some("John"),
           forename2 = None,
           name = Some("Smith"),
-          address1 = Some("123 High Street"),
-          isRepresentedByAgent = Some("YES")
+          address1 = Some("123 High Street")
         )
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
@@ -225,8 +214,7 @@ class PopulateVendorServiceSpec extends SpecBase {
         val vendor = Vendor(
           vendorID = Some("VEN009"),
           name = Some("Jones"),
-          address1 = Some("456 Park Lane"),
-          isRepresentedByAgent = Some("YES")
+          address1 = Some("456 Park Lane")
         )
 
         val result = service.populateVendorInSession(vendor, "VEN-REF-009", existingAnswers)
@@ -236,7 +224,6 @@ class PopulateVendorServiceSpec extends SpecBase {
         val updatedAnswers = result.get
 
         // Should override the existing value
-        updatedAnswers.get(VendorRepresentedByAgentPage) mustBe Some(true)
         updatedAnswers.get(VendorOrCompanyNamePage) mustBe Some(VendorName(
           forename1 = None,
           forename2 = None,

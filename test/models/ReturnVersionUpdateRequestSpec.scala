@@ -47,16 +47,16 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
     )
   )
 
-  private val validReturnVersionUpdateReturnJsonTrue = Json.obj(
-    "updated" -> true
+  private val validReturnVersionUpdateReturnJson1 = Json.obj(
+    "newVersion" -> Some(1)
   )
 
-  private val validReturnVersionUpdateReturnJsonFalse = Json.obj(
-    "updated" -> false
+  private val validReturnVersionUpdateReturnJson2 = Json.obj(
+    "newVersion" -> Some(2)
   )
 
-  private val returnVersionUpdateReturnTrue = ReturnVersionUpdateReturn(updated = true)
-  private val returnVersionUpdateReturnFalse = ReturnVersionUpdateReturn(updated = false)
+  private val returnVersionUpdateReturnTrue = ReturnVersionUpdateReturn(newVersion = Some(1))
+  private val returnVersionUpdateReturnFalse = ReturnVersionUpdateReturn(newVersion = None)
 
   "ReturnVersionUpdateRequest" - {
 
@@ -356,44 +356,28 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
         implicitly[Reads[ReturnVersionUpdateReturn]]
       }
 
-      "must deserialize valid JSON with updated true" in {
-        val result = Json.fromJson[ReturnVersionUpdateReturn](validReturnVersionUpdateReturnJsonTrue).asEither.value
+      "must deserialize valid JSON with updated to 1" in {
+        val result = Json.fromJson[ReturnVersionUpdateReturn](validReturnVersionUpdateReturnJson1).asEither.value
 
-        result.updated mustBe true
+        result.newVersion mustBe Some(1)
       }
 
-      "must deserialize valid JSON with updated false" in {
-        val result = Json.fromJson[ReturnVersionUpdateReturn](validReturnVersionUpdateReturnJsonFalse).asEither.value
+      "must deserialize valid JSON with newVersion 2" in {
+        val result = Json.fromJson[ReturnVersionUpdateReturn](validReturnVersionUpdateReturnJson2).asEither.value
 
-        result.updated mustBe false
+        result.newVersion mustBe Some(2)
       }
 
-      "must fail to deserialize when updated is missing" in {
-        val json = Json.obj()
+      "must fail to deserialize when newVersion has invalid type" in {
+        val json = Json.obj("newVersion" -> "invalid")
 
         val result = Json.fromJson[ReturnVersionUpdateReturn](json).asEither
 
         result.isLeft mustBe true
       }
 
-      "must fail to deserialize when updated has invalid type" in {
-        val json = Json.obj("updated" -> "invalid")
-
-        val result = Json.fromJson[ReturnVersionUpdateReturn](json).asEither
-
-        result.isLeft mustBe true
-      }
-
-      "must fail to deserialize when updated is a number" in {
-        val json = Json.obj("updated" -> 1)
-
-        val result = Json.fromJson[ReturnVersionUpdateReturn](json).asEither
-
-        result.isLeft mustBe true
-      }
-
-      "must fail to deserialize when updated is null" in {
-        val json = Json.obj("updated" -> JsNull)
+      "must fail to deserialize when newVersion is a boolean" in {
+        val json = Json.obj("newVersion" -> true)
 
         val result = Json.fromJson[ReturnVersionUpdateReturn](json).asEither
 
@@ -401,7 +385,7 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
       }
 
       "must fail to deserialize completely invalid JSON structure" in {
-        val json = Json.obj("invalidField" -> "value")
+        val json = Json.obj("newVersion" -> "Not an int")
 
         val result = Json.fromJson[ReturnVersionUpdateReturn](json).asEither
 
@@ -418,20 +402,20 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
       "must serialize ReturnVersionUpdateReturn with updated true" in {
         val json = Json.toJson(returnVersionUpdateReturnTrue)
 
-        (json \ "updated").as[Boolean] mustBe true
+        (json \ "newVersion").as[Int] mustBe 1
       }
 
       "must serialize ReturnVersionUpdateReturn with updated false" in {
         val json = Json.toJson(returnVersionUpdateReturnFalse)
 
-        (json \ "updated").as[Boolean] mustBe false
+        (json \ "newVersion").asOpt[Int] mustBe None
       }
 
       "must produce valid JSON structure" in {
         val json = Json.toJson(returnVersionUpdateReturnTrue)
 
         json mustBe a[JsObject]
-        json.as[JsObject].keys must contain("updated")
+        json.as[JsObject].keys must contain("newVersion")
       }
 
       "must produce JSON with exactly one field" in {
@@ -443,7 +427,7 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
       "must produce boolean value not string" in {
         val json = Json.toJson(returnVersionUpdateReturnTrue)
 
-        (json \ "updated").get mustBe a[JsBoolean]
+        (json \ "newVersion").get mustBe a[JsNumber]
       }
     }
 
@@ -469,21 +453,21 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
 
       "must maintain boolean type through round-trip" in {
         val json = Json.toJson(returnVersionUpdateReturnTrue)
-        (json \ "updated").as[Boolean] mustBe true
+        (json \ "newVersion").asOpt[Int] mustBe Some(1)
 
         val result = Json.fromJson[ReturnVersionUpdateReturn](json).asEither.value
-        result.updated mustBe true
+        result.newVersion mustBe Some(1)
       }
     }
 
     "case class" - {
 
       "must create instance with updated true" in {
-        returnVersionUpdateReturnTrue.updated mustBe true
+        returnVersionUpdateReturnTrue.newVersion mustBe Some(1)
       }
 
       "must create instance with updated false" in {
-        returnVersionUpdateReturnFalse.updated mustBe false
+        returnVersionUpdateReturnFalse.newVersion mustBe None
       }
 
       "must support equality with true value" in {
@@ -501,15 +485,15 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
       }
 
       "must support copy with modifications" in {
-        val modified = returnVersionUpdateReturnTrue.copy(updated = false)
+        val modified = returnVersionUpdateReturnTrue.copy(newVersion = None)
 
-        modified.updated mustBe false
+        modified.newVersion mustBe None
       }
 
       "must support copy from false to true" in {
-        val modified = returnVersionUpdateReturnFalse.copy(updated = true)
+        val modified = returnVersionUpdateReturnFalse.copy(newVersion = Some(1))
 
-        modified.updated mustBe true
+        modified.newVersion mustBe Some(1)
       }
 
       "must not be equal when fields differ" in {
@@ -521,7 +505,7 @@ class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with Eith
 
       "must not be equal when modified" in {
         val versionReturn1 = returnVersionUpdateReturnTrue
-        val versionReturn2 = returnVersionUpdateReturnTrue.copy(updated = false)
+        val versionReturn2 = returnVersionUpdateReturnTrue.copy(newVersion = None)
 
         versionReturn1 must not equal versionReturn2
       }

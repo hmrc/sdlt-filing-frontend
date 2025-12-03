@@ -28,12 +28,13 @@ import play.api.libs.json.Json
 class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
+  val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+  case object UnknownPage extends Page
 
   "Navigator" - {
 
     "in Normal mode" - {
       "must go from a page that doesn't exist in the route map to Index" in {
-        case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
       }
 
@@ -87,9 +88,9 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(DoYouKnowYourAgentReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
         }
 
-        // TODO: Should navigate to Check Your Answers Page
+        // TODO: Redirect should change to AgentCYA when created
         "go from Agent Reference page to CYA page" in {
-          navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
+          navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -107,8 +108,7 @@ class NavigatorSpec extends SpecBase {
 
     "in Check mode" - {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-      case object UnknownPage extends Page
-      navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
     }
 
       "must go from any purchaser page to CheckYourAnswers" in {
@@ -116,11 +116,11 @@ class NavigatorSpec extends SpecBase {
       navigator.nextPage(NameOfPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     }
 
-      "must go from any vendor page to CheckYourAnswers" in {
-      navigator.nextPage(WhoIsTheVendorPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-      navigator.nextPage(VendorOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-      navigator.nextPage(VendorRepresentedByAgentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-      navigator.nextPage(AgentNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    "must go from any vendor page to VendorCheckYourAnswers" in {
+      navigator.nextPage(WhoIsTheVendorPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+      navigator.nextPage(VendorOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+      navigator.nextPage(VendorRepresentedByAgentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+      navigator.nextPage(AgentNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     }
 
       "must go from any preliminary page to CheckYourAnswers" in {

@@ -189,7 +189,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+            redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
           }
         }
 
@@ -222,7 +222,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+            redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
           }
         }
 
@@ -249,7 +249,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+            redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
           }
         }
 
@@ -401,7 +401,6 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             }
           }
 
-          //TODO update to CYA route
           "must redirect to check your answers when 'no' is selected" in {
 
           }
@@ -418,7 +417,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
               val result = route(application, request).value
 
               status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+              redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
             }
           }
         }

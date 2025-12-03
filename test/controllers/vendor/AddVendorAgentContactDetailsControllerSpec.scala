@@ -138,7 +138,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "must redirect to the Agent Contact Details View when 'No' is selected" in {
+    "must redirect to do you know your agent reference Details View when 'No' is selected" in {
 
       val userAnswersWithAgentName = emptyUserAnswers.set(AgentNamePage, "Mary Brown").success.value
 
@@ -160,8 +160,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        //TODO - add proper route here when completed
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode).url
       }
     }
 

@@ -45,7 +45,6 @@ class ReturnTaskListController @Inject()(
     implicit request =>
  
       val effectiveReturnId = returnId.orElse(request.userAnswers.flatMap(_.returnId))
-
       effectiveReturnId.fold(
         Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
       ) { id =>

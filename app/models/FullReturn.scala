@@ -17,6 +17,9 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
+import models.vendor.VendorSessionQuestions
+
+import scala.concurrent.Future
 
 
 case class SdltOrganisation(
@@ -137,6 +140,25 @@ case class Vendor(
 
 object Vendor {
   implicit val format: OFormat[Vendor] = Json.format[Vendor]
+
+  def from(userAnswers: Option[UserAnswers]): Future[Vendor] = {
+    val vendorSessionQuestions: VendorSessionQuestions = userAnswers.get.data.as[VendorSessionQuestions]
+    Future.successful(Vendor(
+      vendorID = vendorSessionQuestions.vendorCurrent.vendorID,
+      forename1 = vendorSessionQuestions.vendorCurrent.vendorOrCompanyName.forename1,
+      forename2 = vendorSessionQuestions.vendorCurrent.vendorOrCompanyName.forename2,
+      name = Some(vendorSessionQuestions.vendorCurrent.vendorOrCompanyName.name),
+      houseNumber = vendorSessionQuestions.vendorCurrent.vendorAddress.houseNumber,
+      address1 = vendorSessionQuestions.vendorCurrent.vendorAddress.line1,
+      address2 = vendorSessionQuestions.vendorCurrent.vendorAddress.line2,
+      address3 = vendorSessionQuestions.vendorCurrent.vendorAddress.line3,
+      address4 = vendorSessionQuestions.vendorCurrent.vendorAddress.line4,
+      postcode = vendorSessionQuestions.vendorCurrent.vendorAddress.postcode,
+      isRepresentedByAgent = vendorSessionQuestions.vendorCurrent.representedByAnAgent
+    )
+    )
+  }
+  
 }
 
 case class Land(

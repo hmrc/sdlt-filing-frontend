@@ -63,7 +63,7 @@ class VendorOverviewController @Inject()(
         Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
       ) { id =>
         fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.userAnswers.storn))
-          .flatMap { fullReturn =>
+        .flatMap { fullReturn =>
             val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
             sessionRepository.set(userAnswers).map { _ =>
 
@@ -136,7 +136,7 @@ class VendorOverviewController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(populateVendorService.populateVendorInSession(vendor, vendorId, request.userAnswers))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode))
+          } yield Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

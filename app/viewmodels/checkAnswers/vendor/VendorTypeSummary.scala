@@ -16,38 +16,46 @@
 
 package viewmodels.checkAnswers.vendor
 
-import models.{CheckMode, UserAnswers}
-import pages.vendor.AgentNamePage
+
+import models.{CheckMode, NormalMode, UserAnswers}
+import pages.vendor.WhoIsTheVendorPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AgentNameSummary  {
-
+object VendorTypeSummary {
 
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
-    answers.flatMap(_.get(AgentNamePage)).map { answer =>
+    answers.flatMap(_.get(WhoIsTheVendorPage)).map { answer =>
+
+      val answerText = answer.toString match {
+        case "Individual" => messages("vendor.checkYourAnswers.Individual")
+        case _  => messages("vendor.checkYourAnswers.Company")
+      }
+
+      val value = ValueViewModel(
+        HtmlContent(answerText)
+      )
 
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.agentName.label",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        key = "vendor.checkYourAnswers.vendorType.label",
+        value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("agentName.change.hidden"))
+          ActionItemViewModel("site.change", controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("vendor.checkYourAnswers.hidden"))
         )
       )
     }.getOrElse {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendor.checkYourAnswers.agentName.agentMissing")}</a>""")
+          s"""<a href="${controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendor.checkYourAnswers.vendorTypeMissing")}</a>""")
       )
 
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.agentName.label",
+        key = "vendor.checkYourAnswers.vendorType.label",
         value = value
       )
     }

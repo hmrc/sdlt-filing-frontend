@@ -631,7 +631,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           forename1 = Some("John"),
           forename2 = Some("Paul"),
           name = "Smith",
-          houseNumber = Some(10),
+          houseNumber = Some("10"),
           addressLine1 = "Main Street",
           addressLine2 = Some("Apt 5"),
           addressLine3 = Some("Building A"),
@@ -783,7 +783,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           forename1 = Some("John"),
           forename2 = Some("Paul"),
           name = "Smith",
-          houseNumber = Some(10),
+          houseNumber = Some("10"),
           addressLine1 = "Main Street",
           addressLine2 = Some("Apt 5"),
           addressLine3 = Some("Building A"),
@@ -1319,7 +1319,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           currentVersion = "1.0"
         )
-        val expectedResult = ReturnVersionUpdateReturn(updated = true)
+        val expectedResult = ReturnVersionUpdateReturn(newVersion = Some(1))
 
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
@@ -1333,7 +1333,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val result = connector.updateReturnVersion(testRequest).futureValue
 
         result mustBe expectedResult
-        result.updated mustBe true
+        result.newVersion must contain(1)
       }
 
       "must handle Left response with UpstreamErrorResponse (400)" in {
@@ -1452,7 +1452,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           currentVersion = "1.0"
         )
-        val expectedResult = ReturnVersionUpdateReturn(updated = true)
+        val expectedResult = ReturnVersionUpdateReturn(newVersion = Some(1))
 
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
@@ -1477,7 +1477,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           currentVersion = "1.0"
         )
-        val expectedResult = ReturnVersionUpdateReturn(updated = true)
+        val expectedResult = ReturnVersionUpdateReturn(newVersion = Some(1))
 
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
@@ -1503,7 +1503,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           currentVersion = "1.0"
         )
-        val expectedResult = ReturnVersionUpdateReturn(updated = true)
+        val expectedResult = ReturnVersionUpdateReturn(newVersion = Some(1))
 
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
@@ -1528,7 +1528,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           currentVersion = "1.0"
         )
-        val expectedResult = ReturnVersionUpdateReturn(updated = true)
+        val expectedResult = ReturnVersionUpdateReturn(newVersion = Some(1))
 
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)

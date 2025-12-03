@@ -122,7 +122,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
         .set(VendorOverviewRemovePage, vendorResourceRef).success.value
 
       when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
-        .thenReturn(Future.successful(ReturnVersionUpdateReturn(true)))
+        .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(1))))
       when(mockBackendConnector.deleteVendor(any)(any(), any()))
         .thenReturn(Future.successful(DeleteVendorReturn(true)))
 
@@ -185,7 +185,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
           .set(VendorOverviewRemovePage, "VEN-REF-001").success.value
 
         when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
-          .thenReturn(Future.successful(ReturnVersionUpdateReturn(true)))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(1))))
 
         val application =
           applicationBuilder(userAnswers = Some(userAnswers))
@@ -253,7 +253,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
           .set(VendorOverviewRemovePage, vendorResourceRef).success.value
 
         when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
-          .thenReturn(Future.successful(ReturnVersionUpdateReturn(true)))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(1))))
         when(mockBackendConnector.deleteVendor(any)(any(), any()))
           .thenReturn(Future.failed(UpstreamErrorResponse("Bad Request", 400)))
 
