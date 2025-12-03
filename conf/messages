@@ -66,3 +66,24 @@ nonUkResident.details.d2.p1 = Corporate purchasers will be non-UK resident if th
 nonUkResident.details.d2.p2 = Special rules apply for UK resident companies which are under the direct or indirect control of persons who are not resident in the UK.
 nonUkResident.details.d2.p3 = Special rules also apply for trusts and settlements.
 nonUkResident.error.required = You must complete the effective date field
+
+isPurchaserIndividual.heading = Are you purchasing the property as an individual?
+isPurchaserIndividual.hint = Choose ‘Yes’ if you’re buying on your own, or you’re married or in a civil partnership. Choose ‘No’ if you’re a company or trust.
+
+isAdditionalProperty.heading = Will the purchase of the property result in owning two or more properties?
+
+ownsOtherProperties.heading = Have you ever owned or part owned another property?
+ownsOtherProperties.content = We only need to know about residential property, or property that has both residential and non-residential use. This includes freehold property, or leasehold property of at least 21 years. Select yes if you either:
+ownsOtherProperties.bullet.b1 = bought a property
+ownsOtherProperties.bullet.b2 = inherited a property
+ownsOtherProperties.bullet.b3 = are a beneficiary of a trust that owns a property
+
+replaceMainResidence.heading = Is the property being purchased replacing your main residence?
+replaceMainResidence.hint = If your previous main residence has not yet been sold choose "No". A refund may be available if the previous main residence is sold within 3 years.
+
+purchasePrice.heading = Enter the purchase price
+purchasePrice.hint = This is the chargeable consideration.
+purchasePrice.detail.title = Is your chargeable consideration less than £40,000?
+purchasePrice.detail.content = If the purchase price is less than £40,000, you don't need to pay SDLT or file a return.
+
+mainResidence.heading = Will this property be your main residence?

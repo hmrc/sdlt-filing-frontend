@@ -31,6 +31,5 @@ class EffectiveDateViewSpec extends ViewTestFixture {
       buttonText mustBe  messages("site.continue")
     }
   }
-
 }
 

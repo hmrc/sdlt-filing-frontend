@@ -21,7 +21,7 @@ private[mappings] class LocalDateFormatter(
 ) extends Formatter[LocalDate]
     with Formatters {
 
-  private val fieldKeys: List[String] = List("day", "month", "year")
+  private val fieldKeys: List[String] = List("Day", "Month", "Year")
 
   private def toDate(
       key: String,
@@ -49,9 +49,9 @@ private[mappings] class LocalDateFormatter(
     )
 
     for {
-      day <- int.bind(s"$key.day", data)
-      month <- int.bind(s"$key.month", data)
-      year <- int.bind(s"$key.year", data)
+      day <- int.bind(s"${key}Day", data)
+      month <- int.bind(s"${key}Month", data)
+      year <- int.bind(s"${key}Year", data)
       year <- yearMinFourDigits(year)
       date <- toDate(key, day, month, year)
     } yield date
@@ -71,7 +71,7 @@ private[mappings] class LocalDateFormatter(
   ): Either[Seq[FormError], LocalDate] = {
 
     val fields = fieldKeys.map { field =>
-      field -> data.get(s"$key.$field").filter(_.nonEmpty)
+      field -> data.get(s"$key$field").filter(_.nonEmpty)
     }.toMap
 
     lazy val missingFields = fields
@@ -95,8 +95,8 @@ private[mappings] class LocalDateFormatter(
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
-      s"$key.day" -> value.getDayOfMonth.toString,
-      s"$key.month" -> value.getMonthValue.toString,
-      s"$key.year" -> value.getYear.toString
+      s"${key}Day" -> value.getDayOfMonth.toString,
+      s"${key}Month" -> value.getMonthValue.toString,
+      s"${key}Year" -> value.getYear.toString
     )
 }

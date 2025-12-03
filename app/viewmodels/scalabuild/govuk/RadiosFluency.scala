@@ -75,6 +75,47 @@ trait RadiosFluency {
         items = items
       ).inline()
     }
+
+
+    def yesNoCustomIdSuffix(
+      field: Field,
+      legend: Legend,
+      yesId: String,
+      noId: String
+    )(implicit messages: Messages): Radios =
+      yesNoCustomIdSuffix(
+        field = field,
+        fieldset = FieldsetViewModel(legend),
+        yesId: String,
+        noId: String
+      )
+
+    def yesNoCustomIdSuffix(
+      field: Field,
+      fieldset: Fieldset,
+      yesId: String,
+      noId: String
+    )(implicit messages: Messages): Radios = {
+
+      val items = Seq(
+        RadioItem(
+          id = Some(s"${field.id}${yesId}"),
+          value = Some("true"),
+          content = Text(messages("site.yes"))
+        ),
+        RadioItem(
+          id = Some(s"${field.id}${noId}"),
+          value = Some("false"),
+          content = Text(messages("site.no"))
+        )
+      )
+
+      apply(
+        field = field,
+        fieldset = fieldset,
+        items = items
+      ).inline()
+    }
   }
 
   implicit class FluentRadios(radios: Radios) {
@@ -85,6 +126,6 @@ trait RadiosFluency {
     def inline(): Radios ={
       val newClass = "govuk-radios--inline"
       radios.copy(classes = s"${radios.classes} $newClass")
-}
+    }
   }
 }

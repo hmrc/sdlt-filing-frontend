@@ -26,14 +26,14 @@ class StartGuidanceViewSpec extends ViewTestFixture {
     "render the correct list items and link text" in {
 
       document.select("p").text  must include(messages("startGuidance.content.l1"))
-      document.select("li").text must include(messages("startGuidance.bullet.b1"))
-      document.select("li").text must include(messages("startGuidance.bullet.b2"))
-      document.select("li").text must include(messages("startGuidance.bullet.b3"))
-      document.select("li").text must include(messages("startGuidance.bullet.b4"))
-      document.select("li").text must include(messages("startGuidance.bullet.b5"))
-      document.select("li").text must include(messages("startGuidance.bullet.b6"))
-      document.getElementsByClass("govuk-link").text must include(messages("check the guidance"))
-      document.getElementsByClass("govuk-link").text must include(messages("different rules for a corporate body"))
+      bullet must include(messages("startGuidance.bullet.b1"))
+      bullet must include(messages("startGuidance.bullet.b2"))
+      bullet must include(messages("startGuidance.bullet.b3"))
+      bullet must include(messages("startGuidance.bullet.b4"))
+      bullet must include(messages("startGuidance.bullet.b5"))
+      bullet must include(messages("startGuidance.bullet.b6"))
+      linkText must include(messages("check the guidance"))
+      linkText must include(messages("different rules for a corporate body"))
     }
   }
 }

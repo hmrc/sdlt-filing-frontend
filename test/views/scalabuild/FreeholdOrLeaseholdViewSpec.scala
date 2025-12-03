@@ -29,5 +29,4 @@ class FreeholdOrLeaseholdViewSpec extends ViewTestFixture {
       buttonText mustBe  messages("site.continue")
     }
   }
-
 }

@@ -6,27 +6,28 @@
 package controllers.scalabuild
 
 import base.ScalaSpecBase
+import forms.scalabuild.ReplaceMainResidenceFormProvider
 import play.api.mvc.Call
-import forms.scalabuild.ResidentialOrNonResidentialFormProvider
-import models.scalabuild.PropertyType.Residential
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.scalabuild.ResidentialOrNonResidentialView
+import views.html.scalabuild.ReplaceMainResidenceView
 
-class ResidentialOrNonResidentialControllerSpec extends ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/property")
-  val formProvider = new ResidentialOrNonResidentialFormProvider()
+
+class ReplaceMainResidenceControllerSpec extends ScalaSpecBase {
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/replace-main-residence")
+  val formProvider = new ReplaceMainResidenceFormProvider()
   val form          = formProvider()
-  lazy val residentialOrNonResidentialRoute = routes.ResidentialOrNonResidentialController.onPageLoad().url
+  lazy val replaceMainResidenceRoute = controllers.scalabuild.routes.ReplaceMainResidenceController.onPageLoad().url
 
-  "Residential Or Non Residential Controller" - {
+  "Non UK Resident Controller" - {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder().build()
+
       running(application) {
-        val request = FakeRequest(GET, residentialOrNonResidentialRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val request = FakeRequest(GET, replaceMainResidenceRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
         val result = route(application, request).value
-        val view = application.injector.instanceOf[ResidentialOrNonResidentialView]
+        val view = application.injector.instanceOf[ReplaceMainResidenceView]
 
         status(result)          mustEqual OK
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
@@ -39,8 +40,8 @@ class ResidentialOrNonResidentialControllerSpec extends ScalaSpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, residentialOrNonResidentialRoute)
-            .withFormUrlEncodedBody(("value", Residential.toString)).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+          FakeRequest(POST, replaceMainResidenceRoute)
+            .withFormUrlEncodedBody(("replaceMainResidence", "true")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value
 
@@ -55,12 +56,12 @@ class ResidentialOrNonResidentialControllerSpec extends ScalaSpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, residentialOrNonResidentialRoute)
-            .withFormUrlEncodedBody(("value", "")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+          FakeRequest(POST, replaceMainResidenceRoute)
+            .withFormUrlEncodedBody(("replaceMainResidence", "")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = form.bind(Map("replaceMainResidence" -> ""))
 
-        val view = application.injector.instanceOf[ResidentialOrNonResidentialView]
+        val view = application.injector.instanceOf[ReplaceMainResidenceView]
 
         val result = route(application, request).value
 
