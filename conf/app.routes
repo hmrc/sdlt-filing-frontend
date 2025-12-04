@@ -154,3 +154,8 @@ GET        /about-the-purchaser/add-national-insurance-number                   
 POST       /about-the-purchaser/add-national-insurance-number                        controllers.purchaser.PurchaserNationalInsuranceController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/add-national-insurance-number/change                 controllers.purchaser.PurchaserNationalInsuranceController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/add-national-insurance-number/change                 controllers.purchaser.PurchaserNationalInsuranceController.onSubmit(mode: Mode = CheckMode)
+
+GET        /addPurchaserPhoneNumber                        controllers.AddPurchaserPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /addPurchaserPhoneNumber                        controllers.AddPurchaserPhoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAddPurchaserPhoneNumber                  controllers.AddPurchaserPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAddPurchaserPhoneNumber                  controllers.AddPurchaserPhoneNumberController.onSubmit(mode: Mode = CheckMode)
