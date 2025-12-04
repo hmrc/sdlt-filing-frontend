@@ -34,6 +34,8 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode)
     case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
+    case PurchaserFormOfIdIndividualPage =>
+      _ => routes.ReturnTaskListController.onPageLoad() // TODO: Update to pr-6 'Is the Purchaser a trustee?' in DTR-1682
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case WhoIsTheVendorPage =>
@@ -94,6 +96,7 @@ class Navigator @Inject()() {
 
     case PurchaserIsIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case PurchaserSurnameOrCompanyNamePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case PurchaserFormOfIdIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }

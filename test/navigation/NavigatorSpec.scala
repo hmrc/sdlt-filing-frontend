@@ -21,9 +21,8 @@ import controllers.routes
 import models.*
 import pages.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserDateOfBirthPage, PurchaserNationalInsurancePage, WhoIsMakingThePurchasePage}
+import pages.purchaser.*
 import pages.vendor.*
-import play.api.libs.json.Json
 
 class NavigatorSpec extends SpecBase {
 
@@ -115,6 +114,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
         }
 
+        "go from PurchaserFormOfIdIndividualPage to Return Task List Controller" in {
+          navigator.nextPage(PurchaserFormOfIdIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        }
+
         //        "go from addPhoneNumberPage to enterPhoneNumberPage" in {
         //          //TODO - add test once implemented on DTR-1591
         //          //          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
@@ -131,6 +134,7 @@ class NavigatorSpec extends SpecBase {
       "must go from any purchaser page to CheckYourAnswers" in {
         navigator.nextPage(WhoIsMakingThePurchasePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
         navigator.nextPage(NameOfPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserFormOfIdIndividualPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
       }
 
       "must go from any vendor page to VendorCheckYourAnswers" in {
