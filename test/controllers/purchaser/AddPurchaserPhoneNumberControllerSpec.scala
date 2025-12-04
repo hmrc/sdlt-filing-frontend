@@ -23,7 +23,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val addPurchaserPhoneNumberRoute = routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
+  lazy val addPurchaserPhoneNumberRoute = controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
 
   val formProvider = new AddPurchaserPhoneNumberFormProvider()
   val form = formProvider()

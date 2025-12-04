@@ -17,15 +17,15 @@
 package forms.purchaser
 
 import forms.mappings.Mappings
-import models.purchaser.AddPurchaserPhoneNumber
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class AddPurchaserPhoneNumberFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[AddPurchaserPhoneNumber] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[AddPurchaserPhoneNumber]("addPurchaserPhoneNumber.error.required")
+      "value" -> boolean("addPurchaserPhoneNumber.error.required")
     )
 }
+ 

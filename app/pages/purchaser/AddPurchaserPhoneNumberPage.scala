@@ -16,13 +16,13 @@
 
 package pages.purchaser
 
-import models.purchaser.AddPurchaserPhoneNumber
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object AddPurchaserPhoneNumberPage extends QuestionPage[AddPurchaserPhoneNumber] {
+case object AddPurchaserPhoneNumberPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "purchaserCurrent" \ toString
 
   override def toString: String = "addPurchaserPhoneNumber"
 }
+ 

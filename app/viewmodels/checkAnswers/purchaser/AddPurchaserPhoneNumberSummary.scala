@@ -26,23 +26,19 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AddPurchaserPhoneNumberSummary  {
+object AddPurchaserPhoneNumberSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(AddPurchaserPhoneNumberPage).map {
       answer =>
 
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"addPurchaserPhoneNumber.$answer"))
-          )
-        )
+        val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "addPurchaserPhoneNumber.checkYourAnswersLabel",
-          value   = value,
+          key = "addPurchaserPhoneNumber.checkYourAnswersLabel",
+          value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("addPurchaserPhoneNumber.change.hidden"))
           )
         )
