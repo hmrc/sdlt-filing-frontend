@@ -140,3 +140,8 @@ POST        /about-the-vendor/change/add-agent-reference-number                 
 
 GET         /about-the-vendor/check-answers                          controllers.vendor.VendorCheckYourAnswersController.onPageLoad()
 POST        /about-the-vendor/check-answers                          controllers.vendor.VendorCheckYourAnswersController.onSubmit()
+
+GET        /about-the-purchaser/does-purchaser-have-ni                         controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/does-purchaser-have-ni                         controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
