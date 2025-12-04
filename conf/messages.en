@@ -457,3 +457,11 @@ purchaser.doesPurchaserHaveNI.no = No
 purchaser.doesPurchaserHaveNI.checkYourAnswersLabel = Does the purchaser have a National Insurance number?
 purchaser.doesPurchaserHaveNI.error.required = Select yes or no
 purchaser.doesPurchaserHaveNI.change.hidden = Purchaser National Insurance number
+
+addPurchaserPhoneNumber.title = addPurchaserPhoneNumber
+addPurchaserPhoneNumber.heading = addPurchaserPhoneNumber
+addPurchaserPhoneNumber.option1 = Option 1
+addPurchaserPhoneNumber.option2 = Option 2
+addPurchaserPhoneNumber.checkYourAnswersLabel = addPurchaserPhoneNumber
+addPurchaserPhoneNumber.error.required = Select addPurchaserPhoneNumber
+addPurchaserPhoneNumber.change.hidden = AddPurchaserPhoneNumber

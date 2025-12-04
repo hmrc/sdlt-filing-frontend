@@ -145,3 +145,8 @@ GET        /about-the-purchaser/does-purchaser-have-ni                         c
 POST       /about-the-purchaser/does-purchaser-have-ni                         controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
+
+GET        /addPurchaserPhoneNumber                        controllers.AddPurchaserPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /addPurchaserPhoneNumber                        controllers.AddPurchaserPhoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAddPurchaserPhoneNumber                  controllers.AddPurchaserPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAddPurchaserPhoneNumber                  controllers.AddPurchaserPhoneNumberController.onSubmit(mode: Mode = CheckMode)
