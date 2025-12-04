@@ -55,13 +55,12 @@ class Navigator @Inject()() {
     case VendorAgentsReferencePage => // TODO: Should navigate to Agent Check Your Answers Page
       _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
 
-
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
   private def isPurchaserSection(page: Page): Boolean = page match {
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | AddPurchaserPhoneNumberPage | DoesPurchaserHaveNIPage => true
     case _ => false
   }
 
@@ -72,6 +71,8 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
     case DoesPurchaserHaveNIPage => //TODO: Should navigate to What is Purchaser NI page DTR-1626
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case AddPurchaserPhoneNumberPage =>
+      _ => controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -79,12 +80,12 @@ class Navigator @Inject()() {
     //TODO Change to correct CYA when created
     case WhoIsMakingThePurchasePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-    
+
     case VendorOrCompanyNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case AgentNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case WhoIsTheVendorPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case VendorRepresentedByAgentPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
-    
+
     case PurchaserIsIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case PurchaserSurnameOrCompanyNamePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()

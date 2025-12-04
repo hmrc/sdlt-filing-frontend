@@ -33,13 +33,13 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserAddressController @Inject()(
-                                  val controllerComponents: MessagesControllerComponents,
-                                  identify: IdentifierAction,
-                                  getData: DataRetrievalAction,
-                                  requireData: DataRequiredAction,
-                                  addressLookupService: AddressLookupService,
-                                  sessionRepository: SessionRepository
-                                )(implicit ec: ExecutionContext)
+                                            val controllerComponents: MessagesControllerComponents,
+                                            identify: IdentifierAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            addressLookupService: AddressLookupService,
+                                            sessionRepository: SessionRepository
+                                          )(implicit ec: ExecutionContext)
   extends FrontendBaseController
     with I18nSupport {
 
@@ -94,14 +94,14 @@ class PurchaserAddressController @Inject()(
 
   def addressLookupCallbackPurchaser(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-        for {
-          address <- addressLookupService.getAddressById(id)
-          updated <- addressLookupService.saveAddressDetails(address, PurchaserAddressPage)
-        } yield if(updated) {
-          Redirect(controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode))
-        } else {
-          Redirect(routes.JourneyRecoveryController.onPageLoad())
-        }
+      for {
+        address <- addressLookupService.getAddressById(id)
+        updated <- addressLookupService.saveAddressDetails(address, PurchaserAddressPage)
+      } yield if (updated) {
+        Redirect(controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode))
+      } else {
+        Redirect(routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   def addressLookupCallbackChangePurchaser(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -109,7 +109,7 @@ class PurchaserAddressController @Inject()(
       for {
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, PurchaserAddressPage)
-      } yield if(updated) {
+      } yield if (updated) {
         //change this when we have the check your answers page
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
