@@ -209,7 +209,23 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to PurchaserBeforeYouStartPage when user selects no" in {
+    "must redirect to purchaser name page when name is missing for a POST" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, doesPurchaserHaveNIRoute)
+            .withFormUrlEncodedBody(("value", DoesPurchaserHaveNI.values.head.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "redirect to PurchaserFormOfIdIndividualPage when user selects no" in {
 
       val application = applicationBuilder(userAnswers = Some(testUserAnswersIndividual)).build()
 
@@ -220,7 +236,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(NormalMode).url
       }
     }
 
