@@ -203,7 +203,7 @@ vendor.name.error.required = Nothing has been provided
 # Vendor Address Lookup
 addressLookup.vendorQuestionsAddress.lookupPage.title                   = Find {0}’s address - About the Vendor
 addressLookup.vendorQuestionsAddress.lookupPage.heading                 = Find {0}’s address
-addressLookup.vendorQuestionsAddress.lookupPage.filterLabel             = Property name or number
+addressLookup.vendorQuestionsAddress.lookupPage.filterLabel             = Property name or number (optional)
 addressLookup.vendorQuestionsAddress.lookupPage.submitLabel             = Continue
 addressLookup.vendorQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
 
@@ -248,7 +248,7 @@ genericError.heading = Generic Error (Content TBC)
 # Vendor Agent Address Lookup
 addressLookup.vendorAgentQuestionsAddress.lookupPage.title                   = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.lookupPage.heading                 = Find {0}’s address
-addressLookup.vendorAgentQuestionsAddress.lookupPage.filterLabel             = Property name or number
+addressLookup.vendorAgentQuestionsAddress.lookupPage.filterLabel             = Property name or number (optional)
 addressLookup.vendorAgentQuestionsAddress.lookupPage.submitLabel             = Continue
 addressLookup.vendorAgentQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
 
@@ -366,7 +366,7 @@ purchaser.individual.nameOfThePurchaser.surname = Surname
 # Purchaser Address Lookup
 addressLookup.purchaserQuestionsAddress.lookupPage.title                   = Find {0}’s address - About the purchaser
 addressLookup.purchaserQuestionsAddress.lookupPage.heading                 = Find {0}’s address
-addressLookup.purchaserQuestionsAddress.lookupPage.filterLabel             = Property name or number
+addressLookup.purchaserQuestionsAddress.lookupPage.filterLabel             = Property name or number (optional)
 addressLookup.purchaserQuestionsAddress.lookupPage.submitLabel             = Continue
 addressLookup.purchaserQuestionsAddress.lookupPage.manualAddressLinkText   = Enter the address manually
 
