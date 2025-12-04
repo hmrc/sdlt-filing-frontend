@@ -25,22 +25,22 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.AddPurchaserPhoneNumberView
+import views.html.purchaser.AddPurchaserPhoneNumberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddPurchaserPhoneNumberController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: AddPurchaserPhoneNumberFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: AddPurchaserPhoneNumberView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                   override val messagesApi: MessagesApi,
+                                                   sessionRepository: SessionRepository,
+                                                   navigator: Navigator,
+                                                   identify: IdentifierAction,
+                                                   getData: DataRetrievalAction,
+                                                   requireData: DataRequiredAction,
+                                                   formProvider: AddPurchaserPhoneNumberFormProvider,
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   view: AddPurchaserPhoneNumberView
+                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -65,7 +65,7 @@ class AddPurchaserPhoneNumberController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPurchaserPhoneNumberPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
       )
   }
