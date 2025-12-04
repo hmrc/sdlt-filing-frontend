@@ -22,7 +22,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, purchaserName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("addPurchaserPhoneNumber.title"))) {
 
@@ -37,7 +37,7 @@
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("addPurchaserPhoneNumber.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("addPurchaserPhoneNumber.heading", purchaserName)).asPageHeading(),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),
@@ -47,7 +47,7 @@
                         value = Some("false"),
                         content = Text(messages("site.no"))
                     )
-                )).withHint(HintViewModel(HtmlContent(Html(messages("addPurchaserPhoneNumber.hint", "Purchaser"))))
+                )).withHint(HintViewModel(HtmlContent(Html(messages("addPurchaserPhoneNumber.hint", purchaserName))))
             )
         )
 

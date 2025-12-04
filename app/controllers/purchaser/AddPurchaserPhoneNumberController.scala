@@ -20,7 +20,8 @@ import controllers.actions.*
 import forms.purchaser.AddPurchaserPhoneNumberFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.purchaser.AddPurchaserPhoneNumberPage
+import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage}
+import pages.vendor.VendorOrCompanyNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -47,26 +48,34 @@ class AddPurchaserPhoneNumberController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
+      val purchaserName: Option[String] = request.userAnswers
+        .get(NameOfPurchaserPage)
+        .map(_.name)
+      
       val preparedForm = request.userAnswers.get(AddPurchaserPhoneNumberPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode, purchaserName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+      val purchaserName: Option[String] = request.userAnswers
+        .get(NameOfPurchaserPage)
+        .map(_.name)
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPurchaserPhoneNumberPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
-      )
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, mode, purchaserName))),
+  
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPurchaserPhoneNumberPage, value))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
+        )
   }
 }
