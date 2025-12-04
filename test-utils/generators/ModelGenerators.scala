@@ -18,12 +18,17 @@ package generators
 
 import models.*
 import models.prelimQuestions.TransactionType
-import models.purchaser.{NameOfPurchaser, WhoIsMakingThePurchase}
+import models.purchaser.{DoesPurchaserHaveNI, NameOfPurchaser, WhoIsMakingThePurchase}
 import models.vendor.{DoYouKnowYourAgentReference, whoIsTheVendor}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryDoesPurchaserHaveNI: Arbitrary[DoesPurchaserHaveNI] =
+    Arbitrary {
+      Gen.oneOf(DoesPurchaserHaveNI.values.toSeq)
+    }
 
   implicit lazy val arbitraryWhoIsMakingThePurchase: Arbitrary[WhoIsMakingThePurchase] =
     Arbitrary {

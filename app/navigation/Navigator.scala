@@ -55,12 +55,13 @@ class Navigator @Inject()() {
     case VendorAgentsReferencePage => // TODO: Should navigate to Agent Check Your Answers Page
       _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
 
+
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
   private def isPurchaserSection(page: Page): Boolean = page match {
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage => true
     case _ => false
   }
 
@@ -69,6 +70,8 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
     case NameOfPurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+    case DoesPurchaserHaveNIPage => //TODO: Should navigate to What is Purchaser NI page DTR-1626
+      _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

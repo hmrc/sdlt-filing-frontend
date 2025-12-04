@@ -21,7 +21,7 @@ import controllers.routes
 import models.*
 import pages.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.purchaser.{NameOfPurchaserPage, WhoIsMakingThePurchasePage, ConfirmNameOfThePurchaserPage}
+import pages.purchaser.{ConfirmNameOfThePurchaserPage, DoesPurchaserHaveNIPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import pages.vendor.*
 import play.api.libs.json.Json
 
@@ -101,6 +101,11 @@ class NavigatorSpec extends SpecBase {
 
         "go from NameOfPurchaserPage to address lookup" in {
           navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        }
+
+        "go from DoesPurchaserHaveNIPage to ReturnTaskList" in {
+          //TODO: Should navigate to What is Purchaser NI page DTR-1626
+          navigator.nextPage(DoesPurchaserHaveNIPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
         }
       }
 
