@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package models.vendor
+package forms.purchaser
 
-import utils.FullName
-import play.api.libs.json.{Json, OFormat}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case class VendorName(forename1: Option[String], forename2: Option[String], name: String) extends FullName
+import javax.inject.Inject
 
-object VendorName {
-  implicit val format: OFormat[VendorName] = Json.format[VendorName]
+class AddPurchaserPhoneNumberFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("addPurchaserPhoneNumber.error.required")
+    )
 }
+ 

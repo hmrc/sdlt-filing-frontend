@@ -16,10 +16,15 @@
 
 package models.purchaser
 
+import utils.FullName
 import models.purchaser.NameOfPurchaser
 import play.api.libs.json.*
 
-case class NameOfPurchaser(forename1: Option[String], forename2: Option[String], name: String)
+case class NameOfPurchaser(
+                            forename1: Option[String],
+                            forename2: Option[String],
+                            name: String
+                          ) extends FullName
 
 object NameOfPurchaser {
   implicit val format: OFormat[NameOfPurchaser] = Json.format[NameOfPurchaser]

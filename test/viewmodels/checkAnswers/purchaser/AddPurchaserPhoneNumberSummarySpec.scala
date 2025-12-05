@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package models.vendor
+package viewmodels.checkAnswers.purchaser
 
-import utils.FullName
-import play.api.libs.json.{Json, OFormat}
+class AddPurchaserPhoneNumberSummarySpec {
 
-case class VendorName(forename1: Option[String], forename2: Option[String], name: String) extends FullName
-
-object VendorName {
-  implicit val format: OFormat[VendorName] = Json.format[VendorName]
 }
