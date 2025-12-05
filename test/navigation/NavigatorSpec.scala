@@ -21,7 +21,7 @@ import controllers.routes
 import models.*
 import pages.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, DoesPurchaserHaveNIPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import pages.purchaser.{ConfirmNameOfThePurchaserPage, DoesPurchaserHaveNIPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage, RegistrationNumberPage}
 import pages.vendor.*
 import play.api.libs.json.Json
 
@@ -144,6 +144,9 @@ class NavigatorSpec extends SpecBase {
 
         navigator.nextPage(NameOfPurchaserPage, NormalMode, userAnswers) mustBe
           controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        // Todo vat registration number
+       //  navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
+       //    controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
       }
 
       "must return false for non-purchaser section pages" in {

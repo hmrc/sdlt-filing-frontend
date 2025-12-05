@@ -72,6 +72,11 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
     case DoesPurchaserHaveNIPage => //TODO: Should navigate to What is Purchaser NI page DTR-1626
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case NameOfPurchaserPage=>
+    _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+    // todo
+   // case RegistrationNumberPage =>
+  //    _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

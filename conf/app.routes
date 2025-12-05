@@ -145,3 +145,8 @@ GET        /about-the-purchaser/does-purchaser-have-ni                         c
 POST       /about-the-purchaser/does-purchaser-have-ni                         controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-purchaser/vat-registration-number                        controllers.purchaser.RegistrationNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/vat-registration-number                        controllers.purchaser.RegistrationNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/change/vat-registration-number                  controllers.purchaser.RegistrationNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/change/vat-registration-number                  controllers.purchaser.RegistrationNumberController.onSubmit(mode: Mode = CheckMode)
