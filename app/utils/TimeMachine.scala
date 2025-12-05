@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package models.purchaser
+package utils
 
-import play.api.libs.json.*
-import utils.FullName
+import java.time.{Instant, LocalDate}
+import javax.inject.Singleton
 
-case class NameOfPurchaser(forename1: Option[String], forename2: Option[String], name: String) extends FullName
+@Singleton
+class TimeMachine {
 
-object NameOfPurchaser {
-  implicit val format: OFormat[NameOfPurchaser] = Json.format[NameOfPurchaser]
+  def today: LocalDate = LocalDate.now()
+
+  def instant: Instant = Instant.now()
+
 }

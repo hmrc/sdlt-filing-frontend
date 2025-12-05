@@ -61,7 +61,7 @@ class Navigator @Inject()() {
   }
 
   private def isPurchaserSection(page: Page): Boolean = page match {
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserDateOfBirthPage => true
     case _ => false
   }
 
@@ -72,8 +72,10 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
     case DoesPurchaserHaveNIPage =>
       _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
-    case PurchaserNationalInsurancePage => //TODO update to purchaser DOB
-      _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
+    case PurchaserNationalInsurancePage =>
+      _ => controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(NormalMode)
+    case PurchaserDateOfBirthPage =>  // TODO: Should redirect to pr-6 is the purchaser acting as a trustee
+      _ => controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
