@@ -16,9 +16,10 @@
 
 package models.vendor
 
+import models.FullName
 import play.api.libs.json.{Json, OFormat}
 
-case class VendorName(forename1: Option[String], forename2: Option[String], name: String)
+case class VendorName(forename1: Option[String], forename2: Option[String], name: String) extends FullName
 
 object VendorName {
   implicit val format: OFormat[VendorName] = Json.format[VendorName]

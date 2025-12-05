@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package models.purchaser
+package models
 
-import models.FullName
-import models.purchaser.NameOfPurchaser
-import play.api.libs.json.*
+trait FullName {
+  def forename1: Option[String]
 
-case class NameOfPurchaser(
-                            forename1: Option[String],
-                            forename2: Option[String],
-                            name: String
-                          ) extends FullName
+  def forename2: Option[String]
 
-object NameOfPurchaser {
-  implicit val format: OFormat[NameOfPurchaser] = Json.format[NameOfPurchaser]
+  def name: String
+
+  def fullName: String = (forename1, forename2, name) match {
+    case (Some(f1), Some(f2), sn) => s"$f1 $f2 $sn"
+    case (Some(f1), None, sn) => s"$f1 $sn"
+    case (None, _, sn) => sn
+  }
 }

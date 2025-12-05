@@ -17,143 +17,245 @@
 package controllers.purchaser
 
 import base.SpecBase
-import controllers.routes
+import constants.FullReturnConstants.emptyFullReturn
 import forms.purchaser.AddPurchaserPhoneNumberFormProvider
-import models.purchaser.AddPurchaserPhoneNumber
-import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{FullReturn, NormalMode, Purchaser, UserAnswers}
+import org.mockito.Mockito.{reset, when}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.AddPurchaserPhoneNumberPage
+import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.AddPurchaserPhoneNumberView
+import views.html.purchaser.AddPurchaserPhoneNumberView
 
 import scala.concurrent.Future
 
-class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
+class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
-  lazy val addPurchaserPhoneNumberRoute = controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSessionRepository)
+  }
+
+  lazy val addPurchaserPhoneNumberRoute: String = controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
 
   val formProvider = new AddPurchaserPhoneNumberFormProvider()
   val form = formProvider()
 
+  private val testStorn = "TESTSTORN"
+
+  private val individualPurchaser = Purchaser(
+    purchaserID = Some("PURCH001"),
+    forename1 = Some("John"),
+    forename2 = Some("Middle"),
+    surname = Some("Doe"),
+    companyName = None,
+    address1 = None,
+    address2 = None,
+    address3 = None,
+    address4 = None,
+    postcode = None
+  )
+
+  private val companyPurchaser = Purchaser(
+    purchaserID = Some("PURCH002"),
+    forename1 = None,
+    forename2 = None,
+    surname = None,
+    companyName = Some("ACME Corporation"),
+    address1 = None,
+    address2 = None,
+    address3 = None,
+    address4 = None,
+    postcode = None
+  )
+
+  private def fullReturnWithIndividualPurchaser: FullReturn =
+    emptyFullReturn.copy(purchaser = Some(Seq(individualPurchaser)))
+
+  private def fullReturnWithCompanyPurchaser: FullReturn =
+    emptyFullReturn.copy(purchaser = Some(Seq(companyPurchaser)))
+
+  val userAnswersWithIndividualPurchaser: UserAnswers =
+    UserAnswers(userAnswersId, storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
+      .set(NameOfPurchaserPage, individualPurchaser.toNameOfPurchaser).success.value
+      .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Individual).success.value
+
+  val userAnswersWithCompanyPurchaser: UserAnswers =
+    UserAnswers(userAnswersId, storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
+      .set(NameOfPurchaserPage, companyPurchaser.toNameOfPurchaser).success.value
+      .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Company).success.value
+
+  implicit class PurchaserOps(p: Purchaser) {
+    def toNameOfPurchaser = models.purchaser.NameOfPurchaser(p.forename1, p.forename2, p.surname.orElse(p.companyName).getOrElse(""))
+  }
+
   "AddPurchaserPhoneNumber Controller" - {
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(AddPurchaserPhoneNumberPage, AddPurchaserPhoneNumber.values.head).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
-
-        val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(AddPurchaserPhoneNumber.values.head), NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
+    "must return OK and correct view for individual purchaser" in {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIndividualPurchaser))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, addPurchaserPhoneNumberRoute)
-            .withFormUrlEncodedBody(("value", AddPurchaserPhoneNumber.values.head.toString))
+        val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
+        val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode, "John Middle Doe")(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and correct view for company purchaser" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithCompanyPurchaser))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
+        val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode, "ACME Corporation")(request, messages(application)).toString
+      }
+    }
+
+    "must populate the form when previously answered" in {
+      val ua = userAnswersWithIndividualPurchaser
+        .set(AddPurchaserPhoneNumberPage, true).success.value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
+        val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, "John Middle Doe")(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to PurchaserPhoneNumberController if Yes for individual purchaser" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIndividualPurchaser))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual
+          controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must redirect to DoesPurchaserHaveNIController if No for individual purchaser" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIndividualPurchaser))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, addPurchaserPhoneNumberRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
+          .withFormUrlEncodedBody(("value", "false"))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val result = route(application, request).value
 
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+        //        controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to PurchaserBeforeYouStartController if No for company purchaser" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithCompanyPurchaser))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
+          .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+      }
+    }
+
+    "must return BadRequest for invalid data" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithCompanyPurchaser))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
+          .withFormUrlEncodedBody(("value", "invalid"))
+
+        val boundForm = form.bind(Map("value" -> "invalid"))
         val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "ACME Corporation")(request, messages(application)).toString
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
+    "must redirect to Journey Recovery if no existing data" in {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
-    "redirect to Journey Recovery for a POST if no existing data is found" in {
-
+    "must redirect to Journey Recovery if no existing data" in {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, addPurchaserPhoneNumberRoute)
-            .withFormUrlEncodedBody(("value", AddPurchaserPhoneNumber.values.head.toString))
+        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

@@ -18,10 +18,10 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.AddPurchaserPhoneNumberFormProvider
-import models.Mode
+import models.purchaser.WhoIsMakingThePurchase
+import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage}
-import pages.vendor.VendorOrCompanyNamePage
+import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -48,34 +48,66 @@ class AddPurchaserPhoneNumberController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val purchaserName: Option[String] = request.userAnswers
-        .get(NameOfPurchaserPage)
-        .map(_.name)
-      
-      val preparedForm = request.userAnswers.get(AddPurchaserPhoneNumberPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      request.userAnswers.get(NameOfPurchaserPage) match {
+        case None =>
+          Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 
-      Ok(view(preparedForm, mode, purchaserName))
+        case Some(purchaser) =>
+          val purchaserName = purchaser.fullName
+
+          val preparedForm = request.userAnswers.get(AddPurchaserPhoneNumberPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          Ok(view(preparedForm, mode, purchaserName))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val purchaserName: Option[String] = request.userAnswers
-        .get(NameOfPurchaserPage)
-        .map(_.name)
+      request.userAnswers.get(NameOfPurchaserPage) match {
+        case None =>
+          Future.successful(
+            Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode))
+          )
 
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, mode, purchaserName))),
-  
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPurchaserPhoneNumberPage, value))
-              _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
-        )
+        case Some(purchaser) =>
+          val purchaserName: String = purchaser.fullName
+
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, purchaserName))),
+
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPurchaserPhoneNumberPage, value))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield {
+                (value, updatedAnswers.get(WhoIsMakingThePurchasePage)) match {
+
+                  // If the user answered Yes → go to next page
+                  case (true, _) =>
+                    Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
+                  //TODO - Update to DTR-1591 path on completion
+                  // Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
+
+                  case (false, Some(WhoIsMakingThePurchase.Individual)) =>
+                    Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
+                  //TODO - Update to DTR-1594 path on completion
+                  // Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
+
+                  case (false, Some(WhoIsMakingThePurchase.Company)) =>
+                    //TODO - Update to DTR-1603 path on completion
+                    Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
+                  // Redirect(controllers.purchaser.routes.WhatInformationWouldYouLikeToShare.onPageLoad(mode))
+
+                  case _ =>
+                    Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
+                }
+              }
+          )
+      }
   }
 }
