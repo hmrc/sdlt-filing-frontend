@@ -16,7 +16,7 @@
 
 package models.purchaser
 
-import models.FullName
+import utils.FullName
 import models.purchaser.NameOfPurchaser
 import play.api.libs.json.*
 
