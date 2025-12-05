@@ -53,7 +53,7 @@ class PurchaserAddressController @Inject()(
 
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          val fullName = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
+          val fullName = userAnswers.get(NameOfPurchaserPage).map(_.fullName)
 
           fullName match {
             case Some(name) =>
