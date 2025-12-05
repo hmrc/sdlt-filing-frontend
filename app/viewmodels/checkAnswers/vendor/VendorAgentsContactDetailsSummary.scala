@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.vendor
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.vendor.VendorAgentsContactDetailsPage
+import pages.vendor.{VendorAgentAddressPage, VendorAgentsContactDetailsPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -28,19 +28,49 @@ import viewmodels.implicits.*
 
 object VendorAgentsContactDetailsSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(VendorAgentsContactDetailsPage).map {
-      answer =>
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(VendorAgentsContactDetailsPage)).map { answer =>
+        val value: Option[String] = (answer.phoneNumber, answer.emailAddress) match {
+          case (Some(phone), Some(email)) =>
+            Some(HtmlFormat.escape(phone).toString + "<br/>" + HtmlFormat.escape(email).toString)
+          case (_, Some(email)) =>
+            Some(HtmlFormat.escape(email).toString)
+          case (Some(phone), _) =>
+            Some(HtmlFormat.escape(phone).toString)
+          case _ =>
+            None
+        }
 
-      val value = HtmlFormat.escape(answer.phoneNumber).toString + "<br/>" + HtmlFormat.escape(answer.emailAddress).toString
+        value match {
+          case Some(details) =>
+            SummaryListRowViewModel(
+              key = "vendorAgentsContactDetails.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlContent(details)),
+              actions = Seq(
+                ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("vendorAgentsContactDetails.change.hidden"))
+              )
+            )
+          case _ =>
+            SummaryListRowViewModel(
+              key = "vendorAgentsContactDetails.checkYourAnswersLabel",
+              value = ValueViewModel(HtmlContent("-")),
+              actions = Seq(
+                ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("vendorAgentsContactDetails.change.hidden"))
+              )
+            )
+        }
+    }.getOrElse{
 
-        SummaryListRowViewModel(
-          key     = "vendorAgentsContactDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(value)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendorAgentsContactDetails.change.hidden"))
-          )
-        )
-    }
+    val value = ValueViewModel(
+      HtmlContent(
+        s"""<a href="${controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendor.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
+    )
+
+    SummaryListRowViewModel(
+      key = "vendorAgentsContactDetails.checkYourAnswersLabel",
+      value = value
+    )
+  }
 }

@@ -446,6 +446,7 @@ vendor.checkYourAnswers.agentName.label = Agent name
 vendor.checkYourAnswers.agentName.agentMissing = Enter agent name
 vendor.checkYourAnswers.agentAddress.label = Agent address
 vendor.checkYourAnswers.agentName.agentAddressMissing = Enter agent address
+vendor.checkYourAnswers.agentContactDetails.agentDetailsMissing = Enter agent details
 
 purchaser.doesPurchaserHaveNI.title = Does the purchaser have a National Insurance number? – About the purchaser
 purchaser.doesPurchaserHaveNI.heading = Does {0} have a National Insurance number?

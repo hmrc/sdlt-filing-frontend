@@ -18,6 +18,7 @@ package forms.vendor
 
 import forms.behaviours.StringFieldBehaviours
 import forms.vendor.VendorAgentsContactDetailsFormProvider
+import models.vendor.VendorAgentsContactDetails
 import play.api.data.FormError
 
 class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
@@ -27,17 +28,9 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
   ".phoneNumber" - {
 
     val fieldName = "phoneNumber"
-    val requiredKey = "vendorAgentsContactDetails.error.agentPhoneNumber.required"
     val lengthKey = "vendorAgentsContactDetails.error.agentPhoneNumber.length"
     val invalidKey = "vendorAgentsContactDetails.error.agentPhoneNumber.invalid"
     val maxLength = 14
-
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
 
     "must bind valid phone number form data" in {
       val validNumbers = Seq(
@@ -58,12 +51,34 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
       validNumbers.foreach { number =>
         val result = form.bind(
           Map(
-          fieldName -> number,
-          "emailAddress" -> "test@example.com"
+            fieldName -> number,
+            "emailAddress" -> "test@example.com"
           )
         )
         result.errors mustBe empty
+        result.get.phoneNumber mustBe Some(number)
       }
+    }
+
+    "must bind empty strings as None" in {
+      val result = form.bind(
+        Map(
+          fieldName -> "",
+          "emailAddress" -> "test@example.com"
+        )
+      )
+      result.errors mustBe empty
+      result.get.phoneNumber mustBe None
+    }
+
+    "must bind when field is missing" in {
+      val result = form.bind(
+        Map(
+          "emailAddress" -> "test@example.com"
+        )
+      )
+      result.errors mustBe empty
+      result.get.phoneNumber mustBe None
     }
 
     "must not bind strings longer than 14 characters" in {
@@ -75,16 +90,6 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
         )
       )
       result.errors must contain(FormError(fieldName, lengthKey, Seq(maxLength)))
-    }
-
-    "must not bind empty strings" in {
-      val result = form.bind(
-        Map(
-          fieldName -> "",
-          "emailAddress" -> "test@example.com"
-        )
-      )
-      result.errors must contain(FormError(fieldName, requiredKey))
     }
 
     "must not bind invalid phone number values" in {
@@ -115,7 +120,7 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
       }
     }
 
-    "must not bind string that is only whitespace or tabs" in {
+    "must bind string that is only whitespace as None" in {
       val whiteSpace = Seq(
         " ",
         "            ",
@@ -130,9 +135,8 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
             "emailAddress" -> "test@example.com"
           )
         )
-        result.errors must contain(
-          FormError(fieldName, requiredKey)
-        )
+        result.errors mustBe empty
+        result.get.phoneNumber mustBe None
       }
     }
   }
@@ -140,17 +144,9 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
   ".emailAddress" - {
 
     val fieldName = "emailAddress"
-    val requiredKey = "vendorAgentsContactDetails.error.agentEmailAddress.required"
     val lengthKey = "vendorAgentsContactDetails.error.agentEmailAddress.length"
     val invalidKey = "vendorAgentsContactDetails.error.agentEmailAddress.invalid"
     val maxLength = 36
-
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
 
     "must bind valid email address form data" in {
       val validEmails = Seq(
@@ -173,28 +169,58 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
           )
         )
         result.errors mustBe empty
+        result.get.emailAddress mustBe Some(email)
       }
     }
 
-    "must not bind strings longer than 36 characters" in {
-      val longEmail = "1" * (maxLength + 1)
-      val result = form.bind(
-        Map(
-          fieldName -> longEmail,
-          "phoneNumber" -> "123456789"
-        )
-      )
-      result.errors must contain(FormError(fieldName, lengthKey, Seq(maxLength)))
-    }
-
-    "must not bind empty strings" in {
+    "must bind empty strings as None" in {
       val result = form.bind(
         Map(
           fieldName -> "",
           "phoneNumber" -> "123456789"
         )
       )
-      result.errors must contain(FormError(fieldName, requiredKey))
+      result.errors mustBe empty
+      result.get.emailAddress mustBe None
+    }
+
+    "must bind when field is missing" in {
+      val result = form.bind(
+        Map(
+          "phoneNumber" -> "123456789"
+        )
+      )
+      result.errors mustBe empty
+      result.get.emailAddress mustBe None
+    }
+
+    "must bind when both fields are empty" in {
+      val result = form.bind(
+        Map(
+          "phoneNumber" -> "",
+          "emailAddress" -> ""
+        )
+      )
+      result.errors mustBe empty
+      result.get mustBe VendorAgentsContactDetails(None, None)
+    }
+
+    "must bind when both fields are missing" in {
+      val result = form.bind(Map.empty[String, String])
+      result.errors mustBe empty
+      result.get mustBe VendorAgentsContactDetails(None, None)
+    }
+
+    "must not bind strings longer than 36 characters" in {
+      val longEmail = ("a" * maxLength) + "@test.com"
+      val result = form.bind(
+        Map(
+          fieldName -> longEmail,
+          "phoneNumber" -> "123456789"
+        )
+      )
+
+      result.errors must contain(FormError(fieldName, lengthKey, Seq(maxLength)))
     }
 
     "must not bind invalid email address values" in {
@@ -224,7 +250,7 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
       }
     }
 
-    "must not bind string that is only whitespace or tabs" in {
+    "must bind string that is only whitespace as None" in {
       val whiteSpace = Seq(
         " ",
         "            ",
@@ -239,10 +265,11 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
             "phoneNumber" -> "123456789"
           )
         )
-        result.errors must contain(
-          FormError(fieldName, requiredKey)
-        )
+        result.errors mustBe empty
+        result.get.emailAddress mustBe None
       }
     }
   }
+
+
 }

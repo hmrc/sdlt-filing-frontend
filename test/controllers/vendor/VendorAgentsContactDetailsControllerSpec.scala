@@ -108,7 +108,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       )
 
       val userAnswers = userAnswersWithAgentDetails
-        .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails("value1", "value2")).success.value
+        .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(Some("value1"), Some("value2"))).success.value
         .copy(fullReturn = Some(fullReturnWithNonVendorAgent))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -124,7 +124,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          form.fill(VendorAgentsContactDetails("value1", "value2")), NormalMode, agentName
+          form.fill(VendorAgentsContactDetails(Some("value1"), Some("value2"))), NormalMode, agentName
         )(request, messages(application)).toString
       }
     }
@@ -155,7 +155,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must return a Bad Request and errors when no data is submitted" in {
+    "must redirect when no data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithAgentDetails)).build()
 
@@ -178,8 +178,9 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         val result = route(application, request).value
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, agentName)(request, messages(application)).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode).url
+
       }
     }
 
@@ -299,12 +300,12 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
           FakeRequest(POST, vendorAgentsContactDetailsRoute)
             .withFormUrlEncodedBody(
               ("phoneNumber", ""),
-              ("emailAddress", "")
+              ("emailAddress", "notandemail")
             )
 
         val boundForm = form.bind(Map(
           "phoneNumber" -> "",
-          "emailAddress" -> ""
+          "emailAddress" -> "notandemail"
         ))
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
