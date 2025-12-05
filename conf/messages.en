@@ -457,3 +457,12 @@ purchaser.doesPurchaserHaveNI.no = No
 purchaser.doesPurchaserHaveNI.checkYourAnswersLabel = Does the purchaser have a National Insurance number?
 purchaser.doesPurchaserHaveNI.error.required = Select yes or no
 purchaser.doesPurchaserHaveNI.change.hidden = Purchaser National Insurance number
+
+purchaserNationalInsurance.title                                        = What is the purchaser’s National Insurance number? - About the purchaser
+purchaserNationalInsurance.heading                                      = What is {0}’s national insurance number?
+purchaserNationalInsurance.hint                                         = It’s on their National Insurance card, benefit letter, payslip or P60 - for example, QQ 12 34 56 C
+purchaserNationalInsurance.checkYourAnswersLabel                        = purchaserNationalInsurance
+purchaserNationalInsurance.error.required                               = Please enter the national insurance number
+purchaserNationalInsurance.error.length                                 = National insurance number must be {0} characters or less
+purchaserNationalInsurance.error.invalid                                = Please enter a valid national insurance number
+purchaserNationalInsurance.change.hidden                                = PurchaserNationalInsurance

@@ -61,7 +61,7 @@ class Navigator @Inject()() {
   }
 
   private def isPurchaserSection(page: Page): Boolean = page match {
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage => true
     case _ => false
   }
 
@@ -70,8 +70,10 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
     case NameOfPurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
-    case DoesPurchaserHaveNIPage => //TODO: Should navigate to What is Purchaser NI page DTR-1626
-      _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case DoesPurchaserHaveNIPage =>
+      _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
+    case PurchaserNationalInsurancePage => //TODO update to purchaser DOB
+      _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
