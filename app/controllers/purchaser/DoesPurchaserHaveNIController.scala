@@ -57,31 +57,34 @@ class DoesPurchaserHaveNIController @Inject()(
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, mode, Some(purchaserName.name)))
+          Ok(view(preparedForm, mode, purchaserName.fullName))
       }
   }
 
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      request.userAnswers.get(NameOfPurchaserPage) match {
+        case None =>
+          Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
+        case Some(purchaserName) =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, purchaserName.fullName))),
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, None))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DoesPurchaserHaveNIPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (value.toString.equals("yes")) {
-              Redirect(navigator.nextPage(DoesPurchaserHaveNIPage, mode, updatedAnswers))
-            } else {
-              //TODO Change redirect to confirm purchaser identity page
-              Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
-            }
-          }
-      )
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoesPurchaserHaveNIPage, value))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield {
+                if (value.toString.equals("yes")) {
+                  Redirect(navigator.nextPage(DoesPurchaserHaveNIPage, mode, updatedAnswers))
+                } else {
+                  //TODO Change redirect to confirm purchaser identity page
+                  Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
+                }
+              }
+          )
+      }
   }
 }
-

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package models.purchaser
+package pages.purchaser
 
-import play.api.libs.json.*
-import utils.FullName
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class NameOfPurchaser(forename1: Option[String], forename2: Option[String], name: String) extends FullName
+case object PurchaserNationalInsurancePage extends QuestionPage[String] {
 
-object NameOfPurchaser {
-  implicit val format: OFormat[NameOfPurchaser] = Json.format[NameOfPurchaser]
+  override def path: JsPath = JsPath \ "purchaserCurrent" \ toString
+
+  override def toString: String = "nationalInsuranceNumber"
 }

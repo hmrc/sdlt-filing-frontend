@@ -14,33 +14,35 @@
  * limitations under the License.
  *@
 
-@import viewmodels.LegendSize.Large
-@import models.purchaser.DoesPurchaserHaveNI
+@import viewmodels.InputWidth._
+@import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
     govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaser.doesPurchaserHaveNI.title"))) {
+@layout(pageTitle = title(form, messages("purchaserNationalInsurance.title"))) {
 
-    @formHelper(action = controllers.purchaser.routes.DoesPurchaserHaveNIController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.purchaser.routes.PurchaserNationalInsuranceController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("purchaser.doesPurchaserHaveNI.caption")</span>
-        @govukRadios(
-            RadiosViewModel(
-                field  = form("value"),
-                legend = LegendViewModel(messages("purchaser.doesPurchaserHaveNI.heading", purchaserName)).asPageHeading(size = Large),
-                items  = DoesPurchaserHaveNI.options
+
+        <span class="govuk-caption-l">@messages("purchaser.caption")</span>
+        @govukInput(
+            InputViewModel(
+                field = form("nationalInsuranceNumber"),
+                label = LabelViewModel(messages("purchaserNationalInsurance.heading", purchaserName)).asPageHeading(size = Large)
             )
+            .withWidth(Full)
+            .withHint(HintViewModel(HtmlContent(Html(messages("purchaserNationalInsurance.hint")))))
         )
 
         @govukButton(
