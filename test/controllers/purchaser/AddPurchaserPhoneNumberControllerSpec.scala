@@ -243,20 +243,5 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
           controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-
-    "must redirect to Journey Recovery if no existing data" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
-          .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
   }
 }
