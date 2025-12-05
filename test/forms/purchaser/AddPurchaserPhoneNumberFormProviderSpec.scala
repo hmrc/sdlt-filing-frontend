@@ -16,25 +16,30 @@
 
 package forms.purchaser
 
-import forms.behaviours.OptionFieldBehaviours
+import forms.behaviours.BooleanFieldBehaviours
 import forms.purchaser.AddPurchaserPhoneNumberFormProvider
-import models.purchaser.AddPurchaserPhoneNumber
 import play.api.data.FormError
 
-class AddPurchaserPhoneNumberFormProviderSpec extends OptionFieldBehaviours {
+class AddPurchaserPhoneNumberFormProviderSpec extends BooleanFieldBehaviours {
 
+  val requiredKey = "addPurchaserPhoneNumber.error.required"
+  val invalidKey = "error.boolean"
+  
   val form = new AddPurchaserPhoneNumberFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "addPurchaserPhoneNumber.error.required"
 
-    behave like optionsField[AddPurchaserPhoneNumber](
+    "must bind true and false values correctly" in {
+      form.bind(Map(fieldName -> "true")).get mustBe true
+      form.bind(Map(fieldName -> "false")).get mustBe false
+    }
+
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = AddPurchaserPhoneNumber.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

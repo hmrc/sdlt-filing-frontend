@@ -29,6 +29,7 @@ class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
   val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+
   case object UnknownPage extends Page
 
   "Navigator" - {

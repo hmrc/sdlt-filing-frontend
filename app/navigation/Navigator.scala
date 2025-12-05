@@ -73,6 +73,7 @@ class Navigator @Inject()() {
     case DoesPurchaserHaveNIPage => //TODO: Should navigate to What is Purchaser NI page DTR-1626
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case AddPurchaserPhoneNumberPage =>
+      //TODO - update to DTR-1591 route when completed
       _ => controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode)
     case DoesPurchaserHaveNIPage =>
       _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)

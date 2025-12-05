@@ -18,6 +18,7 @@ package generators
 
 import models.*
 import models.prelimQuestions.TransactionType
+import models.purchaser.{NameOfPurchaser, WhoIsMakingThePurchase}
 import models.purchaser.{DoesPurchaserHaveNI, NameOfPurchaser, WhoIsMakingThePurchase}
 import models.vendor.{DoYouKnowYourAgentReference, whoIsTheVendor}
 import org.scalacheck.Arbitrary.arbitrary
