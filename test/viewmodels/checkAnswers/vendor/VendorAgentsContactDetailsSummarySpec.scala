@@ -22,13 +22,12 @@ import models.vendor.VendorAgentsContactDetails
 import pages.vendor.VendorAgentsContactDetailsPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
   "VendorAgentsContactDetailsSummary" - {
 
-    "when contact details are present" - {
+    "when both phone number and email address are present" - {
 
       "must return a summary list row with phone number and email address" in {
 
@@ -38,14 +37,15 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails("123456", "test@example.com")).success.value
+            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(Some("123456"), Some("test@example.com"))).success.value
 
-          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml must include("123456")
+          valueHtml must include("<br/>")
           valueHtml must include("test@example.com")
 
           result.actions.get.items.size mustEqual 1
@@ -63,11 +63,134 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails("123456", "test@example.com")).success.value
+            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(Some("123456"), Some("test@example.com"))).success.value
 
-          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
 
           result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+        }
+      }
+    }
+
+    "when only phone number is present" - {
+
+      "must return a summary list row with only phone number" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(Some("123456"), None)).success.value
+
+          val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgentsContactDetails.checkYourAnswersLabel")
+
+          val valueHtml = result.value.content.asHtml.toString()
+          valueHtml must include("123456")
+          valueHtml mustNot include("<br/>")
+          valueHtml mustNot include("test@example.com")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+        }
+      }
+    }
+
+    "when only email address is present" - {
+
+      "must return a summary list row with only email address" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(None, Some("test@example.com"))).success.value
+
+          val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgentsContactDetails.checkYourAnswersLabel")
+
+          val valueHtml = result.value.content.asHtml.toString()
+          valueHtml must include("test@example.com")
+          valueHtml mustNot include("<br/>")
+          valueHtml mustNot include("123456")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+        }
+      }
+    }
+
+    "when both fields are None" - {
+
+      "must return a summary list row with dash" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(None, None)).success.value
+
+          val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgentsContactDetails.checkYourAnswersLabel")
+
+          val valueHtml = result.value.content.asHtml.toString()
+          valueHtml must include("-")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+        }
+      }
+    }
+
+    "when contact details page is not answered" - {
+
+      "must return a summary list row with missing link" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val result = VendorAgentsContactDetailsSummary.row(Some(emptyUserAnswers))
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgentsContactDetails.checkYourAnswersLabel")
+
+          val valueHtml = result.value.content.asHtml.toString()
+          valueHtml must include(controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+          valueHtml must include(msgs("vendor.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
+          valueHtml must include("govuk-link")
+
+
+          result.actions mustBe None
+        }
+      }
+    }
+
+    "when userAnswers is None" - {
+
+      "must return a summary list row with missing link" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val result = VendorAgentsContactDetailsSummary.row(None)
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgentsContactDetails.checkYourAnswersLabel")
+
+          val valueHtml = result.value.content.asHtml.toString()
+          valueHtml must include(controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+          valueHtml must include(msgs("vendor.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
         }
       }
     }

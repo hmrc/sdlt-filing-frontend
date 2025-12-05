@@ -19,7 +19,7 @@ package models.vendor
 import models.vendor.VendorAgentsContactDetails
 import play.api.libs.json.*
 
-case class VendorAgentsContactDetails (phoneNumber: String, emailAddress: String)
+case class VendorAgentsContactDetails (phoneNumber: Option[String], emailAddress: Option[String])
 
 object VendorAgentsContactDetails {
 

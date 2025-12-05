@@ -19,7 +19,7 @@ package forms.vendor
 import forms.mappings.Mappings
 import models.vendor.VendorAgentsContactDetails
 import play.api.data.Form
-import play.api.data.Forms.mapping
+import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 import scala.util.matching.Regex
@@ -33,16 +33,15 @@ class VendorAgentsContactDetailsFormProvider @Inject() extends Mappings {
   private val formEmailRegex = "^[^@|<>\"'`]+@[^@|<>\"'`]+$"
 
 
-   def apply(): Form[VendorAgentsContactDetails] = Form(
-
-     mapping(
-      "phoneNumber" -> text("vendorAgentsContactDetails.error.agentPhoneNumber.required")
-        .verifying(maxLength(agentNumberMaxLength,"vendorAgentsContactDetails.error.agentPhoneNumber.length"))
-        .verifying(regexp(formNumberRegex, "vendorAgentsContactDetails.error.agentPhoneNumber.invalid")),
-
-       "emailAddress" -> text("vendorAgentsContactDetails.error.agentEmailAddress.required")
-        .verifying(maxLength(agentEmailMaxLength, "vendorAgentsContactDetails.error.agentEmailAddress.length"))
-         .verifying(regexp(formEmailRegex, "vendorAgentsContactDetails.error.agentEmailAddress.invalid"))
+  def apply(): Form[VendorAgentsContactDetails] = Form(
+    mapping(
+      "phoneNumber" -> optionalText()
+        .verifying(optionalMaxLength(agentNumberMaxLength,"vendorAgentsContactDetails.error.agentPhoneNumber.length"))
+        .verifying(optionalRegexp(formNumberRegex, "vendorAgentsContactDetails.error.agentPhoneNumber.invalid"))
+      ,
+      "emailAddress" -> optionalText()
+        .verifying(optionalMaxLength(agentEmailMaxLength, "vendorAgentsContactDetails.error.agentEmailAddress.length"))
+        .verifying(optionalRegexp(formEmailRegex, "vendorAgentsContactDetails.error.agentEmailAddress.invalid"))
     )(VendorAgentsContactDetails.apply)(x => Some((x.phoneNumber, x.emailAddress)))
-   )
+  )
  }
