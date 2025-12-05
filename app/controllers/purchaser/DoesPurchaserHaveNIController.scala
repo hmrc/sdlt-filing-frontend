@@ -80,8 +80,7 @@ class DoesPurchaserHaveNIController @Inject()(
                 if (value.toString.equals("yes")) {
                   Redirect(navigator.nextPage(DoesPurchaserHaveNIPage, mode, updatedAnswers))
                 } else {
-                  //TODO Change redirect to confirm purchaser identity page
-                  Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
+                  Redirect(controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(mode))
                 }
               }
           )

@@ -20,10 +20,9 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.purchaserQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
-import models.{Mode, NormalMode, Vendor}
-import pages.purchaser.PurchaserAddressPage
+import models.{Mode, NormalMode}
+import pages.purchaser.{NameOfPurchaserPage, PurchaserAddressPage}
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.AddressLookupService
@@ -54,17 +53,7 @@ class PurchaserAddressController @Inject()(
 
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          val purchaserData = userAnswers.data \ "purchaserCurrent" \ "nameOfPurchaser"
-          val forename1 = (purchaserData \ "forename1").asOpt[String]
-          val forename2 = (purchaserData \ "forename2").asOpt[String]
-          val name = (purchaserData \ "name").asOpt[String]
-
-          val fullName = (forename1, forename2, name) match {
-            case (Some(f1), Some(f2), Some(sn)) => Some(s"$f1 $f2 $sn")
-            case (Some(f1), None, Some(sn)) => Some(s"$f1 $sn")
-            case (None, None, Some(sn)) => Some(sn)
-            case _ => None
-          }
+          val fullName = userAnswers.get(NameOfPurchaserPage).map(_.fullName)
 
           fullName match {
             case Some(name) =>

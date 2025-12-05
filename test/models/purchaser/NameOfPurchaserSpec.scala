@@ -16,7 +16,6 @@
 
 package models.purchaser
 
-import models.purchaser.NameOfPurchaser
 import org.scalatest.EitherValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -178,6 +177,30 @@ class NameOfPurchaserSpec extends AnyFreeSpec with Matchers with EitherValues {
 
           result mustEqual nameOfPurchaserWithPartialOptional
         }
+      }
+    }
+
+    ".fullName" - {
+      "must concatenate forename1, forename2, and name with spaces" in {
+        nameOfPurchaserWithOptional.fullName mustBe "John Michael Smith"
+      }
+
+      "must handle missing forename2" in {
+        nameOfPurchaserWithPartialOptional.fullName mustBe "John Smith"
+      }
+
+      "must handle missing forename1 and forename2" in {
+        nameOfPurchaserWithNoOptional.fullName mustBe "Smith"
+      }
+
+      "must handle missing forename1" in {
+        val nameOfPurchaser = NameOfPurchaser(
+          forename1 = None,
+          forename2 = Some("Michael"),
+          name = "Smith"
+        )
+
+        nameOfPurchaser .fullName mustBe "Smith"
       }
     }
   }

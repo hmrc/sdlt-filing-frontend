@@ -1,0 +1,95 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels.InputWidth._
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    h1: h1,
+    p: Paragraph,
+    govukFieldset: GovukFieldset,
+    hmrcPageHeading: HmrcPageHeading,
+    govukButton: GovukButton
+)
+
+@(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("purchaserFormOfIdIndividual.title"), Some(messages("purchaser.common.caption")))) {
+
+    @formHelper(action = controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @govukFieldset(
+            Fieldset(
+                legend = Some(
+                    Legend(
+                        content = HtmlContent(
+                            HtmlFormat.fill(Seq(
+                                hmrcPageHeading(PageHeading(
+                                    text = messages("purchaserFormOfIdIndividual.heading", purchaserName),
+                                    headingClasses = Some("govuk-heading-l"),
+                                    captionClasses = Some("govuk-caption-l"),
+                                    section = Some(messages("purchaser.common.caption"))
+                                ))
+                            ))
+                        ),
+                        classes = "govuk-fieldset__legend--l"
+                    )
+                ),
+                html = HtmlFormat.fill(Seq(
+                    p(messages("purchaserFormOfIdIndividual.p1", purchaserName)),
+                    p(messages("purchaserFormOfIdIndividual.p2")),
+                    Html(
+                        s"""<ul class="govuk-list govuk-list--bullet">
+                            <li>${messages("purchaserFormOfIdIndividual.li1")}</li>
+                            <li>${messages("purchaserFormOfIdIndividual.li2")}</li>
+                            <li>${messages("purchaserFormOfIdIndividual.li3")}</li>
+                            <li>${messages("purchaserFormOfIdIndividual.li4")}</li>
+                            <li>${messages("purchaserFormOfIdIndividual.li5")}</li>
+                        </ul>"""
+                    ),
+                    govukInput(
+                        InputViewModel(
+                            field = form("idNumberOrReference"),
+                            label = LabelViewModel(messages("purchaserFormOfIdIndividual.idNumberOrReference"))
+                        )
+                        .withWidth(Full)
+                    ),
+                    govukInput(
+                        InputViewModel(
+                            field = form("countryIssued"),
+                            label = LabelViewModel(messages("purchaserFormOfIdIndividual.countryIssued"))
+                        )
+                        .withWidth(Full)
+                    )
+                ))
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
+    }
+}
