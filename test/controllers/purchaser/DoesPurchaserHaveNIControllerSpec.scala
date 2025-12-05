@@ -96,11 +96,9 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[DoesPurchaserHaveNIView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, Some("Doe"))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
-
-
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
@@ -116,7 +114,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(DoesPurchaserHaveNI.values.head), NormalMode, Some("Doe"))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(DoesPurchaserHaveNI.values.head), NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
 
@@ -127,7 +125,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(testUserAnswersIndividual))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -148,7 +146,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswersIndividual)).build()
 
       running(application) {
         val request =
@@ -162,7 +160,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
 
