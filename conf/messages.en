@@ -467,6 +467,14 @@ purchaserNationalInsurance.error.length                                 = Nation
 purchaserNationalInsurance.error.invalid                                = Please enter a valid national insurance number
 purchaserNationalInsurance.change.hidden                                = PurchaserNationalInsurance
 
+addPurchaserPhoneNumber.title = Do you want to add a phone number for the purchaser? – About the purchaser
+addPurchaserPhoneNumber.heading = addPurchaserPhoneNumber
+addPurchaserPhoneNumber.heading = Do you want to add a phone number for {0}?
+addPurchaserPhoneNumber.hint = We’ll only use this to contact {0} about this return
+addPurchaserPhoneNumber.checkYourAnswersLabel = addPurchaserPhoneNumber
+addPurchaserPhoneNumber.error.required = Please select an option
+addPurchaserPhoneNumber.change.hidden = AddPurchaserPhoneNumber
+
 purchaserDateOfBirth.title = What is the purchaser’s date of birth? - About the purchaser
 purchaserDateOfBirth.heading = What is {0}’s date of birth?
 purchaserDateOfBirth.hint = For example, 27 3 1980
@@ -477,14 +485,3 @@ purchaserDateOfBirth.error.required = The date must include {0}
 purchaserDateOfBirth.error.invalid = Enter a valid date
 purchaserDateOfBirth.change.hidden = Purchaser’s date of birth
 PurchaserDateOfBirth.error.date.range.max = Date cannot be in the future
-
-addPurchaserPhoneNumber.title = addPurchaserPhoneNumber
-addPurchaserPhoneNumber.heading = addPurchaserPhoneNumber
-addPurchaserPhoneNumber.option1 = Option 1
-addPurchaserPhoneNumber.option2 = Option 2
-addPurchaserPhoneNumber.title = Do you want to add a phone number for the purchaser? – About the purchaser – Stamp Taxes Online – GOV.UK
-addPurchaserPhoneNumber.heading = Do you want to add a phone number for {0}?
-addPurchaserPhoneNumber.hint = We’ll only use this to contact {0} about this return
-addPurchaserPhoneNumber.checkYourAnswersLabel = addPurchaserPhoneNumber
-addPurchaserPhoneNumber.error.required = Please select an option
-addPurchaserPhoneNumber.change.hidden = AddPurchaserPhoneNumber
