@@ -102,14 +102,14 @@ class PurchaserFormOfIdIndividualSpec extends AnyFreeSpec with Matchers with Eit
       "must serialize PurchaserFormOfIdIndividual" - {
 
         "with all values" in {
-          val json = Json.toJson(validJsonWithOptional)
+          val json = Json.toJson(purchaserFormOfIdIndividualWithOptional)
 
           (json \ "idNumberOrReference").as[String] mustBe "123456"
           (json \ "countryIssued").as[String] mustBe "Germany"
         }
 
         "with all required values" in {
-          val json = Json.toJson(validJsonWithoutOptional)
+          val json = Json.toJson(purchaserFormOfIdIndividualWithoutOptional)
 
           (json \ "idNumberOrReference").as[String] mustBe "123456"
           (json \ "countryIssued").asOpt[String] mustBe None
