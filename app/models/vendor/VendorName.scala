@@ -16,7 +16,7 @@
 
 package models.vendor
 
-import models.FullName
+import utils.FullName
 import play.api.libs.json.{Json, OFormat}
 
 case class VendorName(forename1: Option[String], forename2: Option[String], name: String) extends FullName
