@@ -34,8 +34,6 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(NormalMode)
     case PurchaserSurnameOrCompanyNamePage =>
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
-    case PurchaserFormOfIdIndividualPage =>
-      _ => routes.ReturnTaskListController.onPageLoad() // TODO: Update to pr-6 'Is the Purchaser a trustee?' in DTR-1682
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case WhoIsTheVendorPage =>
@@ -63,7 +61,7 @@ class Navigator @Inject()() {
   }
 
   private def isPurchaserSection(page: Page): Boolean = page match {
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage => true
     case _ => false
   }
 
@@ -76,6 +74,9 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
     case PurchaserNationalInsurancePage => //TODO update to purchaser DOB
       _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
+    case PurchaserFormOfIdIndividualPage =>
+      _ => routes.ReturnTaskListController.onPageLoad() // TODO: Update to pr-6 'Is the Purchaser a trustee?' in DTR-1682
+
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
