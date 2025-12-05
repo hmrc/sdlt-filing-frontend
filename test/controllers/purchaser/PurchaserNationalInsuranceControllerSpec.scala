@@ -124,6 +124,7 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, "John Middle Doe")(request, messages(application)).toString
+        contentAsString(result) must include("John Middle Doe")
       }
     }
 
@@ -202,6 +203,7 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "John Middle Doe")(request, messages(application)).toString
+        contentAsString(result) must include("John Middle Doe")
       }
     }
 
@@ -258,7 +260,6 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
-
     }
 
     "must redirect to NameOfPurchaser page when purchaser name is missing for POST" in {
@@ -277,46 +278,5 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must pass purchaser name to view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(testUserAnswersIndividual)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, purchaserNationalInsuranceRoute)
-
-        val view = application.injector.instanceOf[PurchaserNationalInsuranceView]
-
-        val purchaserName = testUserAnswersIndividual.get(NameOfPurchaserPage).map(_.fullName).getOrElse("")
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, purchaserName)(request, messages(application)).toString
-      }
-    }
-
-    "must pass the agentName to view for a POST when BAD REQUEST returned" in {
-      val application = applicationBuilder(userAnswers = Some(testUserAnswersIndividual)).build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserNationalInsuranceRoute)
-          .withFormUrlEncodedBody(
-            ("nationalInsuranceNumber", "QQ123456Q")
-          )
-
-        val boundForm = form.bind(Map(
-          "nationalInsuranceNumber" -> "QQ123456Q"
-        ))
-
-        val view = application.injector.instanceOf[PurchaserNationalInsuranceView]
-
-        val purchaserName = testUserAnswersIndividual.get(NameOfPurchaserPage).map(_.fullName).getOrElse("")
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, purchaserName)(request, messages(application)).toString
-      }
-    }
   }
 }
