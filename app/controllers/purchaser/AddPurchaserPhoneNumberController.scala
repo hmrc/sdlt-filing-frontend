@@ -94,9 +94,7 @@ class AddPurchaserPhoneNumberController @Inject()(
                   // Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
 
                   case (false, Some(WhoIsMakingThePurchase.Individual)) =>
-                    Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
-                  //TODO - Update to DTR-1594 path on completion
-                  // Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
+                    Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
 
                   case (false, Some(WhoIsMakingThePurchase.Company)) =>
                     //TODO - Update to DTR-1603 path on completion

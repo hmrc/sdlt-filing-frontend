@@ -188,8 +188,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
-        //        controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
       }
     }
 
