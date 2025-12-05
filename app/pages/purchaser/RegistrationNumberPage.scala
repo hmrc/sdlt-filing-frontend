@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package models.purchaser
+package pages.purchaser
 
-import models.purchaser.NameOfPurchaser
-import play.api.libs.json.*
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class NameOfPurchaser(forename1: Option[String], forename2: Option[String], name: String) {
-    def fullName: String = (forename1, forename2, name) match {
-    case (Some(f1), Some(f2), sn) => s"$f1 $f2 $sn"
-    case (Some(f1), None, sn) => s"$f1 $sn"
-    case (None, _, sn) => sn
-  }
-}
+case object RegistrationNumberPage extends QuestionPage[String] {
 
-object NameOfPurchaser {
-  implicit val format: OFormat[NameOfPurchaser] = Json.format[NameOfPurchaser]
+  override def path: JsPath = JsPath \ "purchaserCurrent" \ toString
+
+  override def toString: String = "registrationNumber"
 }

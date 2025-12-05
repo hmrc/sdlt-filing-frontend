@@ -98,7 +98,7 @@ class PurchaserAddressController @Inject()(
           address <- addressLookupService.getAddressById(id)
           updated <- addressLookupService.saveAddressDetails(address, PurchaserAddressPage)
         } yield if(updated) {
-          Redirect(controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode))
+          Redirect(controllers.purchaser.routes.RegistrationNumberController.onPageLoad(NormalMode))
         } else {
           Redirect(routes.JourneyRecoveryController.onPageLoad())
         }
