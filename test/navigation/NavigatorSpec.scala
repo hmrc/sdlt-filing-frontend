@@ -21,7 +21,7 @@ import controllers.routes
 import models.*
 import pages.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserNationalInsurancePage, WhoIsMakingThePurchasePage}
+import pages.purchaser.{ConfirmNameOfThePurchaserPage, DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserDateOfBirthPage, PurchaserNationalInsurancePage, WhoIsMakingThePurchasePage}
 import pages.vendor.*
 import play.api.libs.json.Json
 
@@ -106,9 +106,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(DoesPurchaserHaveNIPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(mode = NormalMode)
         }
 
-        //TODO update to purchaser DOB page when created DTR-1600
-        "go from PurchaserNationalInsurancePage to PurchaserNationalInsurancePage" in {
-          navigator.nextPage(PurchaserNationalInsurancePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(mode = NormalMode)
+        "go from PurchaserNationalInsurancePage to PurchaserDateOfBirthPage" in {
+          navigator.nextPage(PurchaserNationalInsurancePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(mode = NormalMode)
+        }
+        // TODO: Should redirect to pr-6 is the purchaser acting as a trustee
+        "go from PurchaserDateOfBirthPage to WhoIsMakingThePurchasePage" in {
+          navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
         }
       }
     }
