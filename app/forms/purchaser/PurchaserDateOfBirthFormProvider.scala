@@ -27,7 +27,6 @@ import javax.inject.Inject
 
 class PurchaserDateOfBirthFormProvider @Inject()(timeMachine: TimeMachine) extends Mappings {
 
-  private def minDateAllowed: LocalDate = timeMachine.today.minusYears(130)
   private def maxDateAllowed: LocalDate = timeMachine.today
   private def dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
@@ -40,7 +39,6 @@ class PurchaserDateOfBirthFormProvider @Inject()(timeMachine: TimeMachine) exten
         requiredKey    = "purchaserDateOfBirth.error.required"
       ).verifying(
         maxDate(maxDateAllowed, "PurchaserDateOfBirth.error.date.range.max", maxDateAllowed.format(dateFormatter)),
-        minDate(minDateAllowed, "PurchaserDateOfBirth.error.date.range.min", minDateAllowed.format(dateFormatter))
       )
     )
 }

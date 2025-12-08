@@ -477,4 +477,3 @@ purchaserDateOfBirth.error.required = The date must include {0}
 purchaserDateOfBirth.error.invalid = Enter a valid date
 purchaserDateOfBirth.change.hidden = Purchaser’s date of birth
 PurchaserDateOfBirth.error.date.range.max = Date cannot be in the future
-PurchaserDateOfBirth.error.date.range.min = Enter a valid date of birth
