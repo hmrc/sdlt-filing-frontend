@@ -61,7 +61,7 @@ class Navigator @Inject()() {
   }
 
   private def isPurchaserSection(page: Page): Boolean = page match {
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserDateOfBirthPage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | AddPurchaserPhoneNumberPage | PurchaserNationalInsurancePage | PurchaserDateOfBirthPage => true
     case _ => false
   }
 
@@ -70,11 +70,14 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
     case NameOfPurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+    case AddPurchaserPhoneNumberPage =>
+      //TODO - update to DTR-1591 route when completed
+      _ => controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode)
     case DoesPurchaserHaveNIPage =>
       _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
     case PurchaserNationalInsurancePage =>
       _ => controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(NormalMode)
-    case PurchaserDateOfBirthPage =>  // TODO: Should redirect to pr-6 is the purchaser acting as a trustee
+    case PurchaserDateOfBirthPage => // TODO: Should redirect to pr-6 is the purchaser acting as a trustee
       _ => controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
@@ -83,12 +86,12 @@ class Navigator @Inject()() {
     //TODO Change to correct CYA when created
     case WhoIsMakingThePurchasePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-    
+
     case VendorOrCompanyNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case AgentNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case WhoIsTheVendorPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case VendorRepresentedByAgentPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
-    
+
     case PurchaserIsIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case PurchaserSurnameOrCompanyNamePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()

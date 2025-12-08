@@ -467,6 +467,14 @@ purchaserNationalInsurance.error.length                                 = Nation
 purchaserNationalInsurance.error.invalid                                = Please enter a valid national insurance number
 purchaserNationalInsurance.change.hidden                                = PurchaserNationalInsurance
 
+addPurchaserPhoneNumber.title = Do you want to add a phone number for the purchaser? – About the purchaser
+addPurchaserPhoneNumber.heading = addPurchaserPhoneNumber
+addPurchaserPhoneNumber.heading = Do you want to add a phone number for {0}?
+addPurchaserPhoneNumber.hint = We’ll only use this to contact {0} about this return
+addPurchaserPhoneNumber.checkYourAnswersLabel = addPurchaserPhoneNumber
+addPurchaserPhoneNumber.error.required = Please select an option
+addPurchaserPhoneNumber.change.hidden = AddPurchaserPhoneNumber
+
 purchaserDateOfBirth.title = What is the purchaser’s date of birth? - About the purchaser
 purchaserDateOfBirth.heading = What is {0}’s date of birth?
 purchaserDateOfBirth.hint = For example, 27 3 1980

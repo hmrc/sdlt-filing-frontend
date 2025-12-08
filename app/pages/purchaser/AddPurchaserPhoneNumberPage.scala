@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package models.vendor
+package pages.purchaser
 
-import utils.FullName
-import play.api.libs.json.{Json, OFormat}
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class VendorName(forename1: Option[String], forename2: Option[String], name: String) extends FullName
+case object AddPurchaserPhoneNumberPage extends QuestionPage[Boolean] {
 
-object VendorName {
-  implicit val format: OFormat[VendorName] = Json.format[VendorName]
+  override def path: JsPath = JsPath \ "purchaserCurrent" \ toString
+
+  override def toString: String = "addPurchaserPhoneNumber"
 }
+ 

@@ -44,5 +44,5 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(TransactionType.values.toSeq)
     }
-  
+
 }

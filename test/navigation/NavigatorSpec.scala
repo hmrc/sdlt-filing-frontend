@@ -29,6 +29,7 @@ class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
   val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+
   case object UnknownPage extends Page
 
   "Navigator" - {
@@ -113,12 +114,18 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserDateOfBirthPage to WhoIsMakingThePurchasePage" in {
           navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
         }
+
+        //        "go from addPhoneNumberPage to enterPhoneNumberPage" in {
+        //          //TODO - add test once implemented on DTR-1591
+        //          //          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        //        }
+
       }
     }
 
     "in Check mode" - {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-      navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
       }
 
       "must go from any purchaser page to CheckYourAnswers" in {
@@ -133,7 +140,7 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(AgentNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
       }
 
-        "must go from any preliminary page to CheckYourAnswers" in {
+      "must go from any preliminary page to CheckYourAnswers" in {
         navigator.nextPage(PurchaserIsIndividualPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
         navigator.nextPage(PurchaserSurnameOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
         navigator.nextPage(TransactionTypePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
@@ -142,7 +149,7 @@ class NavigatorSpec extends SpecBase {
 
     "isPurchaserSection helper" - {
       "must return true for purchaser section pages" in {
-      val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+        val userAnswers = UserAnswers("id", storn = "TESTSTORN")
 
         navigator.nextPage(WhoIsMakingThePurchasePage, NormalMode, userAnswers) mustBe
           controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
@@ -152,7 +159,7 @@ class NavigatorSpec extends SpecBase {
       }
 
       "must return false for non-purchaser section pages" in {
-      val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+        val userAnswers = UserAnswers("id", storn = "TESTSTORN")
 
         navigator.nextPage(WhoIsTheVendorPage, NormalMode, userAnswers) mustBe
           controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
