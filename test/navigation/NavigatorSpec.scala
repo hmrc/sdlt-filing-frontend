@@ -113,6 +113,17 @@ class NavigatorSpec extends SpecBase {
         // TODO: Should redirect to pr-6 is the purchaser acting as a trustee
         "go from PurchaserDateOfBirthPage to WhoIsMakingThePurchasePage" in {
           navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
+        //TODO update to purchaser DOB page when created DTR-1600
+        "go from PurchaserNationalInsurancePage to PurchaserNationalInsurancePage" in {
+          navigator.nextPage(PurchaserNationalInsurancePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(mode = NormalMode)
+        "go from addPhoneNumberPage to enterPhoneNumberPage" in {
+          //TODO - add test once implemented on DTR-1591
+          //          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        }
+
+        "go from DoesPurchaserHaveNIPage to ReturnTaskList" in {
+          //TODO: Should navigate to What is Purchaser NI page DTR-1626
+          navigator.nextPage(DoesPurchaserHaveNIPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
         }
       }
     }

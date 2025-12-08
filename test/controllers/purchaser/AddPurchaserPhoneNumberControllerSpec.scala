@@ -174,6 +174,25 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
       }
     }
 
+    "must redirect to PurchaserPhoneNumberController if Yes for company purchaser" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithCompanyPurchaser))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+      }
+    }
+
     "must redirect to DoesPurchaserHaveNIController if No for individual purchaser" in {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
