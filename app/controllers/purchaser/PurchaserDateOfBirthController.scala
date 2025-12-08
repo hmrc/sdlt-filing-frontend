@@ -18,7 +18,7 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.PurchaserDateOfBirthFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{NameOfPurchaserPage, PurchaserDateOfBirthPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -46,7 +46,7 @@ class PurchaserDateOfBirthController @Inject()(
     implicit request =>
 
      request.userAnswers.get(NameOfPurchaserPage) match {
-       case None => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+       case None => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 
        case Some(value) =>
          val purchaserName:String = value.fullName
@@ -68,7 +68,7 @@ class PurchaserDateOfBirthController @Inject()(
     implicit request =>
 
       request.userAnswers.get(NameOfPurchaserPage) match {
-        case None => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+        case None => Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
 
         case Some(value) =>
           val purchaserName:String = value.fullName

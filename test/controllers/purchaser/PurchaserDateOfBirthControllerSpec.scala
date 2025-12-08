@@ -147,7 +147,29 @@ class PurchaserDateOfBirthControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the Return Task List page when purchaser name is not present" in {
+    "must redirect to the NameOfPurchaser page when purchaser name is not present at .onPageLoad" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(testUserAnswersWithNoPurchaserName))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val result = route(application, getRequest()).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to the NameOfPurchaser page when purchaser name is not present at .onSubmit" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -165,7 +187,7 @@ class PurchaserDateOfBirthControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, postRequest()).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
       }
     }
 

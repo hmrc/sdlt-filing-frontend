@@ -468,13 +468,13 @@ purchaserNationalInsurance.error.invalid                                = Please
 purchaserNationalInsurance.change.hidden                                = PurchaserNationalInsurance
 
 purchaserDateOfBirth.title = What is the purchaser’s date of birth? - About the purchaser
-purchaserDateOfBirth.heading = What is the {0}’s date of birth?
-purchaserDateOfBirth.hint = For example, 27 3 2024
+purchaserDateOfBirth.heading = What is {0}’s date of birth?
+purchaserDateOfBirth.hint = For example, 27 3 1980
 purchaserDateOfBirth.checkYourAnswersLabel = Date of birth
 purchaserDateOfBirth.error.required.all = Enter the date of birth
 purchaserDateOfBirth.error.required.two = The date must include {0} and {1}
 purchaserDateOfBirth.error.required = The date must include {0}
 purchaserDateOfBirth.error.invalid = Enter a valid date
-purchaserDateOfBirth.change.hidden = Purchaser's date of birth
+purchaserDateOfBirth.change.hidden = Purchaser’s date of birth
 PurchaserDateOfBirth.error.date.range.max = Date cannot be in the future
 PurchaserDateOfBirth.error.date.range.min = Enter a valid date of birth
