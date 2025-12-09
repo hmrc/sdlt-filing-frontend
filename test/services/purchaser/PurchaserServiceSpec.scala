@@ -17,13 +17,18 @@
 package services.purchaser
 
 import base.SpecBase
-import models.purchaser.{ConfirmNameOfThePurchaser, NameOfPurchaser}
-import models.{FullReturn, Purchaser, UserAnswers}
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage}
+import models.purchaser.WhoIsMakingThePurchase.{Company, Individual}
+import models.purchaser.{ConfirmNameOfThePurchaser, NameOfPurchaser, WhoIsMakingThePurchase}
+import models.{FullReturn, NormalMode, Purchaser, UserAnswers}
+import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import play.api.mvc.Result
+import play.api.mvc.Results.Ok
+import play.api.test.Helpers.*
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class PopulatePurchaserNameInSessionServiceSpec extends SpecBase {
+class PurchaserServiceSpec extends SpecBase {
 
   val service = new PurchaserService()
 
@@ -35,9 +40,17 @@ class PopulatePurchaserNameInSessionServiceSpec extends SpecBase {
     transaction = None
   )
 
-  "PopulatePurchaserNameInSessionService" - {
+  private def userAnswersWithIndividualPurchaser: UserAnswers =
+    emptyUserAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
 
-    "populatePurchaserNameInSession" - {
+  private def userAnswersWithCompanyPurchaser: UserAnswers =
+    emptyUserAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
+
+  val continueRoute: Result = Ok("Continue route")
+
+  "PurchaserService" - {
+
+    ".populatePurchaserNameInSession" - {
 
       "when purchaserCheck is 'Yes'" - {
 
@@ -351,6 +364,54 @@ class PopulatePurchaserNameInSessionServiceSpec extends SpecBase {
           forename2 = None,
           name = "Purchaser"
         ))
+      }
+    }
+
+    ".checkPurchaserType" - {
+      "when the purchaser type is set to Company" - {
+        "when the value in user answers is Company" - {
+          "must stay on the page" in {
+            val result = service.checkPurchaserType(Company, userAnswersWithCompanyPurchaser, continueRoute)
+            result mustBe continueRoute
+          }
+        }
+
+        "when the value in user answers is Individual" - {
+          "must redirect to Generic Error Page" in { // TODO DTR-1788: redirect to CYA
+            val result = service.checkPurchaserType(Company, userAnswersWithIndividualPurchaser, continueRoute)
+            redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.GenericErrorController.onPageLoad().url)
+          }
+        }
+
+        "when the value in user answers is not present" - {
+          "must redirect to WhoIsMakingThePurchase page" in {
+            val result = service.checkPurchaserType(Company, emptyUserAnswers, continueRoute)
+            redirectLocation(Future.successful(result)) mustBe Some(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url)
+          }
+        }
+      }
+
+      "when the purchaser type is set to Individual" - {
+        "when the value in user answers is Individual" - {
+          "must stay on the page" in {
+            val result = service.checkPurchaserType(Individual, userAnswersWithIndividualPurchaser, continueRoute)
+            result mustBe continueRoute
+          }
+        }
+
+        "when the value in user answers is Company" - {
+          "must redirect to Generic Error Page" in { // TODO DTR-1788: redirect to CYA
+            val result = service.checkPurchaserType(Individual, userAnswersWithCompanyPurchaser, continueRoute)
+            redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.GenericErrorController.onPageLoad().url)
+          }
+        }
+
+        "when the value in user answers is not present" - {
+          "must redirect to WhoIsMakingThePurchase page" in {
+            val result = service.checkPurchaserType(Individual, emptyUserAnswers, continueRoute)
+            redirectLocation(Future.successful(result)) mustBe Some(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url)
+          }
+        }
       }
     }
   }

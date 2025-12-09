@@ -16,11 +16,11 @@
 
 package services.purchaser
 
-import models.UserAnswers
 import models.*
 import models.purchaser.*
-import models.address.*
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage}
+import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
 
 import scala.util.Try
 
@@ -73,4 +73,14 @@ class PurchaserService {
         userAnswers.set(ConfirmNameOfThePurchaserPage, confirmName)
     }
   }
+
+  def checkPurchaserType(purchaserType: WhoIsMakingThePurchase, userAnswers: UserAnswers, continueRoute: Result): Result =
+    userAnswers.get(WhoIsMakingThePurchasePage) match {
+      case Some(value) if value == purchaserType =>
+        continueRoute
+      case Some(_) =>
+        Redirect(controllers.routes.GenericErrorController.onPageLoad()) // TODO DTR-1788: redirect to CYA
+      case None =>
+        Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
+    }
 }
