@@ -160,6 +160,8 @@ confirmVendorAddress.error.required = Please select an option
 
 aboutTheVendor.common.caption = About the vendor
 aboutTheVendor.common.theVendor = the vendor
+purchaser.common.caption = About the purchaser
+purchaser.common.thePurchaser = the purchaser
 
 agentName.title = What is the agent’s name?
 agentName.heading = What is the agent’s name?
@@ -393,6 +395,27 @@ addressLookup.purchaserQuestionsAddress.countryPicker.title                = Fin
 addressLookup.purchaserQuestionsAddress.countryPicker.heading              = Find {0}’s address
 
 
+purchaserFormOfIdIndividual.title = Provide a form of ID for the purchaser
+purchaserFormOfIdIndividual.heading = Provide a form of ID for {0}
+purchaserFormOfIdIndividual.p1 = We need to confirm {0}’s identity for this return
+purchaserFormOfIdIndividual.p2 = This could be:
+purchaserFormOfIdIndividual.li1 = passport number
+purchaserFormOfIdIndividual.li2 = driving licence number
+purchaserFormOfIdIndividual.li3 = identity card number
+purchaserFormOfIdIndividual.li4 = any other reference issues by a recognised local or national authority
+purchaserFormOfIdIndividual.li5 = an NHS reference can be used for UK residents or citizens without any other identification
+purchaserFormOfIdIndividual.p3 = You must include country of issue
+purchaserFormOfIdIndividual.idNumberOrReference = ID number or reference
+purchaserFormOfIdIndividual.countryIssued = Country of issue
+purchaserFormOfIdIndividual.checkYourAnswersLabel = PurchaserFormOfIdIndividual
+purchaserFormOfIdIndividual.error.idNumberOrReference.required = Enter ID number or reference
+purchaserFormOfIdIndividual.error.idNumberOrReference.length = ID number or reference must be 14 characters or less
+purchaserFormOfIdIndividual.error.idNumberOrReference.invalid = ID number or reference is invalid
+purchaserFormOfIdIndividual.error.countryIssued.length = Country of issue must be 28 characters or less
+purchaserFormOfIdIndividual.error.countryIssued.invalid = Country of issue is invalid
+purchaserFormOfIdIndividual.idNumberOrReference.change.hidden = ID number or reference
+purchaserFormOfIdIndividual.countryIssued.change.hidden = Country of issue
+
 
 vendorAgentsContactDetails.title                                             = What are the agent’s contact details? - About the vendor
 vendorAgentsContactDetails.heading                                           = What are {0}’s contact details?
@@ -451,7 +474,6 @@ vendor.checkYourAnswers.agentContactDetails.agentDetailsMissing = Enter agent de
 purchaser.doesPurchaserHaveNI.title = Does the purchaser have a National Insurance number? – About the purchaser
 purchaser.doesPurchaserHaveNI.heading = Does {0} have a National Insurance number?
 purchaser.doesPurchaserHaveNI.caption = About the purchaser
-purchaser.doesPurchaserHaveNI.noPurchaserName = the purchaser
 purchaser.doesPurchaserHaveNI.yes = Yes
 purchaser.doesPurchaserHaveNI.no = No
 purchaser.doesPurchaserHaveNI.checkYourAnswersLabel = Does the purchaser have a National Insurance number?

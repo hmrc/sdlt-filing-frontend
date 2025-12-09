@@ -127,6 +127,11 @@ GET         /about-the-purchaser/purchaser-address-lookup            controllers
 GET         /about-the-purchaser/purchaser-address-return            controllers.purchaser.PurchaserAddressController.addressLookupCallbackPurchaser(id: String ?= "", mode: Mode = NormalMode)
 GET         /about-the-purchaser/purchaser-address-return/change     controllers.purchaser.PurchaserAddressController.addressLookupCallbackChangePurchaser(id: String ?= "", mode: Mode = NormalMode)
 
+GET         /about-the-purchaser/form-of-id-individual               controllers.purchaser.PurchaserFormOfIdIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/form-of-id-individual               controllers.purchaser.PurchaserFormOfIdIndividualController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/form-of-id-individual/change        controllers.purchaser.PurchaserFormOfIdIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/form-of-id-individual/change        controllers.purchaser.PurchaserFormOfIdIndividualController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-purchaser/date-of-birth                  controllers.purchaser.PurchaserDateOfBirthController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-purchaser/date-of-birth                  controllers.purchaser.PurchaserDateOfBirthController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/date-of-birth/change                        controllers.purchaser.PurchaserDateOfBirthController.onPageLoad(mode: Mode = CheckMode)
