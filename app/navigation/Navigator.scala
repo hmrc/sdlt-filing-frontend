@@ -61,11 +61,11 @@ class Navigator @Inject()() {
   }
 
   private def isPurchaserSection(page: Page): Boolean = page match {
-<<<<<<< Updated upstream
+
     case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage | PurchaserDateOfBirthPage => true
-=======
+
     case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | AddPurchaserPhoneNumberPage | PurchaserNationalInsurancePage | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage => true
->>>>>>> Stashed changes
+
     case _ => false
   }
 
