@@ -170,7 +170,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
+          controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(NormalMode).url
       }
     }
 
@@ -189,7 +189,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
+          controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(NormalMode).url
       }
     }
 

@@ -61,7 +61,11 @@ class Navigator @Inject()() {
   }
 
   private def isPurchaserSection(page: Page): Boolean = page match {
+<<<<<<< Updated upstream
     case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage | PurchaserDateOfBirthPage => true
+=======
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | AddPurchaserPhoneNumberPage | PurchaserNationalInsurancePage | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage => true
+>>>>>>> Stashed changes
     case _ => false
   }
 
@@ -71,8 +75,9 @@ class Navigator @Inject()() {
     case NameOfPurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
     case AddPurchaserPhoneNumberPage =>
-      //TODO - update to DTR-1591 route when completed
-      _ => controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode)
+      _ => controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(NormalMode)
+    case EnterPurchaserPhoneNumberPage =>
+      _ => controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode)
     case DoesPurchaserHaveNIPage =>
       _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
     case PurchaserNationalInsurancePage =>

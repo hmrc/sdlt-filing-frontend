@@ -114,6 +114,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
         }
 
+<<<<<<< Updated upstream
         "go from PurchaserFormOfIdIndividualPage to Return Task List Controller" in {
           navigator.nextPage(PurchaserFormOfIdIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
@@ -123,6 +124,11 @@ class NavigatorSpec extends SpecBase {
         //          //          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
         //        }
 
+=======
+        "go from addPhoneNumberPage to enterPhoneNumberPage" in {
+          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        }
+>>>>>>> Stashed changes
       }
     }
 
