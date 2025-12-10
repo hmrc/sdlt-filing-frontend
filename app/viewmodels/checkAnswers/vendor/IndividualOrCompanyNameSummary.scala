@@ -38,13 +38,8 @@ object IndividualOrCompanyNameSummary  {
 
     answers.flatMap(_.get(VendorOrCompanyNamePage)).map {
       answer =>
+        val vendorName = answer.fullName
         if (vendorOrBusiness == "Individual") {
-          val vendorName = (answer.forename1, answer.forename2) match {
-            case (Some(forename),Some(forename2)) => forename + " " + forename2 + " " + answer.name
-            case (Some(forename), _) => forename + " " + answer.name
-            case (_, Some(forename2)) => forename2 + " " + answer.name
-            case _ => answer.name
-          }
           SummaryListRowViewModel(
           key     = s"vendor.checkYourAnswers.vendorName.label",
           value   = ValueViewModel(HtmlFormat.escape(vendorName).toString),

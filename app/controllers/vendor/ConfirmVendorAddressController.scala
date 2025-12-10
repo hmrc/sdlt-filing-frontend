@@ -58,8 +58,7 @@ class ConfirmVendorAddressController @Inject()(
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
 
         case Some(vn) =>
-          val vendorOrCompanyName = Seq(vn.forename1, vn.forename2, Some(vn.name))
-            .flatten.mkString(" ").trim.replaceAll(" +", " ")
+          val vendorOrCompanyName = vn.fullName
 
           userAnswers.fullReturn match {
             case None =>
@@ -95,8 +94,7 @@ class ConfirmVendorAddressController @Inject()(
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
 
         case Some(vn) =>
-          val vendorOrCompanyName = Seq(vn.forename1, vn.forename2, Some(vn.name))
-            .flatten.mkString(" ").trim.replaceAll(" +", " ")
+          val vendorOrCompanyName = vn.fullName
 
           userAnswers.fullReturn match {
             case None =>

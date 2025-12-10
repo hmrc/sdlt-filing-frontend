@@ -21,7 +21,7 @@ import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.vendorQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
 import models.{Mode, NormalMode, Vendor}
-import pages.vendor.VendorAddressPage
+import pages.vendor.{VendorAddressPage, VendorOrCompanyNamePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -54,7 +54,9 @@ class VendorAddressController @Inject()(
 
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          val vendorName = (userAnswers.data \ "vendorCurrent" \ "vendorOrCompanyName" \ "name").asOpt[String]
+
+          val vendorName = userAnswers.get(VendorOrCompanyNamePage).map(_.fullName)
+          
           vendorName match {
             case Some(name) =>
               val callback = if (changeRoute.isDefined) {
