@@ -32,10 +32,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import org.apache.pekko.util.Timeout
 import org.scalatest.BeforeAndAfterEach
-
-import scala.concurrent.duration.*
 import views.html.purchaser.EnterPurchaserPhoneNumberView
 
 import scala.concurrent.Future
@@ -157,21 +154,18 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
         contentAsString(result) mustEqual view(form.fill(phoneNumber), NormalMode, individualNameOfPurchaser.fullName)(request, messages(application)).toString
       }
     }
+    
+    "must redirect to next page (DoesPurchaserHaveNI page) when valid data is submitted for an individual purchaser" in {
 
-    "must redirect to the next page when valid data is submitted" in {
-
-      val userAnswersWithName = UserAnswers(userAnswersId, storn = testStorn)
+      val userAnswersWithIndividual = UserAnswers(userAnswersId, storn = testStorn)
         .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
         .set(NameOfPurchaserPage, individualNameOfPurchaser).success.value
-
-      val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithName))
+        applicationBuilder(userAnswers = Some(userAnswersWithIndividual))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -184,7 +178,7 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
       }
     }
 
@@ -282,7 +276,6 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
       val application =
         applicationBuilder(userAnswers = Some(userAnswersWithName))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -295,7 +288,34 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+         redirectLocation(result).value mustEqual controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to Journey Recovery when valid data is submitted for a company purchaser (company page not yet built)" in {
+
+      val userAnswersWithCompany = UserAnswers(userAnswersId, storn = testStorn)
+        .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
+        .set(NameOfPurchaserPage, companyPurchaser.toNameOfPurchaser).success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersWithCompany))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, enterPurchaserPhoneNumberRoute)
+            .withFormUrlEncodedBody(("value", "0987654321"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

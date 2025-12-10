@@ -40,7 +40,7 @@ class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
     )
 
     "must not bind strings longer than max length" in {
-      val tooLong = "1234567890123456" // 16 chars, exceeds 14
+      val tooLong = "1234567890123456"
       val result = form.bind(Map(fieldName -> tooLong))
       result.errors must contain only FormError(fieldName, lengthKey, Seq(maxLength))
     }

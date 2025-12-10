@@ -18,16 +18,15 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.EnterPurchaserPhoneNumberFormProvider
-import models.purchaser.NameOfPurchaser
+import models.purchaser.{NameOfPurchaser, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaser.{EnterPurchaserPhoneNumberPage, NameOfPurchaserPage}
+import pages.purchaser.{EnterPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.EnterPurchaserPhoneNumberView
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -83,7 +82,16 @@ class EnterPurchaserPhoneNumberController @Inject()(
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterPurchaserPhoneNumberPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(EnterPurchaserPhoneNumberPage, mode, updatedAnswers))
+              } yield {
+                updatedAnswers.get(WhoIsMakingThePurchasePage) match {
+                  case Some(WhoIsMakingThePurchase.Individual) =>
+                    Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
+                  case Some(WhoIsMakingThePurchase.Company) =>
+                    Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO: PR-5b when built
+                  case None =>
+                    Redirect(navigator.nextPage(EnterPurchaserPhoneNumberPage, mode, updatedAnswers))
+                }
+              }
           )
       }
   }
