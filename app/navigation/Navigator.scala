@@ -62,9 +62,7 @@ class Navigator @Inject()() {
 
   private def isPurchaserSection(page: Page): Boolean = page match {
 
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage | PurchaserDateOfBirthPage => true
-
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | AddPurchaserPhoneNumberPage | PurchaserNationalInsurancePage | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage => true
 
     case _ => false
   }

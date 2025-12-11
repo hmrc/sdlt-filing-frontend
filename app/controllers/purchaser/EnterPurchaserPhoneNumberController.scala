@@ -85,11 +85,11 @@ class EnterPurchaserPhoneNumberController @Inject()(
               } yield {
                 updatedAnswers.get(WhoIsMakingThePurchasePage) match {
                   case Some(WhoIsMakingThePurchase.Individual) =>
-                    Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
-                  case Some(WhoIsMakingThePurchase.Company) =>
-                    Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO: PR-5b when built
-                  case None =>
                     Redirect(navigator.nextPage(EnterPurchaserPhoneNumberPage, mode, updatedAnswers))
+                  case Some(WhoIsMakingThePurchase.Company) =>
+                    Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO: DTR-1603 when built
+                  case None =>
+                    Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode))
                 }
               }
           )
