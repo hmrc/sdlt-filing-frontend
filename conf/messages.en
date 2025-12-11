@@ -520,7 +520,7 @@ purchaserDateOfBirth.error.invalid = Enter a valid date
 purchaserDateOfBirth.change.hidden = Purchaser’s date of birth
 PurchaserDateOfBirth.error.date.range.max = Date cannot be in the future
 
-enterPurchaserPhoneNumber.title                                         = What is the purchaser’s phone number?
+enterPurchaserPhoneNumber.title                                         = What is the purchaser’s phone number? - About the purchaser
 enterPurchaserPhoneNumber.heading                                       = What is {0}’s phone number?
 enterPurchaserPhoneNumber.hint                                          = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 enterPurchaserPhoneNumber.checkYourAnswersLabel                         = enterPurchaserPhoneNumber
