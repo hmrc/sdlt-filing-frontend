@@ -164,3 +164,13 @@ GET        /about-the-purchaser/add-national-insurance-number                   
 POST       /about-the-purchaser/add-national-insurance-number                         controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/add-national-insurance-number/change                  controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/add-national-insurance-number/change                  controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-purchaser/confirm-purchaser-identity                     controllers.purchaser.PurchaserConfirmIdentityController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/confirm-purchaser-identity                     controllers.purchaser.PurchaserConfirmIdentityController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/confirm-purchaser-identity/change              controllers.purchaser.PurchaserConfirmIdentityController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/confirm-purchaser-identity/change              controllers.purchaser.PurchaserConfirmIdentityController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-purchaser/does-purchaser-have-ni                         controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/does-purchaser-have-ni                         controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)

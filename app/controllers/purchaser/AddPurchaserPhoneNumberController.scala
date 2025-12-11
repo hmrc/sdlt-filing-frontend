@@ -86,20 +86,14 @@ class AddPurchaserPhoneNumberController @Inject()(
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
                 (value, updatedAnswers.get(WhoIsMakingThePurchasePage)) match {
-
-                  // If the user answered Yes → go to next page
                   case (true, _) =>
-                    Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
-                  //TODO - Update to DTR-1591 path on completion
-                  // Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
+                  Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
 
                   case (false, Some(WhoIsMakingThePurchase.Individual)) =>
                     Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
 
                   case (false, Some(WhoIsMakingThePurchase.Company)) =>
-                    //TODO - Update to DTR-1603 path on completion
-                    Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
-                  // Redirect(controllers.purchaser.routes.WhatInformationWouldYouLikeToShare.onPageLoad(mode))
+                    Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode))
 
                   case _ =>
                     Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
