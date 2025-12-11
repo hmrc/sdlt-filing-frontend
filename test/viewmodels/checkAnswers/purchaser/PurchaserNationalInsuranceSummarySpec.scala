@@ -18,12 +18,10 @@ package viewmodels.checkAnswers.purchaser
 
 import base.SpecBase
 import models.CheckMode
-import models.purchaser.DoesPurchaserHaveNI
-import pages.purchaser.{DoesPurchaserHaveNIPage, PurchaserNationalInsurancePage}
+import pages.purchaser.PurchaserNationalInsurancePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class PurchaserNationalInsuranceSummarySpec extends SpecBase {
 
@@ -45,7 +43,7 @@ class PurchaserNationalInsuranceSummarySpec extends SpecBase {
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserNationalInsurance.checkYourAnswersLabel")
 
-          val htmlContent = result.value.content.asInstanceOf[Text].asHtml.toString()
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "AA123456A"
 
           result.actions.get.items.size mustEqual 1

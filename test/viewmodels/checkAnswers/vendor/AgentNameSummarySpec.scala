@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.vendor.AgentNamePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class AgentNameSummarySpec extends SpecBase {
 
@@ -42,8 +42,8 @@ class AgentNameSummarySpec extends SpecBase {
 
           result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.agentName.label")
 
-          val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-          textContent mustEqual "Smith"
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent mustEqual "Smith"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url
@@ -64,11 +64,11 @@ class AgentNameSummarySpec extends SpecBase {
 
           val result = AgentNameSummary.row(Some(userAnswers))
 
-          val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-          textContent must include("O&amp;#x27;Brien")
-          textContent must include("&amp;amp;")
-          textContent must include("&amp;lt;")
-          textContent must include("&amp;gt;")
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("O&#x27;Brien")
+          htmlContent must include("&amp;")
+          htmlContent must include("&lt;")
+          htmlContent must include("&gt;")
         }
       }
     }

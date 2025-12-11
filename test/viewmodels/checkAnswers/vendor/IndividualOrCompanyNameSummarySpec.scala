@@ -22,7 +22,7 @@ import models.vendor.{VendorName, whoIsTheVendor}
 import pages.vendor.{VendorOrCompanyNamePage, WhoIsTheVendorPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class IndividualOrCompanyNameSummarySpec extends SpecBase {
 
@@ -44,8 +44,8 @@ class IndividualOrCompanyNameSummarySpec extends SpecBase {
 
           result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
 
-          val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-          textContent mustEqual "Doe"
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent mustEqual "Doe"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
@@ -92,8 +92,8 @@ class IndividualOrCompanyNameSummarySpec extends SpecBase {
 
         result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
 
-        val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-        textContent mustEqual "John Doe"
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent mustEqual "John Doe"
 
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
@@ -119,8 +119,8 @@ class IndividualOrCompanyNameSummarySpec extends SpecBase {
 
         result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
 
-        val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-        textContent mustEqual "John Smith Doe"
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent mustEqual "John Smith Doe"
 
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
@@ -145,8 +145,8 @@ class IndividualOrCompanyNameSummarySpec extends SpecBase {
 
         result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
 
-        val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-        textContent mustEqual "Smith Doe"
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent mustEqual "Smith Doe"
 
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
@@ -171,8 +171,8 @@ class IndividualOrCompanyNameSummarySpec extends SpecBase {
 
         result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
 
-        val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-        textContent mustEqual "Bank plc"
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent mustEqual "Bank plc"
 
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
