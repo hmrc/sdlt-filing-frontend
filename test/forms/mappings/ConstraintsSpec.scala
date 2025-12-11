@@ -244,4 +244,45 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       result mustEqual Invalid("error.max", CurrencyFormatter.currencyFormat(1))
     }
   }
+
+  "validUtr" - {
+    val validUtrString: Seq[String] = Seq("1111111111","9570845180")
+    val invalidUtrStrings: Seq[String] = Seq("1234567899","5570845180")
+    val invalidUtrLength: Seq[String] = Seq("12134", "2343243", "3123123123123123", "42342342342342342323423423")
+    val invalidUtrRegex: Seq[String] = Seq("23423khjbh", "agagagagag", "12--------", "          ")
+    val invalidUtrMultipleErrors: String = "12ab"
+
+    "must return Valid for a valid UTR number" in {
+      validUtrString.foreach { utr =>
+        val result = validUtr("error.utr")(utr)
+        result mustBe Valid
+      }
+    }
+
+    "must return Invalid for an invalid UTR number" in {
+      invalidUtrStrings.foreach{ utr =>
+        val result = validUtr("error.utr")(utr)
+        result mustBe Invalid("error.utr.invalid")
+      }
+    }
+
+    "must return Invalid for numbers more or less than 10 digits" in {
+      invalidUtrLength.foreach { utr =>
+        val result = validUtr("error.utr")(utr)
+        result mustBe Invalid("error.utr.length", 10)
+      }
+    }
+
+    "must return Invalid for UTR values with no digits" in {
+      invalidUtrRegex.foreach { utr =>
+        val result = validUtr("error.utr")(utr)
+        result mustBe Invalid("error.utr.regex.invalid", "^[0-9]*$")
+      }
+    }
+
+    "must return Invalid and first error message for UTR values with multiple errors" in {
+      val result = validUtr("error.utr")(invalidUtrMultipleErrors)
+      result mustBe Invalid("error.utr.regex.invalid", "^[0-9]*$")
+    }
+  }
 }

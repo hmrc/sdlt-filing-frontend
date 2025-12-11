@@ -17,9 +17,12 @@
 package forms.mappings
 
 import config.CurrencyFormatter
-import java.time.LocalDate
+import play.api.data.validation.Constraints.minLength
 
+import java.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
+
+import scala.util.{Failure, Success, Try}
 
 trait Constraints {
 
@@ -136,7 +139,7 @@ trait Constraints {
         }
     }
 
-  protected def maximumCurrency(maximum: BigDecimal, errorKey: String)(implicit ev: Ordering[BigDecimal]): Constraint[BigDecimal] =
+  protected def maximumCurrency(maximum: BigDecimal, errorKey: String)(implicit ev: Ordering[BigDecimal]): Constraint[BigDecimal] = {
     Constraint {
       input =>
         if (input <= maximum) {
@@ -145,4 +148,34 @@ trait Constraints {
           Invalid(errorKey, CurrencyFormatter.currencyFormat(maximum))
         }
     }
+  }
+
+  protected def validUtr(errorKey: String): Constraint[String] = {
+
+    def checkSum(errorKey: String): Constraint[String] = {
+      val weights: Seq[Int] = Seq(6, 7, 8, 9, 10, 5, 4, 3, 2)
+
+      def validateCheckSum(utr: String) = Try {
+        val utrInts: Seq[Int] = utr.map(_.asDigit)
+        val utrSum: Int = utrInts.slice(1, 10).zip(weights).map { case (x, y) => x * y }.sum
+        val utrCalc = 11 - (utrSum % 11)
+        val checkSum = if (utrCalc > 9) utrCalc - 9 else utrCalc
+        checkSum == utrInts.head
+      } match {
+        case Success(s) => s
+        case Failure(_) => false
+      }
+
+      Constraint { str =>
+        if (validateCheckSum(str)) Valid else Invalid(errorKey)
+      }
+    }
+
+    firstError(
+      regexp("^[0-9]*$", s"${errorKey}.regex.invalid"),
+      minLength(10, s"${errorKey}.length"),
+      maxLength(10, s"${errorKey}.length"),
+      checkSum(s"${errorKey}.invalid")
+    )
+  }
 }
