@@ -34,9 +34,9 @@ object RepresentedByAnAgentSummary  {
       answer =>
 
         val answerText = if (answer) {
-          messages("vendor.checkYourAnswers.representedByAgent.yes")
+          messages("site.yes")
         } else {
-          messages("vendor.checkYourAnswers.representedByAgent.no")
+          messages("site.no")
         }
 
         val value = ValueViewModel(

@@ -22,34 +22,34 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 
 @this(
-    appConfig: FrontendAppConfig,
-    hmrcTimeoutDialog: HmrcTimeoutDialog,
-    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-    alphaBanner: StandardAlphaBanner,
-    hmrcStandardPage: HmrcStandardPage
+        appConfig: FrontendAppConfig,
+        hmrcTimeoutDialog: HmrcTimeoutDialog,
+        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+        alphaBanner: StandardAlphaBanner,
+        hmrcStandardPage: HmrcStandardPage
 )
 
 @(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
 
 @head = {
 
-    @if(timeout) {
-        @hmrcTimeoutDialog(TimeoutDialog(
-            timeout             = Some(appConfig.timeout),
-            countdown           = Some(appConfig.countdown),
-            keepAliveUrl        = Some(routes.KeepAliveController.keepAlive().url),
-            keepAliveButtonText = Some(messages("timeout.keepAlive")),
-            signOutUrl          = Some(controllers.auth.routes.AuthController.signOut().url),
-            signOutButtonText   = Some(messages("timeout.signOut")),
-            title               = Some(messages("timeout.title")),
-            message             = Some(messages("timeout.message")),
-            language            = Some(messages.lang.code)
-        ))
-    }
+@if(timeout) {
+    @hmrcTimeoutDialog(TimeoutDialog(
+        timeout = Some(appConfig.timeout),
+        countdown = Some(appConfig.countdown),
+        keepAliveUrl = Some(routes.KeepAliveController.keepAlive().url),
+        keepAliveButtonText = Some(messages("site.timeout.keepAlive")),
+        signOutUrl = Some(controllers.auth.routes.AuthController.signOut().url),
+        signOutButtonText = Some(messages("site.timeout.signOut")),
+        title = Some(messages("site.timeout.title")),
+        message = Some(messages("site.timeout.message")),
+        language = Some(messages.lang.code)
+    ))
+}
 }
 
 @content = {
-    @contentBlock
+@contentBlock
     <div>
     @hmrcReportTechnicalIssueHelper()
     </div>
@@ -69,5 +69,5 @@
         phaseBanner = Some(alphaBanner(appConfig.feedbackUrl))
     ),
     isWelshTranslationAvailable = appConfig.languageTranslationEnabled,
-    backLink = if (showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None
+    backLink = if(showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None
 ))(content)

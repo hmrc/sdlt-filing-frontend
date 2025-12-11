@@ -35,11 +35,11 @@ object AddPurchaserPhoneNumberSummary {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "addPurchaserPhoneNumber.checkYourAnswersLabel",
+          key = "purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("addPurchaserPhoneNumber.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.addPurchaserPhoneNumber.change.hidden"))
           )
         )
     }

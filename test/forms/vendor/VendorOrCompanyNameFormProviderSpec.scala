@@ -22,11 +22,11 @@ import play.api.data.FormError
 
 class VendorOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "vendor.name.error.required"
+  val requiredKey = "site.error.input.required"
   val nameLengthKey = "vendor.name.error.length"
   val firstNameLengthKey = "vendor.individual.error.length.firstName"
   val middleNameLengthKey = "vendor.individual.error.length.middleName"
-  val invalidKey = "vendor.name.form.regex.error"
+  val invalidKey = "site.error.regex.invalid"
   val maxLength = 56
   val firstNameMaxLength = 14
   val middleNameMaxLength = 14

@@ -54,22 +54,22 @@ object PrelimAddressSummary {
       )
 
       SummaryListRowViewModel(
-        key = "purchaserAddress.checkYourAnswersLabel",
+        key = "purchaser.address.checkYourAnswersLabel",
         value = value,
         actions = Seq(
           ActionItemViewModel("site.change", routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url)
-            .withVisuallyHiddenText(messages("purchaserAddress.change.hidden"))
+            .withVisuallyHiddenText(messages("purchaser.address.change.hidden"))
         )
       )
     }.getOrElse{
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url}" class="govuk-link">${messages("purchaserAddress.link.message")}</a>""")
+          s"""<a href="${routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url}" class="govuk-link">${messages("purchaser.address.link.message")}</a>""")
       )
       
       SummaryListRowViewModel(
-        key = "purchaserAddress.checkYourAnswersLabel",
+        key = "purchaser.address.checkYourAnswersLabel",
         value = value
       )
     }

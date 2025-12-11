@@ -18,16 +18,16 @@
 @import viewmodels.LabelSize.Large
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaserNationalInsurance.title"))) {
+@layout(pageTitle = title(form, messages("purchaser.nationalInsurance.title"))) {
 
     @formHelper(action = controllers.purchaser.routes.PurchaserNationalInsuranceController.onSubmit(mode)) {
 
@@ -35,14 +35,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <span class="govuk-caption-l">@messages("purchaser.caption")</span>
+        <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
         @govukInput(
             InputViewModel(
                 field = form("nationalInsuranceNumber"),
-                label = LabelViewModel(messages("purchaserNationalInsurance.heading", purchaserName)).asPageHeading(size = Large)
+                label = LabelViewModel(messages("purchaser.nationalInsurance.heading", purchaserName)).asPageHeading(size = Large)
             )
             .withWidth(Full)
-            .withHint(HintViewModel(HtmlContent(Html(messages("purchaserNationalInsurance.hint")))))
+            .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.nationalInsurance.hint")))))
         )
 
         @govukButton(

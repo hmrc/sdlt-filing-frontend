@@ -24,7 +24,7 @@ class VendorOverviewFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("vendor.vendor-overview.error")
+      "value" -> boolean("site.error.select.required")
     )
 }
 

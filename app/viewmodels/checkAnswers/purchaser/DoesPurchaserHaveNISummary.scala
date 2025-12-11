@@ -34,7 +34,7 @@ object DoesPurchaserHaveNISummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"purchaser.doesPurchaserHaveNI.$answer"))
+            HtmlFormat.escape(messages(s"site.$answer"))
           )
         )
 

@@ -36,12 +36,12 @@ class VendorAgentsContactDetailsFormProvider @Inject() extends Mappings {
   def apply(): Form[VendorAgentsContactDetails] = Form(
     mapping(
       "phoneNumber" -> optionalText()
-        .verifying(optionalMaxLength(agentNumberMaxLength,"vendorAgentsContactDetails.error.agentPhoneNumber.length"))
-        .verifying(optionalRegexp(formNumberRegex, "vendorAgentsContactDetails.error.agentPhoneNumber.invalid"))
+        .verifying(optionalMaxLength(agentNumberMaxLength,"agent.vendorAgentsContactDetails.error.agentPhoneNumber.length"))
+        .verifying(optionalRegexp(formNumberRegex, "agent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"))
       ,
       "emailAddress" -> optionalText()
-        .verifying(optionalMaxLength(agentEmailMaxLength, "vendorAgentsContactDetails.error.agentEmailAddress.length"))
-        .verifying(optionalRegexp(formEmailRegex, "vendorAgentsContactDetails.error.agentEmailAddress.invalid"))
+        .verifying(optionalMaxLength(agentEmailMaxLength, "agent.vendorAgentsContactDetails.error.agentEmailAddress.length"))
+        .verifying(optionalRegexp(formEmailRegex, "agent.vendorAgentsContactDetails.error.agentEmailAddress.invalid"))
     )(VendorAgentsContactDetails.apply)(x => Some((x.phoneNumber, x.emailAddress)))
   )
  }

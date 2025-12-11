@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.purchaser.WhoIsMakingThePurchaseFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.purchaser.{NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import pages.purchaser.WhoIsMakingThePurchasePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository

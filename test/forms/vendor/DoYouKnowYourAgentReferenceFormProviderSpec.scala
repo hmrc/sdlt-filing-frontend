@@ -28,7 +28,7 @@ class DoYouKnowYourAgentReferenceFormProviderSpec extends OptionFieldBehaviours 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "doYouKnowYourAgentReference.error.required"
+    val requiredKey = "site.error.select.required"
 
     behave like optionsField[DoYouKnowYourAgentReference](
       form,

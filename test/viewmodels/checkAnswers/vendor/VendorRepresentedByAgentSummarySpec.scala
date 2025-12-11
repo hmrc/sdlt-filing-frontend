@@ -42,7 +42,7 @@ class VendorRepresentedByAgentSummarySpec extends SpecBase {
 
         val result = VendorRepresentedByAgentSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("vendorRepresentedByAgent.checkYourAnswersLabel")
+        result.key.content.asHtml.toString() mustEqual msgs("vendor.vendorRepresentedByAgent.checkYourAnswersLabel")
 
         val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
 
@@ -51,7 +51,7 @@ class VendorRepresentedByAgentSummarySpec extends SpecBase {
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorRepresentedByAgent.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.vendorRepresentedByAgent.change.hidden")
       }
     }
 
@@ -65,7 +65,7 @@ class VendorRepresentedByAgentSummarySpec extends SpecBase {
 
         val result = VendorRepresentedByAgentSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("vendorRepresentedByAgent.checkYourAnswersLabel")
+        result.key.content.asHtml.toString() mustEqual msgs("vendor.vendorRepresentedByAgent.checkYourAnswersLabel")
 
         val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
 
@@ -74,7 +74,7 @@ class VendorRepresentedByAgentSummarySpec extends SpecBase {
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorRepresentedByAgent.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.vendorRepresentedByAgent.change.hidden")
       }
     }
 

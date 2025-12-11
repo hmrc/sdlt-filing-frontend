@@ -34,27 +34,27 @@ object TransactionTypeSummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"transactionType.$answer"))
+            HtmlFormat.escape(messages(s"prelim.transactionType.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "transactionType.checkYourAnswersLabel",
+          key     = "prelim.transactionType.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("transactionType.change.hidden"))
+              .withVisuallyHiddenText(messages("prelim.transactionType.change.hidden"))
           )
         )
     }.getOrElse{
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("transactionType.link.message")}</a>""")
+          s"""<a href="${controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("prelim.transactionType.link.message")}</a>""")
       )
 
       SummaryListRowViewModel(
-        key = "transactionType.checkYourAnswersLabel",
+        key = "prelim.transactionType.checkYourAnswersLabel",
         value = value
       )
     }

@@ -44,16 +44,16 @@ class TransactionTypeSummarySpec extends SpecBase {
 
           val result = TransactionTypeSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("transactionType.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           // Check for the actual resolved message, not the key
-          htmlContent mustEqual msgs(s"transactionType.${TransactionType.ConveyanceTransfer}")
+          htmlContent mustEqual msgs(s"prelim.transactionType.${TransactionType.ConveyanceTransfer}")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transactionType.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.transactionType.change.hidden")
         }
       }
 
@@ -79,7 +79,7 @@ class TransactionTypeSummarySpec extends SpecBase {
 
             val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
             // Verify it equals the resolved message for this transaction type
-            htmlContent mustEqual msgs(s"transactionType.$transactionType")
+            htmlContent mustEqual msgs(s"prelim.transactionType.$transactionType")
           }
         }
       }
@@ -115,12 +115,12 @@ class TransactionTypeSummarySpec extends SpecBase {
 
           val result = TransactionTypeSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("transactionType.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transactionType.link.message"))
+          htmlContent must include(msgs("prelim.transactionType.link.message"))
 
           result.actions mustBe None
         }
@@ -135,12 +135,12 @@ class TransactionTypeSummarySpec extends SpecBase {
 
           val result = TransactionTypeSummary.row(None)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transactionType.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transactionType.link.message"))
+          htmlContent must include(msgs("prelim.transactionType.link.message"))
 
           result.actions mustBe None
         }

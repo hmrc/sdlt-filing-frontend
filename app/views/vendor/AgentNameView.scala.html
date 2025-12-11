@@ -18,16 +18,16 @@
 @import viewmodels.LabelSize.Large
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("agentName.title"), Some(messages("aboutTheVendor.common.caption")))) {
+@layout(pageTitle = title(form, messages("agent.agentName.title"), Some(messages("site.vendor.caption")))) {
 
     @formHelper(action = controllers.vendor.routes.AgentNameController.onSubmit(mode)) {
 
@@ -35,14 +35,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <span class="govuk-caption-l">@messages("aboutTheVendor.common.caption")</span>
+        <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
         @govukInput(
             InputViewModel(
                 field = form("agentName"),
-                label = LabelViewModel(messages("agentName.heading")).asPageHeading(size = Large)
+                label = LabelViewModel(messages("agent.agentName.heading")).asPageHeading(size = Large)
             )
             .withWidth(Full)
-            .withHint(HintViewModel(HtmlContent(Html(messages("agentName.hint")))))
+            .withHint(HintViewModel(HtmlContent(Html(messages("agent.agentName.hint")))))
         )
 
         @govukButton(

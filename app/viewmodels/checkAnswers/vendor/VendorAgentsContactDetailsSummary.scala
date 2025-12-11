@@ -44,32 +44,32 @@ object VendorAgentsContactDetailsSummary  {
         value match {
           case Some(details) =>
             SummaryListRowViewModel(
-              key = "vendorAgentsContactDetails.checkYourAnswersLabel",
+              key = "agent.vendorAgentsContactDetails.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(details)),
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("vendorAgentsContactDetails.change.hidden"))
+                  .withVisuallyHiddenText(messages("agent.vendorAgentsContactDetails.change.hidden"))
               )
             )
           case _ =>
             SummaryListRowViewModel(
-              key = "vendorAgentsContactDetails.checkYourAnswersLabel",
+              key = "agent.vendorAgentsContactDetails.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent("-")),
               actions = Seq(
                 ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("vendorAgentsContactDetails.change.hidden"))
+                  .withVisuallyHiddenText(messages("agent.vendorAgentsContactDetails.change.hidden"))
               )
             )
         }
     }.getOrElse{
 
     val value = ValueViewModel(
-      HtmlContent(
-        s"""<a href="${controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendor.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
+      HtmlContent( //todo 2073 revisit cya here
+        s"""<a href="${controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
     )
 
     SummaryListRowViewModel(
-      key = "vendorAgentsContactDetails.checkYourAnswersLabel",
+      key = "agent.vendorAgentsContactDetails.checkYourAnswersLabel",
       value = value
     )
   }

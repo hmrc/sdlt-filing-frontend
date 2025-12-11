@@ -43,7 +43,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.purchaser")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaser.name.checkYourAnswersLabel.purchaser")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "Smith"
@@ -51,7 +51,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.name.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.purchaser.name.change.hidden")
         }
       }
 
@@ -68,7 +68,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.company")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaser.name.checkYourAnswersLabel.company")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "ACME Corp"
@@ -76,7 +76,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.name.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.purchaser.name.change.hidden")
         }
       }
 
@@ -92,7 +92,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.default")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaser.name.checkYourAnswersLabel.default")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "Test Name"

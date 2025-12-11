@@ -37,7 +37,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
 
         val result = AddPurchaserPhoneNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("addPurchaserPhoneNumber.checkYourAnswersLabel")
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
 
         val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
 
@@ -46,7 +46,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("addPurchaserPhoneNumber.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.addPurchaserPhoneNumber.change.hidden")
       }
     }
 
@@ -60,7 +60,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
 
         val result = AddPurchaserPhoneNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("addPurchaserPhoneNumber.checkYourAnswersLabel")
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
 
         val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
 
@@ -69,7 +69,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("addPurchaserPhoneNumber.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.addPurchaserPhoneNumber.change.hidden")
       }
     }
   }

@@ -28,7 +28,7 @@ class DoesPurchaserHaveNIFormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "purchaser.doesPurchaserHaveNI.error.required"
+    val requiredKey = "site.error.select.required"
 
     behave like optionsField[DoesPurchaserHaveNI](
       form,

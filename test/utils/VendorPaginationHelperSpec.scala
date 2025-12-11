@@ -340,7 +340,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
         result mustBe defined
         result.get.href must include("vendor-overview")
         result.get.href must include("2")
-        result.get.text mustBe Some("vendor.vendor-overview.pagination.previous")
+        result.get.text mustBe Some("site.previous")
       }
 
       "must return link to page 1 when on page 2" in {
@@ -363,7 +363,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
 
         result mustBe defined
         result.get.href must include("/about-the-vendor/vendor-overview?paginationIndex=3")
-        result.get.text mustBe Some("vendor.vendor-overview.pagination.next")
+        result.get.text mustBe Some("site.next")
       }
 
       "must return link to page 2 when on page 1" in {

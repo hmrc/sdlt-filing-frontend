@@ -21,20 +21,20 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("beforeStartReturn.title"))) {
+@layout(pageTitle = titleNoForm(messages("prelim.beforeStart.title"))) {
 
-     <h1 class="govuk-heading-l">@messages("beforeStartReturn.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("prelim.beforeStart.heading")</h1>
 
-     <p class="govuk-body">@messages("beforeStartReturn.paragraph.p1")</p>
+    <p class="govuk-body">@messages("prelim.beforeStart.p1")</p>
 
-     <p class="govuk-body">@messages("beforeStartReturn.paragraph.p2")</p>
+    <p class="govuk-body">@messages("prelim.beforeStart.p2")</p>
 
-     <p class="govuk-body">@messages("beforeStartReturn.paragraph.p3")</p>
+    <p class="govuk-body">@messages("prelim.beforeStart.p3")</p>
 
-     <p class="govuk-body">
-         @govukButton(
-          ButtonViewModel(messages("site.continue"))
-          .asLink(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(NormalMode).url)
-        )
-     </p>
+    <p class="govuk-body">
+    @govukButton(
+        ButtonViewModel(messages("site.continue"))
+        .asLink(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(NormalMode).url)
+    )
+    </p>
 }
