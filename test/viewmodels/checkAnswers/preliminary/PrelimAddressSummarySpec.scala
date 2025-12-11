@@ -52,7 +52,7 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val result = PrelimAddressSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAddress.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.address.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("123 Test Street")
@@ -65,7 +65,7 @@ class PrelimAddressSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAddress.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.address.change.hidden")
         }
       }
 
@@ -188,12 +188,12 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val result = PrelimAddressSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAddress.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.address.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url)
-          htmlContent must include(msgs("purchaserAddress.link.message"))
+          htmlContent must include(msgs("purchaser.address.link.message"))
 
           result.actions mustBe None
         }
@@ -208,12 +208,12 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val result = PrelimAddressSummary.row(None)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAddress.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.address.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url)
-          htmlContent must include(msgs("purchaserAddress.link.message"))
+          htmlContent must include(msgs("purchaser.address.link.message"))
 
           result.actions mustBe None
         }

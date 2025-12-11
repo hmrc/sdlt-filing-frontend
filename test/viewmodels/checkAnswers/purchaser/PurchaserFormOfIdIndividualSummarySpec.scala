@@ -41,7 +41,7 @@ class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
 
           val result = PurchaserFormOfIdIndividualSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserFormOfIdIndividual.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.formOfIdIndividual.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml must include("123456")
@@ -50,7 +50,7 @@ class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserFormOfIdIndividual.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.formOfIdIndividual.change.hidden")
         }
       }
 

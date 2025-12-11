@@ -38,11 +38,11 @@ object PurchaserSurnameOrCompanyNameSummary  {
     answers.flatMap(_.get(PurchaserSurnameOrCompanyNamePage)).map {
       answer =>
         SummaryListRowViewModel(
-          key     = s"purchaser.name.checkYourAnswersLabel.${typeOfPurchaser}",
+          key     = s"prelim.purchaser.name.checkYourAnswersLabel.${typeOfPurchaser}",
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.name.change.hidden"))
+              .withVisuallyHiddenText(messages("prelim.purchaser.name.change.hidden"))
           )
         )
     }.getOrElse {
@@ -50,11 +50,11 @@ object PurchaserSurnameOrCompanyNameSummary  {
       val value = ValueViewModel(
         HtmlContent(
           s"""<a href="${controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}"
-             |class="govuk-link">${messages("purchaser.name.link.message")}</a>""".stripMargin)
+             |class="govuk-link">${messages("prelim.purchaser.name.link.message")}</a>""".stripMargin)
       )
 
       SummaryListRowViewModel(
-        key = s"purchaser.name.checkYourAnswersLabel.$typeOfPurchaser",
+        key = s"prelim.purchaser.name.checkYourAnswersLabel.$typeOfPurchaser",
         value = value
       )
     }

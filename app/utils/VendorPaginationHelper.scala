@@ -38,7 +38,7 @@ trait VendorPaginationHelper {
         val total = itemList.length
         val start = (paginationIndex - 1) * ROWS_ON_PAGE + 1
         val end = math.min(paginationIndex * ROWS_ON_PAGE, total)
-        messages("vendor.vendor-overview.summaryInfo.text", start, end, total)
+        messages("vendor.vendorOverview.summaryInfo.text", start, end, total)
       }
     }
   }
@@ -137,7 +137,7 @@ trait VendorPaginationHelper {
       Some(
         PaginationLink(
           href = controllers.vendor.routes.VendorOverviewController.onPageLoad(paginationIndex - 1).url,
-          text = Some(messages("vendor.vendor-overview.pagination.previous")),
+          text = Some(messages("site.previous")),
           attributes = Map.empty
         )
       )
@@ -150,7 +150,7 @@ trait VendorPaginationHelper {
       Some(
         PaginationLink(
           href = controllers.vendor.routes.VendorOverviewController.onPageLoad(paginationIndex + 1).url,
-          text = Some(messages("vendor.vendor-overview.pagination.next")),
+          text = Some(messages("site.next")),
           attributes = Map.empty
         )
       )

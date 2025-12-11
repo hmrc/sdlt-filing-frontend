@@ -33,11 +33,11 @@ object PurchaserDateOfBirthSummary  {
         implicit val lang: Lang = messages.lang
 
         SummaryListRowViewModel(
-          key     = "purchaserDateOfBirth.checkYourAnswersLabel",
+          key     = "purchaser.dateOfBirth.checkYourAnswersLabel",
           value   = ValueViewModel(answer.format(dateTimeFormat())),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserDateOfBirth.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.dateOfBirth.change.hidden"))
           )
         )
     }

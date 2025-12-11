@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class NameOfPurchaserFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "purchaser.name.error.required"
+  val requiredKey = "site.error.input.required"
   val nameLengthKey = "purchaser.name.error.length"
   val firstNameLengthKey = "purchaser.individual.error.length.firstName"
   val middleNameLengthKey = "purchaser.individual.error.length.middleName"

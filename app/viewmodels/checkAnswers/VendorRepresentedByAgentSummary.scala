@@ -33,11 +33,11 @@ object VendorRepresentedByAgentSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "vendorRepresentedByAgent.checkYourAnswersLabel",
+          key     = "vendor.vendorRepresentedByAgent.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendorRepresentedByAgent.change.hidden"))
+              .withVisuallyHiddenText(messages("vendor.vendorRepresentedByAgent.change.hidden"))
           )
         )
     }

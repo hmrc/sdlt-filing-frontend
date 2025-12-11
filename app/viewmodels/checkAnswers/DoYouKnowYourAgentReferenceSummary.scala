@@ -34,16 +34,16 @@ object DoYouKnowYourAgentReferenceSummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"doYouKnowYourAgentReference.$answer"))
+            HtmlFormat.escape(messages(s"agent.doYouKnowYourAgentReference.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "doYouKnowYourAgentReference.checkYourAnswersLabel",
+          key     = "agent.doYouKnowYourAgentReference.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("doYouKnowYourAgentReference.change.hidden"))
+              .withVisuallyHiddenText(messages("agent.doYouKnowYourAgentReference.change.hidden"))
           )
         )
     }

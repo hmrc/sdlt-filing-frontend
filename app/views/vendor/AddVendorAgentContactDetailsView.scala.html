@@ -19,29 +19,29 @@
 @import views.html.vendor.AddVendorAgentContactDetailsView
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("addVendorAgentContactDetails.title", agentName))) {
+@layout(pageTitle = title(form, messages("agent.addVendorAgentContactDetails.title", agentName))) {
 
     @formHelper(action = controllers.vendor.routes.AddVendorAgentContactDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
 
-        <span class="govuk-caption-l">@messages("aboutTheVendor.common.caption")</span>
+        <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("addVendorAgentContactDetails.heading", agentName)).asPageHeading(size = Large),
+                legend = LegendViewModel(messages("agent.addVendorAgentContactDetails.heading", agentName)).asPageHeading(size = Large),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),
@@ -52,7 +52,7 @@
                         content = Text(messages("site.no"))
                     )
                 )
-            ).withHint(HintViewModel(HtmlContent(Html(messages("addVendorAgentContactDetails.hint.radio", agentName)))))
+            ).withHint(HintViewModel(HtmlContent(Html(messages("agent.addVendorAgentContactDetails.hint.radio", agentName)))))
         )
 
         @govukButton(

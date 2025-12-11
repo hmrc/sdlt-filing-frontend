@@ -29,7 +29,7 @@
 
 @(form: Form[_], mode: Mode, agentName: Option[String] )(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("doYouKnowYourAgentReference.title"))) {
+@layout(pageTitle = title(form, messages("agent.doYouKnowYourAgentReference.title"))) {
 
     @formHelper(action = controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -38,13 +38,13 @@
         }
 
 
-    <span class="govuk-caption-l">@messages("doYouKnowYourAgentReference.caption")</span>
+    <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-             legend = LegendViewModel(messages("doYouKnowYourAgentReference.heading",agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent")))).asPageHeading(size = Large),
+             legend = LegendViewModel(messages("agent.doYouKnowYourAgentReference.heading",agentName.getOrElse(messages("agent.doYouKnowYourAgentReference.theAgent")))).asPageHeading(size = Large),
              items  = DoYouKnowYourAgentReference.options
-).withHint(HintViewModel(HtmlContent(Html(messages("doYouKnowYourAgentReference.p", agentName.getOrElse(messages("doYouKnowYourAgentReference.theAgent"))))))
+).withHint(HintViewModel(HtmlContent(Html(messages("agent.doYouKnowYourAgentReference.p", agentName.getOrElse(messages("agent.doYouKnowYourAgentReference.theAgent"))))))
                             )
                      )
 

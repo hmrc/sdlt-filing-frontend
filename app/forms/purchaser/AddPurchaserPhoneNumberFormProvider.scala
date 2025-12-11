@@ -25,7 +25,7 @@ class AddPurchaserPhoneNumberFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("addPurchaserPhoneNumber.error.required")
+      "value" -> boolean("site.error.select.required")
     )
 }
  

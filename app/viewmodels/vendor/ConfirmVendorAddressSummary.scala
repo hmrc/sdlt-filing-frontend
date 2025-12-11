@@ -34,16 +34,16 @@ object ConfirmVendorAddressSummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"confirmAddress.$answer"))
+            HtmlFormat.escape(messages(s"vendor.confirmAddress.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "confirmAddress.checkYourAnswersLabel",
+          key     = "vendor.confirmAddress.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("confirmAddress.change.hidden"))
+              .withVisuallyHiddenText(messages("vendor.confirmAddress.change.hidden"))
           )
         )
     }

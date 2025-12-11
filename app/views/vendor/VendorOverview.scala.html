@@ -33,10 +33,10 @@
         govukNotificationBanner: GovukNotificationBanner
 )
 @(
-        maybeSummaryList:   Option[SummaryList],
-        pagination:         Option[Pagination],
+        maybeSummaryList: Option[SummaryList],
+        pagination: Option[Pagination],
         paginationInfoText: Option[String],
-        redirect:           Call,
+        redirect: Call,
         form: Form[_],
         mode: Mode,
         errorCalc: Boolean
@@ -45,7 +45,7 @@
         messages: Messages
 )
 
-@layout(pageTitle = titleNoForm(messages("vendor.vendor-overview.title"))) {
+@layout(pageTitle = titleNoForm(messages("vendor.vendorOverview.title"))) {
 
     @request.flash.get("vendorLimitReached").map { _ =>
         @govukErrorSummary(
@@ -53,7 +53,7 @@
                 title = Text(messages("error.summary.title")),
                 errorList = Seq(
                     ErrorLink(
-                        content = Text(messages("vendor.vendor-overview.limitReached"))
+                        content = Text(messages("vendor.vendorOverview.limitReached"))
                     )
                 )
             )
@@ -64,7 +64,7 @@
         @govukNotificationBanner(
             NotificationBanner(
                 title = messages("site.success"),
-                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("vendor.vendor-overview.vendorRemoved", if(!vendorName.isBlank) then vendorName else messages("aboutTheVendor.common.theVendor"))}</h3>"""),
+                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("vendor.vendorOverview.vendorRemoved", if(!vendorName.isBlank) then vendorName else messages("site.vendor.caption"))}</h3>"""),
                 bannerType = Some("success"),
                 role = Some("alert")
             )
@@ -72,12 +72,11 @@
     }
 
     @hmrcPageHeading(PageHeading(
-        text    = messages("vendor.vendor-overview.heading"),
+        text = messages("vendor.vendorOverview.heading"),
         headingClasses = Some("govuk-heading-l"),
         captionClasses = Some("govuk-caption-xl"),
-        section = Some(messages("aboutTheVendor.common.caption"))
+        section = Some(messages("site.vendor.caption"))
     ))
-
 
     @formHelper(action = controllers.vendor.routes.VendorOverviewController.onSubmit(), Symbol("autoComplete") -> "off") {
 
@@ -98,7 +97,7 @@
                     @govukRadios(
                         RadiosViewModel.yesNo(
                             field = form("value"),
-                            legend = LegendViewModel(messages("vendor.vendor-overview.no-vendor.sub-heading-no-vendors")).asPageHeading(size = Medium)
+                            legend = LegendViewModel(messages("vendor.vendorOverview.noVendor.subHeadingNoVendors")).asPageHeading(size = Medium)
                         )
                     )
 
@@ -106,15 +105,15 @@
                         ButtonViewModel(messages("site.continue"))
                     )
                 } else {
-                    @p(messages("vendor.vendor-overview.limitReached"))
+                    @p(messages("vendor.vendorOverview.limitReached"))
                 }
             }
             case None => {
-                @p("vendor.vendor-overview.no-vendor.p1")
+                @p("vendor.vendorOverview.noVendor.p1")
 
                 <p class="govuk-body">
                 @govukButton(
-                    ButtonViewModel(messages("vendor.vendor-overview.no-vendor.button"))
+                    ButtonViewModel(messages("vendor.vendorOverview.noVendor.button"))
                     .asLink(controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url)
                 )
                 </p>

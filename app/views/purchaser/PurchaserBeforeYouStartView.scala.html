@@ -19,36 +19,36 @@
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
-        h1:h1,
+        h1: h1,
         p: p
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("purchaser.beforeYourStart.title"))) {
+@layout(pageTitle = titleNoForm(messages("purchaser.beforeStart.title"))) {
 
-    @h1(messages("purchaser.beforeYourStart.heading"))
+    @h1(messages("site.purchaser.caption"))
 
-    @p(Html(messages("purchaser.beforeYourStart.p1")))
-    @p(Html(messages("purchaser.beforeYourStart.p2")))
+    @p(Html(messages("purchaser.beforeStart.p1")))
+    @p(Html(messages("purchaser.beforeStart.p2")))
 
- <ul class="govuk-list govuk-list--bullet">
-  <li>@messages("purchaser.beforeYourStart.bullet1")</li>
-  <li>@messages("purchaser.beforeYourStart.bullet2")</li>
-  <li>@messages("purchaser.beforeYourStart.bullet3")</li>
-  <li>@messages("purchaser.beforeYourStart.bullet4")</li>
- </ul>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("purchaser.beforeStart.bullet1")</li>
+        <li>@messages("purchaser.beforeStart.bullet2")</li>
+        <li>@messages("purchaser.beforeStart.bullet3")</li>
+        <li>@messages("purchaser.beforeStart.bullet4")</li>
+    </ul>
 
- @p(Html(messages("purchaser.beforeYourStart.p3")))
+    @p(Html(messages("purchaser.beforeStart.p3")))
 
- <ul class="govuk-list govuk-list--bullet">
-  <li>@messages("purchaser.beforeYourStart.bullet5")</li>
- </ul>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("purchaser.beforeStart.bullet5")</li>
+    </ul>
 
- @govukButton(
-  ButtonViewModel(messages("site.continue"))
-  .asLink(controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onPageLoad(NormalMode).url)
-  .withCssClass("govuk-!-margin-top-2")
- )
+    @govukButton(
+        ButtonViewModel(messages("site.continue"))
+        .asLink(controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onPageLoad(NormalMode).url)
+        .withCssClass("govuk-!-margin-top-2")
+    )
 
 }

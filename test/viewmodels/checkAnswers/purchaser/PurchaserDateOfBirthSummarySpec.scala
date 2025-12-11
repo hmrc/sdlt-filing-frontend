@@ -39,7 +39,7 @@ class PurchaserDateOfBirthSummarySpec extends SpecBase {
 
         val result = PurchaserDateOfBirthSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaserDateOfBirth.checkYourAnswersLabel")
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.dateOfBirth.checkYourAnswersLabel")
 
         val htmlContent = result.value.content.asInstanceOf[Text].asHtml.toString()
         htmlContent mustEqual msgs("26 October 2000")
@@ -47,7 +47,7 @@ class PurchaserDateOfBirthSummarySpec extends SpecBase {
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserDateOfBirth.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.dateOfBirth.change.hidden")
       }
     }
   }

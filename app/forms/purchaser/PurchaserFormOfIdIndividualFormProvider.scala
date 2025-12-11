@@ -33,12 +33,12 @@ class PurchaserFormOfIdIndividualFormProvider @Inject() extends Mappings {
 
    def apply(): Form[PurchaserFormOfIdIndividual] = Form(
      mapping(
-      "idNumberOrReference" -> text("purchaserFormOfIdIndividual.error.idNumberOrReference.required")
-        .verifying(maxLength(idNumberOrReferenceMaxLength, "purchaserFormOfIdIndividual.error.idNumberOrReference.length"))
-        .verifying(regexp(formIdNumberOrReferenceRegex, "purchaserFormOfIdIndividual.error.idNumberOrReference.invalid")),
+      "idNumberOrReference" -> text("purchaser.formOfIdIndividual.error.idNumberOrReference.required")
+        .verifying(maxLength(idNumberOrReferenceMaxLength, "purchaser.formOfIdIndividual.error.idNumberOrReference.length"))
+        .verifying(regexp(formIdNumberOrReferenceRegex, "purchaser.formOfIdIndividual.error.idNumberOrReference.invalid")),
 
        "countryIssued" -> optionalText()
-         .verifying(optionalMaxLength(countryIssuedMaxLength, "purchaserFormOfIdIndividual.error.countryIssued.length"))
-         .verifying(optionalRegexp(formCountryIssuedRegex, "purchaserFormOfIdIndividual.error.countryIssued.invalid"))
+         .verifying(optionalMaxLength(countryIssuedMaxLength, "purchaser.formOfIdIndividual.error.countryIssued.length"))
+         .verifying(optionalRegexp(formCountryIssuedRegex, "purchaser.formOfIdIndividual.error.countryIssued.invalid"))
     )(PurchaserFormOfIdIndividual.apply)(o => Some(Tuple.fromProductTyped(o))))
  }

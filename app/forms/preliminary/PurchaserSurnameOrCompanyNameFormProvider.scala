@@ -34,22 +34,22 @@ class PurchaserSurnameOrCompanyNameFormProvider @Inject() extends Mappings {
       )
 
   private def errorKey(choice: String): String = choice match {
-    case "Individual" => "purchaser.name.form.no.input.error.individual"
-    case "Company" => "purchaser.name.form.no.input.error.company"
-    case _ => "p.name.form.no.input.error"
+    case "Individual" => "prelim.purchaser.name.form.no.input.error.individual"
+    case "Company" => "prelim.purchaser.name.form.no.input.error.company"
+    case _ => "prelim.purchaser.name.form.no.input.error"
   }
 
 
   private def maxLengthErrorKey(choice: String): String = choice match {
-    case "Individual" => "purchaser.name.form.maxLength.error.individual"
-    case "Company" => "purchaser.name.form.maxLength.error.company"
-    case _ => "purchaser.name.form.maxLength.error"
+    case "Individual" => "prelim.purchaser.name.form.maxLength.error.individual"
+    case "Company" => "prelim.purchaser.name.form.maxLength.error.company"
+    case _ => "prelim.purchaser.name.form.maxLength.error"
   }
 
 
   private def regexErrorKey(choice: String): String = choice match {
-    case "Individual" => "purchaser.name.form.regex.error.individual"
-    case "Company" => "purchaser.name.form.regex.error.company"
-    case _ => "purchaser.name.form.regex.error"
+    case "Individual" => "prelim.purchaser.name.form.regex.error.individual"
+    case "Company" => "prelim.purchaser.name.form.regex.error.company"
+    case _ => "site.error.regex.invalid"
   }
 }

@@ -28,8 +28,8 @@ class PurchaserNationalInsuranceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "nationalInsuranceNumber" -> text("purchaserNationalInsurance.error.required")
-        .verifying(maxLength(nationalInsuranceNumberLength, "purchaserNationalInsurance.error.length"))
-        .verifying(regexp(formNumberRegex, "purchaserNationalInsurance.error.invalid"))
+      "nationalInsuranceNumber" -> text("purchaser.nationalInsurance.error.required")
+        .verifying(maxLength(nationalInsuranceNumberLength, "purchaser.nationalInsurance.error.length"))
+        .verifying(regexp(formNumberRegex, "purchaser.nationalInsurance.error.invalid"))
     )
 }
