@@ -39,6 +39,12 @@ class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
       Gen.oneOf(Seq("+987654321", "(987)654-32", "987-654-3210", "9876543210"))
     )
 
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
     "must not bind strings longer than max length" in {
       val tooLong = "1234567890123456"
       val result = form.bind(Map(fieldName -> tooLong))
