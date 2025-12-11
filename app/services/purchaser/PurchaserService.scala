@@ -21,6 +21,9 @@ import models.purchaser.*
 import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage}
+import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import play.api.mvc.Call
 
 import scala.util.Try
 
@@ -46,6 +49,15 @@ class PurchaserService {
     }
   }
 
+  def whoIsMakingThePurchase(isCompany: Option[String]): WhoIsMakingThePurchase = {
+    isCompany match
+    {
+      case Some(value) if value.toLowerCase == "yes" => WhoIsMakingThePurchase.Company
+      case Some(value) if value.toLowerCase == "no" => WhoIsMakingThePurchase.Individual
+      case _ => WhoIsMakingThePurchase.Company
+    }
+  }
+
   def populatePurchaserNameInSession(
                                       purchaserCheck: String,
                                       userAnswers: UserAnswers
@@ -60,9 +72,11 @@ class PurchaserService {
       case Some(purchaser) if purchaserCheck == "Yes" && purchaser.purchaserID.isDefined =>
         createPurchaserName(purchaser) match {
           case Some(purchaserName) =>
+
             for {
               withName <- userAnswers.set(NameOfPurchaserPage, purchaserName)
-              withConfirm <- withName.set(ConfirmNameOfThePurchaserPage, confirmName)
+              withIndividualOrCompany <- withName.set(WhoIsMakingThePurchasePage, whoIsMakingThePurchase(purchaser.isCompany))
+              withConfirm <- withIndividualOrCompany.set(ConfirmNameOfThePurchaserPage, confirmName)
             } yield withConfirm
 
           case None =>
@@ -83,4 +97,28 @@ class PurchaserService {
       case None =>
         Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
     }
+
+  def confirmIdentityNextPage(value: PurchaserConfirmIdentity, mode: Mode): Call = {
+    if (mode == CheckMode) {
+      // TODO: change this to check your answers
+      controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad()
+    } else {
+      value match {
+        case PurchaserConfirmIdentity.PartnershipUTR =>
+          // TODO: redirect to Partnership UTR page
+          controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+        case PurchaserConfirmIdentity.CorporationTaxUTR =>
+          // TODO: redirect to Corp Tax UTR page
+          controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+        case PurchaserConfirmIdentity.VatRegistrationNumber =>
+          // TODO: redirect to Vat Reg Num page
+          controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+        case PurchaserConfirmIdentity.AnotherFormOfID =>
+          // TODO: redirect to Another Form ID page
+          controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+        case _ =>
+          controllers.routes.ReturnTaskListController.onPageLoad()
+      }
+    }
+  }
 }

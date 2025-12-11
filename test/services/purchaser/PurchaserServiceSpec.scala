@@ -17,20 +17,19 @@
 package services.purchaser
 
 import base.SpecBase
-import models.purchaser.WhoIsMakingThePurchase.{Company, Individual}
-import models.purchaser.{ConfirmNameOfThePurchaser, NameOfPurchaser, WhoIsMakingThePurchase}
-import models.{FullReturn, NormalMode, Purchaser, UserAnswers}
+import models.*
+import models.purchaser.*
 import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.*
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 class PurchaserServiceSpec extends SpecBase {
 
-  val service = new PurchaserService()
+  private val service = new PurchaserService()
 
   private def emptyFullReturn: FullReturn = FullReturn(
     returnResourceRef = "REF123",
@@ -50,83 +49,102 @@ class PurchaserServiceSpec extends SpecBase {
 
   "PurchaserService" - {
 
-    ".populatePurchaserNameInSession" - {
+    "confirmIdentityNextPage" - {
+
+      "in CheckMode" - {
+
+        "must return PurchaserBeforeYouStart for any identity type" in {
+          val result = service.confirmIdentityNextPage(PurchaserConfirmIdentity.PartnershipUTR, CheckMode)
+
+          result mustEqual controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad()
+        }
+      }
+
+      "in NormalMode" - {
+
+        "must return NameOfPurchaser for PartnershipUTR" in {
+          val result = service.confirmIdentityNextPage(PurchaserConfirmIdentity.PartnershipUTR, NormalMode)
+
+          result mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+        }
+
+        "must return NameOfPurchaser for CorporationTaxUTR" in {
+          val result = service.confirmIdentityNextPage(PurchaserConfirmIdentity.CorporationTaxUTR, NormalMode)
+
+          result mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+        }
+
+        "must return NameOfPurchaser for VatRegistrationNumber" in {
+          val result = service.confirmIdentityNextPage(PurchaserConfirmIdentity.VatRegistrationNumber, NormalMode)
+
+          result mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+        }
+
+        "must return NameOfPurchaser for AnotherFormOfID" in {
+          val result = service.confirmIdentityNextPage(PurchaserConfirmIdentity.AnotherFormOfID, NormalMode)
+
+          result mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+        }
+
+        "must return ReturnTaskList for Divider" in {
+          val result = service.confirmIdentityNextPage(PurchaserConfirmIdentity.Divider, NormalMode)
+
+          result mustEqual controllers.routes.ReturnTaskListController.onPageLoad()
+        }
+      }
+    }
+
+    "whoIsMakingThePurchase" - {
+
+      "must return Company when isCompany is 'yes'" in {
+        val result = service.whoIsMakingThePurchase(Some("yes"))
+
+        result mustEqual WhoIsMakingThePurchase.Company
+      }
+
+      "must return Company when isCompany is 'YES'" in {
+        val result = service.whoIsMakingThePurchase(Some("YES"))
+
+        result mustEqual WhoIsMakingThePurchase.Company
+      }
+
+      "must return Individual when isCompany is 'no'" in {
+        val result = service.whoIsMakingThePurchase(Some("no"))
+
+        result mustEqual WhoIsMakingThePurchase.Individual
+      }
+
+      "must return Individual when isCompany is 'NO'" in {
+        val result = service.whoIsMakingThePurchase(Some("NO"))
+
+        result mustEqual WhoIsMakingThePurchase.Individual
+      }
+
+      "must return Company when isCompany is None" in {
+        val result = service.whoIsMakingThePurchase(None)
+
+        result mustEqual WhoIsMakingThePurchase.Company
+      }
+
+      "must return Company when isCompany is any other value" in {
+        val result = service.whoIsMakingThePurchase(Some("maybe"))
+
+        result mustEqual WhoIsMakingThePurchase.Company
+      }
+    }
+
+    "populatePurchaserNameInSession" - {
 
       "when purchaserCheck is 'Yes'" - {
 
-        "must successfully populate session with individual purchaser with full name" in {
-          val purchaser = Purchaser(
-            purchaserID = Some("PURCH001"),
-            forename1 = Some("John"),
-            forename2 = Some("Michael"),
-            surname = Some("Smith"),
-            companyName = None,
-            address1 = None,
-            address2 = None,
-            address3 = None,
-            address4 = None,
-            postcode = None
-          )
-
-          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
-          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-            .copy(fullReturn = Some(fullReturn))
-
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
-
-          result mustBe a[Success[_]]
-
-          val updatedAnswers = result.get
-
-          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
-            forename1 = Some("John"),
-            forename2 = Some("Michael"),
-            name = "Smith"
-          ))
-
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
-        }
-
-        "must successfully populate session with individual purchaser without middle name" in {
-          val purchaser = Purchaser(
-            purchaserID = Some("PURCH002"),
-            forename1 = Some("Jane"),
-            forename2 = None,
-            surname = Some("Doe"),
-            companyName = None,
-            address1 = None,
-            address2 = None,
-            address3 = None,
-            address4 = None,
-            postcode = None
-          )
-
-          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
-          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-            .copy(fullReturn = Some(fullReturn))
-
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
-
-          result mustBe a[Success[_]]
-
-          val updatedAnswers = result.get
-
-          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
-            forename1 = Some("Jane"),
-            forename2 = None,
-            name = "Doe"
-          ))
-
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
-        }
-
         "must successfully populate session with company purchaser" in {
           val purchaser = Purchaser(
-            purchaserID = Some("PURCH003"),
+            purchaserID = Some("PURCH001"),
             forename1 = None,
             forename2 = None,
             surname = None,
             companyName = Some("ACME Corporation"),
+            isCompany = Some("YES"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -135,8 +153,7 @@ class PurchaserServiceSpec extends SpecBase {
           )
 
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
-          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-            .copy(fullReturn = Some(fullReturn))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
           val result = service.populatePurchaserNameInSession("Yes", userAnswers)
 
@@ -150,19 +167,18 @@ class PurchaserServiceSpec extends SpecBase {
             name = "ACME Corporation"
           ))
 
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
           updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
         }
-      }
 
-      "when purchaserCheck is 'No'" - {
-
-        "must only set confirmation to No without setting name" in {
+        "must successfully populate session with individual purchaser with full name" in {
           val purchaser = Purchaser(
-            purchaserID = Some("PURCH005"),
+            purchaserID = Some("PURCH002"),
             forename1 = Some("John"),
             forename2 = Some("Michael"),
             surname = Some("Smith"),
             companyName = None,
+            isCompany = Some("NO"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -171,8 +187,315 @@ class PurchaserServiceSpec extends SpecBase {
           )
 
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
-          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-            .copy(fullReturn = Some(fullReturn))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = Some("John"),
+            forename2 = Some("Michael"),
+            name = "Smith"
+          ))
+
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+
+        "must successfully populate session with individual purchaser without middle name" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH003"),
+            forename1 = Some("Jane"),
+            forename2 = None,
+            surname = Some("Doe"),
+            companyName = None,
+            isCompany = Some("no"),
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = Some("Jane"),
+            forename2 = None,
+            name = "Doe"
+          ))
+
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+
+        "must handle purchaser with only surname (no forenames)" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH004"),
+            forename1 = None,
+            forename2 = None,
+            surname = Some("Madonna"),
+            companyName = None,
+            isCompany = Some("NO"),
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = None,
+            forename2 = None,
+            name = "Madonna"
+          ))
+
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+
+        "must prioritize company name over surname when both are present" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH005"),
+            forename1 = Some("John"),
+            forename2 = None,
+            surname = Some("Smith"),
+            companyName = Some("Smith & Co Ltd"),
+            isCompany = Some("YES"),
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = None,
+            forename2 = None,
+            name = "Smith & Co Ltd"
+          ))
+
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
+        }
+
+        "must use first purchaser when multiple purchasers exist" in {
+          val firstPurchaser = Purchaser(
+            purchaserID = Some("PURCH006"),
+            forename1 = Some("First"),
+            forename2 = None,
+            surname = Some("Purchaser"),
+            companyName = None,
+            isCompany = Some("NO"),
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val secondPurchaser = Purchaser(
+            purchaserID = Some("PURCH007"),
+            forename1 = Some("Second"),
+            forename2 = None,
+            surname = Some("Buyer"),
+            companyName = None,
+            isCompany = Some("NO"),
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(firstPurchaser, secondPurchaser)))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = Some("First"),
+            forename2 = None,
+            name = "Purchaser"
+          ))
+        }
+
+        "must only set confirmation when purchaser has no surname" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH008"),
+            forename1 = Some("John"),
+            forename2 = Some("Middle"),
+            surname = None,
+            companyName = None,
+            isCompany = Some("NO"),
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe None
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+
+        "must only set confirmation when purchaser has no purchaserID" in {
+          val purchaser = Purchaser(
+            purchaserID = None,
+            forename1 = Some("John"),
+            forename2 = None,
+            surname = Some("Smith"),
+            companyName = None,
+            isCompany = Some("NO"),
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe None
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+
+        "must only set confirmation when IsCompany is None" in {
+          val purchaser = Purchaser(
+            purchaserID = None,
+            forename1 = Some("John"),
+            forename2 = None,
+            surname = Some("Smith"),
+            companyName = None,
+            isCompany = None,
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe None
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+
+        "must only set confirmation when no purchaser exists in fullReturn" in {
+          val fullReturn = emptyFullReturn.copy(purchaser = None)
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe None
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+
+        "must only set confirmation when purchaser list is empty" in {
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq.empty))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe None
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+
+        "must only set confirmation when fullReturn is None" in {
+          val userAnswers = emptyUserAnswers
+
+          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(NameOfPurchaserPage) mustBe None
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+        }
+      }
+
+      "when purchaserCheck is 'No'" - {
+
+        "must only set confirmation to No without setting name" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH009"),
+            forename1 = Some("John"),
+            forename2 = Some("Michael"),
+            surname = Some("Smith"),
+            companyName = None,
+            isCompany = Some("NO"),
+            address1 = None,
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = None
+          )
+
+          val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
           val result = service.populatePurchaserNameInSession("No", userAnswers)
 
@@ -185,7 +508,7 @@ class PurchaserServiceSpec extends SpecBase {
         }
 
         "must only set confirmation to No when no purchaser exists" in {
-          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+          val userAnswers = emptyUserAnswers
 
           val result = service.populatePurchaserNameInSession("No", userAnswers)
 
@@ -202,10 +525,12 @@ class PurchaserServiceSpec extends SpecBase {
 
         "must set confirmation to No" in {
           val purchaser = Purchaser(
-            purchaserID = Some("PURCH006"),
+            purchaserID = Some("PURCH010"),
             forename1 = Some("John"),
+            forename2 = None,
             surname = Some("Smith"),
             companyName = None,
+            isCompany = Some("NO"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -214,8 +539,7 @@ class PurchaserServiceSpec extends SpecBase {
           )
 
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
-          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-            .copy(fullReturn = Some(fullReturn))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
           val result = service.populatePurchaserNameInSession("Invalid", userAnswers)
 
@@ -227,188 +551,53 @@ class PurchaserServiceSpec extends SpecBase {
           updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.No)
         }
       }
-
-      "must preserve existing user answers when populating purchaser data" in {
-        val existingAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
-
-        val purchaser = Purchaser(
-          purchaserID = Some("PURCH007"),
-          forename1 = Some("Jane"),
-          surname = Some("Doe"),
-          companyName = None,
-          address1 = None,
-          address2 = None,
-          address3 = None,
-          address4 = None,
-          postcode = None
-        )
-
-        val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
-        val userAnswersWithPurchaser = existingAnswers.copy(fullReturn = Some(fullReturn))
-
-        val result = service.populatePurchaserNameInSession("Yes", userAnswersWithPurchaser)
-
-        result mustBe a[Success[_]]
-
-        val updatedAnswers = result.get
-
-        // Should override the existing value
-        updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
-        updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
-          forename1 = Some("Jane"),
-          forename2 = None,
-          name = "Doe"
-        ))
-      }
-
-      "must handle purchaser with only surname (no forenames)" in {
-        val purchaser = Purchaser(
-          purchaserID = Some("PURCH008"),
-          forename1 = None,
-          forename2 = None,
-          surname = Some("Madonna"),
-          companyName = None,
-          address1 = None,
-          address2 = None,
-          address3 = None,
-          address4 = None,
-          postcode = None
-        )
-
-        val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
-        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-          .copy(fullReturn = Some(fullReturn))
-
-        val result = service.populatePurchaserNameInSession("Yes", userAnswers)
-
-        result mustBe a[Success[_]]
-
-        val updatedAnswers = result.get
-
-        updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
-          forename1 = None,
-          forename2 = None,
-          name = "Madonna"
-        ))
-      }
-
-      "must prioritize company name over surname when both are present" in {
-        val purchaser = Purchaser(
-          purchaserID = Some("PURCH009"),
-          forename1 = Some("John"),
-          forename2 = None,
-          surname = Some("Smith"),
-          companyName = Some("Smith & Co Ltd"),
-          address1 = None,
-          address2 = None,
-          address3 = None,
-          address4 = None,
-          postcode = None
-        )
-
-        val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
-        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-          .copy(fullReturn = Some(fullReturn))
-
-        val result = service.populatePurchaserNameInSession("Yes", userAnswers)
-
-        result mustBe a[Success[_]]
-
-        val updatedAnswers = result.get
-
-        updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
-          forename1 = None,
-          forename2 = None,
-          name = "Smith & Co Ltd"
-        ))
-      }
-
-      "must use first purchaser when multiple purchasers exist" in {
-        val firstPurchaser = Purchaser(
-          purchaserID = Some("PURCH010"),
-          forename1 = Some("First"),
-          surname = Some("Purchaser"),
-          companyName = None,
-          address1 = None,
-          address2 = None,
-          address3 = None,
-          address4 = None,
-          postcode = None
-        )
-
-        val secondPurchaser = Purchaser(
-          purchaserID = Some("PURCH011"),
-          forename1 = Some("Second"),
-          surname = Some("Buyer"),
-          companyName = None,
-          address1 = None,
-          address2 = None,
-          address3 = None,
-          address4 = None,
-          postcode = None
-        )
-
-        val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(firstPurchaser, secondPurchaser)))
-        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-          .copy(fullReturn = Some(fullReturn))
-
-        val result = service.populatePurchaserNameInSession("Yes", userAnswers)
-
-        result mustBe a[Success[_]]
-
-        val updatedAnswers = result.get
-
-        updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
-          forename1 = Some("First"),
-          forename2 = None,
-          name = "Purchaser"
-        ))
-      }
     }
 
-    ".checkPurchaserType" - {
+    "checkPurchaserType" - {
+
       "when the purchaser type is set to Company" - {
+
         "when the value in user answers is Company" - {
           "must stay on the page" in {
-            val result = service.checkPurchaserType(Company, userAnswersWithCompanyPurchaser, continueRoute)
+            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Company, userAnswersWithCompanyPurchaser, continueRoute)
             result mustBe continueRoute
           }
         }
 
         "when the value in user answers is Individual" - {
-          "must redirect to Generic Error Page" in { // TODO DTR-1788: redirect to CYA
-            val result = service.checkPurchaserType(Company, userAnswersWithIndividualPurchaser, continueRoute)
+          "must redirect to Generic Error Page" in {
+            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Company, userAnswersWithIndividualPurchaser, continueRoute)
             redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.GenericErrorController.onPageLoad().url)
           }
         }
 
         "when the value in user answers is not present" - {
           "must redirect to WhoIsMakingThePurchase page" in {
-            val result = service.checkPurchaserType(Company, emptyUserAnswers, continueRoute)
+            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Company, emptyUserAnswers, continueRoute)
             redirectLocation(Future.successful(result)) mustBe Some(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url)
           }
         }
       }
 
       "when the purchaser type is set to Individual" - {
+
         "when the value in user answers is Individual" - {
           "must stay on the page" in {
-            val result = service.checkPurchaserType(Individual, userAnswersWithIndividualPurchaser, continueRoute)
+            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Individual, userAnswersWithIndividualPurchaser, continueRoute)
             result mustBe continueRoute
           }
         }
 
         "when the value in user answers is Company" - {
-          "must redirect to Generic Error Page" in { // TODO DTR-1788: redirect to CYA
-            val result = service.checkPurchaserType(Individual, userAnswersWithCompanyPurchaser, continueRoute)
+          "must redirect to Generic Error Page" in {
+            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Individual, userAnswersWithCompanyPurchaser, continueRoute)
             redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.GenericErrorController.onPageLoad().url)
           }
         }
 
         "when the value in user answers is not present" - {
           "must redirect to WhoIsMakingThePurchase page" in {
-            val result = service.checkPurchaserType(Individual, emptyUserAnswers, continueRoute)
+            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Individual, emptyUserAnswers, continueRoute)
             redirectLocation(Future.successful(result)) mustBe Some(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url)
           }
         }

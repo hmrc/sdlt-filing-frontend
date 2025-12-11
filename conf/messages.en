@@ -480,6 +480,18 @@ purchaser.doesPurchaserHaveNI.checkYourAnswersLabel = Does the purchaser have a 
 purchaser.doesPurchaserHaveNI.error.required = Select yes or no
 purchaser.doesPurchaserHaveNI.change.hidden = Purchaser National Insurance number
 
+purchaserConfirmIdentity.title = What information can you provide about {0}? - About the purchaser
+purchaserConfirmIdentity.heading = What information can you provide about {0}?
+purchaserConfirmIdentity.p1 = We need one form of ID to confirm {0}’s identity.
+purchaserConfirmIdentity.vatRegistrationNumber = VAT registration number
+purchaserConfirmIdentity.corporationTaxUniqueTaxpayerReference = Corporation tax Unique Taxpayer Reference (UTR)
+purchaserConfirmIdentity.partnershipUniqueTaxpayerReference = Partnership Unique Taxpayer Reference (UTR)
+purchaserConfirmIdentity.confirmIdentityDivider = or
+purchaserConfirmIdentity.anotherFormOfId = Another form of ID
+purchaserConfirmIdentity.checkYourAnswersLabel = What information can you provide about the purchaser?
+purchaserConfirmIdentity.error.required = Please select what information can you provide about the purchaser
+purchaserConfirmIdentity.change.hidden = Purchaser information
+
 purchaserNationalInsurance.title                                        = What is the purchaser’s National Insurance number? - About the purchaser
 purchaserNationalInsurance.heading                                      = What is {0}’s national insurance number?
 purchaserNationalInsurance.hint                                         = It’s on their National Insurance card, benefit letter, payslip or P60 - for example, QQ 12 34 56 C

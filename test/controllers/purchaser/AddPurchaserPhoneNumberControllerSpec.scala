@@ -170,7 +170,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+          controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
       }
     }
 
@@ -189,7 +189,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+          controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
       }
     }
 
@@ -211,7 +211,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
       }
     }
 
-    "must redirect to PurchaserBeforeYouStartController if No for company purchaser" in {
+    "must redirect to PurchaserConfirmIdentityController if No for company purchaser" in {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithCompanyPurchaser))
@@ -226,7 +226,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+          controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode).url
       }
     }
 
