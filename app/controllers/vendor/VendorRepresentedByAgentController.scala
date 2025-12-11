@@ -52,7 +52,7 @@ class VendorRepresentedByAgentController @Inject()(
 
       val vendorName: Option[String] = request.userAnswers
         .get(VendorOrCompanyNamePage)
-        .map(_.name)
+        .map(_.fullName)
 
       val preparedForm = request.userAnswers.get(VendorRepresentedByAgentPage) match {
         case None => form
@@ -68,7 +68,7 @@ class VendorRepresentedByAgentController @Inject()(
 
       val vendorName: Option[String] = request.userAnswers
         .get(VendorOrCompanyNamePage)
-        .map(_.name)
+        .map(_.fullName)
 
       form.bindFromRequest().fold(
         formWithErrors =>

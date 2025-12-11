@@ -200,7 +200,7 @@ class NameOfPurchaserSpec extends AnyFreeSpec with Matchers with EitherValues {
           name = "Smith"
         )
 
-        nameOfPurchaser .fullName mustBe "Smith"
+        nameOfPurchaser .fullName mustBe "Michael Smith"
       }
     }
   }
