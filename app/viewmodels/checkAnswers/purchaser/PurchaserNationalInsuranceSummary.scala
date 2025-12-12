@@ -20,6 +20,7 @@ import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserNationalInsurancePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
@@ -32,7 +33,7 @@ object PurchaserNationalInsuranceSummary  {
 
         SummaryListRowViewModel(
           key     = "purchaserNationalInsurance.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaserNationalInsurance.change.hidden"))

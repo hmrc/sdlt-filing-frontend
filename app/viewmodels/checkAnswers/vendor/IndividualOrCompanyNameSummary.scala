@@ -42,7 +42,7 @@ object IndividualOrCompanyNameSummary  {
         if (vendorOrBusiness == "Individual") {
           SummaryListRowViewModel(
           key     = s"vendor.checkYourAnswers.vendorName.label",
-          value   = ValueViewModel(HtmlFormat.escape(vendorName).toString),
+          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(vendorName).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("vendor.checkYourAnswers.vendorName.hidden"))
@@ -50,7 +50,7 @@ object IndividualOrCompanyNameSummary  {
         ) } else  {
           SummaryListRowViewModel(
             key = s"vendor.checkYourAnswers.vendorName.label",
-            value = ValueViewModel(HtmlFormat.escape(answer.name).toString),
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer.name).toString)),
             actions = Seq(
               ActionItemViewModel("site.change", controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url)
                 .withVisuallyHiddenText(messages("vendor.checkYourAnswers.vendorName.hidden"))

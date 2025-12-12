@@ -33,7 +33,7 @@ object AgentNameSummary  {
 
       SummaryListRowViewModel(
         key = "vendor.checkYourAnswers.agentName.label",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("agentName.change.hidden"))

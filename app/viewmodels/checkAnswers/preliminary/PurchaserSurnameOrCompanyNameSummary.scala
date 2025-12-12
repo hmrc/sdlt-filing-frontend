@@ -39,7 +39,7 @@ object PurchaserSurnameOrCompanyNameSummary  {
       answer =>
         SummaryListRowViewModel(
           key     = s"purchaser.name.checkYourAnswersLabel.${typeOfPurchaser}",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaser.name.change.hidden"))

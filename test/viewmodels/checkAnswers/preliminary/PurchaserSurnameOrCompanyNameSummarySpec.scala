@@ -17,14 +17,12 @@
 package viewmodels.checkAnswers.preliminary
 
 import base.SpecBase
-import controllers.routes
 import models.CheckMode
 import models.prelimQuestions.CompanyOrIndividualRequest
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
-import viewmodels.checkAnswers.preliminary.PurchaserSurnameOrCompanyNameSummary
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
@@ -47,8 +45,8 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.purchaser")
 
-          val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-          textContent mustEqual "Smith"
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent mustEqual "Smith"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
@@ -72,8 +70,8 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.company")
 
-          val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-          textContent mustEqual "ACME Corp"
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent mustEqual "ACME Corp"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
@@ -96,8 +94,8 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.name.checkYourAnswersLabel.default")
 
-          val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-          textContent mustEqual "Test Name"
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent mustEqual "Test Name"
         }
       }
 
@@ -114,11 +112,11 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-          val textContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-          textContent must include("O&amp;#x27;Brien")
-          textContent must include("&amp;amp;")
-          textContent must include("&amp;lt;")
-          textContent must include("&amp;gt;")
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("O&#x27;Brien")
+          htmlContent must include("&amp;")
+          htmlContent must include("&lt;")
+          htmlContent must include("&gt;")
         }
       }
     }
