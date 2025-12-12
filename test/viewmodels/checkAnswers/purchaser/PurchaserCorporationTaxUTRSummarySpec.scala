@@ -21,7 +21,6 @@ import models.CheckMode
 import pages.purchaser.PurchaserCorporationTaxUTRPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
   "when valid Corporation Tax UTR present" - {
@@ -40,7 +39,7 @@ class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserCorporationTaxUTR.checkYourAnswersLabel")
 
-        val htmlContent = result.value.content.asInstanceOf[Text].asHtml.toString()
+        val htmlContent = result.value.content.asHtml.toString()
         htmlContent mustEqual "1234567494"
 
         result.actions.get.items.size mustEqual 1

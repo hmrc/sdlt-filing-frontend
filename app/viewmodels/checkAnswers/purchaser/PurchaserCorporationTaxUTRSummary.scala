@@ -21,6 +21,7 @@ import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserCorporationTaxUTRPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
@@ -33,7 +34,7 @@ object PurchaserCorporationTaxUTRSummary  {
 
         SummaryListRowViewModel(
           key     = "purchaser.purchaserCorporationTaxUTR.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaser.purchaserCorporationTaxUTR.change.hidden"))

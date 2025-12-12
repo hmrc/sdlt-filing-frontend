@@ -23,10 +23,7 @@ import play.api.data.validation.Constraints.minLength
 import javax.inject.Inject
 
 class PurchaserCorporationTaxUTRFormProvider @Inject() extends Mappings {
-
-  private val formNumberRegex = "^[0-9]*$"
-
-
+  
   def apply(): Form[String] =
     Form(
       "value" -> text("purchaser.purchaserCorporationTaxUTR.error.required")

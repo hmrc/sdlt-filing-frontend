@@ -542,7 +542,7 @@ purchaserPartnershipUtr.change.hidden                                       = Pu
 
 purchaser.purchaserCorporationTaxUTR.title = What is the purchaser’s Corporation Tax Unique Taxpayer Reference (UTR)? - About the purchaser
 purchaser.purchaserCorporationTaxUTR.h1 = {0}’s Corporation Tax Unique Taxpayer Reference (UTR)
-purchaser.purchaserCorporationTaxUTR.p = It will be on tax returns and other letters about Corporation Tax. It might be called 'reference', 'UTR' or 'official use'.
+purchaser.purchaserCorporationTaxUTR.p = It will be on tax returns and other letters about Corporation Tax. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 purchaser.purchaserCorporationTaxUTR.h2 = What is {0}’s Corporation Tax UTR?
 purchaser.purchaserCorporationTaxUTR.hint = Their UTR should be 10 digits long
 purchaser.purchaserCorporationTaxUTR.checkYourAnswersLabel = Corporation Tax Unique Taxpayer Reference (UTR)
