@@ -113,13 +113,18 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserDateOfBirthPage to WhoIsMakingThePurchasePage" in {
           navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
         }
-        
+
         "go from PurchaserFormOfIdIndividualPage to Return Task List Controller" in {
           navigator.nextPage(PurchaserFormOfIdIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
-        
+
         "go from addPhoneNumberPage to enterPhoneNumberPage" in {
           navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        }
+
+        //TODO update to type of business page PR-9
+        "go from PurchaserPartnershipUtrPage to PurchaserPartnershipUtrPage" in {
+          navigator.nextPage(PurchaserPartnershipUtrPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(mode = NormalMode)
         }
       }
     }

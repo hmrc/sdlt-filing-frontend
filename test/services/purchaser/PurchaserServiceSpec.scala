@@ -65,7 +65,7 @@ class PurchaserServiceSpec extends SpecBase {
         "must return NameOfPurchaser for PartnershipUTR" in {
           val result = service.confirmIdentityNextPage(PurchaserConfirmIdentity.PartnershipUTR, NormalMode)
 
-          result mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+          result mustEqual controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(NormalMode)
         }
 
         "must return NameOfPurchaser for CorporationTaxUTR" in {

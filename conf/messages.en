@@ -527,3 +527,15 @@ enterPurchaserPhoneNumber.checkYourAnswersLabel                         = enterP
 enterPurchaserPhoneNumber.error.required                                = Enter enterPurchaserPhoneNumber
 enterPurchaserPhoneNumber.error.length                                  = EnterPurchaserPhoneNumber must be 14 characters or less
 enterPurchaserPhoneNumber.change.hidden                                 = EnterPurchaserPhoneNumber
+
+purchaserPartnershipUtr.title                                               = What is the purchaser’s Partnership Unique Taxpayer Reference (UTR)? - About the purchaser
+purchaserPartnershipUtr.heading                                             = {0}’s Partnership Unique Taxpayer Reference (UTR)
+purchaserPartnershipUtr.hint                                                = Their UTR should be 10 digits long
+purchaserPartnershipUtr.p1                                                  = You can find it in your Business Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+purchaserPartnershipUtr.h2                                                  = What is {0}’s Partnership UTR?
+purchaserPartnershipUtr.checkYourAnswersLabel                               = purchaserPartnershipUtr
+purchaserPartnershipUtr.error.required                                      = Please enter the purchaser’s partnership UTR
+purchaserPartnershipUtr.error.length                                        = The purchaser’s partnership UTR should be 10 digits long
+purchaserPartnershipUtr.error.invalid                                       = Please enter a valid UTR
+purchaserPartnershipUtr.error.regex.invalid                                 = The UTR should only contain numbers
+purchaserPartnershipUtr.change.hidden                                       = PurchaserPartnershipUtr
