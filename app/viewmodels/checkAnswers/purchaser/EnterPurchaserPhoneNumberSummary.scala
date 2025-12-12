@@ -17,25 +17,25 @@
 package viewmodels.checkAnswers.purchaser
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaser.PurchaserNationalInsurancePage
+import pages.purchaser.EnterPurchaserPhoneNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object PurchaserNationalInsuranceSummary  {
+object EnterPurchaserPhoneNumberSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserNationalInsurancePage).map {
+    answers.get(EnterPurchaserPhoneNumberPage).map {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "purchaserNationalInsurance.checkYourAnswersLabel",
+          key     = "enterPurchaserPhoneNumber.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserNationalInsurance.change.hidden"))
+            ActionItemViewModel("site.change", controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("enterPurchaserPhoneNumber.change.hidden"))
           )
         )
     }

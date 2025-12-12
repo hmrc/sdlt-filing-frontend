@@ -113,16 +113,14 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserDateOfBirthPage to WhoIsMakingThePurchasePage" in {
           navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
         }
-
+        
         "go from PurchaserFormOfIdIndividualPage to Return Task List Controller" in {
           navigator.nextPage(PurchaserFormOfIdIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
-
-        //        "go from addPhoneNumberPage to enterPhoneNumberPage" in {
-        //          //TODO - add test once implemented on DTR-1591
-        //          //          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
-        //        }
-
+        
+        "go from addPhoneNumberPage to enterPhoneNumberPage" in {
+          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        }
       }
     }
 

@@ -86,8 +86,9 @@ class AddPurchaserPhoneNumberController @Inject()(
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
                 (value, updatedAnswers.get(WhoIsMakingThePurchasePage)) match {
+
                   case (true, _) =>
-                  Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
+                    Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
 
                   case (false, Some(WhoIsMakingThePurchase.Individual)) =>
                     Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
