@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("purchaser.confirmNameOfPurchaser.title"))) {
 
-    <div class="govuk-caption-l">@messages("purchaser.caption")</div>
+    <div class="govuk-caption-l">@messages("site.purchaser.caption")</div>
 
     @formHelper(action = controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 

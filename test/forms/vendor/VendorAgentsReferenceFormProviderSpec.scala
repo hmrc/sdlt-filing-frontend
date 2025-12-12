@@ -24,9 +24,9 @@ import play.api.test.Helpers.stubMessages
 
 class VendorAgentsReferenceFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "vendorAgentsReference.error.required"
-  val lengthKey = "vendorAgentsReference.error.length"
-  val invalidKey = "vendorAgentsReference.error.invalid"
+  val requiredKey = "agent.agentsReference.error.required"
+  val lengthKey = "agent.agentsReference.error.length"
+  val invalidKey = "agent.agentsReference.error.invalid"
   val maxLength = 14
   val agentName = "Name"
 

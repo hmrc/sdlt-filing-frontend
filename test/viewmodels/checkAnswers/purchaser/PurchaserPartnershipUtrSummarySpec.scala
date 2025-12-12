@@ -40,7 +40,7 @@ class PurchaserPartnershipUtrSummarySpec extends SpecBase {
 
           val result = PurchaserPartnershipUtrSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserPartnershipUtr.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.partnershipUtr.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml must include("1234567890")
@@ -48,7 +48,7 @@ class PurchaserPartnershipUtrSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserPartnershipUtr.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.partnershipUtr.change.hidden")
         }
       }
 
@@ -67,7 +67,5 @@ class PurchaserPartnershipUtrSummarySpec extends SpecBase {
         }
       }
     }
-
   }
-
 }

@@ -56,9 +56,9 @@ class PurchaserDateOfBirthFormProviderSpec extends DateBehaviours with MockitoSu
       form = form,
       key = "value",
       max = maxDate,
-      formError = FormError("value", "PurchaserDateOfBirth.error.date.range.max", Seq(maxDate.format(dateFormatter)))
+      formError = FormError("value", "purchaser.dateOfBirth.error.date.range.max", Seq(maxDate.format(dateFormatter)))
     )
 
-    behave like mandatoryDateField(form, "value", "purchaserDateOfBirth.error.required.all")
+    behave like mandatoryDateField(form, "value", "purchaser.dateOfBirth.error.required.all")
   }
 }

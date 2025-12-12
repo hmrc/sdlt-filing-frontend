@@ -27,8 +27,8 @@ class AgentNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "agentName" -> text("agentName.error.required")
-        .verifying(maxLength(28, "agentName.error.length"))
-        .verifying(regexp(formRegex, "agentName.error.invalid"))
+      "agentName" -> text("agent.agentName.error.required")
+        .verifying(maxLength(28, "agent.agentName.error.length"))
+        .verifying(regexp(formRegex, "agent.agentName.error.invalid"))
     )
 }

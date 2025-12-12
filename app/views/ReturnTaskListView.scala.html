@@ -25,9 +25,9 @@
 
 @(sections: TaskListSection*)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = titleNoForm(messages("returnTaskList.title"))) {
+@layout(pageTitle = titleNoForm(messages("taskList.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("returnTaskList.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("taskList.heading")</h1>
 
  @taskList(sections: _*)
 

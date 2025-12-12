@@ -61,9 +61,9 @@ class ConfirmNameOfThePurchaserSpec extends AnyFreeSpec with Matchers with Eithe
       "must return correct radio items" in {
         implicit val messages: Messages = mock[Messages]
 
-        org.mockito.Mockito.when(messages.apply("purchaser.nameOfThePurchaser.Yes"))
+        org.mockito.Mockito.when(messages.apply("site.Yes"))
           .thenReturn("Yes")
-        org.mockito.Mockito.when(messages.apply("purchaser.nameOfThePurchaser.No"))
+        org.mockito.Mockito.when(messages.apply("site.No"))
           .thenReturn("No")
 
         val result = ConfirmNameOfThePurchaser.options

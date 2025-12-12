@@ -40,7 +40,7 @@ class AgentNameSummarySpec extends SpecBase {
 
           val result = AgentNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.agentName.label")
+          result.key.content.asHtml.toString() mustEqual msgs("agent.checkYourAnswers.agentName.label")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "Smith"
@@ -48,7 +48,7 @@ class AgentNameSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("agentName.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("agent.agentName.change.hidden")
         }
       }
 

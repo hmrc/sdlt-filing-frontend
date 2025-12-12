@@ -26,6 +26,6 @@ class TransactionTypeFormProvider @Inject() extends Mappings {
 
   def apply(): Form[TransactionType] =
     Form(
-      "value" -> enumerable[TransactionType]("transactionType.error.required")
+      "value" -> enumerable[TransactionType]("prelim.transactionType.error.required")
     )
 }

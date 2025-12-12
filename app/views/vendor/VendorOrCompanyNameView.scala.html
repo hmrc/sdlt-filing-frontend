@@ -19,11 +19,11 @@
 @import views.html.components.h1
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, vendorOrCompany: String)(implicit request: Request[_], messages: Messages)
@@ -40,7 +40,7 @@
 
             @if(vendorOrCompany == "Individual") {
                 <label class="govuk-label">
-                    <span class="govuk-caption-l">@messages(key + ".caption")</span>
+                    <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
                     <h1 class="govuk-heading-l">@messages(key + ".heading")</h1>
                 </label>
 
@@ -53,8 +53,8 @@
                 )
                 @govukInput(
                     InputViewModel(
-                    field = form("forename2"),
-                    label = LabelViewModel(messages(key + ".middleName")).withCssClass(className = "govuk-hint")
+                        field = form("forename2"),
+                        label = LabelViewModel(messages(key + ".middleName")).withCssClass(className = "govuk-hint")
                     )
                     .withWidth(Full)
                 )
@@ -69,14 +69,14 @@
                 @govukInput(
                     InputViewModel(
                         field = form("name"),
-                        label =  LabelViewModel(
-                                    HtmlContent(
-                                        Html(
-                                            s"""<span class="govuk-caption-l">${messages(key + ".caption")}</span>
+                        label = LabelViewModel(
+                            HtmlContent(
+                                Html(
+                                    s"""<span class="govuk-caption-l">${messages("site.vendor.caption")}</span>
                                             <h1 class="govuk-heading-l">${messages(key + ".heading")}</h1>"""
-                                            )
-                                        )
-                                    )
+                                )
+                            )
+                        )
                     )
                     .withWidth(Full)
                 )

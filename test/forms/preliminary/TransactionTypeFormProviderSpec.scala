@@ -28,7 +28,7 @@ class TransactionTypeFormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "transactionType.error.required"
+    val requiredKey = "prelim.transactionType.error.required"
 
     behave like optionsField[TransactionType](
       form,

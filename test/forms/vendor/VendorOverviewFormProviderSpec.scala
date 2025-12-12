@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class VendorOverviewFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "vendor.vendor-overview.error"
+  val requiredKey = "vendor.vendorOverview.error.required"
   val invalidKey = "error.boolean"
 
   val form = new VendorOverviewFormProvider()()

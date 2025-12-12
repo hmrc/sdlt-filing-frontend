@@ -18,16 +18,16 @@
 @import viewmodels.LabelSize.Large
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
-@(form: Form[_], agentName:String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], agentName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("vendorAgentsReference.title"))) {
+@layout(pageTitle = title(form, messages("agent.agentsReference.title"))) {
 
     @formHelper(action = controllers.vendor.routes.VendorAgentsReferenceController.onSubmit(mode)) {
 
@@ -35,12 +35,12 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <div class="govuk-caption-l">@messages("vendorAgentsReference.caption")</div>
+        <div class="govuk-caption-l">@messages("site.vendor.caption")</div>
 
         @govukInput(
             InputViewModel(
                 field = form("agentReference"),
-                label = LabelViewModel(messages("vendorAgentsReference.heading", agentName)).asPageHeading(size = Large)
+                label = LabelViewModel(messages("agent.agentsReference.heading", agentName)).asPageHeading(size = Large)
             )
             .withWidth(Full)
         )

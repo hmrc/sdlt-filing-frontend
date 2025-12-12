@@ -27,22 +27,22 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("vendor.vendor-before-start.title"))) {
+@layout(pageTitle = titleNoForm(messages("vendor.beforeStart.title"))) {
 
-    @h1(messages("vendor.vendor-before-start.heading"))
+    @h1(messages("site.vendor.caption"))
 
-    @p(messages("vendor.vendor-before-start.p1"))
-    @p(messages("vendor.vendor-before-start.p2"))
+    @p(messages("vendor.beforeStart.p1"))
+    @p(messages("vendor.beforeStart.p2"))
 
     <ul class="govuk-list govuk-list--bullet">
-     <li>@messages("vendor.vendor-before-start.bullet1")</li>
-     <li>@messages("vendor.vendor-before-start.bullet2")</li>
-     <li>@messages("vendor.vendor-before-start.bullet3")</li>
+        <li>@messages("vendor.beforeStart.bullet1")</li>
+        <li>@messages("vendor.beforeStart.bullet2")</li>
+        <li>@messages("vendor.beforeStart.bullet3")</li>
     </ul>
 
-     @govukButton(
-      ButtonViewModel(messages("site.continue"))
-      .asLink(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url)
-      .withCssClass("govuk-!-margin-top-2")
-     )
+    @govukButton(
+        ButtonViewModel(messages("site.continue"))
+        .asLink(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url)
+        .withCssClass("govuk-!-margin-top-2")
+    )
 }

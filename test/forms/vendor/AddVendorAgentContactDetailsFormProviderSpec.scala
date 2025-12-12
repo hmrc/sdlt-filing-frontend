@@ -22,7 +22,7 @@ import play.api.data.FormError
 
 class AddVendorAgentContactDetailsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "addVendorAgentContactDetails.error.required"
+  val requiredKey = "agent.addVendorAgentContactDetails.error.required"
   val invalidKey = "error.boolean"
   
   val form = new AddVendorAgentContactDetailsFormProvider()()

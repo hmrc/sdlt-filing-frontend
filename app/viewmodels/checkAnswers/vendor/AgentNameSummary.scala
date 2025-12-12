@@ -32,22 +32,22 @@ object AgentNameSummary  {
     answers.flatMap(_.get(AgentNamePage)).map { answer =>
 
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.agentName.label",
+        key = "agent.checkYourAnswers.agentName.label",
         value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("agentName.change.hidden"))
+            .withVisuallyHiddenText(messages("agent.agentName.change.hidden"))
         )
       )
     }.getOrElse {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendor.checkYourAnswers.agentName.agentMissing")}</a>""")
+          s"""<a href="${controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentMissing")}</a>""")
       )
 
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.agentName.label",
+        key = "agent.checkYourAnswers.agentName.label",
         value = value
       )
     }

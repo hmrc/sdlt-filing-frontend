@@ -24,7 +24,7 @@
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("addPurchaserPhoneNumber.title"))) {
+@layout(pageTitle = title(form, messages("purchaser.addPurchaserPhoneNumber.title"))) {
 
     @formHelper(action = controllers.purchaser.routes.AddPurchaserPhoneNumberController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -32,12 +32,12 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        <span class="govuk-caption-l">@messages("purchaser.caption")</span>
+        <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
 
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("addPurchaserPhoneNumber.heading", purchaserName)).asPageHeading(),
+                legend = LegendViewModel(messages("purchaser.addPurchaserPhoneNumber.heading", purchaserName)).asPageHeading(),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),
@@ -48,7 +48,7 @@
                         content = Text(messages("site.no"))
                     )
                 )
-            ).withHint(HintViewModel(HtmlContent(Html(messages("addPurchaserPhoneNumber.hint", purchaserName)))))
+            ).withHint(HintViewModel(HtmlContent(Html(messages("purchaser.addPurchaserPhoneNumber.hint", purchaserName)))))
         )
 
         @govukButton(

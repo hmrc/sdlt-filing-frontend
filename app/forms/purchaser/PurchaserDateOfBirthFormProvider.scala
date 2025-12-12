@@ -33,12 +33,12 @@ class PurchaserDateOfBirthFormProvider @Inject()(timeMachine: TimeMachine) exten
   def apply()(implicit messages: Messages): Form[LocalDate] =
     Form(
       "value" -> localDate(
-        invalidKey     = "purchaserDateOfBirth.error.invalid",
-        allRequiredKey = "purchaserDateOfBirth.error.required.all",
-        twoRequiredKey = "purchaserDateOfBirth.error.required.two",
-        requiredKey    = "purchaserDateOfBirth.error.required"
+        invalidKey     = "purchaser.dateOfBirth.error.invalid",
+        allRequiredKey = "purchaser.dateOfBirth.error.required.all",
+        twoRequiredKey = "purchaser.dateOfBirth.error.required.two",
+        requiredKey    = "purchaser.dateOfBirth.error.required"
       ).verifying(
-        maxDate(maxDateAllowed, "PurchaserDateOfBirth.error.date.range.max", maxDateAllowed.format(dateFormatter)),
+        maxDate(maxDateAllowed, "purchaser.dateOfBirth.error.date.range.max", maxDateAllowed.format(dateFormatter)),
       )
     )
 }

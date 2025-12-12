@@ -37,8 +37,8 @@ object CompanyOrIndividualRequest extends Enumerable.Implicits {
     RadioItem(
       content = Text(
         value match {
-          case Option1 => messages("purchaserIsIndividual.company")
-          case Option2 => messages("purchaserIsIndividual.individual")
+          case Option1 => messages("prelim.purchaserIsIndividual.company")
+          case Option2 => messages("prelim.purchaserIsIndividual.individual")
         }
       ),
       value = Some(value.toString),

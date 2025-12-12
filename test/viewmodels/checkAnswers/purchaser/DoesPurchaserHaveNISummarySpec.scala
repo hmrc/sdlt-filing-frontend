@@ -17,15 +17,13 @@
 package viewmodels.checkAnswers.purchaser
 
 import base.SpecBase
-import models.{CheckMode, UserAnswers}
+import models.CheckMode
 import models.purchaser.{DoesPurchaserHaveNI, NameOfPurchaser}
-import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage}
+import pages.purchaser.DoesPurchaserHaveNIPage
 import play.api.i18n.Messages
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json._
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
-
-import java.time.Instant
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class DoesPurchaserHaveNISummarySpec extends SpecBase {
 

@@ -17,18 +17,18 @@
 @import viewmodels.InputWidth._
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, purchaserOrCompany: String)(implicit request: Request[_], messages: Messages)
 
 @defining(if(purchaserOrCompany == "Individual") "purchaser.individual.nameOfThePurchaser" else "purchaser.company.nameOfThePurchaser") { key =>
 
-    @layout(pageTitle = title(form, (key + ".title"))){
+    @layout(pageTitle = title(form, (key + ".title"))) {
 
 
         @formHelper(action = controllers.purchaser.routes.NameOfPurchaserController.onSubmit(mode), Symbol("autoComplete") -> "off") {
@@ -39,7 +39,7 @@
 
             @if(purchaserOrCompany == "Individual") {
                 <label class="govuk-label">
-                    <span class="govuk-caption-l">@messages("purchaser.caption")</span>
+                    <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
                     <h1 class="govuk-heading-l">@messages(key + ".heading")</h1>
                 </label>
 
@@ -71,7 +71,7 @@
                         label = LabelViewModel(
                             HtmlContent(
                                 Html(
-                                    s"""<span class="govuk-caption-l">${messages("purchaser.caption")}</span>
+                                    s"""<span class="govuk-caption-l">${messages("site.purchaser.caption")}</span>
                                             <h1 class="govuk-heading-l">${messages(key + ".heading")}</h1>"""
                                 )
                             )

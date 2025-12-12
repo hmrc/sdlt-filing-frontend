@@ -32,11 +32,11 @@ object VendorAgentsReferenceSummary  {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "vendorAgentsReference.checkYourAnswersLabel",
+          key     = "agent.agentsReference.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendorAgentsReference.change.hidden"))
+              .withVisuallyHiddenText(messages("agent.agentsReference.change.hidden"))
           )
         )
     }

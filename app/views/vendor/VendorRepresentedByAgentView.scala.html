@@ -17,16 +17,16 @@
 @import viewmodels.LegendSize.Large
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, vendorName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("vendorRepresentedByAgent.title"))) {
+@layout(pageTitle = title(form, messages("vendor.vendorRepresentedByAgent.title"))) {
 
     @formHelper(action = controllers.vendor.routes.VendorRepresentedByAgentController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -34,12 +34,12 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <div class="govuk-caption-l">@messages("vendorRepresentedByAgent.caption")</div>
+        <div class="govuk-caption-l">@messages("site.vendor.caption")</div>
 
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("vendorRepresentedByAgent.heading", vendorName.getOrElse(messages("vendorRepresentedByAgent.theVendor")))).asPageHeading(size = Large),
+                legend = LegendViewModel(messages("vendor.vendorRepresentedByAgent.heading", vendorName.getOrElse(messages("site.vendor.theVendor")))).asPageHeading(size = Large),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),

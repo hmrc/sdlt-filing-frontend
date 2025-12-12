@@ -30,8 +30,8 @@ class PurchaserSurnameOrCompanyNameFormProviderSpec extends AnyWordSpec with Mat
 
   val cases = Table(
     ("choice", "requiredKey", "lengthKey", "invalidKey"),
-    ("Individual", "purchaser.name.form.no.input.error.individual", "purchaser.name.form.maxLength.error.individual", "purchaser.name.form.regex.error.individual"),
-    ("Company", "purchaser.name.form.no.input.error.company", "purchaser.name.form.maxLength.error.company", "purchaser.name.form.regex.error.company")
+    ("Individual", "prelim.purchaser.name.form.no.input.error.individual", "prelim.purchaser.name.form.maxLength.error.individual", "prelim.purchaser.name.form.regex.error.individual"),
+    ("Company", "prelim.purchaser.name.form.no.input.error.company", "prelim.purchaser.name.form.maxLength.error.company", "prelim.purchaser.name.form.regex.error.company")
   )
 
   "PProvider form" should {
