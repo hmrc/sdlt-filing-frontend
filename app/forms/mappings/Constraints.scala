@@ -178,4 +178,51 @@ trait Constraints {
       checkSum(s"${errorKey}.invalid")
     )
   }
+
+  protected def vatCheckF16Validation(errorKey: String): Constraint[String] = {
+
+    def vatF16Check(errorKey: String): Constraint[String] = {
+
+      def validateVAT(raw: String): Boolean = Try {
+        // ---- Normalization requested: drop "GB" and spaces ----
+        val normalized = {
+          val up = Option(raw).getOrElse("").trim.toUpperCase
+          val noGb = if (up.startsWith("GB")) up.drop(2) else up
+          noGb.replaceAll("\\s+", "")
+        }
+        val bodyDigits       = normalized.substring(0, 7)
+        val checkDigitsValue = normalized.substring(7, 9).toInt
+
+        val weights = Array(8, 7, 6, 5, 4, 3, 2)
+        val sum = bodyDigits
+          .map(_.asDigit)
+          .zip(weights)
+          .map { case (digit, weight) => digit * weight }
+          .sum
+
+        val check1 = 97 - Math.floorMod(sum, 97)
+        val check2 = 97 - Math.floorMod(sum + 55, 97)
+
+        checkDigitsValue >= 0 &&
+          checkDigitsValue <= 97 &&
+          (checkDigitsValue == check1 || checkDigitsValue == check2)
+      } match {
+        case Success(isValid) => isValid
+        case Failure(_)       => false
+      }
+
+      Constraint[String] { str =>
+        // Only returns Valid/Invalid; no extra format/length checks here
+        if (validateVAT(str)) Valid else Invalid(errorKey)
+      }
+    }
+
+    firstError(
+      regexp("^[0-9]*$", s"${errorKey}.regex.invalid"),
+      minLength(9, s"${errorKey}.length"),
+      maxLength(9, s"${errorKey}.length"),
+      vatF16Check(s"${errorKey}.invalid")
+    )
+  }
+
 }

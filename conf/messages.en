@@ -551,3 +551,16 @@ purchaser.purchaserCorporationTaxUTR.error.length = Corporation Tax Unique Taxpa
 purchaser.purchaserCorporationTaxUTR.error.regex.invalid = Enter a valid UTR
 purchaser.purchaserCorporationTaxUTR.error.invalid = Enter a valid UTR
 purchaser.purchaserCorporationTaxUTR.change.hidden = Corporation Tax Unique Taxpayer Reference (UTR)
+
+purchaser.registrationNumber.title = What is the purchaser’s VAT registration number? - About the purchaser
+purchaser.registrationNumber.caption = About the purchaser
+purchaser.registrationNumber.heading = What is {0}’s VAT registration number?
+purchaser.registrationNumber.checkYourAnswersLabel = registrationNumber
+purchaser.registrationNumber.error.required = Enter VAT Registration Number
+purchaser.registrationNumber.error.length = Registration Number must be 9 digits
+purchaser.registrationNumber.error.invalid =  Registration Number must be 9 digits
+purchaser.registrationNumber.change.hidden = registrationNumber
+purchaser.registrationNumber.error.regex.error = Numeric only
+purchaser.registrationNumber.error.regex.invalid = Numeric only
+purchaser.registrationNumber.error.invalid = Registration Number is invalid
+purchaser.registrationNumber.hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate

@@ -116,8 +116,7 @@ class PurchaserService {
         case PurchaserConfirmIdentity.CorporationTaxUTR =>
           controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(NormalMode)
         case PurchaserConfirmIdentity.VatRegistrationNumber =>
-          // TODO: redirect to Vat Reg Num page
-          controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+          controllers.purchaser.routes.RegistrationNumberController.onPageLoad(NormalMode)
         case PurchaserConfirmIdentity.AnotherFormOfID =>
           // TODO: redirect to Another Form ID page
           controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
