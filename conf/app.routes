@@ -184,3 +184,8 @@ GET        /about-the-purchaser/partnership-utr                                 
 POST       /about-the-purchaser/partnership-utr                                       controllers.purchaser.PurchaserPartnershipUtrController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/partnership-utr/change                                controllers.purchaser.PurchaserPartnershipUtrController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/partnership-utr/change                                controllers.purchaser.PurchaserPartnershipUtrController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-purchaser/corporation-tax-utr                        controllers.purchaser.PurchaserCorporationTaxUTRController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/corporation-tax-utr                        controllers.purchaser.PurchaserCorporationTaxUTRController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/corporation-tax-utr/change                 controllers.purchaser.PurchaserCorporationTaxUTRController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/corporation-tax-utr/change                 controllers.purchaser.PurchaserCorporationTaxUTRController.onSubmit(mode: Mode = CheckMode)
