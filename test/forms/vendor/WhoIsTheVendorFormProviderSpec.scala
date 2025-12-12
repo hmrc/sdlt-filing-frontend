@@ -28,7 +28,7 @@ class WhoIsTheVendorFormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "site.error.select.required"
+    val requiredKey = "vendor.whoIsTheVendor.error.required"
 
     behave like optionsField[whoIsTheVendor](
       form,

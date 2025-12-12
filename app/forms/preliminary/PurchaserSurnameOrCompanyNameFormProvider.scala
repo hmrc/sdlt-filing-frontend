@@ -50,6 +50,6 @@ class PurchaserSurnameOrCompanyNameFormProvider @Inject() extends Mappings {
   private def regexErrorKey(choice: String): String = choice match {
     case "Individual" => "prelim.purchaser.name.form.regex.error.individual"
     case "Company" => "prelim.purchaser.name.form.regex.error.company"
-    case _ => "site.error.regex.invalid"
+    case _ => "prelim.purchaser.name.form.regex.error"
   }
 }

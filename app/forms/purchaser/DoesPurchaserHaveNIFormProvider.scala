@@ -26,6 +26,6 @@ class DoesPurchaserHaveNIFormProvider @Inject() extends Mappings {
 
   def apply(): Form[DoesPurchaserHaveNI] =
     Form(
-      "value" -> enumerable[DoesPurchaserHaveNI]("site.error.select.required")
+      "value" -> enumerable[DoesPurchaserHaveNI]("purchaser.doesPurchaserHaveNI.error.required")
     )
 }

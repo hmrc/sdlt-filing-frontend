@@ -22,7 +22,7 @@ import play.api.data.FormError
 
 class AddPurchaserPhoneNumberFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "site.error.select.required"
+  val requiredKey = "purchaser.addPurchaserPhoneNumber.error.required"
   val invalidKey = "error.boolean"
   
   val form = new AddPurchaserPhoneNumberFormProvider()()

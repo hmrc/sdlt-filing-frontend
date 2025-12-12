@@ -27,7 +27,7 @@ class ConfirmVendorAddressFormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "site.error.select.required"
+    val requiredKey = "vendor.confirmVendorAddress.error.required"
 
     behave like optionsField[ConfirmVendorAddress](
       form,

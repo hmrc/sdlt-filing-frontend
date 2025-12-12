@@ -21,9 +21,22 @@ site.success = Success
 # Site Errors
 site.error.generic.title = Generic Error (Content TBC)
 site.error.generic.heading = Generic Error (Content TBC)
-site.error.select.required = Please select an option
-site.error.input.required = Nothing has been provided
-site.error.regex.invalid = Invalid Error
+
+vendor.confirmVendorAddress.error.required = Please select an option
+vendor.vendorRepresentedByAgent.error.required = Please select an option
+vendor.whoIsTheVendor.error.required = Please select an option
+agent.addVendorAgentContactDetails.error.required = Please select an option
+agent.doYouKnowYourAgentReference.error.required = Please select an option
+purchaser.addPurchaserPhoneNumber.error.required = Please select an option
+purchaser.doesPurchaserHaveNI.error.required = Please select an option
+vendor.vendorOverview.error.required = Please select an option
+
+purchaser.name.form.regex.error = Invalid Error
+prelim.purchaser.name.form.regex.error = Invalid Error
+vendor.name.form.regex.error = Invalid Error
+purchaser.name.form.no.input.error = Nothing has been added
+prelim.purchaser.name.form.no.input.error = Nothing has been added
+vendor.name.error.required = Nothing has been provided
 
 # Section Captions
 site.vendor.caption = About the vendor
