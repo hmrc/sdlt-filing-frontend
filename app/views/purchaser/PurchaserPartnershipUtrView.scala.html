@@ -15,7 +15,7 @@
  *@
 
 @import viewmodels.InputWidth._
-@import viewmodels.LabelSize.Large
+@import viewmodels.LabelSize._
 @import views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
 
@@ -61,11 +61,11 @@
                 ),
                 html = HtmlFormat.fill(Seq(
                     p(messages("purchaserPartnershipUtr.p1")),
-                    h2(messages("purchaserPartnershipUtr.h2", purchaserName)),
                     govukInput(
                         InputViewModel(
                             field = form("partnershipUniqueTaxpayerReference"),
-                            label = LabelViewModel("")
+                            label = LabelViewModel(content = messages("purchaserPartnershipUtr.h2", purchaserName)).asPageHeading(size = Medium)
+
                         )
                         .withWidth(Full)
                         .withHint(HintViewModel(HtmlContent(Html(messages("purchaserPartnershipUtr.hint")))))
