@@ -33,11 +33,11 @@ object PurchaserPartnershipUtrSummary  {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "purchaserPartnershipUtr.checkYourAnswersLabel",
+          key     = "purchaser.partnershipUtr.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserPartnershipUtr.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.partnershipUtr.change.hidden"))
           )
         )
     }

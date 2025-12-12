@@ -27,10 +27,10 @@ class PurchaserPartnershipUtrFormProviderSpec extends StringFieldBehaviours {
   ".partnershipUniqueTaxpayerReference" - {
 
     val fieldName = "partnershipUniqueTaxpayerReference"
-    val requiredKey = "purchaserPartnershipUtr.error.required"
-    val lengthKey = "purchaserPartnershipUtr.error.length"
-    val invalidKey = "purchaserPartnershipUtr.error.invalid"
-    val invalidRegexKey = "purchaserPartnershipUtr.error.regex.invalid"
+    val requiredKey = "purchaser.partnershipUtr.error.required"
+    val lengthKey = "purchaser.partnershipUtr.error.length"
+    val invalidKey = "purchaser.partnershipUtr.error.invalid"
+    val invalidRegexKey = "purchaser.partnershipUtr.error.regex.invalid"
     val maxLength = 10
     val minLength = 10
 
