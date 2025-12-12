@@ -18,35 +18,35 @@
 @import viewmodels.LabelSize.Large
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-govukErrorSummary: GovukErrorSummary,
-govukInput: GovukInput,
-govukButton: GovukButton
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("enterPurchaserPhoneNumber.title"))) {
-
-@formHelper(action = controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onSubmit(mode)) {
-
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form))
-}
-
-<span class="govuk-caption-l">@messages("purchaser.caption")</span>
-@govukInput(
-InputViewModel(
-field = form("value"),
-label = LabelViewModel(messages("enterPurchaserPhoneNumber.heading", purchaserName)).asPageHeading(size = Large)
-)
-.withWidth(Full)
-.withHint(HintViewModel(HtmlContent(Html(messages("enterPurchaserPhoneNumber.hint")))))
-)
-
-@govukButton(
-ButtonViewModel(messages("site.save.continue"))
-)
-}
+    @layout(pageTitle = title(form, messages("purchaser.enterPhoneNumber.title"))) {
+        
+        @formHelper(action = controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onSubmit(mode)) {
+        
+            @if(form.errors.nonEmpty) {
+                @govukErrorSummary(ErrorSummaryViewModel(form))
+            }
+        
+        <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
+            @govukInput(
+                InputViewModel(
+                    field = form("value"),
+                    label = LabelViewModel(messages("purchaser.enterPhoneNumber.heading", purchaserName)).asPageHeading(size = Large)
+                )
+                .withWidth(Full)
+                .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.enterPhoneNumber.hint")))))
+            )
+        
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
+    }
 }
