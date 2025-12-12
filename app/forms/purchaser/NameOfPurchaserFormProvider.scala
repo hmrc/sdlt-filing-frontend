@@ -37,7 +37,7 @@ class NameOfPurchaserFormProvider @Inject() extends Mappings {
         "forename2" -> optionalText()
           .verifying(optionalMaxLength(14, "purchaser.individual.error.length.middleName"))
           .verifying(optionalRegexp(formRegex, "purchaser.name.form.regex.error")),
-        "name" -> text("site.error.input.required")
+        "name" -> text("purchaser.name.error.required")
           .verifying(maxLength(56, "purchaser.name.error.length"))
           .verifying(regexp(formRegex, "purchaser.name.form.regex.error"))
       )(NameOfPurchaser.apply)(o => Some(Tuple.fromProductTyped(o)))

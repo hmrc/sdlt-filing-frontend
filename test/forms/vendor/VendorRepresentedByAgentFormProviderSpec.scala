@@ -22,7 +22,7 @@ import play.api.data.FormError
 
 class VendorRepresentedByAgentFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "site.error.select.required"
+  val requiredKey = "vendor.vendorRepresentedByAgent.error.required"
   val invalidKey = "error.boolean"
 
   val form = new VendorRepresentedByAgentFormProvider()()

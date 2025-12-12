@@ -32,13 +32,13 @@ class VendorOrCompanyNameFormProvider @Inject() extends Mappings {
       mapping(
         "forename1" -> optionalText()
           .verifying(optionalMaxLength(14, "vendor.individual.error.length.firstName"))
-          .verifying(optionalRegexp(formRegex, "site.error.regex.invalid")),
+          .verifying(optionalRegexp(formRegex, "vendor.name.form.regex.error")),
         "forename2" -> optionalText()
           .verifying(optionalMaxLength(14, "vendor.individual.error.length.middleName"))
-          .verifying(optionalRegexp(formRegex, "site.error.regex.invalid")),
-        "name" -> text("site.error.input.required")
+          .verifying(optionalRegexp(formRegex, "vendor.name.form.regex.error")),
+        "name" -> text("vendor.name.error.required")
           .verifying(maxLength(56, "vendor.name.error.length"))
-          .verifying(regexp(formRegex, "site.error.regex.invalid"))
+          .verifying(regexp(formRegex, "vendor.name.form.regex.error"))
       )(VendorName.apply)(o => Some(Tuple.fromProductTyped(o)))
     )
 }

@@ -26,6 +26,6 @@ class DoYouKnowYourAgentReferenceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[DoYouKnowYourAgentReference] =
     Form(
-      "value" -> enumerable[DoYouKnowYourAgentReference]("site.error.select.required")
+      "value" -> enumerable[DoYouKnowYourAgentReference]("agent.doYouKnowYourAgentReference.error.required")
     )
 }
