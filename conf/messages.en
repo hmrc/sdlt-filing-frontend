@@ -37,6 +37,7 @@ vendor.name.form.regex.error = Invalid Error
 purchaser.name.form.no.input.error = Nothing has been added
 prelim.purchaser.name.form.no.input.error = Nothing has been added
 vendor.name.error.required = Nothing has been provided
+purchaser.name.error.required = Nothing has been provided
 
 # Section Captions
 site.vendor.caption = About the vendor
@@ -410,7 +411,7 @@ purchaser.whoIsMakingThePurchase.Company.hintText = This means any form of organ
 purchaser.whoIsMakingThePurchase.Individual = An individual
 purchaser.whoIsMakingThePurchase.Individual.hintText = This means a person liable to pay Stamp Duty Land Tax (SDLT)
 purchaser.whoIsMakingThePurchase.checkYourAnswersLabel = Who is making the purchase?
-purchaser.whoIsMakingThePurchase.error.required = Select an answers
+purchaser.whoIsMakingThePurchase.error.required = Select an answer
 purchaser.whoIsMakingThePurchase.change.hidden = Who is making the purchase?
 
 purchaser.company.nameOfThePurchaser.title = What is the purchaser’s name? - About the purchaser
