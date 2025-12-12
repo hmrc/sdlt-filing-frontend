@@ -27,7 +27,7 @@ class WhoIsMakingThePurchaseFormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "whoIsMakingThePurchase.error.required"
+    val requiredKey = "purchaser.whoIsMakingThePurchase.error.required"
 
     behave like optionsField[WhoIsMakingThePurchase](
       form,
