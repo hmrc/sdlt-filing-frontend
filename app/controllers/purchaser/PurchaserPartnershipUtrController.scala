@@ -54,7 +54,7 @@ class PurchaserPartnershipUtrController @Inject()(
       val purchaserNameOpt: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
       val purchaserInformationOpt = request.userAnswers.get(PurchaserConfirmIdentityPage)
 
-      purchaserService.checkPurchaserType(
+      purchaserService.checkPurchaserTypeAndCompanyDetails(
         purchaserType = WhoIsMakingThePurchase.Company,
         userAnswers = request.userAnswers,
         continueRoute = {

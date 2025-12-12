@@ -88,9 +88,16 @@ class PurchaserService {
     }
   }
 
-  def checkPurchaserType(purchaserType: WhoIsMakingThePurchase, userAnswers: UserAnswers, continueRoute: Result): Result =
+  def checkPurchaserTypeAndCompanyDetails(purchaserType: WhoIsMakingThePurchase, userAnswers: UserAnswers, continueRoute: Result): Result =
     userAnswers.get(WhoIsMakingThePurchasePage) match {
-      case Some(value) if value == purchaserType =>
+      case Some(value) if value == purchaserType && purchaserType == WhoIsMakingThePurchase.Company =>
+        userAnswers.fullReturn
+          .flatMap(_.companyDetails)
+          .flatMap(_.companyTypePensionfund)
+          .fold(continueRoute)(_ =>
+            //TODO change to check your answers
+            Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)))
+      case Some(value) if value == purchaserType && purchaserType == WhoIsMakingThePurchase.Individual =>
         continueRoute
       case Some(_) =>
         Redirect(controllers.routes.GenericErrorController.onPageLoad()) // TODO DTR-1788: redirect to CYA

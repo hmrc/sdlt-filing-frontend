@@ -93,8 +93,8 @@ object Purchaser {
 
 case class CompanyDetails(
                            companyDetailsID: Option[String] = None,
-                           returnID: Option[String] = None, // Used in backend
-                           purchaserID: Option[String] = None, // Used in backend
+                           returnID: Option[String] = None,
+                           purchaserID: Option[String] = None,
                            UTR: Option[String] = None,
                            VATReference: Option[String] = None,
                            companyTypeBank: Option[String] = None,
