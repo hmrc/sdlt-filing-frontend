@@ -179,3 +179,8 @@ GET        /about-the-purchaser/does-purchaser-have-ni                         c
 POST       /about-the-purchaser/does-purchaser-have-ni                         controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/does-purchaser-have-ni/change                  controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-purchaser/partnership-utr                                       controllers.purchaser.PurchaserPartnershipUtrController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/partnership-utr                                       controllers.purchaser.PurchaserPartnershipUtrController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/partnership-utr/change                                controllers.purchaser.PurchaserPartnershipUtrController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/partnership-utr/change                                controllers.purchaser.PurchaserPartnershipUtrController.onSubmit(mode: Mode = CheckMode)

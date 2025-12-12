@@ -105,8 +105,7 @@ class PurchaserService {
     } else {
       value match {
         case PurchaserConfirmIdentity.PartnershipUTR =>
-          // TODO: redirect to Partnership UTR page
-          controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+          controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(NormalMode)
         case PurchaserConfirmIdentity.CorporationTaxUTR =>
           // TODO: redirect to Corp Tax UTR page
           controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
