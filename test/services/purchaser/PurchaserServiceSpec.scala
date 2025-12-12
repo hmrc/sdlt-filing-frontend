@@ -553,28 +553,69 @@ class PurchaserServiceSpec extends SpecBase {
       }
     }
 
-    "checkPurchaserType" - {
+    "checkPurchaserTypeAndCompanyDetails" - {
 
       "when the purchaser type is set to Company" - {
 
         "when the value in user answers is Company" - {
-          "must stay on the page" in {
-            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Company, userAnswersWithCompanyPurchaser, continueRoute)
-            result mustBe continueRoute
+
+          "when companyTypePensionfund is not present" - {
+            "must stay on the page" in {
+              val result = service.checkPurchaserTypeAndCompanyDetails(
+                WhoIsMakingThePurchase.Company,
+                userAnswersWithCompanyPurchaser,
+                continueRoute
+              )
+              result mustBe continueRoute
+            }
+          }
+
+          "when companyTypePensionfund is present" - {
+            "must redirect to WhoIsMakingThePurchase page" in {
+              val userAnswersWithPensionFund = userAnswersWithCompanyPurchaser
+                .copy(fullReturn = Some(FullReturn(
+                  stornId = "test",
+                  returnResourceRef = "testref",
+                  companyDetails = Some(CompanyDetails(
+                    companyTypePensionfund = Some("YES")
+                  ))
+                )))
+
+              val result = service.checkPurchaserTypeAndCompanyDetails(
+                WhoIsMakingThePurchase.Company,
+                userAnswersWithPensionFund,
+                continueRoute
+              )
+              redirectLocation(Future.successful(result)) mustBe Some(
+                controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url
+              )
+            }
           }
         }
 
         "when the value in user answers is Individual" - {
           "must redirect to Generic Error Page" in {
-            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Company, userAnswersWithIndividualPurchaser, continueRoute)
-            redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.GenericErrorController.onPageLoad().url)
+            val result = service.checkPurchaserTypeAndCompanyDetails(
+              WhoIsMakingThePurchase.Company,
+              userAnswersWithIndividualPurchaser,
+              continueRoute
+            )
+            redirectLocation(Future.successful(result)) mustBe Some(
+              controllers.routes.GenericErrorController.onPageLoad().url
+            )
           }
         }
 
         "when the value in user answers is not present" - {
           "must redirect to WhoIsMakingThePurchase page" in {
-            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Company, emptyUserAnswers, continueRoute)
-            redirectLocation(Future.successful(result)) mustBe Some(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url)
+            val result = service.checkPurchaserTypeAndCompanyDetails(
+              WhoIsMakingThePurchase.Company,
+              emptyUserAnswers,
+              continueRoute
+            )
+            redirectLocation(Future.successful(result)) mustBe Some(
+              controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url
+            )
           }
         }
       }
@@ -583,22 +624,38 @@ class PurchaserServiceSpec extends SpecBase {
 
         "when the value in user answers is Individual" - {
           "must stay on the page" in {
-            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Individual, userAnswersWithIndividualPurchaser, continueRoute)
+            val result = service.checkPurchaserTypeAndCompanyDetails(
+              WhoIsMakingThePurchase.Individual,
+              userAnswersWithIndividualPurchaser,
+              continueRoute
+            )
             result mustBe continueRoute
           }
         }
 
         "when the value in user answers is Company" - {
           "must redirect to Generic Error Page" in {
-            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Individual, userAnswersWithCompanyPurchaser, continueRoute)
-            redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.GenericErrorController.onPageLoad().url)
+            val result = service.checkPurchaserTypeAndCompanyDetails(
+              WhoIsMakingThePurchase.Individual,
+              userAnswersWithCompanyPurchaser,
+              continueRoute
+            )
+            redirectLocation(Future.successful(result)) mustBe Some(
+              controllers.routes.GenericErrorController.onPageLoad().url
+            )
           }
         }
 
         "when the value in user answers is not present" - {
           "must redirect to WhoIsMakingThePurchase page" in {
-            val result = service.checkPurchaserType(WhoIsMakingThePurchase.Individual, emptyUserAnswers, continueRoute)
-            redirectLocation(Future.successful(result)) mustBe Some(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url)
+            val result = service.checkPurchaserTypeAndCompanyDetails(
+              WhoIsMakingThePurchase.Individual,
+              emptyUserAnswers,
+              continueRoute
+            )
+            redirectLocation(Future.successful(result)) mustBe Some(
+              controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url
+            )
           }
         }
       }

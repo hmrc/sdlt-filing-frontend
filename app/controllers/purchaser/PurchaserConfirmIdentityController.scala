@@ -58,7 +58,7 @@ class PurchaserConfirmIdentityController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          purchaserService.checkPurchaserType(
+          purchaserService.checkPurchaserTypeAndCompanyDetails(
             purchaserType = WhoIsMakingThePurchase.Company,
             userAnswers = request.userAnswers,
             continueRoute = Ok(view(preparedForm, mode, purchaserName.fullName)))
