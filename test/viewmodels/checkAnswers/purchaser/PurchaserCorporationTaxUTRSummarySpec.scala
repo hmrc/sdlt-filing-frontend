@@ -1,0 +1,68 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package viewmodels.checkAnswers.purchaser
+
+import base.SpecBase
+import models.CheckMode
+import pages.purchaser.PurchaserCorporationTaxUTRPage
+import play.api.i18n.Messages
+import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+
+class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
+  "when valid Corporation Tax UTR present" - {
+
+    "must return summary list row with Corporation Tax UTR only" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+          .set(PurchaserCorporationTaxUTRPage, "1234567494").success.value
+
+        val result = PurchaserCorporationTaxUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserCorporationTaxUTR.checkYourAnswersLabel")
+
+        val htmlContent = result.value.content.asInstanceOf[Text].asHtml.toString()
+        htmlContent mustEqual "1234567494"
+
+        result.actions.get.items.size mustEqual 1
+        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.purchaserCorporationTaxUTR.change.hidden")
+      }
+    }
+
+    "must use check mode to change link" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+          .set(PurchaserCorporationTaxUTRPage, "1234567494").success.value
+
+        val result = PurchaserCorporationTaxUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url
+      }
+    }
+  }
+}

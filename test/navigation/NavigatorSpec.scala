@@ -122,9 +122,13 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
         }
 
-        //TODO update to type of business page PR-9
+        // TODO DTR-1679: Redirect to 'type of business' (pr-9)
         "go from PurchaserPartnershipUtrPage to PurchaserPartnershipUtrPage" in {
           navigator.nextPage(PurchaserPartnershipUtrPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(mode = NormalMode)
+        }
+
+        "go from PurchaserCorporationTaxUTRPage to PurchaserCorporationTaxUTRPage" in { // TODO DTR-1679: Redirect to 'type of business' (pr-9)
+          navigator.nextPage(PurchaserCorporationTaxUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(mode = NormalMode)
         }
       }
     }
