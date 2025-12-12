@@ -285,4 +285,45 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       result mustBe Invalid("error.utr.regex.invalid", "^[0-9]*$")
     }
   }
+
+  "vatChecksumMod97Len9" -  {
+    val validVATString: Seq[String] = Seq("438573857","438573857", "438573857")
+    val invalidVatStrings: Seq[String] = Seq("123456789","987654321")
+    val invalidVatLength: Seq[String] = Seq("12134", "2343243", "3123123123123123", "42342342342342342323423423")
+    val invalidVatRegex: Seq[String] = Seq("12345678H", "ZXCVBNMLK", "12-------", "          ")
+    val invalidVatMultipleErrors: String = "12ab"
+
+    "must return Valid for a valid vat number" in {
+      validVATString.foreach { vat =>
+        val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
+        result mustBe Valid
+      }
+    }
+
+    "must return Invalid for an invalid vat number" in {
+      invalidVatStrings.foreach{ vat =>
+        val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
+        result mustBe Invalid("purchaser.registrationNumber.error.invalid")
+      }
+    }
+
+    "must return Invalid for numbers more or less than 9 digits" in {
+      invalidVatLength.foreach { vat =>
+        val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
+        result mustBe Invalid("purchaser.registrationNumber.error.length", 9)
+      }
+    }
+
+    "must return Invalid for VAT values with no digits" in {
+      invalidVatRegex.foreach { vat =>
+        val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
+        result mustBe Invalid("purchaser.registrationNumber.error.regex.invalid", "^[0-9]*$")
+      }
+    }
+
+    "must return Invalid and first error message for VAT values with multiple errors" in {
+      val result = validUtr("purchaser.registrationNumber.error")(invalidVatMultipleErrors)
+      result mustBe Invalid("purchaser.registrationNumber.error.regex.invalid", "^[0-9]*$")
+    }
+  }
 }
