@@ -28,8 +28,8 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
   ".phoneNumber" - {
 
     val fieldName = "phoneNumber"
-    val lengthKey = "vendorAgentsContactDetails.error.agentPhoneNumber.length"
-    val invalidKey = "vendorAgentsContactDetails.error.agentPhoneNumber.invalid"
+    val lengthKey = "agent.vendorAgentsContactDetails.error.agentPhoneNumber.length"
+    val invalidKey = "agent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"
     val maxLength = 14
 
     "must bind valid phone number form data" in {
@@ -144,8 +144,8 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
   ".emailAddress" - {
 
     val fieldName = "emailAddress"
-    val lengthKey = "vendorAgentsContactDetails.error.agentEmailAddress.length"
-    val invalidKey = "vendorAgentsContactDetails.error.agentEmailAddress.invalid"
+    val lengthKey = "agent.vendorAgentsContactDetails.error.agentEmailAddress.length"
+    val invalidKey = "agent.vendorAgentsContactDetails.error.agentEmailAddress.invalid"
     val maxLength = 36
 
     "must bind valid email address form data" in {
@@ -270,6 +270,4 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
       }
     }
   }
-
-
 }

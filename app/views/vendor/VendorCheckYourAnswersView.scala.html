@@ -15,8 +15,8 @@
  *@
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
         formHelper: FormWithCSRF
 )
@@ -25,13 +25,13 @@
 
 @layout(pageTitle = titleNoForm(messages("vendor.checkYourAnswers.title"))) {
     @formHelper(action = controllers.vendor.routes.VendorCheckYourAnswersController.onSubmit()) {
-     <span class="govuk-caption-l">@messages("whoIsTheVendor.caption")</span>
-     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+        <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
+        <h1 class="govuk-heading-l">@messages("site.checkYourAnswers.heading")</h1>
 
-     @govukSummaryList(list.withCssClass("govuk-!-margin-bottom-9"))
+        @govukSummaryList(list.withCssClass("govuk-!-margin-bottom-9"))
 
-     @govukButton(
-      ButtonViewModel(messages("site.save.continue"))
-     )
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
     }
 }

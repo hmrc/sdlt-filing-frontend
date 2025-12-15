@@ -34,16 +34,16 @@ object WhoIsTheVendorSummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"whoIsTheVendor.$answer"))
+            HtmlFormat.escape(messages(s"vendor.whoIsTheVendor.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "whoIsTheVendor.checkYourAnswersLabel",
+          key     = "vendor.whoIsTheVendor.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("whoIsTheVendor.change.hidden"))
+              .withVisuallyHiddenText(messages("vendor.whoIsTheVendor.change.hidden"))
           )
         )
     }

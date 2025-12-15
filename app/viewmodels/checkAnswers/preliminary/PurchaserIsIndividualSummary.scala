@@ -30,8 +30,8 @@ object PurchaserIsIndividualSummary {
     answers.flatMap(_.get(PurchaserIsIndividualPage)).map { answer =>
 
       val answerText = answer.toString match {
-        case "Individual" => messages("purchaserIsIndividual.individual.value")
-        case _  => messages("purchaserIsIndividual.company.value")
+        case "Individual" => messages("prelim.purchaserIsIndividual.individual.value")
+        case _  => messages("prelim.purchaserIsIndividual.company.value")
       }
 
       val value = ValueViewModel(
@@ -39,22 +39,22 @@ object PurchaserIsIndividualSummary {
       )
 
       SummaryListRowViewModel(
-        key = "purchaserIsIndividual.checkYourAnswersLabel",
+        key = "prelim.purchaserIsIndividual.checkYourAnswersLabel",
         value = value,
         actions = Seq(
           ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("purchaserIsIndividual.change.hidden"))
+            .withVisuallyHiddenText(messages("prelim.purchaserIsIndividual.change.hidden"))
         )
       )
     }.getOrElse {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaserIsIndividual.link.message")}</a>""")
+          s"""<a href="${controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("prelim.purchaserIsIndividual.link.message")}</a>""")
       )
 
       SummaryListRowViewModel(
-        key = "purchaserIsIndividual.checkYourAnswersLabel",
+        key = "prelim.purchaserIsIndividual.checkYourAnswersLabel",
         value = value
       )
     }

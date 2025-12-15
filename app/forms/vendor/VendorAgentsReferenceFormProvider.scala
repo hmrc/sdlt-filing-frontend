@@ -28,8 +28,8 @@ class VendorAgentsReferenceFormProvider @Inject() extends Mappings {
 
   def apply(agentName: String)(implicit messages: Messages): Form[String] =
     Form(
-      "agentReference" -> text(messages("vendorAgentsReference.error.required", agentName))
-        .verifying(maxLength(14, "vendorAgentsReference.error.length"))
-        .verifying(regexp(formRegex, "vendorAgentsReference.error.invalid"))
+      "agentReference" -> text(messages("agent.agentsReference.error.required", agentName))
+        .verifying(maxLength(14, "agent.agentsReference.error.length"))
+        .verifying(regexp(formRegex, "agent.agentsReference.error.invalid"))
     )
 }

@@ -28,8 +28,8 @@ class PurchaserIsIndividualFormProviderSpec extends OptionFieldBehaviours{
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "purchaserIsIndividual.error.required"
-    val invalidKey = "purchaserIsIndividual.error.invalid"
+    val requiredKey = "prelim.purchaserIsIndividual.error.required"
+    val invalidKey = "prelim.purchaserIsIndividual.error.invalid"
 
     behave like optionsField[CompanyOrIndividualRequest](
       form,

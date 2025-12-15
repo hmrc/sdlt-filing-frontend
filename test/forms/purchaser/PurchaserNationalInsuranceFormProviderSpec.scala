@@ -22,10 +22,10 @@ import play.api.data.FormError
 
 class PurchaserNationalInsuranceFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "purchaserNationalInsurance.error.required"
-  val lengthKey = "purchaserNationalInsurance.error.length"
+  val requiredKey = "purchaser.nationalInsurance.error.required"
+  val lengthKey = "purchaser.nationalInsurance.error.length"
   val maxLength = 9
-  val invalidKey = "purchaserNationalInsurance.error.invalid"
+  val invalidKey = "purchaser.nationalInsurance.error.invalid"
 
   val form = new PurchaserNationalInsuranceFormProvider()()
 

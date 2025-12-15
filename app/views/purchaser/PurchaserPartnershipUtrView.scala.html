@@ -34,7 +34,7 @@
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaserPartnershipUtr.title"))) {
+@layout(pageTitle = title(form, messages("purchaser.partnershipUtr.title"))) {
 
     @formHelper(action = controllers.purchaser.routes.PurchaserPartnershipUtrController.onSubmit(mode)) {
 
@@ -49,10 +49,10 @@
                         content = HtmlContent(
                             HtmlFormat.fill(Seq(
                                 hmrcPageHeading(PageHeading(
-                                    text = messages("purchaserPartnershipUtr.heading", purchaserName),
+                                    text = messages("purchaser.partnershipUtr.heading", purchaserName),
                                     headingClasses = Some("govuk-heading-l"),
                                     captionClasses = Some("govuk-caption-l"),
-                                    section = Some(messages("purchaser.common.caption"))
+                                    section = Some(messages("site.purchaser.caption"))
                                 ))
                             ))
                         ),
@@ -60,15 +60,15 @@
                     )
                 ),
                 html = HtmlFormat.fill(Seq(
-                    p(messages("purchaserPartnershipUtr.p1")),
+                    p(messages("purchaser.partnershipUtr.p1")),
                     govukInput(
                         InputViewModel(
                             field = form("partnershipUniqueTaxpayerReference"),
-                            label = LabelViewModel(content = messages("purchaserPartnershipUtr.h2", purchaserName)).asPageHeading(size = Medium)
+                            label = LabelViewModel(content = messages("purchaser.partnershipUtr.h2", purchaserName)).asPageHeading(size = Medium)
 
                         )
                         .withWidth(Full)
-                        .withHint(HintViewModel(HtmlContent(Html(messages("purchaserPartnershipUtr.hint")))))
+                        .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.partnershipUtr.hint")))))
                     )
                 ))
             )

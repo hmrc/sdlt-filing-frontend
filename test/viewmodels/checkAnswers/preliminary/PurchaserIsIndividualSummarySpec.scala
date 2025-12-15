@@ -43,15 +43,15 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserIsIndividual.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaserIsIndividual.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("purchaserIsIndividual.company.value")
+          htmlContent mustEqual msgs("prelim.purchaserIsIndividual.company.value")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserIsIndividual.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.purchaserIsIndividual.change.hidden")
         }
       }
     }
@@ -69,15 +69,15 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserIsIndividual.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaserIsIndividual.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("purchaserIsIndividual.individual.value")
+          htmlContent mustEqual msgs("prelim.purchaserIsIndividual.individual.value")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserIsIndividual.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.purchaserIsIndividual.change.hidden")
         }
       }
     }
@@ -93,12 +93,12 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val result = PurchaserIsIndividualSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserIsIndividual.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaserIsIndividual.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("purchaserIsIndividual.link.message"))
+          htmlContent must include(msgs("prelim.purchaserIsIndividual.link.message"))
 
           result.actions mustBe None
         }
@@ -113,12 +113,12 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val result = PurchaserIsIndividualSummary.row(None)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserIsIndividual.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaserIsIndividual.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("purchaserIsIndividual.link.message"))
+          htmlContent must include(msgs("prelim.purchaserIsIndividual.link.message"))
 
           result.actions mustBe None
         }

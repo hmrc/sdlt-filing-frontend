@@ -37,7 +37,7 @@ object TransactionType extends Enumerable.Implicits {
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
     case (value, index) =>
       RadioItem(
-        content = Text(messages(s"transactionType.${value.toString}")),
+        content = Text(messages(s"prelim.transactionType.${value.toString}")),
         value   = Some(value.toString),
         id      = Some(s"value_$index")
       )

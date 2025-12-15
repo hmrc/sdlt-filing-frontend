@@ -35,11 +35,11 @@ object PurchaserFormOfIdIndividualSummary  {
         answer.countryIssued.map(countryIssued => "<br/>" + HtmlFormat.escape(countryIssued).toString).getOrElse("")
 
         SummaryListRowViewModel(
-          key     = "purchaserFormOfIdIndividual.checkYourAnswersLabel",
+          key     = "purchaser.formOfIdIndividual.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(value)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserFormOfIdIndividual.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.formOfIdIndividual.change.hidden"))
           )
         )
     }

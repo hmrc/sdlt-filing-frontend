@@ -26,7 +26,7 @@ class PurchaserPartnershipUtrFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "partnershipUniqueTaxpayerReference" -> text("purchaserPartnershipUtr.error.required")
-        .verifying(validUtr("purchaserPartnershipUtr.error"))
+      "partnershipUniqueTaxpayerReference" -> text("purchaser.partnershipUtr.error.required")
+        .verifying(validUtr("purchaser.partnershipUtr.error"))
     )
 }

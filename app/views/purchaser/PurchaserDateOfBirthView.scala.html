@@ -15,17 +15,17 @@
  *@
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukDateInput: GovukDateInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukDateInput: GovukDateInput,
+        govukButton: GovukButton
 )
 
-@(form: Form[_], purchaserName:String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], purchaserName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaserDateOfBirth.title"))) {
-    <div class="govuk-caption-l">@messages("purchaser.caption")</div>
+@layout(pageTitle = title(form, messages("purchaser.dateOfBirth.title"))) {
+    <div class="govuk-caption-l">@messages("site.purchaser.caption")</div>
 
     @formHelper(action = controllers.purchaser.routes.PurchaserDateOfBirthController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -35,10 +35,10 @@
 
         @govukDateInput(
             DateViewModel(
-                field  = form("value"),
-                legend = LegendViewModel(messages("purchaserDateOfBirth.heading", purchaserName)).asPageHeading()
+                field = form("value"),
+                legend = LegendViewModel(messages("purchaser.dateOfBirth.heading", purchaserName)).asPageHeading()
             )
-            .withHint(HintViewModel(messages("purchaserDateOfBirth.hint")))
+            .withHint(HintViewModel(messages("purchaser.dateOfBirth.hint")))
             .asDateOfBirth()
         )
 

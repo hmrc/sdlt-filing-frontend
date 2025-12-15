@@ -22,9 +22,9 @@ import org.scalacheck.Gen
 
 class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "enterPurchaserPhoneNumber.error.required"
-  val lengthKey = "enterPurchaserPhoneNumber.error.length"
-  val invalidKey = "enterPurchaserPhoneNumber.error.invalid"
+  val requiredKey = "purchaser.enterPhoneNumber.error.required"
+  val lengthKey = "purchaser.enterPhoneNumber.error.length"
+  val invalidKey = "purchaser.enterPhoneNumber.error.invalid"
   val maxLength = 14
 
   val form = new EnterPurchaserPhoneNumberFormProvider()()

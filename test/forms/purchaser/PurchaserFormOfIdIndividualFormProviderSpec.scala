@@ -26,9 +26,9 @@ class PurchaserFormOfIdIndividualFormProviderSpec extends StringFieldBehaviours 
   ".idNumberOrReference" - {
 
     val fieldName = "idNumberOrReference"
-    val requiredKey = "purchaserFormOfIdIndividual.error.idNumberOrReference.required"
-    val lengthKey = "purchaserFormOfIdIndividual.error.idNumberOrReference.length"
-    val invalidKey = "purchaserFormOfIdIndividual.error.idNumberOrReference.invalid"
+    val requiredKey = "purchaser.formOfIdIndividual.error.idNumberOrReference.required"
+    val lengthKey = "purchaser.formOfIdIndividual.error.idNumberOrReference.length"
+    val invalidKey = "purchaser.formOfIdIndividual.error.idNumberOrReference.invalid"
     val maxLength = 14
 
     behave like mandatoryField(
@@ -126,8 +126,8 @@ class PurchaserFormOfIdIndividualFormProviderSpec extends StringFieldBehaviours 
   ".countryIssued" - {
 
     val fieldName = "countryIssued"
-    val lengthKey = "purchaserFormOfIdIndividual.error.countryIssued.length"
-    val invalidKey = "purchaserFormOfIdIndividual.error.countryIssued.invalid"
+    val lengthKey = "purchaser.formOfIdIndividual.error.countryIssued.length"
+    val invalidKey = "purchaser.formOfIdIndividual.error.countryIssued.invalid"
     val maxLength = 28
 
     behave like optionalField(

@@ -20,20 +20,20 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    h1: h1,
-    p: Paragraph,
-    govukFieldset: GovukFieldset,
-    hmrcPageHeading: HmrcPageHeading,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        h1: h1,
+        p: Paragraph,
+        govukFieldset: GovukFieldset,
+        hmrcPageHeading: HmrcPageHeading,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaserFormOfIdIndividual.title"), Some(messages("purchaser.common.caption")))) {
+@layout(pageTitle = title(form, messages("purchaser.formOfIdIndividual.title"))) {
 
     @formHelper(action = controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -48,10 +48,10 @@
                         content = HtmlContent(
                             HtmlFormat.fill(Seq(
                                 hmrcPageHeading(PageHeading(
-                                    text = messages("purchaserFormOfIdIndividual.heading", purchaserName),
+                                    text = messages("purchaser.formOfIdIndividual.heading", purchaserName),
                                     headingClasses = Some("govuk-heading-l"),
                                     captionClasses = Some("govuk-caption-l"),
-                                    section = Some(messages("purchaser.common.caption"))
+                                    section = Some(messages("site.purchaser.caption"))
                                 ))
                             ))
                         ),
@@ -59,28 +59,28 @@
                     )
                 ),
                 html = HtmlFormat.fill(Seq(
-                    p(messages("purchaserFormOfIdIndividual.p1", purchaserName)),
-                    p(messages("purchaserFormOfIdIndividual.p2")),
+                    p(messages("purchaser.formOfIdIndividual.p1", purchaserName)),
+                    p(messages("purchaser.formOfIdIndividual.p2")),
                     Html(
                         s"""<ul class="govuk-list govuk-list--bullet">
-                            <li>${messages("purchaserFormOfIdIndividual.li1")}</li>
-                            <li>${messages("purchaserFormOfIdIndividual.li2")}</li>
-                            <li>${messages("purchaserFormOfIdIndividual.li3")}</li>
-                            <li>${messages("purchaserFormOfIdIndividual.li4")}</li>
-                            <li>${messages("purchaserFormOfIdIndividual.li5")}</li>
+                            <li>${messages("purchaser.formOfIdIndividual.li1")}</li>
+                            <li>${messages("purchaser.formOfIdIndividual.li2")}</li>
+                            <li>${messages("purchaser.formOfIdIndividual.li3")}</li>
+                            <li>${messages("purchaser.formOfIdIndividual.li4")}</li>
+                            <li>${messages("purchaser.formOfIdIndividual.li5")}</li>
                         </ul>"""
                     ),
                     govukInput(
                         InputViewModel(
                             field = form("idNumberOrReference"),
-                            label = LabelViewModel(messages("purchaserFormOfIdIndividual.idNumberOrReference"))
+                            label = LabelViewModel(messages("purchaser.formOfIdIndividual.idNumberOrReference"))
                         )
                         .withWidth(Full)
                     ),
                     govukInput(
                         InputViewModel(
                             field = form("countryIssued"),
-                            label = LabelViewModel(messages("purchaserFormOfIdIndividual.countryIssued"))
+                            label = LabelViewModel(messages("purchaser.formOfIdIndividual.countryIssued"))
                         )
                         .withWidth(Full)
                     )

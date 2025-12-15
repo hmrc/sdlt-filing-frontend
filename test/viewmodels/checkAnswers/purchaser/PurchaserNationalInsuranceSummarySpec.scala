@@ -41,7 +41,7 @@ class PurchaserNationalInsuranceSummarySpec extends SpecBase {
 
           val result = PurchaserNationalInsuranceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserNationalInsurance.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.nationalInsurance.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "AA123456A"
@@ -49,7 +49,7 @@ class PurchaserNationalInsuranceSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserNationalInsurance.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.nationalInsurance.change.hidden")
         }
       }
 

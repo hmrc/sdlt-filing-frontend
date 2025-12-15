@@ -26,6 +26,6 @@ class WhoIsMakingThePurchaseFormProvider @Inject() extends Mappings {
 
   def apply(): Form[WhoIsMakingThePurchase] =
     Form(
-      "value" -> enumerable[WhoIsMakingThePurchase]("whoIsMakingThePurchase.error.required")
+      "value" -> enumerable[WhoIsMakingThePurchase]("purchaser.whoIsMakingThePurchase.error.required")
     )
 }

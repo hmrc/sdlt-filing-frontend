@@ -32,11 +32,11 @@ object PurchaserNationalInsuranceSummary  {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "purchaserNationalInsurance.checkYourAnswersLabel",
+          key     = "purchaser.nationalInsurance.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserNationalInsurance.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.nationalInsurance.change.hidden"))
           )
         )
     }

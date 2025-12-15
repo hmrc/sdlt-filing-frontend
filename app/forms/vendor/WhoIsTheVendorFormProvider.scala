@@ -26,6 +26,6 @@ class WhoIsTheVendorFormProvider @Inject() extends Mappings {
 
   def apply(): Form[whoIsTheVendor] =
     Form(
-      "value" -> enumerable[whoIsTheVendor]("whoIsTheVendor.error.required")
+      "value" -> enumerable[whoIsTheVendor]("vendor.whoIsTheVendor.error.required")
     )
 }
