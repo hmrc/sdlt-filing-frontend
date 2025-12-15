@@ -167,6 +167,9 @@ class NavigatorSpec extends SpecBase {
 
         navigator.nextPage(NameOfPurchaserPage, NormalMode, userAnswers) mustBe
           controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        //TODO update post pr-9 page implementation in future sprints
+         navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
+           controllers.routes.ReturnTaskListController.onPageLoad()
       }
 
       "must return false for non-purchaser section pages" in {
