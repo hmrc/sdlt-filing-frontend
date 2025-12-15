@@ -33,7 +33,7 @@
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaser.formOfIdIndividual.title"), Some(messages("site.purchaser.caption")))) {
+@layout(pageTitle = title(form, messages("purchaser.formOfIdIndividual.title"))) {
 
     @formHelper(action = controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
