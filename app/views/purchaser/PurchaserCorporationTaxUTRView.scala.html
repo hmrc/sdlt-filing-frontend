@@ -31,7 +31,7 @@
 
 @(form: Form[_], purchaserName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaser.purchaserCorporationTaxUTR.title"))) {
+@layout(pageTitle = title(form, messages("purchaser.corporationTaxUTR.title"))) {
 
     @formHelper(action = controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onSubmit(mode)) {
 
@@ -39,17 +39,17 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <div class="govuk-caption-l">@messages("purchaser.caption")</div>
-        @h1(messages("purchaser.purchaserCorporationTaxUTR.h1", purchaserName))
-        @p(Html(messages("purchaser.purchaserCorporationTaxUTR.p")))
+        <div class="govuk-caption-l">@messages("site.purchaser.caption")</div>
+        @h1(messages("purchaser.corporationTaxUTR.h1", purchaserName))
+        @p(Html(messages("purchaser.corporationTaxUTR.p")))
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("purchaser.purchaserCorporationTaxUTR.h2", purchaserName)).asPageHeading(size = Medium)
+                label = LabelViewModel(messages("purchaser.corporationTaxUTR.h2", purchaserName)).asPageHeading(size = Medium)
             )
             .withWidth(Full)
-            .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.purchaserCorporationTaxUTR.hint")))))
+            .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.corporationTaxUTR.hint")))))
         )
 
         @govukButton(

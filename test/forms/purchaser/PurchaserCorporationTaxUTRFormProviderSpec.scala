@@ -21,10 +21,10 @@ import play.api.data.FormError
 
 class PurchaserCorporationTaxUTRFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "purchaser.purchaserCorporationTaxUTR.error.required"
-  val lengthKey = "purchaser.purchaserCorporationTaxUTR.error.length"
-  val invalidRegexKey = "purchaser.purchaserCorporationTaxUTR.error.regex.invalid"
-  val invalidKey = "purchaser.purchaserCorporationTaxUTR.error.invalid"
+  val requiredKey = "purchaser.corporationTaxUTR.error.required"
+  val lengthKey = "purchaser.corporationTaxUTR.error.length"
+  val invalidRegexKey = "purchaser.corporationTaxUTR.error.regex.invalid"
+  val invalidKey = "purchaser.corporationTaxUTR.error.invalid"
   val minLength = 10
   val maxLength = 10
 

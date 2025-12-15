@@ -26,7 +26,7 @@ class PurchaserCorporationTaxUTRFormProvider @Inject() extends Mappings {
   
   def apply(): Form[String] =
     Form(
-      "value" -> text("purchaser.purchaserCorporationTaxUTR.error.required")
-        .verifying(validUtr("purchaser.purchaserCorporationTaxUTR.error"))
+      "value" -> text("purchaser.corporationTaxUTR.error.required")
+        .verifying(validUtr("purchaser.corporationTaxUTR.error"))
     )
 }

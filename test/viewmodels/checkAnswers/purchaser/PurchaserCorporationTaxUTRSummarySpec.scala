@@ -37,7 +37,7 @@ class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
 
         val result = PurchaserCorporationTaxUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserCorporationTaxUTR.checkYourAnswersLabel")
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.corporationTaxUTR.checkYourAnswersLabel")
 
         val htmlContent = result.value.content.asHtml.toString()
         htmlContent mustEqual "1234567494"
@@ -45,7 +45,7 @@ class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.purchaserCorporationTaxUTR.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.corporationTaxUTR.change.hidden")
       }
     }
 

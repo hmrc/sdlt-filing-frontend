@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserConfirmIdentityPage
 import play.api.i18n.Messages
@@ -34,16 +33,16 @@ object PurchaserConfirmIdentitySummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"purchaserConfirmIdentity.$answer"))
+            HtmlFormat.escape(messages(s"purchaser.confirmIdentity.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "purchaserConfirmIdentity.checkYourAnswersLabel",
+          key     = "purchaser.confirmIdentity.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserConfirmIdentity.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.confirmIdentity.change.hidden"))
           )
         )
     }
