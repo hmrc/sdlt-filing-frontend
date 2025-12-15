@@ -16,7 +16,6 @@
 
 package models.prelimQuestions
 
-import models.prelimQuestions.{PrelimSessionAddress, PrelimSessionCountry, PrelimSessionQuestions}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.should.Matchers.shouldBe

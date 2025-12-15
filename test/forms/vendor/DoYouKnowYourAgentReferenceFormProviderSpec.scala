@@ -17,7 +17,6 @@
 package forms.vendor
 
 import forms.behaviours.OptionFieldBehaviours
-import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
 import models.vendor.DoYouKnowYourAgentReference
 import play.api.data.FormError
 

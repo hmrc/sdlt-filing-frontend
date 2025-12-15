@@ -23,7 +23,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import config.{AddressLookupConfiguration, FrontendAppConfig}
 import models.address.AddressLookupJourneyIdentifier.prelimQuestionsAddress
 import models.address.{Address, Country, MandatoryFieldsConfigModel}
-import org.apache.pekko.http.scaladsl.model.HttpResponse
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

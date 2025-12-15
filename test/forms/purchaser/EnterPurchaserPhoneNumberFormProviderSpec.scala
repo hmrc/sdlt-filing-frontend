@@ -17,8 +17,8 @@
 package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
-import play.api.data.FormError
 import org.scalacheck.Gen
+import play.api.data.FormError
 
 class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
 

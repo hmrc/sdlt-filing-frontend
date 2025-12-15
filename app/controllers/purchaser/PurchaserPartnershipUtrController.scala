@@ -26,9 +26,9 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.PurchaserPartnershipUtrView
-import services.purchaser.PurchaserService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

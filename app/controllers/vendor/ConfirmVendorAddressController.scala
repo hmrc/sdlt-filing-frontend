@@ -19,9 +19,9 @@ package controllers.vendor
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.vendor.ConfirmVendorAddressFormProvider
+import models.Mode
 import models.address.Address
 import models.vendor.ConfirmVendorAddress
-import models.{GetReturnByRefRequest, Mode}
 import navigation.Navigator
 import pages.vendor.{ConfirmVendorAddressPage, VendorAddressPage, VendorOrCompanyNamePage}
 import play.api.data.Form
@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.ConfirmVendorAddressView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ConfirmVendorAddressController @Inject()(
                                           override val messagesApi: MessagesApi,

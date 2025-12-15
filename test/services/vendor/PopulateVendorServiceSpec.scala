@@ -17,9 +17,9 @@
 package services.vendor
 
 import base.SpecBase
-import models.{UserAnswers, Vendor}
 import models.address.Address
 import models.vendor.VendorName
+import models.{UserAnswers, Vendor}
 import pages.vendor.{VendorAddressPage, VendorOrCompanyNamePage, VendorOverviewVendorIdPage, VendorRepresentedByAgentPage}
 
 import scala.util.{Failure, Success}

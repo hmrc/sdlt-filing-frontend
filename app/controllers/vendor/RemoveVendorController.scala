@@ -19,8 +19,8 @@ package controllers.vendor
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.vendor.RemoveVendorFormProvider
-import models.vendor.DeleteVendorRequest
 import models.ReturnVersionUpdateRequest
+import models.vendor.DeleteVendorRequest
 import pages.vendor.VendorOverviewRemovePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -17,11 +17,10 @@
 package viewmodels.checkAnswers.purchaser
 
 import base.SpecBase
-import models.{CheckMode, UserAnswers}
+import models.CheckMode
 import models.purchaser.NameOfPurchaser
-import pages.purchaser.{RegistrationNumberPage, NameOfPurchaserPage}
+import pages.purchaser.RegistrationNumberPage
 import play.api.i18n.Messages
-import play.api.libs.json.{JsNull, Json}
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 

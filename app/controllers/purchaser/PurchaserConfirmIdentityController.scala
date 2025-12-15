@@ -19,8 +19,8 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.PurchaserConfirmIdentityFormProvider
 import models.purchaser.{PurchaserConfirmIdentity, WhoIsMakingThePurchase}
-import models.{CheckMode, Mode, NormalMode}
-import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, WhoIsMakingThePurchasePage}
+import models.{Mode, NormalMode}
+import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

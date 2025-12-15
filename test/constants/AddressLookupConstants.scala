@@ -16,8 +16,7 @@
 
 package constants
 
-import models.address._
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import models.address.*
 
 object AddressLookupConstants {
 

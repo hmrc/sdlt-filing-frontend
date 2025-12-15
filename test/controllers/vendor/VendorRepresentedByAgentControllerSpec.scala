@@ -30,8 +30,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.vendor.VendorRepresentedByAgentView
 
-import scala.concurrent.Future
-
 class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")

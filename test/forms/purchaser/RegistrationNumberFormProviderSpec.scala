@@ -17,7 +17,6 @@
 package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
-import forms.purchaser.RegistrationNumberFormProvider
 import org.scalacheck.Gen
 import play.api.data.FormError
 

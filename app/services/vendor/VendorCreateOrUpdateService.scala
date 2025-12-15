@@ -17,12 +17,11 @@
 package services.vendor
 
 import connectors.StampDutyLandTaxConnector
-import models.{ReturnVersionUpdateRequest, UserAnswers, Vendor}
 import models.vendor.VendorSessionQuestions
+import models.{ReturnVersionUpdateRequest, UserAnswers, Vendor}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 
 import scala.concurrent.{ExecutionContext, Future}
 class VendorCreateOrUpdateService {

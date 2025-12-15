@@ -16,8 +16,7 @@
 
 package forms.vendor
 
-import forms.behaviours.{BooleanFieldBehaviours, OptionFieldBehaviours}
-import forms.vendor.AddVendorAgentContactDetailsFormProvider
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
 class AddVendorAgentContactDetailsFormProviderSpec extends BooleanFieldBehaviours {

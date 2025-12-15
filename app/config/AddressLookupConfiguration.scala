@@ -19,7 +19,6 @@ package config
 import models.address.*
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.mvc.{Call, RequestHeader}
-import uk.gov.hmrc.http.StringContextOps
 
 import javax.inject.Inject
 

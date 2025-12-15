@@ -19,13 +19,13 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.PurchaserNationalInsuranceFormProvider
-import models.purchaser.{DoesPurchaserHaveNI, NameOfPurchaser}
+import models.purchaser.DoesPurchaserHaveNI
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserNationalInsurancePage}
+import pages.purchaser.{DoesPurchaserHaveNIPage, PurchaserNationalInsurancePage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json

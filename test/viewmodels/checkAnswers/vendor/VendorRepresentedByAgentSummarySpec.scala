@@ -17,15 +17,12 @@
 package viewmodels.checkAnswers.vendor
 
 import base.SpecBase
-import models.{CheckMode, UserAnswers}
-import pages.vendor.{AgentNamePage, VendorRepresentedByAgentPage}
+import models.CheckMode
+import pages.vendor.VendorRepresentedByAgentPage
 import play.api.i18n.Messages
-import play.api.test.FakeRequest
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import viewmodels.checkAnswers.VendorRepresentedByAgentSummary
-import controllers.routes
 
 
 class VendorRepresentedByAgentSummarySpec extends SpecBase {

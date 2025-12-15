@@ -17,7 +17,6 @@
 package forms.purchaser
 
 import forms.behaviours.OptionFieldBehaviours
-import forms.purchaser.PurchaserConfirmIdentityFormProvider
 import models.purchaser.PurchaserConfirmIdentity
 import play.api.data.FormError
 

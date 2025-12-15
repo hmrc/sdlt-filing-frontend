@@ -17,9 +17,9 @@
 package controllers.vendor
 
 import base.SpecBase
+import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.vendor.VendorAgentsReferenceFormProvider
-import constants.FullReturnConstants.completeFullReturn
 import models.vendor.DoYouKnowYourAgentReference
 import models.{NormalMode, ReturnAgent, ReturnInfo, UserAnswers, Vendor}
 import navigation.{FakeNavigator, Navigator}
@@ -33,7 +33,7 @@ import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Call, RequestHeader}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository

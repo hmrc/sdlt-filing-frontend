@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.purchaser.PurchaserConfirmIdentityFormProvider
 import models.purchaser.*
 import models.{CheckMode, NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.*

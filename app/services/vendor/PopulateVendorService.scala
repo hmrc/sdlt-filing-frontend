@@ -16,11 +16,11 @@
 
 package services.vendor
 
-import models.UserAnswers
-import models._
-import models.vendor._
-import models.address._
-import pages.vendor._
+import models.*
+import models.address.*
+import models.vendor.*
+import pages.vendor.*
+
 import scala.util.Try
 
 class PopulateVendorService {

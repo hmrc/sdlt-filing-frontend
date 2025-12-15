@@ -17,9 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.*
 import models.prelimQuestions.PrelimReturn
-import models.vendor._
-import models._
+import models.vendor.*
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue

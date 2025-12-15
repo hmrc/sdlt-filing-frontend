@@ -25,13 +25,13 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.ConfirmNameOfThePurchaserView
-import services.purchaser.PurchaserService
 
-import scala.util.{Failure, Success}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class ConfirmNameOfThePurchaserController @Inject()(
                                                      override val messagesApi: MessagesApi,

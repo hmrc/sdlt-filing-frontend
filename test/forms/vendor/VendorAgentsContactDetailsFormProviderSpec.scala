@@ -17,7 +17,6 @@
 package forms.vendor
 
 import forms.behaviours.StringFieldBehaviours
-import forms.vendor.VendorAgentsContactDetailsFormProvider
 import models.vendor.VendorAgentsContactDetails
 import play.api.data.FormError
 

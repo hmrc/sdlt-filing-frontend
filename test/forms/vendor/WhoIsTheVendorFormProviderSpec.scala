@@ -17,7 +17,6 @@
 package forms.vendor
 
 import forms.behaviours.OptionFieldBehaviours
-import forms.vendor.WhoIsTheVendorFormProvider
 import models.vendor.whoIsTheVendor
 import play.api.data.FormError
 

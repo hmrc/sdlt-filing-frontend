@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.preliminary
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import play.api.i18n.Messages

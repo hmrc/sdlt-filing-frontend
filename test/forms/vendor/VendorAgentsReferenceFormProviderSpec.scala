@@ -17,7 +17,6 @@
 package forms.vendor
 
 import forms.behaviours.StringFieldBehaviours
-import forms.vendor.VendorAgentsReferenceFormProvider
 import play.api.data.FormError
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages

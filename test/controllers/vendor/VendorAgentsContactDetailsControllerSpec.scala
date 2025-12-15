@@ -18,7 +18,6 @@ package controllers.vendor
 
 import base.SpecBase
 import constants.FullReturnConstants
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import forms.vendor.VendorAgentsContactDetailsFormProvider
 import models.vendor.VendorAgentsContactDetails
@@ -27,18 +26,16 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor._
+import pages.vendor.*
 import play.api.data.Form
-import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{Call, MessagesControllerComponents}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.vendor.AgentChecksService
 import views.html.vendor.VendorAgentsContactDetailsView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSugar {
 

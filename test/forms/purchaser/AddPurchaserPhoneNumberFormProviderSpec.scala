@@ -17,7 +17,6 @@
 package forms.purchaser
 
 import forms.behaviours.BooleanFieldBehaviours
-import forms.purchaser.AddPurchaserPhoneNumberFormProvider
 import play.api.data.FormError
 
 class AddPurchaserPhoneNumberFormProviderSpec extends BooleanFieldBehaviours {

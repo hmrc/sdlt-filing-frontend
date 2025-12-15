@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.vendor
 
-import controllers.preliminary.routes
 import models.UserAnswers
 import models.address.{Address, Country}
 import pages.vendor.VendorAddressPage

@@ -17,7 +17,6 @@
 package forms.vendor
 
 import forms.behaviours.BooleanFieldBehaviours
-import forms.vendor.VendorRepresentedByAgentFormProvider
 import play.api.data.FormError
 
 class VendorRepresentedByAgentFormProviderSpec extends BooleanFieldBehaviours {

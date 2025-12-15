@@ -16,7 +16,6 @@
 
 package models.prelimQuestions
 
-import models.prelimQuestions.TransactionType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.OptionValues

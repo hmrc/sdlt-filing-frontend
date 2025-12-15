@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.purchaser.AddPurchaserPhoneNumberPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
 

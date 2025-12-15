@@ -19,9 +19,9 @@ package services
 import base.SpecBase
 import config.AddressLookupConfiguration
 import connectors.AddressLookupConnector
+import models.UserAnswers
 import models.address.{Address, AddressLookupJourneyIdentifier, Country, MandatoryFieldsConfigModel}
 import models.requests.DataRequest
-import models.UserAnswers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar

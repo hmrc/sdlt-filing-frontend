@@ -18,9 +18,6 @@ package viewmodels.tasklist
 
 import base.SpecBase
 import constants.FullReturnConstants
-import models.prelimQuestions.PrelimReturn
-import models.FullReturn
-import viewmodels.tasklist.{TLCannotStart, TLCompleted, TLFailed, TLInProgress, TLNotStarted, TaskListRowBuilder}
 
 class TaskListRowBuilderSpec extends SpecBase {
 

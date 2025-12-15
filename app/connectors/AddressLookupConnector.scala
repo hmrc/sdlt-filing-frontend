@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.address.Address.addressLookupReads
 import models.address.{Address, AddressLookupConfigurationModel}
 import play.api.http.HeaderNames.*
 import play.api.http.HttpVerbs.*

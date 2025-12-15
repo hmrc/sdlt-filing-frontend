@@ -16,11 +16,11 @@
 
 package models
 
-import constants.FullReturnConstants.completeFullReturn
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReturnVersionUpdateRequestSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues {

@@ -20,7 +20,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.prelimQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
-import models.{CheckMode, Mode, NormalMode}
+import models.{Mode, NormalMode}
 import pages.preliminary.PurchaserAddressPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

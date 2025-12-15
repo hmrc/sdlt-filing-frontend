@@ -17,9 +17,7 @@
 package viewmodels.checkAnswers.vendor
 
 import base.SpecBase
-import controllers.routes
 import models.CheckMode
-import models.prelimQuestions.TransactionType
 import models.vendor.whoIsTheVendor
 import pages.vendor.WhoIsTheVendorPage
 import play.api.i18n.Messages

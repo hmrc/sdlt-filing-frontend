@@ -18,8 +18,8 @@ package controllers.vendor
 
 import controllers.actions.*
 import forms.vendor.VendorAgentsContactDetailsFormProvider
+import models.Mode
 import models.vendor.VendorAgentsContactDetails
-import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorAgentsContactDetailsPage, VendorRepresentedByAgentPage}
 import play.api.data.Form

@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.purchaser
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.RegistrationNumberPage
 import play.api.i18n.Messages

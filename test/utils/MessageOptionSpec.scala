@@ -32,12 +32,12 @@ package utils
  * limitations under the License.
  */
 
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.*
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
-import org.mockito.Mockito._
-import org.mockito.ArgumentMatchers._
 import play.api.i18n.{Lang, MessagesApi}
 
 class MessageOptionSpec extends AnyFreeSpec with Matchers with OptionValues with EitherValues with MockitoSugar {

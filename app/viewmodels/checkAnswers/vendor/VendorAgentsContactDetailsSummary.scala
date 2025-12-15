@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers.vendor
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.vendor.{VendorAgentAddressPage, VendorAgentsContactDetailsPage}
+import pages.vendor.VendorAgentsContactDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

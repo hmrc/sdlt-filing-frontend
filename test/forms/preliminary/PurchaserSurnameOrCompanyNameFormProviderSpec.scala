@@ -16,12 +16,9 @@
 
 package forms.preliminary
 
-import forms.behaviours.StringFieldBehaviours
-import forms.preliminary.PurchaserSurnameOrCompanyNameFormProvider
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import play.api.data.FormError
-import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.TableDrivenPropertyChecks.*
+import org.scalatest.wordspec.AnyWordSpec
 
 class PurchaserSurnameOrCompanyNameFormProviderSpec extends AnyWordSpec with Matchers {
 

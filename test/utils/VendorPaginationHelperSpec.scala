@@ -20,7 +20,7 @@ import base.SpecBase
 import models.Vendor
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {

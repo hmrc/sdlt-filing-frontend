@@ -17,7 +17,6 @@
 package forms.preliminary
 
 import forms.behaviours.OptionFieldBehaviours
-import forms.preliminary.TransactionTypeFormProvider
 import models.prelimQuestions.TransactionType
 import play.api.data.FormError
 

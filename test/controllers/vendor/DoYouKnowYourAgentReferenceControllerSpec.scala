@@ -20,23 +20,22 @@ import base.SpecBase
 import constants.FullReturnConstants
 import controllers.routes
 import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
-import models.prelimQuestions.TransactionType
 import models.vendor.DoYouKnowYourAgentReference
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage}
+import pages.vendor.AgentNamePage
+import play.api.Application
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.vendor.DoYouKnowYourAgentReferenceView
-import play.api.libs.json.Json
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.Application
 
 import scala.concurrent.Future
 

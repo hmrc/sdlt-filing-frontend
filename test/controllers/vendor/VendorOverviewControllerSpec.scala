@@ -19,22 +19,19 @@ package controllers.vendor
 import base.SpecBase
 import forms.vendor.VendorOverviewFormProvider
 import models.{FullReturn, GetReturnByRefRequest, NormalMode, UserAnswers, Vendor}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.{VendorOverviewRemovePage, VendorOverviewVendorIdPage}
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.FullReturnService
 import services.vendor.PopulateVendorService
 import views.html.vendor.VendorOverview
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
 

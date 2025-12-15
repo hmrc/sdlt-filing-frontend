@@ -18,10 +18,10 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.RegistrationNumberFormProvider
+import models.purchaser.{NameOfPurchaser, PurchaserConfirmIdentity, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
-import models.purchaser.{NameOfPurchaser, WhoIsMakingThePurchase, PurchaserConfirmIdentity}
 import navigation.Navigator
-import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, RegistrationNumberPage, WhoIsMakingThePurchasePage}
+import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, RegistrationNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository

@@ -19,11 +19,8 @@ package services.purchaser
 import models.*
 import models.purchaser.*
 import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
-import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage}
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
-import play.api.mvc.Call
+import play.api.mvc.{Call, Result}
 
 import scala.util.Try
 

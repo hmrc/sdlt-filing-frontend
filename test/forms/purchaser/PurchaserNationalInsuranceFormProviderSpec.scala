@@ -17,7 +17,6 @@
 package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
-import forms.purchaser.PurchaserNationalInsuranceFormProvider
 import play.api.data.FormError
 
 class PurchaserNationalInsuranceFormProviderSpec extends StringFieldBehaviours {

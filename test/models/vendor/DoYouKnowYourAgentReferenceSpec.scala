@@ -16,7 +16,6 @@
 
 package models.vendor
 
-import models.vendor.DoYouKnowYourAgentReference
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.OptionValues

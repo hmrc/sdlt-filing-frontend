@@ -16,7 +16,6 @@
 
 package models.purchaser
 
-import models.purchaser.PurchaserConfirmIdentity
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.OptionValues

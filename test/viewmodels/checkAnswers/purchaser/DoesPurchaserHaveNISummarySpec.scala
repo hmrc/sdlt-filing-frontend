@@ -21,7 +21,6 @@ import models.CheckMode
 import models.purchaser.{DoesPurchaserHaveNI, NameOfPurchaser}
 import pages.purchaser.DoesPurchaserHaveNIPage
 import play.api.i18n.Messages
-import play.api.libs.json._
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 

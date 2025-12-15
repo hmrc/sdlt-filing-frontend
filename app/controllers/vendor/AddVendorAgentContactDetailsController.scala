@@ -16,7 +16,6 @@
 
 package controllers.vendor
 
-import controllers.JourneyRecoveryController
 import controllers.actions.*
 import forms.vendor.AddVendorAgentContactDetailsFormProvider
 import models.{Mode, NormalMode}

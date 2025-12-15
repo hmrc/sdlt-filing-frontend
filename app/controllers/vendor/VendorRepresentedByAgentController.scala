@@ -17,17 +17,16 @@
 package controllers.vendor
 
 import controllers.actions.*
-import controllers.routes
 import forms.vendor.VendorRepresentedByAgentFormProvider
 import models.*
 import navigation.Navigator
 import pages.vendor.{VendorOrCompanyNamePage, VendorRepresentedByAgentPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.vendor.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.VendorRepresentedByAgentView
-import services.vendor.AgentChecksService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

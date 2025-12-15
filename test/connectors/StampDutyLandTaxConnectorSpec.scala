@@ -19,15 +19,15 @@ package connectors
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants.*
-import models.prelimQuestions.PrelimReturn
 import models.*
-import models.vendor._
+import models.prelimQuestions.PrelimReturn
+import models.vendor.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
-import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 
 import scala.concurrent.{ExecutionContext, Future}
 

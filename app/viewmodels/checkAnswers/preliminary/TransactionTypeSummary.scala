@@ -16,8 +16,7 @@
 
 package viewmodels.checkAnswers.preliminary
 
-import controllers.routes
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.preliminary.TransactionTypePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
