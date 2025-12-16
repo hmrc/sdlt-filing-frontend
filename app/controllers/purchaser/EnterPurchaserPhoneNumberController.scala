@@ -18,6 +18,7 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.EnterPurchaserPhoneNumberFormProvider
+import models.purchaser.WhoIsMakingThePurchase.Company
 import models.purchaser.{NameOfPurchaser, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
 import navigation.Navigator
@@ -27,8 +28,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.EnterPurchaserPhoneNumberView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import services.purchaser.PurchaserService
 
 class EnterPurchaserPhoneNumberController @Inject()(
                                         override val messagesApi: MessagesApi,
@@ -87,7 +90,7 @@ class EnterPurchaserPhoneNumberController @Inject()(
                   case Some(WhoIsMakingThePurchase.Individual) =>
                     Redirect(navigator.nextPage(EnterPurchaserPhoneNumberPage, mode, updatedAnswers))
                   case Some(WhoIsMakingThePurchase.Company) =>
-                    Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO: DTR-1603 when built
+                    Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode))
                   case None =>
                     Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode))
                 }

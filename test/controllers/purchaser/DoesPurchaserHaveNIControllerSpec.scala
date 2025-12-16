@@ -59,7 +59,8 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
           "forename1" -> "John",
           "forename2" -> "Middle",
           "name" -> "Doe"
-        )
+        ),
+        "whoIsMakingThePurchase" -> "Individual"
       )
     ),
     lastUpdated = Instant.now
@@ -76,7 +77,8 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
           "forename1" -> JsNull,
           "forename2" -> JsNull,
           "name" -> JsNull
-        )
+        ),
+        "whoIsMakingThePurchase" -> "Individual"
       )
     ),
     lastUpdated = Instant.now

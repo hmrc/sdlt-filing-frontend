@@ -74,7 +74,8 @@ class PurchaserDateOfBirthControllerSpec extends SpecBase with MockitoSugar {
             "forename1" -> "John",
             "forename2" -> "Middle",
             "name" -> "Doe"
-          )
+          ),
+          "whoIsMakingThePurchase" -> "Individual"
         )
       ),
       lastUpdated = Instant.now

@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserFormOfIdIndividualPage}
+import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserFormOfIdIndividualPage, WhoIsMakingThePurchasePage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -33,6 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.purchaser.PurchaserFormOfIdIndividualView
+import models.purchaser.WhoIsMakingThePurchase
 
 import scala.concurrent.Future
 
@@ -51,6 +52,7 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
   val userAnswersWithPurchaserNameAndNoNino: UserAnswers = emptyUserAnswers
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
     .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
+    .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
 
   val userAnswersWithPurchaserNameAndNino: UserAnswers = emptyUserAnswers
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
@@ -60,6 +62,8 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
     .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", Some("Germany"))).success.value
     .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
+    .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
+
 
   "PurchaserFormOfIdIndividual Controller" - {
 

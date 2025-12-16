@@ -56,7 +56,8 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
           "forename2" -> "Middle",
           "name" -> "Doe"
         ),
-        "doesPurchaserHaveNI" -> "yes"
+        "doesPurchaserHaveNI" -> "yes",
+        "whoIsMakingThePurchase" -> "Individual"
       )
     )
   )
@@ -73,6 +74,7 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
           "forename2" -> "Middle",
           "name" -> "Doe"
         ),
+        "whoIsMakingThePurchase" -> "Individual"
       )
     )
   )

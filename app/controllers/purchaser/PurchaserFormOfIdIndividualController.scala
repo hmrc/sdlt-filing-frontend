@@ -27,6 +27,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.PurchaserFormOfIdIndividualView
+import models.purchaser.WhoIsMakingThePurchase
+import services.purchaser.PurchaserService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,6 +41,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
                                                        getData: DataRetrievalAction,
                                                        requireData: DataRequiredAction,
                                                        formProvider: PurchaserFormOfIdIndividualFormProvider,
+                                                       purchaserService: PurchaserService,
                                                        val controllerComponents: MessagesControllerComponents,
                                                        view: PurchaserFormOfIdIndividualView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -57,7 +60,12 @@ class PurchaserFormOfIdIndividualController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          Ok(view(preparedForm, mode, purchaserName))
+          purchaserService.checkPurchaserTypeAndCompanyDetails(
+            purchaserType = WhoIsMakingThePurchase.Individual,
+            userAnswers = request.userAnswers,
+            continueRoute = Ok(view(preparedForm, mode, purchaserName)))
+          
+      
         case (None, _) => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode))
         case (_, Some(doesPurchaserHaveNI)) if doesPurchaserHaveNI.equals(DoesPurchaserHaveNI.Yes) =>
           Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad()) // TODO change to enter purchaser NI page

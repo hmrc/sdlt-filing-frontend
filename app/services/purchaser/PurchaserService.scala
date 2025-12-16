@@ -91,12 +91,7 @@ class PurchaserService {
   def checkPurchaserTypeAndCompanyDetails(purchaserType: WhoIsMakingThePurchase, userAnswers: UserAnswers, continueRoute: Result): Result =
     userAnswers.get(WhoIsMakingThePurchasePage) match {
       case Some(value) if value == purchaserType && purchaserType == WhoIsMakingThePurchase.Company =>
-        userAnswers.fullReturn
-          .flatMap(_.companyDetails)
-          .flatMap(_.companyTypePensionfund)
-          .fold(continueRoute)(_ =>
-            //TODO change to check your answers
-            Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)))
+        handleCompanyPurchaser(userAnswers, continueRoute)
       case Some(value) if value == purchaserType && purchaserType == WhoIsMakingThePurchase.Individual =>
         continueRoute
       case Some(_) =>
@@ -104,6 +99,32 @@ class PurchaserService {
       case None =>
         Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
     }
+
+  private def handleCompanyPurchaser(userAnswers: UserAnswers, continueRoute: Result): Result = {
+    val purchasers = userAnswers.fullReturn.flatMap(_.purchaser)
+
+    if (shouldShowCompanyDetailsPage(purchasers, userAnswers)) {
+      continueRoute
+    } else {
+      // TODO Don't show company details page, go to CYA
+      Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)) // TODO: change to check your answers
+    }
+  }
+
+  private def shouldShowCompanyDetailsPage(purchasers: Option[Seq[Purchaser]], userAnswers: UserAnswers): Boolean = {
+
+    val companyDetailsAlreadyExist = userAnswers.fullReturn
+      .flatMap(_.companyDetails)
+      .flatMap(_.companyTypePensionfund)
+      .isDefined
+    
+    purchasers match {
+      case None => true
+      case Some(p) if p.isEmpty => true
+      case Some(p) if p.size == 1 => !companyDetailsAlreadyExist
+      case _ => false
+    }
+  }
 
   def confirmIdentityNextPage(value: PurchaserConfirmIdentity, mode: Mode): Call = {
     if (mode == CheckMode) {
