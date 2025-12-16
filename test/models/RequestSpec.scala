@@ -266,6 +266,7 @@ class RequestSpec extends PlaySpec {
           contractChangedSinceMar16 = Some(false),
           relevantRent = Some(1000)
         )),
+        taxReliefDetails = None,
         firstTimeBuyer = None
       )
 
@@ -307,6 +308,7 @@ class RequestSpec extends PlaySpec {
         )),
         leaseDetails = None,
         relevantRentDetails = None,
+        taxReliefDetails = None,
         firstTimeBuyer = None
       )
 
@@ -350,6 +352,7 @@ class RequestSpec extends PlaySpec {
         )),
         leaseDetails = None,
         relevantRentDetails = None,
+        taxReliefDetails = None,
         firstTimeBuyer = Some(true)
       )
 
@@ -380,6 +383,7 @@ class RequestSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = None,
         relevantRentDetails = None,
+        taxReliefDetails = None,
         firstTimeBuyer = None
       )
 
@@ -424,6 +428,7 @@ class RequestSpec extends PlaySpec {
         )),
         leaseDetails = None,
         relevantRentDetails = None,
+        taxReliefDetails = None,
         firstTimeBuyer = Some(true)
       )
 
@@ -468,6 +473,7 @@ class RequestSpec extends PlaySpec {
         )),
         leaseDetails = None,
         relevantRentDetails = None,
+        taxReliefDetails = None,
         firstTimeBuyer = Some(true)
       )
 

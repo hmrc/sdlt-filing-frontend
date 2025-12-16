@@ -11,6 +11,7 @@ import validators.api.RequestValidators
 import play.api.libs.json.{Json, Reads, __}
 import play.api.libs.functional.syntax._
 import RequestValidators.{multiFieldDateReads, yesNoToBooleanReads}
+import models.sdltRebuild.TaxReliefDetails
 
 object RelevantRentDetails {
   implicit val reads: Reads[RelevantRentDetails] = (
@@ -58,7 +59,9 @@ object Request {
     (__ \ "propertyDetails").readNullable[PropertyDetails] and
     (__ \ "leaseDetails").readNullable[LeaseDetails] and
     (__ \ "relevantRentDetails").readNullable[RelevantRentDetails] and
-      (__ \ "firstTimeBuyer").readNullable[Boolean](yesNoToBooleanReads)
+    (__ \ "firstTimeBuyer").readNullable[Boolean](yesNoToBooleanReads) and
+    (__ \ "isLinked").readNullable[Boolean].map(_.getOrElse(false)) and
+    (__ \ "taxReliefDetails").readNullable[TaxReliefDetails]
   )(Request.apply _)
 }
 
@@ -72,7 +75,9 @@ case class Request(
                   propertyDetails: Option[PropertyDetails],
                   leaseDetails: Option[LeaseDetails],
                   relevantRentDetails: Option[RelevantRentDetails],
-                  firstTimeBuyer: Option[Boolean]
+                  firstTimeBuyer: Option[Boolean],
+                  isLinked: Boolean = false,
+                  taxReliefDetails: Option[TaxReliefDetails]
                   )
 
 case class PropertyDetails(
