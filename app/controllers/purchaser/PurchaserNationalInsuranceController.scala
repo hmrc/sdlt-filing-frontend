@@ -30,6 +30,8 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.FullName
 import views.html.purchaser.PurchaserNationalInsuranceView
+import services.purchaser.PurchaserService
+import models.purchaser.WhoIsMakingThePurchase
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,6 +44,7 @@ class PurchaserNationalInsuranceController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: PurchaserNationalInsuranceFormProvider,
+                                        purchaserService: PurchaserService,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: PurchaserNationalInsuranceView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -65,8 +68,11 @@ class PurchaserNationalInsuranceController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          Ok(view(preparedForm, mode, purchaserName))
-
+          purchaserService.checkPurchaserTypeAndCompanyDetails(
+            purchaserType = WhoIsMakingThePurchase.Individual,
+            userAnswers = request.userAnswers,
+            continueRoute = Ok(view(preparedForm, mode, purchaserName)))
+          
         case (None, _) => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 
         case (_, Some(doesPurchaserHaveNI)) if doesPurchaserHaveNI.equals(DoesPurchaserHaveNI.No) =>

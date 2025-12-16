@@ -559,23 +559,80 @@ class PurchaserServiceSpec extends SpecBase {
 
         "when the value in user answers is Company" - {
 
-          "when companyTypePensionfund is not present" - {
+          "when no purchaser exists in fullReturn" - {
             "must stay on the page" in {
+              val userAnswersWithoutPurchaser = userAnswersWithCompanyPurchaser
+                .copy(fullReturn = Some(FullReturn(
+                  stornId = "test",
+                  returnResourceRef = "testref",
+                  purchaser = None
+                )))
+
               val result = service.checkPurchaserTypeAndCompanyDetails(
                 WhoIsMakingThePurchase.Company,
-                userAnswersWithCompanyPurchaser,
+                userAnswersWithoutPurchaser,
                 continueRoute
               )
               result mustBe continueRoute
             }
           }
 
-          "when companyTypePensionfund is present" - {
+          "when purchaser list is empty" - {
+            "must stay on the page" in {
+              val userAnswersWithEmptyPurchasers = userAnswersWithCompanyPurchaser
+                .copy(fullReturn = Some(FullReturn(
+                  stornId = "test",
+                  returnResourceRef = "testref",
+                  purchaser = Some(Seq.empty)
+                )))
+
+              val result = service.checkPurchaserTypeAndCompanyDetails(
+                WhoIsMakingThePurchase.Company,
+                userAnswersWithEmptyPurchasers,
+                continueRoute
+              )
+              result mustBe continueRoute
+            }
+          }
+
+          "when there is one purchaser and companyTypePensionfund is not present" - {
+            "must stay on the page" in {
+              val singlePurchaser = Purchaser(
+                purchaserID = Some("PURCH001"),
+                isCompany = Some("YES"),
+                companyName = Some("Test Company")
+              )
+
+              val userAnswersWithOnePurchaser = userAnswersWithCompanyPurchaser
+                .copy(fullReturn = Some(FullReturn(
+                  stornId = "test",
+                  returnResourceRef = "testref",
+                  purchaser = Some(Seq(singlePurchaser)),
+                  companyDetails = None
+                )))
+
+              val result = service.checkPurchaserTypeAndCompanyDetails(
+                WhoIsMakingThePurchase.Company,
+                userAnswersWithOnePurchaser,
+                continueRoute
+              )
+              result mustBe continueRoute
+            }
+          }
+
+          "when there is one purchaser and companyTypePensionfund is present" - {
             "must redirect to WhoIsMakingThePurchase page" in {
+              val singlePurchaser = Purchaser(
+                purchaserID = Some("PURCH001"),
+                isCompany = Some("YES"),
+                companyName = Some("Test Company")
+              )
+
               val userAnswersWithPensionFund = userAnswersWithCompanyPurchaser
                 .copy(fullReturn = Some(FullReturn(
                   stornId = "test",
                   returnResourceRef = "testref",
+                  purchaser = Some(Seq(singlePurchaser)),
                   companyDetails = Some(CompanyDetails(
                     companyTypePensionfund = Some("YES")
                   ))
@@ -589,6 +646,49 @@ class PurchaserServiceSpec extends SpecBase {
               redirectLocation(Future.successful(result)) mustBe Some(
                 controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url
               )
+            }
+          }
+
+          "when there are multiple purchasers" - {
+            "must redirect to WhoIsMakingThePurchase page" in {
+              val firstPurchaser = Purchaser(
+                purchaserID = Some("PURCH001"),
+                isCompany = Some("YES"),
+                companyName = Some("First Company")
+              )
+
+              val secondPurchaser = Purchaser(
+                purchaserID = Some("PURCH002"),
+                isCompany = Some("YES"),
+                companyName = Some("Second Company")
+              )
+
+              val userAnswersWithMultiplePurchasers = userAnswersWithCompanyPurchaser
+                .copy(fullReturn = Some(FullReturn(
+                  stornId = "test",
+                  returnResourceRef = "testref",
+                  purchaser = Some(Seq(firstPurchaser, secondPurchaser))
+                )))
+
+              val result = service.checkPurchaserTypeAndCompanyDetails(
+                WhoIsMakingThePurchase.Company,
+                userAnswersWithMultiplePurchasers,
+                continueRoute
+              )
+              redirectLocation(Future.successful(result)) mustBe Some(
+                controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url
+              )
+            }
+          }
+
+          "when fullReturn is not present" - {
+            "must stay on the page" in {
+              val result = service.checkPurchaserTypeAndCompanyDetails(
+                WhoIsMakingThePurchase.Company,
+                userAnswersWithCompanyPurchaser,
+                continueRoute
+              )
+              result mustBe continueRoute
             }
           }
         }
@@ -660,5 +760,6 @@ class PurchaserServiceSpec extends SpecBase {
         }
       }
     }
+
   }
 }

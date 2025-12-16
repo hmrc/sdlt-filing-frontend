@@ -26,6 +26,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.DoesPurchaserHaveNIView
+import services.purchaser.PurchaserService
+import models.purchaser.WhoIsMakingThePurchase
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +40,7 @@ class DoesPurchaserHaveNIController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: DoesPurchaserHaveNIFormProvider,
+                                       purchaserService: PurchaserService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: DoesPurchaserHaveNIView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -57,8 +60,11 @@ class DoesPurchaserHaveNIController @Inject()(
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, mode, purchaserName.fullName))
-      }
+          purchaserService.checkPurchaserTypeAndCompanyDetails(
+            purchaserType = WhoIsMakingThePurchase.Individual,
+            userAnswers = request.userAnswers,
+            continueRoute =  Ok(view(preparedForm, mode, purchaserName.fullName)))
+        }
   }
 
 

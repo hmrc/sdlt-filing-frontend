@@ -26,6 +26,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.PurchaserDateOfBirthView
+import services.purchaser.PurchaserService
+import models.purchaser.WhoIsMakingThePurchase
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +40,7 @@ class PurchaserDateOfBirthController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: PurchaserDateOfBirthFormProvider,
+                                        purchaserService: PurchaserService,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: PurchaserDateOfBirthView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -58,10 +61,12 @@ class PurchaserDateOfBirthController @Inject()(
            case Some(value) => form.fill(value)
          }
 
-         Ok(view(preparedForm, purchaserName, mode))
-     }
+         purchaserService.checkPurchaserTypeAndCompanyDetails(
+           purchaserType = WhoIsMakingThePurchase.Individual,
+           userAnswers = request.userAnswers,
+           continueRoute = Ok(view(preparedForm, purchaserName, mode)))
 
-     
+     }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

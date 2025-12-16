@@ -292,7 +292,7 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    "must redirect to Journey Recovery when valid data is submitted for a company purchaser (company page not yet built)" in {
+    "must redirect to Confirm identity page when valid data is submitted for a company purchaser" in {
 
       val userAnswersWithCompany = UserAnswers(userAnswersId, storn = testStorn)
         .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
@@ -315,7 +315,7 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode).url
       }
     }
   }
