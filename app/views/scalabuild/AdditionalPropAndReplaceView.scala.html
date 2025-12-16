@@ -1,0 +1,55 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+)
+
+@(addPropForm: Form[_], replaceMainForm: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+@formHelper(action = controllers.scalabuild.routes.IsAdditionalPropertyController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+@if(addPropForm.errors.nonEmpty) {
+@govukErrorSummary(ErrorSummaryViewModel(addPropForm))
+}
+
+@govukRadios(
+    RadiosViewModel.yesNoWithConditionalHtml(
+        field = addPropForm("twoOrMore"),
+        legend = LegendViewModel(messages("isAdditionalProperty.heading")).asPageHeading(),
+        yesId = "Yes",
+        noId = "No",
+        items = RadiosViewModel.yesNoItemsWithConditionalHtml(
+            field = replaceMainForm("twoOrMore"),
+            yesId = "Yes",
+            noId = "No",
+            conditionalYesHtml = Some(
+                govukRadios(
+                    RadiosViewModel.yesNoCustomIdSuffix(
+                        field = replaceMainForm("mainResidence"),
+                        legend = LegendViewModel(messages("replaceMainResidence.heading")).asPageHeading(),
+                        yesId = "Yes",
+                        noId = "No"
+                    ).inline().withHint(Hint(content = HtmlContent(messages("replaceMainResidence.hint"))))
+                )
+            )
+        )
+    ).inline()
+)
+
+
+@govukButton(ButtonViewModel("continue-button",messages("site.continue")))
+}
+}

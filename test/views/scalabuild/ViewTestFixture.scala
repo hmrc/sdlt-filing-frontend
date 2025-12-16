@@ -41,6 +41,8 @@ abstract class ViewTestFixture extends PlaySpec
 
   lazy val sign_in_href = document.select("a.govuk-button").attr("href")
 
+  lazy val linkText = document.getElementsByClass("govuk-link").text
+
   lazy val input_field = document.select("input.govuk-input")
 
   lazy val input_field_label = document.select("label.govuk-label").text()
@@ -48,5 +50,7 @@ abstract class ViewTestFixture extends PlaySpec
   lazy val radios = document.select(".govuk-radios").text()
 
   lazy val dateField = document.select(".govuk-date-input__label").text()
+
+  lazy val bullet = document.select("li").text
 
 }

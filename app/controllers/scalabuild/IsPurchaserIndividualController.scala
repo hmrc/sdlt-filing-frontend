@@ -4,37 +4,35 @@
  */
 
 package controllers.scalabuild
-
-import forms.scalabuild.FreeholdOrLeaseholdFormProvider
-import models.scalabuild.Tenancy
+import forms.scalabuild.IsPurchaserIndividualFormProvider
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.scalabuild.FreeholdOrLeaseholdView
+import views.html.scalabuild.IsPurchaserIndividualView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class FreeholdOrLeaseholdController @Inject()(
+class IsPurchaserIndividualController @Inject()(
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: FreeholdOrLeaseholdView,
-                                         formProvider: FreeholdOrLeaseholdFormProvider,
+                                         view: IsPurchaserIndividualView,
+                                         formProvider: IsPurchaserIndividualFormProvider,
                                        ) extends FrontendBaseController {
-
-  val form:Form[Tenancy] = formProvider()
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
+    val form:Form[_] = formProvider()
     Ok(view(form))
   }
 
   def onSubmit(): Action[AnyContent] = Action.async { implicit request =>
+    val form:Form[_] = formProvider()
     form
       .bindFromRequest()
       .fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors))),
         _ =>
-           Future.successful(Redirect(controllers.scalabuild.routes.FreeholdOrLeaseholdController.onPageLoad().url))
+          Future.successful(Redirect(controllers.scalabuild.routes.IsPurchaserIndividualController.onPageLoad().url))
       )
-    }
+  }
 }

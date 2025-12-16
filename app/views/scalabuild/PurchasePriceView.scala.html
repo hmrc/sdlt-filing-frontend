@@ -1,0 +1,54 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import components.PageHeading
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukInput: GovukInput,
+    govukButton: GovukButton,
+    govukDetails : GovukDetails,
+    pageHeading: PageHeading
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+@formHelper(action = controllers.scalabuild.routes.PurchasePriceController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+    }
+
+@govukInput(
+        InputViewModel(
+            field = form("premium"),
+            label = Label(
+                isPageHeading = true,
+                classes = "govuk-label--xl",
+                content = messages("purchasePrice.heading"))
+        )
+        .asNumeric()
+        .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
+        .withPrefix(PrefixOrSuffix(content = Text("£")))
+        .withHint(Hint(content = HtmlContent(messages("purchasePrice.hint"))))
+    )
+
+@govukDetails(Details(
+summary = Text(messages("purchasePrice.detail.title")),
+content = HtmlContent(
+s"""<p>${messages("purchasePrice.detail.content")}</p>""".stripMargin
+)
+)
+)
+    @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
+    }
+}

@@ -10,5 +10,27 @@ POST       /property                         controllers.scalabuild.ResidentialO
 GET        /date                             controllers.scalabuild.EffectiveDateController.onPageLoad()
 POST       /date                             controllers.scalabuild.EffectiveDateController.onSubmit()
 
-GET       /non-uk-resident                  controllers.scalabuild.NonUkResidentController.onPageLoad()
-POST      /non-uk-resident                  controllers.scalabuild.NonUkResidentController.onSubmit()
+GET       /non-uk-resident                   controllers.scalabuild.NonUkResidentController.onPageLoad()
+POST      /non-uk-resident                   controllers.scalabuild.NonUkResidentController.onSubmit()
+
+GET       /purchaser                         controllers.scalabuild.IsPurchaserIndividualController.onPageLoad()
+POST      /purchaser                         controllers.scalabuild.IsPurchaserIndividualController.onSubmit()
+
+GET       /additional-property               controllers.scalabuild.IsAdditionalPropertyController.onPageLoad()
+POST      /additional-property               controllers.scalabuild.IsAdditionalPropertyController.onSubmit()
+
+    # remove after finished
+GET       /additional-property-double        controllers.scalabuild.AdditionalPropAndReplaceController.onPageLoad()
+POST      /additional-property-double        controllers.scalabuild.AdditionalPropAndReplaceController.onSubmit()
+
+GET       /replace-main-residence            controllers.scalabuild.ReplaceMainResidenceController.onPageLoad()
+POST      /replace-main-residence            controllers.scalabuild.ReplaceMainResidenceController.onSubmit()
+
+GET       /purchase-price                    controllers.scalabuild.PurchasePriceController.onPageLoad()
+POST      /purchase-price                    controllers.scalabuild.PurchasePriceController.onSubmit()
+
+GET       /owned-other-properties            controllers.scalabuild.OwnsOtherPropertiesController.onPageLoad()
+POST      /owned-other-properties            controllers.scalabuild.OwnsOtherPropertiesController.onSubmit()
+
+GET       /main-residence                    controllers.scalabuild.MainResidenceController.onPageLoad()
+POST      /main-residence                    controllers.scalabuild.MainResidenceController.onSubmit()

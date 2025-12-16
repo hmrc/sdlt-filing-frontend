@@ -1,0 +1,52 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import components.{Paragraph,PageHeading}
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    pageHeading: PageHeading,
+    paragraph: Paragraph
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.OwnsOtherPropertiesController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+    }
+    @pageHeading(messages("ownsOtherProperties.heading"))
+    <div id="ownedOtherProps-hint" class="form-hint">
+        @paragraph(messages("ownsOtherProperties.content"))
+
+        <ul id="list" class="govuk-list govuk-list--bullet" >
+         <li>@messages("ownsOtherProperties.bullet.b1")</li>
+         <li>@messages("ownsOtherProperties.bullet.b2")</li>
+         <li>@messages("ownsOtherProperties.bullet.b3")</li>
+        </ul>
+    </div>
+    @govukRadios(
+        RadiosViewModel.yesNoCustomIdSuffix(
+            field = form("ownedOtherProperties"),
+            legend = LegendViewModel(messages("ownsOtherProperties.heading")).asVisuallyHidden(),
+            yesId = "-yes",
+            noId = "-no"
+        ).inline()
+    )
+
+    @govukButton(ButtonViewModel("continue-button",messages("site.continue"))))
+
+    }
+}

@@ -47,5 +47,3 @@ class EffectiveDateControllerSpec extends ScalaSpecBase with MockitoSugar {
     }
   }
 }
-
-

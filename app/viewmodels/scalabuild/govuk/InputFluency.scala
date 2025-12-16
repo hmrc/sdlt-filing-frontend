@@ -7,8 +7,9 @@ package viewmodels.scalabuild.govuk
 
 import play.api.data.Field
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
+import uk.gov.hmrc.govukfrontend.views.viewmodels.input.{Input, PrefixOrSuffix}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 import viewmodels.scalabuild.ErrorMessageAwareness
 
@@ -37,9 +38,6 @@ trait InputFluency {
         input.copy(inputmode = Some("numeric"))
         .withPattern("[0-9]*")
 
-    def withInputMode(inputMode: String): Input =
-      input.copy(inputmode = Some(inputMode))
-
     def withHint(hint: Hint): Input =
       input.copy(hint = Some(hint))
 
@@ -48,5 +46,11 @@ trait InputFluency {
 
     def withPattern(pattern: String): Input =
       input.copy(pattern = Some(pattern))
+
+    def withPrefix(prefix: PrefixOrSuffix): Input =
+      input.copy(prefix = Some(prefix))
+
+    def asVisuallyHidden(): Input =
+      withCssClass("govuk-visually-hidden")
   }
 }
