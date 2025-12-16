@@ -27,6 +27,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{EnterPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -45,12 +46,12 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
     reset(mockSessionRepository)
   }
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new EnterPurchaserPhoneNumberFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val enterPurchaserPhoneNumberRoute = controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(NormalMode).url
+  lazy val enterPurchaserPhoneNumberRoute: String = controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(NormalMode).url
 
   private val testStorn = "TESTSTORN"
 
@@ -107,7 +108,7 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
       .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Company).success.value
 
   implicit class PurchaserOps(p: Purchaser) {
-    def toNameOfPurchaser = models.purchaser.NameOfPurchaser(p.forename1, p.forename2, p.surname.orElse(p.companyName).getOrElse(""))
+    def toNameOfPurchaser: NameOfPurchaser = models.purchaser.NameOfPurchaser(p.forename1, p.forename2, p.surname.orElse(p.companyName).getOrElse(""))
   }
 
   "EnterPurchaserPhoneNumber Controller" - {
@@ -253,10 +254,6 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
         val request =
           FakeRequest(POST, enterPurchaserPhoneNumberRoute)
             .withFormUrlEncodedBody(("value", PhoneNumberTooLong))
-
-        val boundForm = form.bind(Map("value" -> PhoneNumberTooLong))
-
-        val view = application.injector.instanceOf[EnterPurchaserPhoneNumberView]
 
         val result = route(application, request).value
 

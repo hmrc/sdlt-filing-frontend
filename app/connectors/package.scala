@@ -27,14 +27,14 @@ package object connectors extends LoggingUtil {
         warnLog(s"[$func] received NOT FOUND")
       case e: BadRequestException =>
         warnLog(s"[$func] received BAD REQUEST")
+      case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(e).isDefined =>
+        errorLog(s"[$func] received Upstream 5xx: ${e.statusCode}")
       case e: UpstreamErrorResponse => e.statusCode match {
         case Status.FORBIDDEN =>
           errorLog(s"[$func] received FORBIDDEN")
         case _ =>
           errorLog(s"[$func] received Upstream 4xx: ${e.statusCode}")
       }
-      case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(e).isDefined =>
-        errorLog(s"[$func] received Upstream 5xx: ${e.statusCode}")
       case e: Exception             =>
         errorLog(s"[$func] received unexpected error")
     }

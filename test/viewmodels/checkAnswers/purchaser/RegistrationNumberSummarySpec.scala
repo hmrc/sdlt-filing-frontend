@@ -22,11 +22,10 @@ import models.purchaser.NameOfPurchaser
 import pages.purchaser.RegistrationNumberPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 
 class RegistrationNumberSummarySpec extends SpecBase {
 
-  val purchaserName = NameOfPurchaser(None, None, "Samsung")
+  val purchaserName: NameOfPurchaser = NameOfPurchaser(None, None, "Samsung")
 
   "RegistrationNumberSummarySpec" - {
 
@@ -44,11 +43,7 @@ class RegistrationNumberSummarySpec extends SpecBase {
 
            result.key.content.asHtml.toString() mustEqual msgs("purchaser.registrationNumber.checkYourAnswersLabel")
 
-          val htmlContent =
-            result.value.content match {
-              case Text(answer) => answer
-              case HtmlContent(html) => html.toString
-            }
+          val htmlContent = result.value.content.asHtml.toString()
           htmlContent mustEqual "123456789"
 
           result.actions.get.items.size mustEqual 1

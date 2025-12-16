@@ -16,7 +16,6 @@
 
 package models.purchaser
 
-import models.purchaser.CompanyFormOfId
 import play.api.libs.json.*
 
 case class CompanyFormOfId (referenceId: String, countryIssued: String)

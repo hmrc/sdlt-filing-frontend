@@ -22,9 +22,7 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class RegistrationNumberFormProvider @Inject() extends Mappings with Constraints{
-
-  private val RegistrationNumberPattern = "^[0-9]*$"
-
+  
   def apply(): Form[String] =
     Form(
       "registrationNumber" -> text("purchaser.registrationNumber.error.required")

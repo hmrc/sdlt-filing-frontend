@@ -16,7 +16,6 @@
 
 package controllers.vendor
 
-import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.vendor.ConfirmVendorAddressFormProvider
 import models.Mode
@@ -32,7 +31,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.ConfirmVendorAddressView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class ConfirmVendorAddressController @Inject()(
                                           override val messagesApi: MessagesApi,
@@ -42,10 +40,9 @@ class ConfirmVendorAddressController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: ConfirmVendorAddressFormProvider,
-                                          backendConnector: StampDutyLandTaxConnector,
                                           val controllerComponents: MessagesControllerComponents,
                                           view: ConfirmVendorAddressView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     ) extends FrontendBaseController with I18nSupport {
 
   val form: Form[ConfirmVendorAddress] = formProvider()
 

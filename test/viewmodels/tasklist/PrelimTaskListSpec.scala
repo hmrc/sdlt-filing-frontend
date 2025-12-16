@@ -27,7 +27,6 @@ import play.api.test.Helpers.*
 class PrelimTaskListSpec extends SpecBase {
 
   private val fullReturnComplete = FullReturnConstants.completeFullReturn
-  private val fullReturnIncomplete = FullReturnConstants.incompleteFullReturn
 
   "PrelimTaskList" - {
 

@@ -17,7 +17,6 @@
 package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
-import org.scalacheck.Gen
 import play.api.data.FormError
 
 class RegistrationNumberFormProviderSpec extends StringFieldBehaviours {
@@ -29,10 +28,6 @@ class RegistrationNumberFormProviderSpec extends StringFieldBehaviours {
 
   val form = new RegistrationNumberFormProvider()()
   val fieldName = "registrationNumber"
-
-  // Generator: exactly 9 numeric characters
-  private val numericStringsOfExactLengthNine: Gen[String] =
-    Gen.listOfN(exactLength, Gen.numChar).map(_.mkString)
 
   ".value" - {
 

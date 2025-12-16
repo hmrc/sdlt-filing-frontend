@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new VendorAgentsContactDetailsFormProvider()
   val form: Form[VendorAgentsContactDetails] = formProvider()
@@ -163,15 +163,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
               ("phoneNumber", ""),
               ("emailAddress", "")
             )
-
-        val boundForm = form.bind(Map(
-          "phoneNumber" -> "",
-          "emailAddress" -> ""
-        ))
-
-        val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
-
-        val agentName: Option[String] = userAnswersWithAgentDetails.get(AgentNamePage)
 
         val result = route(application, request).value
 

@@ -18,7 +18,6 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.EnterPurchaserPhoneNumberFormProvider
-import models.purchaser.WhoIsMakingThePurchase.Company
 import models.purchaser.{NameOfPurchaser, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
 import navigation.Navigator
@@ -31,7 +30,6 @@ import views.html.purchaser.EnterPurchaserPhoneNumberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import services.purchaser.PurchaserService
 
 class EnterPurchaserPhoneNumberController @Inject()(
                                         override val messagesApi: MessagesApi,

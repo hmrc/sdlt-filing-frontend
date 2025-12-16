@@ -19,9 +19,9 @@ package controllers.vendor
 import controllers.actions.*
 import forms.vendor.VendorOverviewFormProvider
 import models.{GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
-import navigation.Navigator
 import pages.vendor.VendorOverviewRemovePage
 import play.api.Logging
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -41,7 +41,6 @@ class VendorOverviewController @Inject()(
                                           identify: IdentifierAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          navigator: Navigator,
                                           fullReturnService: FullReturnService,
                                           sessionRepository: SessionRepository,
                                           view: VendorOverview,
@@ -50,7 +49,7 @@ class VendorOverviewController @Inject()(
                                         )(implicit executionContext: ExecutionContext)
   extends FrontendBaseController with VendorPaginationHelper with I18nSupport with Logging {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, paginationIndex: Int = 1): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>

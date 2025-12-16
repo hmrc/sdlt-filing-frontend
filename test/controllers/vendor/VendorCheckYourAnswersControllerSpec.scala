@@ -34,7 +34,6 @@ import repositories.SessionRepository
 import services.vendor.{VendorCreateOrUpdateService, VendorRequestService}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
-import views.html.vendor.VendorCheckYourAnswersView
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
@@ -145,8 +144,6 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
           val request = FakeRequest(GET, controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url)
 
           val result = route(application, request).value
-
-          val view = application.injector.instanceOf[VendorCheckYourAnswersView]
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")
