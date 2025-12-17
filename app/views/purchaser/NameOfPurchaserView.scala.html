@@ -15,13 +15,18 @@
  *@
 
 @import viewmodels.InputWidth._
+@import viewmodels.LegendSize.Large as LargeLegend
+@import viewmodels.LabelSize.Large as LargeLabel
+@import views.html.components.Caption
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        govukFieldset: GovukFieldset,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, purchaserOrCompany: String)(implicit request: Request[_], messages: Messages)
@@ -30,52 +35,48 @@
 
     @layout(pageTitle = title(form, (key + ".title"))) {
 
-
         @formHelper(action = controllers.purchaser.routes.NameOfPurchaserController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))
             }
 
-            @if(purchaserOrCompany == "Individual") {
-                <label class="govuk-label">
-                    <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
-                    <h1 class="govuk-heading-l">@messages(key + ".heading")</h1>
-                </label>
+            @caption(messages("site.purchaser.caption"))
 
-                @govukInput(
-                    InputViewModel(
-                        field = form("forename1"),
-                        label = LabelViewModel(messages((key + ".firstName"))).withCssClass(className = "govuk-hint")
+            @if(purchaserOrCompany == "Individual") {
+                @govukFieldset(
+                    Fieldset(
+                        legend = Some(LegendViewModel(messages(s"$key.heading")).asPageHeading(size = LargeLegend)),
+                        html = HtmlFormat.fill(Seq(
+                            govukInput(
+                                InputViewModel(
+                                    field = form("forename1"),
+                                    label = LabelViewModel(messages((s"$key.firstName")))
+                                )
+                                .withWidth(Full)
+                            ),
+                            govukInput(
+                                InputViewModel(
+                                    field = form("forename2"),
+                                    label = LabelViewModel(messages((s"$key.middleName")))
+                                )
+                                .withWidth(Full)
+                            ),
+                            govukInput(
+                                InputViewModel(
+                                    field = form("name"),
+                                    label = LabelViewModel(messages((s"$key.surname")))
+                                )
+                                .withWidth(Full)
+                            )
+                        ))
                     )
-                    .withWidth(Full)
-                )
-                @govukInput(
-                    InputViewModel(
-                        field = form("forename2"),
-                        label = LabelViewModel(messages((key + ".middleName"))).withCssClass(className = "govuk-hint")
-                    )
-                    .withWidth(Full)
-                )
-                @govukInput(
-                    InputViewModel(
-                        field = form("name"),
-                        label = LabelViewModel(messages((key + ".surname"))).withCssClass(className = "govuk-hint")
-                    )
-                    .withWidth(Full)
                 )
             } else {
                 @govukInput(
                     InputViewModel(
                         field = form("name"),
-                        label = LabelViewModel(
-                            HtmlContent(
-                                Html(
-                                    s"""<span class="govuk-caption-l">${messages("site.purchaser.caption")}</span>
-                                            <h1 class="govuk-heading-l">${messages(key + ".heading")}</h1>"""
-                                )
-                            )
-                        )
+                        label = LabelViewModel(messages(s"$key.heading")).asPageHeading(size = LargeLabel)
                     )
                     .withWidth(Full)
                 )

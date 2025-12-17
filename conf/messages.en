@@ -17,6 +17,7 @@ site.signIn                                                                     
 site.govuk                                                                          = GOV.UK
 site.save.continue                                                                  = Save and continue
 site.success                                                                        = Success
+site.section.prefix                                                                 = This section is
 
 # Site Errors
 site.error.generic.title                                                            = Generic Error (Content TBC)
@@ -414,6 +415,7 @@ purchaser.confirmIdentity.change.hidden                                         
 purchaser.confirmNameOfPurchaser.title                                              = Is this the name of the purchaser? - About the purchaser
 purchaser.confirmNameOfPurchaser.company.heading                                    = Is {0} the name of the purchaser?
 purchaser.confirmNameOfPurchaser.individual.heading                                 = Is {0} the surname of the purchaser?
+purchaser.confirmNameOfPurchaser.error.required                                     = Select an answer
 
 purchaser.corporationTaxUTR.title                                                   = What is the purchaser’s Corporation Tax Unique Taxpayer Reference (UTR)? - About the purchaser
 purchaser.corporationTaxUTR.h1                                                      = {0}’s Corporation Tax Unique Taxpayer Reference (UTR)

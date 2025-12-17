@@ -16,19 +16,17 @@
 
 @import viewmodels.InputWidth._
 @import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
+@import viewmodels.LegendSize.Large
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
-        h1: h1,
         p: Paragraph,
         govukFieldset: GovukFieldset,
-        hmrcPageHeading: HmrcPageHeading,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
@@ -41,23 +39,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @caption(messages("site.purchaser.caption"))
+
         @govukFieldset(
             Fieldset(
-                legend = Some(
-                    Legend(
-                        content = HtmlContent(
-                            HtmlFormat.fill(Seq(
-                                hmrcPageHeading(PageHeading(
-                                    text = messages("purchaser.formOfIdIndividual.heading", purchaserName),
-                                    headingClasses = Some("govuk-heading-l"),
-                                    captionClasses = Some("govuk-caption-l"),
-                                    section = Some(messages("site.purchaser.caption"))
-                                ))
-                            ))
-                        ),
-                        classes = "govuk-fieldset__legend--l"
-                    )
-                ),
+                legend = Some(LegendViewModel(messages("purchaser.formOfIdIndividual.heading", purchaserName)).asPageHeading(size = Large)),
                 html = HtmlFormat.fill(Seq(
                     p(messages("purchaser.formOfIdIndividual.p1", purchaserName)),
                     p(messages("purchaser.formOfIdIndividual.p2")),

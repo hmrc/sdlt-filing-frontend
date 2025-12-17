@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package viewmodels
 
-@(content: Html, classes: String = "govuk-body", id: Option[String] = None)(implicit messages: Messages)
+sealed trait CaptionSize
 
-@if(id.isDefined){
-    <p class="@classes", id ="@id">@content</p>
-} else {
-    <p class="@classes">@content</p>
+object CaptionSize {
+  case object ExtraLarge extends WithCssClass("govuk-caption-xl hmrc-caption-xl") with CaptionSize
+  case object Large      extends WithCssClass("govuk-caption-l hmrc-caption-l") with CaptionSize
+  case object Medium     extends WithCssClass("govuk-caption-m hmrc-caption-m") with CaptionSize
+  case object Small      extends WithCssClass("govuk-caption-s hmrc-caption-s") with CaptionSize
 }

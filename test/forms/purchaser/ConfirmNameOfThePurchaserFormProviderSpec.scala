@@ -27,7 +27,7 @@ class ConfirmNameOfThePurchaserFormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "confirmNameOfThePurchaser.error.required"
+    val requiredKey = "purchaser.confirmNameOfPurchaser.error.required"
 
     behave like optionsField[ConfirmNameOfThePurchaser](
       form,

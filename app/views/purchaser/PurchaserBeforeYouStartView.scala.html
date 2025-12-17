@@ -19,8 +19,8 @@
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
-        h1: h1,
-        p: p
+        h1:h1,
+        p: Paragraph
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -29,8 +29,8 @@
 
     @h1(messages("site.purchaser.caption"))
 
-    @p(Html(messages("purchaser.beforeStart.p1")))
-    @p(Html(messages("purchaser.beforeStart.p2")))
+    @p(messages("purchaser.beforeStart.p1"))
+    @p(messages("purchaser.beforeStart.p2"))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("purchaser.beforeStart.bullet1")</li>
@@ -39,7 +39,7 @@
         <li>@messages("purchaser.beforeStart.bullet4")</li>
     </ul>
 
-    @p(Html(messages("purchaser.beforeStart.p3")))
+    @p(messages("purchaser.beforeStart.p3"))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("purchaser.beforeStart.bullet5")</li>

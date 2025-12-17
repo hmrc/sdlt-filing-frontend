@@ -15,13 +15,17 @@
  *@
 
 @import models.purchaser.PurchaserConfirmIdentity
-@import views.html.components.h1
+@import viewmodels.LegendSize.Large
+@import views.html.components._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
+    caption: Caption,
+    p: Paragraph,
     h1: h1
 )
 
@@ -35,13 +39,17 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
+
+        @caption(messages("site.purchaser.caption"))
+
         @h1(messages("purchaser.confirmIdentity.heading", purchaserName))
+
+        @p(messages("purchaser.confirmIdentity.p1", purchaserName))
 
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("purchaser.confirmIdentity.p1", purchaserName)),
+                legend = LegendViewModel(messages("purchaser.confirmIdentity.heading", purchaserName)).withCssClass("govuk-visually-hidden"),
                 items  = PurchaserConfirmIdentity.options
             )
         )

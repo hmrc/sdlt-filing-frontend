@@ -15,9 +15,8 @@
  *@
 
 @import viewmodels.InputWidth._
-@import viewmodels.LabelSize._
 @import views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
+@import viewmodels.LegendSize.Large
 
 @this(
     layout: templates.Layout,
@@ -26,10 +25,8 @@
     govukInput: GovukInput,
     govukButton: GovukButton,
     govukFieldset: GovukFieldset,
-    hmrcPageHeading: HmrcPageHeading,
-    h1: h1,
-    h2: h2,
-    p: Paragraph
+    p: Paragraph,
+    caption: Caption
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
@@ -42,30 +39,21 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @caption(messages("site.purchaser.caption"))
+
         @govukFieldset(
             Fieldset(
                 legend = Some(
-                    Legend(
-                        content = HtmlContent(
-                            HtmlFormat.fill(Seq(
-                                hmrcPageHeading(PageHeading(
-                                    text = messages("purchaser.partnershipUtr.heading", purchaserName),
-                                    headingClasses = Some("govuk-heading-l"),
-                                    captionClasses = Some("govuk-caption-l"),
-                                    section = Some(messages("site.purchaser.caption"))
-                                ))
-                            ))
-                        ),
-                        classes = "govuk-fieldset__legend--l"
-                    )
+                    LegendViewModel(
+                        messages("purchaser.partnershipUtr.heading", purchaserName)
+                    ).asPageHeading(size = Large)
                 ),
                 html = HtmlFormat.fill(Seq(
                     p(messages("purchaser.partnershipUtr.p1")),
                     govukInput(
                         InputViewModel(
                             field = form("partnershipUniqueTaxpayerReference"),
-                            label = LabelViewModel(content = messages("purchaser.partnershipUtr.h2", purchaserName)).asPageHeading(size = Medium)
-
+                            label = LabelViewModel(content = messages("purchaser.partnershipUtr.h2", purchaserName)).asPageSubHeading()
                         )
                         .withWidth(Full)
                         .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.partnershipUtr.hint")))))

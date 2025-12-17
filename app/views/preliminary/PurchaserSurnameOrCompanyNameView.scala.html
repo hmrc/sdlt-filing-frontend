@@ -16,19 +16,22 @@
 
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
+@import views.html.components.h1
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
         govukButton: GovukButton,
-        p: components.p
+        h1: h1
 )
+
 @(form: Form[_], mode: Mode, companyOrIndividual: String)(implicit request: Request[_], messages: Messages)
 
 @defining(if(companyOrIndividual == "Individual") "prelim.purchaser.individual" else "prelim.purchaser.company") { key =>
 
-    @layout(pageTitle = title(form, key + ".title")) {
+    @layout(pageTitle = title(form, s"$key.title")) {
 
         @formHelper(action = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onSubmit(mode)) {
 
@@ -36,27 +39,14 @@
                 @govukErrorSummary(ErrorSummaryViewModel(form))
             }
 
-            @if(companyOrIndividual == "Individual") {
-                <h1 class="govuk-heading-l">@messages(key + ".heading")</h1>
-
-                @govukInput(
-                    InputViewModel(
-                        field = form("purchaserSurnameOrCompanyName"),
-                        label = LabelViewModel(messages(key + ".surname")).withCssClass(className = "govuk-visually-hidden")
-                    )
-                    .withWidth(Full)
+            @govukInput(
+                InputViewModel(
+                    field = form("purchaserSurnameOrCompanyName"),
+                    label = LabelViewModel(messages(s"$key.heading"))
+                        .asPageHeading(size = Large)
                 )
-            } else {
-                <h1 class="govuk-heading-l">@messages(key + ".heading")</h1>
-
-                @govukInput(
-                    InputViewModel(
-                        field = form("purchaserSurnameOrCompanyName"),
-                        label = LabelViewModel(messages(key + ".name")).withCssClass(className = "govuk-visually-hidden")
-                    )
-                    .withWidth(Full)
-                )
-            }
+                .withWidth(Full)
+            )
 
             @govukButton(
                 ButtonViewModel(messages("site.save.continue"))

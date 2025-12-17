@@ -16,13 +16,15 @@
 
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
+@import views.html.components.Caption
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -35,7 +37,8 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
+        @caption(messages("site.vendor.caption"))
+
         @govukInput(
             InputViewModel(
                 field = form("agentName"),

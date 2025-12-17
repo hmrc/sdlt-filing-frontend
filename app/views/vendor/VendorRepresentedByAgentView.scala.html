@@ -15,13 +15,15 @@
  *@
 
 @import viewmodels.LegendSize.Large
+@import views.html.components.Caption
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, vendorName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -34,7 +36,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <div class="govuk-caption-l">@messages("site.vendor.caption")</div>
+        @caption(messages("site.vendor.caption"))
 
         @govukRadios(
             RadiosViewModel(

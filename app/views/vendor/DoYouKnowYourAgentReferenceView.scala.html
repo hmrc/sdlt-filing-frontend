@@ -14,9 +14,8 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
 @import viewmodels.LegendSize.Large
-@import views.html.components.h1
+@import views.html.components.Caption
 @import models.vendor.DoYouKnowYourAgentReference
 
 @this(
@@ -24,7 +23,8 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    caption: Caption
 )
 
 @(form: Form[_], mode: Mode, agentName: Option[String] )(implicit request: Request[_], messages: Messages)
@@ -37,17 +37,16 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
 
+        @caption(messages("site.vendor.caption"))
 
-    <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-             legend = LegendViewModel(messages("agent.doYouKnowYourAgentReference.heading",agentName.getOrElse(messages("agent.doYouKnowYourAgentReference.theAgent")))).asPageHeading(size = Large),
-             items  = DoYouKnowYourAgentReference.options
-).withHint(HintViewModel(HtmlContent(Html(messages("agent.doYouKnowYourAgentReference.p", agentName.getOrElse(messages("agent.doYouKnowYourAgentReference.theAgent"))))))
+                legend = LegendViewModel(messages("agent.doYouKnowYourAgentReference.heading",agentName.getOrElse(messages("agent.doYouKnowYourAgentReference.theAgent")))).asPageHeading(size = Large),
+                items  = DoYouKnowYourAgentReference.options
+            ).withHint(HintViewModel(HtmlContent(Html(messages("agent.doYouKnowYourAgentReference.p", agentName.getOrElse(messages("agent.doYouKnowYourAgentReference.theAgent"))))))
                             )
                      )
-
 
         @govukButton(
             ButtonViewModel(messages("site.save.continue"))
