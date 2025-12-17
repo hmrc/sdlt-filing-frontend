@@ -32,6 +32,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
 
@@ -53,6 +54,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -74,6 +76,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -95,6 +98,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
 
@@ -116,6 +120,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
 
@@ -139,6 +144,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
 
@@ -160,6 +166,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
 
@@ -181,6 +188,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
 
@@ -202,6 +210,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
 
@@ -231,6 +240,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         relevantRent = Some(999)
       )
     ),
+    taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
 
@@ -254,6 +264,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
 
@@ -277,6 +288,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -298,6 +310,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -321,6 +334,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
 
@@ -348,6 +362,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         relevantRent = Some(999)
       )
     ),
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -369,6 +384,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -390,6 +406,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -411,6 +428,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -432,6 +450,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 }

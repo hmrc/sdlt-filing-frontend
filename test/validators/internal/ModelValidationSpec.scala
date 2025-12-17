@@ -79,6 +79,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
@@ -110,6 +111,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
@@ -141,6 +143,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
@@ -172,6 +175,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
@@ -203,6 +207,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
@@ -234,6 +239,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationSuccess
@@ -267,6 +273,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
@@ -298,6 +305,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
@@ -329,6 +337,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseDetails(model) shouldBe ValidationFailure("Lease details have been input incorrectly")
@@ -364,6 +373,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 
@@ -396,6 +406,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 
@@ -428,6 +439,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseTerm(model) shouldBe ValidationSuccess
@@ -459,6 +471,7 @@ class ModelValidationSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
         relevantRentDetails = None,
+        taxReliefDetails = None,
           firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationSuccess
@@ -490,6 +503,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validLeaseTerm(model) shouldBe ValidationSuccess
@@ -524,6 +538,7 @@ class ModelValidationSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
         relevantRentDetails = None,
+        taxReliefDetails = None,
           firstTimeBuyer = None
       )
 
@@ -556,6 +571,7 @@ class ModelValidationSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
         relevantRentDetails = None,
+        taxReliefDetails = None,
           firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 7 does not match amount of lease year rents: 4 and 0 partial days")
@@ -587,6 +603,7 @@ class ModelValidationSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
         relevantRentDetails = None,
+        taxReliefDetails = None,
           firstTimeBuyer = None
       )
       validLeaseTerm(model) shouldBe ValidationFailure("Lease term: 4 does not match amount of lease year rents: 4 and 1 partial days")
@@ -958,6 +975,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = None,
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
@@ -974,6 +992,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
@@ -990,6 +1009,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
@@ -1006,6 +1026,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(2000)),
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
           validRelevantRentDetails(request) shouldBe ValidationSuccess
@@ -1022,6 +1043,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validLeaseDetails(800)),
           relevantRentDetails = Some(testRelevantRentDetails),
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationSuccess
@@ -1039,6 +1061,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = Some(testRelevantRentDetails),
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationFailure("No lease details provided for leasehold property")
@@ -1054,6 +1077,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validLeaseDetails(800)),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validRelevantRentDetails(request) shouldBe ValidationFailure(
@@ -1175,6 +1199,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validFirstTimeBuyer(request) shouldBe ValidationSuccess
@@ -1199,6 +1224,7 @@ class ModelValidationSpec extends PlaySpec {
           ),
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validFirstTimeBuyer(request) shouldBe ValidationSuccess
@@ -1215,6 +1241,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         validFirstTimeBuyer(request) shouldBe ValidationSuccess
@@ -1240,6 +1267,7 @@ class ModelValidationSpec extends PlaySpec {
             ),
             leaseDetails = None,
             relevantRentDetails = None,
+            taxReliefDetails = None,
             firstTimeBuyer = Some(true)
           )
           validFirstTimeBuyer(request) shouldBe ValidationSuccess
@@ -1264,6 +1292,7 @@ class ModelValidationSpec extends PlaySpec {
             ),
             leaseDetails = None,
             relevantRentDetails = None,
+            taxReliefDetails = None,
             firstTimeBuyer = None
           )
           validFirstTimeBuyer(request) shouldBe ValidationSuccess
@@ -1288,6 +1317,7 @@ class ModelValidationSpec extends PlaySpec {
             ),
             leaseDetails = None,
             relevantRentDetails = None,
+            taxReliefDetails = None,
             firstTimeBuyer = None
           )
           validFirstTimeBuyer(request) shouldBe ValidationSuccess
@@ -1309,6 +1339,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = None,
             relevantRentDetails = None,
+            taxReliefDetails = None,
             firstTimeBuyer = None
           )
           validFirstTimeBuyer(request) shouldBe ValidationFailure("No property details found for first time buyer.")
@@ -1333,6 +1364,7 @@ class ModelValidationSpec extends PlaySpec {
             ),
             leaseDetails = None,
             relevantRentDetails = None,
+            taxReliefDetails = None,
             firstTimeBuyer = None
           )
           validFirstTimeBuyer(request) shouldBe ValidationFailure("First time buyer was not defined.")
@@ -1354,6 +1386,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 
@@ -1370,6 +1403,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 
@@ -1387,6 +1421,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = None,
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
 
@@ -1403,6 +1438,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
 
@@ -1419,6 +1455,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
 
@@ -1437,6 +1474,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = Some(validPropertyDetails),
             leaseDetails = None,
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
 
@@ -1466,6 +1504,7 @@ class ModelValidationSpec extends PlaySpec {
               year5Rent = Some(10000)
             )),
             relevantRentDetails = None,
+            taxReliefDetails = None,
           firstTimeBuyer = None
           )
 
@@ -1487,6 +1526,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 
@@ -1506,6 +1546,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 
@@ -1525,6 +1566,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 
@@ -1544,6 +1586,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetails),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 
@@ -1563,6 +1606,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetailsAllLessTan2000),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
         listValidationErrors(model) shouldBe Seq(
@@ -1584,6 +1628,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 

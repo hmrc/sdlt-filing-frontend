@@ -58,6 +58,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
     leaseDetails = None,
     propertyDetails = None,
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -79,6 +80,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -100,6 +102,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
@@ -121,6 +124,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
       )
     ),
     relevantRentDetails = None,
+    taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
 
@@ -1819,6 +1823,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec {
             )
           ),
           relevantRentDetails = None,
+          taxReliefDetails = None,
           firstTimeBuyer = None
         )
 

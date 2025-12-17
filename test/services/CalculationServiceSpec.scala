@@ -76,6 +76,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       propertyDetails = None,
       leaseDetails = None,
       relevantRentDetails = None,
+      taxReliefDetails = None,
       firstTimeBuyer = None
     )
 
@@ -97,6 +98,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       ),
       leaseDetails = None,
       relevantRentDetails = None,
+      taxReliefDetails = None,
       firstTimeBuyer = Some(true)
     )
 
