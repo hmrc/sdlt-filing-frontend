@@ -402,7 +402,7 @@ purchaser.beforeStart.bullet5                                                   
 
 purchaser.confirmIdentity.title                                                     = What information can you provide about {0}? - About the purchaser
 purchaser.confirmIdentity.heading                                                   = What information can you provide about {0}?
-purchaser.confirmIdentity.p1                                                        = We need one form of ID to confirm {0}’s identity.
+purchaser.confirmIdentity.hint                                                      = We need one form of ID to confirm {0}’s identity
 purchaser.confirmIdentity.vatRegistrationNumber                                     = VAT registration number
 purchaser.confirmIdentity.corporationTaxUniqueTaxpayerReference                     = Corporation tax Unique Taxpayer Reference (UTR)
 purchaser.confirmIdentity.partnershipUniqueTaxpayerReference                        = Partnership Unique Taxpayer Reference (UTR)

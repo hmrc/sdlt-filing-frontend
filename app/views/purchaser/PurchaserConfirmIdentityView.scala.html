@@ -15,7 +15,6 @@
  *@
 
 @import models.purchaser.PurchaserConfirmIdentity
-@import viewmodels.LegendSize.Large
 @import views.html.components._
 
 @this(
@@ -42,16 +41,12 @@
 
         @caption(messages("site.purchaser.caption"))
 
-        @h1(messages("purchaser.confirmIdentity.heading", purchaserName))
-
-        @p(messages("purchaser.confirmIdentity.p1", purchaserName))
-
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("purchaser.confirmIdentity.heading", purchaserName)).withCssClass("govuk-visually-hidden"),
+                legend = LegendViewModel(messages("purchaser.confirmIdentity.heading", purchaserName)).asPageHeading(),
                 items  = PurchaserConfirmIdentity.options
-            )
+            ).withHint(HintViewModel(HtmlContent(Html(messages("purchaser.confirmIdentity.hint", purchaserName)))))
         )
 
         @govukButton(
