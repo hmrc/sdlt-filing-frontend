@@ -14,19 +14,24 @@
  * limitations under the License.
  *@
 
+@import views.html.components._
+
 @this(
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
-        formHelper: FormWithCSRF
+        formHelper: FormWithCSRF,
+        h1: h1,
+        caption: Caption
 )
 
 @(list: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("vendor.checkYourAnswers.title"))) {
     @formHelper(action = controllers.vendor.routes.VendorCheckYourAnswersController.onSubmit()) {
-        <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
-        <h1 class="govuk-heading-l">@messages("site.checkYourAnswers.heading")</h1>
+
+        @caption(messages("site.vendor.caption"))
+        @h1(messages("site.checkYourAnswers.heading"))
 
         @govukSummaryList(list.withCssClass("govuk-!-margin-bottom-9"))
 

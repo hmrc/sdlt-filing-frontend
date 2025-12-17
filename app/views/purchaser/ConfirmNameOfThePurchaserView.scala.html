@@ -15,47 +15,42 @@
  *@
 
 @import models.purchaser.ConfirmNameOfThePurchaser
+@import views.html.components.Caption
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, name: String, isCompany: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaser.confirmNameOfPurchaser.title"))) {
+@defining(if(isCompany) "company" else "individual") { companyOrIndividualStr =>
 
-    <div class="govuk-caption-l">@messages("site.purchaser.caption")</div>
+    @layout(pageTitle = title(form, messages("purchaser.confirmNameOfPurchaser.title"))) {
 
-    @formHelper(action = controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+        @formHelper(action = controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
-        }
+            @if(form.errors.nonEmpty) {
+                @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+            }
 
-        @if(isCompany) {
+            @caption(messages("site.purchaser.caption"))
+
             @govukRadios(
                 RadiosViewModel(
                     field = form("value"),
-                    legend = LegendViewModel(messages("purchaser.confirmNameOfPurchaser.company.heading", name)).asPageHeading(),
+                    legend = LegendViewModel(messages(s"purchaser.confirmNameOfPurchaser.$companyOrIndividualStr.heading", name)).asPageHeading(),
                     items = ConfirmNameOfThePurchaser.options
                 )
             )
-        } else {
-            @govukRadios(
-                RadiosViewModel(
-                    field = form("value"),
-                    legend = LegendViewModel(messages("purchaser.confirmNameOfPurchaser.individual.heading", name)).asPageHeading(),
-                    items = ConfirmNameOfThePurchaser.options
-                )
+
+            @govukButton(
+                ButtonViewModel(messages("site.continue"))
             )
         }
-
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
     }
 }

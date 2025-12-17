@@ -15,15 +15,15 @@
  *@
 
 @import viewmodels.LegendSize.Large
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-@import views.html.vendor.AddVendorAgentContactDetailsView
+@import views.html.components.Caption
 
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
@@ -33,11 +33,11 @@
     @formHelper(action = controllers.vendor.routes.AddVendorAgentContactDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @caption(messages("site.vendor.caption"))
 
-        <span class="govuk-caption-l">@messages("site.vendor.caption")</span>
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
@@ -58,7 +58,5 @@
         @govukButton(
             ButtonViewModel(messages("site.save.continue"))
         )
-
-
     }
 }

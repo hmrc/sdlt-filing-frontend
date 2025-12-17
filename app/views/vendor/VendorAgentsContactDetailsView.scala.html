@@ -15,7 +15,8 @@
  *@
 
 @import viewmodels.InputWidth._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import viewmodels.LegendSize.Large
+@import views.html.components.Caption
 
 @this(
         layout: templates.Layout,
@@ -23,7 +24,8 @@
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
         govukButton: GovukButton,
-        govukFieldset: GovukFieldset
+        govukFieldset: GovukFieldset,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, agentName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -36,22 +38,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @caption(messages("site.vendor.caption"))
+
         @govukFieldset(
             Fieldset(
                 legend = Some(
-                    Legend(
-                        content = HtmlContent(
-                            HtmlFormat.fill(Seq(
-                                Html(s"""<span class="govuk-caption-l">${messages("site.vendor.caption")}</span>"""),
-                                Html(messages(
-                                    "agent.vendorAgentsContactDetails.heading",
-                                    agentName.getOrElse(messages("agent.vendorAgentsContactDetails.theAgent"))
-                                ))
-                            ))
-                        ),
-                        classes = "govuk-fieldset__legend--l",
-                        isPageHeading = true
-                    )
+                    LegendViewModel(
+                        messages("agent.vendorAgentsContactDetails.heading", agentName.getOrElse(messages("agent.vendorAgentsContactDetails.theAgent")))
+                    ).asPageHeading(size = Large)
                 ),
                 html = HtmlFormat.fill(Seq(
                     govukInput(

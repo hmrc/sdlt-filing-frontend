@@ -14,27 +14,29 @@
  * limitations under the License.
  *@
 
+@import views.html.components._
+
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        h1: h1,
+        p: Paragraph
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("prelim.beforeStart.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("prelim.beforeStart.heading")</h1>
+    @h1(messages("prelim.beforeStart.heading"))
 
-    <p class="govuk-body">@messages("prelim.beforeStart.p1")</p>
+    @p(messages("prelim.beforeStart.p1"))
 
-    <p class="govuk-body">@messages("prelim.beforeStart.p2")</p>
+    @p(messages("prelim.beforeStart.p2"))
 
-    <p class="govuk-body">@messages("prelim.beforeStart.p3")</p>
+    @p(messages("prelim.beforeStart.p3"))
 
-    <p class="govuk-body">
-    @govukButton(
+     @govukButton(
         ButtonViewModel(messages("site.continue"))
-        .asLink(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(NormalMode).url)
+            .asLink(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(NormalMode).url)
     )
-    </p>
 }

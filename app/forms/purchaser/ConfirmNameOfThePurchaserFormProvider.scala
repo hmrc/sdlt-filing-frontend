@@ -26,6 +26,6 @@ class ConfirmNameOfThePurchaserFormProvider @Inject() extends Mappings {
 
   def apply(): Form[ConfirmNameOfThePurchaser] =
     Form(
-      "value" -> enumerable[ConfirmNameOfThePurchaser]("confirmNameOfThePurchaser.error.required")
+      "value" -> enumerable[ConfirmNameOfThePurchaser]("purchaser.confirmNameOfPurchaser.error.required")
     )
 }

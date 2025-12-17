@@ -14,12 +14,15 @@
  * limitations under the License.
  *@
 
+@import views.html.components.Caption
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
@@ -29,10 +32,10 @@
     @formHelper(action = controllers.purchaser.routes.AddPurchaserPhoneNumberController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
+        @caption(messages("site.purchaser.caption"))
 
         @govukRadios(
             RadiosViewModel(

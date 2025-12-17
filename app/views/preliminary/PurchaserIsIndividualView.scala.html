@@ -16,6 +16,7 @@
 
 @import models.prelimQuestions.CompanyOrIndividualRequest
 @import views.html.components.h1
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -29,23 +30,17 @@
 
 @layout(pageTitle = title(form, messages("prelim.purchaserIsIndividual.title"))) {
 
-    @h1(messages("prelim.purchaserIsIndividual.heading"))
-
     @formHelper(action = controllers.preliminary.routes.PurchaserIsIndividualController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
         @govukRadios(
-            Radios(
-                fieldset = None,
-                name = form("value").name,
-                items = CompanyOrIndividualRequest.options map (item => item.copy(checked = form("value").value.isDefined && form("value").value == item.value)),
-                errorMessage = if(form("value").hasErrors) Some(ErrorMessage(
-                    content = Text(messages(form("value").error.get.message, form("value").error.get.args: _*)),
-                    visuallyHiddenText = Some(messages("error.prefix"))
-                )) else None
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(messages("prelim.purchaserIsIndividual.heading")).asPageHeading(),
+                items = CompanyOrIndividualRequest.options
             ))
 
         @govukButton(

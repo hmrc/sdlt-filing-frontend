@@ -14,10 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import viewmodels.LegendSize.Medium
+@import viewmodels.CaptionSize.ExtraLarge
 
 @this(
         layout: templates.Layout,
@@ -28,8 +27,8 @@
         formHelper: FormWithCSRF,
         p: Paragraph,
         govukRadios: GovukRadios,
-        hmrcPageHeading: HmrcPageHeading,
         h1: h1,
+        caption: Caption,
         govukNotificationBanner: GovukNotificationBanner
 )
 @(
@@ -71,18 +70,14 @@
         )
     }
 
-    @hmrcPageHeading(PageHeading(
-        text = messages("vendor.vendorOverview.heading"),
-        headingClasses = Some("govuk-heading-l"),
-        captionClasses = Some("govuk-caption-xl"),
-        section = Some(messages("site.vendor.caption"))
-    ))
-
     @formHelper(action = controllers.vendor.routes.VendorOverviewController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @caption(messages("site.vendor.caption"), size = ExtraLarge)
+        @h1(messages("vendor.vendorOverview.heading"))
 
         @maybeSummaryList match {
             case Some(summary) => {
@@ -97,7 +92,7 @@
                     @govukRadios(
                         RadiosViewModel.yesNo(
                             field = form("value"),
-                            legend = LegendViewModel(messages("vendor.vendorOverview.noVendor.subHeadingNoVendors")).asPageHeading(size = Medium)
+                            legend = LegendViewModel(messages("vendor.vendorOverview.noVendor.subHeadingNoVendors")).asPageSubHeading()
                         )
                     )
 
@@ -111,12 +106,10 @@
             case None => {
                 @p("vendor.vendorOverview.noVendor.p1")
 
-                <p class="govuk-body">
                 @govukButton(
                     ButtonViewModel(messages("vendor.vendorOverview.noVendor.button"))
                     .asLink(controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url)
                 )
-                </p>
             }
         }
     }

@@ -14,8 +14,12 @@
  * limitations under the License.
  *@
 
+@import viewmodels.CaptionSize
+
 @this()
 
-@(msg: String, classes: String = "govuk-heading-l")(implicit messages: Messages)
-
-<h1 class="@classes">@messages(msg)</h1>
+@(msg: String, size: CaptionSize = CaptionSize.Large, prefixKey: String = "site.section.prefix")(implicit messages: Messages)
+<h2 class="@size">
+    <span class="govuk-visually-hidden">@messages(prefixKey)</span>
+    @msg
+</h2>
