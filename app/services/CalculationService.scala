@@ -24,8 +24,14 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     request.holdingType match {
       case HoldingTypes.freehold =>
         request.propertyType match {
-          case PropertyTypes.residential => calculateFreeholdResidentialTax(request)
-          case PropertyTypes.nonResidential => calculateFreeholdNonResidentialTax(request)
+          case PropertyTypes.residential =>
+            freeCalculationService
+              .calcTaxReliefResponseIfAny(request)
+              .getOrElse(calculateFreeholdResidentialTax(request))
+          case PropertyTypes.nonResidential =>
+            freeCalculationService
+              .calcTaxReliefResponseIfAny(request)
+                .getOrElse(calculateFreeholdNonResidentialTax(request))
           case _ => throw new RequiredValueNotDefinedException("Value not defined")
         }
 
@@ -355,5 +361,6 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
   def extractLeaseTerm(leaseDetails: Option[LeaseDetails]): Option[Int] = {
     leaseDetails.fold[Option[Int]](None)(leaseDets => Some(leaseDets.leaseTerm.years))
   }
+
 
 }
