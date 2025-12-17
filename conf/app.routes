@@ -194,3 +194,8 @@ GET        /about-the-purchaser/corporation-tax-utr                        contr
 POST       /about-the-purchaser/corporation-tax-utr                        controllers.purchaser.PurchaserCorporationTaxUTRController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/corporation-tax-utr/change                 controllers.purchaser.PurchaserCorporationTaxUTRController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/corporation-tax-utr/change                 controllers.purchaser.PurchaserCorporationTaxUTRController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-purchaser/form-of-id-company                                              controllers.purchaser.CompanyFormOfIdController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/form-of-id-company                                                controllers.purchaser.CompanyFormOfIdController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/form-of-id-company/change                                           controllers.purchaser.CompanyFormOfIdController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/form-of-id-company/change                                         controllers.purchaser.CompanyFormOfIdController.onSubmit(mode: Mode = CheckMode)

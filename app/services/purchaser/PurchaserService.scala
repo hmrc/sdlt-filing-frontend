@@ -138,8 +138,7 @@ class PurchaserService {
         case PurchaserConfirmIdentity.VatRegistrationNumber =>
           controllers.purchaser.routes.RegistrationNumberController.onPageLoad(NormalMode)
         case PurchaserConfirmIdentity.AnotherFormOfID =>
-          // TODO: redirect to Another Form ID page
-          controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+          controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(NormalMode)
         case _ =>
           controllers.routes.ReturnTaskListController.onPageLoad()
       }

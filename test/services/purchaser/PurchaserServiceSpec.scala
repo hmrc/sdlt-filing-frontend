@@ -83,7 +83,7 @@ class PurchaserServiceSpec extends SpecBase {
         "must return NameOfPurchaser for AnotherFormOfID" in {
           val result = service.confirmIdentityNextPage(PurchaserConfirmIdentity.AnotherFormOfID, NormalMode)
 
-          result mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
+          result mustEqual controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(NormalMode)
         }
 
         "must return ReturnTaskList for Divider" in {
