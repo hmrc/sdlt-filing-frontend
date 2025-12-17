@@ -22,7 +22,7 @@
     @formHelper(action = controllers.scalabuild.routes.ResidentialOrNonResidentialController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "residential")))
         }
 
         @govukRadios(

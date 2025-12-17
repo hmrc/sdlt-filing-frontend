@@ -1,0 +1,9 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@this(govukErrorSummary: GovukErrorSummary)
+
+@(hasErrors: Boolean = false)(content: Html)
+<div class="govuk-form-group @if(hasErrors) {govuk-form-group--error}">@content</div>

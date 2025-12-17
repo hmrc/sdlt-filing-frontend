@@ -66,6 +66,7 @@ nonUkResident.details.d2.p1 = Corporate purchasers will be non-UK resident if th
 nonUkResident.details.d2.p2 = Special rules apply for UK resident companies which are under the direct or indirect control of persons who are not resident in the UK.
 nonUkResident.details.d2.p3 = Special rules also apply for trusts and settlements.
 nonUkResident.error.required = You must complete the effective date field
+nonUkResident.error.required = Select ''Yes'' or ''No''
 
 isPurchaserIndividual.heading = Are you purchasing the property as an individual?
 isPurchaserIndividual.hint = Choose ‘Yes’ if you’re buying on your own, or you’re married or in a civil partnership. Choose ‘No’ if you’re a company or trust.
@@ -87,3 +88,75 @@ purchasePrice.detail.title = Is your chargeable consideration less than £40,000
 purchasePrice.detail.content = If the purchase price is less than £40,000, you don't need to pay SDLT or file a return.
 
 mainResidence.heading = Will this property be your main residence?
+
+isPurchaserIndividual.heading = Are you purchasing the property as an individual?
+isPurchaserIndividual.hint = Choose ‘Yes’ if you’re buying on your own, or you’re married or in a civil partnership. Choose ‘No’ if you’re a company or trust.
+
+isAdditionalProperty.heading = Will the purchase of the property result in owning two or more properties?
+
+ownsOtherProperties.heading = Have you ever owned or part owned another property?
+ownsOtherProperties.content = We only need to know about residential property, or property that has both residential and non-residential use. This includes freehold property, or leasehold property of at least 21 years. Select yes if you either:
+ownsOtherProperties.bullet.b1 = bought a property
+ownsOtherProperties.bullet.b2 = inherited a property
+ownsOtherProperties.bullet.b3 = are a beneficiary of a trust that owns a property
+
+replaceMainResidence.heading = Is the property being purchased replacing your main residence?
+replaceMainResidence.hint = If your previous main residence has not yet been sold choose "No". A refund may be available if the previous main residence is sold within 3 years.
+
+purchasePrice.heading = Enter the purchase price
+purchasePrice.hint = This is the chargeable consideration.
+purchasePrice.detail.title = Is your chargeable consideration less than £40,000?
+purchasePrice.detail.content = If the purchase price is less than £40,000, you don't need to pay SDLT or file a return.
+
+mainResidence.heading = Will this property be your main residence?
+
+section.sharedOwnership = Shared ownership scheme
+sharedOwnership.heading = Are you buying the property through a shared ownership scheme?
+sharedOwnership.error.required = Select ''Yes'' or ''No''
+sharedOwnership.p1 = The scheme must be operated by an approved qualifying body, like a housing association or local authority.
+
+currentValue.heading = What is the market value of the property?
+currentValue.p1 = This means the market value at the time of purchase. If the maximum share of the property ultimately obtainable is less than 100%, enter the value of that percentage.
+currentValue.error.required = Select a value
+currentValue.atOrBelowThreshold = £{0} or less
+currentValue.aboveThreshold = More than £{0}
+currentValue.atOrBelowThreshold.hint = May qualify for First Time Buyers Relief.
+
+marketValue.heading = Do you want to pay SDLT on the market value or only on the percentage of the property you are buying?
+marketValue.p1 = You can choose to pay SDLT on the market value of the property. This is known as a ‘market value election’.
+marketValue.details.title = How does this work?
+marketValue.details.d1.p1 = First Time Buyers Relief
+marketValue.details.d1.p2 = will be applied to the SDLT on:
+marketValue.details.d1.b1 = the market value of the property, or
+marketValue.details.d1.b2 = on the market value of the share of the property that is ultimately obtainable under the scheme
+marketValue.details.d1.p3 = No further SDLT will be due if you purchase further shares in the property or acquire the property outright.
+marketValue.p2 = Alternatively you can choose to pay SDLT on the amount you are paying for your initial purchase.
+marketValue.details.d2.p1 = If you pay SDLT in stages, your First Time Buyers Relief will only be applied to the initial payment you make, including any rental payments.
+marketValue.details.d2.p2 = Further payments towards your property purchase made at a later stage may be liable to SDLT which could add up to a higher or lower total amount payable than the ‘market value election’ option. First Time Buyers Relief is not available against those further payments.
+marketValue.details.d2.p3 = However if your total share in the property is never more than 80%, then you will not be liable for any further SDLT.
+marketValue.PayUpfront = Pay SDLT up front by making a market value election
+marketValue.PayInStages = Pay SDLT in stages
+marketValue.paySDLTUpfront.input = What is the cost in pounds?
+marketValue.marketPropValue.input = Price of initial share of the property
+marketValue.error.required = Provide an answer to continue.
+marketValue.error.nonNumeric = Enter the amount again - don''t use any letters or characters including £
+marketValue.error.maxValue = Enter a value that is £{0} or less.
+
+leaseDates.startDate.heading = Start date shown in your lease
+leaseDates.startDate.hint = This is the date your term starts.
+leaseDates.endDate.heading = End date shown in your lease
+leaseDates.endDate.hint1 = This is the date your term ends.
+leaseDates.endDate.hint2 = For example, 31 3 2017.
+leaseStartDate.error.required.all = Enter a start date
+leaseEndDate.error.required.all = Enter an end date
+leaseEndDate.error.beforeStartDate = End date can't be before the start date
+leaseEndDate.error.beforeEffectiveDate = End date can't be before the effective date
+leaseDate.error.invalid = Enter a valid date
+
+premium.heading = Total lease premium payable
+premium.hint = Find this in your lease.
+premium.details.title = Is your lease premium less than £40,000?
+premium.details.para = You will not have to pay SDLT if the lease premium is less than £40,000 and no tax is due on the rent. You may still have to
+premium.details.linkText =  file an SDLT return in some cases.
+premium.error.nonNumeric = Enter the premium again - don’t use any letters or characters including £
+premium.error.required = Enter your Premium

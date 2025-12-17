@@ -1,0 +1,54 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import components.{Caption, FormGroupWithError, PageHeading, Paragraph}
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukRadios: GovukRadios,
+    caption: Caption,
+    govukButton: GovukButton,
+    formGroupWithError: FormGroupWithError,
+    pageHeading: PageHeading,
+    paragraph: Paragraph
+)
+@(form: Form[_], ftbLimit: Int)(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.CurrentValueController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> CurrentValue.options(ftbLimit).headOption.flatMap(_.id).getOrElse(""))))
+    }
+        @formGroupWithError(form.errors.nonEmpty) {
+            @caption(
+            id = "current-value-section",
+            text = messages("section.sharedOwnership"),
+            )
+
+            @pageHeading(messages("currentValue.heading"))
+
+            @paragraph(messages("currentValue.p1"))
+
+            @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(messages("currentValue.heading")).asVisuallyHidden(),
+                items = CurrentValue.options(ftbLimit)
+                )
+            )
+        }
+
+        @govukButton(
+            ButtonViewModel("continue-button",messages("site.continue"))
+        )
+    }
+}

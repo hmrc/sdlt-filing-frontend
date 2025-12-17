@@ -19,6 +19,7 @@ import play.twirl.api.HtmlFormat
 abstract class ViewTestFixture extends PlaySpec
   with MockitoSugar
   with GuiceOneAppPerSuite {
+
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
 
   implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
@@ -32,7 +33,7 @@ abstract class ViewTestFixture extends PlaySpec
   lazy val document: Document = Jsoup.parse(htmlString)
 
   lazy val heading = document.select("h1").text()
-
+  lazy val caption = document.select(".govuk-caption-xl").text()
   lazy val bodyText = document.select("p").text()
   lazy val hintText = document.select(".govuk-hint").text()
   lazy val summaryText = document.select(".govuk-details__summary-text").text()
@@ -41,15 +42,19 @@ abstract class ViewTestFixture extends PlaySpec
 
   lazy val sign_in_href = document.select("a.govuk-button").attr("href")
 
+  lazy val inputField = document.select("input.govuk-input")
+
   lazy val linkText = document.getElementsByClass("govuk-link").text
 
-  lazy val input_field = document.select("input.govuk-input")
-
-  lazy val input_field_label = document.select("label.govuk-label").text()
+  lazy val inputFieldLabel = document.select("label.govuk-label").eachText()
 
   lazy val radios = document.select(".govuk-radios").text()
 
+  lazy val radiosHint = document.select(".govuk-radios__hint").text()
+
   lazy val dateField = document.select(".govuk-date-input__label").text()
+
+  lazy val bullets = document.select("ul.govuk-list--bullet li").eachText()
 
   lazy val bullet = document.select("li").text
 

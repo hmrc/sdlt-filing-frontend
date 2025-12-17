@@ -18,6 +18,7 @@ object Tenancy extends Enumerable.Implicits {
     Freehold,
     Leasehold
   )
+
   def options(implicit messages: Messages): Seq[RadioItem] =
     values.map {  value =>
       RadioItem(

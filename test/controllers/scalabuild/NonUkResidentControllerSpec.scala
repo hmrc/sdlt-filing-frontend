@@ -14,6 +14,7 @@ import play.api.test.Helpers._
 import views.html.scalabuild.NonUkResidentView
 
 class NonUkResidentControllerSpec extends ScalaSpecBase {
+
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/non-uk-resident")
   val formProvider = new NonUkResidentFormProvider()
   val form          = formProvider()

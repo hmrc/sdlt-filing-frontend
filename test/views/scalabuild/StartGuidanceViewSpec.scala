@@ -14,7 +14,6 @@ class StartGuidanceViewSpec extends ViewTestFixture {
 
   "StartGuidanceView" must {
     "render the correct content" in {
-
       heading mustBe messages("Calculate Stamp Duty Land Tax (SDLT)")
       bodyText must include("This calculator can be used for property purchases that are:")
       bodyText must include("The calculator will work out the SDLT payable for most transactions. You should")
@@ -23,8 +22,8 @@ class StartGuidanceViewSpec extends ViewTestFixture {
       bodyText must include("purchasing residential property for more than £500,000.")
       buttonText mustBe messages("Start now")
     }
-    "render the correct list items and link text" in {
 
+    "render the correct list items and link text" in {
       document.select("p").text  must include(messages("startGuidance.content.l1"))
       bullet must include(messages("startGuidance.bullet.b1"))
       bullet must include(messages("startGuidance.bullet.b2"))

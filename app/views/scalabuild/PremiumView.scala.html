@@ -1,0 +1,56 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import components.{Caption, FormGroupWithError, PageHeading, Paragraph}
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukInput: GovukInput,
+    govukButton: GovukButton,
+    govukDetails : GovukDetails
+)
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.PremiumController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
+
+    @govukInput(
+        InputViewModel(
+            field = form("premium"),
+            label = Label(
+            isPageHeading = true,
+            classes = "govuk-label--xl",
+            content = messages("premium.heading"))
+        )
+        .asNumeric()
+        .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
+        .withPoundPrefix
+        .withHint(Hint(content = HtmlContent(messages("premium.hint"))))
+    )
+
+    @govukDetails(
+        Details(
+            summary = Text(messages("premium.details.title")),
+            content = HtmlContent(
+            s"""<p>${messages("premium.details.para")} <a href="https://www.gov.uk/guidance/stamp-duty-land-tax-leasehold-purchases" target="_blank" rel="noopener noreferrer" class="govuk-link">${messages("premium.details.linkText")}</a></p>""".stripMargin
+            )
+        )
+    )
+
+    @govukButton(
+        ButtonViewModel("continue-button",messages("site.continue"))
+    )
+    }
+}

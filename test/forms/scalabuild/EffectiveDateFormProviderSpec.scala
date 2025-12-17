@@ -18,9 +18,9 @@ class EffectiveDateFormProviderSpec extends ScalaSpecBase {
       val date  = LocalDate.of(2022,2,11)
 
       val data = Map(
-        "effectiveDateDay"   -> "11",
-        "effectiveDateMonth" -> "2",
-        "effectiveDateYear"  -> "2022"
+        "effectiveDate.day"   -> "11",
+        "effectiveDate.month" -> "2",
+        "effectiveDate.year"  -> "2022"
       )
       val result = form.bind(data)
       result.value.value mustEqual date
@@ -34,9 +34,9 @@ class EffectiveDateFormProviderSpec extends ScalaSpecBase {
       invalidDates.map { invalidDate =>
 
       val data = Map(
-        "effectiveDateDay"   -> invalidDate._1,
-        "effectiveDateMonth" -> invalidDate._2,
-        "effectiveDateYear"  -> invalidDate._3
+        "effectiveDate.day"   -> invalidDate._1,
+        "effectiveDate.month" -> invalidDate._2,
+        "effectiveDate.year"  -> invalidDate._3
       )
 
       val result = form.bind(data)

@@ -84,32 +84,6 @@ trait Formatters {
       override def unbind(key: String, value: Int) =
         baseFormatter.unbind(key, value.toString)
     }
-
-  private[mappings] def enumerableFormatter[A](
-      requiredKey: String,
-      invalidKey: String,
-      args: Seq[String] = Seq.empty
-  )(implicit
-      ev: Enumerable[A]
-  ): Formatter[A] =
-    new Formatter[A] {
-
-      private val baseFormatter = stringFormatter(requiredKey, args)
-
-      override def bind(
-          key: String,
-          data: Map[String, String]
-      ): Either[Seq[FormError], A] =
-        baseFormatter.bind(key, data).flatMap { str =>
-          ev.withName(str)
-            .map(Right.apply)
-            .getOrElse(Left(Seq(FormError(key, invalidKey, args))))
-        }
-
-      override def unbind(key: String, value: A): Map[String, String] =
-        baseFormatter.unbind(key, value.toString)
-    }
-
   private[mappings] def currencyFormatter(
                                            requiredKey: String,
                                            twoDecimalPlacesKey: String,
@@ -144,5 +118,63 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
+  private[mappings] def bigDecimalFormatter(
+                                             decimalPlaces: Int,
+                                             requiredKey: String,
+                                             nonNumericKey: String,
+                                             decimalPlacesKey: String,
+                                             args: Seq[String] = Seq.empty
+                                           ): Formatter[BigDecimal] =
+    new Formatter[BigDecimal] {
+      private val decimalRegexp = s"""^[+-]?[0-9]*(\\.[0-9]{0,$decimalPlaces})?$$"""
+
+      private val baseFormatter = stringFormatter(requiredKey, args)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(",", "").replaceAll("\\s", ""))
+          .flatMap { s =>
+            nonFatalCatch
+              .either(BigDecimal(s))
+              .left
+              .map(_ => Seq(FormError(key, nonNumericKey, args)))
+              .flatMap { res =>
+                if (res.toString().matches(decimalRegexp)) {
+                  Right(res)
+                } else {
+                  Left(Seq(FormError(key, decimalPlacesKey, args)))
+                }
+              }
+          }
+
+      override def unbind(key: String, value: BigDecimal): Map[String, String] =
+        baseFormatter.unbind(key, value.toString)
+    }
+
+  private[mappings] def enumerableFormatter[A](
+      requiredKey: String,
+      invalidKey: String,
+      args: Seq[String] = Seq.empty
+  )(implicit
+      ev: Enumerable[A]
+  ): Formatter[A] =
+    new Formatter[A] {
+
+      private val baseFormatter = stringFormatter(requiredKey, args)
+
+      override def bind(
+          key: String,
+          data: Map[String, String]
+      ): Either[Seq[FormError], A] =
+        baseFormatter.bind(key, data).flatMap { str =>
+          ev.withName(str)
+            .map(Right.apply)
+            .getOrElse(Left(Seq(FormError(key, invalidKey, args))))
+        }
+
+      override def unbind(key: String, value: A): Map[String, String] =
+        baseFormatter.unbind(key, value.toString)
+    }
 
 }

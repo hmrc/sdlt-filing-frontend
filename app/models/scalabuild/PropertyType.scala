@@ -18,6 +18,7 @@ sealed trait PropertyType
       Residential,
       NonResidential
     )
+
     def options(implicit messages: Messages): Seq[RadioItem] =
       values.map { value =>
         val label = messages(s"propertyType.${value.toString}")

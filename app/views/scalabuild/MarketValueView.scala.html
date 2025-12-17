@@ -1,0 +1,115 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import components.{Caption, FormGroupWithError, PageHeading, Paragraph}
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    caption: Caption,
+    formGroupWithError: FormGroupWithError,
+    pageHeading: PageHeading,
+    paragraph: Paragraph,
+    govukDetails : GovukDetails,
+    govukInput: GovukInput,
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.MarketValueController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> MarketValueChoice.options.headOption.flatMap(_.id).getOrElse(""))))
+    }
+
+    @formGroupWithError(form.errors.nonEmpty) {
+        @caption(
+            id = "market-value-section",
+            text = messages("section.sharedOwnership"),
+        )
+
+        @pageHeading(messages("marketValue.heading"))
+
+        @paragraph(messages("marketValue.hint"), "govuk-hint")
+
+        @govukDetails(
+            Details(
+                summary = Text(messages("marketValue.details.title")),
+                content = HtmlContent(
+                            s"""
+                            |   <p><a href="https://www.gov.uk/guidance/stamp-duty-land-tax-relief-for-land-or-property-transactions#first-time-buyers-relief" target="_blank" rel="noopener noreferrer" class="govuk-link">${messages("marketValue.details.d1.p1")}</a> ${messages("marketValue.details.d1.p2")}</p>
+                            |    <ul class="govuk-list govuk-list--bullet">
+                            |        <li>${messages("marketValue.details.d1.b1")}</li>
+                            |        <li>${messages("marketValue.details.d1.b2")}</li>
+                            |     </ul>
+                            |   <p>${messages("marketValue.details.d1.p3")}</p>""".stripMargin
+                        )
+            )
+        )
+
+        @paragraph(messages("marketValue.p2"))
+
+        @govukDetails(
+            Details(
+                summary = Text(messages("marketValue.details.title")),
+                content = HtmlContent(
+                        s"""
+                        |   <p>${messages("marketValue.details.d2.p1")}</p>
+                        |   <p>${messages("marketValue.details.d2.p2")}</p>
+                        |   <p>${messages("marketValue.details.d2.p3")}</p>""".stripMargin
+                    )
+            )
+        )
+
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("value"),
+                legend = LegendViewModel(messages("marketValue.heading")).asVisuallyHidden(),
+                items  = MarketValueChoice.options.map
+                            { item =>
+                                item.value match {
+                                                    case Some("PayUpfront") =>
+                                                        item.copy(conditionalHtml =
+                                                                    Some(govukInput(
+                                                                        InputViewModel(
+                                                                        field = form("paySDLTUpfront"),
+                                                                        label = Label(
+                                                                                    classes = "govuk-label--l",
+                                                                                    content = messages("marketValue.paySDLTUpfront.input")
+                                                                                )
+                                                                            ).withPoundPrefix
+                                                                        )
+                                                                    ))
+                                                    case Some("PayInStages") =>
+                                                        item.copy(conditionalHtml =
+                                                                    Some(govukInput(
+                                                                        InputViewModel(
+                                                                        field = form("marketPropValue"),
+                                                                        label = Label(
+                                                                                    classes = "govuk-label--l",
+                                                                                    content = messages("marketValue.marketPropValue.input")
+                                                                                )
+                                                                            ).withPoundPrefix
+                                                                        )
+                                                                    ))
+                                                    case _ => item
+                                                 }
+                            }
+            )
+
+        )
+    }
+    @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
+
+    }
+}

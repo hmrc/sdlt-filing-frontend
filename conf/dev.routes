@@ -34,3 +34,18 @@ POST      /owned-other-properties            controllers.scalabuild.OwnsOtherPro
 
 GET       /main-residence                    controllers.scalabuild.MainResidenceController.onPageLoad()
 POST      /main-residence                    controllers.scalabuild.MainResidenceController.onSubmit()
+
+GET       /shared-ownership                  controllers.scalabuild.SharedOwnershipController.onPageLoad()
+POST      /shared-ownership                  controllers.scalabuild.SharedOwnershipController.onSubmit()
+
+GET       /current-value                     controllers.scalabuild.CurrentValueController.onPageLoad()
+POST      /current-value                     controllers.scalabuild.CurrentValueController.onSubmit()
+
+GET       /market-value                     controllers.scalabuild.MarketValueController.onPageLoad()
+POST      /market-value                     controllers.scalabuild.MarketValueController.onSubmit()
+
+GET       /lease-dates                     controllers.scalabuild.LeaseDatesController.onPageLoad()
+POST      /lease-dates                     controllers.scalabuild.LeaseDatesController.onSubmit()
+
+GET       /premium                     controllers.scalabuild.PremiumController.onPageLoad()
+POST      /premium                     controllers.scalabuild.PremiumController.onSubmit()

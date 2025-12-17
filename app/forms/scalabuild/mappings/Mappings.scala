@@ -8,11 +8,9 @@ package forms.scalabuild.mappings
 import models.scalabuild.Enumerable
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
-import play.api.data.validation.{Constraint, Invalid, Valid}
-
 import java.time.LocalDate
 
-trait Mappings extends Formatters  {
+trait Mappings extends Formatters with Constraints {
 
   protected def text(
       errorKey: String = "error.required",
@@ -28,20 +26,12 @@ trait Mappings extends Formatters  {
   ): FieldMapping[Int] =
     of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, args))
 
-  protected def currency(requiredKey: String = "error.required",
-                         twoDecimalPlacesKey: String = "error.twoDecimalPlaces",
-                         nonNumericKey: String = "error.nonNumeric",
-                         args: Seq[String] = Seq.empty) : FieldMapping[BigDecimal] =
-    of(currencyFormatter(requiredKey, twoDecimalPlacesKey, nonNumericKey, args))
-
-
   protected def enumerable[A](
       requiredKey: String = "error.required",
       invalidKey: String = "error.invalid",
       args: Seq[String] = Seq.empty
   )(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey, args))
-
 
   protected def boolean(
                          requiredKey: String = "error.required",
@@ -69,16 +59,18 @@ trait Mappings extends Formatters  {
       )
     )
 
-  protected def inRange[A](minimum: A, maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
-    Constraint {
-      input =>
+  protected def currency(requiredKey: String = "error.required",
+                         twoDecimalPlacesKey: String = "error.twoDecimalPlaces",
+                         nonNumericKey: String = "error.nonNumeric",
+                         args: Seq[String] = Seq.empty) : FieldMapping[BigDecimal] =
+    of(currencyFormatter(requiredKey, twoDecimalPlacesKey, nonNumericKey, args))
 
-        import ev._
-
-        if (input >= minimum && input <= maximum) {
-          Valid
-        } else {
-          Invalid(errorKey, minimum, maximum)
-        }
-    }
+  protected def bigDecimal(
+                            decimalPlaces: Int = 2,
+                            requiredKey: String,
+                            nonNumericKey: String,
+                            decimalPlacesKey: String,
+                            args: Seq[String] = Seq.empty
+                          ): FieldMapping[BigDecimal] =
+    of(bigDecimalFormatter(decimalPlaces, requiredKey, nonNumericKey, decimalPlacesKey, args))
 }

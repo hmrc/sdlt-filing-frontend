@@ -11,6 +11,7 @@ import views.html.scalabuild.FreeholdOrLeaseholdView
 
 
 class FreeholdOrLeaseholdViewSpec extends ViewTestFixture {
+
   val view: FreeholdOrLeaseholdView = app.injector.instanceOf[views.html.scalabuild.FreeholdOrLeaseholdView]
   val form: Form[_] = app.injector.instanceOf[forms.scalabuild.FreeholdOrLeaseholdFormProvider].apply()
   override val htmlContent: HtmlFormat.Appendable = view.apply(form)(fakeRequest, messages)

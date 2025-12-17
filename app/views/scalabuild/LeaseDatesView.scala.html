@@ -1,0 +1,70 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import components.{Paragraph,PageHeading, FormGroupWithError}
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukDateInput: GovukDateInput,
+    govukButton: GovukButton,
+    pageHeading: PageHeading,
+    paragraph: Paragraph,
+    formGroupWithError: FormGroupWithError
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.LeaseDatesController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(
+            ErrorSummaryViewModel(
+                form,
+                errorLinkOverrides = Map(
+                    "leaseStartDate" -> "leaseStartDate.day",
+                    "leaseEndDate" -> "leaseEndDate.day",
+                    "leaseEndDate.error.beforeStartDate"     -> "leaseEndDate.day",
+                    "leaseEndDate.error.beforeEffectiveDate" -> "leaseEndDate.day"
+                    )
+            )
+        )
+    }
+
+    @formGroupWithError(form.errors.nonEmpty) {
+        @pageHeading(messages("leaseDates.startDate.heading"), id = Some("startDate"))
+
+        @paragraph(messages("leaseDates.startDate.hint"), classes = "govuk-hint", id = Some("leaseStartDate-hint"))
+
+        @paragraph(messages("effectiveDate.hint.h2"), classes = "govuk-hint", id = Some("date-hint"))
+
+        @govukDateInput(
+            DateViewModel(
+                field  = form("leaseStartDate"),
+                legend = LegendViewModel(messages("leaseDates.startDate.heading")).asVisuallyHidden()
+            )
+        )
+
+        @pageHeading(messages("leaseDates.endDate.heading"), id = Some("endDate"))
+
+        @paragraph(messages("leaseDates.endDate.hint1"), classes = "govuk-hint", id = Some("leaseEndDate-hint"))
+
+        @paragraph(messages("leaseDates.endDate.hint2"), classes = "govuk-hint", id = Some("exampleDate-hint"))
+
+        @govukDateInput(
+            DateViewModel(
+                field  = form("leaseEndDate"),
+                legend = LegendViewModel(messages("leaseDates.endDate.heading")).asVisuallyHidden()
+            )
+        )
+    }
+
+    @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
+
+    }
+}

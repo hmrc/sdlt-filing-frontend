@@ -1,0 +1,58 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild._
+@import components.{Caption, FormGroupWithError, PageHeading, Paragraph}
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    caption: Caption,
+    formGroupWithError: FormGroupWithError,
+    pageHeading: PageHeading,
+    paragraph: Paragraph
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.SharedOwnershipController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("sharedOwnership" -> "sharedOwnership-yes")))
+    }
+
+    @formGroupWithError(form.errors.nonEmpty) {
+        @caption(
+            id = "shared-ownership-section",
+            text = messages("section.sharedOwnership"),
+        )
+
+        @pageHeading(messages("sharedOwnership.heading"))
+
+        @paragraph(messages("sharedOwnership.p1"))
+
+        @govukRadios(
+            RadiosViewModel.yesNoCustomIdSuffix(
+                field = form("sharedOwnership"),
+                legend = LegendViewModel(messages("sharedOwnership.heading")).asVisuallyHidden(),
+                yesId = "-yes",
+                noId = "-no"
+            )
+            .inline()
+        )
+    }
+
+    @govukButton(
+        ButtonViewModel("continue-button",messages("site.continue"))
+    )
+
+    }
+}

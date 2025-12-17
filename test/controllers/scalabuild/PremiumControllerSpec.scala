@@ -6,28 +6,27 @@
 package controllers.scalabuild
 
 import base.ScalaSpecBase
+import forms.scalabuild.PremiumFormProvider
 import play.api.mvc.Call
-import forms.scalabuild.ResidentialOrNonResidentialFormProvider
-import models.scalabuild.PropertyType.Residential
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.scalabuild.ResidentialOrNonResidentialView
+import views.html.scalabuild.PremiumView
 
-class ResidentialOrNonResidentialControllerSpec extends ScalaSpecBase {
+class PremiumControllerSpec extends ScalaSpecBase {
 
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/property")
-  val formProvider = new ResidentialOrNonResidentialFormProvider()
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/premium")
+  val formProvider = new PremiumFormProvider()
   val form          = formProvider()
-  lazy val residentialOrNonResidentialRoute = routes.ResidentialOrNonResidentialController.onPageLoad().url
+  lazy val premiumRoute = routes.PremiumController.onPageLoad().url
 
-  "Residential Or Non Residential Controller" - {
+  "Premium Controller" - {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(GET, residentialOrNonResidentialRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val request = FakeRequest(GET, premiumRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
         val result = route(application, request).value
-        val view = application.injector.instanceOf[ResidentialOrNonResidentialView]
+        val view = application.injector.instanceOf[PremiumView]
 
         status(result)          mustEqual OK
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
@@ -35,14 +34,11 @@ class ResidentialOrNonResidentialControllerSpec extends ScalaSpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
       val application = applicationBuilder().build()
-
       running(application) {
         val request =
-          FakeRequest(POST, residentialOrNonResidentialRoute)
-            .withFormUrlEncodedBody(("value", Residential.toString)).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
-
+          FakeRequest(POST, premiumRoute)
+            .withFormUrlEncodedBody(("premium", "1234")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
         val result = route(application, request).value
 
         status(result)                 mustEqual SEE_OTHER
@@ -51,18 +47,13 @@ class ResidentialOrNonResidentialControllerSpec extends ScalaSpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
       val application = applicationBuilder().build()
-
       running(application) {
         val request =
-          FakeRequest(POST, residentialOrNonResidentialRoute)
-            .withFormUrlEncodedBody(("value", "")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[ResidentialOrNonResidentialView]
-
+          FakeRequest(POST, premiumRoute)
+            .withFormUrlEncodedBody(("premium", "")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val boundForm = form.bind(Map("premium" -> ""))
+        val view = application.injector.instanceOf[PremiumView]
         val result = route(application, request).value
 
         status(result)          mustEqual BAD_REQUEST

@@ -3,7 +3,7 @@
  *
  *@
 
-@import components.{Paragraph,PageHeading}
+@import components.{Paragraph,PageHeading, FormGroupWithError}
 
 @this(
     layout: templates.Layout,
@@ -12,7 +12,8 @@
     govukDateInput: GovukDateInput,
     govukButton: GovukButton,
     pageHeading: PageHeading,
-    paragraph: Paragraph
+    paragraph: Paragraph,
+    formGroupWithError: FormGroupWithError
 )
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
@@ -21,19 +22,24 @@
 
     @formHelper(action = controllers.scalabuild.routes.EffectiveDateController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-    @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("effectiveDate" -> "effectiveDateDay")))
-    }
-    @pageHeading(messages("effectiveDate.heading"), id = Some("effectiveDate"))
-    @paragraph(messages("effectiveDate.hint.h1"), classes = "govuk-hint", id = Some("effectiveDate-hint"))
-    @paragraph(messages("effectiveDate.hint.h2"), classes = "govuk-hint", id = Some("exampleDate-hint"))
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("effectiveDate" -> "effectiveDate.day")))
+        }
 
-        @govukDateInput(
-            DateViewModel(
-            field  = form("effectiveDate"),
-            legend = LegendViewModel(messages("effectiveDate.heading")).asVisuallyHidden()
-            )
-        )
+        @formGroupWithError(form.errors.nonEmpty) {
+                @pageHeading(messages("effectiveDate.heading"), id = Some("effectiveDate"))
+
+                @paragraph(messages("effectiveDate.hint.h1"), classes = "govuk-hint", id = Some("effectiveDate-hint"))
+
+                @paragraph(messages("effectiveDate.hint.h2"), classes = "govuk-hint", id = Some("exampleDate-hint"))
+
+                @govukDateInput(
+                    DateViewModel(
+                    field  = form("effectiveDate"),
+                    legend = LegendViewModel(messages("effectiveDate.heading")).asVisuallyHidden()
+                    )
+                )
+        }
 
         @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
 

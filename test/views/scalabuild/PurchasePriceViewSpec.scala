@@ -23,7 +23,7 @@ class PurchasePriceViewSpec extends ViewTestFixture {
       bodyText must include(messages("purchasePrice.detail.content"))
     }
     "render the correct values for the radio button choices" in {
-      input_field_label mustBe messages("purchasePrice.heading")
+      inputFieldLabel.get(0) mustBe messages("purchasePrice.heading")
     }
     "render the correct button" in {
       buttonText mustBe  messages("site.continue")
