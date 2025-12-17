@@ -525,3 +525,21 @@ purchaser.whoIsMakingThePurchase.Individual.hintText                            
 purchaser.whoIsMakingThePurchase.checkYourAnswersLabel                              = Who is making the purchase?
 purchaser.whoIsMakingThePurchase.error.required                                     = Select an answer
 purchaser.whoIsMakingThePurchase.change.hidden                                      = Who is making the purchase?
+
+purchaser.companyFormOfId.title                                                     = Provide a form of ID for the purchaser - About the purchaser
+purchaser.companyFormOfId.heading                                                   = Provide a form of ID for {0}
+purchaser.companyFormOfId.p1                                                        = This could be:
+purchaser.companyFormOfId.li1                                                       = a UK tax or registration number for {0}
+purchaser.companyFormOfId.li2                                                       = a tax reference provided by {0}’s country of origin
+purchaser.companyFormOfId.li3                                                       = a registration number issued by any recognised local or national authority
+purchaser.companyFormOfId.referenceId                                               = ID number or reference
+purchaser.companyFormOfId.countryIssued                                             = Country of issue
+purchaser.companyFormOfId.checkYourAnswersLabel                                     = CompanyFormOfId
+purchaser.companyFormOfId.error.referenceId.required                                = Enter ID number or reference
+purchaser.companyFormOfId.error.referenceId.length                                  = ID number or reference must be 14 characters or less
+purchaser.companyFormOfId.error.referenceId.invalid                                 = ID number or reference is invalid
+purchaser.companyFormOfId.error.countryIssued.required                              = Enter country of issue
+purchaser.companyFormOfId.error.countryIssued.length                                = Country of issue must be 28 characters or less
+purchaser.companyFormOfId.error.countryIssued.invalid                               = Country of issue is invalid
+purchaser.companyFormOfId.referenceId.change.hidden                                 = ID number or reference
+purchaser.companyFormOfId.countryIssued.change.hidden                               = Country of issue

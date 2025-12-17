@@ -130,6 +130,11 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserCorporationTaxUTRPage to PurchaserCorporationTaxUTRPage" in { // TODO DTR-1679: Redirect to 'type of business' (pr-9)
           navigator.nextPage(PurchaserCorporationTaxUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(mode = NormalMode)
         }
+
+        // TODO DTR-1679: Redirect to 'type of business' (pr-9)
+        "go from CompanyFormOfIdPage to CompanyFormOfIdPage"in {
+          navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(mode = NormalMode)
+        }
       }
     }
 

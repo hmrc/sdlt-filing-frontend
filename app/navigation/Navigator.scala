@@ -62,7 +62,7 @@ class Navigator @Inject()() {
 
   private def isPurchaserSection(page: Page): Boolean = page match {
 
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage | PurchaserCorporationTaxUTRPage | RegistrationNumberPage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | CompanyFormOfIdPage => true
 
     case _ => false
   }
@@ -90,6 +90,8 @@ class Navigator @Inject()() {
      _ => controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(NormalMode)
     case RegistrationNumberPage => //TODO update post pr-9 page implementation in future sprints
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case CompanyFormOfIdPage => //TODO: to be updated to 'type of business' (DTR-1679 pr-9 - sprint 5)
+      _ => controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
