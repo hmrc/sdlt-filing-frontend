@@ -155,7 +155,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -189,7 +189,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -223,7 +223,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -257,7 +257,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -291,7 +291,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -338,7 +338,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(firstPurchaser, secondPurchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -369,7 +369,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -397,7 +397,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -425,7 +425,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -439,7 +439,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = None)
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -453,7 +453,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq.empty))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -466,7 +466,7 @@ class PurchaserServiceSpec extends SpecBase {
         "must only set confirmation when fullReturn is None" in {
           val userAnswers = emptyUserAnswers
 
-          val result = service.populatePurchaserNameInSession("Yes", userAnswers)
+          val result = service.populatePurchaserNameInSession("yes", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -497,7 +497,7 @@ class PurchaserServiceSpec extends SpecBase {
           val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser)))
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
 
-          val result = service.populatePurchaserNameInSession("No", userAnswers)
+          val result = service.populatePurchaserNameInSession("no", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -510,7 +510,7 @@ class PurchaserServiceSpec extends SpecBase {
         "must only set confirmation to No when no purchaser exists" in {
           val userAnswers = emptyUserAnswers
 
-          val result = service.populatePurchaserNameInSession("No", userAnswers)
+          val result = service.populatePurchaserNameInSession("no", userAnswers)
 
           result mustBe a[Success[_]]
 

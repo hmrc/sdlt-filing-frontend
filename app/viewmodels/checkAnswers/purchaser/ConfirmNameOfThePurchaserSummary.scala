@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.purchaser
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.ConfirmNameOfThePurchaserPage
 import play.api.i18n.Messages
@@ -26,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object ConfirmNameOfThePurchaserSummary  {
+object ConfirmNameOfThePurchaserSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ConfirmNameOfThePurchaserPage).map {
@@ -34,13 +33,13 @@ object ConfirmNameOfThePurchaserSummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"nameOfThePurchaser.$answer"))
+            HtmlFormat.escape(messages(s"site.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "nameOfThePurchaser.checkYourAnswersLabel",
-          value   = value,
+          key = "nameOfThePurchaser.checkYourAnswersLabel",
+          value = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("nameOfThePurchaser.change.hidden"))

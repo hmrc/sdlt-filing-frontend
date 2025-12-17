@@ -25,8 +25,8 @@ sealed trait VendorOverview
 
 object VendorOverview extends Enumerable.Implicits {
 
-  case object Yes extends WithName("Yes") with VendorOverview
-  case object No extends WithName("No") with VendorOverview
+  case object Yes extends WithName("yes") with VendorOverview
+  case object No extends WithName("no") with VendorOverview
 
   val values: Seq[VendorOverview] = Seq(
     Yes, No

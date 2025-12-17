@@ -16,14 +16,13 @@
 
 package models.purchaser
 
-import models.purchaser.ConfirmNameOfThePurchaser
 import org.scalatest.EitherValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.JsString
 
 class ConfirmNameOfThePurchaserSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues with MockitoSugar {
 
@@ -32,12 +31,12 @@ class ConfirmNameOfThePurchaserSpec extends AnyFreeSpec with Matchers with Eithe
     "must deserialise valid values" - {
 
       "Yes" in {
-        val json = JsString("Yes")
+        val json = JsString("yes")
         json.validate[ConfirmNameOfThePurchaser].asOpt.value mustEqual ConfirmNameOfThePurchaser.Yes
       }
 
       "No" in {
-        val json = JsString("No")
+        val json = JsString("no")
         json.validate[ConfirmNameOfThePurchaser].asOpt.value mustEqual ConfirmNameOfThePurchaser.No
       }
     }
@@ -61,17 +60,17 @@ class ConfirmNameOfThePurchaserSpec extends AnyFreeSpec with Matchers with Eithe
       "must return correct radio items" in {
         implicit val messages: Messages = mock[Messages]
 
-        org.mockito.Mockito.when(messages.apply("site.Yes"))
+        org.mockito.Mockito.when(messages.apply("site.yes"))
           .thenReturn("Yes")
-        org.mockito.Mockito.when(messages.apply("site.No"))
+        org.mockito.Mockito.when(messages.apply("site.no"))
           .thenReturn("No")
 
         val result = ConfirmNameOfThePurchaser.options
 
         result.size mustBe 2
-        result.head.value.value mustBe "Yes"
+        result.head.value.value mustBe "yes"
         result.head.id.value mustBe "value_0"
-        result(1).value.value mustBe "No"
+        result(1).value.value mustBe "no"
         result(1).id.value mustBe "value_1"
       }
     }

@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.purchaser
 
-import controllers.purchaser.routes
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserCorporationTaxUTRPage
 import play.api.i18n.Messages
@@ -33,11 +32,11 @@ object PurchaserCorporationTaxUTRSummary  {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "purchaser.purchaserCorporationTaxUTR.checkYourAnswersLabel",
+          key     = "purchaser.corporationTaxUTR.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.purchaserCorporationTaxUTR.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.corporationTaxUTR.change.hidden"))
           )
         )
     }

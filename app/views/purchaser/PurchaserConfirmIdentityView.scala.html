@@ -28,20 +28,20 @@
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaserConfirmIdentity.title", purchaserName))) {
+@layout(pageTitle = title(form, messages("purchaser.confirmIdentity.title", purchaserName))) {
 
     @formHelper(action = controllers.purchaser.routes.PurchaserConfirmIdentityController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
-        <span class="govuk-caption-l">@messages("purchaser.caption")</span>
-        @h1(messages("purchaserConfirmIdentity.heading", purchaserName))
+        <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
+        @h1(messages("purchaser.confirmIdentity.heading", purchaserName))
 
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("purchaserConfirmIdentity.p1", purchaserName)),
+                legend = LegendViewModel(messages("purchaser.confirmIdentity.p1", purchaserName)),
                 items  = PurchaserConfirmIdentity.options
             )
         )

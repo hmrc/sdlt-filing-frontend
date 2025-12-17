@@ -38,13 +38,13 @@ object PurchaserConfirmIdentity extends Enumerable.Implicits {
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
     case (Divider, index) =>
       RadioItem(
-        content = Text(messages(s"purchaserConfirmIdentity.${Divider.toString}")),
+        content = Text(messages(s"purchaser.confirmIdentity.${Divider.toString}")),
         id = Some(s"value_$index"),
-        divider = Some(messages(s"purchaserConfirmIdentity.${Divider.toString}"))
+        divider = Some(messages(s"purchaser.confirmIdentity.${Divider.toString}"))
       )
     case (value, index) =>
         RadioItem(
-          content = Text(messages(s"purchaserConfirmIdentity.${value.toString}")),
+          content = Text(messages(s"purchaser.confirmIdentity.${value.toString}")),
           value = Some(value.toString),
           id = Some(s"value_$index")
         )

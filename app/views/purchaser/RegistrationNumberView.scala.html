@@ -18,11 +18,11 @@
 @import viewmodels.LabelSize.Large
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
@@ -34,15 +34,15 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <span class="govuk-caption-l">@messages("purchaser.registrationNumber.caption")</span>
+        <span class="govuk-caption-l">@messages("site.purchaser.caption")</span>
 
         @govukInput(
             InputViewModel(
                 field = form("registrationNumber"),
-                label = LabelViewModel(messages("purchaser.registrationNumber.heading",purchaserName)).asPageHeading(size = Large)
+                label = LabelViewModel(messages("purchaser.registrationNumber.heading", purchaserName)).asPageHeading(size = Large)
             )
             .withWidth(Full)
-            .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.registrationNumber.hint",purchaserName)))))
+            .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.registrationNumber.hint", purchaserName)))))
         )
 
         @govukButton(

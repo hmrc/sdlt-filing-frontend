@@ -40,15 +40,15 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
 
           val result = WhoIsMakingThePurchaseSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("whoIsMakingThePurchase.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("whoIsMakingThePurchase.Individual")
+          htmlContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Individual")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("whoIsMakingThePurchase.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.whoIsMakingThePurchase.change.hidden")
         }
       }
     }
@@ -65,15 +65,15 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
 
           val result = WhoIsMakingThePurchaseSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("whoIsMakingThePurchase.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("whoIsMakingThePurchase.Company")
+          htmlContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Company")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("whoIsMakingThePurchase.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.whoIsMakingThePurchase.change.hidden")
         }
       }
     }
@@ -139,8 +139,8 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
         val individualContent = individualResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         val companyContent = companyResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
 
-        individualContent mustEqual msgs("whoIsMakingThePurchase.Individual")
-        companyContent mustEqual msgs("whoIsMakingThePurchase.Company")
+        individualContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Individual")
+        companyContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Company")
 
         individualContent must not equal companyContent
       }

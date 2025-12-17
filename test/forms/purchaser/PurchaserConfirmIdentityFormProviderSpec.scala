@@ -28,12 +28,12 @@ class PurchaserConfirmIdentityFormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "purchaserConfirmIdentity.error.required"
+    val requiredKey = "purchaser.confirmIdentity.error.required"
 
     behave like optionsField[PurchaserConfirmIdentity](
       form,
       fieldName,
-      validValues  = PurchaserConfirmIdentity.values,
+      validValues = PurchaserConfirmIdentity.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 
