@@ -97,7 +97,7 @@ class ConfirmNameOfThePurchaserController @Inject()(
           ) match {
             case Success(updatedAnswers) =>
               sessionRepository.set(updatedAnswers).map { _ =>
-                if (value.toString == "Yes") {
+                if (value.toString == "yes") {
                   //TODO - update to use navigator?
                   Redirect(controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser())
                 } else {

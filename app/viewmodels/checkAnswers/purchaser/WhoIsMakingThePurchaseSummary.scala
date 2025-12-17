@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.purchaser
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.WhoIsMakingThePurchasePage
 import play.api.i18n.Messages
@@ -34,16 +33,16 @@ object WhoIsMakingThePurchaseSummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"whoIsMakingThePurchase.$answer"))
+            HtmlFormat.escape(messages(s"purchaser.whoIsMakingThePurchase.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "whoIsMakingThePurchase.checkYourAnswersLabel",
+          key     = "purchaser.whoIsMakingThePurchase.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("whoIsMakingThePurchase.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.whoIsMakingThePurchase.change.hidden"))
           )
         )
     }

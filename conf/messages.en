@@ -378,16 +378,6 @@ agent.vendorAgentsContactDetails.agentEmailAddress.change.hidden                
 
 # Purchaser Messages
 
-purchaser.beforeStart.title                                                         = Before you start - About the purchaser
-purchaser.beforeStart.p1                                                            = In this section, you need to tell us about the purchaser of the land or property.
-purchaser.beforeStart.p2                                                            = We will ask for:
-purchaser.beforeStart.p3                                                            = You can also provide:
-purchaser.beforeStart.bullet1                                                       = the purchaser’s name
-purchaser.beforeStart.bullet2                                                       = the purchaser’s address
-purchaser.beforeStart.bullet3                                                       = a valid form of ID
-purchaser.beforeStart.bullet4                                                       = if they’re connected to the vendor
-purchaser.beforeStart.bullet5                                                       = the purchaser’s phone number
-
 purchaser.addPurchaserPhoneNumber.error.required                                    = Please select an option
 purchaser.addPurchaserPhoneNumber.title                                             = Do you want to add a phone number for the purchaser? - About the purchaser
 purchaser.addPurchaserPhoneNumber.heading                                           = Do you want to add a phone number for {0}?
@@ -399,8 +389,15 @@ purchaser.address.checkYourAnswersLabel                                         
 purchaser.address.change.hidden                                                     = Property address
 purchaser.address.link.message                                                      = Enter property address
 
-purchaser.company.nameOfThePurchaser.title                                          = What is the purchaser’s name? - About the purchaser
-purchaser.company.nameOfThePurchaser.heading                                        = What is the company’s name?
+purchaser.beforeStart.title                                                         = Before you start - About the purchaser
+purchaser.beforeStart.p1                                                            = In this section, you need to tell us about the purchaser of the land or property.
+purchaser.beforeStart.p2                                                            = We will ask for:
+purchaser.beforeStart.p3                                                            = You can also provide:
+purchaser.beforeStart.bullet1                                                       = the purchaser’s name
+purchaser.beforeStart.bullet2                                                       = the purchaser’s address
+purchaser.beforeStart.bullet3                                                       = a valid form of ID
+purchaser.beforeStart.bullet4                                                       = if they’re connected to the vendor
+purchaser.beforeStart.bullet5                                                       = the purchaser’s phone number
 
 purchaser.confirmIdentity.title                                                     = What information can you provide about {0}? - About the purchaser
 purchaser.confirmIdentity.heading                                                   = What information can you provide about {0}?
@@ -413,6 +410,7 @@ purchaser.confirmIdentity.anotherFormOfId                                       
 purchaser.confirmIdentity.checkYourAnswersLabel                                     = What information can you provide about the purchaser?
 purchaser.confirmIdentity.error.required                                            = Please select what information can you provide about the purchaser
 purchaser.confirmIdentity.change.hidden                                             = Purchaser information
+
 purchaser.confirmNameOfPurchaser.title                                              = Is this the name of the purchaser? - About the purchaser
 purchaser.confirmNameOfPurchaser.company.heading                                    = Is {0} the name of the purchaser?
 purchaser.confirmNameOfPurchaser.individual.heading                                 = Is {0} the surname of the purchaser?
@@ -474,6 +472,8 @@ purchaser.formOfIdIndividual.error.countryIssued.invalid                        
 purchaser.formOfIdIndividual.idNumberOrReference.change.hidden                      = ID number or reference
 purchaser.formOfIdIndividual.countryIssued.change.hidden                            = Country of issue
 
+purchaser.company.nameOfThePurchaser.title                                          = What is the purchaser’s name? - About the purchaser
+purchaser.company.nameOfThePurchaser.heading                                        = What is the company’s name?
 purchaser.individual.nameOfThePurchaser.title                                       = What is the purchaser’s name? - About the purchaser
 purchaser.individual.nameOfThePurchaser.heading                                     = What is the purchaser’s full name?
 purchaser.individual.nameOfThePurchaser.firstName                                   = First name
@@ -510,7 +510,6 @@ purchaser.registrationNumber.heading                                            
 purchaser.registrationNumber.checkYourAnswersLabel                                  = VAT Registration Number
 purchaser.registrationNumber.error.required                                         = Enter VAT Registration Number
 purchaser.registrationNumber.error.length                                           = Registration Number must be 9 digits
-purchaser.registrationNumber.error.invalid                                          = Registration Number must be 9 digits
 purchaser.registrationNumber.change.hidden                                          = VAT Registration Number
 purchaser.registrationNumber.error.regex.error                                      = Numeric only
 purchaser.registrationNumber.error.regex.invalid                                    = Numeric only

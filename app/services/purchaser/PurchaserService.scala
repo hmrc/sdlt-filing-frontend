@@ -50,8 +50,7 @@ class PurchaserService {
   }
 
   def whoIsMakingThePurchase(isCompany: Option[String]): WhoIsMakingThePurchase = {
-    isCompany match
-    {
+    isCompany match {
       case Some(value) if value.toLowerCase == "yes" => WhoIsMakingThePurchase.Company
       case Some(value) if value.toLowerCase == "no" => WhoIsMakingThePurchase.Individual
       case _ => WhoIsMakingThePurchase.Company
@@ -62,14 +61,14 @@ class PurchaserService {
                                       purchaserCheck: String,
                                       userAnswers: UserAnswers
                                     ): Try[UserAnswers] = {
-    val confirmName = if (purchaserCheck == "Yes") ConfirmNameOfThePurchaser.Yes else ConfirmNameOfThePurchaser.No
-    
+    val confirmName = if (purchaserCheck == "yes") ConfirmNameOfThePurchaser.Yes else ConfirmNameOfThePurchaser.No
+
     val purchaserOpt: Option[Purchaser] = userAnswers.fullReturn
       .flatMap(_.purchaser)
       .flatMap(_.headOption)
 
     purchaserOpt match {
-      case Some(purchaser) if purchaserCheck == "Yes" && purchaser.purchaserID.isDefined =>
+      case Some(purchaser) if purchaserCheck == "yes" && purchaser.purchaserID.isDefined =>
         createPurchaserName(purchaser) match {
           case Some(purchaserName) =>
 
@@ -117,7 +116,7 @@ class PurchaserService {
       .flatMap(_.companyDetails)
       .flatMap(_.companyTypePensionfund)
       .isDefined
-    
+
     purchasers match {
       case None => true
       case Some(p) if p.isEmpty => true

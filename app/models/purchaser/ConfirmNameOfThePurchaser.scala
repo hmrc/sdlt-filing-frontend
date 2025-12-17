@@ -26,8 +26,8 @@ sealed trait ConfirmNameOfThePurchaser
 
 object ConfirmNameOfThePurchaser extends Enumerable.Implicits {
 
-  case object Yes extends WithName("Yes") with ConfirmNameOfThePurchaser
-  case object No extends WithName("No") with ConfirmNameOfThePurchaser
+  case object Yes extends WithName("yes") with ConfirmNameOfThePurchaser
+  case object No extends WithName("no") with ConfirmNameOfThePurchaser
 
   val values: Seq[ConfirmNameOfThePurchaser] = Seq(
     Yes, No

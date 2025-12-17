@@ -43,7 +43,7 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("nameOfThePurchaser.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("nameOfThePurchaser.Yes")
+          htmlContent mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onPageLoad(CheckMode).url
@@ -68,7 +68,7 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("nameOfThePurchaser.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("nameOfThePurchaser.No")
+          htmlContent mustEqual msgs("site.no")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onPageLoad(CheckMode).url
