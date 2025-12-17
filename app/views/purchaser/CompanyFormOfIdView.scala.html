@@ -17,7 +17,6 @@
 @import viewmodels.InputWidth._
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
 
 @this(
     layout: templates.Layout,
@@ -26,8 +25,8 @@
     govukInput: GovukInput,
     h1: h1,
     p: Paragraph,
+    caption: Caption,
     govukFieldset: GovukFieldset,
-    hmrcPageHeading: HmrcPageHeading,
     govukButton: GovukButton
 )
 
@@ -41,23 +40,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @caption(messages("site.purchaser.caption"))
+
         @govukFieldset(
             Fieldset(
-                legend = Some(
-                    Legend(
-                        content = HtmlContent(
-                            HtmlFormat.fill(Seq(
-                                hmrcPageHeading(PageHeading(
-                                    text = messages("purchaser.companyFormOfId.heading", purchaserName),
-                                    headingClasses = Some("govuk-heading-l"),
-                                    captionClasses = Some("govuk-caption-l"),
-                                    section = Some(messages("site.purchaser.caption"))
-                                ))
-                            ))
-                        ),
-                        classes = "govuk-fieldset__legend--l"
-                    )
-                ),
+                legend = Some(LegendViewModel(messages("purchaser.companyFormOfId.heading", purchaserName)).asPageHeading()),
                 html = HtmlFormat.fill(Seq(
                     p(messages("purchaser.companyFormOfId.p1")),
                     Html(
