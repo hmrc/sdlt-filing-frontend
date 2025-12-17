@@ -17,8 +17,7 @@ Run the command: `sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes`
 This allows access to the following test routes:
 
 ```
-/stamp-duty-land-tax-agent/manage-agents/test-only/session/set
-/stamp-duty-land-tax-agent/manage-agents/test-only/session/clear
+
 ```
 
 ## Adding New Pages
@@ -39,10 +38,10 @@ app/
 
 ```
 test/
-├── controllers/[domain]/   # e.g. controllers/vendor
-├── models/[domain]/        # e.g. models/vendor
-├── forms/[domain]/         # e.g. forms/vendor
-└── views/[domain]/         # e.g. views/vendor
+├── controllers/[section]/   # e.g. controllers/vendor
+├── models/[section]/        # e.g. models/vendor
+├── forms/[section]/         # e.g. forms/vendor
+└── views/[section]/         # e.g. views/vendor
 ```
 
 ### License
