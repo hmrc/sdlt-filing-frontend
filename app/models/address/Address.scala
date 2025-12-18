@@ -96,12 +96,12 @@ object Address {
   def normalisedSeq(address: Address): Seq[String] = {
     Seq[Option[AddressLineOrPostcode]](
       Option(AddressLine(address.line1)),
-      address.line2.map(AddressLine),
-      address.line3.map(AddressLine),
-      address.line4.map(AddressLine),
-      address.line5.map(AddressLine),
-      address.postcode.map(Postcode),
-      address.country.flatMap(_.name).map(AddressLine)
+      address.line2.map(AddressLine(_)),
+      address.line3.map(AddressLine(_)),
+      address.line4.map(AddressLine(_)),
+      address.line5.map(AddressLine(_)),
+      address.postcode.map(Postcode(_)),
+      address.country.flatMap(_.name).map(AddressLine(_))
     ).collect {
       case Some(AddressLine(line)) => line.split("\\s").map(_.capitalize).mkString(" ")
       case Some(Postcode(postcode)) => postcode.toUpperCase()

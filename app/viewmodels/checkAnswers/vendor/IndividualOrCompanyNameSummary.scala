@@ -16,9 +16,7 @@
 
 package viewmodels.checkAnswers.vendor
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage}
 import pages.vendor.{VendorOrCompanyNamePage, WhoIsTheVendorPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat

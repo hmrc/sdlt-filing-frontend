@@ -7,6 +7,12 @@ lazy val appName: String = "sdlt-filing-frontend"
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / scalacOptions ++= Seq(
+  "-feature",                // warn about misused language features
+  "-Wconf:msg=Flag.*repeatedly:silent", // suppress repeated flag warnings
+  "-Xfatal-warnings",        // treat all compiler warnings as errors,
+  "-Wconf:src=target/.*:silent" // suppress warnings from target files
+)
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
@@ -37,17 +43,13 @@ lazy val microservice = (project in file("."))
     ScoverageKeys.coverageMinimumStmtTotal := 78,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
-    scalacOptions ++= Seq(
-      "-feature",
-      "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
-    ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(concat)
   )
 
-lazy val testSettings: Seq[Def.Setting[_]] = Seq(
+lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )

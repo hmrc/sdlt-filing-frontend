@@ -23,7 +23,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import config.{AddressLookupConfiguration, FrontendAppConfig}
 import models.address.AddressLookupJourneyIdentifier.prelimQuestionsAddress
 import models.address.{Address, Country, MandatoryFieldsConfigModel}
-import org.apache.pekko.http.scaladsl.model.HttpResponse
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -33,7 +32,6 @@ import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
-import services.AddressLookupService
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.WireMockHelper
 
@@ -62,7 +60,6 @@ class AddressLookupConnectorISpec
       .build()
 
   private lazy val alfConnector = app.injector.instanceOf[AddressLookupConnector]
-  private lazy val addressLookupService = app.injector.instanceOf[AddressLookupService]
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   implicit val messages: Messages = messagesApi.preferred(Seq(Lang("en")))

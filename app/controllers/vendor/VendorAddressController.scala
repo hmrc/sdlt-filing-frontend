@@ -20,14 +20,13 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.vendorQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
-import models.{Mode, NormalMode, Vendor}
+import models.{Mode, NormalMode}
 import pages.vendor.{VendorAddressPage, VendorOrCompanyNamePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.AddressLookupService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import play.api.libs.json.{JsError, JsSuccess}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

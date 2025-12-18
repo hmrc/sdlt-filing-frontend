@@ -16,7 +16,6 @@
 
 package models.vendor
 
-import models.vendor.VendorAgentsContactDetails
 import play.api.libs.json.*
 
 case class VendorAgentsContactDetails (phoneNumber: Option[String], emailAddress: Option[String])

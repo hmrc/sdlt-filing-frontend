@@ -19,9 +19,9 @@ package services
 import base.SpecBase
 import config.AddressLookupConfiguration
 import connectors.AddressLookupConnector
+import models.UserAnswers
 import models.address.{Address, AddressLookupJourneyIdentifier, Country, MandatoryFieldsConfigModel}
 import models.requests.DataRequest
-import models.UserAnswers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -53,7 +53,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
 
   val testCall: Call = Call("GET", "http://localhost:9028/lookup-address/journey")
 
-  val testMandatoryFieldsConfigModel = MandatoryFieldsConfigModel(addressLine1 = Some(true),
+  val testMandatoryFieldsConfigModel: MandatoryFieldsConfigModel = MandatoryFieldsConfigModel(addressLine1 = Some(true),
     addressLine2 = Some(true),
     addressLine3 = Some(true),
     town = Some(true),
@@ -216,7 +216,6 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
         val mockConfigModel = mock[models.address.AddressLookupConfigurationModel]
         val testName = Some("Jane Smith")
-        val mockMandatoryFieldsConfigModel = mock[models.address.MandatoryFieldsConfigModel]
 
         when(mockAlfConfig.apply(eqTo(journeyId), eqTo(continueUrl), eqTo(true), eqTo(testName), eqTo(testMandatoryFieldsConfigModel))(any()))
           .thenReturn(mockConfigModel)
@@ -400,7 +399,7 @@ class AddressLookupServiceSpec extends SpecBase with MockitoSugar {
           testAddress.copy(line2 = None),
           testAddress.copy(postcode = None),
           testAddress.copy(country = None),
-          Address("Simple Line", None, None, None, None, None, None, false)
+          Address("Simple Line", None, None, None, None, None, None)
         )
 
         addresses.foreach { address =>

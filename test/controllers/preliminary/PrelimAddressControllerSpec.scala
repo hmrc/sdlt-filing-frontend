@@ -33,15 +33,15 @@ package controllers.preliminary
  */
 
 import base.SpecBase
-import models.address.{Address, Country}
 import models.NormalMode
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import models.address.{Address, Country}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.AddressLookupService
 
 import scala.concurrent.Future

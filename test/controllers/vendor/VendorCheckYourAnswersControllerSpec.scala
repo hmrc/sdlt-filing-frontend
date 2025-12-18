@@ -19,15 +19,14 @@ package controllers.vendor
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.completeFullReturn
-import models.vendor.{CreateVendorRequest, CreateVendorReturn, VendorCurrent, VendorName, VendorSessionAddress, VendorSessionCountry, VendorSessionQuestions}
-import models.{CreateReturnResult, ReturnInfo, UserAnswers, Vendor}
+import models.vendor.*
+import models.{CreateReturnResult, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.{JsNull, JsObject, Json}
-import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -35,11 +34,9 @@ import repositories.SessionRepository
 import services.vendor.{VendorCreateOrUpdateService, VendorRequestService}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
-import views.html.vendor.VendorCheckYourAnswersView
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
 
@@ -147,8 +144,6 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
           val request = FakeRequest(GET, controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url)
 
           val result = route(application, request).value
-
-          val view = application.injector.instanceOf[VendorCheckYourAnswersView]
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")

@@ -19,24 +19,24 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.ConfirmNameOfThePurchaserFormProvider
 import models.*
-import navigation.Navigator
+import models.purchaser.ConfirmNameOfThePurchaser
 import pages.purchaser.ConfirmNameOfThePurchaserPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.ConfirmNameOfThePurchaserView
-import services.purchaser.PurchaserService
 
-import scala.util.{Failure, Success}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class ConfirmNameOfThePurchaserController @Inject()(
                                                      override val messagesApi: MessagesApi,
                                                      sessionRepository: SessionRepository,
-                                                     navigator: Navigator,
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
@@ -46,7 +46,7 @@ class ConfirmNameOfThePurchaserController @Inject()(
                                                      view: ConfirmNameOfThePurchaserView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[ConfirmNameOfThePurchaser] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

@@ -19,8 +19,8 @@ package controllers.preliminary
 import com.google.inject.Inject
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.prelimQuestions.{PrelimReturn, PrelimSessionQuestions}
 import models.UserAnswers
+import models.prelimQuestions.{PrelimReturn, PrelimSessionQuestions}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -20,7 +20,6 @@ import forms.mappings.Mappings
 import models.purchaser.NameOfPurchaser
 import play.api.data.Form
 import play.api.data.Forms.*
-import models.purchaser.NameOfPurchaser
 
 import javax.inject.Inject
 

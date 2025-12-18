@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{FullReturn, NormalMode}
+import models.FullReturn
 import play.api.i18n.Messages
 
 import javax.inject.Singleton

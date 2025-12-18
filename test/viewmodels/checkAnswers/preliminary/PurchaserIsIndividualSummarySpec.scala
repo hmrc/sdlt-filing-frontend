@@ -17,14 +17,12 @@
 package viewmodels.checkAnswers.preliminary
 
 import base.SpecBase
-import controllers.routes
 import models.CheckMode
 import models.prelimQuestions.CompanyOrIndividualRequest
 import pages.preliminary.PurchaserIsIndividualPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import viewmodels.checkAnswers.preliminary.PurchaserIsIndividualSummary
 
 class PurchaserIsIndividualSummarySpec extends SpecBase {
 

@@ -21,16 +21,13 @@ import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants
 import models.*
 import models.vendor.*
-import models.vendor.{VendorCurrent, VendorSessionQuestions}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsNull, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.redirectLocation
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import play.api.test.Helpers.*
-import play.api.inject.bind
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}

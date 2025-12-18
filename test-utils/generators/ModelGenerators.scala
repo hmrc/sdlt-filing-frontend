@@ -18,8 +18,8 @@ package generators
 
 import models.*
 import models.prelimQuestions.TransactionType
-import models.purchaser.{CompanyFormOfId, DoesPurchaserHaveNI, NameOfPurchaser, PurchaserConfirmIdentity, WhoIsMakingThePurchase}
-import models.vendor.{DoYouKnowYourAgentReference, whoIsTheVendor}
+import models.purchaser.{CompanyFormOfId, DoesPurchaserHaveNI, PurchaserConfirmIdentity, WhoIsMakingThePurchase}
+import models.vendor.whoIsTheVendor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 

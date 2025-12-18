@@ -18,17 +18,16 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.*
-
-import javax.inject.Inject
+import models.{GetReturnByRefRequest, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Results}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist._
+import viewmodels.tasklist.*
 import views.html.ReturnTaskListView
-import models.{GetReturnByRefRequest, NormalMode, UserAnswers}
-import repositories.SessionRepository
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnTaskListController @Inject()(

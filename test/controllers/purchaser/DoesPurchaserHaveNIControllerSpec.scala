@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.DoesPurchaserHaveNIPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
@@ -39,16 +40,14 @@ import scala.concurrent.Future
 
 class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
-
-  private val mockSessionRepository = mock[SessionRepository]
-
-  lazy val doesPurchaserHaveNIRoute = controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
+  def onwardRoute: Call = Call("GET", "/foo")
+  
+  lazy val doesPurchaserHaveNIRoute: String = controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
 
   val formProvider = new DoesPurchaserHaveNIFormProvider()
-  val form = formProvider()
+  val form: Form[DoesPurchaserHaveNI] = formProvider()
 
-  val testUserAnswersIndividual = UserAnswers(
+  val testUserAnswersIndividual: UserAnswers = UserAnswers(
     id = "test-session-id",
     storn = "test-storn-123",
     returnId = Some("test-return-id"),
@@ -66,7 +65,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
     lastUpdated = Instant.now
   )
 
-  val testUserAnswersNoName = UserAnswers(
+  val testUserAnswersNoName: UserAnswers = UserAnswers(
     id = "test-session-id",
     storn = "test-storn-123",
     returnId = Some("test-return-id"),
@@ -116,7 +115,8 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(DoesPurchaserHaveNI.values.head), NormalMode, "John Middle Doe")(request, messages(application)).toString
+        contentAsString(result) mustEqual
+          view(form.fill(DoesPurchaserHaveNI.values.head), NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
 

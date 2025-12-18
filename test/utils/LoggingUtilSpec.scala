@@ -20,10 +20,9 @@ import org.apache.pekko.stream.Materializer
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import org.slf4j.{Logger, MDC, MarkerFactory}
+import org.slf4j.MarkerFactory
 import play.api.MarkerContext
 import play.api.test.FakeRequest
-import play.api.test.Helpers.*
 import uk.gov.hmrc.http.{HeaderNames, HttpResponse, SessionKeys}
 
 class LoggingUtilSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {

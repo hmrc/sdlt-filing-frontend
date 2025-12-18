@@ -18,7 +18,6 @@ package forms.purchaser
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.validation.Constraints.minLength
 
 import javax.inject.Inject
 

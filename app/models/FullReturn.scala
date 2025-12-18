@@ -16,8 +16,8 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
 import models.vendor.VendorSessionQuestions
+import play.api.libs.json.{Json, OFormat}
 
 import scala.concurrent.Future
 

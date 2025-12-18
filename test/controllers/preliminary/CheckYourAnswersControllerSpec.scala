@@ -30,7 +30,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
-import views.html.preliminary.CheckYourAnswersView
 
 import java.time.Instant
 import scala.concurrent.Future
@@ -102,8 +101,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val request = FakeRequest(GET, controllers.preliminary.routes.CheckYourAnswersController.onPageLoad().url)
 
           val result = route(application, request).value
-
-          val view = application.injector.instanceOf[CheckYourAnswersView]
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")

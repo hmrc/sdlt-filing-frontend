@@ -19,19 +19,18 @@ package controllers.vendor
 import controllers.actions.*
 import forms.vendor.VendorOverviewFormProvider
 import models.{GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
-import navigation.Navigator
-import pages.vendor.{VendorOverviewRemovePage, WhoIsTheVendorPage}
+import pages.vendor.VendorOverviewRemovePage
 import play.api.Logging
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.FullReturnService
+import services.vendor.PopulateVendorService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.VendorPaginationHelper
 import views.html.vendor.VendorOverview
-import services.vendor.PopulateVendorService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +41,6 @@ class VendorOverviewController @Inject()(
                                           identify: IdentifierAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          navigator: Navigator,
                                           fullReturnService: FullReturnService,
                                           sessionRepository: SessionRepository,
                                           view: VendorOverview,
@@ -51,7 +49,7 @@ class VendorOverviewController @Inject()(
                                         )(implicit executionContext: ExecutionContext)
   extends FrontendBaseController with VendorPaginationHelper with I18nSupport with Logging {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, paginationIndex: Int = 1): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>

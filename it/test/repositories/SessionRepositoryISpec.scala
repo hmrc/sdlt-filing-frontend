@@ -32,8 +32,8 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.play.bootstrap.dispatchers.MDCPropagatingExecutorService
 
-import java.time.{Clock, Instant, ZoneId}
 import java.time.temporal.ChronoUnit
+import java.time.{Clock, Instant, ZoneId}
 import java.util.concurrent.Executors
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,7 +52,11 @@ class SessionRepositoryISpec
 
   private val testReturnId = "123456"
   private val userAnswers = UserAnswers("id",  storn = "TESTSTORN", data = Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
-  private val userAnswersWithReturnId = UserAnswers("id", storn = "TESTSTORN", Some(testReturnId), Some(fullReturn), Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
+  private val userAnswersWithReturnId =
+    UserAnswers("id", storn = "TESTSTORN",
+      Some(testReturnId), Some(fullReturn),
+      Json.obj("foo" -> "bar"),
+      Instant.ofEpochSecond(1))
 
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1L
@@ -69,7 +73,8 @@ class SessionRepositoryISpec
 
       val expectedResult = userAnswers copy (lastUpdated = instant)
 
-      val setResult     = repository.set(userAnswers).futureValue
+      repository.set(userAnswers).futureValue
+
       val updatedRecord = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
       updatedRecord mustEqual expectedResult
@@ -121,7 +126,7 @@ class SessionRepositoryISpec
 
       insert(userAnswers).futureValue
 
-      val result = repository.clear(userAnswers.id).futureValue
+      repository.clear(userAnswers.id).futureValue
 
       repository.get(userAnswers.id).futureValue must not be defined
     }
@@ -143,7 +148,7 @@ class SessionRepositoryISpec
 
         insert(userAnswers).futureValue
 
-        val result = repository.keepAlive(userAnswers.id).futureValue
+        repository.keepAlive(userAnswers.id).futureValue
 
         val expectedUpdatedAnswers = userAnswers copy (lastUpdated = instant)
 

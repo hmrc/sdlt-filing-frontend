@@ -17,8 +17,8 @@
 package controllers.purchaser
 
 import base.SpecBase
-import models.{NormalMode, UserAnswers}
 import models.address.{Address, Country}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar

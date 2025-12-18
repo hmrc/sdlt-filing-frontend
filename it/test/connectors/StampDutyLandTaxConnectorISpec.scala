@@ -16,11 +16,10 @@
 
 package connectors
 
-import com.fasterxml.jackson.core.JsonParseException
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import constants.FullReturnConstants
-import models.{CreateReturnResult, FullReturn, GetReturnByRefRequest}
 import models.prelimQuestions.PrelimReturn
+import models.{CreateReturnResult, FullReturn, GetReturnByRefRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -31,8 +30,6 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.*
 import utils.WireMockHelper
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class StampDutyLandTaxConnectorISpec
   extends AnyFreeSpec

@@ -19,13 +19,13 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.RegistrationNumberFormProvider
+import models.purchaser.{NameOfPurchaser, PurchaserConfirmIdentity, WhoIsMakingThePurchase}
 import models.{NormalMode, UserAnswers}
-import models.purchaser.{NameOfPurchaser, WhoIsMakingThePurchase, PurchaserConfirmIdentity}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.{NameOfPurchaserPage, RegistrationNumberPage, WhoIsMakingThePurchasePage,PurchaserConfirmIdentityPage}
+import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, RegistrationNumberPage, WhoIsMakingThePurchasePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call

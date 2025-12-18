@@ -20,31 +20,31 @@ import base.SpecBase
 import constants.FullReturnConstants
 import controllers.routes
 import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
-import models.prelimQuestions.TransactionType
 import models.vendor.DoYouKnowYourAgentReference
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage}
+import pages.vendor.AgentNamePage
+import play.api.Application
+import play.api.data.Form
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.vendor.DoYouKnowYourAgentReferenceView
-import play.api.libs.json.Json
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.Application
 
 import scala.concurrent.Future
 
 class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val doYouKnowYourAgentReferenceRoute = controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode).url
+  lazy val doYouKnowYourAgentReferenceRoute: String = controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode).url
 
   val userAnswersWithAgentSelectionKnown: UserAnswers = emptyUserAnswers.copy(
     data = Json.obj(
@@ -57,7 +57,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
   val agentName: Option[String] = userAnswersWithAgentSelectionKnown.get(AgentNamePage)
 
   val formProvider = new DoYouKnowYourAgentReferenceFormProvider()
-  val form = formProvider()
+  val form: Form[DoYouKnowYourAgentReference] = formProvider()
 
   "DoYouKnowYourAgentReference Controller" - {
     def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -125,7 +125,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn), data = Json.obj(
           "vendorCurrent" -> Json.obj(
-            "agentName" -> "test",  
+            "agentName" -> "test",
             "representedByAgent" -> true,
           )
         )
@@ -150,8 +150,6 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      // val userAnswers = userAnswersWithAgentSelectionKnown.set(DoYouKnowYourAgentReferencePage, DoYouKnowYourAgentReference.Yes).success.value
-
       val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
         returnAgent = None,
         vendor = None
@@ -175,10 +173,9 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
 
         val result = route(application, request).value
-        implicit val messages: Messages =
-          application.injector.instanceOf[MessagesApi].preferred(request)
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(DoYouKnowYourAgentReference.Yes), NormalMode, agentName)(request, customMessages(application, request)).toString
+        contentAsString(result) mustEqual
+          view(form.fill(DoYouKnowYourAgentReference.Yes), NormalMode, agentName)(request, customMessages(application, request)).toString
 
       }
     }

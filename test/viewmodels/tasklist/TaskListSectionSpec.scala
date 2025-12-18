@@ -20,13 +20,11 @@ import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants
 import constants.FullReturnConstants.emptyFullReturn
-import models.*
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderCarrier
-import viewmodels.tasklist.{TLCannotStart, TLCompleted, TLFailed, TLInProgress, TLNotStarted, TaskListRowBuilder, TaskListSection, TaskListSectionRow, TaskListSections, TaskListState}
 
 import scala.concurrent.ExecutionContext
 

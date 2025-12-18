@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.vendor
 
 
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.vendor.WhoIsTheVendorPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

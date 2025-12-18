@@ -16,7 +16,6 @@
 
 package viewmodels.vendor
 
-import controllers.*
 import models.{CheckMode, UserAnswers}
 import pages.vendor.ConfirmVendorAddressPage
 import play.api.i18n.Messages

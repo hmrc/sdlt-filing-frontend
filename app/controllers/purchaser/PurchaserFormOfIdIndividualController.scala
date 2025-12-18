@@ -18,8 +18,8 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.PurchaserFormOfIdIndividualFormProvider
-import models.purchaser.DoesPurchaserHaveNI
 import models.Mode
+import models.purchaser.DoesPurchaserHaveNI
 import navigation.Navigator
 import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserFormOfIdIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}

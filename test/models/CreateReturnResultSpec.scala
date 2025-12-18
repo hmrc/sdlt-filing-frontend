@@ -20,7 +20,6 @@ import org.scalatest.EitherValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{JsObject, Json, Reads, Writes}
-import models.CreateReturnResult
 
 class CreateReturnResultSpec extends AnyFreeSpec with Matchers with EitherValues {
 

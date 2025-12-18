@@ -20,16 +20,13 @@ import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants
 import constants.FullReturnConstants.emptyFullReturn
-import models.prelimQuestions.PrelimReturn
-import models.{FullReturn, NormalMode}
+import models.NormalMode
 import play.api.i18n.Messages
 import play.api.test.Helpers.*
-import viewmodels.tasklist.{PrelimTaskList, TLCompleted, TLNotStarted, TaskListSection, TaskListSectionRow}
 
 class PrelimTaskListSpec extends SpecBase {
 
   private val fullReturnComplete = FullReturnConstants.completeFullReturn
-  private val fullReturnIncomplete = FullReturnConstants.incompleteFullReturn
 
   "PrelimTaskList" - {
 

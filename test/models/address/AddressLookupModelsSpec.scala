@@ -16,10 +16,10 @@
 
 package models.address
 
-import org.scalatest.{EitherValues, OptionValues}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.libs.json._
+import org.scalatest.{EitherValues, OptionValues}
+import play.api.libs.json.*
 
 class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues {
 

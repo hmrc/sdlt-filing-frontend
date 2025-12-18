@@ -18,9 +18,8 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.CompanyFormOfIdFormProvider
-import models.{Mode, NormalMode}
 import models.purchaser.{CompanyFormOfId, PurchaserConfirmIdentity, WhoIsMakingThePurchase}
-import models.purchaser.WhoIsMakingThePurchase.Company
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{CompanyFormOfIdPage, NameOfPurchaserPage, PurchaserConfirmIdentityPage}
 import play.api.data.Form

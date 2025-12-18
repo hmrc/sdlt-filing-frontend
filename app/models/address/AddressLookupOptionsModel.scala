@@ -16,8 +16,7 @@
 
 package models.address
 
-import play.api.libs.json.{JsString, Json, Writes}
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import play.api.libs.json.{Json, Writes}
 
 case class AddressLookupOptionsModel(continueUrl: String,
                                      signOutHref: Option[String] = None,

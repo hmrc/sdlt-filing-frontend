@@ -17,7 +17,6 @@
 package forms.preliminary
 
 import forms.behaviours.OptionFieldBehaviours
-import forms.preliminary.PurchaserIsIndividualFormProvider
 import models.prelimQuestions.CompanyOrIndividualRequest
 import play.api.data.FormError
 

@@ -20,16 +20,18 @@ import base.SpecBase
 import models.Vendor
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
 
   private implicit val messages: Messages = stubMessages()
 
-  private val ROWS_ON_PAGE = 15
-
-  def createVendor(id: String, forename1: Option[String] = None, forename2: Option[String] = None, name: Option[String] = None, vendorResourceRef: Option[String] = None): Vendor = {
+  def createVendor(id: String,
+                   forename1: Option[String] = None,
+                   forename2: Option[String] = None,
+                   name: Option[String] = None,
+                   vendorResourceRef: Option[String] = None): Vendor = {
     Vendor(
       vendorID = Some(id),
       forename1 = forename1,

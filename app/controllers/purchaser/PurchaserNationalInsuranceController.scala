@@ -24,11 +24,9 @@ import navigation.Navigator
 import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserNationalInsurancePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.FullName
 import views.html.purchaser.PurchaserNationalInsuranceView
 import services.purchaser.PurchaserService
 import models.purchaser.WhoIsMakingThePurchase
