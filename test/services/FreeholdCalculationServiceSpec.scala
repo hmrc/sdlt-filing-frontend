@@ -7,7 +7,7 @@ package services
 
 import java.time.LocalDate
 import data.ResultText.RESULT_HEADING_GENERIC
-import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies}
+import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import models.sdltRebuild.TaxReliefDetails
@@ -200,7 +200,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
 
   def hint(message: String, amount: String) = s"$message $amount."
 
-  val zeroRateTaxReliefGen = Gen.oneOf(PartExchange, ReLocationEmployment,
+  val zeroRateTaxReliefGen: Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(PartExchange, ReLocationEmployment,
     CompulsoryPurchaseFacilitatingDevelopment, ComplianceWithPlanningObligations,
     GroupRelief, ReConstructionRelief, DemutualisationOfInsuranceCompany,
     DemutualisationOfBuildingSociety, IncorporationOfLimitedLiabilityPartnership,
@@ -664,7 +664,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
         basePrevResult(61250,
           prevSliceCalculationDetails(61250, currentSlices, detailHeading, bandHeading, detailFooter),
           currentResultHeading,
-          (currentResultHint))
+          currentResultHint)
       )
     }
   }
@@ -756,7 +756,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
         basePrevResult(63750,
           prevSliceCalculationDetails(63750, currentSlices, detailHeading, bandHeading, detailFooter),
           currentResultHeading,
-          (currentResultHint))
+          currentResultHint)
       )
     }
   }
@@ -1893,81 +1893,9 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
       )
 
       forAll(zeroRateTaxReliefGen) {
-        zeroRateReliefTaxCode => // default ScalaCheck config: 10 tests various test will be executed
-          //println(s"SelectedZeroCode:${zeroRateReliefTaxCode}")
-          val taxReliefDetails = TaxReliefDetails(taxReliefCode = zeroRateReliefTaxCode, isPartialRelief = None)
-          val res = testFreeholdCalcService.calcTaxReliefResponseIfAny(
-            baseRequestIndividual(75000000, march2012EffectiveDate, taxReliefDetails = Some(taxReliefDetails)))
-          res shouldBe Some(
-            CalculationResponse( Seq(expectedRes) )
-          )
-      }
-    }
-    "return zero tax response for all TR::zero codes: residential and linked" in {
-      forAll(zeroRateTaxReliefGen) {
-        zeroRateReliefTaxCode =>
-          val taxReliefDetails = TaxReliefDetails(taxReliefCode = zeroRateReliefTaxCode, isPartialRelief = None)
-          val res = testFreeholdCalcService.calcTaxReliefResponseIfAny(
-            baseRequestIndividual(75000000, march2012EffectiveDate, taxReliefDetails = Some(taxReliefDetails), linked = true) )
-          res shouldBe None
-      }
-    }
-
-    "return zero tax response for all TR::zero codes: nonResidential and not linked" in {
-      val calcDetails = CalculationDetails(
-        taxType = TaxTypes.premium,
-        calcType = CalcTypes.slab,
-        taxDue = 0,
-        detailHeading = None,
-        bandHeading = None,
-        detailFooter = None,
-        rate = Some(0),
-        slices = None
-      )
-      val expectedRes = Result(
-        totalTax = 0,
-        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
-        resultHint = None,
-        npv = None,
-        taxCalcs = Seq(calcDetails)
-      )
-
-      forAll(zeroRateTaxReliefGen) {
-        zeroRateReliefTaxCode =>
-          val taxReliefDetails = TaxReliefDetails(taxReliefCode = zeroRateReliefTaxCode, isPartialRelief = None)
-          val res = testFreeholdCalcService.calcTaxReliefResponseIfAny(
-            baseRequestCompany(75000000, march2012EffectiveDate, taxReliefDetails = Some(taxReliefDetails), linked = false))
-          res shouldBe Some(
-            CalculationResponse( Seq(expectedRes) )
-          )
-      }
-    }
-
-    "return zero tax response for all TR::zero codes: nonResidential and linked" in {
-      val calcDetails = CalculationDetails(
-        taxType = TaxTypes.premium,
-        calcType = CalcTypes.slab,
-        taxDue = 0,
-        detailHeading = None,
-        bandHeading = None,
-        detailFooter = None,
-        rate = Some(0),
-        slices = None
-      )
-      val expectedRes = Result(
-        totalTax = 0,
-        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
-        resultHint = None,
-        npv = None,
-        taxCalcs = Seq(calcDetails)
-      )
-
-      forAll(zeroRateTaxReliefGen) {
-        zeroRateReliefTaxCode =>
-          val taxReliefDetails = TaxReliefDetails(taxReliefCode = zeroRateReliefTaxCode, isPartialRelief = None)
-          val res = testFreeholdCalcService.calcTaxReliefResponseIfAny(
-            baseRequestCompany(75000000, march2012EffectiveDate, taxReliefDetails = Some(taxReliefDetails), linked = true))
-          res shouldBe None
+        _ =>
+          val res = testFreeholdCalcService.zeroRateTaxReliefForFreehold
+          res shouldBe CalculationResponse(Seq(expectedRes))
       }
     }
   }

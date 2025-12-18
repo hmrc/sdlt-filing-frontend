@@ -5,10 +5,9 @@
 
 package services
 
-import data.{Dates, SlabRatesTables}
 import data.FreeholdSliceRatesTables._
+import data.{Dates, SlabRatesTables}
 import enums.{CalcTypes, TaxTypes}
-import enums.sdltRebuild.{ZeroRate}
 import exceptions.RequiredValueNotDefinedException
 import factories.FreeholdResultFactory
 import models.{CalculationDetails, CalculationResponse, Request, Result}
@@ -506,38 +505,28 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
   }
 
-  def calcTaxReliefResponseIfAny(request: Request): Option[CalculationResponse] = {
-    val zeroRateCalcDetails = CalculationDetails(
-      taxType = TaxTypes.premium,
-      calcType = CalcTypes.slab,
-      taxDue = 0,
-      detailHeading = None,
-      bandHeading = None,
-      detailFooter = None,
-      rate = Some(0),
-      slices = None
-    )
-    if (!request.isLinked) { // Only not linked case permitted apply taxRelief::=> Zero rate case
-      request.taxReliefDetails.flatMap { taxReliefDetails =>
-        taxReliefDetails.taxReliefCode match {
-          case taxReliefCode if taxReliefCode.isInstanceOf[ZeroRate] =>
-            val nonLeaseTaxRelief: Result = Result(
-                totalTax = 0,
-                resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
-                resultHint = None,
-                npv = None,
-                taxCalcs = Seq(zeroRateCalcDetails)
+  val zeroRateTaxReliefForFreehold: CalculationResponse =
+    CalculationResponse(
+      Seq(
+        Result(
+          totalTax = 0,
+          resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+          resultHint = None,
+          npv = None,
+          taxCalcs = Seq(
+            CalculationDetails(
+              taxType = TaxTypes.premium,
+              calcType = CalcTypes.slab,
+              taxDue = 0,
+              detailHeading = None,
+              bandHeading = None,
+              detailFooter = None,
+              rate = Some(0),
+              slices = None
             )
-            val updatedResult = Seq(nonLeaseTaxRelief)
-            Some(CalculationResponse(updatedResult))
-          case taxReliefCode =>
-            throw new Error(s"TaxRelief logic not yet implemented: ${taxReliefCode}")
-        }
-      }
-    }
-    else { // fallback to the main calculation chain
-      None
-    }
-  }
+          )
+        )
+      )
+    )
 
 }

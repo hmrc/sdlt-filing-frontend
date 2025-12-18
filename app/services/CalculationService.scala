@@ -6,14 +6,17 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import enums.{HoldingTypes, PropertyTypes}
+import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.InvalidDateException
-import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
+import models.{CalculationDetails, CalculationResponse, LeaseDetails, PropertyDetails, Request, Result}
 import data.Dates
+import enums.sdltRebuild.TaxReliefCode.zeroRateCodes
+import enums.sdltRebuild.ZeroRate
 import utils.DateUtil
 import utils.CalculationUtils.isAfterSept2022AndBeforeApril2025
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, leaseholdNRSDLTOutOfScope,isAfterOct2024AndBeforeApril2025,isAfterSep2022AndBeforeOct24}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, leaseholdNRSDLTOutOfScope}
 import exceptions.RequiredValueNotDefinedException
+import models.sdltRebuild.TaxReliefDetails
 
 @Singleton
 class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalculationService,
@@ -21,27 +24,17 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
                                    val additionalPropertyService: AdditionalPropertyService) extends DateUtil {
 
   def calculateTax(request: Request): CalculationResponse = {
-    request.holdingType match {
-      case HoldingTypes.freehold =>
-        request.propertyType match {
-          case PropertyTypes.residential =>
-            freeCalculationService
-              .calcTaxReliefResponseIfAny(request)
-              .getOrElse(calculateFreeholdResidentialTax(request))
-          case PropertyTypes.nonResidential =>
-            freeCalculationService
-              .calcTaxReliefResponseIfAny(request)
-                .getOrElse(calculateFreeholdNonResidentialTax(request))
+    (request.taxReliefDetails, request.isLinked) match {
+      case (_, true) => throw new Error("Linked logic not yet implemented")
+      case (Some(taxReliefDetails), false) => calculateTaxRelief(request.holdingType, taxReliefDetails)
+      case _ =>
+        (request.holdingType, request.propertyType) match {
+          case (HoldingTypes.leasehold, PropertyTypes.residential) => calculateLeaseholdResidentialTax(request)
+          case (HoldingTypes.leasehold, PropertyTypes.nonResidential) => calculateLeaseholdNonResidentialTax(request)
+          case (HoldingTypes.freehold, PropertyTypes.residential) => calculateFreeholdResidentialTax(request)
+          case (HoldingTypes.freehold, PropertyTypes.nonResidential) => calculateFreeholdNonResidentialTax(request)
           case _ => throw new RequiredValueNotDefinedException("Value not defined")
         }
-
-      case HoldingTypes.leasehold =>
-        request.propertyType match {
-          case PropertyTypes.residential => calculateLeaseholdResidentialTax(request)
-          case PropertyTypes.nonResidential => calculateLeaseholdNonResidentialTax(request)
-          case _ => throw new RequiredValueNotDefinedException("Value not defined")
-        }
-      case _ => throw new RequiredValueNotDefinedException("Value not defined")
     }
   }
 
@@ -362,5 +355,17 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     leaseDetails.fold[Option[Int]](None)(leaseDets => Some(leaseDets.leaseTerm.years))
   }
 
+  def calculateTaxRelief(holdingType: HoldingTypes.Value,
+                         taxReliefDetails: TaxReliefDetails): CalculationResponse = {
+
+    (holdingType, taxReliefDetails.taxReliefCode) match {
+      case (HoldingTypes.freehold, taxReliefCode) if zeroRateCodes.contains(taxReliefCode) =>
+        freeCalculationService.zeroRateTaxReliefForFreehold
+      case (holdingType, taxReliefCode) =>
+        throw new Error(
+          s"TaxRelief logic not yet implemented for taxReliefCode: ${taxReliefCode} and holding type: $holdingType"
+        )
+    }
+  }
 
 }
