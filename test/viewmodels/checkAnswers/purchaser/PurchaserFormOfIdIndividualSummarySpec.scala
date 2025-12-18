@@ -37,7 +37,7 @@ class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", Some("Germany"))).success.value
+            .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", "Germany")).success.value
 
           val result = PurchaserFormOfIdIndividualSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
@@ -62,7 +62,7 @@ class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", Some("Germany"))).success.value
+            .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", "Germany")).success.value
 
           val result = PurchaserFormOfIdIndividualSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 

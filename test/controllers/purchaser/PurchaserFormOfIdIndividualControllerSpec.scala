@@ -60,7 +60,7 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
 
   val userAnswersWithPurchaserNameAndIDAndNoNino: UserAnswers = emptyUserAnswers
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
-    .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", Some("Germany"))).success.value
+    .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", "Germany")).success.value
     .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
     .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
 
@@ -139,7 +139,7 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          form.fill(PurchaserFormOfIdIndividual("123456", Some("Germany"))),
+          form.fill(PurchaserFormOfIdIndividual("123456", "Germany")),
           NormalMode,
           "John Smith"
         )(request, messages(application)).toString

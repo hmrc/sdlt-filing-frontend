@@ -18,7 +18,7 @@ package models.purchaser
 
 import play.api.libs.json.*
 
-case class PurchaserFormOfIdIndividual (idNumberOrReference: String, countryIssued: Option[String])
+case class PurchaserFormOfIdIndividual (idNumberOrReference: String, countryIssued: String)
 
 object PurchaserFormOfIdIndividual {
 

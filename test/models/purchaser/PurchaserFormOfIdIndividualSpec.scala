@@ -25,13 +25,9 @@ class PurchaserFormOfIdIndividualSpec extends AnyFreeSpec with Matchers with Eit
 
   "PurchaserFormOfIdIndividual" - {
 
-    val validJsonWithOptional: JsObject = Json.obj(
+    val validJson: JsObject = Json.obj(
       "idNumberOrReference" -> "123456",
       "countryIssued" -> "Germany"
-    )
-
-    val validJsonWithoutOptional: JsObject = Json.obj(
-      "idNumberOrReference" -> "123456"
     )
 
     val invalidJson: JsObject = Json.obj(
@@ -42,15 +38,14 @@ class PurchaserFormOfIdIndividualSpec extends AnyFreeSpec with Matchers with Eit
     val missingRequiredFieldJson: JsObject = Json.obj(
       "countryIssued" -> "Germany"
     )
-    
-    val purchaserFormOfIdIndividualWithOptional: PurchaserFormOfIdIndividual = PurchaserFormOfIdIndividual(
-      idNumberOrReference = "123456",
-      countryIssued = Some("Germany")
+
+    val missingRequiredCountryFieldJson: JsObject = Json.obj(
+      "idNumberOrReference" -> "123456"
     )
     
-    val purchaserFormOfIdIndividualWithoutOptional: PurchaserFormOfIdIndividual = PurchaserFormOfIdIndividual(
+    val purchaserFormOfIdIndividualComplete: PurchaserFormOfIdIndividual = PurchaserFormOfIdIndividual(
       idNumberOrReference = "123456",
-      countryIssued = None
+      countryIssued = "Germany"
     )
 
     ".reads" - {
@@ -61,21 +56,12 @@ class PurchaserFormOfIdIndividualSpec extends AnyFreeSpec with Matchers with Eit
 
       "must deserialize valid JSON" - {
 
-        "with all values" in {
-          val result = Json.fromJson[PurchaserFormOfIdIndividual](validJsonWithOptional).asEither.value
-
-          result mustBe PurchaserFormOfIdIndividual(
-            idNumberOrReference = "123456",
-            countryIssued = Some("Germany")
-          )
-        }
-
         "with all required values" in {
-          val result = Json.fromJson[PurchaserFormOfIdIndividual](validJsonWithoutOptional).asEither.value
+          val result = Json.fromJson[PurchaserFormOfIdIndividual](validJson).asEither.value
 
           result mustBe PurchaserFormOfIdIndividual(
             idNumberOrReference = "123456",
-            countryIssued = None
+            countryIssued = "Germany"
           )
         }
       }
@@ -86,8 +72,14 @@ class PurchaserFormOfIdIndividualSpec extends AnyFreeSpec with Matchers with Eit
         result.isLeft mustBe true
       }
 
-      "must fail when required field is missing" in {
+      "must fail when required ID field is missing" in {
         val result = Json.fromJson[PurchaserFormOfIdIndividual](missingRequiredFieldJson).asEither
+
+        result.isLeft mustBe true
+      }
+
+      "must fail when required country field is missing" in {
+        val result = Json.fromJson[PurchaserFormOfIdIndividual](missingRequiredCountryFieldJson).asEither
 
         result.isLeft mustBe true
       }
@@ -102,17 +94,10 @@ class PurchaserFormOfIdIndividualSpec extends AnyFreeSpec with Matchers with Eit
       "must serialize PurchaserFormOfIdIndividual" - {
 
         "with all values" in {
-          val json = Json.toJson(purchaserFormOfIdIndividualWithOptional)
+          val json = Json.toJson(purchaserFormOfIdIndividualComplete)
 
           (json \ "idNumberOrReference").as[String] mustBe "123456"
           (json \ "countryIssued").as[String] mustBe "Germany"
-        }
-
-        "with all required values" in {
-          val json = Json.toJson(purchaserFormOfIdIndividualWithoutOptional)
-
-          (json \ "idNumberOrReference").as[String] mustBe "123456"
-          (json \ "countryIssued").asOpt[String] mustBe None
         }
       }
     }
@@ -121,18 +106,11 @@ class PurchaserFormOfIdIndividualSpec extends AnyFreeSpec with Matchers with Eit
 
       "must round-trip" - {
 
-        "with all values" in {
-          val json = Json.toJson(validJsonWithOptional)
-          val result = Json.fromJson[PurchaserFormOfIdIndividual](json).asEither.value
-
-          result mustEqual purchaserFormOfIdIndividualWithOptional
-        }
-
         "with all required values" in {
-          val json = Json.toJson(validJsonWithoutOptional)
+          val json = Json.toJson(validJson)
           val result = Json.fromJson[PurchaserFormOfIdIndividual](json).asEither.value
 
-          result mustEqual purchaserFormOfIdIndividualWithoutOptional
+          result mustEqual purchaserFormOfIdIndividualComplete
         }
       }
     }

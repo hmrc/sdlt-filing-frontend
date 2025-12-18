@@ -31,8 +31,7 @@ object PurchaserFormOfIdIndividualSummary  {
     answers.get(PurchaserFormOfIdIndividualPage).map {
       answer =>
 
-      val value = HtmlFormat.escape(answer.idNumberOrReference).toString +
-        answer.countryIssued.map(countryIssued => "<br/>" + HtmlFormat.escape(countryIssued).toString).getOrElse("")
+      val value = HtmlFormat.escape(answer.idNumberOrReference).toString + "<br/>" + HtmlFormat.escape(answer.countryIssued).toString
 
         SummaryListRowViewModel(
           key     = "purchaser.formOfIdIndividual.checkYourAnswersLabel",

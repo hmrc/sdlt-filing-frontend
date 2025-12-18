@@ -37,8 +37,8 @@ class PurchaserFormOfIdIndividualFormProvider @Inject() extends Mappings {
         .verifying(maxLength(idNumberOrReferenceMaxLength, "purchaser.formOfIdIndividual.error.idNumberOrReference.length"))
         .verifying(regexp(formIdNumberOrReferenceRegex, "purchaser.formOfIdIndividual.error.idNumberOrReference.invalid")),
 
-       "countryIssued" -> optionalText()
-         .verifying(optionalMaxLength(countryIssuedMaxLength, "purchaser.formOfIdIndividual.error.countryIssued.length"))
-         .verifying(optionalRegexp(formCountryIssuedRegex, "purchaser.formOfIdIndividual.error.countryIssued.invalid"))
+       "countryIssued" -> text("purchaser.formOfIdIndividual.error.countryIssued.required")
+         .verifying(maxLength(countryIssuedMaxLength, "purchaser.formOfIdIndividual.error.countryIssued.length"))
+         .verifying(regexp(formCountryIssuedRegex, "purchaser.formOfIdIndividual.error.countryIssued.invalid"))
     )(PurchaserFormOfIdIndividual.apply)(o => Some(Tuple.fromProductTyped(o))))
  }
