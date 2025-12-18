@@ -62,7 +62,11 @@ class Navigator @Inject()() {
 
   private def isPurchaserSection(page: Page): Boolean = page match {
 
-    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | CompanyFormOfIdPage => true
+    case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage
+         | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage
+         | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage
+         | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | PurchaserTypeOfCompanyPage
+         | CompanyFormOfIdPage => true
 
     case _ => false
   }
@@ -84,14 +88,16 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)
     case PurchaserFormOfIdIndividualPage =>
       _ => routes.ReturnTaskListController.onPageLoad() // TODO: Update to pr-6 'Is the Purchaser a trustee?' in DTR-1682
-    case PurchaserPartnershipUtrPage => //TODO: to be updated to 'type of business' (DTR-1679 pr-9 - sprint 5)
-      _ => controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(NormalMode)
-    case PurchaserCorporationTaxUTRPage => //TODO: to be updated to 'type of business' (DTR-1679 pr-9 - sprint 5)
-     _ => controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(NormalMode)
-    case RegistrationNumberPage => //TODO update post pr-9 page implementation in future sprints
-      _ => controllers.routes.ReturnTaskListController.onPageLoad()
-    case CompanyFormOfIdPage => //TODO: to be updated to 'type of business' (DTR-1679 pr-9 - sprint 5)
-      _ => controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(NormalMode)
+    case PurchaserPartnershipUtrPage =>
+      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+    case PurchaserCorporationTaxUTRPage =>
+     _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+    case RegistrationNumberPage =>
+      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+    case PurchaserTypeOfCompanyPage =>
+      _ => routes.ReturnTaskListController.onPageLoad()//TODO Update to PR-6 DTR-1682
+    case CompanyFormOfIdPage =>
+      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

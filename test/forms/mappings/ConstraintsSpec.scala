@@ -326,4 +326,16 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       result mustBe Invalid("purchaser.registrationNumber.error.regex.invalid", "^[0-9]*$")
     }
   }
+  
+  "maxCheckboxes" - {
+    "must return Valid for a number less than the threshold" in {
+      val result = maxCheckboxes(4, "error.max").apply(Set(1, 2, 3))
+      result mustEqual Valid
+    }
+
+    "must return Invalid for a number more than the threshold" in {
+      val result = maxCheckboxes(2, "error.max").apply(Set(1, 2, 3))
+        result mustBe Invalid("error.max")
+    }
+  }
 }

@@ -144,8 +144,8 @@ POST       /about-the-vendor/enter-agent-contact-details/change               co
 
 GET         /about-the-vendor/add-agent-reference-number                        controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-vendor/add-agent-reference-number                          controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/change/add-agent-reference-number                    controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/change/add-agent-reference-number                   controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/add-agent-reference-number/change                    controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/add-agent-reference-number/change                   controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-vendor/check-answers                          controllers.vendor.VendorCheckYourAnswersController.onPageLoad()
 POST        /about-the-vendor/check-answers                          controllers.vendor.VendorCheckYourAnswersController.onSubmit()
@@ -199,3 +199,9 @@ GET        /about-the-purchaser/form-of-id-company                              
 POST       /about-the-purchaser/form-of-id-company                                                controllers.purchaser.CompanyFormOfIdController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/form-of-id-company/change                                           controllers.purchaser.CompanyFormOfIdController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/form-of-id-company/change                                         controllers.purchaser.CompanyFormOfIdController.onSubmit(mode: Mode = CheckMode)
+
+
+GET        /about-the-purchaser/type-of-company                         controllers.purchaser.PurchaserTypeOfCompanyController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/type-of-company                         controllers.purchaser.PurchaserTypeOfCompanyController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/type-of-company/change                  controllers.purchaser.PurchaserTypeOfCompanyController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/type-of-company/change                  controllers.purchaser.PurchaserTypeOfCompanyController.onSubmit(mode: Mode = CheckMode)
