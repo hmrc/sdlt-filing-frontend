@@ -144,7 +144,12 @@ class VendorAddressControllerSpec extends SpecBase with MockitoSugar {
 
       "must redirect to vendor name page when vendor name is missing" in {
 
-        val application = applicationBuilder(userAnswers = Some(testUserAnswersMissingVendorName))
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswersMissingVendorName)))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswersMissingVendorName)).overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
           .build()
 
         running(application) {
