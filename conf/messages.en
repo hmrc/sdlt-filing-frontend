@@ -568,3 +568,10 @@ purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                       
 purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                                        = What type of company is the purchaser? – About the purchaser
 purchaser.purchaserTypeOfCompany.error.required                                               = Select purchaserTypeOfCompany
 purchaser.purchaserTypeOfCompany.change.hidden                                                = PurchaserTypeOfCompany
+
+purchaser.purchaserAndVendorConnected.title                                         = Are the purchaser and the vendor connected? - About the purchaser
+purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor(s) connected?
+purchaser.purchaserAndVendorConnected.checkYourAnswersLabel                         = purchaserAndVendorConnected
+purchaser.purchaserAndVendorConnected.error.required                                = Please select an option
+purchaser.purchaserAndVendorConnected.change.hidden                                 = PurchaserAndVendorConnected
+purchaser.purchaserAndVendorConnected.hint                                          = A purchaser and vendor can be connected in different ways, like a marriage, civil partnership, family link or business interest

@@ -66,7 +66,7 @@ class Navigator @Inject()() {
          | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage
          | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage
          | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | PurchaserTypeOfCompanyPage
-         | CompanyFormOfIdPage => true
+         | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage=> true
 
     case _ => false
   }
@@ -98,6 +98,8 @@ class Navigator @Inject()() {
       _ => routes.ReturnTaskListController.onPageLoad()//TODO Update to PR-6 DTR-1682
     case CompanyFormOfIdPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+    case PurchaserAndVendorConnectedPage => // TODO: update post pr-cya - DTR-1788 page created - (DTR-1687 -Sprint 5)
+      - => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
