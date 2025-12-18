@@ -18,7 +18,7 @@ package generators
 
 import models.*
 import models.prelimQuestions.TransactionType
-import models.purchaser.{CompanyFormOfId, DoesPurchaserHaveNI, PurchaserConfirmIdentity, WhoIsMakingThePurchase}
+import models.purchaser.{CompanyFormOfId, DoesPurchaserHaveNI, PurchaserConfirmIdentity, WhoIsMakingThePurchase, PurchaserTypeOfCompany}
 import models.vendor.whoIsTheVendor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -42,6 +42,11 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(DoesPurchaserHaveNI.values.toSeq)
     }
+
+  implicit lazy val arbitraryPurchaserTypeOfCompany: Arbitrary[PurchaserTypeOfCompany] =
+     Arbitrary {
+       Gen.oneOf(PurchaserTypeOfCompany.values.toSeq)
+     }
 
   implicit lazy val arbitraryWhoIsMakingThePurchase: Arbitrary[WhoIsMakingThePurchase] =
     Arbitrary {

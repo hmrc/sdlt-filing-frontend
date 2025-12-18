@@ -114,26 +114,28 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
         }
 
-        "go from PurchaserFormOfIdIndividualPage to Return Task List Controller" in {
+        "go from PurchaserFormOfIdIndividualPage to ReturnTaskList" in {
           navigator.nextPage(PurchaserFormOfIdIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
 
         "go from addPhoneNumberPage to enterPhoneNumberPage" in {
           navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
         }
-
-        // TODO DTR-1679: Redirect to 'type of business' (pr-9)
-        "go from PurchaserPartnershipUtrPage to PurchaserPartnershipUtrPage" in {
-          navigator.nextPage(PurchaserPartnershipUtrPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(mode = NormalMode)
+        
+        "go from PurchaserPartnershipUtrPage to PurchaserType Page" in {
+          navigator.nextPage(PurchaserPartnershipUtrPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
-        "go from PurchaserCorporationTaxUTRPage to PurchaserCorporationTaxUTRPage" in { // TODO DTR-1679: Redirect to 'type of business' (pr-9)
-          navigator.nextPage(PurchaserCorporationTaxUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(mode = NormalMode)
+        "go from PurchaserCorporationTaxUTRPage to PurchaserType Page" in {
+          navigator.nextPage(PurchaserCorporationTaxUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
-        // TODO DTR-1679: Redirect to 'type of business' (pr-9)
-        "go from CompanyFormOfIdPage to CompanyFormOfIdPage"in {
-          navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(mode = NormalMode)
+        "go from PurchaserTypePage to ReturnTaskList" in { //TODO: update route for pr-6 (DTR-1682)
+          navigator.nextPage(PurchaserTypeOfCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        }
+        
+        "go from CompanyFormOfIdPage to PurchaserType page"in {
+          navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
       }
     }
@@ -172,9 +174,9 @@ class NavigatorSpec extends SpecBase {
 
         navigator.nextPage(NameOfPurchaserPage, NormalMode, userAnswers) mustBe
           controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
-        //TODO update post pr-9 page implementation in future sprints
+        
          navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
-           controllers.routes.ReturnTaskListController.onPageLoad()
+           controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
       }
 
       "must return false for non-purchaser section pages" in {

@@ -546,3 +546,25 @@ purchaser.companyFormOfId.error.countryIssued.length                            
 purchaser.companyFormOfId.error.countryIssued.invalid                               = Country of issue is invalid
 purchaser.companyFormOfId.referenceId.change.hidden                                 = ID number or reference
 purchaser.companyFormOfId.countryIssued.change.hidden                               = Country of issue
+
+purchaser.purchaserTypeOfCompany.title                                                        = What type of company is the purchaser? – About the purchaser
+purchaser.purchaserTypeOfCompany.heading                                                      = What type of company is {0}?
+purchaser.purchaserTypeOfCompany.hint                                                         = Select up to four.
+purchaser.purchaserTypeOfCompany.bank                                                         = Bank
+purchaser.purchaserTypeOfCompany.buildingAssociation                                          = Building association
+purchaser.purchaserTypeOfCompany.centralGovernment                                            = Central government
+purchaser.purchaserTypeOfCompany.individualOther                                              = Individual other than sole trader
+purchaser.purchaserTypeOfCompany.insuranceAssurance                                           = Insurance/Assurance company
+purchaser.purchaserTypeOfCompany.localAuthority                                               = Local authority
+purchaser.purchaserTypeOfCompany.partnership                                                  = Partnership
+purchaser.purchaserTypeOfCompany.propertyCompany                                              = Property company
+purchaser.purchaserTypeOfCompany.publicCorporation                                            = Public corporation
+purchaser.purchaserTypeOfCompany.otherCompany                                                 = Other company
+purchaser.purchaserTypeOfCompany.otherFinancialInstitute                                      = Other financial institute
+purchaser.purchaserTypeOfCompany.otherIncludingCharity                                        = Other, including charity
+purchaser.purchaserTypeOfCompany.superannuationOrPensionFund                                  = Superannuation or pension fund
+purchaser.purchaserTypeOfCompany.unincorporatedBuilder                                        = Unincorporated builder
+purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                                     = Unincorporated sole trader other than builder
+purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                                        = What type of company is the purchaser? – About the purchaser
+purchaser.purchaserTypeOfCompany.error.required                                               = Select purchaserTypeOfCompany
+purchaser.purchaserTypeOfCompany.change.hidden                                                = PurchaserTypeOfCompany

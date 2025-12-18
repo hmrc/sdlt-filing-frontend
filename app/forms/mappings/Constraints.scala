@@ -224,4 +224,12 @@ trait Constraints {
     )
   }
 
+  protected def maxCheckboxes(maximumSelection: Int, errorKey: String): Constraint[Set[_]] =
+    Constraint {
+      case set if set.size <= maximumSelection =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
+    }
+
 }
