@@ -469,6 +469,7 @@ purchaser.formOfIdIndividual.checkYourAnswersLabel                              
 purchaser.formOfIdIndividual.error.idNumberOrReference.required                     = Enter ID number or reference
 purchaser.formOfIdIndividual.error.idNumberOrReference.length                       = ID number or reference must be 14 characters or less
 purchaser.formOfIdIndividual.error.idNumberOrReference.invalid                      = ID number or reference is invalid
+purchaser.formOfIdIndividual.error.countryIssued.required                           = Enter country of issue
 purchaser.formOfIdIndividual.error.countryIssued.length                             = Country of issue must be 28 characters or less
 purchaser.formOfIdIndividual.error.countryIssued.invalid                            = Country of issue is invalid
 purchaser.formOfIdIndividual.idNumberOrReference.change.hidden                      = ID number or reference

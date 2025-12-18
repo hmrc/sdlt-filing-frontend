@@ -126,13 +126,15 @@ class PurchaserFormOfIdIndividualFormProviderSpec extends StringFieldBehaviours 
   ".countryIssued" - {
 
     val fieldName = "countryIssued"
+    val requiredKey = "purchaser.formOfIdIndividual.error.countryIssued.required"
     val lengthKey = "purchaser.formOfIdIndividual.error.countryIssued.length"
     val invalidKey = "purchaser.formOfIdIndividual.error.countryIssued.invalid"
     val maxLength = 28
 
-    behave like optionalField(
+    behave like mandatoryField(
       form,
-      fieldName
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
     )
 
     "must bind valid form data" in {
