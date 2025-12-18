@@ -5,11 +5,13 @@
 
 package services
 
-import data.{Dates, SlabRatesTables}
 import data.FreeholdSliceRatesTables._
+import data.{Dates, SlabRatesTables}
+import enums.{CalcTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import factories.FreeholdResultFactory
-import models.{Request, Result}
+import models.{CalculationDetails, CalculationResponse, Request, Result}
+
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -502,4 +504,29 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
 
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
   }
+
+  val zeroRateTaxReliefForFreehold: CalculationResponse =
+    CalculationResponse(
+      Seq(
+        Result(
+          totalTax = 0,
+          resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+          resultHint = None,
+          npv = None,
+          taxCalcs = Seq(
+            CalculationDetails(
+              taxType = TaxTypes.premium,
+              calcType = CalcTypes.slab,
+              taxDue = 0,
+              detailHeading = None,
+              bandHeading = None,
+              detailFooter = None,
+              rate = Some(0),
+              slices = None
+            )
+          )
+        )
+      )
+    )
+
 }

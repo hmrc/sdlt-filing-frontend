@@ -10,9 +10,12 @@
 
 package services
 
+import enums.sdltRebuild._
+
 import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.InvalidDateException
+import models.sdltRebuild.TaxReliefDetails
 import models.{CalculationDetails, CalculationResponse, Result, _}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{ArgumentMatchers, MockitoSugar}
@@ -21,7 +24,8 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
-class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneAppPerSuite with BeforeAndAfterEach {
+class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneAppPerSuite
+  with BeforeAndAfterEach  {
 
   val april2021EffectiveDate: LocalDate = LocalDate.of(2021, 4, 1)
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
@@ -101,6 +105,35 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       taxReliefDetails = None,
       firstTimeBuyer = Some(true)
     )
+
+    def createRequestWithTaxRelief(hType: HoldingTypes.Value,
+                                   pType: PropertyTypes.Value, eDate: LocalDate,
+                                   premiumAmount: BigDecimal= 0,
+                                   nonUKResident: Option[Boolean] = None,
+                                   zeroTaxRelief: TaxReliefCode, linked : Boolean) = {
+      Request(
+        holdingType = hType,
+        propertyType = pType,
+        effectiveDate = eDate,
+        nonUKResident = nonUKResident,
+        premium = premiumAmount,
+        highestRent = BigDecimal(0),
+        propertyDetails = Some(
+          PropertyDetails(
+            individual = true,
+            twoOrMoreProperties = Some(false),
+            replaceMainResidence = Some(true),
+            sharedOwnership = None,
+            currentValue = None
+          )
+        ),
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = Some(true),
+        isLinked = linked,
+        taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = zeroTaxRelief, isPartialRelief = None)),
+      )
+    }
 
     "select the freeholdResidential function for March2012 to December2014" when {
       "given a request with an effective date of 3/12/2014" in{
@@ -297,7 +330,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropJuly20Onwards(testRequest)
-        
       }
 
       "given a request with an effective date of 08/7/2020 and additional property eligibility check returns true" in{
@@ -311,7 +343,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropJuly20Onwards(testRequest)
-
       }
 
       "given a request with an effective date of 11/7/2020 and additional property eligibility check returns true" in{
@@ -325,7 +356,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropJuly20Onwards(testRequest)
-        
       }
 
       "given a request with an effective date of 31/3/2021 and additional property eligibility check returns true" in{
@@ -339,7 +369,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropJuly20Onwards(testRequest)
-
       }
 
       "given a request with an effective date of 1/10/2021 and additional property eligibility check returns true" in{
@@ -353,7 +382,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropApr16Onwards(testRequest)
-
       }
 
       "given a request with an effective date of 30/11/2019,the user is an individual without twoOrMoreProperties but the premium is >500000" in {
@@ -367,7 +395,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropApr16Onwards(testRequest)
-        
       }
 
       "given a request with an effective date of 2/4/2016 and additional property eligibility check returns true" in{
@@ -381,7 +408,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropApr16Onwards(testRequest)
-        
       }
 
       "given a request with an effective date of 1/4/2016 and additional property eligibility check returns true" in{
@@ -395,7 +421,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropApr16Onwards(testRequest)
-        
       }
 
       "given a request with an effective date of 23/9/2022 and additional property eligibility check returns true" in{
@@ -405,11 +430,9 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockFreeholdCalculationService.freeholdResidentialAddPropJuly21Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropJuly21Onwards(testRequest)
-
       }
       "given a request with an effective date of 01/04/2025 and additional property eligibility check returns true" in{
         val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2025, 4, 1))
@@ -418,11 +441,9 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockFreeholdCalculationService.freeholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropApril25Onwards(testRequest)
-
       }
       "given a request with an effective date of 31/10/2024 and additional property eligibility check returns true" in{
         val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2024, 10, 31))
@@ -431,11 +452,9 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockFreeholdCalculationService.freeholdResidentialAddPropOct24BeforeApril25(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropOct24BeforeApril25(testRequest)
-
       }
     }
 
@@ -447,7 +466,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockFreeholdCalculationService.freeholdResidentialJuly21Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
@@ -460,7 +478,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
        when(mockFreeholdCalculationService.freeholdResidentialJuly21Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
@@ -488,7 +505,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), ArgumentMatchers.eq(None))).thenReturn(false)
 
         when(mockFreeholdCalculationService.freeholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), ArgumentMatchers.eq(None))
@@ -503,7 +519,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any())).thenReturn(false)
 
         when(mockFreeholdCalculationService.freeholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any())
@@ -519,7 +534,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockFreeholdCalculationService.freeholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialJuly20Onwards(testRequest)
@@ -535,7 +549,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockFreeholdCalculationService.freeholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialJuly20Onwards(testRequest)
@@ -551,7 +564,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val result = createResult("freeholdResidential, December2014 to April2016")
 
         when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(testRequest)).thenReturn(result)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(testRequest)
@@ -562,7 +574,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val result = createResult("freeholdResidential, December2014 to April2016")
 
         when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(testRequest)).thenReturn(result)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(testRequest)
@@ -575,7 +586,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(testRequest)).thenReturn(result)
 
         when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
-
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(testRequest)
@@ -585,7 +595,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
     "throw an exception for freehold residential" when {
       "given a request with an effective date of 21/3/2012" in{
         val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential,LocalDate.of(2012, 3, 21))
-
         the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
       }
     }
@@ -1133,6 +1142,26 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
       }
     }
+
+    "select freeHold / residential property with tax relief code" when {
+      "given relief code PartExchange" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2017, 11, 22),
+          zeroTaxRelief = PartExchange,
+          linked = false
+        )
+        val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
+
+        when(mockFreeholdCalculationService.zeroRateTaxReliefForFreehold).thenReturn(CalculationResponse(Seq(result)))
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
+      }
+    }
+
   }
 
   "checkFTB" must {
