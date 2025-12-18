@@ -10,7 +10,7 @@ import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.InvalidDateException
 import models.{CalculationDetails, CalculationResponse, LeaseDetails, PropertyDetails, Request, Result}
 import data.Dates
-import enums.sdltRebuild.TaxReliefCode.zeroRateCodes
+import enums.sdltRebuild.TaxReliefCode.{freeportRelief, zeroRateCodes}
 import enums.sdltRebuild.ZeroRate
 import utils.DateUtil
 import utils.CalculationUtils.isAfterSept2022AndBeforeApril2025
@@ -359,6 +359,8 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
                          taxReliefDetails: TaxReliefDetails): CalculationResponse = {
 
     (holdingType, taxReliefDetails.taxReliefCode) match {
+      case (HoldingTypes.freehold, taxReliefCode) if freeportRelief.contains(taxReliefCode) && taxReliefDetails.isPartialRelief.contains(false) =>
+        freeCalculationService.zeroRateTaxReliefForFreehold
       case (HoldingTypes.freehold, taxReliefCode) if zeroRateCodes.contains(taxReliefCode) =>
         freeCalculationService.zeroRateTaxReliefForFreehold
       case (holdingType, taxReliefCode) =>
