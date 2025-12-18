@@ -58,20 +58,17 @@ trait VendorPaginationHelper {
       if (pageVendors.forall(_.vendorResourceRef.isDefined)) {
         Some(SummaryList(
           rows = pageVendors.flatMap { vendorDetails =>
-            val fullName = (vendorDetails.forename1, vendorDetails.forename2, vendorDetails.name) match {
-              case (Some(f1), Some(f2), Some(surname)) => Some(s"$f1 $f2 $surname")
-              case (Some(f1), None, Some(surname)) => Some(s"$f1 $surname")
-              case (None, _, Some(surname)) => Some(surname)
-              case _ => None
+            val maybeFullName: Option[String] = vendorDetails.name.map {
+              name => FullName.fullName(vendorDetails.forename1, vendorDetails.forename2, name)
             }
 
             for {
-              name <- fullName
+              fullName <- maybeFullName
               vendorRef <- vendorDetails.vendorResourceRef
             } yield {
               SummaryListRow(
                 key = Key(
-                  content = Text(name),
+                  content = Text(fullName),
                   classes = "govuk-!-width-one-third govuk-!-font-weight-regular hmrc-summary-list__key"
                 ),
                 actions = Some(Actions(
@@ -79,12 +76,12 @@ trait VendorPaginationHelper {
                     ActionItem(
                       href = controllers.vendor.routes.VendorOverviewController.changeVendor(vendorRef).url,
                       content = Text(messages("site.change")),
-                      visuallyHiddenText = Some(name)
+                      visuallyHiddenText = Some(fullName)
                     ),
                     ActionItem(
                       href = controllers.vendor.routes.VendorOverviewController.removeVendor(vendorRef).url,
                       content = Text(messages("site.remove")),
-                      visuallyHiddenText = Some(name)
+                      visuallyHiddenText = Some(fullName)
                     )
                   ),
                   classes = "govuk-!-width-one-third"

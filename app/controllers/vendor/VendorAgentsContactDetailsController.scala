@@ -18,8 +18,8 @@ package controllers.vendor
 
 import controllers.actions.*
 import forms.vendor.VendorAgentsContactDetailsFormProvider
-import models.Mode
 import models.vendor.VendorAgentsContactDetails
+import models.Mode
 import navigation.Navigator
 import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorAgentsContactDetailsPage, VendorRepresentedByAgentPage}
 import play.api.data.Form
@@ -51,44 +51,46 @@ class VendorAgentsContactDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val agentName: Option[String] = request.userAnswers.get(AgentNamePage)
-
-      val agentNameExists = agentName.isDefined
-
+      val maybeAgentName: Option[String] = request.userAnswers.get(AgentNamePage)
       val isRepresentedByAgent = request.userAnswers.get(VendorRepresentedByAgentPage).getOrElse(false)
-
       val knowsAgentDetails: Boolean = request.userAnswers.get(AddVendorAgentContactDetailsPage).getOrElse(false)
 
-      if (!knowsAgentDetails || !isRepresentedByAgent) {
-        //TODO update to check your answers once created
-       Redirect(controllers.routes.IndexController.onPageLoad())
-      } else if (!agentNameExists) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
-        val preparedForm = request.userAnswers.get(VendorAgentsContactDetailsPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        val continueRoute = Ok(view(preparedForm, mode, agentName))
-        agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
+      (maybeAgentName, isRepresentedByAgent, knowsAgentDetails) match {
+        case (_, false, _) | (_, _, false) =>
+          //TODO update to check your answers once created
+          Redirect(controllers.routes.IndexController.onPageLoad())
+
+        case (None, _, _) =>
+          Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode))
+
+        case (Some(agentName), _, _) =>
+          val preparedForm = request.userAnswers.get(VendorAgentsContactDetailsPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          val continueRoute = Ok(view(preparedForm, mode, agentName))
+          agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val agentName: Option[String] = request.userAnswers
-        .get(AgentNamePage)
+      request.userAnswers.get(AgentNamePage) match {
+        case None =>
+          Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode)))
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, agentName))),
+        case Some(agentName) =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, agentName))),
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsContactDetailsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(VendorAgentsContactDetailsPage, mode, updatedAnswers))
-      )
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsContactDetailsPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(VendorAgentsContactDetailsPage, mode, updatedAnswers))
+          )
+      }
   }
 }

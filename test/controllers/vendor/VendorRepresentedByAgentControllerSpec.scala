@@ -20,6 +20,7 @@ import base.SpecBase
 import constants.FullReturnConstants
 import controllers.routes
 import forms.vendor.VendorRepresentedByAgentFormProvider
+import models.vendor.VendorName
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.scalatestplus.mockito.MockitoSugar
@@ -39,6 +40,12 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
 
   lazy val vendorRepresentedByAgentRoute: String = controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode).url
 
+  val vendorName: VendorName = VendorName(
+    forename1 = Some("John"),
+    forename2 = Some("Michael"),
+    name = "Doe"
+  )
+
   "VendorRepresentedByAgent Controller" - {
 
     "onPageLoad" - {
@@ -57,6 +64,25 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
           }
         }
+
+        "must redirect to vendor name page when vendor name is missing" in {
+
+          val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
+            returnAgent = None,
+            vendor = None
+          )
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent))
+
+          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+          running(application) {
+            val request = FakeRequest(GET, vendorRepresentedByAgentRoute)
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode).url
+          }
+        }
       }
 
       "continue route" - {
@@ -67,12 +93,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             returnAgent = None,
             vendor = None
           )
-          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent))
-
-          val vendorName: String = userAnswers
-            .get(VendorOrCompanyNamePage)
-            .map(_.name)
-            .getOrElse("the vendor")
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent)).set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -83,7 +104,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             val view = application.injector.instanceOf[VendorRepresentedByAgentView]
 
             status(result) mustEqual OK
-            contentAsString(result) mustEqual view(form, NormalMode, Some(vendorName))(request, messages(application)).toString
+            contentAsString(result) mustEqual view(form, NormalMode, vendorName.fullName)(request, messages(application)).toString
           }
         }
 
@@ -101,11 +122,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           )
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-
-          val vendorName: String = userAnswers
-            .get(VendorOrCompanyNamePage)
-            .map(_.name)
-            .getOrElse("the vendor")
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -116,7 +133,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             val view = application.injector.instanceOf[VendorRepresentedByAgentView]
 
             status(result) mustEqual OK
-            contentAsString(result) mustEqual view(form, NormalMode, Some(vendorName))(request, messages(application)).toString
+            contentAsString(result) mustEqual view(form, NormalMode, vendorName.fullName)(request, messages(application)).toString
           }
         }
 
@@ -136,11 +153,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(VendorRepresentedByAgentPage, true).success.value
-
-          val vendorName: String = userAnswers
-            .get(VendorOrCompanyNamePage)
-            .map(_.name)
-            .getOrElse("the vendor")
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -151,7 +164,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
             val view = application.injector.instanceOf[VendorRepresentedByAgentView]
 
             status(result) mustEqual OK
-            contentAsString(result) mustEqual view(form.fill(true), NormalMode, Some(vendorName))(request, messages(application)).toString
+            contentAsString(result) mustEqual view(form.fill(true), NormalMode, vendorName.fullName)(request, messages(application)).toString
           }
         }
       }
@@ -179,6 +192,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           )
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -212,6 +226,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           )
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -239,6 +254,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           )
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -276,6 +292,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           )
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -303,6 +320,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           )
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -336,6 +354,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           )
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -363,6 +382,7 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
           )
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+            .set(VendorOrCompanyNamePage, vendorName).success.value
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -379,88 +399,109 @@ class VendorRepresentedByAgentControllerSpec extends SpecBase with MockitoSugar 
 
     "onSubmit" - {
 
-        "when valid data is submitted" - {
+      "when valid data is submitted" - {
 
-          "must redirect to the next page when 'yes' is selected" in {
-            val userAnswers = emptyUserAnswers
-            val application = applicationBuilder(userAnswers = Some(userAnswers))
-              .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)))
-              .build()
+        "must redirect to the next page when 'yes' is selected" in {
+          val userAnswers = emptyUserAnswers.set(VendorOrCompanyNamePage, vendorName).success.value
+          val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)))
+            .build()
 
-            running(application) {
-              val request =
-                FakeRequest(POST, vendorRepresentedByAgentRoute)
-                  .withFormUrlEncodedBody(("value", "true"))
+          running(application) {
+            val request =
+              FakeRequest(POST, vendorRepresentedByAgentRoute)
+                .withFormUrlEncodedBody(("value", "true"))
 
-              val result = route(application, request).value
+            val result = route(application, request).value
 
-              status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value mustEqual onwardRoute.url
-            }
-          }
-
-          "must redirect to check your answers when 'no' is selected" in {
-
-          }
-            val userAnswers = emptyUserAnswers
-            val application = applicationBuilder(userAnswers = Some(userAnswers))
-              .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)))
-              .build()
-
-            running(application) {
-              val request =
-                FakeRequest(POST, vendorRepresentedByAgentRoute)
-                  .withFormUrlEncodedBody(("value", "false"))
-
-              val result = route(application, request).value
-
-              status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
-            }
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual onwardRoute.url
           }
         }
 
-        "when invalid data is submitted" - {
+        "must redirect to check your answers when 'no' is selected" in {
+          val userAnswers = emptyUserAnswers.set(VendorOrCompanyNamePage, vendorName).success.value
+          val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(bind[Navigator].toInstance(new FakeNavigator(onwardRoute)))
+            .build()
 
-          "must return a Bad Request and errors when invalid data is submitted" in {
+          running(application) {
+            val request =
+              FakeRequest(POST, vendorRepresentedByAgentRoute)
+                .withFormUrlEncodedBody(("value", "false"))
 
-            val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+            val result = route(application, request).value
 
-            running(application) {
-              val request =
-                FakeRequest(POST, vendorRepresentedByAgentRoute)
-                  .withFormUrlEncodedBody(("value", ""))
-
-              val boundForm = form.bind(Map("value" -> ""))
-
-              val view = application.injector.instanceOf[VendorRepresentedByAgentView]
-
-              val result = route(application, request).value
-
-              status(result) mustEqual BAD_REQUEST
-              contentAsString(result) mustEqual view(boundForm, NormalMode, Some("the vendor"))(request, messages(application)).toString
-            }
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
           }
         }
 
-        "when no existing data is found" - {
+        "must redirect to vendor name page when vendor name is missing" in {
 
-          "must redirect to Journey Recovery for a POST if no existing data is found" in {
+          val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
+            returnAgent = None,
+            vendor = None
+          )
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent))
 
-            val application = applicationBuilder(userAnswers = None).build()
+          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-            running(application) {
-              val request =
-                FakeRequest(POST, vendorRepresentedByAgentRoute)
-                  .withFormUrlEncodedBody(("value", "true"))
+          running(application) {
+            val request =
+              FakeRequest(POST, vendorRepresentedByAgentRoute)
+                .withFormUrlEncodedBody(("value", "true"))
+            val result = route(application, request).value
 
-              val result = route(application, request).value
-
-              status(result) mustEqual SEE_OTHER
-              redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-            }
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode).url
           }
-
         }
       }
+    }
+
+    "when invalid data is submitted" - {
+
+      "must return a Bad Request and errors when invalid data is submitted" in {
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers.set(VendorOrCompanyNamePage, vendorName).success.value)
+        ).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, vendorRepresentedByAgentRoute)
+              .withFormUrlEncodedBody(("value", ""))
+
+          val boundForm = form.bind(Map("value" -> ""))
+
+          val view = application.injector.instanceOf[VendorRepresentedByAgentView]
+
+          val result = route(application, request).value
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(boundForm, NormalMode, vendorName.fullName)(request, messages(application)).toString
+        }
+      }
+    }
+
+    "when no existing data is found" - {
+
+      "must redirect to Journey Recovery for a POST if no existing data is found" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, vendorRepresentedByAgentRoute)
+              .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+    }
   }
+}

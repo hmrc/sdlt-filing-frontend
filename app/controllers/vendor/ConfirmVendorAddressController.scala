@@ -52,7 +52,7 @@ class ConfirmVendorAddressController @Inject()(
 
       userAnswers.get(VendorOrCompanyNamePage) match {
         case None =>
-          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          Redirect(controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(mode))
 
         case Some(vn) =>
           val vendorOrCompanyName = vn.fullName
@@ -88,7 +88,7 @@ class ConfirmVendorAddressController @Inject()(
 
       userAnswers.get(VendorOrCompanyNamePage) match {
         case None =>
-          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          Redirect(controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(mode))
 
         case Some(vn) =>
           val vendorOrCompanyName = vn.fullName

@@ -28,7 +28,7 @@
         caption: Caption
 )
 
-@(form: Form[_], mode: Mode, agentName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("agent.vendorAgentsContactDetails.title"))) {
 
@@ -44,7 +44,7 @@
             Fieldset(
                 legend = Some(
                     LegendViewModel(
-                        messages("agent.vendorAgentsContactDetails.heading", agentName.getOrElse(messages("agent.vendorAgentsContactDetails.theAgent")))
+                        messages("agent.vendorAgentsContactDetails.heading", agentName)
                     ).asPageHeading(size = Large)
                 ),
                 html = HtmlFormat.fill(Seq(

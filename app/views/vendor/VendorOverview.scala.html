@@ -63,7 +63,7 @@
         @govukNotificationBanner(
             NotificationBanner(
                 title = messages("site.success"),
-                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("vendor.vendorOverview.vendorRemoved", if(!vendorName.isBlank) then vendorName else messages("site.vendor.caption"))}</h3>"""),
+                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("vendor.vendorOverview.vendorRemoved", if(!vendorName.isBlank) then vendorName else messages("vendor.vendorOverview.aVendor"))}</h3>"""),
                 bannerType = Some("success"),
                 role = Some("alert")
             )
