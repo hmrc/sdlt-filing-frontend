@@ -23,7 +23,6 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneAppPerSuite
   with BeforeAndAfterEach  {

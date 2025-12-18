@@ -1,0 +1,106 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ */
+
+package freehold
+
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.Application
+import play.api.http.Status._
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
+import play.api.libs.ws.{WSClient, WSResponse}
+import test.base.BaseSpec
+
+class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOneServerPerSuite {
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .configure()
+    .build()
+
+  lazy val calculateUrl = s"http://localhost:$port/calculate-stamp-duty-land-tax/calculate"
+
+  lazy val ws: WSClient = app.injector.instanceOf[WSClient]
+
+  "Hitting the /calculate route" should {
+
+    "return a 200 and valid result for freehold property type" when {
+
+      "with tax relief code: PartExchange(8)" when {
+
+        "residential" in {
+          def request: WSResponse = ws.url(
+            calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{"holdingType":"Freehold",
+                  |"propertyType":"Residential",
+                  |"effectiveDateDay":1,
+                  |"effectiveDateMonth":1,
+                  |"effectiveDateYear":2020,
+                  |"highestRent":0,"premium":"750000",
+                  |"propertyDetails":{"individual":"Yes",
+                  |"twoOrMoreProperties":"No"},
+                  |"firstTimeBuyer":"No",
+                  |"isLinked": false,
+                  |"taxReliefDetails": { "taxReliefCode": 8,
+                  |"isPartialRelief": false }
+                  |}""".stripMargin
+              )
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{"result":[{"totalTax":0,
+              |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+              |"taxCalcs":[{"taxType":"premium",
+              |"calcType":"slab",
+              |"taxDue":0,
+              |"rate":0}]}]}
+              |""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+
+        "non-residential" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{"holdingType":"Freehold",
+                  |"propertyType":"Non-residential",
+                  |"effectiveDateDay":1,
+                  |"effectiveDateMonth":1,
+                  |"effectiveDateYear":2020,
+                  |"highestRent":0,"premium":"750000",
+                  |"propertyDetails":{"individual":"Yes",
+                  |"twoOrMoreProperties":"No"},
+                  |"firstTimeBuyer":"No",
+                  |"isLinked": false,
+                  |"taxReliefDetails": { "taxReliefCode": 8,
+                  |"isPartialRelief": false }
+                  |}""".stripMargin
+              )
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{"result":[{"totalTax":0,
+              |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+              |"taxCalcs":[{"taxType":"premium",
+              |"calcType":"slab",
+              |"taxDue":0,
+              |"rate":0}]}]}
+              |""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+      }
+    }
+  }
+}
