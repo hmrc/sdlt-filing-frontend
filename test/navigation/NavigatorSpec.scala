@@ -109,19 +109,19 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserNationalInsurancePage to PurchaserDateOfBirthPage" in {
           navigator.nextPage(PurchaserNationalInsurancePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(mode = NormalMode)
         }
-        // TODO: Should redirect to pr-6 is the purchaser acting as a trustee
-        "go from PurchaserDateOfBirthPage to WhoIsMakingThePurchasePage" in {
-          navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode = NormalMode)
+
+        "go from PurchaserDateOfBirthPage to IsPurchaserActingAsTrusteeController" in {
+          navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(mode = NormalMode)
         }
 
         "go from PurchaserFormOfIdIndividualPage to ReturnTaskList" in {
-          navigator.nextPage(PurchaserFormOfIdIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+          navigator.nextPage(PurchaserFormOfIdIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
         }
 
         "go from addPhoneNumberPage to enterPhoneNumberPage" in {
           navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
         }
-        
+
         "go from PurchaserPartnershipUtrPage to PurchaserType Page" in {
           navigator.nextPage(PurchaserPartnershipUtrPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
@@ -130,16 +130,20 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserCorporationTaxUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
-        "go from PurchaserTypePage to ReturnTaskList" in { //TODO: update route for pr-6 (DTR-1682)
-          navigator.nextPage(PurchaserTypeOfCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        "go from PurchaserTypePage to ReturnTaskList" in { 
+          navigator.nextPage(PurchaserTypeOfCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
         }
-        
+
         "go from CompanyFormOfIdPage to PurchaserType page"in {
           navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserCorporationTaxUTRPage to purchaserandvendorconnected" in { // TODO: update post pr-cya - DTR-1788 page created - (DTR-1687 -Sprint 5)
           navigator.nextPage(PurchaserAndVendorConnectedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        }
+
+        "go from IsPurchaserActingAsTrusteePage to Return Task List Controller" in {
+          navigator.nextPage(IsPurchaserActingAsTrusteePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(NormalMode)
         }
       }
     }
@@ -178,7 +182,7 @@ class NavigatorSpec extends SpecBase {
 
         navigator.nextPage(NameOfPurchaserPage, NormalMode, userAnswers) mustBe
           controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
-        
+
          navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
            controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
       }

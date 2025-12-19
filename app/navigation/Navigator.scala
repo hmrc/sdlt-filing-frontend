@@ -66,7 +66,7 @@ class Navigator @Inject()() {
          | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage
          | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage
          | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | PurchaserTypeOfCompanyPage
-         | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage=> true
+         | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage => true
 
     case _ => false
   }
@@ -84,18 +84,20 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode)
     case PurchaserNationalInsurancePage =>
       _ => controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(NormalMode)
-    case PurchaserDateOfBirthPage => // TODO: Should redirect to pr-6 is the purchaser acting as a trustee
-      _ => controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)
+    case PurchaserDateOfBirthPage =>
+      _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
     case PurchaserFormOfIdIndividualPage =>
-      _ => routes.ReturnTaskListController.onPageLoad() // TODO: Update to pr-6 'Is the Purchaser a trustee?' in DTR-1682
+      _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
     case PurchaserPartnershipUtrPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case PurchaserCorporationTaxUTRPage =>
      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case RegistrationNumberPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+    case IsPurchaserActingAsTrusteePage =>
+      _ => controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(NormalMode)
     case PurchaserTypeOfCompanyPage =>
-      _ => routes.ReturnTaskListController.onPageLoad()//TODO Update to PR-6 DTR-1682
+      _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
     case CompanyFormOfIdPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case PurchaserAndVendorConnectedPage => // TODO: update post pr-cya - DTR-1788 page created - (DTR-1687 -Sprint 5)
