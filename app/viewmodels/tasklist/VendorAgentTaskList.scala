@@ -17,37 +17,46 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.FullReturn
+import models.{FullReturn, NormalMode}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
 
 @Singleton
-object PurchaserTaskList {
+object VendorAgentTaskList {
 
   def build(fullReturn: FullReturn)
            (implicit messages: Messages,
             appConfig: FrontendAppConfig): TaskListSection =
     TaskListSection(
-      heading = messages("tasklist.purchaserQuestion.heading"),
+      heading = messages("tasklist.vendorAgentQuestion.heading"),
       rows = Seq(
-        buildPurchaserRow(fullReturn)
+        buildVendorAgentRow(fullReturn)
       )
     )
 
-  def buildPurchaserRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildVendorAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+    
+    val vendorAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))
+
+    val url = if(vendorAgentCheck) {
+      //TODO Change to the Vendor agent Overview page
+        controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+    } else {
+      //TODO Change to the Vendor agent Before You Start Page
+      controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+    }
+    
     TaskListRowBuilder(
+      isOptional = true,
       canEdit = {
         case TLCompleted => true
         case _ => true
       },
-      messageKey = _ => "tasklist.purchaserQuestion.details",
-      url = _ => _ => {
-        //change url when ready
-        controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
-      },
-      tagId = "purchaserQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.purchaser.exists(_.nonEmpty)),
+      messageKey = _ => "tasklist.vendorAgentQuestion.details",
+      url = _ => _ => {url},
+      tagId = "vendorQuestionDetailRow",
+      checks = scheme => Seq(vendorAgentCheck),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
     ).build(fullReturn)
   }

@@ -39,11 +39,13 @@ object TaskListSections {
                                        ec: ExecutionContext,
                                        request: Request[_]) = List(
     Some(PrelimTaskList.build(fullReturn)),
-    Some(VendorTaskList.build(fullReturn))
+    Some(VendorTaskList.build(fullReturn)),
+    Some(PurchaserTaskList.build(fullReturn)),
+    Some(PurchaserAgentTaskList.build(fullReturn))
   ).flatten
   def allComplete(fullReturn: FullReturn)
                  (implicit messagesApi: Messages, appConfig: FrontendAppConfig, hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Boolean =
-    sections(fullReturn).forall{x =>x.isComplete}
+    sections(fullReturn).forall{x => x.isComplete}
 }
 
 case class TaskListSectionRow(messageKey: String,
@@ -63,3 +65,5 @@ case object TLInProgress extends TaskListState
 case object TLCompleted extends TaskListState
 
 case object TLFailed extends TaskListState
+
+case object TLOptional extends TaskListState

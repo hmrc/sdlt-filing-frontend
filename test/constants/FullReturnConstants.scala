@@ -266,7 +266,7 @@ object FullReturnConstants {
   val completeReturnAgent: ReturnAgent = ReturnAgent(
     returnAgentID = Some("RA001"),
     returnID = Some("RET123456789"),
-    agentType = Some("SOLICITOR"),
+    agentType = Some("PURCHASER"),
     name = Some("Smith & Partners LLP"),
     houseNumber = Some("100"),
     address1 = Some("Fleet Street"),

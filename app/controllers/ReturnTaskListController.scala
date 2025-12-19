@@ -55,7 +55,9 @@ class ReturnTaskListController @Inject()(
           val sections = List(
             Some(PrelimTaskList.build(fullReturn)),
             Some(VendorTaskList.build(fullReturn)),
-            Some(PurchaserTaskList.build(fullReturn))
+            Some(VendorAgentTaskList.build(fullReturn)),
+            Some(PurchaserTaskList.build(fullReturn)),
+            Some(PurchaserAgentTaskList.build(fullReturn))
           ).flatten
           Ok(view(sections: _*))
         }
