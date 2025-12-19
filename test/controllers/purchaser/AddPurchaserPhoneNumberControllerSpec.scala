@@ -93,6 +93,11 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
       .set(NameOfPurchaserPage, companyPurchaser.toNameOfPurchaser).success.value
       .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Company).success.value
 
+  val userAnswersMissingPurchaserName: UserAnswers =
+    UserAnswers(userAnswersId, storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
+      .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Individual).success.value
+
   implicit class PurchaserOps(p: Purchaser) {
     def toNameOfPurchaser = models.purchaser.NameOfPurchaser(p.forename1, p.forename2, p.surname.orElse(p.companyName).getOrElse(""))
   }
@@ -151,6 +156,21 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(true), NormalMode, "John Middle Doe")(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to purchaser name page when purchaser name is missing for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersMissingPurchaserName))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
       }
     }
 
@@ -226,6 +246,22 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
           controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to purchaser name page when purchaser name is missing for a POST" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersMissingPurchaserName))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
+          .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
       }
     }
 

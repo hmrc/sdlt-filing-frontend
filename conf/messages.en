@@ -28,9 +28,7 @@ site.vendor.caption                                                             
 site.purchaser.caption                                                              = About the purchaser
 site.agent.caption                                                                  = About the agent
 
-site.agent.theAgent                                                                 = the agent
 site.vendor.theVendor                                                               = the vendor
-site.purchaser.thePurchaser                                                         = the purchaser
 
 site.journeyRecovery.continue.title                                                 = Sorry, there is a problem with the service
 site.journeyRecovery.continue.heading                                               = Sorry, there is a problem with the service
@@ -311,6 +309,7 @@ vendor.vendorOverview.vendorRemoved                                             
 vendor.vendorOverview.noVendor.p1                                                   = You have no vendors. You must add a vendor.
 vendor.vendorOverview.noVendor.button                                               = Add a vendor
 vendor.vendorOverview.error.required                                                = Please select an option
+vendor.vendorOverview.aVendor                                                       = a vendor
 
 vendor.whoIsTheVendor.title                                                         = Who is the vendor? - About the vendor
 vendor.whoIsTheVendor.heading                                                       = Who is the vendor?
@@ -352,7 +351,6 @@ agent.checkYourAnswers.agentName.agentAddressMissing                            
 agent.checkYourAnswers.agentContactDetails.agentDetailsMissing                      = Enter agent details
 
 agent.doYouKnowYourAgentReference.title                                             = Do you want to add a reference for this return? - About the vendor
-agent.doYouKnowYourAgentReference.theAgent                                          = the agent
 agent.doYouKnowYourAgentReference.heading                                           = Do you want to add a reference for {0}?
 agent.doYouKnowYourAgentReference.checkYourAnswersLabel                             = Do you know your agent reference?
 agent.doYouKnowYourAgentReference.change.hidden                                     = Do you know your agent reference?
@@ -361,7 +359,6 @@ agent.doYouKnowYourAgentReference.error.required                                
 
 agent.vendorAgentsContactDetails.title                                              = What are the agent’s contact details? - About the vendor
 agent.vendorAgentsContactDetails.heading                                            = What are {0}’s contact details?
-agent.vendorAgentsContactDetails.theAgent                                           = the agent
 agent.vendorAgentsContactDetails.agentPhoneNumber                                   = Agent phone number
 agent.vendorAgentsContactDetails.agentEmailAddress                                  = Agent email address
 agent.vendorAgentsContactDetails.agentPhoneNumber.caption                           = For international numbers include the country code, like 0049 for Germany (+49 on mobile)

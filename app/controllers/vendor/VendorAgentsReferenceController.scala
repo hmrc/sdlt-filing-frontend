@@ -56,7 +56,7 @@ class VendorAgentsReferenceController @Inject()(
       if (isRepresentedByAgent) {
         userAnswers.get(AgentNamePage) match {
           case None =>
-            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode))
 
           case Some(agentName) =>
             userAnswers.get(DoYouKnowYourAgentReferencePage) match {
@@ -88,7 +88,7 @@ class VendorAgentsReferenceController @Inject()(
 
       userAnswers.get(AgentNamePage) match {
         case None =>
-          Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+          Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode)))
 
         case Some(agentName) =>
           val form = formProvider(agentName)

@@ -257,7 +257,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       }
     }
     
-    "must redirect to Return Task List for a GET if no agent name is found" in {
+    "must redirect to agent name page for a GET if no agent name is found" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithoutAgentName)).build()
 
@@ -267,7 +267,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
       }
     }
 
@@ -374,6 +374,22 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.GenericErrorController.onPageLoad().url
+      }
+    }
+
+    "must redirect to agent name page for a POST if no agent name is found" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutAgentName)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, vendorAgentsReferenceRoute)
+            .withFormUrlEncodedBody(("value", "answer"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
       }
     }
 

@@ -50,30 +50,35 @@ class DoYouKnowYourAgentReferenceController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
          
-      val agentName: Option[String] = request.userAnswers.get(AgentNamePage)
-      val agentNameExists = agentName.isDefined
+      val maybeAgentName: Option[String] = request.userAnswers.get(AgentNamePage)
       val isRepresentedByAgent = request.userAnswers.get(VendorRepresentedByAgentPage).getOrElse(false)
 
-   
-      if (!isRepresentedByAgent) {
-        //TODO update to check your answers once created
-        Redirect(controllers.routes.IndexController.onPageLoad())
-      } else if (!agentNameExists) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
-        val preparedForm = request.userAnswers.get(DoYouKnowYourAgentReferencePage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        val continueRoute = Ok(view(preparedForm, mode, agentName))
-        agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
+      (maybeAgentName, isRepresentedByAgent) match {
+        case (_, false) =>
+          //TODO update to check your answers once created
+          Redirect(controllers.routes.IndexController.onPageLoad())
+          
+        case (None, _) =>
+          Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode))
+          
+        case (Some(agentName), true) =>
+          val preparedForm = request.userAnswers.get(DoYouKnowYourAgentReferencePage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          val continueRoute = Ok(view(preparedForm, mode, agentName))
+          agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-          val agentName: Option[String]  = request.userAnswers.get(AgentNamePage)
+      request.userAnswers.get(AgentNamePage) match {
+        case None =>
+          Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode)))
+          
+        case Some(agentName) =>
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, agentName))),
@@ -89,9 +94,8 @@ class DoYouKnowYourAgentReferenceController @Inject()(
                   Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
                 }
               }
-
           )
-       
+      }
   }
 }
 

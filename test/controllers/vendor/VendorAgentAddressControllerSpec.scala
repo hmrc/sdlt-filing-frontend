@@ -16,22 +16,6 @@
 
 package controllers.vendor
 
-/*
- * Copyright 2025 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import base.SpecBase
 import models.address.{Address, Country}
 import models.{NormalMode, UserAnswers}
@@ -78,6 +62,19 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
       "vendorCurrent" -> Json.obj(
         "whoIsTheVendor" -> "Company",
         "agentName" -> "test"
+      )
+    ),
+    lastUpdated = Instant.now
+  )
+
+  val testUserAnswersMissingAgentName = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("test-return-id"),
+    fullReturn = None,
+    data = Json.obj(
+      "vendorCurrent" -> Json.obj(
+        "whoIsTheVendor" -> "Company"
       )
     ),
     lastUpdated = Instant.now
@@ -140,6 +137,27 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
 
           verify(mockAddressLookupService, times(1))
             .getJourneyUrl(any(), eqTo(controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent()), eqTo(true), any(), any())(any(), any(), any())
+        }
+      }
+
+      "must redirect to agent name page when agent name is missing" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswersMissingAgentName)))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswersMissingAgentName))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, redirectToAddressLookupChangeRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
         }
       }
 

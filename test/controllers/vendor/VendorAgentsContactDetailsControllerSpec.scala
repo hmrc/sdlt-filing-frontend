@@ -21,7 +21,7 @@ import constants.FullReturnConstants
 import controllers.routes
 import forms.vendor.VendorAgentsContactDetailsFormProvider
 import models.vendor.VendorAgentsContactDetails
-import models.{NormalMode, UserAnswers}
+import models.{FullReturn, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -51,6 +51,17 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
     .set(VendorRepresentedByAgentPage, true).success.value
     .set(AddVendorAgentContactDetailsPage, true).success.value
 
+  val agentName = "Jones & Co, Leeds"
+
+  val userAnswersMissingAgentName: UserAnswers = emptyUserAnswers
+    .set(VendorRepresentedByAgentPage, true).success.value
+    .set(AddVendorAgentContactDetailsPage, true).success.value
+
+  val fullReturnWithNonVendorAgent: FullReturn = FullReturnConstants.completeFullReturn.copy(
+    returnAgent = None,
+    vendor = None,
+  )
+
 
   "VendorAgentsContactDetails Controller" - {
 
@@ -74,11 +85,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
     "must return OK and the correct view for a GET when agent name exists and is represented by agent is true" in {
 
-      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-        returnAgent = None,
-        vendor = None,
-      )
-
       val userAnswers = userAnswersWithAgentDetails.copy(fullReturn = Some(fullReturnWithNonVendorAgent))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -88,7 +94,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
 
-        val agentName: Option[String] = userAnswers.get(AgentNamePage)
+        val agentName = userAnswers.get(AgentNamePage).get
 
         val result = route(application, request).value
 
@@ -98,11 +104,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
     }
 
     "must populate the view correctly on a GET when the question has previously been answered no return agent or vendors" in {
-
-      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-        returnAgent = None,
-        vendor = None
-      )
 
       val userAnswers = userAnswersWithAgentDetails
         .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(Some("value1"), Some("value2"))).success.value
@@ -115,7 +116,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
 
-        val agentName: Option[String] = userAnswers.get(AgentNamePage)
+        val agentName = userAnswers.get(AgentNamePage).get
 
         val result = route(application, request).value
 
@@ -191,8 +192,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
 
-        val agentName: Option[String] = userAnswersWithAgentDetails.get(AgentNamePage)
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -200,12 +199,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to return task list if agent name is not found" in {
-
-      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-        returnAgent = None,
-        vendor = None,
-      )
+    "must redirect to agent name page if agent name is not found for a GET" in {
 
       val userAnswers = emptyUserAnswers
         .set(VendorRepresentedByAgentPage, true).success.value
@@ -220,7 +214,25 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to agent name page when agent name is missing for a POST" in {
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersMissingAgentName))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, vendorAgentsContactDetailsRoute)
+            .withFormUrlEncodedBody(("phoneNumber", "12345678912345"), ("emailAddress", "example-test@test.com"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
       }
     }
 
@@ -256,11 +268,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
     "must pass the agentName to view for a GET" in {
 
-      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-        returnAgent = None,
-        vendor = None
-      )
-
       val userAnswers = userAnswersWithAgentDetails.copy(fullReturn = Some(fullReturnWithNonVendorAgent))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -270,13 +277,11 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
 
-        val agentName: Option[String] = userAnswersWithAgentDetails.get(AgentNamePage)
-
         val result = route(application, request).value
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, agentName)(request, messages(application)).toString
-        agentName.value mustEqual "Jones & Co, Leeds"
+        agentName mustEqual "Jones & Co, Leeds"
       }
     }
 
@@ -298,13 +303,11 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
 
-        val agentName: Option[String] = userAnswersWithAgentDetails.get(AgentNamePage)
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, agentName)(request, messages(application)).toString
-        agentName.value mustEqual "Jones & Co, Leeds"
+        agentName mustEqual "Jones & Co, Leeds"
       }
     }
   }

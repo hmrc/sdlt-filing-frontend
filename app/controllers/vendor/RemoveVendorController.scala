@@ -25,6 +25,7 @@ import pages.vendor.VendorOverviewRemovePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.FullName
 import views.html.vendor.RemoveVendorView
 
 import javax.inject.Inject
@@ -49,8 +50,7 @@ class RemoveVendorController @Inject()(
 
         val maybeVendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorResourceRef.contains(vendorResourceRef))))
         val vendorFullName: Option[String] = maybeVendor.flatMap(vendor => vendor.name.map { name =>
-            Seq(vendor.forename1, vendor.forename2, Some(name))
-              .flatten.mkString(" ").trim.replaceAll(" +", " ")
+            FullName.fullName(vendor.forename1, vendor.forename2, name)
         })
 
         Ok(view(form, vendorFullName))
@@ -65,8 +65,7 @@ class RemoveVendorController @Inject()(
 
         val maybeVendor = request.userAnswers.fullReturn.flatMap(_.vendor.flatMap(_.find(_.vendorResourceRef.contains(vendorResourceRef))))
         val vendorFullName: Option[String] = maybeVendor.flatMap(vendor => vendor.name.map { name =>
-          Seq(vendor.forename1, vendor.forename2, Some(name))
-            .flatten.mkString(" ").trim.replaceAll(" +", " ")
+          FullName.fullName(vendor.forename1, vendor.forename2, name)
         })
 
         form.bindFromRequest().fold(

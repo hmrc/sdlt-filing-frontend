@@ -21,12 +21,11 @@ import constants.FullReturnConstants
 import controllers.routes
 import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
 import models.vendor.DoYouKnowYourAgentReference
-import models.{NormalMode, UserAnswers}
+import models.{FullReturn, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.AgentNamePage
 import play.api.Application
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
@@ -51,10 +50,17 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
       "vendorCurrent" -> Json.obj(
         "whoIsTheVendor" -> "Business",
         "agentName" -> "test",
-        "representedByAgent" -> false,
+        "representedByAgent" -> false
       )
-    ))
-  val agentName: Option[String] = userAnswersWithAgentSelectionKnown.get(AgentNamePage)
+    )
+  )
+
+  val fullReturnWithNonVendorAgent: FullReturn = FullReturnConstants.completeFullReturn.copy(
+    returnAgent = None,
+    vendor = None
+  )
+
+  val agentName = "test"
 
   val formProvider = new DoYouKnowYourAgentReferenceFormProvider()
   val form: Form[DoYouKnowYourAgentReference] = formProvider()
@@ -62,7 +68,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
   "DoYouKnowYourAgentReference Controller" - {
     def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
     "onPageLoad" - {
-      "when no existing data is found" - {
+      "when data is missing" - {
 
         "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
@@ -77,6 +83,28 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
             redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
           }
         }
+
+        "must redirect to agent name page for a GET if no agent name is found" in {
+
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
+            data = Json.obj(
+              "vendorCurrent" -> Json.obj(
+                "representedByAgent" -> true
+              )
+            )
+          )
+
+          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+          running(application) {
+            val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+          }
+        }
       }
     }
 
@@ -84,16 +112,11 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
       "must return OK and correct view when no returnAgent and no vendor" in {
 
-        val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-          returnAgent = None,
-          vendor = None
-        )
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
           data = Json.obj(
             "vendorCurrent" -> Json.obj(
               "agentName" -> "test",
-              "representedByAgent" -> true,
-
+              "representedByAgent" -> true
             )
           )
         )
@@ -126,9 +149,9 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn), data = Json.obj(
           "vendorCurrent" -> Json.obj(
             "agentName" -> "test",
-            "representedByAgent" -> true,
+            "representedByAgent" -> true
+            )
           )
-        )
         )
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -150,17 +173,12 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-        returnAgent = None,
-        vendor = None
-      )
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
         data = Json.obj(
           "vendorCurrent" -> Json.obj(
             "agentName" -> "test",
-      "doYouKnowYourAgentReference" -> "yes",
-            "representedByAgent" -> true,
-
+            "doYouKnowYourAgentReference" -> "yes",
+            "representedByAgent" -> true
           )
         )
       )
@@ -413,64 +431,47 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
     "onSubmit" - {
 
-    "must redirect to the next page when 'yes' is selected" in {
+      "must redirect to the next page when 'yes' is selected" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-        returnAgent = None,
-        vendor = None
-      )
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
-        data = Json.obj(
-          "vendorCurrent" -> Json.obj(
-            "agentName" -> "test",
-            "doYouKnowYourAgentReference" -> "yes",
-            "representedByAgent" -> true
-
-          )
-        )
-      )
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
-            .withFormUrlEncodedBody(("value", DoYouKnowYourAgentReference.values.head.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual  SEE_OTHER
-          redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-      //TODO update to CYA route
-      "must redirect to check your answers when 'no' is selected" in {
-
-      }
-
-    "when invalid data is submitted" - {
-
-      "must return a Bad Request and errors when invalid data is submitted" in {
-
-        val fullReturnWithNonVendorAgent = FullReturnConstants.completeFullReturn.copy(
-          returnAgent = None,
-          vendor = None
-        )
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
           data = Json.obj(
             "vendorCurrent" -> Json.obj(
               "agentName" -> "test",
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true
+            )
+          )
+        )
 
+        val application =
+          applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
+              .withFormUrlEncodedBody(("value", DoYouKnowYourAgentReference.values.head.toString))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual  SEE_OTHER
+            redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+
+      "must redirect to agent name page when agent name is missing" in {
+
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
+          data = Json.obj(
+            "vendorCurrent" -> Json.obj(
               "doYouKnowYourAgentReference" -> "yes",
               "representedByAgent" -> true
             )
@@ -482,50 +483,84 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         running(application) {
           val request =
             FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
-              .withFormUrlEncodedBody(("DoYouKnowYourAgentReference", "invalid value"), ("agentName", "test"))
-
-          val boundForm = form.bind(Map("DoYouKnowYourAgentReference" -> "invalid value"))
-
-          val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
+              .withFormUrlEncodedBody(("value", DoYouKnowYourAgentReference.values.head.toString))
 
           val result = route(application, request).value
 
-          status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, NormalMode, agentName)(request, messages(application)).toString
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
         }
       }
-    }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      //TODO update to CYA route
+      "must redirect to check your answers when 'no' is selected" in {
 
-      running(application) {
-        val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
-    }
 
-    "redirect to Journey Recovery for a POST if no existing data is found" in {
+      "when invalid data is submitted" - {
 
-      val application = applicationBuilder(userAnswers = None).build()
+        "must return a Bad Request and errors when invalid data is submitted" in {
 
-      running(application) {
-        val request =
-          FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
-            .withFormUrlEncodedBody(("value", DoYouKnowYourAgentReference.values.head.toString))
+          val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
+            data = Json.obj(
+              "vendorCurrent" -> Json.obj(
+                "agentName" -> "test",
+                "doYouKnowYourAgentReference" -> "yes",
+                "representedByAgent" -> true
+              )
+            )
+          )
 
-        val result = route(application, request).value
+          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        status(result) mustEqual SEE_OTHER
+          running(application) {
+            val request =
+              FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
+                .withFormUrlEncodedBody(("DoYouKnowYourAgentReference", "invalid value"), ("agentName", "test"))
 
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+            val boundForm = form.bind(Map("DoYouKnowYourAgentReference" -> "invalid value"))
+
+            val view = application.injector.instanceOf[DoYouKnowYourAgentReferenceView]
+
+            val result = route(application, request).value
+
+            status(result) mustEqual BAD_REQUEST
+            contentAsString(result) mustEqual view(boundForm, NormalMode, agentName)(request, messages(application)).toString
+          }
+        }
       }
-    }
+
+      "must redirect to Journey Recovery for a GET if no existing data is found" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "redirect to Journey Recovery for a POST if no existing data is found" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
+              .withFormUrlEncodedBody(("value", DoYouKnowYourAgentReference.values.head.toString))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
     }
   }
 }

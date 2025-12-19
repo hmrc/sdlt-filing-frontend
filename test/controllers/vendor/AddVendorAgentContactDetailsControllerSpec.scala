@@ -97,7 +97,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "redirect to Vendor Agent Name Page when the agent name data is missing for a GET" in {
+    "must redirect to Vendor Agent Name Page when the agent name data is missing for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -161,6 +161,22 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to Vendor Agent Name Page when the agent name data is missing for a POST" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addVendorAgentContactDetailsRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
       }
     }
 

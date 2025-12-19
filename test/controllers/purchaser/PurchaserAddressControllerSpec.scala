@@ -196,7 +196,7 @@ class PurchaserAddressControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to Journey Recovery when no purchaser name is found" in {
+      "must redirect to purchaser name page when no purchaser name is found" in {
         val mockAddressLookupService = mock[AddressLookupService]
         val mockSessionRepository = mock[SessionRepository]
 
@@ -225,7 +225,7 @@ class PurchaserAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
         }
       }
 

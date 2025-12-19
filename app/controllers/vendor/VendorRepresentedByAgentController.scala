@@ -49,41 +49,45 @@ class VendorRepresentedByAgentController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val vendorName: Option[String] = request.userAnswers
-        .get(VendorOrCompanyNamePage)
-        .map(_.fullName)
+      request.userAnswers.get(VendorOrCompanyNamePage).map(_.fullName) match {
+        case None =>
+          Redirect(controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(mode))
+        
+        case Some(vendorName) =>
+          val preparedForm = request.userAnswers.get(VendorRepresentedByAgentPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
 
-      val preparedForm = request.userAnswers.get(VendorRepresentedByAgentPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+          val continueRoute = Ok(view(preparedForm, mode, vendorName))
+          agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
       }
-      
-      val continueRoute = Ok(view(preparedForm, mode, vendorName))
-      agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val vendorName: Option[String] = request.userAnswers
-        .get(VendorOrCompanyNamePage)
-        .map(_.fullName)
+      request.userAnswers.get(VendorOrCompanyNamePage).map(_.fullName) match {
+        case None =>
+          Future.successful(Redirect(controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(mode)))
+        
+        case Some(vendorName) =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, vendorName))),
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, vendorName = vendorName))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorRepresentedByAgentPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (value) {
-              Redirect(navigator.nextPage(VendorRepresentedByAgentPage, mode, updatedAnswers))
-            } else {
-              Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
-            }
-          }
-      )
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorRepresentedByAgentPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield {
+                if (value) {
+                  Redirect(navigator.nextPage(VendorRepresentedByAgentPage, mode, updatedAnswers))
+                } else {
+                  Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+                }
+              }
+          )
+      }
   }
 }

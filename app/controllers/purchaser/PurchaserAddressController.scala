@@ -72,7 +72,7 @@ class PurchaserAddressController @Inject()(
               ).map(Redirect)
 
             case None =>
-              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+              Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode)))
           }
 
         case None =>

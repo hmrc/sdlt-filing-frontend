@@ -27,7 +27,7 @@
     caption: Caption
 )
 
-@(form: Form[_], mode: Mode, agentName: Option[String] )(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("agent.doYouKnowYourAgentReference.title"))) {
 
@@ -42,11 +42,10 @@
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("agent.doYouKnowYourAgentReference.heading",agentName.getOrElse(messages("agent.doYouKnowYourAgentReference.theAgent")))).asPageHeading(size = Large),
+                legend = LegendViewModel(messages("agent.doYouKnowYourAgentReference.heading",agentName)).asPageHeading(size = Large),
                 items  = DoYouKnowYourAgentReference.options
-            ).withHint(HintViewModel(HtmlContent(Html(messages("agent.doYouKnowYourAgentReference.p", agentName.getOrElse(messages("agent.doYouKnowYourAgentReference.theAgent"))))))
-                            )
-                     )
+            ).withHint(HintViewModel(HtmlContent(Html(messages("agent.doYouKnowYourAgentReference.p", agentName)))))
+         )
 
         @govukButton(
             ButtonViewModel(messages("site.save.continue"))

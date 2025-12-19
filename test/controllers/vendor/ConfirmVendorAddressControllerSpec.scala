@@ -192,7 +192,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
-    "must redirect to Return Task List when no VendorOrCompanyNamePage is present" in {
+    "must redirect to vendor name page when no VendorOrCompanyNamePage is present" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -204,7 +204,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.routes.ReturnTaskListController.onPageLoad().url
+          controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode).url
       }
     }
 
@@ -250,6 +250,23 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+
+      "must redirect to vendor name page when no VendorOrCompanyNamePage is present for a POST" in {
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, confirmVendorAddressRoute)
+            .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.Yes.toString)
+          val result = route(application, request).get
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode).url
         }
       }
 
