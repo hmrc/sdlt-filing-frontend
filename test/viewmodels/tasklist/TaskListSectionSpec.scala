@@ -40,7 +40,9 @@ class TaskListSectionSpec extends SpecBase {
       "must return true when all rows are completed" in {
         val row1 = TaskListSectionRow("test1", "/url1", "tag1", TLCompleted)
         val row2 = TaskListSectionRow("test2", "/url2", "tag2", TLCompleted)
-        val section = TaskListSection("Test Section", Seq(row1, row2))
+        val row3 = TaskListSectionRow("test3", "/url3", "tag3", TLCompleted)
+        val row4 = TaskListSectionRow("test4", "/url4", "tag4", TLCompleted)
+        val section = TaskListSection("Test Section", Seq(row1, row2, row3, row4))
 
         section.isComplete mustBe true
       }
@@ -109,7 +111,7 @@ class TaskListSectionSpec extends SpecBase {
 
           val result = TaskListSections.sections(fullReturnComplete)
 
-          result.size mustBe 2 // PrelimTaskList and VendorTaskList
+          result.size mustBe 4
           result.head mustBe a[TaskListSection]
         }
       }
@@ -126,7 +128,7 @@ class TaskListSectionSpec extends SpecBase {
 
           val result = TaskListSections.sections(fullReturnIncomplete)
 
-          result.size mustBe 2
+          result.size mustBe 4
           result.head mustBe a[TaskListSection]
         }
       }
@@ -179,7 +181,7 @@ class TaskListSectionSpec extends SpecBase {
           implicit val hc: HeaderCarrier = HeaderCarrier()
           implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
           implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
+          
           val result = TaskListSections.allComplete(fullReturnComplete)
 
           result mustBe true
@@ -339,6 +341,20 @@ class TaskListSectionSpec extends SpecBase {
       "must be a singleton" in {
         val ref1 = TLInProgress
         val ref2 = TLInProgress
+
+        ref1 must be theSameInstanceAs ref2
+      }
+    }
+
+    "TLOptional" - {
+
+      "must be a TaskListState" in {
+        TLOptional mustBe a[TaskListState]
+      }
+
+      "must be a singleton" in {
+        val ref1 = TLOptional
+        val ref2 = TLOptional
 
         ref1 must be theSameInstanceAs ref2
       }

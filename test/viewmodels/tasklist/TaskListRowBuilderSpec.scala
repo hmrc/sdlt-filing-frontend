@@ -382,6 +382,119 @@ class TaskListRowBuilderSpec extends SpecBase {
 
         result.canEdit mustBe true
       }
+
+      "must return Optional status when isOptional is true and task not started" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(false, false),
+          prerequisites = _ => Seq(),
+          isOptional = true
+        )
+
+        val result = builder.build(fullReturnComplete)
+
+        result.status mustBe TLOptional
+      }
+
+      "must return Completed status even when isOptional is true if all checks are true" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(true, true),
+          prerequisites = _ => Seq(),
+          isOptional = true
+        )
+
+        val result = builder.build(fullReturnComplete)
+
+        result.status mustBe TLCompleted
+      }
+
+      "must return InProgress status when isOptional is true but some checks are true" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(true, false),
+          prerequisites = _ => Seq(),
+          isOptional = true
+        )
+
+        val result = builder.build(fullReturnComplete)
+
+        result.status mustBe TLInProgress
+      }
+
+      "must return Failed status when isOptional is true but error is true" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(false),
+          prerequisites = _ => Seq(),
+          error = _ => true,
+          isOptional = true
+        )
+
+        val result = builder.build(fullReturnComplete)
+
+        result.status mustBe TLFailed
+      }
+
+      "must return CannotStart status when isOptional is true but prerequisites not met" in {
+        val prerequisite = TaskListRowBuilder(
+          messageKey = _ => "prereq.key",
+          url = _ => _ => "/prereq",
+          tagId = "prereqId",
+          checks = _ => Seq(false),
+          prerequisites = _ => Seq()
+        )
+
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(false),
+          prerequisites = _ => Seq(prerequisite),
+          isOptional = true
+        )
+
+        val result = builder.build(fullReturnComplete)
+
+        result.status mustBe TLCannotStart
+      }
+
+      "must return NotStarted status when isOptional is false and no checks are true" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(false, false),
+          prerequisites = _ => Seq(),
+          isOptional = false
+        )
+
+        val result = builder.build(fullReturnComplete)
+
+        result.status mustBe TLNotStarted
+      }
+
+      "must default isOptional to false when not provided" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(false),
+          prerequisites = _ => Seq()
+        )
+
+        val result = builder.build(fullReturnComplete)
+
+        result.status mustBe TLNotStarted
+      }
     }
   }
 }

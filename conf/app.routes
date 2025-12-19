@@ -210,3 +210,9 @@ GET        /about-the-purchaser/purchaser-and-vendor-connected                  
 POST       /about-the-purchaser/purchaser-and-vendor-connected                        controllers.purchaser.PurchaserAndVendorConnectedController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/purchaser-and-vendor-connected/change                 controllers.purchaser.PurchaserAndVendorConnectedController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/purchaser-and-vendor-connected/change                 controllers.purchaser.PurchaserAndVendorConnectedController.onSubmit(mode: Mode = CheckMode)
+
+
+GET        /about-the-purchasers-agent/before-you-start                    controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchasers-agent/before-you-start                    controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchasers-agent/before-you-start/change             controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchasers-agent/before-you-start/change             controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onSubmit(mode: Mode = CheckMode)

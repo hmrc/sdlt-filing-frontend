@@ -27,6 +27,7 @@ site.error.generic.heading                                                      
 site.vendor.caption                                                                 = About the vendor
 site.purchaser.caption                                                              = About the purchaser
 site.agent.caption                                                                  = About the agent
+site.purchaserAgent.caption                                                         = Add an agent for the purchaser
 
 site.vendor.theVendor                                                               = the vendor
 
@@ -75,6 +76,15 @@ tasklist.purchaserQuestion.details                                              
 tasklist.purchaserQuestion.heading                                                  = Purchaser Questions
 tasklist.complete                                                                   = Complete
 tasklist.notStarted                                                                 = Not Started
+tasklist.purchaserAgentQuestion.details                                             = Purchaser Agent Questions
+tasklist.purchaserAgentQuestion.heading                                             = Purchaser Agent Questions
+tasklist.vendorAgentQuestion.details                                                = Vendor Agent Questions
+tasklist.vendorAgentQuestion.heading                                                = Vendor Agent Questions
+tasklist.inProgress                                                                 = In Progress
+tasklist.cannotStartYet                                                             = Can not Start
+tasklist.failed                                                                     = Failed
+tasklist.optional                                                                   = Optional
+
 
 # Check Your Answers
 site.checkYourAnswers.heading                                                       = Check your answers
@@ -572,3 +582,20 @@ purchaser.purchaserAndVendorConnected.checkYourAnswersLabel                     
 purchaser.purchaserAndVendorConnected.error.required                                = Please select an option
 purchaser.purchaserAndVendorConnected.change.hidden                                 = PurchaserAndVendorConnected
 purchaser.purchaserAndVendorConnected.hint                                          = A purchaser and vendor can be connected in different ways, like a marriage, civil partnership, family link or business interest
+
+
+# Purchaser Agent
+purchaserAgent.BeforeYouStart.title                                                 = Before you start – About the purchaser’s agent
+purchaserAgent.BeforeYouStart.heading                                               = Add an agent for the purchaser
+purchaserAgent.BeforeYouStart.checkYourAnswersLabel                                 = Add an agent for the purchaser
+purchaserAgent.BeforeYouStart.error.required                                        = Select yes if need to add a purchaser agent
+purchaserAgent.BeforeYouStart.change.hidden                                         = Add an agent for the purchaser
+purchaserAgent.BeforeYouStart.p1                                                    = If the purchaser is represented by an agent, you can link an existing agent to this return. If you add a new agent, we will ask for:
+purchaserAgent.BeforeYouStart.b1                                                    = the agent’s name
+purchaserAgent.BeforeYouStart.b2                                                    = the agent’s address
+purchaserAgent.BeforeYouStart.b3                                                    = the agent’s contact details
+purchaserAgent.BeforeYouStart.p2                                                    = You can also provide:
+purchaserAgent.BeforeYouStart.b4                                                    = the agent’s reference number
+purchaserAgent.BeforeYouStart.b5                                                    = the agent’s authorisation to handle correspondence
+purchaserAgent.BeforeYouStart.subheading                                            = Do you want to add an agent for the purchaser?
+

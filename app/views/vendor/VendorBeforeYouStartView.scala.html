@@ -21,13 +21,14 @@
         layout: templates.Layout,
         govukButton: GovukButton,
         h1: h1,
-        p: Paragraph
+        p: Paragraph,
+        caption: Caption
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("vendor.beforeStart.title"))) {
-
+    @caption(messages("site.vendor.caption"))
     @h1(messages("site.vendor.caption"))
 
     @p(messages("vendor.beforeStart.p1"))

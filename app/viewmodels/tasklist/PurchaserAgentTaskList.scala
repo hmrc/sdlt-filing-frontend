@@ -17,37 +17,45 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.FullReturn
+import models.{FullReturn, NormalMode}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
 
 @Singleton
-object PurchaserTaskList {
+object PurchaserAgentTaskList {
 
   def build(fullReturn: FullReturn)
            (implicit messages: Messages,
             appConfig: FrontendAppConfig): TaskListSection =
     TaskListSection(
-      heading = messages("tasklist.purchaserQuestion.heading"),
+      heading = messages("tasklist.purchaserAgentQuestion.heading"),
       rows = Seq(
-        buildPurchaserRow(fullReturn)
+        buildPurchaserAgentRow(fullReturn)
       )
     )
 
-  def buildPurchaserRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildPurchaserAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+    
+    val purchaserAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains("PURCHASER")))
+
+    val url = if(purchaserAgentCheck) {
+      //TODO Change to the purchaser agent overview page
+        controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+    } else {
+      controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+    }
+    
     TaskListRowBuilder(
+      isOptional = true,
       canEdit = {
         case TLCompleted => true
         case _ => true
       },
-      messageKey = _ => "tasklist.purchaserQuestion.details",
-      url = _ => _ => {
-        //change url when ready
-        controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
-      },
+      messageKey = _ => "tasklist.purchaserAgentQuestion.details",
+      url = _ => _ => {url},
       tagId = "purchaserQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.purchaser.exists(_.nonEmpty)),
+      checks = scheme => Seq(purchaserAgentCheck),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
     ).build(fullReturn)
   }

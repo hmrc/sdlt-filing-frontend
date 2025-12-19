@@ -26,7 +26,8 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
                               checks: FullReturn => Seq[Boolean],
                               prerequisites: FullReturn => Seq[TaskListRowBuilder],
                               error: FullReturn => Boolean = _ => false,
-                              canEdit: TaskListState => Boolean = _ => false) {
+                              canEdit: TaskListState => Boolean = _ => false,
+                              isOptional: Boolean = false) {
 
   def isComplete(fullReturn: FullReturn): Boolean = checks(fullReturn).forall(_ == true)
 
@@ -49,6 +50,7 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
       case true if(error(fullReturn)) => TLFailed
       case true if(isComplete(fullReturn)) => TLCompleted
       case true if(checks(fullReturn).contains(true)) => TLInProgress
+      case true if(isOptional) => TLOptional
       case true => TLNotStarted
       case _ => TLCannotStart
     }
