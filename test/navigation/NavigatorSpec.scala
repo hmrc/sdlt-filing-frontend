@@ -137,6 +137,10 @@ class NavigatorSpec extends SpecBase {
         "go from CompanyFormOfIdPage to PurchaserType page"in {
           navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
+
+        "go from PurchaserCorporationTaxUTRPage to purchaserandvendorconnected" in { // TODO: update post pr-cya - DTR-1788 page created - (DTR-1687 -Sprint 5)
+          navigator.nextPage(PurchaserAndVendorConnectedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        }
       }
     }
 
