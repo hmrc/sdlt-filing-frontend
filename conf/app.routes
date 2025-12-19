@@ -206,6 +206,12 @@ POST       /about-the-purchaser/type-of-company                         controll
 GET        /about-the-purchaser/type-of-company/change                  controllers.purchaser.PurchaserTypeOfCompanyController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/type-of-company/change                  controllers.purchaser.PurchaserTypeOfCompanyController.onSubmit(mode: Mode = CheckMode)
 
+
+GET        /about-the-purchaser/acting-as-a-trustee                        controllers.purchaser.IsPurchaserActingAsTrusteeController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/acting-as-a-trustee                        controllers.purchaser.IsPurchaserActingAsTrusteeController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/acting-as-a-trustee/change                  controllers.purchaser.IsPurchaserActingAsTrusteeController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/acting-as-a-trustee/change                  controllers.purchaser.IsPurchaserActingAsTrusteeController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-purchaser/purchaser-and-vendor-connected                        controllers.purchaser.PurchaserAndVendorConnectedController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-purchaser/purchaser-and-vendor-connected                        controllers.purchaser.PurchaserAndVendorConnectedController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/purchaser-and-vendor-connected/change                 controllers.purchaser.PurchaserAndVendorConnectedController.onPageLoad(mode: Mode = CheckMode)

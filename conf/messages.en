@@ -599,3 +599,10 @@ purchaserAgent.BeforeYouStart.b4                                                
 purchaserAgent.BeforeYouStart.b5                                                    = the agent’s authorisation to handle correspondence
 purchaserAgent.BeforeYouStart.subheading                                            = Do you want to add an agent for the purchaser?
 
+
+purchaser.isPurchaserActingAsTrustee.title                                          = Is the purchaser acting as a trustee? – About the purchaser
+purchaser.isPurchaserActingAsTrustee.heading                                        = Is {0} acting as a trustee?
+purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is the purchaser acting as a trustee? – About the purchaser
+purchaser.isPurchaserActingAsTrustee.error.required                                 = Please select Yes or No
+purchaser.isPurchaserActingAsTrustee.change.hidden                                  = IsPurchaserActingAsTrustee
+
