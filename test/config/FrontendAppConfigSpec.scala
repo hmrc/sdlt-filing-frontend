@@ -216,8 +216,6 @@ class FrontendAppConfigSpec extends AnyFreeSpec with Matchers with GuiceOneAppPe
 
         result mustBe "http://localhost:9876/api/v2/init"
       }
-
-
     }
   }
 }
