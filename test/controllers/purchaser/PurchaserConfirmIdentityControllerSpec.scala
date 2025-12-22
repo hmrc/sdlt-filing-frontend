@@ -305,7 +305,7 @@ class PurchaserConfirmIdentityControllerSpec extends SpecBase with MockitoSugar 
           val mockPurchaserService = mock[PurchaserService]
 
           when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-          //TODO Change to check your answers
+          //TODO: Change to Purchaser check your answers - DTR-1788
           when(mockPurchaserService.confirmIdentityNextPage(eqTo(PurchaserConfirmIdentity.PartnershipUTR), eqTo(CheckMode)))
             .thenReturn(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
 
@@ -327,7 +327,7 @@ class PurchaserConfirmIdentityControllerSpec extends SpecBase with MockitoSugar 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            //TODO change to check your answers
+            //TODO change to Purchaser check your answers - DTR-1788
             redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
             verify(mockPurchaserService).confirmIdentityNextPage(eqTo(PurchaserConfirmIdentity.PartnershipUTR), eqTo(CheckMode))
           }

@@ -239,7 +239,7 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to DoesPurchaserHaveNIPage if DoesPurchaserHaveNI data does not exist" in {
+    "must redirect to PurchaserFormOfIdIndividualPage if DoesPurchaserHaveNI data does not exist" in {
 
       val userAnswers = testUserAnswersIndividual.set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
 
@@ -250,7 +250,7 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
+      redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(NormalMode).url
     }
 
     "must redirect to NameOfPurchaserPage if purchaser name data is missing for a GET" in {

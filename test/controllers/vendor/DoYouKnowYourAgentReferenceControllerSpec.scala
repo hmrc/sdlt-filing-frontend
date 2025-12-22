@@ -493,7 +493,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
       }
 
 
-      //TODO update to CYA route
+      //TODO update to VendorAgent CYA - DTR-2057
       "must redirect to check your answers when 'no' is selected" in {
 
       }

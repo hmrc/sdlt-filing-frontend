@@ -110,9 +110,8 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
         redirectLocation(result) mustBe Some(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url)
       }
     }
-
-    // TODO change to enter purchaser NI
-    "must redirect to before you start page when does purchaser have NI is YES for a GET" in {
+    
+    "must redirect to enter PurchaserNationalInsurance page when does purchaser have NI is YES for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithPurchaserNameAndNino)).build()
 
@@ -122,7 +121,7 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(NormalMode).url)
       }
     }
 

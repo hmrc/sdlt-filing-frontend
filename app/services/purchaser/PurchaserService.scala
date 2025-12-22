@@ -91,7 +91,7 @@ class PurchaserService {
       case Some(value) if value == purchaserType && purchaserType == WhoIsMakingThePurchase.Individual =>
         continueRoute
       case Some(_) =>
-        Redirect(controllers.routes.GenericErrorController.onPageLoad()) // TODO DTR-1788: redirect to CYA
+        Redirect(controllers.routes.GenericErrorController.onPageLoad()) // TODO: DTR-1788 - redirect to CYA
       case None =>
         Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
     }
@@ -102,8 +102,7 @@ class PurchaserService {
     if (shouldShowCompanyDetailsPage(purchasers, userAnswers)) {
       continueRoute
     } else {
-      // TODO Don't show company details page, go to CYA
-      Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)) // TODO: change to check your answers
+      Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)) // TODO: change to Purchaser check your answers - DTR-1788
     }
   }
 
@@ -124,7 +123,7 @@ class PurchaserService {
 
   def confirmIdentityNextPage(value: PurchaserConfirmIdentity, mode: Mode): Call = {
     if (mode == CheckMode) {
-      // TODO: change this to check your answers
+      // TODO: change this to Purchaser check your answers - DTR-1788
       controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad()
     } else {
       value match {

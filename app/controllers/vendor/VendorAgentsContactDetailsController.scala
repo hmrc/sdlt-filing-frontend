@@ -57,7 +57,7 @@ class VendorAgentsContactDetailsController @Inject()(
 
       (maybeAgentName, isRepresentedByAgent, knowsAgentDetails) match {
         case (_, false, _) | (_, _, false) =>
-          //TODO update to check your answers once created
+          //TODO: update to check your answers once created DTR-2057
           Redirect(controllers.routes.IndexController.onPageLoad())
 
         case (None, _, _) =>

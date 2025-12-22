@@ -68,7 +68,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
       
         case (None, _) => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode))
         case (_, Some(doesPurchaserHaveNI)) if doesPurchaserHaveNI.equals(DoesPurchaserHaveNI.Yes) =>
-          Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad()) // TODO change to enter purchaser NI page
+          Redirect(controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(mode))
         case (_, _) => Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
       }
   }

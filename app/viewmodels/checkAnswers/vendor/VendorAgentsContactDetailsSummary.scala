@@ -63,7 +63,7 @@ object VendorAgentsContactDetailsSummary  {
     }.getOrElse{
 
     val value = ValueViewModel(
-      HtmlContent( //todo 2073 revisit cya here
+      HtmlContent( //TODO: DTR-2057 revisit cya here
         s"""<a href="${controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
     )
 
