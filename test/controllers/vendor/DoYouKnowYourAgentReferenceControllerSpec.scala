@@ -26,6 +26,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.vendor.AgentNamePage
 import play.api.Application
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
@@ -103,6 +104,20 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
             status(result) mustEqual SEE_OTHER
             redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+          }
+        }
+
+        "must redirect to index controller when isRepresentedByAgent is no for a GET" in {
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+          running(application) {
+            val request = FakeRequest(GET, doYouKnowYourAgentReferenceRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
           }
         }
       }
@@ -496,6 +511,29 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
       //TODO update to VendorAgent CYA - DTR-2057
       "must redirect to check your answers when 'no' is selected" in {
 
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val userAnswers = emptyUserAnswers.set(AgentNamePage, "Test Agent").get
+
+        val application =
+          applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, doYouKnowYourAgentReferenceRoute)
+              .withFormUrlEncodedBody(("value", "no"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual  SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
+        }
       }
 
       "when invalid data is submitted" - {

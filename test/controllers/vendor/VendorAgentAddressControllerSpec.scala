@@ -162,23 +162,25 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to Journey Recovery when no existing data is found" in {
-        val mockAddressLookupService = mock[AddressLookupService]
+          val mockSessionRepository = mock[SessionRepository]
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
-        val application = applicationBuilder(userAnswers = None)
-          .overrides(
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
-          )
-          .build()
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository)
+            )
+            .build()
 
-        running(application) {
-          val request = FakeRequest(GET, redirectToAddressLookupRoute)
+          running(application) {
+            val request = FakeRequest(GET, redirectToAddressLookupRoute)
 
-          val result = route(application, request).value
+            val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          }
         }
-      }
+      
 
       "must handle service failure when getting journey URL" in {
         val mockAddressLookupService = mock[AddressLookupService]

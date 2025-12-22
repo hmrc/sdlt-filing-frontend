@@ -93,10 +93,17 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
       .set(NameOfPurchaserPage, companyPurchaser.toNameOfPurchaser).success.value
       .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Company).success.value
 
-  val userAnswersMissingPurchaserName: UserAnswers =
+  val userAnswersMissingPurchaserName: UserAnswers = {
     UserAnswers(userAnswersId, storn = testStorn)
       .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
       .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Individual).success.value
+  }
+
+  val userAnswersWithName: UserAnswers = {
+    UserAnswers(userAnswersId, storn = testStorn)
+      .set(NameOfPurchaserPage, individualPurchaser.toNameOfPurchaser).success.value
+  }
+
 
   implicit class PurchaserOps(p: Purchaser) {
     def toNameOfPurchaser = models.purchaser.NameOfPurchaser(p.forename1, p.forename2, p.surname.orElse(p.companyName).getOrElse(""))
@@ -262,6 +269,22 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to WhoIsMakingThePurchaseController when value is false and WhoIsMakingThePurchasePage is not answered" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithName)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
+          .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url
       }
     }
 
