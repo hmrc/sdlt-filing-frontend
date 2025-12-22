@@ -63,8 +63,7 @@ class AuthenticatedIdentifierAction @Inject()(
             }
 
           case None =>
-            //to do get error page for this 
-            Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+            Future.successful(Redirect(routes.NoSdltEnrolmentErrorPageController.onPageLoad()))
         }
 
       case None ~ _ =>

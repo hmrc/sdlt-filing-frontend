@@ -110,5 +110,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
     } else { s"$addressLookupFrontendUrl/api/v2/init"}
 
   val stubBool: Boolean = configuration.get("backend-feature-stub")
-    
+
+  lazy val addTaxesBaseUrl: String = baseUrl("add-taxes-frontend")
+
+  def addTaxesRedirectUrl: String =
+    s"$addTaxesBaseUrl/business-account/add-tax/other/land/stamp-duty"
 }
