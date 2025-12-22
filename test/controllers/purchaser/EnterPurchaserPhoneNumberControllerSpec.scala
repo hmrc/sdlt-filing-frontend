@@ -106,11 +106,17 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
       .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
       .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Individual).success.value
 
-  val userAnswersWithCompanyPurchaser: UserAnswers =
+  val userAnswersWithCompanyPurchaser: UserAnswers = {
     UserAnswers(userAnswersId, storn = testStorn)
       .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
       .set(NameOfPurchaserPage, companyPurchaser.toNameOfPurchaser).success.value
       .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Company).success.value
+  }
+
+  val userAnswersWithNameOnly: UserAnswers = {
+    UserAnswers(userAnswersId, storn = testStorn)
+      .set(NameOfPurchaserPage, companyPurchaser.toNameOfPurchaser).success.value
+  }
 
   implicit class PurchaserOps(p: Purchaser) {
     def toNameOfPurchaser: NameOfPurchaser = models.purchaser.NameOfPurchaser(p.forename1, p.forename2, p.surname.orElse(p.companyName).getOrElse(""))
@@ -276,6 +282,22 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to WhoIsMakingThePurchase page when no Individual or Company data present" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNameOnly)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, enterPurchaserPhoneNumberRoute)
+            .withFormUrlEncodedBody(("value", "07987654321"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url
       }
     }
 

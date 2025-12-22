@@ -163,11 +163,12 @@ class VendorAddressControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to Journey Recovery when no existing data is found" in {
-        val mockAddressLookupService = mock[AddressLookupService]
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
-        val application = applicationBuilder(userAnswers = None)
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
