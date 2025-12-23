@@ -116,9 +116,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def addTaxesRedirectUrl: String =
     s"$addTaxesFrontendHost/business-account/add-tax/other/land/stamp-duty"
 
-  lazy val sdltManagementBaseUrl: String = baseUrl("sdlt-management-frontend")
+  lazy val sdltManagementHost: String = configuration.get[String](s"sdlt-management-frontend")
 
   def sdltManagementRedirectUrl: String =
-    s"$sdltManagementBaseUrl/stamp-duty-land-tax-management"
+    s"$sdltManagementHost/stamp-duty-land-tax-management"
 
 }
