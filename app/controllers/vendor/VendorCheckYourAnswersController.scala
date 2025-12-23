@@ -63,7 +63,7 @@ class VendorCheckYourAnswersController @Inject()(
               IndividualOrCompanyNameSummary.row(Some(userAnswers)),
               VendorAddressSummary.row(Some(userAnswers))
             )
-            //TODO Logic should be moved to agent CYA page
+            //TODO: Logic should be moved to agent CYA page - DTR-2057
 //            val showAgentCYA: Option[Boolean] = userAnswers
 //              .get(VendorRepresentedByAgentPage)
 //              .map(_.self)

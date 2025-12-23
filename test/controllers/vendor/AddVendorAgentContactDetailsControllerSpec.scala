@@ -120,7 +120,6 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
       val application =
         applicationBuilder(userAnswers = Some(userAnswersWithAgentName))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -133,8 +132,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        //TODO - add proper route here when completed
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode).url
       }
     }
 

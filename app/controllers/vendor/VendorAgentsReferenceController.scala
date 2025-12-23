@@ -72,11 +72,11 @@ class VendorAgentsReferenceController @Inject()(
                 agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
 
               case _ =>
-                Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)) // TODO: This will need to redirect to CYA page
+                Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)) //TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
             }
         }
       } else {
-        Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)) // TODO: This will need to redirect to CYA page
+        Redirect(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)) //TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
       }
 
   }

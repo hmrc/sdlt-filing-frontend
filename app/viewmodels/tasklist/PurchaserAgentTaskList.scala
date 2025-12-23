@@ -40,7 +40,7 @@ object PurchaserAgentTaskList {
     val purchaserAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains("PURCHASER")))
 
     val url = if(purchaserAgentCheck) {
-      //TODO Change to the purchaser agent overview page
+      //TODO: Change to the purchaser agent overview page - DTR-1851
         controllers.vendor.routes.VendorOverviewController.onPageLoad().url
     } else {
       controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url

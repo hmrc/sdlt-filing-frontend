@@ -233,7 +233,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            // TODO: This should navigate to CYA page
+            // TODO: This should navigate to VendorAgent CYA page - DTR-2057
             redirectLocation(result).value mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
           }
         }
@@ -250,7 +250,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          // TODO: This should navigate to CYA page
+          // TODO: This should navigate to VendorAgent CYA page - DTR-2057
           redirectLocation(result).value mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode).url
 
         }
@@ -313,7 +313,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to error page when agent is type VENDOR and main vendor is not represented by agent" in { // TODO: Change to actual error page (TBC)
+    "must redirect to error page when agent is type VENDOR and main vendor is not represented by agent" in { //TODO: Change to actual error page (TBC)
 
       val fullReturn = completeFullReturn.copy(
         returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
@@ -335,7 +335,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to error page when there is no return agent and main vendor is represented by agent" in { // TODO: Change to actual error page (TBC)
+    "must redirect to error page when there is no return agent and main vendor is represented by agent" in { //TODO: Change to actual error page (TBC)
       val fullReturn = completeFullReturn.copy(
         returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
         returnAgent = None,
@@ -356,7 +356,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to error page when agent is not type VENDOR and main vendor is represented by agent" in { // TODO: Change to actual error page (TBC)
+    "must redirect to error page when agent is not type VENDOR and main vendor is represented by agent" in { //TODO: Change to actual error page (TBC)
       val fullReturn = completeFullReturn.copy(
         returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
         returnAgent = Some(Seq(ReturnAgent(agentType = Some("SOLICITOR")))),

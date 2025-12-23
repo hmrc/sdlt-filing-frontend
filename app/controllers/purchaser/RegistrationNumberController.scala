@@ -50,24 +50,20 @@ class RegistrationNumberController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val purchaserFullName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
-      // val isPurchaserVATRegistered: Option[String] = Some("VATRegistrationNumber")
        val isPurchaserVATRegistered: Option[PurchaserConfirmIdentity] = request.userAnswers.get(PurchaserConfirmIdentityPage)
       
         purchaserService.checkPurchaserTypeAndCompanyDetails(
         purchaserType = WhoIsMakingThePurchase.Company,
         userAnswers = request.userAnswers,
         continueRoute = {
-          (purchaserFullName) match {
+          purchaserFullName match {
             case Some(purchaserFullName) if isPurchaserVATRegistered.contains(PurchaserConfirmIdentity.VatRegistrationNumber) =>
               val preparedForm = request.userAnswers.get(RegistrationNumberPage) match {
                 case None => form
                 case Some(value) => form.fill(value)
               }
               Ok(view(preparedForm, mode, purchaserFullName))
-            case None => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
-            case _ =>
-              //TODO update to more relevant path i.e. back to pr-5b
-              Redirect(controllers.routes.GenericErrorController.onPageLoad())
+            case _ => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
           }
         }
       )

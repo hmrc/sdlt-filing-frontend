@@ -74,8 +74,7 @@ class PurchaserNationalInsuranceController @Inject()(
         case (None, _) => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 
         case (_, Some(doesPurchaserHaveNI)) if doesPurchaserHaveNI.equals(DoesPurchaserHaveNI.No) =>
-          //TODO might need to update to more relevant path i.e. No Nino Page
-          Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode))
+          Redirect(controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(NormalMode))
 
         case (_, _) => Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
       }

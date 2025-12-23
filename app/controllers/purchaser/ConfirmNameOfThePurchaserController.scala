@@ -20,6 +20,7 @@ import controllers.actions.*
 import forms.purchaser.ConfirmNameOfThePurchaserFormProvider
 import models.*
 import models.purchaser.ConfirmNameOfThePurchaser
+import navigation.Navigator
 import pages.purchaser.ConfirmNameOfThePurchaserPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,6 +40,7 @@ class ConfirmNameOfThePurchaserController @Inject()(
                                                      sessionRepository: SessionRepository,
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalAction,
+                                                     navigator: Navigator,
                                                      requireData: DataRequiredAction,
                                                      formProvider: ConfirmNameOfThePurchaserFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
@@ -98,8 +100,7 @@ class ConfirmNameOfThePurchaserController @Inject()(
             case Success(updatedAnswers) =>
               sessionRepository.set(updatedAnswers).map { _ =>
                 if (value.toString == "yes") {
-                  //TODO - update to use navigator?
-                  Redirect(controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser())
+                  Redirect(navigator.nextPage(ConfirmNameOfThePurchaserPage, mode, updatedAnswers))
                 } else {
                   Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
                 }

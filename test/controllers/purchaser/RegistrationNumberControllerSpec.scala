@@ -200,9 +200,6 @@ class RegistrationNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    //TODO : write this test once previous page has been implemented
-    "must redirect to Generic Error if purchaser information does not match partnership" in {}
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()

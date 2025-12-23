@@ -65,7 +65,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
   "VendorAgentsContactDetails Controller" - {
 
-    //TODO update test when CYA page created
+    //TODO: update to VendorAgent CYA page created DTR-2057
     "must redirect to index controller if knowsAgentDetails is false" in {
 
       val userAnswers = emptyUserAnswers

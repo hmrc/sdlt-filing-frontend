@@ -52,7 +52,7 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode)
     case DoYouKnowYourAgentReferencePage =>
       _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
-    case VendorAgentsReferencePage => // TODO: Should navigate to Agent Check Your Answers Page
+    case VendorAgentsReferencePage => //TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
       _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
 
 
@@ -66,7 +66,8 @@ class Navigator @Inject()() {
          | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage
          | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage
          | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | PurchaserTypeOfCompanyPage
-         | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage => true
+         | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage 
+         | ConfirmNameOfThePurchaserPage => true
 
     case _ => false
   }
@@ -100,13 +101,15 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
     case CompanyFormOfIdPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
-    case PurchaserAndVendorConnectedPage => // TODO: update post pr-cya - DTR-1788 page created - (DTR-1687 -Sprint 5)
+    case PurchaserAndVendorConnectedPage => //TODO: update post pr-cya - DTR-1788 page created - (DTR-1687 -Sprint 5)
       - => controllers.routes.ReturnTaskListController.onPageLoad()
+    case ConfirmNameOfThePurchaserPage =>
+      _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    //TODO Change to correct CYA when created
+    //TODO: Change to Purchaser CYA when created - DTR-1788
     case WhoIsMakingThePurchasePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
 

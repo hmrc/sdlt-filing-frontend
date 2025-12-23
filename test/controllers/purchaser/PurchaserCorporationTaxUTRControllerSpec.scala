@@ -134,7 +134,7 @@ class PurchaserCorporationTaxUTRControllerSpec extends SpecBase with MockitoSuga
         }
       }
 
-      "must redirect to GenericError page when the purchaser type selected is Individual" in { // TODO DTR-1788: redirect to CYA
+      "must redirect to GenericError page when the purchaser type selected is Individual" in { //TODO: DTR-1788: redirect to CYA
         val application = applicationBuilder(userAnswers = Some(userAnswersWithPurchaserIndividual)).build()
 
         running(application) {
