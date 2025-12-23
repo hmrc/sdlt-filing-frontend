@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.*
 import models.prelimQuestions.PrelimReturn
 import models.vendor.*
+import models.purchaser.*
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -196,6 +197,108 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       }
       .recover {
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateReturnVersion]")
+      }
+  }
+
+  def createPurchaser(purchaserRequest: CreatePurchaserRequest)(implicit hc: HeaderCarrier,
+                                                       request: Request[_]): Future[CreatePurchaserReturn] = {
+    http.post(url"$activeBase/filing/create/purchaser")
+      .withBody(Json.toJson(purchaserRequest))
+      .execute[Either[UpstreamErrorResponse, CreatePurchaserReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][createPurchaser]")
+      }
+  }
+
+  def updatePurchaser(updatePurchaserRequest: UpdatePurchaserRequest)(implicit hc: HeaderCarrier,
+                                                             request: Request[_]): Future[UpdatePurchaserReturn] = {
+    http.post(url"$activeBase/filing/update/purchaser")
+      .withBody(Json.toJson(updatePurchaserRequest))
+      .execute[Either[UpstreamErrorResponse, UpdatePurchaserReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updatePurchaser]")
+      }
+  }
+
+  def deletePurchaser(deletePurchaserRequest: DeletePurchaserRequest)(implicit hc: HeaderCarrier,
+                                                             request: Request[_]): Future[DeletePurchaserReturn] = {
+    http.post(url"$activeBase/filing/delete/purchaser")
+      .withBody(Json.toJson(deletePurchaserRequest))
+      .execute[Either[UpstreamErrorResponse, DeletePurchaserReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][deletePurchaser]")
+      }
+  }
+
+  def createCompanyDetails(companyDetailsRequest: CreateCompanyDetailsRequest)(implicit hc: HeaderCarrier,
+                                                                request: Request[_]): Future[CreateCompanyDetailsReturn] = {
+    http.post(url"$activeBase/filing/create/company-details")
+      .withBody(Json.toJson(companyDetailsRequest))
+      .execute[Either[UpstreamErrorResponse, CreateCompanyDetailsReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][createCompanyDetails]")
+      }
+  }
+
+  def updateCompanyDetails(updateCompanyDetailsRequest: UpdateCompanyDetailsRequest)(implicit hc: HeaderCarrier,
+                                                                      request: Request[_]): Future[UpdateCompanyDetailsReturn] = {
+    http.post(url"$activeBase/filing/update/company-details")
+      .withBody(Json.toJson(updateCompanyDetailsRequest))
+      .execute[Either[UpstreamErrorResponse, UpdateCompanyDetailsReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateCompanyDetails]")
+      }
+  }
+
+  def deleteCompanyDetails(deleteCompanyDetailsRequest: DeleteCompanyDetailsRequest)(implicit hc: HeaderCarrier,
+                                                                      request: Request[_]): Future[DeleteCompanyDetailsReturn] = {
+    http.post(url"$activeBase/filing/delete/company-details")
+      .withBody(Json.toJson(deleteCompanyDetailsRequest))
+      .execute[Either[UpstreamErrorResponse, DeleteCompanyDetailsReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteCompanyDetails]")
       }
   }
 

@@ -696,5 +696,1255 @@ class StampDutyLandTaxConnectorISpec
         result mustBe a[Throwable]
       }
     }
+    
+    "createVendor()" - {
+
+      val createVendorRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "title" -> "Mr",
+        "forename1" -> "John",
+        "name" -> "Smith",
+        "addressLine1" -> "Main Street",
+        "isRepresentedByAgent" -> "YES"
+      )
+
+      val createVendorReturnJson = Json.obj(
+        "vendorResourceRef" -> "VRF-001",
+        "vendorId" -> "VID-001"
+      )
+
+      "must return CreateVendorReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createVendorReturnJson.toString())
+            )
+        )
+
+        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        val result = connector.createVendor(request).futureValue
+
+        result.vendorResourceRef mustBe "VRF-001"
+        result.vendorId mustBe "VID-001"
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/vendor"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        val result = connector.createVendor(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        val result = connector.createVendor(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createVendorReturnJson.toString())
+            )
+        )
+
+        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        connector.createVendor(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/vendor"))
+        )
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createVendorReturnJson.toString())
+            )
+        )
+
+        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        connector.createVendor(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/vendor"))
+            .withHeader("Content-Type", containing("application/json"))
+        )
+      }
+    }
+
+    "updateVendor()" - {
+
+      val updateVendorRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "vendorResourceRef" -> "VRF-001",
+        "name" -> "Smith Updated",
+        "addressLine1" -> "Main Street",
+        "isRepresentedByAgent" -> "YES"
+      )
+
+      val updateVendorReturnJson = Json.obj("updated" -> true)
+
+      "must return UpdateVendorReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateVendorReturnJson.toString())
+            )
+        )
+
+        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val result = connector.updateVendor(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/vendor"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val result = connector.updateVendor(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val result = connector.updateVendor(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val result = connector.updateVendor(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateVendorReturnJson.toString())
+            )
+        )
+
+        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        connector.updateVendor(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/vendor"))
+        )
+      }
+    }
+
+    "deleteVendor()" - {
+
+      val deleteVendorRequestJson = Json.obj(
+        "storn" -> "STORN12345",
+        "vendorResourceRef" -> "VRF-001",
+        "returnResourceRef" -> "VID-001"
+      )
+
+      val deleteVendorReturnJson = Json.obj("deleted" -> true)
+
+      "must return DeleteVendorReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteVendorReturnJson.toString())
+            )
+        )
+
+        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val result = connector.deleteVendor(request).futureValue
+
+        result.deleted mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/vendor"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val result = connector.deleteVendor(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val result = connector.deleteVendor(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val result = connector.deleteVendor(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteVendorReturnJson.toString())
+            )
+        )
+
+        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        connector.deleteVendor(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/vendor"))
+        )
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/vendor"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val result = connector.deleteVendor(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+    }
+
+    "createReturnAgent()" - {
+
+      val createReturnAgentRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "agentType" -> "SOLICITOR",
+        "name" -> "Agent Company Ltd",
+        "addressLine1" -> "Agent Street",
+        "postcode" -> "AG1 2NT"
+      )
+
+      val createReturnAgentReturnJson = Json.obj(
+        "returnAgentId" -> "RAID-001"
+      )
+
+      "must return CreateReturnAgentReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createReturnAgentReturnJson.toString())
+            )
+        )
+
+        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        val result = connector.createReturnAgent(request).futureValue
+
+        result.returnAgentId mustBe "RAID-001"
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        val result = connector.createReturnAgent(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        val result = connector.createReturnAgent(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createReturnAgentReturnJson.toString())
+            )
+        )
+
+        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        connector.createReturnAgent(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))
+        )
+      }
+
+      "must send correct request body with agentType and required fields" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createReturnAgentReturnJson.toString())
+            )
+        )
+
+        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        connector.createReturnAgent(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))
+            .withRequestBody(matchingJsonPath("$.agentType", equalTo("SOLICITOR")))
+            .withRequestBody(matchingJsonPath("$.name", equalTo("Agent Company Ltd")))
+            .withRequestBody(matchingJsonPath("$.postcode", equalTo("AG1 2NT")))
+        )
+      }
+    }
+
+    "updateReturnAgent()" - {
+
+      val updateReturnAgentRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "agentType" -> "SOLICITOR",
+        "name" -> "Updated Agent Company Ltd",
+        "addressLine1" -> "Agent Street",
+        "postcode" -> "AG1 2NT"
+      )
+
+      val updateReturnAgentReturnJson = Json.obj("updated" -> true)
+
+      "must return UpdateReturnAgentReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnAgentReturnJson.toString())
+            )
+        )
+
+        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val result = connector.updateReturnAgent(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-agent"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val result = connector.updateReturnAgent(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val result = connector.updateReturnAgent(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val result = connector.updateReturnAgent(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnAgentReturnJson.toString())
+            )
+        )
+
+        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        connector.updateReturnAgent(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-agent"))
+        )
+      }
+    }
+
+    "deleteReturnAgent()" - {
+
+      val deleteReturnAgentRequestJson = Json.obj(
+        "storn" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "agentType" -> "SOLICITOR"
+      )
+
+      val deleteReturnAgentReturnJson = Json.obj("deleted" -> true)
+
+      "must return DeleteReturnAgentReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteReturnAgentReturnJson.toString())
+            )
+        )
+
+        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val result = connector.deleteReturnAgent(request).futureValue
+
+        result.deleted mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val result = connector.deleteReturnAgent(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val result = connector.deleteReturnAgent(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val result = connector.deleteReturnAgent(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteReturnAgentReturnJson.toString())
+            )
+        )
+
+        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        connector.deleteReturnAgent(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+        )
+      }
+
+      "must send correct request body with agentType field" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteReturnAgentReturnJson.toString())
+            )
+        )
+
+        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        connector.deleteReturnAgent(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/return-agent"))
+            .withRequestBody(matchingJsonPath("$.agentType", equalTo("SOLICITOR")))
+        )
+      }
+    }
+
+    "createPurchaser()" - {
+
+      val createPurchaserRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "isCompany" -> "NO",
+        "isTrustee" -> "NO",
+        "isConnectedToVendor" -> "NO",
+        "isRepresentedByAgent" -> "YES",
+        "title" -> "Mr",
+        "surname" -> "Jones",
+        "forename1" -> "David",
+        "address1" -> "Park Avenue"
+      )
+
+      val createPurchaserReturnJson = Json.obj(
+        "purchaserResourceRef" -> "PRF-001",
+        "purchaserId" -> "PID-001"
+      )
+
+      "must return CreatePurchaserReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createPurchaserReturnJson.toString())
+            )
+        )
+
+        val request = createPurchaserRequestJson.as[models.purchaser.CreatePurchaserRequest]
+        val result = connector.createPurchaser(request).futureValue
+
+        result.purchaserResourceRef mustBe "PRF-001"
+        result.purchaserId mustBe "PID-001"
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/purchaser"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = createPurchaserRequestJson.as[models.purchaser.CreatePurchaserRequest]
+        val result = connector.createPurchaser(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = createPurchaserRequestJson.as[models.purchaser.CreatePurchaserRequest]
+        val result = connector.createPurchaser(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createPurchaserReturnJson.toString())
+            )
+        )
+
+        val request = createPurchaserRequestJson.as[models.purchaser.CreatePurchaserRequest]
+        connector.createPurchaser(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/purchaser"))
+        )
+      }
+    }
+
+    "updatePurchaser()" - {
+
+      val updatePurchaserRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "purchaserResourceRef" -> "PRF-001",
+        "isCompany" -> "NO",
+        "isTrustee" -> "NO",
+        "isConnectedToVendor" -> "NO",
+        "isRepresentedByAgent" -> "YES",
+        "address1" -> "Park Avenue"
+      )
+
+      val updatePurchaserReturnJson = Json.obj("updated" -> true)
+
+      "must return UpdatePurchaserReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updatePurchaserReturnJson.toString())
+            )
+        )
+
+        val request = updatePurchaserRequestJson.as[models.purchaser.UpdatePurchaserRequest]
+        val result = connector.updatePurchaser(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/purchaser"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = updatePurchaserRequestJson.as[models.purchaser.UpdatePurchaserRequest]
+        val result = connector.updatePurchaser(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = updatePurchaserRequestJson.as[models.purchaser.UpdatePurchaserRequest]
+        val result = connector.updatePurchaser(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updatePurchaserReturnJson.toString())
+            )
+        )
+
+        val request = updatePurchaserRequestJson.as[models.purchaser.UpdatePurchaserRequest]
+        connector.updatePurchaser(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/purchaser"))
+        )
+      }
+    }
+
+    "deletePurchaser()" - {
+
+      val deletePurchaserRequestJson = Json.obj(
+        "storn" -> "STORN12345",
+        "purchaserResourceRef" -> "PRF-001",
+        "returnResourceRef" -> "RRF-2024-001"
+      )
+
+      val deletePurchaserReturnJson = Json.obj("deleted" -> true)
+
+      "must return DeletePurchaserReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deletePurchaserReturnJson.toString())
+            )
+        )
+
+        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val result = connector.deletePurchaser(request).futureValue
+
+        result.deleted mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/purchaser"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val result = connector.deletePurchaser(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val result = connector.deletePurchaser(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val result = connector.deletePurchaser(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/purchaser"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deletePurchaserReturnJson.toString())
+            )
+        )
+
+        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        connector.deletePurchaser(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/purchaser"))
+        )
+      }
+    }
+
+    "createCompanyDetails()" - {
+
+      val createCompanyDetailsRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "purchaserResourceRef" -> "PRF-001",
+        "utr" -> "1234567890",
+        "vatReference" -> "GB123456789"
+      )
+
+      val createCompanyDetailsReturnJson = Json.obj("companyDetailsId" -> "CID-001")
+
+      "must return CreateCompanyDetailsReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createCompanyDetailsReturnJson.toString())
+            )
+        )
+
+        val request = createCompanyDetailsRequestJson.as[models.purchaser.CreateCompanyDetailsRequest]
+        val result = connector.createCompanyDetails(request).futureValue
+
+        result.companyDetailsId mustBe "CID-001"
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/company-details"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = createCompanyDetailsRequestJson.as[models.purchaser.CreateCompanyDetailsRequest]
+        val result = connector.createCompanyDetails(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = createCompanyDetailsRequestJson.as[models.purchaser.CreateCompanyDetailsRequest]
+        val result = connector.createCompanyDetails(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createCompanyDetailsReturnJson.toString())
+            )
+        )
+
+        val request = createCompanyDetailsRequestJson.as[models.purchaser.CreateCompanyDetailsRequest]
+        connector.createCompanyDetails(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/company-details"))
+        )
+      }
+    }
+
+    "updateCompanyDetails()" - {
+
+      val updateCompanyDetailsRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "purchaserResourceRef" -> "PRF-001",
+        "utr" -> "9876543210"
+      )
+
+      val updateCompanyDetailsReturnJson = Json.obj("updated" -> true)
+
+      "must return UpdateCompanyDetailsReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateCompanyDetailsReturnJson.toString())
+            )
+        )
+
+        val request = updateCompanyDetailsRequestJson.as[models.purchaser.UpdateCompanyDetailsRequest]
+        val result = connector.updateCompanyDetails(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/company-details"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = updateCompanyDetailsRequestJson.as[models.purchaser.UpdateCompanyDetailsRequest]
+        val result = connector.updateCompanyDetails(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = updateCompanyDetailsRequestJson.as[models.purchaser.UpdateCompanyDetailsRequest]
+        val result = connector.updateCompanyDetails(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateCompanyDetailsReturnJson.toString())
+            )
+        )
+
+        val request = updateCompanyDetailsRequestJson.as[models.purchaser.UpdateCompanyDetailsRequest]
+        connector.updateCompanyDetails(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/company-details"))
+        )
+      }
+    }
+
+    "deleteCompanyDetails()" - {
+
+      val deleteCompanyDetailsRequestJson = Json.obj(
+        "storn" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001"
+      )
+
+      val deleteCompanyDetailsReturnJson = Json.obj("deleted" -> true)
+
+      "must return DeleteCompanyDetailsReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteCompanyDetailsReturnJson.toString())
+            )
+        )
+
+        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val result = connector.deleteCompanyDetails(request).futureValue
+
+        result.deleted mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/company-details"))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val result = connector.deleteCompanyDetails(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val result = connector.deleteCompanyDetails(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val result = connector.deleteCompanyDetails(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/company-details"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteCompanyDetailsReturnJson.toString())
+            )
+        )
+
+        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        connector.deleteCompanyDetails(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/company-details"))
+        )
+      }
+    }
   }
 }
