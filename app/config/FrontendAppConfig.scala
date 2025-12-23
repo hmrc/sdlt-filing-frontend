@@ -111,8 +111,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val stubBool: Boolean = configuration.get("backend-feature-stub")
 
-  lazy val addTaxesBaseUrl: String = baseUrl("add-taxes-frontend")
+  lazy val addTaxesFrontendHost: String = configuration.get[String](s"add-taxes-frontend.host")
 
   def addTaxesRedirectUrl: String =
-    s"$addTaxesBaseUrl/business-account/add-tax/other/land/stamp-duty"
+    s"$addTaxesFrontendHost/business-account/add-tax/other/land/stamp-duty"
 }
