@@ -54,36 +54,42 @@ class VendorCheckYourAnswersController @Inject()(
         result <- sessionRepository.get(request.userAnswers.id)
       } yield {
 
+        val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
         val isDataEmpty = result.exists(_.data.value.isEmpty)
-        (isDataEmpty, result) match {
-          case (true, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-          case (_, Some(userAnswers)) =>
-            val baseRows = Seq(
-              VendorTypeSummary.row(Some(userAnswers)),
-              IndividualOrCompanyNameSummary.row(Some(userAnswers)),
-              VendorAddressSummary.row(Some(userAnswers))
-            )
-            //TODO: Logic should be moved to agent CYA page - DTR-2057
-//            val showAgentCYA: Option[Boolean] = userAnswers
-//              .get(VendorRepresentedByAgentPage)
-//              .map(_.self)
-//
-//            val showAgentCYACheck = showAgentCYA match {
-//              case Some(true) => true
-//              case _ => false
-//            }
-//            val agentRows = if (showAgentCYACheck) {
-//              Seq(
-//                AgentNameSummary.row(Some(userAnswers)),
-//                AgentAddressSummary.row(Some(userAnswers))
-//              )
-//            } else {
-//              Seq.empty
-//            }
+        
+        if(isReturnIdEmpty){
+          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        } else {
+          (isDataEmpty, result) match {
+            case (true, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+            case (_, Some(userAnswers)) =>
+              val baseRows = Seq(
+                VendorTypeSummary.row(Some(userAnswers)),
+                IndividualOrCompanyNameSummary.row(Some(userAnswers)),
+                VendorAddressSummary.row(Some(userAnswers))
+              )
+              //TODO Logic should be moved to agent CYA page
+              //            val showAgentCYA: Option[Boolean] = userAnswers
+              //              .get(VendorRepresentedByAgentPage)
+              //              .map(_.self)
+              //
+              //            val showAgentCYACheck = showAgentCYA match {
+              //              case Some(true) => true
+              //              case _ => false
+              //            }
+              //            val agentRows = if (showAgentCYACheck) {
+              //              Seq(
+              //                AgentNameSummary.row(Some(userAnswers)),
+              //                AgentAddressSummary.row(Some(userAnswers))
+              //              )
+              //            } else {
+              //              Seq.empty
+              //            }
 
-            val summaryList = SummaryListViewModel(rows = baseRows)
-            Ok(view(summaryList))
-          case (false, None) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+              val summaryList = SummaryListViewModel(rows = baseRows)
+              Ok(view(summaryList))
+            case (false, None) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          }
         }
       }
 

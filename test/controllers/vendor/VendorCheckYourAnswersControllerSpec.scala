@@ -58,7 +58,7 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
 
     "onPageLoad" - {
 
-      "must redirect to BeforeStartReturnController when the UserAnswers data is empty" in {
+      "must redirect to ReturnTaskList when the UserAnswers data is empty" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -72,7 +72,7 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
@@ -114,7 +114,7 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
 
         val userAnswers = UserAnswers(
           id = "12345",
-          returnId = None,
+          returnId = Some("AB2346"),
           storn = "TESTSTORN",
           data = Json.obj(
             "whoIsTheVendor" -> "Individual",
