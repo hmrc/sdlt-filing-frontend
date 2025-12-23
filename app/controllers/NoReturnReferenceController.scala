@@ -16,8 +16,9 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.NoReturnReferenceFormProvider
+
 import javax.inject.Inject
 import models.NoReturnReference
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -25,6 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.NoReturnReferenceView
 import config.FrontendAppConfig
+import play.api.data.Form
 
 import scala.concurrent.Future
 
@@ -38,7 +40,7 @@ class NoReturnReferenceController @Inject()(
                                              appConfig: FrontendAppConfig
                                            ) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[NoReturnReference] = formProvider()
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData) {
     implicit request =>

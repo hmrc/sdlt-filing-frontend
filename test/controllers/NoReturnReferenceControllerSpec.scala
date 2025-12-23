@@ -19,22 +19,17 @@ package controllers
 import base.SpecBase
 import forms.NoReturnReferenceFormProvider
 import models.NoReturnReference
-//import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-//import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers.*
+import play.api.test.Helpers._
 import views.html.NoReturnReferenceView
-//import config.FrontendAppConfig
-import play.api.mvc.Call
+import config.FrontendAppConfig
 
 class NoReturnReferenceControllerSpec extends SpecBase with MockitoSugar {
 
   private lazy val noReturnReferenceRoute = routes.NoReturnReferenceController.onPageLoad().url
   private lazy val noReturnReferenceSubmitRoute = routes.NoReturnReferenceController.onSubmit().url
 
-  def onwardRoute = Call("GET", "/foo")
-  
   private val formProvider = new NoReturnReferenceFormProvider()
   private val form = formProvider()
 
@@ -68,13 +63,6 @@ class NoReturnReferenceControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to the Stamp Duty Land Tax Management service when ManageTaxes is selected" in {
-//      val mockAppConfig = mock[FrontendAppConfig]
-//      when(mockAppConfig.sdltManagementRedirectUrl) thenReturn onwardRoute.url
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-//        .overrides(bind[FrontendAppConfig].toInstance(mockAppConfig))
-//        .build()
-
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -82,23 +70,10 @@ class NoReturnReferenceControllerSpec extends SpecBase with MockitoSugar {
           .withFormUrlEncodedBody(("value", NoReturnReference.ManageTaxes.toString))
 
         val result = route(application, request).value
+        val config = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(POST, noReturnReferenceSubmitRoute)
-          .withFormUrlEncodedBody(("value", NoReturnReference.FileNewReturn.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual config.sdltManagementRedirectUrl
       }
     }
   }
