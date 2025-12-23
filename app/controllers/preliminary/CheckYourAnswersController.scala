@@ -50,9 +50,9 @@ class CheckYourAnswersController @Inject()(
       for {
         result <- sessionRepository.get(request.userAnswers.id)
       } yield {
-        
+
         val isDataEmpty = result.exists(_.data.value.isEmpty)
-        
+
         if (isDataEmpty) {
           Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
         } else {
