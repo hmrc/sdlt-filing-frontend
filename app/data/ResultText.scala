@@ -66,4 +66,6 @@ object ResultText {
   val RESULT_HINT_ADDNL_PROP_AFTER_MARCH_2021 = "The results are based on the answers you have provided and show that the higher rate on additional dwellings applies. "
   val RESULT_HINT_NON_UK_RES_AFTER_MARCH_2021 = "The results are based on the answers you have provided and show that the non-resident rate of SDLT applies."
   val RESULT_HINT_NON_UK_RES_WITHIN_12M = "If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date."
+
+  val RESULT_HEADING_TAX_RELEIF = "Results of calculation based on SDLT rules for the effective date entered"
 }

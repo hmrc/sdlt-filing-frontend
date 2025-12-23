@@ -6,6 +6,7 @@
 package services
 
 import data.FreeholdSliceRatesTables._
+import data.ResultText.RESULT_HEADING_TAX_RELEIF
 import data.{Dates, SlabRatesTables}
 import enums.{CalcTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
@@ -510,7 +511,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
       Seq(
         Result(
           totalTax = 0,
-          resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+          resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
           resultHint = None,
           npv = None,
           taxCalcs = Seq(
@@ -528,5 +529,4 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
         )
       )
     )
-
 }
