@@ -19,7 +19,7 @@ class PurchasePriceControllerSpec extends ScalaSpecBase {
   val form          = formProvider()
   lazy val purchasePriceRoute = controllers.scalabuild.routes.PurchasePriceController.onPageLoad().url
 
-  "Main Residence Controller" - {
+  "PurchasePrice Controller" - {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder().build()
 

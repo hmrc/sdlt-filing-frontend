@@ -11,6 +11,6 @@ class IsPurchaserIndividualFormProvider extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("isPurchaserIndividual.error.required")
+      "individual" -> boolean("isPurchaserIndividual.error.required")
     )
 }

@@ -27,9 +27,11 @@ govukDetails : GovukDetails
         }
 
         @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("isPurchaserIndividual.heading")).asPageHeading()
+            RadiosViewModel.yesNoCustomIdSuffix(
+                field = form("individual"),
+                legend = LegendViewModel(messages("isPurchaserIndividual.heading")).asPageHeading(),
+                yesId = "-yes",
+                noId = "-no"
             ).inline().withHint(Hint(content = HtmlContent(messages("isPurchaserIndividual.hint"))))
         )
         @govukButton(ButtonViewModel("continue-button",messages("site.continue")))

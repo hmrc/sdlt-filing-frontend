@@ -4,7 +4,7 @@
  */
 
 package views.scalabuild
-import models.scalabuild.Tenancy
+import models.scalabuild.HoldingTypes
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.html.scalabuild.FreeholdOrLeaseholdView
@@ -23,7 +23,7 @@ class FreeholdOrLeaseholdViewSpec extends ViewTestFixture {
       hintText must include(messages("tenancy.hint"))
     }
     "render the correct values for the radio button choices" in {
-      Tenancy.values.map( value => radios must include(messages(s"$value")))
+      HoldingTypes.values.map(value => radios must include(messages(s"$value")))
 
     }
     "render the correct button" in {

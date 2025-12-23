@@ -8,18 +8,19 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import play.api.mvc.Call
 import forms.scalabuild.ResidentialOrNonResidentialFormProvider
+import models.scalabuild.PropertyType
 import models.scalabuild.PropertyType.Residential
+import play.api.data.Form
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.ResidentialOrNonResidentialView
 
 class ResidentialOrNonResidentialControllerSpec extends ScalaSpecBase {
-
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/property")
+  def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/date")
   val formProvider = new ResidentialOrNonResidentialFormProvider()
-  val form          = formProvider()
-  lazy val residentialOrNonResidentialRoute = routes.ResidentialOrNonResidentialController.onPageLoad().url
+  val form: Form[PropertyType] = formProvider()
+  lazy val residentialOrNonResidentialRoute: String = routes.ResidentialOrNonResidentialController.onPageLoad().url
 
   "Residential Or Non Residential Controller" - {
     "must return OK and the correct view for a GET" in {

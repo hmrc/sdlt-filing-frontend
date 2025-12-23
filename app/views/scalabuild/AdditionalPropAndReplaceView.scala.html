@@ -19,7 +19,7 @@
 
 @layout() {
 
-@formHelper(action = controllers.scalabuild.routes.IsAdditionalPropertyController.onSubmit(), Symbol("autoComplete") -> "off") {
+@formHelper(action = controllers.scalabuild.routes.AdditionalPropAndReplaceController.onSubmit(), Symbol("autoComplete") -> "off") {
 
 @if(addPropForm.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(addPropForm))
@@ -32,13 +32,13 @@
         yesId = "Yes",
         noId = "No",
         items = RadiosViewModel.yesNoItemsWithConditionalHtml(
-            field = replaceMainForm("twoOrMore"),
+            field = addPropForm("twoOrMore"),
             yesId = "Yes",
             noId = "No",
             conditionalYesHtml = Some(
                 govukRadios(
                     RadiosViewModel.yesNoCustomIdSuffix(
-                        field = replaceMainForm("mainResidence"),
+                        field = replaceMainForm("replaceMainResidence"),
                         legend = LegendViewModel(messages("replaceMainResidence.heading")).asPageHeading(),
                         yesId = "Yes",
                         noId = "No"

@@ -20,7 +20,7 @@ class OwnsOtherPropertiesControllerSpec extends ScalaSpecBase {
   val form          = formProvider()
   lazy val ownsOtherPropertiesRoute = controllers.scalabuild.routes.OwnsOtherPropertiesController.onPageLoad().url
 
-  "Non UK Resident Controller" - {
+  "OwnsOtherProperty Controller" - {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder().build()
 

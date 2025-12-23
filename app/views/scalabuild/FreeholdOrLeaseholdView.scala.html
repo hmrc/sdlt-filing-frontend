@@ -15,7 +15,7 @@
     govukButton: GovukButton,
 )
 
-@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+@(form: Form[_])(implicit request: RequestHeader, messages: Messages)
 
 @layout() {
 
@@ -29,7 +29,7 @@
             RadiosViewModel(
             field  = form("value"),
             legend = LegendViewModel(messages("tenancy.heading")).asPageHeading(),
-            items  = Tenancy.options
+            items  = HoldingTypes.options
             )
             .inline()
             .withHint(Hint(content = HtmlContent(messages("tenancy.hint"))))

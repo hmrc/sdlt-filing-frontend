@@ -6,13 +6,13 @@
 package forms.scalabuild
 
 import forms.scalabuild.mappings.Mappings
-import models.scalabuild.Tenancy
+import models.scalabuild.HoldingTypes
 import play.api.data.Form
 
 class FreeholdOrLeaseholdFormProvider extends Mappings {
 
-  def apply(): Form[Tenancy] =
+  def apply(): Form[HoldingTypes] =
     Form(
-      "value" -> enumerable[Tenancy]("tenancy.error.required")
+      "value" -> enumerable[HoldingTypes]("tenancy.error.required")
     )
 }

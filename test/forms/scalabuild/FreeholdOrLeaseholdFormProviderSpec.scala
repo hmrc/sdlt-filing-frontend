@@ -6,7 +6,7 @@
 package forms.scalabuild
 
 import base.ScalaSpecBase
-import models.scalabuild.Tenancy
+import models.scalabuild.HoldingTypes.{freehold, leasehold}
 import play.api.data.FormError
 
 class FreeholdOrLeaseholdFormProviderSpec extends ScalaSpecBase {
@@ -14,16 +14,16 @@ class FreeholdOrLeaseholdFormProviderSpec extends ScalaSpecBase {
   val form = new FreeholdOrLeaseholdFormProvider().apply()
 
   "bind Freehold" in {
-    val data = Map(("value", "Freehold"))
+    val data = Map(("value", "freehold"))
     val result = form.bind(data)
-    result.value.value mustBe Tenancy.Freehold
+    result.value.value mustBe freehold
     result.errors mustBe empty
   }
 
   "bind Leasehold" in {
-    val data = Map(("value", "Leasehold"))
+    val data = Map(("value", "leasehold"))
     val result = form.bind(data)
-    result.value.value mustBe Tenancy.Leasehold
+    result.value.value mustBe leasehold
     result.errors mustBe empty
   }
 

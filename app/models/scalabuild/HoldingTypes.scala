@@ -9,14 +9,14 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait Tenancy
-object Tenancy extends Enumerable.Implicits {
-  case object Freehold extends Tenancy
-  case object Leasehold extends Tenancy
+sealed trait HoldingTypes
+object HoldingTypes extends Enumerable.Implicits {
+  case object freehold extends HoldingTypes
+  case object leasehold extends HoldingTypes
 
-  val values: Seq[Tenancy] = Seq(
-    Freehold,
-    Leasehold
+  val values: Seq[HoldingTypes] = Seq(
+    freehold,
+    leasehold
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] =
@@ -28,7 +28,7 @@ object Tenancy extends Enumerable.Implicits {
       )
     }
 
-  implicit val enumerable: Enumerable[Tenancy] =
+  implicit val enumerable: Enumerable[HoldingTypes] =
     Enumerable(values.map(v => v.toString -> v): _*)
 
 }
