@@ -18,10 +18,16 @@ site.govuk                                                                      
 site.save.continue                                                                  = Save and continue
 site.success                                                                        = Success
 site.section.prefix                                                                 = This section is
+site.fullStop                                                                       = .
 
 # Site Errors
 site.error.generic.title                                                            = Generic Error (Content TBC)
 site.error.generic.heading                                                          = Generic Error (Content TBC)
+
+site.error.noSdltEnrolmentErrorPage.title = No Enrolment
+site.error.noSdltEnrolmentErrorPage.heading = You do not have access to Stamp Taxes Online
+site.error.noSdltEnrolmentErrorPage.p = To file a Stamp Duty Land Tax (SDLT) return, you need to
+site.error.noSdltEnrolmentErrorPage.link.message = add this tax to your account
 
 # Section Captions
 site.vendor.caption                                                                 = About the vendor

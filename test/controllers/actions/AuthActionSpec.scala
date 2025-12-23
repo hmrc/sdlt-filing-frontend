@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -36,6 +36,20 @@ class AuthActionSpec extends SpecBase {
   class Harness(authAction: IdentifierAction) {
     def onPageLoad(): Action[AnyContent] = authAction { _ => Results.Ok }
   }
+
+  class FakeAuthConnectorNoSdltEnrolment extends AuthConnector {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])
+                             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+
+      val internalId: Option[String] = Some("internalId-123")
+      val enrolments: Enrolments = Enrolments(Set(
+        Enrolment("IR-OTHER", Seq(), "activated") // No SDLT enrolment
+      ))
+
+      Future.successful(new~(internalId, enrolments).asInstanceOf[A])
+    }
+  }
+
 
   "Auth Action" - {
 
@@ -95,6 +109,31 @@ class AuthActionSpec extends SpecBase {
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+        }
+      }
+    }
+
+    "the user is authorised but has no SDLT enrolment" - {
+
+      "must redirect to the No Enrolment Page" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new AuthenticatedIdentifierAction(
+            new FakeAuthConnectorNoSdltEnrolment,
+            appConfig,
+            bodyParsers
+          )
+
+          val controller = new Harness(authAction)
+          val result = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe routes.NoSdltEnrolmentErrorPageController.onPageLoad().url
         }
       }
     }
