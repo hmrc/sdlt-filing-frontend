@@ -612,3 +612,12 @@ purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                      
 purchaser.isPurchaserActingAsTrustee.error.required                                 = Please select Yes or No
 purchaser.isPurchaserActingAsTrustee.change.hidden                                  = IsPurchaserActingAsTrustee
 
+
+site.error.noReturnReference.title                                                       = You cannot reach this page
+site.error.noReturnReference.heading                                                     = You cannot reach this page
+site.error.noReturnReference.hint                                                        = Select what you would like to do next
+site.error.noReturnReference.fileNewReturn                                               = File a new SDLT return
+site.error.noReturnReference.manageTaxes                                                 = Manage your Stamp Taxes
+site.error.noReturnReference.checkYourAnswersLabel                                       = You cannot reach this page
+site.error.noReturnReference.error.required                                              = Please select an option
+site.error.noReturnReference.change.hidden                                               = NoReturnReference

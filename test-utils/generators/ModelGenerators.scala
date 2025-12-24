@@ -25,6 +25,11 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryNoReturnReference: Arbitrary[NoReturnReference] =
+    Arbitrary {
+      Gen.oneOf(NoReturnReference.values.toSeq)
+    }
+
   implicit lazy val arbitraryCompanyFormOfId: Arbitrary[CompanyFormOfId] =
     Arbitrary {
       for {

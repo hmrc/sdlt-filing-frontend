@@ -40,7 +40,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
     "onPageLoad" - {
 
-      "must return SEE_OTHER and redirect to BeforeStartReturn when no returnId is provided in URL or UserAnswers" in {
+      "must return SEE_OTHER and redirect to NoReturnId error page when no returnId is provided in URL or UserAnswers" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
@@ -56,7 +56,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.NoReturnReferenceController.onPageLoad().url)
 
           verify(mockFullReturnService, never()).getFullReturn(any())(any(), any())
           verify(mockSessionRepository, never()).set(any[UserAnswers])

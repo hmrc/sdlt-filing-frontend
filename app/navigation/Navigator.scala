@@ -36,6 +36,7 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
     case VendorOrCompanyNamePage =>
@@ -44,6 +45,7 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
     case VendorRepresentedByAgentPage =>
       _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
+      
     case AgentNamePage =>
       _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case AddVendorAgentContactDetailsPage =>
@@ -54,7 +56,6 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
     case VendorAgentsReferencePage => //TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
       _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
-
 
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()

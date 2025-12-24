@@ -45,7 +45,7 @@ class ReturnTaskListController @Inject()(
  
       val effectiveReturnId = returnId.orElse(request.userAnswers.flatMap(_.returnId))
       effectiveReturnId.fold(
-        Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
+        Future.successful(Redirect(controllers.routes.NoReturnReferenceController.onPageLoad()))
       ) { id =>
         for {
           fullReturn <- fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.storn))
