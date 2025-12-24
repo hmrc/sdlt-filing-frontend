@@ -51,13 +51,9 @@ class CheckYourAnswersController @Inject()(
         result <- sessionRepository.get(request.userAnswers.id)
       } yield {
         
-        val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
         val isDataEmpty = result.exists(_.data.value.isEmpty)
-
-        if(isReturnIdEmpty) {
-          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        }
-        else if (isDataEmpty) {
+        
+        if (isDataEmpty) {
           Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
         } else {
           val summaryList = SummaryListViewModel(
