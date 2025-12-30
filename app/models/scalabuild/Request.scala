@@ -14,9 +14,7 @@ object PageConstants {
   val propertyDetails: String = "propertyDetails"
   val leaseDetails: String = "leaseDetails"
   val relevantRentDetails: String = "relevantRentDetails"
-  val LeaseTerm: String = "LeaseTerm"
-  val RelevantRentDetails: String = "RelevantRentDetails"
-
+  val leaseTerm: String = "leaseTerm"
 }
 
 case class Request(

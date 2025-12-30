@@ -25,7 +25,7 @@ class MainResidenceController @Inject() (
     Ok(view(form))
   }
 
-  //TODO Lan: Does this need to be saved in the db? Can't see "mainResidence" as part of the request. Is it also the replaceMainResidence field?
+  //TODO: Does this need to be saved in the db? Can't see "mainResidence" as part of the request. Is it also the replaceMainResidence field?
   def onSubmit(): Action[AnyContent] = Action.async { implicit request =>
     val form: Form[_] = formProvider()
     form
