@@ -15,7 +15,6 @@ class PurchasePriceFormProvider  extends Mappings {
       "premium" -> currency(
         "purchasePrice.error.twoDecimalPlaces",
         "purchasePrice.error.nonNumeric")
-      // Todo: Lan can a purchase price be negative? Is there a max value?
     )
 }
 

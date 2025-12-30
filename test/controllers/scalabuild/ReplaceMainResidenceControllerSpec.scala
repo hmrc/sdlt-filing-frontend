@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.ReplaceMainResidenceFormProvider
+import play.api.data.Form
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
@@ -15,12 +16,12 @@ import views.html.scalabuild.ReplaceMainResidenceView
 
 
 class ReplaceMainResidenceControllerSpec extends ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/replace-main-residence")
+  def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/purchase-price")
   val formProvider = new ReplaceMainResidenceFormProvider()
-  val form          = formProvider()
-  lazy val replaceMainResidenceRoute = controllers.scalabuild.routes.ReplaceMainResidenceController.onPageLoad().url
+  val form: Form[Boolean] = formProvider()
+  lazy val replaceMainResidenceRoute: String = controllers.scalabuild.routes.ReplaceMainResidenceController.onPageLoad().url
 
-  "Non UK Resident Controller" - {
+  "ReplaceMainResidence Controller" - {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder().build()
 

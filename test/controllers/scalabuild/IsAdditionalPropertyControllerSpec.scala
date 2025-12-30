@@ -6,20 +6,20 @@
 package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.IsAdditionalPropertyFormProvider
+import play.api.data.Form
 import views.html.scalabuild.IsAdditionalPropertyView
-
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.mvc.Call
 
 class IsAdditionalPropertyControllerSpec extends ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/additional-property")
+  def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/replace-main-residence")
   val formProvider = new IsAdditionalPropertyFormProvider()
-  val form          = formProvider()
-  lazy val isAdditionalPropertyRoute = controllers.scalabuild.routes.IsAdditionalPropertyController.onPageLoad().url
+  val form: Form[Boolean] = formProvider()
+  lazy val isAdditionalPropertyRoute: String = controllers.scalabuild.routes.IsAdditionalPropertyController.onPageLoad().url
 
-  "Non UK Resident Controller" - {
+  "IsAdditionalProperty Controller" - {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder().build()
 

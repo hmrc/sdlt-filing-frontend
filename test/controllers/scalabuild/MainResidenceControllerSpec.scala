@@ -6,20 +6,20 @@
 package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.MainResidenceFormProvider
+import play.api.data.Form
 import views.html.scalabuild.MainResidenceView
-
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.mvc.Call
 
   class MainResidenceControllerSpec extends ScalaSpecBase {
-    def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/main-residence")
+    def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/main-residence")
     val formProvider = new MainResidenceFormProvider()
-    val form          = formProvider()
-    lazy val mainResidenceRoute = controllers.scalabuild.routes.MainResidenceController.onPageLoad().url
+    val form: Form[Boolean] = formProvider()
+    lazy val mainResidenceRoute: String = controllers.scalabuild.routes.MainResidenceController.onPageLoad().url
 
-    "Main Residence Controller" - {
+    "MainResidence Controller" - {
       "must return OK and the correct view for a GET" in {
         val application = applicationBuilder().build()
 
@@ -40,7 +40,7 @@ import play.api.mvc.Call
         running(application) {
           val request =
             FakeRequest(POST, mainResidenceRoute)
-              .withFormUrlEncodedBody(("mainResidence", "true")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+              .withFormUrlEncodedBody(("replaceMainResidence", "true")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
           val result = route(application, request).value
 

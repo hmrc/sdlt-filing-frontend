@@ -6,43 +6,82 @@
 package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.FreeholdOrLeaseholdFormProvider
+import models.scalabuild.HoldingTypes
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.Status.OK
+import play.api.data.Form
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, running, status, writeableOf_AnyContentAsEmpty}
+import play.api.test.Helpers._
 import views.html.scalabuild.FreeholdOrLeaseholdView
 
 class FreeholdOrLeaseholdControllerSpec extends ScalaSpecBase with MockitoSugar {
 
+  def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/property")
 
-def onwardRoute = Call("GET", "/holding")
+  val formProvider = new FreeholdOrLeaseholdFormProvider()
+  val form: Form[HoldingTypes] = formProvider()
 
-val formProvider = new FreeholdOrLeaseholdFormProvider()
-val form = formProvider()
+  lazy val freeholdOrLeaseholdRoute: String =
+    controllers.scalabuild.routes.FreeholdOrLeaseholdController.onPageLoad().url
 
-lazy val freeholdOrLeaseholdControllerRoute: String = controllers.scalabuild.routes.FreeholdOrLeaseholdController.onPageLoad().url
+  "FreeholdOrLease Controller" - {
 
-"FreeholdOrLease Controller" - {
+    "must return OK and the correct view for a GET when saved user Details are fetched" in {
 
-  "must return OK and the correct view for a GET when saved user Details are fetched" in {
+      val application =
+        applicationBuilder()
+          .build()
 
-    val application =
-      applicationBuilder()
-        .build()
+      running(application) {
+        val request =
+          FakeRequest(GET, freeholdOrLeaseholdRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
+        val result = route(application, request).value
 
-    running(application) {
-      val request = FakeRequest(GET, freeholdOrLeaseholdControllerRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val view = application.injector.instanceOf[FreeholdOrLeaseholdView]
 
-      val result = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(view(form)(request, messages(application)).body)
+      }
+    }
 
-      val view = application.injector.instanceOf[FreeholdOrLeaseholdView]
+    "must redirect to the next page when valid data is submitted" in {
 
-      status(result) mustEqual OK
-      contentAsString(result) must include(view(form)(request, messages(application)).body.toString)
+      val application = applicationBuilder().build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, freeholdOrLeaseholdRoute)
+            .withFormUrlEncodedBody(("value", "freehold"))
+            .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      val application = applicationBuilder().build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, freeholdOrLeaseholdRoute)
+            .withFormUrlEncodedBody(("twoOrMore", ""))
+            .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+
+        val boundForm = form.bind(Map("twoOrMore" -> ""))
+
+        val view = application.injector.instanceOf[FreeholdOrLeaseholdView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
+      }
     }
   }
 }
-  }

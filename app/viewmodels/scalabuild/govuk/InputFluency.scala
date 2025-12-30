@@ -47,13 +47,13 @@ trait InputFluency {
     def withPattern(pattern: String): Input =
       input.copy(pattern = Some(pattern))
 
+    def withPoundPrefix: Input =
+      input.copy(prefix = Some(PrefixOrSuffix(content = HtmlContent("&pound;"))))
+
     def withPrefix(prefix: PrefixOrSuffix): Input =
       input.copy(prefix = Some(prefix))
 
     def asVisuallyHidden(): Input =
       withCssClass("govuk-visually-hidden")
-
-    def withPoundPrefix: Input =
-      input.copy(prefix = Some(PrefixOrSuffix(content = HtmlContent("&pound;"))))
   }
 }

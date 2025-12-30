@@ -6,20 +6,20 @@
 package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.IsPurchaserIndividualFormProvider
+import play.api.data.Form
 import views.html.scalabuild.IsPurchaserIndividualView
-
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.mvc.Call
 
 class IsPurchaserIndividualControllerSpec extends ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/purchaser")
+  def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/additional-property-double")
   val formProvider = new IsPurchaserIndividualFormProvider()
-  val form          = formProvider()
-  lazy val isPurchaserIndividualRoute = controllers.scalabuild.routes.IsPurchaserIndividualController.onPageLoad().url
+  val form: Form[Boolean] = formProvider()
+  lazy val isPurchaserIndividualRoute: String = controllers.scalabuild.routes.IsPurchaserIndividualController.onPageLoad().url
 
-  "Non UK Resident Controller" - {
+  "IsPurchaserIndividual Controller" - {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder().build()
 
@@ -40,7 +40,7 @@ class IsPurchaserIndividualControllerSpec extends ScalaSpecBase {
       running(application) {
         val request =
           FakeRequest(POST, isPurchaserIndividualRoute)
-            .withFormUrlEncodedBody(("value", "true")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+            .withFormUrlEncodedBody(("individual", "true")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value
 

@@ -35,20 +35,20 @@
                 isPageHeading = true,
                 classes = "govuk-label--xl",
                 content = messages("purchasePrice.heading"))
+            )
+            .asNumeric()
+            .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
+            .withPrefix(PrefixOrSuffix(content = Text("£")))
+            .withHint(Hint(content = HtmlContent(messages("purchasePrice.hint"))))
         )
-        .asNumeric()
-        .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
-        .withPrefix(PrefixOrSuffix(content = Text("£")))
-        .withHint(Hint(content = HtmlContent(messages("purchasePrice.hint"))))
-    )
 
-@govukDetails(Details(
-summary = Text(messages("purchasePrice.detail.title")),
-content = HtmlContent(
-s"""<p>${messages("purchasePrice.detail.content")}</p>""".stripMargin
-)
-)
-)
+        @govukDetails(Details(
+            summary = Text(messages("purchasePrice.detail.title")),
+                content = HtmlContent(
+                    s"""<p>${messages("purchasePrice.detail.content")}</p>""".stripMargin
+                )
+            )
+        )
     @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
     }
 }

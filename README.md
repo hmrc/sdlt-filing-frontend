@@ -98,6 +98,18 @@ if you have any problem try the following steps:
 Run SDLTC Frontend App on port 9953 from the console at /sdltc-frontend level with:
 ```
 sbt run -Dapplication.router=scalabuild.Routes
+
+or 
+
+ sbt run -Dconfig.resource=application.scalabuild.conf   
 ```
 You will be able to access the first page at http://localhost:9953/calculate-stamp-duty-land-tax/intro
+
+```
+curl 'http://localhost:9000/calculate-stamp-duty-land-tax/calculate' \
+-H 'Accept: application/json, text/plain, */*' \
+-H 'Content-Type: application/json;charset=UTF-8' \
+--data-raw '{"holdingType":"Freehold","propertyType":"Residential","effectiveDateDay":1,"effectiveDateMonth":1,"effectiveDateYear":2020,"highestRent":0,"premium":"550000","propertyDetails":{"individual":"Yes","twoOrMoreProperties":"No"},"firstTimeBuyer":"No"}'
+
+```
     

@@ -5,14 +5,18 @@
 
 package controllers.scalabuild
 
+import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 import views.html.scalabuild.NonUkResidentView
 import forms.scalabuild.NonUkResidentFormProvider
+import pages.scalabuild.{IsPurchaserIndividualPage, NonUkResidentPage}
+import play.api.i18n.I18nSupport
+import repositories.SessionRepository
 
 
 @Singleton
@@ -20,21 +24,34 @@ class NonUkResidentController @Inject()(
                                          val controllerComponents: MessagesControllerComponents,
                                          view: NonUkResidentView,
                                          formProvider: NonUkResidentFormProvider,
-                                       ) extends FrontendBaseController {
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val form:Form[_] = formProvider()
-    Ok(view(form))
+                                         sessionRepository: SessionRepository,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         identify: IdentifierAction
+                                       ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val form:Form[Boolean] = formProvider()
+    val preparedForm = request.userAnswers.get(IsPurchaserIndividualPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
+    Ok(view(preparedForm))
   }
 
-  def onSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    val form:Form[_] = formProvider()
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val form:Form[Boolean] = formProvider()
     form
       .bindFromRequest()
       .fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors))),
-        _ =>
-          Future.successful(Redirect(controllers.scalabuild.routes.NonUkResidentController.onPageLoad().url))
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(NonUkResidentPage, value)
+            )
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(controllers.scalabuild.routes.IsPurchaserIndividualController.onPageLoad().url)
       )
   }
 }

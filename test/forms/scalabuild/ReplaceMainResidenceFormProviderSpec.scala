@@ -7,7 +7,7 @@ package forms.scalabuild
 import base.ScalaSpecBase
 import play.api.data.{Form, FormError}
 
-class ReplaceMainResidenceFormControllerSpec extends ScalaSpecBase {
+class ReplaceMainResidenceFormProviderSpec extends ScalaSpecBase {
   val form:Form[Boolean] = new ReplaceMainResidenceFormProvider().apply()
 
   "bind true" in {
