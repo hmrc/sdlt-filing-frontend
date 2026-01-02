@@ -48,7 +48,7 @@ class NoReturnReferenceControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the preliminary Before You Start page when FileNewReturn is selected" in {
+    "must redirect to the index controller to initiate a session when FileNewReturn is selected" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -58,7 +58,7 @@ class NoReturnReferenceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
       }
     }
 

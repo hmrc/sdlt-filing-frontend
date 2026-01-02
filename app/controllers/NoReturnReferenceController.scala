@@ -56,7 +56,7 @@ class NoReturnReferenceController @Inject()(
 
         {
           case NoReturnReference.FileNewReturn =>
-            Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
+            Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
 
           case NoReturnReference.ManageTaxes =>
             Future.successful(Redirect(appConfig.sdltManagementRedirectUrl))
