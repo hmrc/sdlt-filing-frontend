@@ -58,6 +58,7 @@ case class CalculationDetails(
                             bandHeading: Option[String] = None,
                             detailFooter: Option[String] = None,
                             rate: Option[Int] = None,
+                            bigDecRate: Option[BigDecimal] = None,
                             slices: Option[Seq[SliceDetails]] = None
                             )
 
