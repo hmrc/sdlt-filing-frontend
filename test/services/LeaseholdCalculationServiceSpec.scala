@@ -5,6 +5,8 @@
 
 package services
 
+import data.ResultText.RESULT_HEADING_TAX_RELEIF
+
 import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
@@ -2322,6 +2324,43 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
           service.nonResPrevCalcRequired(request) should
           have message "[LeaseholdCalculationService] [nonResPrevCalcRequired] - relevant rent details not defined"
       }
+    }
+  }
+
+  "calculating leasehold FreePortRelief  for FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" must {
+    "return zero tax response for all residential or non-residential and not linked" in  new PredefinedNPVSetup(50126) {
+      private val calcDetails: Seq[CalculationDetails] = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        ),
+        CalculationDetails(
+          taxType = TaxTypes.rent,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+      )
+
+      val expectedRes: Result = Result(
+        totalTax = 0,
+        resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
+        resultHint = None,
+        npv = Some(npv),
+        taxCalcs = calcDetails
+      )
+      val res: CalculationResponse = service.zeroRateLeaseHoldFreePortRelief(Some(testLeaseDetails))
+      res shouldBe CalculationResponse(Seq(expectedRes))
     }
   }
 

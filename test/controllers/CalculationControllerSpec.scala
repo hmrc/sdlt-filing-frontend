@@ -18,6 +18,10 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import services.CalculationService
 import base.BaseSpec
+import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, FreeportsTaxSiteRelief, GroupRelief, IncorporationOfLimitedLiabilityPartnership, InvestmentZonesTaxSiteRelief, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
+import org.scalacheck.Gen
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
 
 class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerSuite {
@@ -45,6 +49,16 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
     npv = None,
     taxCalcs = Seq(calcDetails)
   )
+
+  private val zeroRateFreePortReliefGen:Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(FreeportsTaxSiteRelief,InvestmentZonesTaxSiteRelief)
+  private val zeroRateWithoutFreePortReliefGen: Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(PartExchange, ReLocationEmployment,
+    CompulsoryPurchaseFacilitatingDevelopment, ComplianceWithPlanningObligations,
+    GroupRelief, ReConstructionRelief, DemutualisationOfInsuranceCompany,
+    DemutualisationOfBuildingSociety, IncorporationOfLimitedLiabilityPartnership,
+    TransfersInvolvingPublicBodies, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies,
+    CharitiesTaxReliefs, AcquisitionByBodiesEstablishedForNationalPurposes, RegisteredSocialLandlords,
+    AlternativePropertyFinance, CroftingCommunityRightToBuy, DiplomaticPrivileges, OtherTaxReliefs,
+    CombinationOfReliefs, AlternativeFinanceInvestmentBondsRelief, SeedingRelief)
 
   "CalculateSDLTC" should{
     "throw a BadRequest(400)" when{
@@ -174,6 +188,244 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
         println(jsonBodyOf(await(result))(materializer))
         jsonBodyOf(await(result))(materializer) mustBe Json.toJson(response)
         verify(mockCalculationService, times(1)).calculateTax(any())
+      }
+    }
+
+    "taxReliefDetails are given " when{
+      "throw a BadRequest" when {
+        "TaxReliefCode is FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" when {
+          "isPartialRelief is not defined(None)" in {
+            forAll(zeroRateFreePortReliefGen) {
+              value =>
+                val jsonRequestWithoutIsPartialReliefNotDefined:JsValue = Json.parse(
+                  s"""
+                     |{
+                     |  "holdingType": "Leasehold",
+                     |  "propertyType": "Non-residential",
+                     |  "effectiveDateDay": 23,
+                     |  "effectiveDateMonth": 3,
+                     |  "effectiveDateYear": 2012,
+                     |  "premium": 1000000,
+                     |  "highestRent": 0,
+                     |  "leaseDetails": {
+                     |    "startDateDay": 23,
+                     |    "startDateMonth": 3,
+                     |    "startDateYear": 2012,
+                     |    "endDateDay": 23,
+                     |    "endDateMonth": 3,
+                     |    "endDateYear": 2013,
+                     |    "leaseTerm": {
+                     |      "years": 1,
+                     |      "days": 1,
+                     |      "daysInPartialYear": 365
+                     |    },
+                     |    "year1Rent": 999,
+                     |    "year2Rent": 999
+                     |  },
+                     |  "linked": "No",
+                     |  "taxReliefDetails": {
+                     |   "taxReliefCode": ${value.code}
+                     | }
+                     |}
+                     |""".stripMargin)
+
+                val fakeRequest = FakeRequest().withJsonBody(jsonRequestWithoutIsPartialReliefNotDefined)
+                val result = testCalculationController.calculateSDLTC(fakeRequest)
+                status(result) mustBe  BAD_REQUEST
+                jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson("Validation error: List(ValidationFailure(No partial relief type defined.))")
+            }
+          }
+          "isPartialRelief is true" in {
+            forAll(zeroRateFreePortReliefGen) {
+              value =>
+                val jsonRequestWithoutIsPartialReliefNotDefined:JsValue = Json.parse(
+                  s"""
+                     |{
+                     |  "holdingType": "Leasehold",
+                     |  "propertyType": "Non-residential",
+                     |  "effectiveDateDay": 23,
+                     |  "effectiveDateMonth": 3,
+                     |  "effectiveDateYear": 2012,
+                     |  "premium": 1000000,
+                     |  "highestRent": 0,
+                     |  "leaseDetails": {
+                     |    "startDateDay": 23,
+                     |    "startDateMonth": 3,
+                     |    "startDateYear": 2012,
+                     |    "endDateDay": 23,
+                     |    "endDateMonth": 3,
+                     |    "endDateYear": 2013,
+                     |    "leaseTerm": {
+                     |      "years": 1,
+                     |      "days": 1,
+                     |      "daysInPartialYear": 365
+                     |    },
+                     |    "year1Rent": 999,
+                     |    "year2Rent": 999
+                     |  },
+                     |  "linked": "No",
+                     |  "taxReliefDetails": {
+                     |   "taxReliefCode": ${value.code},
+                     |   "isPartialRelief": true
+                     | }
+                     |}
+                     |""".stripMargin)
+                val fakeRequest = FakeRequest().withJsonBody(jsonRequestWithoutIsPartialReliefNotDefined)
+                val result = testCalculationController.calculateSDLTC(fakeRequest)
+                status(result) mustBe  BAD_REQUEST
+                jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson("Validation error: List(ValidationFailure(The value of partial relief must be false.))")
+            }
+          }
+        }
+      }
+
+      "return a 200" when {
+        "TaxReliefCode is not  FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" when {
+          "isPartialRelief is true" in {
+            forAll(zeroRateWithoutFreePortReliefGen) {
+              value =>
+                reset(mockCalculationService)
+                val jsonRequestWithoutIsPartialReliefNotDefined:JsValue = Json.parse(
+                  s"""
+                     |{
+                     |  "holdingType": "Leasehold",
+                     |  "propertyType": "Non-residential",
+                     |  "effectiveDateDay": 23,
+                     |  "effectiveDateMonth": 3,
+                     |  "effectiveDateYear": 2012,
+                     |  "premium": 1000000,
+                     |  "highestRent": 0,
+                     |  "leaseDetails": {
+                     |    "startDateDay": 23,
+                     |    "startDateMonth": 3,
+                     |    "startDateYear": 2012,
+                     |    "endDateDay": 23,
+                     |    "endDateMonth": 3,
+                     |    "endDateYear": 2013,
+                     |    "leaseTerm": {
+                     |      "years": 1,
+                     |      "days": 1,
+                     |      "daysInPartialYear": 365
+                     |    },
+                     |    "year1Rent": 999,
+                     |    "year2Rent": 999
+                     |  },
+                     |  "linked": "No",
+                     |  "taxReliefDetails": {
+                     |   "taxReliefCode": ${value.code},
+                     |   "isPartialRelief": true
+                     | }
+                     |}
+                     |""".stripMargin)
+                val response = CalculationResponse(Seq(createResult("given a valid json")))
+
+                when(mockCalculationService.calculateTax(any())).thenReturn(response)
+
+                val fakeRequest = FakeRequest().withJsonBody(jsonRequestWithoutIsPartialReliefNotDefined)
+                val result = testCalculationController.calculateSDLTC(fakeRequest)
+                status(result) mustBe OK
+                jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson(response)
+                verify(mockCalculationService, times(1)).calculateTax(any())
+            }
+          }
+
+          "isPartialRelief is not defined " in {
+            forAll(zeroRateWithoutFreePortReliefGen) {
+              value =>
+                reset(mockCalculationService)
+                val jsonRequestWithoutIsPartialReliefNotDefined:JsValue = Json.parse(
+                  s"""
+                     |{
+                     |  "holdingType": "Leasehold",
+                     |  "propertyType": "Non-residential",
+                     |  "effectiveDateDay": 23,
+                     |  "effectiveDateMonth": 3,
+                     |  "effectiveDateYear": 2012,
+                     |  "premium": 1000000,
+                     |  "highestRent": 0,
+                     |  "leaseDetails": {
+                     |    "startDateDay": 23,
+                     |    "startDateMonth": 3,
+                     |    "startDateYear": 2012,
+                     |    "endDateDay": 23,
+                     |    "endDateMonth": 3,
+                     |    "endDateYear": 2013,
+                     |    "leaseTerm": {
+                     |      "years": 1,
+                     |      "days": 1,
+                     |      "daysInPartialYear": 365
+                     |    },
+                     |    "year1Rent": 999,
+                     |    "year2Rent": 999
+                     |  },
+                     |  "linked": "No",
+                     |  "taxReliefDetails": {
+                     |   "taxReliefCode": ${value.code}
+                     | }
+                     |}
+                     |""".stripMargin)
+                val response = CalculationResponse(Seq(createResult("given a valid json")))
+
+                when(mockCalculationService.calculateTax(any())).thenReturn(response)
+
+                val fakeRequest = FakeRequest().withJsonBody(jsonRequestWithoutIsPartialReliefNotDefined)
+                val result = testCalculationController.calculateSDLTC(fakeRequest)
+                status(result) mustBe OK
+                jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson(response)
+                verify(mockCalculationService, times(1)).calculateTax(any())
+            }
+          }
+        }
+
+        "TaxReliefCode is FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" when {
+          "isPartialRelief is false " in {
+            forAll(zeroRateFreePortReliefGen) {
+              value =>
+                reset(mockCalculationService)
+                val jsonRequestWithoutIsPartialReliefNotDefined:JsValue = Json.parse(
+                  s"""
+                     |{
+                     |  "holdingType": "Leasehold",
+                     |  "propertyType": "Non-residential",
+                     |  "effectiveDateDay": 23,
+                     |  "effectiveDateMonth": 3,
+                     |  "effectiveDateYear": 2012,
+                     |  "premium": 1000000,
+                     |  "highestRent": 0,
+                     |  "leaseDetails": {
+                     |    "startDateDay": 23,
+                     |    "startDateMonth": 3,
+                     |    "startDateYear": 2012,
+                     |    "endDateDay": 23,
+                     |    "endDateMonth": 3,
+                     |    "endDateYear": 2013,
+                     |    "leaseTerm": {
+                     |      "years": 1,
+                     |      "days": 1,
+                     |      "daysInPartialYear": 365
+                     |    },
+                     |    "year1Rent": 999,
+                     |    "year2Rent": 999
+                     |  },
+                     |  "linked": "No",
+                     |  "taxReliefDetails": {
+                     |   "taxReliefCode": ${value.code},
+                     |   "isPartialRelief": false
+                     | }
+                     |}
+                     |""".stripMargin)
+                val response = CalculationResponse(Seq(createResult("given a valid json")))
+
+                when(mockCalculationService.calculateTax(any())).thenReturn(response)
+
+                val fakeRequest = FakeRequest().withJsonBody(jsonRequestWithoutIsPartialReliefNotDefined)
+                val result = testCalculationController.calculateSDLTC(fakeRequest)
+                status(result) mustBe OK
+                jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson(response)
+                verify(mockCalculationService, times(1)).calculateTax(any())
+            }
+          }
+        }
       }
     }
   }

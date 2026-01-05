@@ -5,18 +5,17 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
-import exceptions.InvalidDateException
-import models.{CalculationDetails, CalculationResponse, LeaseDetails, PropertyDetails, Request, Result}
 import data.Dates
-import enums.sdltRebuild.TaxReliefCode.{freeportRelief, zeroRateCodes}
-import enums.sdltRebuild.ZeroRate
-import utils.DateUtil
-import utils.CalculationUtils.isAfterSept2022AndBeforeApril2025
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, leaseholdNRSDLTOutOfScope}
-import exceptions.RequiredValueNotDefinedException
+import enums.sdltRebuild.TaxReliefCode.zeroRateCodes
+import enums.sdltRebuild.{FreeportsTaxSiteRelief, InvestmentZonesTaxSiteRelief}
+import enums.{HoldingTypes, PropertyTypes}
+import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.TaxReliefDetails
+import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope}
+import utils.DateUtil
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalculationService,
@@ -26,7 +25,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
   def calculateTax(request: Request): CalculationResponse = {
     (request.taxReliefDetails, request.isLinked) match {
       case (_, true) => throw new Error("Linked logic not yet implemented")
-      case (Some(taxReliefDetails), false) => calculateTaxRelief(request.holdingType, taxReliefDetails)
+      case (Some(taxReliefDetails), false) => calculateTaxRelief(request, taxReliefDetails)
       case _ =>
         (request.holdingType, request.propertyType) match {
           case (HoldingTypes.leasehold, PropertyTypes.residential) => calculateLeaseholdResidentialTax(request)
@@ -355,14 +354,16 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     leaseDetails.fold[Option[Int]](None)(leaseDets => Some(leaseDets.leaseTerm.years))
   }
 
-  def calculateTaxRelief(holdingType: HoldingTypes.Value,
+  def calculateTaxRelief(request: Request,
                          taxReliefDetails: TaxReliefDetails): CalculationResponse = {
 
-    (holdingType, taxReliefDetails.taxReliefCode) match {
-      case (HoldingTypes.freehold, taxReliefCode) if freeportRelief.contains(taxReliefCode) && taxReliefDetails.isPartialRelief.contains(false) =>
+    (request.holdingType, taxReliefDetails.taxReliefCode) match {
+      case (HoldingTypes.freehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief ) =>
         freeCalculationService.zeroRateTaxReliefForFreehold
       case (HoldingTypes.freehold, taxReliefCode) if zeroRateCodes.contains(taxReliefCode) =>
         freeCalculationService.zeroRateTaxReliefForFreehold
+      case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief)  =>
+        leaseCalculationService.zeroRateLeaseHoldFreePortRelief(request.leaseDetails)
       case (holdingType, taxReliefCode) =>
         throw new Error(
           s"TaxRelief logic not yet implemented for taxReliefCode: ${taxReliefCode} and holding type: $holdingType"

@@ -12,6 +12,7 @@ import models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
 import data.Dates._
 import data.SignificantAmounts.RELEVANT_RENT_PREMIUM_THRESHOLD
 import enums.PropertyTypes.residential
+import enums.sdltRebuild.{FreeportsTaxSiteRelief, InvestmentZonesTaxSiteRelief}
 import utils.DateUtil
 
 sealed trait ValidationResult
@@ -27,7 +28,8 @@ object ModelValidation extends DateUtil{
       validPropertyDetails(request),
       validLeaseTerm(request),
       validRelevantRentDetails(request),
-      validFirstTimeBuyer(request)
+      validFirstTimeBuyer(request),
+      validTaxRelief(request)
     ).flatMap {
       case err :ValidationFailure => Some(err)
       case _ => None
@@ -214,6 +216,17 @@ object ModelValidation extends DateUtil{
       leaseDetails.year4Rent,
       leaseDetails.year5Rent
     ).flatten.exists(_ >= 2000)
+  }
+
+  private [validators] def validTaxRelief(request: Request): ValidationResult = {
+    val taxReliefCode = request.taxReliefDetails.map(_.taxReliefCode)
+    val isPartialRelief = request.taxReliefDetails.flatMap(_.isPartialRelief)
+    (taxReliefCode,request.isLinked, isPartialRelief) match  {
+      case (Some(FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief), false, Some(false)) => ValidationSuccess
+      case (Some(FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief), false, Some(true)) =>  ValidationFailure(s"The value of partial relief must be false.")
+      case (Some(FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief), false, None ) =>  ValidationFailure(s"No partial relief type defined.")
+      case _ => ValidationSuccess
+    }
   }
 
   private[validators] def validRelevantRentDetailsStructure(relRentDetails: RelevantRentDetails, effectiveDate: LocalDate): ValidationResult = {

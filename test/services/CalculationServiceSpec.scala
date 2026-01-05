@@ -1202,6 +1202,79 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
       }
     }
+
+    "select leaseHold freePort / residential property with tax relief code" when {
+      "given relief code FreeportsTaxSiteRelief" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2017, 11, 22),
+          zeroTaxRelief = FreeportsTaxSiteRelief,
+          isPartialRelief = Some(false),
+          linked = false
+        )
+        val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
+
+        when(mockLeaseholdCalculationService.zeroRateLeaseHoldFreePortRelief(testRequest.leaseDetails)).thenReturn(CalculationResponse(Seq(result)))
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseHoldFreePortRelief(any())
+      }
+      "given relief code InvestmentZonesTaxSiteRelief" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2017, 11, 22),
+          zeroTaxRelief = InvestmentZonesTaxSiteRelief,
+          isPartialRelief = Some(false),
+          linked = false
+        )
+        val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
+
+        when(mockLeaseholdCalculationService.zeroRateLeaseHoldFreePortRelief(testRequest.leaseDetails)).thenReturn(CalculationResponse(Seq(result)))
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseHoldFreePortRelief(any())
+      }
+    }
+    "select leaseHold freePort / non-residential property with tax relief code" when {
+      "given relief code FreeportsTaxSiteRelief" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.nonResidential,
+          LocalDate.of(2017, 11, 22),
+          zeroTaxRelief = FreeportsTaxSiteRelief,
+          isPartialRelief = Some(false),
+          linked = false
+        )
+        val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
+
+        when(mockLeaseholdCalculationService.zeroRateLeaseHoldFreePortRelief(testRequest.leaseDetails)).thenReturn(CalculationResponse(Seq(result)))
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseHoldFreePortRelief(any())
+      }
+      "given relief code InvestmentZonesTaxSiteRelief" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.nonResidential,
+          LocalDate.of(2017, 11, 22),
+          zeroTaxRelief = InvestmentZonesTaxSiteRelief,
+          isPartialRelief = Some(false),
+          linked = false
+        )
+        val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
+
+        when(mockLeaseholdCalculationService.zeroRateLeaseHoldFreePortRelief(testRequest.leaseDetails)).thenReturn(CalculationResponse(Seq(result)))
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseHoldFreePortRelief(any())
+      }
+    }
   }
 
   "checkFTB" must {

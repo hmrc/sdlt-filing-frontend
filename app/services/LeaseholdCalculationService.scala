@@ -6,13 +6,15 @@
 package services
 
 import data.LeaseholdSliceRatesTables._
+import data.ResultText.RESULT_HEADING_TAX_RELEIF
 import data.SignificantAmounts._
 import data.{Dates, SlabRatesTables}
+import enums.{CalcTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import factories.LeaseholdResultFactory
 import models._
 import models.calculationtables.{SlabResult, Slice}
-import utils.CalculationUtils.{isAfterSept2022AndBeforeApril2025, duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, leaseholdNRSDLTInScopeForLeaseOrPremium}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTInScopeForLeaseOrPremium}
 import utils.DateUtil
 import validators.internal.ModelValidation
 
@@ -768,5 +770,40 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
           )
       }
   }
+
+  def zeroRateLeaseHoldFreePortRelief(leaseDetails: Option[LeaseDetails]): CalculationResponse = {
+    val calculatedNpv = Some(getNPV("LeaseResidentialOrNonResidentialFreePortRelief", leaseDetails).toInt)
+    CalculationResponse(Seq(zeroRatedResult.copy(npv = calculatedNpv)))
+  }
+
+  val zeroRatedResult: Result =
+    Result(
+      totalTax = 0,
+      resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
+      resultHint = None,
+      npv = None,
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        ),
+        CalculationDetails(
+          taxType = TaxTypes.rent,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+      )
+    )
 
 }

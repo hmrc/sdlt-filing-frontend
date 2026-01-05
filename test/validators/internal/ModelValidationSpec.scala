@@ -5,11 +5,16 @@
 
 package validators.internal
 
+import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, FreeportsTaxSiteRelief, GroupRelief, IncorporationOfLimitedLiabilityPartnership, InvestmentZonesTaxSiteRelief, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
+
 import java.time.LocalDate
 import enums.{HoldingTypes, PropertyTypes}
 import models._
+import models.sdltRebuild.TaxReliefDetails
+import org.scalacheck.Gen
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
 class ModelValidationSpec extends PlaySpec {
 
@@ -63,6 +68,16 @@ class ModelValidationSpec extends PlaySpec {
     year4Rent = Some(1000),
     year5Rent = Some(1000)
   )
+
+  private val zeroRateFreePortReliefGen:Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(FreeportsTaxSiteRelief,InvestmentZonesTaxSiteRelief)
+  private val zeroRateWithoutFreePortReliefGen: Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(PartExchange, ReLocationEmployment,
+    CompulsoryPurchaseFacilitatingDevelopment, ComplianceWithPlanningObligations,
+    GroupRelief, ReConstructionRelief, DemutualisationOfInsuranceCompany,
+    DemutualisationOfBuildingSociety, IncorporationOfLimitedLiabilityPartnership,
+    TransfersInvolvingPublicBodies, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies,
+    CharitiesTaxReliefs, AcquisitionByBodiesEstablishedForNationalPurposes, RegisteredSocialLandlords,
+    AlternativePropertyFinance, CroftingCommunityRightToBuy, DiplomaticPrivileges, OtherTaxReliefs,
+    CombinationOfReliefs, AlternativeFinanceInvestmentBondsRelief, SeedingRelief)
 
   import ModelValidation._
 
@@ -1615,6 +1630,265 @@ class ModelValidationSpec extends PlaySpec {
               "holding type: leasehold, property type: non-residential and all rents <£2000"
           )
         )
+      }
+
+
+      "validIsPartialRelief" must {
+        "return a ValidationSuccess" when {
+          "the HoldingTypes is LeaseHold" when {
+            "the value of isPartialRelief is false and isLinked is false and taxReliefCode is either FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" in {
+              forAll(zeroRateFreePortReliefGen) {
+                value =>
+                  val request = Request(
+                    holdingType = HoldingTypes.leasehold,
+                    propertyType = PropertyTypes.residential,
+                    effectiveDate = LocalDate.of(2017, 12, 31),
+                    nonUKResident = None,
+                    premium = 140000,
+                    highestRent = 0,
+                    propertyDetails = Some(
+                      PropertyDetails(
+                        individual = true,
+                        twoOrMoreProperties = Some(false),
+                        replaceMainResidence = Some(false),
+                        sharedOwnership = None,
+                        currentValue = None
+                      )
+                    ),
+                    leaseDetails = None,
+                    relevantRentDetails = None,
+                    firstTimeBuyer = None,
+                    taxReliefDetails = Some(TaxReliefDetails(
+                      taxReliefCode = value,
+                      isPartialRelief = Some(false)
+                    ))
+                  )
+                  validTaxRelief(request) shouldEqual ValidationSuccess
+              }
+            }
+            "the taxReliefCode is not FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief and isLinked is true/false" in  {
+              forAll(zeroRateWithoutFreePortReliefGen) {
+                value =>
+                  println(value)
+                  val request = Request(
+                    holdingType = HoldingTypes.leasehold,
+                    propertyType = PropertyTypes.residential,
+                    effectiveDate = LocalDate.of(2017, 12, 31),
+                    nonUKResident = None,
+                    premium = 140000,
+                    highestRent = 0,
+                    propertyDetails = Some(
+                      PropertyDetails(
+                        individual = true,
+                        twoOrMoreProperties = Some(false),
+                        replaceMainResidence = Some(false),
+                        sharedOwnership = None,
+                        currentValue = None
+                      )
+                    ),
+                    leaseDetails = None,
+                    relevantRentDetails = None,
+                    firstTimeBuyer = None,
+                    isLinked = true,
+                    taxReliefDetails = Some(TaxReliefDetails(
+                      taxReliefCode = value,
+                      isPartialRelief = None
+                    ))
+                  )
+                  validTaxRelief(request) shouldEqual ValidationSuccess
+              }
+            }
+          }
+          "the HoldingTypes is FreeHold" when {
+            "the value of isPartialRelief is false, isLinked is false and taxReliefCode is either FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" in {
+              forAll(zeroRateFreePortReliefGen) {
+                value =>
+                  val request = Request(
+                    holdingType = HoldingTypes.freehold,
+                    propertyType = PropertyTypes.residential,
+                    effectiveDate = LocalDate.of(2017, 12, 31),
+                    nonUKResident = None,
+                    premium = 140000,
+                    highestRent = 0,
+                    propertyDetails = Some(
+                      PropertyDetails(
+                        individual = true,
+                        twoOrMoreProperties = Some(false),
+                        replaceMainResidence = Some(false),
+                        sharedOwnership = None,
+                        currentValue = None
+                      )
+                    ),
+                    leaseDetails = None,
+                    relevantRentDetails = None,
+                    firstTimeBuyer = None,
+                    taxReliefDetails = Some(TaxReliefDetails(
+                      taxReliefCode = value,
+                      isPartialRelief = Some(false)
+                    ))
+                  )
+                  validTaxRelief(request) shouldEqual ValidationSuccess
+              }
+            }
+            "the taxReliefCode is not FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief and isLinked is true/false" in {
+              forAll(zeroRateWithoutFreePortReliefGen) {
+                value =>
+                  val request = Request(
+                    holdingType = HoldingTypes.freehold,
+                    propertyType = PropertyTypes.residential,
+                    effectiveDate = LocalDate.of(2017, 12, 31),
+                    nonUKResident = None,
+                    premium = 140000,
+                    highestRent = 0,
+                    propertyDetails = Some(
+                      PropertyDetails(
+                        individual = true,
+                        twoOrMoreProperties = Some(false),
+                        replaceMainResidence = Some(false),
+                        sharedOwnership = None,
+                        currentValue = None
+                      )
+                    ),
+                    leaseDetails = None,
+                    relevantRentDetails = None,
+                    firstTimeBuyer = None,
+                    taxReliefDetails = Some(TaxReliefDetails(
+                      taxReliefCode = value,
+                      isPartialRelief = Some(true)
+                    ))
+                  )
+                  validTaxRelief(request) shouldEqual ValidationSuccess
+              }
+            }
+          }
+        }
+        "return a ValidationFailure" when{
+          "the Holding Types is LeaseHold and isLinked is false" when {
+            "the isPartialRelief is true and taxReliefCode is either FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" in {
+              forAll(zeroRateFreePortReliefGen) {
+                value =>
+                  val request = Request(
+                    holdingType = HoldingTypes.leasehold,
+                    propertyType = PropertyTypes.residential,
+                    effectiveDate = LocalDate.of(2017, 12, 31),
+                    nonUKResident = None,
+                    premium = 140000,
+                    highestRent = 0,
+                    propertyDetails = Some(
+                      PropertyDetails(
+                        individual = true,
+                        twoOrMoreProperties = Some(false),
+                        replaceMainResidence = Some(false),
+                        sharedOwnership = None,
+                        currentValue = None
+                      )
+                    ),
+                    leaseDetails = None,
+                    relevantRentDetails = None,
+                    firstTimeBuyer = None,
+                    taxReliefDetails = Some(TaxReliefDetails(
+                      taxReliefCode = value,
+                      isPartialRelief = Some(true)
+                    ))
+
+                  )
+                  validTaxRelief(request) shouldBe ValidationFailure("The value of partial relief must be false.")
+              }
+            }
+            "the isPartialRelief is not defined(None) and taxReliefCode is either FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" in {
+              forAll(zeroRateFreePortReliefGen) {
+                value =>
+                  val request = Request(
+                    holdingType = HoldingTypes.leasehold,
+                    propertyType = PropertyTypes.residential,
+                    effectiveDate = LocalDate.of(2017, 12, 31),
+                    nonUKResident = None,
+                    premium = 140000,
+                    highestRent = 0,
+                    propertyDetails = Some(
+                      PropertyDetails(
+                        individual = true,
+                        twoOrMoreProperties = Some(false),
+                        replaceMainResidence = Some(false),
+                        sharedOwnership = None,
+                        currentValue = None
+                      )
+                    ),
+                    leaseDetails = None,
+                    relevantRentDetails = None,
+                    firstTimeBuyer = None,
+                    taxReliefDetails = Some(TaxReliefDetails(
+                      taxReliefCode = value,
+                      isPartialRelief = None
+                    ))
+                  )
+                  validTaxRelief(request) shouldBe ValidationFailure("No partial relief type defined.")
+              }
+            }
+          }
+          "the Holding Types is FreeHold" when {
+            "the isPartialRelief is true and taxReliefCode is either FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" in {
+              forAll(zeroRateFreePortReliefGen) {
+                value =>
+                  val request = Request(
+                    holdingType = HoldingTypes.freehold,
+                    propertyType = PropertyTypes.residential,
+                    effectiveDate = LocalDate.of(2017, 12, 31),
+                    nonUKResident = None,
+                    premium = 140000,
+                    highestRent = 0,
+                    propertyDetails = Some(
+                      PropertyDetails(
+                        individual = true,
+                        twoOrMoreProperties = Some(false),
+                        replaceMainResidence = Some(false),
+                        sharedOwnership = None,
+                        currentValue = None
+                      )
+                    ),
+                    leaseDetails = None,
+                    relevantRentDetails = None,
+                    firstTimeBuyer = None,
+                    taxReliefDetails = Some(TaxReliefDetails(
+                      taxReliefCode = value,
+                      isPartialRelief = Some(true)
+                    ))
+                  )
+                  validTaxRelief(request) shouldBe ValidationFailure("The value of partial relief must be false.")
+              }
+            }
+            "the isPartialRelief is not defined(None) and taxReliefCode is either FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" in {
+              forAll(zeroRateFreePortReliefGen) {
+                value =>
+                  val request = Request(
+                    holdingType = HoldingTypes.freehold,
+                    propertyType = PropertyTypes.residential,
+                    effectiveDate = LocalDate.of(2017, 12, 31),
+                    nonUKResident = None,
+                    premium = 140000,
+                    highestRent = 0,
+                    propertyDetails = Some(
+                      PropertyDetails(
+                        individual = true,
+                        twoOrMoreProperties = Some(false),
+                        replaceMainResidence = Some(false),
+                        sharedOwnership = None,
+                        currentValue = None
+                      )
+                    ),
+                    leaseDetails = None,
+                    relevantRentDetails = None,
+                    firstTimeBuyer = None,
+                    taxReliefDetails = Some(TaxReliefDetails(
+                      taxReliefCode = value,
+                      isPartialRelief = None
+                    ))
+                  )
+                  validTaxRelief(request) shouldBe ValidationFailure("No partial relief type defined.")
+              }
+            }
+          }
+        }
       }
 
       "there are multiple errors" in {
