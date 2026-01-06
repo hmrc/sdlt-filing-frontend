@@ -6,8 +6,8 @@
 package services
 
 import java.time.LocalDate
-import data.ResultText.{RESULT_HEADING_GENERIC, RESULT_HEADING_TAX_RELEIF}
-import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
+import data.ResultText.RESULT_HEADING_GENERIC
+import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate, AcquisitionRelief}
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import models.sdltRebuild.TaxReliefDetails
@@ -1897,6 +1897,48 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
           val res = testFreeholdCalcService.zeroRateTaxReliefForFreehold
           res shouldBe CalculationResponse(Seq(expectedRes))
       }
+    }
+  }
+
+  "calculating freehold~ Acquisition Relief code 14" must {
+    "return tax response for AcquisitionRelief: residential and not linked" in {
+
+      val AcquisitionReliefTestRequest = Request(
+        HoldingTypes.freehold,
+        PropertyTypes.residential,
+        LocalDate.of(2000, 11, 22),
+        nonUKResident = None,
+        premium = 1000000,
+        highestRent = BigDecimal(0),
+        propertyDetails = None,
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = None,
+        isLinked = false,
+        taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
+      )
+
+      val calcDetails = CalculationDetails(
+        taxType = TaxTypes.premium,
+        calcType = CalcTypes.slab,
+        taxDue = 5000,
+        detailHeading = None,
+        bandHeading = None,
+        detailFooter = None,
+        bigDecRate = Some(0.5),
+        slices = None
+      )
+      val expectedRes = Result(
+        totalTax = 5000,
+        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+        resultHint = None,
+        npv = None,
+        taxCalcs = Seq(calcDetails)
+      )
+
+        val res = testFreeholdCalcService.freeholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)
+        res shouldBe CalculationResponse(Seq(expectedRes))
+
     }
   }
 

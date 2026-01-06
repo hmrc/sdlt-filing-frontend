@@ -1201,6 +1201,27 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
       }
+
+      "given relief code AcquisitionRelief(14)" in {
+        val AcquisitionReliefTestRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2000, 11, 22),
+          premiumAmount = 1000000,
+          zeroTaxRelief = AcquisitionRelief,
+          isPartialRelief = Some(false),
+          linked = false
+        )
+
+        val result = createResult(RESULT_HEADING_TAX_RELEIF)
+
+        when(mockFreeholdCalculationService.freeholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)).thenReturn(CalculationResponse(Seq(result)))
+
+        testCalculationService.calculateTax(AcquisitionReliefTestRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)
+      }
+
     }
 
     "select leaseHold freePort / residential property with tax relief code" when {

@@ -8,7 +8,7 @@ package factories
 import data.ResultText._
 import enums.sdltRebuild.TaxReliefCode
 import enums.{CalcTypes, TaxTypes}
-import models.{CalculationDetails, Result}
+import models.{CalculationDetails, CalculationResponse, Result}
 import models.calculationtables.{SlabResult, SliceResult}
 import utils.StringUtils
 
@@ -436,6 +436,31 @@ object FreeholdResultFactory {
           detailFooter = None,
           rate = Some(0),
           slices = None
+        )
+      )
+    )
+  }
+
+  def freeholdAcquisitionTaxReliefRes(slabResult: SlabResult): CalculationResponse = {
+    CalculationResponse(
+      Seq(
+        Result(
+          totalTax = slabResult.taxDue.toInt,
+          resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
+          resultHint = None,
+          npv = None,
+          taxCalcs = Seq(
+            CalculationDetails(
+              taxType = TaxTypes.premium,
+              calcType = CalcTypes.slab,
+              detailHeading = None,
+              bandHeading = None,
+              detailFooter = None,
+              taxDue = slabResult.taxDue.toInt,
+              bigDecRate = Some(slabResult.rate),
+              slices = None
+            )
+          )
         )
       )
     )

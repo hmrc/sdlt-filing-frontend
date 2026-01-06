@@ -45,4 +45,10 @@ object SlabRatesTables {
     )
   )
 
+  val freeholdAcquisitionTaxReliefRate = SlabTable(
+    slabs = Seq(
+      Slab(threshold = 0, rate = 0.5)
+    )
+  )
+
 }

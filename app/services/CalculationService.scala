@@ -7,8 +7,7 @@ package services
 
 import data.Dates
 import enums.sdltRebuild.TaxReliefCode.zeroRateCodes
-import enums.HoldingTypes._
-import enums.sdltRebuild.{FreeportsTaxSiteRelief, InvestmentZonesTaxSiteRelief, PreCompletionTransaction}
+import enums.sdltRebuild.{AcquisitionRelief, FreeportsTaxSiteRelief, InvestmentZonesTaxSiteRelief, PreCompletionTransaction}
 import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.TaxReliefDetails
@@ -369,6 +368,8 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         freeCalculationService.zeroRateTaxReliefForFreehold
       case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief)  =>
         leaseCalculationService.zeroRateLeaseHoldFreePortRelief(request.leaseDetails)
+      case (HoldingTypes.freehold, AcquisitionRelief) =>
+        freeCalculationService.freeholdAcquisitionTaxRelief(request)
       case (HoldingTypes.freehold, PreCompletionTransaction) =>
         calculateFreeholdResidentialTax(request)
       case (holdingType, taxReliefCode) =>

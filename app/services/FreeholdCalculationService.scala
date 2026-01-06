@@ -474,6 +474,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     val individual: Boolean = request.propertyDetails.exists(_.individual)
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
   }
+
   def freeholdResidentialAddPropNonUKResApril21Onwards(request: Request): Seq[Result] = {
     val currentPremiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
@@ -537,4 +538,13 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
         )
       )
     )
+
+  def freeholdAcquisitionTaxRelief(request: Request): CalculationResponse ={
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(
+      request.premium,
+      SlabRatesTables.freeholdAcquisitionTaxReliefRate.slabs
+    )
+    FreeholdResultFactory.freeholdAcquisitionTaxReliefRes(premiumResult)
+
+  }
 }
