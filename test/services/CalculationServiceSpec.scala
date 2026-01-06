@@ -327,7 +327,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -340,7 +340,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -353,7 +353,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -366,7 +366,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -379,7 +379,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -392,7 +392,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -405,7 +405,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -418,7 +418,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -431,7 +431,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropJuly21Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropJuly21Onwards(testRequest)
@@ -442,7 +442,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropApril25Onwards(testRequest)
@@ -453,7 +453,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialAddPropOct24BeforeApril25(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialAddPropOct24BeforeApril25(testRequest)
@@ -467,10 +467,10 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialJuly21Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
       }
 
       "given a request with an effective date of 23/9/2022" in{
@@ -479,10 +479,10 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
        when(mockFreeholdCalculationService.freeholdResidentialJuly21Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
       }
 
       "given a request with an effective date of 01/4/2025" in{
@@ -491,11 +491,11 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
        when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
       }
     }
 
@@ -504,12 +504,12 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, LocalDate.of(2020, 7, 30))
         val result = createResult("freeholdResidential, July2020 onwards")
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), ArgumentMatchers.eq(None))).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), ArgumentMatchers.eq(None), any())).thenReturn(false)
 
         when(mockFreeholdCalculationService.freeholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), ArgumentMatchers.eq(None))
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), ArgumentMatchers.eq(None), any())
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialJuly20Onwards(testRequest)
       }
@@ -518,12 +518,12 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.freehold, PropertyTypes.residential, july2020EffectiveDate)
         val result = createResult("freeholdResidential, July2020 onwards")
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any(), any())).thenReturn(false)
 
         when(mockFreeholdCalculationService.freeholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any(), any())
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialJuly20Onwards(testRequest)
       }
@@ -535,12 +535,12 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialJuly20Onwards(testRequest)
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
       }
 
       "given a request with an effective date of 31/3/2021 but with additional property eligibility check is false" in {
@@ -550,12 +550,12 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialJuly20Onwards(testRequest)
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
       }
     }
 
@@ -587,7 +587,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(testRequest)
@@ -769,7 +769,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -782,7 +782,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -795,7 +795,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -810,7 +810,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly21Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -823,7 +823,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly21Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -836,7 +836,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly21Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -851,7 +851,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropOct24BeforeApril25(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -866,7 +866,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -881,7 +881,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropJuly21Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -894,7 +894,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -907,7 +907,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApril25Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -922,7 +922,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -935,7 +935,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -948,7 +948,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialAddPropApr16Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(true)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(true)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
 
@@ -961,13 +961,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2020, 7, 31))
         val result = createResult("leaseholdResidential, July2020 onwards")
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any(), any())).thenReturn(false)
 
         when(mockLeaseholdCalculationService.leaseholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any(), any())
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialJuly20Onwards(testRequest)
       }
@@ -977,13 +977,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val result = createResult("leaseholdResidential, July2020 onwards")
 
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any(), any())).thenReturn(false)
 
         when(mockLeaseholdCalculationService.leaseholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), ArgumentMatchers.eq(None), any(), any())
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialJuly20Onwards(testRequest)
       }
@@ -994,13 +994,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialJuly20Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialJuly20Onwards(testRequest)
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
       }
     }
 
@@ -1033,7 +1033,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         when(mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards(testRequest)).thenReturn(result)
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
@@ -1071,13 +1071,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential,LocalDate.of(2021, 7, 1))
         val result = createResult("leaseholdResidential, July2021 Onwards")
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
 
         when(mockLeaseholdCalculationService.leaseholdResidentialJuly21Onwards(testRequest)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialJuly21Onwards(testRequest)
       }
@@ -1086,13 +1086,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential,LocalDate.of(2022, 9, 23))
         val result = createResult("leaseholdResidential, July2021 Onwards")
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
 
         when(mockLeaseholdCalculationService.leaseholdResidentialJuly21Onwards(testRequest)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialJuly21Onwards(testRequest)
       }
@@ -1103,13 +1103,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential,LocalDate.of(2023, 9, 23))
         val result = createResult("leaseholdResidential, July2021 Onwards")
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
 
         when(mockLeaseholdCalculationService.leaseholdResidentialJuly21Onwards(testRequest)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialJuly21Onwards(testRequest)
       }
@@ -1118,13 +1118,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential,LocalDate.of(2025, 4, 1))
         val result = createResult("leaseholdResidential, April2025 Onwards")
 
-        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any())).thenReturn(false)
+        when(mockAdditionalPropertyService.additionalPropertyRatesApply(any(), any(), any(), any())).thenReturn(false)
 
         when(mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards(testRequest)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any())
+        verify(mockAdditionalPropertyService, times(2)).additionalPropertyRatesApply(any(), any(), any(), any())
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialDec14Onwards(testRequest)
       }

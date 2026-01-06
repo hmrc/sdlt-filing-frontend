@@ -7,7 +7,8 @@ package services
 
 import data.Dates
 import enums.sdltRebuild.TaxReliefCode.zeroRateCodes
-import enums.sdltRebuild.{FreeportsTaxSiteRelief, InvestmentZonesTaxSiteRelief}
+import enums.HoldingTypes._
+import enums.sdltRebuild.{FreeportsTaxSiteRelief, InvestmentZonesTaxSiteRelief, PreCompletionTransaction}
 import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.TaxReliefDetails
@@ -42,6 +43,10 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     val premium = request.premium
 
     request.effectiveDate match {
+      case date if request.taxReliefDetails.exists(_.taxReliefCode == PreCompletionTransaction) && date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) &&
+        additionalPropertyService.additionalPropertyRatesApply(
+          request.premium, request.propertyDetails, None, taxReliefCode = Some(PreCompletionTransaction)) =>
+        CalculationResponse(Seq(freeCalculationService.freeholdResidentialAddPropResidentialApril16OnwardsWithBudgetTaxRelief))
       case date if nonUKResident(request.nonUKResident) && date.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
         calculateFreeholdNonUKResidentTax(request)
       case date if isAfterSept2022AndBeforeApril2025(date) &&
@@ -364,11 +369,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         freeCalculationService.zeroRateTaxReliefForFreehold
       case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief)  =>
         leaseCalculationService.zeroRateLeaseHoldFreePortRelief(request.leaseDetails)
+      case (HoldingTypes.freehold, PreCompletionTransaction) =>
+        calculateFreeholdResidentialTax(request)
       case (holdingType, taxReliefCode) =>
         throw new Error(
           s"TaxRelief logic not yet implemented for taxReliefCode: ${taxReliefCode} and holding type: $holdingType"
         )
     }
   }
-
 }
