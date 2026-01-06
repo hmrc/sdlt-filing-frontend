@@ -149,6 +149,35 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
       }
     }
 
+    "must redirect to the next page when purchaser is Company" in {
+
+      val companyUserAnswers = emptyUserAnswers
+        .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
+      
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(companyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, purchaserSurnameOrCompanyNameRoute)
+            .withFormUrlEncodedBody(("purchaserSurnameOrCompanyName", "answer"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted and individual has been answered" in {
       val form = formProvider("Individual")
 
@@ -167,6 +196,21 @@ class PurchaserSurnameOrCompanyNameControllerSpec extends SpecBase with MockitoS
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, individual)(request, messages(application)).toString
+      }
+    }
+
+    "must handle missing purchaser type on GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, purchaserSurnameOrCompanyNameRoute)
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[PurchaserSurnameOrCompanyNameView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(""), NormalMode, "")(request, messages(application)).toString
       }
     }
 

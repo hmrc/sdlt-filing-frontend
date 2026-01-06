@@ -366,6 +366,27 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
       }
     }
 
+    "must redirect to Journey Recovery when fullReturn is missing for a POST" in {
+
+      val userAnswers = emptyUserAnswers
+        .set(VendorOrCompanyNamePage, VendorName(Some("John"), None, "Doe")).get
+        .copy(fullReturn = None)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, confirmVendorAddressRoute)
+          .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.Yes.toString)
+
+        val result = route(application, request).get
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
       val application = applicationBuilder(userAnswers = None).build()
 
