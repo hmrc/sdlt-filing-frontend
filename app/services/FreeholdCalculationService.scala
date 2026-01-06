@@ -8,6 +8,7 @@ package services
 import data.FreeholdSliceRatesTables._
 import data.ResultText.RESULT_HEADING_TAX_RELEIF
 import data.{Dates, SlabRatesTables}
+import enums.sdltRebuild.PreCompletionTransaction
 import enums.{CalcTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import factories.FreeholdResultFactory
@@ -504,6 +505,13 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     val individual: Boolean = request.propertyDetails.exists(_.individual)
 
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
+  }
+
+  val freeholdResidentialAddPropResidentialApril16OnwardsWithBudgetTaxRelief: Result = {
+    FreeholdResultFactory
+      .freeholdResidentialAddPropApril2016OnwardsResultResidentialWithBudgetTaxRelief(
+        PreCompletionTransaction
+      )
   }
 
   val zeroRateTaxReliefForFreehold: CalculationResponse =

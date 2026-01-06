@@ -37,6 +37,7 @@ case object DiplomaticPrivileges extends TaxReliefCode(27) with ZeroRate
 case object OtherTaxReliefs extends TaxReliefCode(28) with ZeroRate
 case object CombinationOfReliefs extends TaxReliefCode(29) with ZeroRate
 case object AlternativeFinanceInvestmentBondsRelief extends TaxReliefCode(31) with ZeroRate
+case object PreCompletionTransaction extends TaxReliefCode(34)
 case object FreeportsTaxSiteRelief extends TaxReliefCode(36) with ZeroRate
 case object InvestmentZonesTaxSiteRelief extends TaxReliefCode(37) with ZeroRate
 case object SeedingRelief extends TaxReliefCode(38) with ZeroRate
@@ -67,6 +68,7 @@ object TaxReliefCode {
     OtherTaxReliefs.fromCode,
     CombinationOfReliefs.fromCode,
     AlternativeFinanceInvestmentBondsRelief.fromCode,
+    PreCompletionTransaction.fromCode,
     FreeportsTaxSiteRelief.fromCode,
     InvestmentZonesTaxSiteRelief.fromCode,
     SeedingRelief.fromCode

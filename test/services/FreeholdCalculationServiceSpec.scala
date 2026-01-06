@@ -6,7 +6,7 @@
 package services
 
 import java.time.LocalDate
-import data.ResultText.RESULT_HEADING_GENERIC
+import data.ResultText.{RESULT_HEADING_GENERIC, RESULT_HEADING_TAX_RELEIF}
 import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
@@ -1900,4 +1900,33 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
     }
   }
 
+  "calculating freeholdResidentialAddPropApr16Onwards with budget tax relief" must {
+
+    "return the budget tax relief result for PreCompletionTransaction" in {
+      val calcDetails =
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+      val expectedRes = Result(
+        totalTax = 0,
+        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+        resultHint = None,
+        npv = None,
+        taxCalcs = Seq(calcDetails)
+      )
+
+      val actual =
+        testFreeholdCalcService
+          .freeholdResidentialAddPropResidentialApril16OnwardsWithBudgetTaxRelief
+
+      actual shouldBe expectedRes
+    }
+  }
 }
