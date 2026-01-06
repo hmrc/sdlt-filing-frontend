@@ -21,6 +21,7 @@ import models.*
 import pages.*
 import pages.preliminary.*
 import pages.purchaser.*
+import pages.purchaserAgent.PurchaserAgentsContactDetailsPage
 import pages.vendor.*
 import play.api.mvc.Call
 
@@ -36,7 +37,7 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-      
+
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
     case VendorOrCompanyNamePage =>
@@ -45,7 +46,7 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
     case VendorRepresentedByAgentPage =>
       _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
-      
+
     case AgentNamePage =>
       _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case AddVendorAgentContactDetailsPage =>
@@ -67,8 +68,8 @@ class Navigator @Inject()() {
          | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage
          | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage
          | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | PurchaserTypeOfCompanyPage
-         | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage 
-         | ConfirmNameOfThePurchaserPage => true
+         | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage
+         | ConfirmNameOfThePurchaserPage | PurchaserAgentsContactDetailsPage => true
 
     case _ => false
   }
@@ -93,7 +94,7 @@ class Navigator @Inject()() {
     case PurchaserPartnershipUtrPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case PurchaserCorporationTaxUTRPage =>
-     _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case RegistrationNumberPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case IsPurchaserActingAsTrusteePage =>
@@ -106,6 +107,10 @@ class Navigator @Inject()() {
       - => controllers.routes.ReturnTaskListController.onPageLoad()
     case ConfirmNameOfThePurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+
+    case PurchaserAgentsContactDetailsPage => //TODO: update to correct route in DTR-1826 add reference
+      - => controllers.routes.ReturnTaskListController.onPageLoad()
+
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
