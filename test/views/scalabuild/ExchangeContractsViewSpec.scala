@@ -7,19 +7,17 @@ package views.scalabuild
 
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import views.html.scalabuild.SharedOwnershipView
+import views.html.scalabuild.ExchangeContractsView
 
-class SharedOwnershipViewSpec extends ViewTestFixture {
+class ExchangeContractsViewSpec extends ViewTestFixture {
 
-  val view: SharedOwnershipView = app.injector.instanceOf[views.html.scalabuild.SharedOwnershipView]
-  val form: Form[_] = app.injector.instanceOf[forms.scalabuild.SharedOwnershipFormProvider].apply()
+  val view: ExchangeContractsView = app.injector.instanceOf[views.html.scalabuild.ExchangeContractsView]
+  val form: Form[_] = app.injector.instanceOf[forms.scalabuild.ExchangeContractsFormProvider].apply()
   override val htmlContent: HtmlFormat.Appendable = view.apply(form)(fakeRequest, messages)
 
-  "Shared ownership view" must {
+  "Exchange contracts view" must {
     "render the correct content" in {
-      heading mustBe messages("sharedOwnership.heading")
-      caption mustBe messages("section.sharedOwnership")
-      bodyText mustBe messages("sharedOwnership.p1")
+      heading mustBe messages("exchangeContracts.heading")
     }
 
     "render the correct values for the radio button choices" in {

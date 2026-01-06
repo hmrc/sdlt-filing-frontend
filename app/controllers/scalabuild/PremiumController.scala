@@ -31,6 +31,5 @@ class PremiumController @Inject()(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         _ => Future.successful(Redirect(controllers.scalabuild.routes.PremiumController.onPageLoad().url))
       )
-
   }
 }

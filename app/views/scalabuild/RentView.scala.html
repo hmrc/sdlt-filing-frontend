@@ -1,0 +1,58 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import components.{Caption, FormGroupWithError, PageHeading, Paragraph}
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukInput: GovukInput,
+    govukButton: GovukButton,
+    pageHeading: PageHeading
+)
+
+@(form: Form[_], count: Int)(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.RentController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form, (0 until count).map { i =>
+            s"rents[$i]" -> s"year${i + 1}Rent"}.toMap))
+    }
+
+    @if(count >= 5) {
+        @pageHeading(messages("rent.fiveYear.heading"), id = Some("rent"))
+    } else{
+        @pageHeading(messages("rent.heading"), id = Some("rent"))
+    }
+
+    @for(i <- 0 until count) {
+        @govukInput(
+            InputViewModel(
+                field = form(s"rents[$i]"),
+                label = Label(
+                    classes = "govuk-label--l",
+                    content = messages("rent.period.label", i+1)
+                )
+            )
+            .asNumeric()
+            .withId(s"year${i+1}Rent")
+            .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
+            .withPoundPrefix
+        )
+    }
+
+    @govukButton(
+        ButtonViewModel("continue-button",messages("site.continue"))
+    )
+
+    }
+}

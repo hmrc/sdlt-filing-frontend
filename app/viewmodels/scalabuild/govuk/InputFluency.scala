@@ -55,5 +55,8 @@ trait InputFluency {
 
     def asVisuallyHidden(): Input =
       withCssClass("govuk-visually-hidden")
+
+    def withId(id: String): Input =
+      input.copy(id = id)
   }
 }

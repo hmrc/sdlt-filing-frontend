@@ -6,27 +6,27 @@
 package controllers.scalabuild
 
 import base.ScalaSpecBase
-import forms.scalabuild.PurchasePriceFormProvider
+import forms.scalabuild.RelevantRentFormProvider
+import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.mvc.Call
-import views.html.scalabuild.PurchasePriceView
+import views.html.scalabuild.RelevantRentView
 
-class PurchasePriceControllerSpec extends ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/purchase-price")
-  val formProvider = new PurchasePriceFormProvider()
+class RelevantRentControllerSpec extends ScalaSpecBase {
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/relevant-rent")
+  val formProvider = new RelevantRentFormProvider()
   val form          = formProvider()
-  lazy val purchasePriceRoute = controllers.scalabuild.routes.PurchasePriceController.onPageLoad().url
+  lazy val relevantRentRoute = controllers.scalabuild.routes.RelevantRentController.onPageLoad().url
 
-  "PurchasePrice Controller" - {
+  "Relevant Rent Controller" - {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, purchasePriceRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val request = FakeRequest(GET, relevantRentRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
         val result = route(application, request).value
-        val view = application.injector.instanceOf[PurchasePriceView]
+        val view = application.injector.instanceOf[RelevantRentView]
 
         status(result)          mustEqual OK
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
@@ -39,8 +39,8 @@ class PurchasePriceControllerSpec extends ScalaSpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, purchasePriceRoute)
-            .withFormUrlEncodedBody(("premium", "100000")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+          FakeRequest(POST, relevantRentRoute)
+            .withFormUrlEncodedBody(("relevantRent", "100000")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value
 
@@ -55,12 +55,12 @@ class PurchasePriceControllerSpec extends ScalaSpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, purchasePriceRoute)
-            .withFormUrlEncodedBody(("purchasePrice", "")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+          FakeRequest(POST, relevantRentRoute)
+            .withFormUrlEncodedBody(("relevantRent", "")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
-        val boundForm = form.bind(Map("purchasePrice" -> ""))
+        val boundForm = form.bind(Map("relevantRent" -> ""))
 
-        val view = application.injector.instanceOf[PurchasePriceView]
+        val view = application.injector.instanceOf[RelevantRentView]
 
         val result = route(application, request).value
 

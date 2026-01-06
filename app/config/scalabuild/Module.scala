@@ -8,7 +8,7 @@ package config.scalabuild
 import com.google.inject.AbstractModule
 import controllers.scalabuild.actions._
 
-import java.time.Clock
+import java.time.{Clock, ZoneId}
 
 class Module extends AbstractModule {
 
@@ -16,7 +16,6 @@ class Module extends AbstractModule {
     bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[DataRequiredAction]).to(classOf[DataRequiredActionImpl]).asEagerSingleton()
     bind(classOf[IdentifierAction]).to(classOf[SessionIdentifierAction]).asEagerSingleton()
-    // lan todo: uncomment when removing the old Module
-    //    bind(classOf[Clock]).toInstance(java.time.Clock.systemDefaultZone)
+    bind(classOf[Clock]).toInstance(Clock.system(ZoneId.of("Europe/London")))
   }
 }

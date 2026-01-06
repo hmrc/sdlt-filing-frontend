@@ -20,9 +20,9 @@ class LeaseDatesControllerSpec extends ScalaSpecBase {
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/lease-dates")
 
   val formProvider = new LeaseDatesFormProvider()
-  val validEffectiveDate = LocalDate.of(2025, 1, 1)
-  val form = formProvider(validEffectiveDate)
   val thisYear = LocalDate.now().getYear
+  val validEffectiveDate = LocalDate.of(thisYear, 1, 1)
+  val form = formProvider(validEffectiveDate)
 
   lazy val leaseDatesControllerRoute: String = controllers.scalabuild.routes.LeaseDatesController.onPageLoad().url
 
@@ -47,7 +47,7 @@ class LeaseDatesControllerSpec extends ScalaSpecBase {
           FakeRequest(POST, leaseDatesControllerRoute)
             .withFormUrlEncodedBody(
               ("leaseStartDate.day", "1"), ("leaseStartDate.month", "1"), ("leaseStartDate.year", s"$thisYear"),
-              ("leaseEndDate.day", "1"), ("leaseEndDate.month", "1"), ("leaseEndDate.year", s"${thisYear + 1}")
+              ("leaseEndDate.day", "1"), ("leaseEndDate.month", "1"), ("leaseEndDate.year",  s"${thisYear + 1}")
             ).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
         val result = route(application, request).value
 

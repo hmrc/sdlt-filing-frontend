@@ -49,3 +49,19 @@ POST      /lease-dates                     controllers.scalabuild.LeaseDatesCont
 
 GET       /premium                     controllers.scalabuild.PremiumController.onPageLoad()
 POST      /premium                     controllers.scalabuild.PremiumController.onSubmit()
+
+GET       /exchange-contracts                        controllers.scalabuild.ExchangeContractsController.onPageLoad()
+POST      /exchange-contracts                        controllers.scalabuild.ExchangeContractsController.onSubmit()
+
+GET       /contract-post-201603                        controllers.scalabuild.ContractPost201603Controller.onPageLoad()
+POST      /contract-post-201603                        controllers.scalabuild.ContractPost201603Controller.onSubmit()
+
+#remove below exchange-contracts-double page route after necessary AT changes are done
+GET       /exchange-contracts-double                        controllers.scalabuild.ExchangeContractsPreAndPostController.onPageLoad()
+POST      /exchange-contracts-double                        controllers.scalabuild.ExchangeContractsPreAndPostController.onSubmit()
+
+GET       /relevant-rent                        controllers.scalabuild.RelevantRentController.onPageLoad()
+POST      /relevant-rent                        controllers.scalabuild.RelevantRentController.onSubmit()
+
+GET       /rent                        controllers.scalabuild.RentController.onPageLoad()
+POST      /rent                        controllers.scalabuild.RentController.onSubmit()

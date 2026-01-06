@@ -5,7 +5,7 @@
 
 package forms.scalabuild
 
-import config.FrontendAppConfig
+import config.scalabuild.FrontendAppConfig
 import forms.scalabuild.mappings.Mappings
 import models.scalabuild.{MarketValue, MarketValueChoice}
 import models.scalabuild.MarketValueChoice.{PayInStages, PayUpfront}

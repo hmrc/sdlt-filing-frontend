@@ -141,6 +141,7 @@ marketValue.marketPropValue.input = Price of initial share of the property
 marketValue.error.required = Provide an answer to continue.
 marketValue.error.nonNumeric = Enter the amount again - don''t use any letters or characters including £
 marketValue.error.maxValue = Enter a value that is £{0} or less.
+marketValue.hint = You can choose to pay SDLT on the market value of the property. This is known as a ‘market value election’.
 
 leaseDates.startDate.heading = Start date shown in your lease
 leaseDates.startDate.hint = This is the date your term starts.
@@ -160,3 +161,19 @@ premium.details.para = You will not have to pay SDLT if the lease premium is les
 premium.details.linkText =  file an SDLT return in some cases.
 premium.error.nonNumeric = Enter the premium again - don’t use any letters or characters including £
 premium.error.required = Enter your Premium
+
+exchangeContracts.heading = Did you exchange contracts before 17 March 2016?
+exchangeContracts.error.required = Select ''Yes'' or ''No''
+
+contractPost201603.heading = Has your contract been changed on or after 17 March 2016?
+contractPost201603.error.required = Select ''Yes'' or ''No''
+
+relevantRent.heading = Relevant rental figure
+relevantRent.error.required = Please enter the rental figure
+relevantRent.error.nonNumeric = Enter the relevant rent again - don’t use any letters or characters including £
+
+rent.heading = Enter the annual rent due
+rent.fiveYear.heading = Enter the annual rent due for the first 5 years
+rent.period.label = Year {0} rent
+rents.error.required = Enter the annual rent for all the years
+rents.error.nonNumeric = Enter the rent again - don't use any letters or characters including £

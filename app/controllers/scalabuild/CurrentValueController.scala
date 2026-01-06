@@ -5,7 +5,7 @@
 
 package controllers.scalabuild
 
-import config.FrontendAppConfig
+import config.scalabuild.FrontendAppConfig
 import forms.scalabuild.CurrentValueFormProvider
 import models.scalabuild.CurrentValue
 import play.api.data.Form

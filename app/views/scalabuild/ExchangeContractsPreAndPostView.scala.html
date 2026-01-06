@@ -1,0 +1,62 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+
+@this(
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    formHelper: FormWithCSRF,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton
+)
+
+@(exchangeContractsForm: Form[_], contractPostForm: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @formHelper(action = controllers.scalabuild.routes.ExchangeContractsPreAndPostController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+    @if(exchangeContractsForm.errors.nonEmpty) {
+        @govukErrorSummary(
+            ErrorSummaryViewModel(
+                exchangeContractsForm,
+                errorLinkOverrides =Map(
+                    "contract-pre-201603" -> "contract-pre-201603-yes",
+                    "contract-varied-post-201603" -> "contract-varied-post-201603-yes"
+                )
+            )
+        )
+    }
+
+    @govukRadios(
+        RadiosViewModel.yesNoWithConditionalHtml(
+            field = exchangeContractsForm("contract-pre-201603"),
+            legend = LegendViewModel(messages("exchangeContracts.heading")).asPageHeading(),
+            yesId = "-yes",
+            noId = "-no",
+            items = RadiosViewModel.yesNoItemsWithConditionalHtml(
+                field = contractPostForm("contract-pre-201603"),
+                yesId = "-yes",
+                noId = "-no",
+                conditionalYesHtml = Some(
+                    govukRadios(
+                        RadiosViewModel.yesNoCustomIdSuffix(
+                            field = contractPostForm("contract-varied-post-201603"),
+                            legend = LegendViewModel(messages("contractPost201603.heading")).asPageHeading(),
+                            yesId = "-yes",
+                            noId = "-no"
+                        ).inline()
+                    )
+                )
+            )
+        ).inline()
+    )
+
+    @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
+    }
+}

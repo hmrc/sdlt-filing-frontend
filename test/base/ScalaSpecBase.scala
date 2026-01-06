@@ -4,7 +4,7 @@
  */
 
 package base
-import config.FrontendAppConfig
+import config.scalabuild.FrontendAppConfig
 import org.scalatest.{OptionValues, TryValues}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
