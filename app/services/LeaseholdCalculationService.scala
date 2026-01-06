@@ -6,7 +6,7 @@
 package services
 
 import data.LeaseholdSliceRatesTables._
-import data.ResultText.RESULT_HEADING_TAX_RELEIF
+import data.ResultText.RESULT_HEADING_TAX_RELIEF
 import data.SignificantAmounts._
 import data.{Dates, SlabRatesTables}
 import enums.{CalcTypes, TaxTypes}
@@ -779,7 +779,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   val zeroRatedResult: Result =
     Result(
       totalTax = 0,
-      resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
       resultHint = None,
       npv = None,
       taxCalcs = Seq(

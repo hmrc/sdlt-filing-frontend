@@ -5,7 +5,7 @@
 
 package services
 
-import data.ResultText.RESULT_HEADING_TAX_RELEIF
+import data.ResultText.RESULT_HEADING_TAX_RELIEF
 
 import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
@@ -2354,7 +2354,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
 
       val expectedRes: Result = Result(
         totalTax = 0,
-        resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
+        resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
         resultHint = None,
         npv = Some(npv),
         taxCalcs = calcDetails

@@ -6,9 +6,8 @@
 package services
 
 import data.FreeholdSliceRatesTables._
-import data.ResultText.RESULT_HEADING_TAX_RELEIF
+import data.ResultText.RESULT_HEADING_TAX_RELIEF
 import data.{Dates, SlabRatesTables}
-import enums.sdltRebuild.PreCompletionTransaction
 import enums.{CalcTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import factories.FreeholdResultFactory
@@ -508,11 +507,14 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
   }
 
-  val freeholdResidentialAddPropResidentialApril16OnwardsWithBudgetTaxRelief: Result = {
+  val freeholdResidentialAddPropApril16OnwardsWithBudgetTaxRelief: Result = {
     FreeholdResultFactory
-      .freeholdResidentialAddPropApril2016OnwardsResultResidentialWithBudgetTaxRelief(
-        PreCompletionTransaction
-      )
+      .freeholdResidentialAddPropApril2016OnwardsResultWithBudgetTaxRelief
+  }
+
+  val freeholdApril13OnwardsWithBudgetTaxRelief: Result = {
+    FreeholdResultFactory
+      .freeholdApril2013OnwardsResultWithBudgetTaxRelief
   }
 
   val zeroRateTaxReliefForFreehold: CalculationResponse =
@@ -520,7 +522,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
       Seq(
         Result(
           totalTax = 0,
-          resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
+          resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
           resultHint = None,
           npv = None,
           taxCalcs = Seq(

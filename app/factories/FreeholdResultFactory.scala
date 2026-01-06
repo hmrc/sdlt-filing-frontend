@@ -6,7 +6,6 @@
 package factories
 
 import data.ResultText._
-import enums.sdltRebuild.TaxReliefCode
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, CalculationResponse, Result}
 import models.calculationtables.{SlabResult, SliceResult}
@@ -419,11 +418,33 @@ object FreeholdResultFactory {
     )
   }
 
-  def freeholdResidentialAddPropApril2016OnwardsResultResidentialWithBudgetTaxRelief(taxReliefCode: TaxReliefCode): Result = {
+  def freeholdResidentialAddPropApril2016OnwardsResultWithBudgetTaxRelief: Result = {
 
     Result(
       totalTax = 0,
-      resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+      resultHint = None,
+      npv = None,
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+      )
+    )
+  }
+
+  def freeholdApril2013OnwardsResultWithBudgetTaxRelief: Result = {
+
+    Result(
+      totalTax = 0,
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
       resultHint = None,
       npv = None,
       taxCalcs = Seq(
@@ -446,7 +467,7 @@ object FreeholdResultFactory {
       Seq(
         Result(
           totalTax = slabResult.taxDue.toInt,
-          resultHeading = Some(RESULT_HEADING_TAX_RELEIF),
+          resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
           resultHint = None,
           npv = None,
           taxCalcs = Seq(
