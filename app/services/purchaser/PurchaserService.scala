@@ -83,7 +83,28 @@ class PurchaserService {
         userAnswers.set(ConfirmNameOfThePurchaserPage, confirmName)
     }
   }
+  
+  def continueIfAddingMainPurchaserWithPurchaserTypeCheck(purchaserType: WhoIsMakingThePurchase, userAnswers: UserAnswers, continueRoute: Result): Result =
+    continueIfAddingMainPurchaser(
+      userAnswers,
+      checkPurchaserTypeAndCompanyDetails(
+        purchaserType,
+        userAnswers,
+        continueRoute
+      )
+    )
 
+  def continueIfAddingMainPurchaser(userAnswers: UserAnswers, continueRoute: Result): Result = {
+      val mainPurchaserID = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
+      val confirmNameOfThePurchaser = userAnswers.get(ConfirmNameOfThePurchaserPage)
+      (confirmNameOfThePurchaser, mainPurchaserID) match {
+        case (Some(ConfirmNameOfThePurchaser.Yes), _) => continueRoute
+        case (Some(ConfirmNameOfThePurchaser.No), _) => Redirect(controllers.routes.GenericErrorController.onPageLoad()) // TODO: DTR-1788 - redirect to CYA
+        case (None, None) => continueRoute
+        case (None, Some(_)) => Redirect(controllers.routes.GenericErrorController.onPageLoad()) // TODO: DTR-1788 - redirect to CYA
+      }
+  }
+  
   def checkPurchaserTypeAndCompanyDetails(purchaserType: WhoIsMakingThePurchase, userAnswers: UserAnswers, continueRoute: Result): Result =
     userAnswers.get(WhoIsMakingThePurchasePage) match {
       case Some(value) if value == purchaserType && purchaserType == WhoIsMakingThePurchase.Company =>

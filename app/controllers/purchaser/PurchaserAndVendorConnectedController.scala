@@ -26,6 +26,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.PurchaserAndVendorConnectedView
 
@@ -41,6 +42,7 @@ class PurchaserAndVendorConnectedController @Inject()(
                                        requireData: DataRequiredAction,
                                        formProvider: PurchaserAndVendorConnectedFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
+                                       purchaserService: PurchaserService,
                                        view: PurchaserAndVendorConnectedView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -57,7 +59,8 @@ class PurchaserAndVendorConnectedController @Inject()(
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, mode, purchaserName))
+          val continueRoute = Ok(view(preparedForm, mode, purchaserName))
+          purchaserService.continueIfAddingMainPurchaser(request.userAnswers, continueRoute)
 
         case None => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
       }

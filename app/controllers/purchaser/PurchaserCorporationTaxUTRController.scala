@@ -54,7 +54,7 @@ class PurchaserCorporationTaxUTRController @Inject()(
       val nameOfPurchaser: Option[String] = userAnswers.get(NameOfPurchaserPage).map(_.fullName)
       val purchaserConfirmIdentity: Option[PurchaserConfirmIdentity] = userAnswers.get(PurchaserConfirmIdentityPage)
 
-      purchaserService.checkPurchaserTypeAndCompanyDetails(
+      purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
         WhoIsMakingThePurchase.Company,
         userAnswers,
         continueRoute = (nameOfPurchaser, purchaserConfirmIdentity) match {

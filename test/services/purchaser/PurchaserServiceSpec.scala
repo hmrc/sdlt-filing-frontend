@@ -17,6 +17,7 @@
 package services.purchaser
 
 import base.SpecBase
+import constants.FullReturnConstants
 import models.*
 import models.purchaser.*
 import pages.purchaser.{ConfirmNameOfThePurchaserPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
@@ -760,6 +761,88 @@ class PurchaserServiceSpec extends SpecBase {
         }
       }
     }
+    
+    "continueIfAddingMainPurchaser" - {
+      val incompletePurchaser = Purchaser(
+        purchaserID = Some("PURCH001"),
+        isCompany = Some("YES"),
+        companyName = Some("Test Company")
+      )
+      
+      "must continue when mainPurchaserID does not exist and adding the main purchaser" in {
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn))
+        val result = service.continueIfAddingMainPurchaser(userAnswers, continueRoute)
+        result mustBe continueRoute
+      }
+      
+      "must continue when main purchaser is incomplete and is being edited" in {
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(
+            emptyFullReturn.copy(purchaser = Some(Seq(incompletePurchaser)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001"))))
+          ))
+          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
+        val result = service.continueIfAddingMainPurchaser(userAnswers, continueRoute)
+        result mustBe continueRoute
+      }
+      
+      "must redirect to CYA when main purchaser is incomplete and is not being edited" in {
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(
+            emptyFullReturn.copy(purchaser = Some(Seq(incompletePurchaser)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH002"))))
+          ))
+          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+        val result = service.continueIfAddingMainPurchaser(userAnswers, continueRoute)
+        redirectLocation(Future.successful(result)) mustBe Some(
+          controllers.routes.GenericErrorController.onPageLoad().url
+        )
+      }
 
+      "must redirect to CYA when main purchaser is complete" in {
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(FullReturnConstants.completeFullReturn))
+        val result = service.continueIfAddingMainPurchaser(userAnswers, continueRoute)
+        redirectLocation(Future.successful(result)) mustBe Some(
+          controllers.routes.GenericErrorController.onPageLoad().url
+        )
+      }
+    }
+
+    "continueIfAddingMainPurchaserWithPurchaserTypeCheck" - {
+
+      "must continue when purchaser type and main purchaser conditions are met" in {
+        val userAnswers = emptyUserAnswers
+          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
+        val result = service.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
+          WhoIsMakingThePurchase.Company,
+          userAnswers,
+          continueRoute
+        )
+        result mustBe continueRoute
+      }
+
+      "must redirect to CYA page when purchaser type does not match" in {
+        val userAnswers = emptyUserAnswers
+          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
+        val result = service.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
+          WhoIsMakingThePurchase.Company,
+          userAnswers,
+          continueRoute
+        )
+        redirectLocation(Future.successful(result)) mustBe Some(
+          controllers.routes.GenericErrorController.onPageLoad().url
+        )
+      }
+
+      "must redirect to CYA page when main purchaser conditions are not met" in {
+        val userAnswers = emptyUserAnswers
+          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
+          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+        val result = service.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
+          WhoIsMakingThePurchase.Individual,
+          userAnswers,
+          continueRoute
+        )
+        redirectLocation(Future.successful(result)) mustBe Some(
+          controllers.routes.GenericErrorController.onPageLoad().url
+        )
+      }
+    }
   }
 }

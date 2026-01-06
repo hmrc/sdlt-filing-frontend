@@ -49,7 +49,7 @@ class PurchaserTypeOfCompanyController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      purchaserService.checkPurchaserTypeAndCompanyDetails(
+      purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
         purchaserType = WhoIsMakingThePurchase.Company,
         userAnswers = request.userAnswers,
         continueRoute = request.userAnswers.get(NameOfPurchaserPage) match {

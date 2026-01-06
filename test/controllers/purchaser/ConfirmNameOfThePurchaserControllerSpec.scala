@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import forms.purchaser.ConfirmNameOfThePurchaserFormProvider
 import models.purchaser.ConfirmNameOfThePurchaser
-import models.{FullReturn, NormalMode, Purchaser, UserAnswers}
+import models.{FullReturn, NormalMode, Purchaser, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -106,13 +106,13 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
   )
 
   private def fullReturnWithIndividualPurchaser: FullReturn =
-    emptyFullReturn.copy(purchaser = Some(Seq(individualPurchaser)))
+    emptyFullReturn.copy(purchaser = Some(Seq(individualPurchaser)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001"))))
 
   private def fullReturnWithCompanyPurchaser: FullReturn =
-    emptyFullReturn.copy(purchaser = Some(Seq(companyPurchaser)))
+    emptyFullReturn.copy(purchaser = Some(Seq(companyPurchaser)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH002"))))
 
   private def fullReturnWithPurchaserWithAddress: FullReturn =
-    emptyFullReturn.copy(purchaser = Some(Seq(purchaserWithAddress)))
+    emptyFullReturn.copy(purchaser = Some(Seq(purchaserWithAddress)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH003"))))
 
   val userAnswersWithIndividualPurchaser: UserAnswers =
     UserAnswers(userAnswersId, storn = testStorn)
