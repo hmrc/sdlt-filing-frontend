@@ -16,7 +16,6 @@
 
 package models.purchaserAgent
 
-//import models.purchaserAgent.PurchaserAgentsContactDetails
 import play.api.libs.json.*
 
 case class PurchaserAgentsContactDetails (phoneNumber: Option[String], emailAddress: Option[String]) {

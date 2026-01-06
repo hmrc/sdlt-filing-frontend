@@ -16,8 +16,6 @@
 
 package viewmodels.checkAnswers.purchaserAgent
 
-//import controllers.routes
-
 import models.{CheckMode, UserAnswers}
 import pages.purchaserAgent.PurchaserAgentsContactDetailsPage
 import play.api.i18n.Messages

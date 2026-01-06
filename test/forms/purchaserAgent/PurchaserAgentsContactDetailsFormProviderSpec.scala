@@ -17,7 +17,6 @@
 package forms.purchaserAgent
 
 import forms.behaviours.StringFieldBehaviours
-//import models.purchaserAgent.PurchaserAgentsContactDetails
 import play.api.data.FormError
 
 class PurchaserAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
