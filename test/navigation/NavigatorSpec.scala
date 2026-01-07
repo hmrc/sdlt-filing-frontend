@@ -22,6 +22,7 @@ import models.*
 import pages.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
+import pages.purchaserAgent.*
 import pages.vendor.*
 
 class NavigatorSpec extends SpecBase {
@@ -148,6 +149,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from ConfirmNameOfThePurchaserPage to PurchaserAddress page" in {
           navigator.nextPage(ConfirmNameOfThePurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        }
+
+        "go from PurchaserAgentNamePage to PurchaserAgentAddress page" in { // TODO: Update to address lookup (DTR-1817)
+          navigator.nextPage(PurchaserAgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
         }
       }
     }

@@ -21,7 +21,7 @@ import models.*
 import pages.*
 import pages.preliminary.*
 import pages.purchaser.*
-import pages.purchaserAgent.PurchaserAgentsContactDetailsPage
+import pages.purchaserAgent.*
 import pages.vendor.*
 import play.api.mvc.Call
 
@@ -69,7 +69,7 @@ class Navigator @Inject()() {
          | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage
          | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | PurchaserTypeOfCompanyPage
          | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage
-         | ConfirmNameOfThePurchaserPage | PurchaserAgentsContactDetailsPage => true
+         | ConfirmNameOfThePurchaserPage | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage => true
 
     case _ => false
   }
@@ -108,6 +108,8 @@ class Navigator @Inject()() {
     case ConfirmNameOfThePurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
+    case PurchaserAgentNamePage => // TODO: Update to address lookup (DTR-1817)
+      _ => routes.ReturnTaskListController.onPageLoad()
     case PurchaserAgentsContactDetailsPage => //TODO: update to correct route in DTR-1826 add reference
       - => controllers.routes.ReturnTaskListController.onPageLoad()
 

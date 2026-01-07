@@ -228,9 +228,14 @@ GET         /about-the-purchasers-agent/agent-address-lookup                   c
 GET         /about-the-purchasers-agent/agent-address-return                   controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
 GET         /about-the-purchasers-agent/agent-address-return/change            controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
 
-GET         /no-enrolment                                                      controllers.NoSdltEnrolmentErrorPageController.onPageLoad()
+GET         /about-the-purchasers-agent/agent-name                             controllers.purchaserAgent.PurchaserAgentNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/agent-name                             controllers.purchaserAgent.PurchaserAgentNameController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/agent-name/change                      controllers.purchaserAgent.PurchaserAgentNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/agent-name/change                      controllers.purchaserAgent.PurchaserAgentNameController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-purchasers-agent/enter-agent-contact-details            controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchasers-agent/enter-agent-contact-details            controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-purchasers-agent/enter-agent-contact-details/change     controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-purchasers-agent/enter-agent-contact-details/change     controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /no-enrolment                                                       controllers.NoSdltEnrolmentErrorPageController.onPageLoad()
