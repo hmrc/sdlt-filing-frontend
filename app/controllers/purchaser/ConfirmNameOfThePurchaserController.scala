@@ -55,9 +55,14 @@ class ConfirmNameOfThePurchaserController @Inject()(
       val purchaserOpt: Option[Purchaser] = request.userAnswers.fullReturn
         .flatMap(_.purchaser)
         .flatMap(_.headOption)
+      
+      val mainPurchaserID = request.userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
 
       purchaserOpt match {
-        case Some(purchaser) if purchaser.address1.isEmpty && (purchaser.surname.isDefined || purchaser.companyName.isDefined) =>
+        case Some(purchaser) if purchaser.address1.isEmpty
+          && (purchaser.surname.isDefined || purchaser.companyName.isDefined)
+          && mainPurchaserID.isDefined =>
+          
           val preparedForm = request.userAnswers.get(ConfirmNameOfThePurchaserPage) match {
             case None => form
             case Some(value) => form.fill(value)

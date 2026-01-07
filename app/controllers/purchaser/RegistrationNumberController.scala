@@ -52,7 +52,7 @@ class RegistrationNumberController @Inject()(
       val purchaserFullName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
        val isPurchaserVATRegistered: Option[PurchaserConfirmIdentity] = request.userAnswers.get(PurchaserConfirmIdentityPage)
       
-        purchaserService.checkPurchaserTypeAndCompanyDetails(
+        purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
         purchaserType = WhoIsMakingThePurchase.Company,
         userAnswers = request.userAnswers,
         continueRoute = {

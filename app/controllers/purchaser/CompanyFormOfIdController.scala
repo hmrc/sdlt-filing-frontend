@@ -54,7 +54,7 @@ class CompanyFormOfIdController @Inject()(
       val maybePurchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
       val maybePurchaserInfo = request.userAnswers.get(PurchaserConfirmIdentityPage)
 
-      purchaserService.checkPurchaserTypeAndCompanyDetails(
+      purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
         purchaserType = WhoIsMakingThePurchase.Company,
         userAnswers = request.userAnswers,
         continueRoute = {

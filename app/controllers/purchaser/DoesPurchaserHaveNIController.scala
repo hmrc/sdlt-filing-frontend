@@ -60,7 +60,7 @@ class DoesPurchaserHaveNIController @Inject()(
             case Some(value) => form.fill(value)
           }
 
-          purchaserService.checkPurchaserTypeAndCompanyDetails(
+          purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
             purchaserType = WhoIsMakingThePurchase.Individual,
             userAnswers = request.userAnswers,
             continueRoute =  Ok(view(preparedForm, mode, purchaserName.fullName)))

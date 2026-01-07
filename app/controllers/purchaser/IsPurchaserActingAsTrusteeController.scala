@@ -25,6 +25,7 @@ import pages.purchaser.{IsPurchaserActingAsTrusteePage, NameOfPurchaserPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.IsPurchaserActingAsTrusteeView
 
@@ -40,6 +41,7 @@ class IsPurchaserActingAsTrusteeController @Inject()(
                                        requireData: DataRequiredAction,
                                        formProvider: IsPurchaserActingAsTrusteeFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
+                                       purchaserService: PurchaserService,
                                        view: IsPurchaserActingAsTrusteeView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -58,7 +60,8 @@ class IsPurchaserActingAsTrusteeController @Inject()(
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, mode, nameOfPurchaser.fullName))
+          val continueRoute = Ok(view(preparedForm, mode, nameOfPurchaser.fullName))
+          purchaserService.continueIfAddingMainPurchaser(request.userAnswers, continueRoute)
       }
   }
 
