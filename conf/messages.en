@@ -206,6 +206,31 @@ addressLookup.purchaserQuestionsAddress.confirmPage.submitLabel                 
 addressLookup.purchaserQuestionsAddress.countryPicker.title                         = Find {0}’s address - About the purchaser
 addressLookup.purchaserQuestionsAddress.countryPicker.heading                       = Find {0}’s address
 
+# Purchaser Agent Address Lookup
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.heading                        = Find {0}’s address
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.filterLabel                    = Property name or number (optional)
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.submitLabel                    = Continue
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.manualAddressLinkText          = Enter the address manually
+addressLookup.purchaserAgentQuestionsAddress.selectPage.title                          = Choose {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.selectPage.heading                        = Choose {0}’s address
+addressLookup.purchaserAgentQuestionsAddress.selectPage.editAddressLinkText            = Enter address manually
+addressLookup.purchaserAgentQuestionsAddress.selectPage.submitLabel                    = Continue
+addressLookup.purchaserAgentQuestionsAddress.editPage.title                            = Enter {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.editPage.heading                          = Enter {0}’s address
+addressLookup.purchaserAgentQuestionsAddress.editPage.line1Label                       = Address line 1
+addressLookup.purchaserAgentQuestionsAddress.editPage.line2Label                       = Address line 2
+addressLookup.purchaserAgentQuestionsAddress.editPage.line3Label                       = Address line 3
+addressLookup.purchaserAgentQuestionsAddress.editPage.postcodeLabel                    = Postcode
+addressLookup.purchaserAgentQuestionsAddress.editPage.countryLabel                     = County
+addressLookup.purchaserAgentQuestionsAddress.editPage.submitLabel                      = Continue
+addressLookup.purchaserAgentQuestionsAddress.confirmPage.title                         = Review and confirm {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.confirmPage.heading                       = Review and confirm {0}’s address
+addressLookup.purchaserAgentQuestionsAddress.confirmPage.changeLinkText                = Edit this address
+addressLookup.purchaserAgentQuestionsAddress.confirmPage.submitLabel                   = Confirm address
+addressLookup.purchaserAgentQuestionsAddress.countryPicker.title                       = Find {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.countryPicker.heading                     = Find {0}’s address
+
 # Vendor Agent Address Lookup
 addressLookup.vendorAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.lookupPage.heading                        = Find {0}’s address
