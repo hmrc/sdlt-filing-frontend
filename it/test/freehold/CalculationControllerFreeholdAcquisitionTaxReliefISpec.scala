@@ -51,12 +51,23 @@ class CalculationControllerFreeholdAcquisitionTaxReliefISpec extends BaseSpec wi
 
         val responseJson = Json.parse(
           """
-            |{"result":[{"totalTax":5000,
-            |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
-            |"taxCalcs":[{"taxType":"premium",
-            |"calcType":"slab",
-            |"taxDue":5000,
-            |"bigDecRate":0.5}]}]}
+            |{
+            |  "result": [
+            |    {
+            |      "totalTax": 5000,
+            |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+            |      "taxCalcs": [
+            |        {
+            |          "taxType": "premium",
+            |          "calcType": "slab",
+            |          "taxDue": 5000,
+            |          "rate": 0,
+            |          "rateFraction": 5
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
             |""".stripMargin)
 
         request.status shouldBe OK
