@@ -1,0 +1,81 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels.InputWidth._
+@import viewmodels.LegendSize.Large
+@import views.html.components.Caption
+
+@this(
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        govukFieldset: GovukFieldset,
+        caption: Caption
+)
+
+@(form: Form[_], agentName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("purchaserAgent.contactDetails.title"))) {
+
+    @formHelper(action = controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @caption(messages("site.purchaserAgent.caption"))
+
+        @govukFieldset(
+            Fieldset(
+                legend = Some(
+                    LegendViewModel(
+                        messages("purchaserAgent.contactDetails.heading", agentName)
+                    ).asPageHeading(size = Large)
+                ),
+                html = HtmlFormat.fill(Seq(
+                    govukInput(
+                        InputViewModel(
+                            field = form("phoneNumber"),
+                            label = LabelViewModel(messages("purchaserAgent.contactDetails.agentPhoneNumber"))
+                        )
+                        .withWidth(Full)
+                        .withHint(
+                            HintViewModel(
+                                HtmlContent(
+                                    Html(messages("purchaserAgent.contactDetails.agentPhoneNumber.caption"))
+                                )
+                            )
+                        )
+                    ),
+
+                    govukInput(
+                        InputViewModel(
+                            field = form("emailAddress"),
+                            label = LabelViewModel(messages("purchaserAgent.contactDetails.agentEmailAddress"))
+                        )
+                        .withWidth(Full)
+                    )
+                ))
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
+    }
+}

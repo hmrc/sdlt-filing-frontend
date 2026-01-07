@@ -33,7 +33,8 @@ site.error.noSdltEnrolmentErrorPage.link.message = add this tax to your account
 site.vendor.caption                                                                 = About the vendor
 site.purchaser.caption                                                              = About the purchaser
 site.agent.caption                                                                  = About the agent
-site.purchaserAgent.caption                                                         = Add an agent for the purchaser
+site.purchaserAgent.caption                                                         = About the purchaser’s agent
+site.purchaserAgent.beforeStart.caption                                             = Add an agent for the purchaser
 
 site.vendor.theVendor                                                               = the vendor
 
@@ -560,7 +561,7 @@ purchaser.companyFormOfId.error.countryIssued.invalid                           
 purchaser.companyFormOfId.referenceId.change.hidden                                 = ID number or reference
 purchaser.companyFormOfId.countryIssued.change.hidden                               = Country of issue
 
-purchaser.purchaserTypeOfCompany.title                                                        = What type of company is the purchaser? – About the purchaser
+purchaser.purchaserTypeOfCompany.title                                                        = What type of company is the purchaser? - About the purchaser
 purchaser.purchaserTypeOfCompany.heading                                                      = What type of company is {0}?
 purchaser.purchaserTypeOfCompany.hint                                                         = Select up to four.
 purchaser.purchaserTypeOfCompany.bank                                                         = Bank
@@ -591,7 +592,7 @@ purchaser.purchaserAndVendorConnected.hint                                      
 
 
 # Purchaser Agent
-purchaserAgent.BeforeYouStart.title                                                 = Before you start – About the purchaser’s agent
+purchaserAgent.BeforeYouStart.title                                                 = Before you start - About the purchaser’s agent
 purchaserAgent.BeforeYouStart.heading                                               = Add an agent for the purchaser
 purchaserAgent.BeforeYouStart.checkYourAnswersLabel                                 = Add an agent for the purchaser
 purchaserAgent.BeforeYouStart.error.required                                        = Select yes if need to add a purchaser agent
@@ -606,9 +607,9 @@ purchaserAgent.BeforeYouStart.b5                                                
 purchaserAgent.BeforeYouStart.subheading                                            = Do you want to add an agent for the purchaser?
 
 
-purchaser.isPurchaserActingAsTrustee.title                                          = Is the purchaser acting as a trustee? – About the purchaser
+purchaser.isPurchaserActingAsTrustee.title                                          = Is the purchaser acting as a trustee? - About the purchaser
 purchaser.isPurchaserActingAsTrustee.heading                                        = Is {0} acting as a trustee?
-purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is the purchaser acting as a trustee? – About the purchaser
+purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is the purchaser acting as a trustee? - About the purchaser
 purchaser.isPurchaserActingAsTrustee.error.required                                 = Please select Yes or No
 purchaser.isPurchaserActingAsTrustee.change.hidden                                  = IsPurchaserActingAsTrustee
 
@@ -621,3 +622,19 @@ site.error.noReturnReference.manageTaxes                                        
 site.error.noReturnReference.checkYourAnswersLabel                                       = You cannot reach this page
 site.error.noReturnReference.error.required                                              = Please select an option
 site.error.noReturnReference.change.hidden                                               = NoReturnReference
+
+purchaserAgent.contactDetails.title                                                      = What are the agent’s contact details? - About the purchaser’s agent
+purchaserAgent.contactDetails.heading                                                    = What are {0}’s contact details?
+purchaserAgent.contactDetails.agentPhoneNumber                                           = Agent phone number
+purchaserAgent.contactDetails.agentPhoneNumber.caption                                   = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
+purchaserAgent.contactDetails.agentEmailAddress                                          = Agent email address
+purchaserAgent.contactDetails.checkYourAnswersLabel                                      = PurchaserAgentsContactDetails
+purchaserAgent.contactDetails.error.agentPhoneNumber.required                            = Enter Agent phone number
+purchaserAgent.contactDetails.error.agentEmailAddress.required                           = Enter Agent email address
+purchaserAgent.contactDetails.error.agentPhoneNumber.invalid                             = Invalid phone number
+purchaserAgent.contactDetails.error.agentEmailAddress.invalid                            = Invalid email address
+purchaserAgent.contactDetails.error.agentPhoneNumber.length                              = Agent phone number must be 14 characters or less
+purchaserAgent.contactDetails.error.agentEmailAddress.length                             = Agent email address must be 36 characters or less
+purchaserAgent.contactDetails.agentPhoneNumber.change.hidden                             = Agent phone number
+purchaserAgent.contactDetails.agentEmailAddress.change.hidden                            = Agent email address
+purchaserAgent.contactDetails.error.oneRequired                                          = At least one option is required

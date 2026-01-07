@@ -18,12 +18,30 @@ package generators
 
 import models.*
 import models.prelimQuestions.TransactionType
-import models.purchaser.{CompanyFormOfId, DoesPurchaserHaveNI, PurchaserConfirmIdentity, WhoIsMakingThePurchase, PurchaserTypeOfCompany, PurchaserAndVendorConnected, IsPurchaserActingAsTrustee}
+import models.purchaser.{CompanyFormOfId, DoesPurchaserHaveNI, IsPurchaserActingAsTrustee, PurchaserAndVendorConnected, PurchaserConfirmIdentity, PurchaserTypeOfCompany, WhoIsMakingThePurchase}
+import models.purchaserAgent.PurchaserAgentsContactDetails
 import models.vendor.whoIsTheVendor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryPurchaserAgentsContactDetails: Arbitrary[PurchaserAgentsContactDetails] =
+    Arbitrary {
+      for {
+        phone <- arbitrary[Option[String]]
+        email <- arbitrary[Option[String]]
+        valid <- if (phone.isEmpty && email.isEmpty) {
+          Gen.oneOf(
+            arbitrary[String].map(s => PurchaserAgentsContactDetails(Some(s), None)),
+            arbitrary[String].map(s => PurchaserAgentsContactDetails(None, Some(s)))
+          )
+        }
+        else {
+          Gen.const(PurchaserAgentsContactDetails(phone, email))
+        }
+      } yield valid
+    }
 
   implicit lazy val arbitraryNoReturnReference: Arbitrary[NoReturnReference] =
     Arbitrary {
@@ -59,9 +77,9 @@ trait ModelGenerators {
     }
 
   implicit lazy val arbitraryPurchaserTypeOfCompany: Arbitrary[PurchaserTypeOfCompany] =
-     Arbitrary {
-       Gen.oneOf(PurchaserTypeOfCompany.values.toSeq)
-     }
+    Arbitrary {
+      Gen.oneOf(PurchaserTypeOfCompany.values.toSeq)
+    }
 
   implicit lazy val arbitraryWhoIsMakingThePurchase: Arbitrary[WhoIsMakingThePurchase] =
     Arbitrary {
