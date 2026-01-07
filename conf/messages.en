@@ -33,7 +33,8 @@ site.error.noSdltEnrolmentErrorPage.link.message = add this tax to your account
 site.vendor.caption                                                                 = About the vendor
 site.purchaser.caption                                                              = About the purchaser
 site.agent.caption                                                                  = About the agent
-site.purchaserAgent.caption                                                         = Add an agent for the purchaser
+site.purchaserAgent.caption                                                         = About the purchaser’s agent
+site.purchaserAgent.beforeStart.caption                                             = Add an agent for the purchaser
 
 site.vendor.theVendor                                                               = the vendor
 
@@ -622,7 +623,7 @@ site.error.noReturnReference.checkYourAnswersLabel                              
 site.error.noReturnReference.error.required                                              = Please select an option
 site.error.noReturnReference.change.hidden                                               = NoReturnReference
 
-purchaserAgent.contactDetails.title                                                      = What are the agent's contact details? - About the purchaser's agent
+purchaserAgent.contactDetails.title                                                      = What are the agent’s contact details? - About the purchaser’s agent
 purchaserAgent.contactDetails.heading                                                    = What are {0}’s contact details?
 purchaserAgent.contactDetails.agentPhoneNumber                                           = Agent phone number
 purchaserAgent.contactDetails.agentPhoneNumber.caption                                   = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
@@ -632,8 +633,8 @@ purchaserAgent.contactDetails.error.agentPhoneNumber.required                   
 purchaserAgent.contactDetails.error.agentEmailAddress.required                           = Enter Agent email address
 purchaserAgent.contactDetails.error.agentPhoneNumber.invalid                             = Invalid phone number
 purchaserAgent.contactDetails.error.agentEmailAddress.invalid                            = Invalid email address
-purchaserAgent.contactDetails.error.agentPhoneNumber.length                              = Agent phone number must be 100 characters or less
-purchaserAgent.contactDetails.error.agentEmailAddress.length                             = Agent email address must be 100 characters or less
+purchaserAgent.contactDetails.error.agentPhoneNumber.length                              = Agent phone number must be 14 characters or less
+purchaserAgent.contactDetails.error.agentEmailAddress.length                             = Agent email address must be 36 characters or less
 purchaserAgent.contactDetails.agentPhoneNumber.change.hidden                             = Agent phone number
 purchaserAgent.contactDetails.agentEmailAddress.change.hidden                            = Agent email address
 purchaserAgent.contactDetails.error.oneRequired                                          = At least one option is required

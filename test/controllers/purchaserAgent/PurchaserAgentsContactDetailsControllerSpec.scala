@@ -130,6 +130,35 @@ class PurchaserAgentsContactDetailsControllerSpec extends SpecBase with MockitoS
       }
     }
 
+    "must redirect to DoYouWantToAddReferenceForThisReturnPage when valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, purchaserAgentsContactDetailsRoute)
+            .withFormUrlEncodedBody(
+              ("phoneNumber", "07564758695"),
+              ("emailAddress", "test@test.com")
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        //TODO fix route on completion
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        //redirectLocation(result).value mustEqual controllers.routes.DoYouWantToAddReferenceForThisReturnController .onPageLoad(NormalMode).url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

@@ -49,7 +49,24 @@ class PurchaserAgentsContactDetailsController @Inject()(
 
       //TODO - extract name properly once ticket for agentName is completed
       //      val agentName: String = request.userAnswers.get(PurchaserAgentNamePage)
+      //      request.userAnswers.get(NameOfPurchaserPage) match {
+      //        case None =>
+      //          Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
+      //
+      //        case Some(purchaser) =>
+      //          val purchaserName = purchaser.fullName
+      //
+      //          val preparedForm = request.userAnswers.get(EnterPurchaserPhoneNumberPage) match {
+      //            case None => form
+      //            case Some(value) => form.fill(value)
+      //          }
+      //
+      //          Ok(view(preparedForm, mode, purchaserName))
+      //      }
+
       val agentName: String = "Bob the Agent"
+
+      //TODO - implement data guard check on previous page (do you want to add contact details)
 
       val preparedForm = request.userAnswers.get(PurchaserAgentsContactDetailsPage) match {
         case None => form
