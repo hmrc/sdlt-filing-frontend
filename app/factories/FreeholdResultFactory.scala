@@ -457,7 +457,8 @@ object FreeholdResultFactory {
               bandHeading = None,
               detailFooter = None,
               taxDue = slabResult.taxDue.toInt,
-              bigDecRate = Some(slabResult.rate),
+              rate = Some(slabResult.rate.toInt),
+              rateFraction = Some(5),
               slices = None
             )
           )

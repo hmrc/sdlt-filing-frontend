@@ -1925,7 +1925,8 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
         detailHeading = None,
         bandHeading = None,
         detailFooter = None,
-        bigDecRate = Some(0.5),
+        rate = Some(0),
+        rateFraction = Some(5),
         slices = None
       )
       val expectedRes = Result(
