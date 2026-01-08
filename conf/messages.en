@@ -674,7 +674,7 @@ purchaserAgent.contactDetails.error.oneRequired                                 
 
 purchaserAgent.addAgentReferenceNumber.title                                             = Do you want to add a reference for this return? - About the purchaser’s agent
 purchaserAgent.addAgentReferenceNumber.heading                                           = Do you want to add a reference for this return?
-purchaserAgent.addAgentReferenceNumber.p                                                 = This is the unique number or code that {0} will use to locate the return in their records.
+purchaserAgent.addAgentReferenceNumber.p                                                 = This is the unique number or code that {0} will use to locate the return in their records
 purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel                             = addPurchaserAgentReferenceNumber
 purchaserAgent.addAgentReferenceNumber.error.required                                    = Please select yes or no
 purchaserAgent.addAgentReferenceNumber.change.hidden                                     = AddPurchaserAgentReferenceNumber
