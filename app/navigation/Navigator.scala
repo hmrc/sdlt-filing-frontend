@@ -69,7 +69,8 @@ class Navigator @Inject()() {
          | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage
          | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | PurchaserTypeOfCompanyPage
          | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage
-         | ConfirmNameOfThePurchaserPage | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage => true
+         | ConfirmNameOfThePurchaserPage | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage
+         | AddPurchaserAgentReferenceNumberPage => true
 
     case _ => false
   }
@@ -110,8 +111,12 @@ class Navigator @Inject()() {
 
     case PurchaserAgentNamePage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
-    case PurchaserAgentsContactDetailsPage => //TODO: update to correct route in DTR-1826 add reference
+    case PurchaserAgentsContactDetailsPage =>
+      - => controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
+    case AddPurchaserAgentReferenceNumberPage =>
       - => controllers.routes.ReturnTaskListController.onPageLoad()
+    //TODO DTR-1829 add onward route to enter agent reference controller
+    // - => controllers.purchaserAgent.routes.EnterAgentReferenceController.onPageLoad(NormalMode)
 
     case _ => _ => routes.IndexController.onPageLoad()
   }
