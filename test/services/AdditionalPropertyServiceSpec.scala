@@ -187,5 +187,26 @@ class AdditionalPropertyServiceSpec extends PlaySpec {
           ) shouldBe false
       }
     }
+    "return false for an individual without additional property" when {
+      "the purchaser has budget tax relief (PreCompletionTransaction)" in {
+        val propertyDetails = Some(
+          PropertyDetails(
+            individual = true,
+            twoOrMoreProperties = Some(false),
+            replaceMainResidence = Some(false),
+            sharedOwnership = None,
+            currentValue = None
+          )
+        )
+
+        additionalPropertyService
+          .additionalPropertyRatesApply(
+            premium = 45000,
+            oPropertyDetails = propertyDetails,
+            leaseDetails = None,
+            taxReliefCode = Some(PreCompletionTransaction)
+          ) shouldBe false
+      }
+    }
   }
 }

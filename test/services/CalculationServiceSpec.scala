@@ -10,7 +10,7 @@
 
 package services
 
-import data.ResultText.RESULT_HEADING_TAX_RELEIF
+import data.ResultText.RESULT_HEADING_TAX_RELIEF
 import enums.sdltRebuild._
 
 import java.time.LocalDate
@@ -112,7 +112,9 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
                                    premiumAmount: BigDecimal= 0,
                                    nonUKResident: Option[Boolean] = None,
                                    zeroTaxRelief: TaxReliefCode,
-                                   isPartialRelief: Option[Boolean], linked : Boolean) = {
+                                   isPartialRelief: Option[Boolean],
+                                   isLinked : Boolean
+                                  ) = {
       Request(
         holdingType = hType,
         propertyType = pType,
@@ -132,7 +134,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         leaseDetails = None,
         relevantRentDetails = None,
         firstTimeBuyer = Some(true),
-        isLinked = linked,
+        isLinked = isLinked,
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = zeroTaxRelief, isPartialRelief = isPartialRelief)),
       )
     }
@@ -1153,7 +1155,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           LocalDate.of(2017, 11, 22),
           zeroTaxRelief = PartExchange,
           isPartialRelief = None,
-          linked = false
+          isLinked = false
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1171,10 +1173,10 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           LocalDate.of(2000, 11, 22),
           zeroTaxRelief = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
-          linked = false
+          isLinked = false
         )
 
-        val result = createResult(RESULT_HEADING_TAX_RELEIF)
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
         when(mockFreeholdCalculationService.zeroRateTaxReliefForFreehold).thenReturn(CalculationResponse(Seq(result)))
 
@@ -1190,16 +1192,53 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           LocalDate.of(2000, 11, 22),
           zeroTaxRelief = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
-          linked = false
+          isLinked = false
         )
 
-        val result = createResult(RESULT_HEADING_TAX_RELEIF)
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
         when(mockFreeholdCalculationService.zeroRateTaxReliefForFreehold).thenReturn(CalculationResponse(Seq(result)))
 
         testCalculationService.calculateTax(investmentTestRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
+      }
+
+      "given a request with relief code PreCompletionTransaction and effective date of 6/4/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2013, 4, 6),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockFreeholdCalculationService.freeholdApril13OnwardsWithBudgetTaxRelief).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdApril13OnwardsWithBudgetTaxRelief
+
+      }
+
+      "given a request with relief code PreCompletionTransaction and invalid effective date of 5/4/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2013, 4, 5),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+        val result = createResult("freeholdResidential, April2013Onwards")
+
+        when(mockFreeholdCalculationService.freeholdResidentialMar12toDec14(testRequest)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdResidentialMar12toDec14(testRequest)
       }
 
       "given relief code AcquisitionRelief(14)" in {
@@ -1210,10 +1249,10 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           premiumAmount = 1000000,
           zeroTaxRelief = AcquisitionRelief,
           isPartialRelief = Some(false),
-          linked = false
+          isLinked = false
         )
 
-        val result = createResult(RESULT_HEADING_TAX_RELEIF)
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
         when(mockFreeholdCalculationService.freeholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)).thenReturn(CalculationResponse(Seq(result)))
 
@@ -1232,7 +1271,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           LocalDate.of(2017, 11, 22),
           zeroTaxRelief = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
-          linked = false
+          isLinked = false
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1249,7 +1288,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           LocalDate.of(2017, 11, 22),
           zeroTaxRelief = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
-          linked = false
+          isLinked = false
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1268,7 +1307,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           LocalDate.of(2017, 11, 22),
           zeroTaxRelief = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
-          linked = false
+          isLinked = false
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1285,7 +1324,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           LocalDate.of(2017, 11, 22),
           zeroTaxRelief = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
-          linked = false
+          isLinked = false
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 

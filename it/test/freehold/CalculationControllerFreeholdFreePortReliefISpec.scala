@@ -40,7 +40,7 @@ class CalculationControllerFreeholdFreePortReliefISpec extends BaseSpec with Gui
                 | "effectiveDateYear": 2013,
                 | "premium": 1000000,
                 | "highestRent": 0,
-                | "linked": "No",
+                | "isLinked": false,
                 | "taxReliefDetails": {
                 |   "taxReliefCode": 36,
                 |   "isPartialRelief": false
@@ -87,7 +87,7 @@ class CalculationControllerFreeholdFreePortReliefISpec extends BaseSpec with Gui
                 | "effectiveDateYear": 2013,
                 | "premium": 1000000,
                 | "highestRent": 0,
-                | "linked": "No",
+                | "isLinked": false,
                 | "taxReliefDetails": {
                 |   "taxReliefCode": 37,
                 |   "isPartialRelief": false

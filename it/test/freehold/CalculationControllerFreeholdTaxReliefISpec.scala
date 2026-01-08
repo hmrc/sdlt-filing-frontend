@@ -102,6 +102,75 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
 
+      "with TaxReliefCode: PreCompletionTransaction(34)" when {
+
+        "residential" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{"holdingType":"Freehold",
+                  |"propertyType":"Residential",
+                  |"effectiveDateDay":6,
+                  |"effectiveDateMonth":4,
+                  |"effectiveDateYear":2013,
+                  |"highestRent":0,"premium":"750000",
+                  |"isLinked": false,
+                  |"taxReliefDetails": { "taxReliefCode": 34,
+                  |"isPartialRelief": false }
+                  |}""".stripMargin
+              )
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{"result":[{"totalTax":0,
+              |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+              |"taxCalcs":[{"taxType":"premium",
+              |"calcType":"slab",
+              |"taxDue":0,
+              |"rate":0}]}]}
+              |""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+
+        "non-residential" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{"holdingType":"Freehold",
+                  |"propertyType":"Non-residential",
+                  |"effectiveDateDay":6,
+                  |"effectiveDateMonth":4,
+                  |"effectiveDateYear":2013,
+                  |"highestRent":0,"premium":"750000",
+                  |"isLinked": false,
+                  |"taxReliefDetails": { "taxReliefCode": 34,
+                  |"isPartialRelief": false }
+                  |}""".stripMargin
+              )
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{"result":[{"totalTax":0,
+              |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+              |"taxCalcs":[{"taxType":"premium",
+              |"calcType":"slab",
+              |"taxDue":0,
+              |"rate":0}]}]}
+              |""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+      }
+
       "with tax relief code: PreCompletionTransaction(34)" when {
         "Property Type is Residential with an additional property and the date is on or after 1st April 2016" in {
           def request: WSResponse = ws.url(

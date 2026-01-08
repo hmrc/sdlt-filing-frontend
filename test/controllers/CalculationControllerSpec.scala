@@ -222,7 +222,7 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                      |    "year1Rent": 999,
                      |    "year2Rent": 999
                      |  },
-                     |  "linked": "No",
+                     |  "isLinked": false,
                      |  "taxReliefDetails": {
                      |   "taxReliefCode": ${value.code}
                      | }
@@ -310,7 +310,7 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                      |    "year1Rent": 999,
                      |    "year2Rent": 999
                      |  },
-                     |  "linked": "No",
+                     |  "isLinked": false,
                      |  "taxReliefDetails": {
                      |   "taxReliefCode": ${value.code},
                      |   "isPartialRelief": true
@@ -358,7 +358,7 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                      |    "year1Rent": 999,
                      |    "year2Rent": 999
                      |  },
-                     |  "linked": "No",
+                     |  "isLinked": false,
                      |  "taxReliefDetails": {
                      |   "taxReliefCode": ${value.code}
                      | }
@@ -407,7 +407,7 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                      |    "year1Rent": 999,
                      |    "year2Rent": 999
                      |  },
-                     |  "linked": "No",
+                     |  "isLinked": false,
                      |  "taxReliefDetails": {
                      |   "taxReliefCode": ${value.code},
                      |   "isPartialRelief": false

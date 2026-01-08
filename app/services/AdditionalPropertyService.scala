@@ -29,6 +29,7 @@ class AdditionalPropertyService {
                                  premium: BigDecimal, leaseYears: Option[Int], taxReliefCode: Option[TaxReliefCode]): Boolean = {
     (individual, twoOrMoreProperties, replaceMainResidence, leaseYears, taxReliefCode) match {
       case (true, Some(true), Some(true), _, Some(PreCompletionTransaction)) => true
+      case (_, Some(false), _, _, Some(PreCompletionTransaction)) => false
       case (false, None, None, Some(years), _) => years > 7 && premium >= 40000
       case (false, None, None, None, _) => premium >= 40000
       case (true, Some(false), _, _, _) => false

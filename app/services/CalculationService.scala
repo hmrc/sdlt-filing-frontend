@@ -14,7 +14,6 @@ import models.sdltRebuild.TaxReliefDetails
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
 import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope}
 import utils.DateUtil
-
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -44,8 +43,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     request.effectiveDate match {
       case date if request.taxReliefDetails.exists(_.taxReliefCode == PreCompletionTransaction) && date.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) &&
         additionalPropertyService.additionalPropertyRatesApply(
-          request.premium, request.propertyDetails, None, taxReliefCode = Some(PreCompletionTransaction)) =>
-        CalculationResponse(Seq(freeCalculationService.freeholdResidentialAddPropResidentialApril16OnwardsWithBudgetTaxRelief))
+          request.premium, request.propertyDetails, None, taxReliefCode = Some(PreCompletionTransaction)) && !nonUKResident(request.nonUKResident) =>
+        CalculationResponse(Seq(freeCalculationService.freeholdResidentialAddPropApril16OnwardsWithBudgetTaxRelief))
+      case date if request.taxReliefDetails.exists(_.taxReliefCode == PreCompletionTransaction) && date.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) && (request.propertyDetails.isEmpty || !additionalPropertyService.additionalPropertyRatesApply(
+        request.premium, request.propertyDetails, None, taxReliefCode = Some(PreCompletionTransaction))) =>
+        CalculationResponse(Seq(freeCalculationService.freeholdApril13OnwardsWithBudgetTaxRelief))
       case date if nonUKResident(request.nonUKResident) && date.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
         calculateFreeholdNonUKResidentTax(request)
       case date if isAfterSept2022AndBeforeApril2025(date) &&
@@ -366,7 +368,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         freeCalculationService.zeroRateTaxReliefForFreehold
       case (HoldingTypes.freehold, taxReliefCode) if zeroRateCodes.contains(taxReliefCode) =>
         freeCalculationService.zeroRateTaxReliefForFreehold
-      case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief)  =>
+      case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief) =>
         leaseCalculationService.zeroRateLeaseHoldFreePortRelief(request.leaseDetails)
       case (HoldingTypes.freehold, AcquisitionRelief) =>
         freeCalculationService.freeholdAcquisitionTaxRelief(request)

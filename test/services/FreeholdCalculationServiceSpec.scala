@@ -6,8 +6,8 @@
 package services
 
 import java.time.LocalDate
-import data.ResultText.RESULT_HEADING_GENERIC
-import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate, AcquisitionRelief}
+import data.ResultText.{RESULT_HEADING_GENERIC, RESULT_HEADING_TAX_RELIEF}
+import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AcquisitionRelief, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import models.sdltRebuild.TaxReliefDetails
@@ -1886,7 +1886,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
       )
       val expectedRes = Result(
         totalTax = 0,
-        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+        resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
         resultHint = None,
         npv = None,
         taxCalcs = Seq(calcDetails)
@@ -1914,7 +1914,6 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
         leaseDetails = None,
         relevantRentDetails = None,
         firstTimeBuyer = None,
-        isLinked = false,
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
       )
 
@@ -1959,7 +1958,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
         )
       val expectedRes = Result(
         totalTax = 0,
-        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+        resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
         resultHint = None,
         npv = None,
         taxCalcs = Seq(calcDetails)
@@ -1967,7 +1966,37 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
 
       val actual =
         testFreeholdCalcService
-          .freeholdResidentialAddPropResidentialApril16OnwardsWithBudgetTaxRelief
+          .freeholdResidentialAddPropApril16OnwardsWithBudgetTaxRelief
+
+      actual shouldBe expectedRes
+    }
+  }
+
+  "calculating freeholdApril13Onwards with budget tax relief" must {
+
+    "return the budget tax relief result for PreCompletionTransaction" in {
+      val calcDetails =
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+      val expectedRes = Result(
+        totalTax = 0,
+        resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+        resultHint = None,
+        npv = None,
+        taxCalcs = Seq(calcDetails)
+      )
+
+      val actual =
+        testFreeholdCalcService
+          .freeholdApril13OnwardsWithBudgetTaxRelief
 
       actual shouldBe expectedRes
     }
