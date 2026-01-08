@@ -68,4 +68,5 @@ object ResultText {
   val RESULT_HINT_NON_UK_RES_WITHIN_12M = "If you become resident in the UK for SDLT purposes within 12 months of your purchase, you may be eligible for a refund. You must apply for any repayment within 2 years of the purchase date."
 
   val RESULT_HEADING_TAX_RELIEF = "Results of calculation based on SDLT rules for the effective date entered"
+  val RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT = "Self-assessed"
 }

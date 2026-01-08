@@ -40,6 +40,14 @@ class TaxReliefCodeSpec extends AnyFreeSpec with Matchers {
     }
   }
 
+  "TaxReliefCode.selfAssessedCodes" - {
+
+    "should equal all TaxReliefCode values that mix in SelfAssessed" in {
+      val expected = allCodes.collect { case s: SelfAssessed => s.asInstanceOf[SelfAssessed] }.toSet
+      TaxReliefCode.selfAssessedCodes mustBe expected
+    }
+  }
+
   "TaxReliefCode JSON" - {
 
     "should read a known numeric code into the correct TaxReliefCode" in {

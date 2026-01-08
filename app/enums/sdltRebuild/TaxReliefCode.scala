@@ -14,6 +14,7 @@ sealed abstract class TaxReliefCode(val code: Int) {
 }
 
 sealed trait ZeroRate
+sealed trait SelfAssessed
 
 /* ------------- Tax codes associated to rate: 0% --------------------------- */
 
@@ -30,6 +31,7 @@ case object TransfersInvolvingPublicBodies extends TaxReliefCode(18) with ZeroRa
 case object TransferInConsequenceOfReorganisationOfParliamentaryConstituencies extends TaxReliefCode(19) with ZeroRate
 case object CharitiesTaxReliefs extends TaxReliefCode(20) with ZeroRate
 case object AcquisitionByBodiesEstablishedForNationalPurposes extends TaxReliefCode(21) with ZeroRate
+case object RightToBuy extends TaxReliefCode(22) with SelfAssessed
 case object RegisteredSocialLandlords extends TaxReliefCode(23) with ZeroRate
 case object AlternativePropertyFinance extends TaxReliefCode(24) with ZeroRate
 case object CroftingCommunityRightToBuy extends TaxReliefCode(26) with ZeroRate
@@ -65,6 +67,7 @@ object TaxReliefCode {
     TransferInConsequenceOfReorganisationOfParliamentaryConstituencies.fromCode,
     CharitiesTaxReliefs.fromCode,
     AcquisitionByBodiesEstablishedForNationalPurposes.fromCode,
+    RightToBuy.fromCode,
     RegisteredSocialLandlords.fromCode,
     AlternativePropertyFinance.fromCode,
     CroftingCommunityRightToBuy.fromCode,
@@ -80,6 +83,10 @@ object TaxReliefCode {
   )
 
   val zeroRateCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[ZeroRate])
+
+  val selfAssessedCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[SelfAssessed])
+
+  val FREEHOLD_ACQUISITION_RATE_FRACTION = 5
 
   implicit val reads: Reads[TaxReliefCode] =
     Reads {

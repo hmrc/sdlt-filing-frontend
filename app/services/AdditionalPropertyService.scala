@@ -5,7 +5,6 @@
 
 package services
 
-import enums.sdltRebuild.{PreCompletionTransaction, TaxReliefCode}
 import exceptions.RequiredValueNotDefinedException
 import models.PropertyDetails
 
@@ -15,9 +14,9 @@ import javax.inject.Singleton
 class AdditionalPropertyService {
 
   def additionalPropertyRatesApply(premium: BigDecimal, oPropertyDetails: Option[PropertyDetails],
-                                   leaseDetails: Option[Int], taxReliefCode: Option[TaxReliefCode] = None): Boolean = {
+                                   leaseDetails: Option[Int]): Boolean = {
     oPropertyDetails.map { propertyDetails =>
-          additionalProperty(individual = propertyDetails.individual,propertyDetails.twoOrMoreProperties, propertyDetails.replaceMainResidence, premium, leaseDetails, taxReliefCode)
+          additionalProperty(individual = propertyDetails.individual,propertyDetails.twoOrMoreProperties, propertyDetails.replaceMainResidence, premium, leaseDetails)
     }.getOrElse{
       throw new RequiredValueNotDefinedException(
         "[AdditionalPropertyService] [additionalPropertyRatesApply]" +
@@ -26,17 +25,15 @@ class AdditionalPropertyService {
   }
 
   private def additionalProperty(individual: Boolean, twoOrMoreProperties: Option[Boolean], replaceMainResidence: Option[Boolean],
-                                 premium: BigDecimal, leaseYears: Option[Int], taxReliefCode: Option[TaxReliefCode]): Boolean = {
-    (individual, twoOrMoreProperties, replaceMainResidence, leaseYears, taxReliefCode) match {
-      case (true, Some(true), Some(true), _, Some(PreCompletionTransaction)) => true
-      case (_, Some(false), _, _, Some(PreCompletionTransaction)) => false
-      case (false, None, None, Some(years), _) => years > 7 && premium >= 40000
-      case (false, None, None, None, _) => premium >= 40000
-      case (true, Some(false), _, _, _) => false
-      case (true, Some(true), Some(true), _, _) => false
-      case (true, Some(true), Some(false), Some(years), _) => years > 7 && premium >= 40000
-      case (true, Some(true), Some(false), None, _) => premium >= 40000
-      case (oIndividual, oTwoOrMore, oReplace, oLeaseDetails, _) =>
+                                 premium: BigDecimal, leaseYears: Option[Int]): Boolean = {
+    (individual, twoOrMoreProperties, replaceMainResidence, leaseYears) match {
+      case (false, None, None, Some(years)) => years > 7 && premium >= 40000
+      case (false, None, None, None) => premium >= 40000
+      case (true, Some(false), _, _) => false
+      case (true, Some(true), Some(true), _) => false
+      case (true, Some(true), Some(false), Some(years)) => years > 7 && premium >= 40000
+      case (true, Some(true), Some(false), None) => premium >= 40000
+      case (oIndividual, oTwoOrMore, oReplace, oLeaseDetails) =>
         throw new RequiredValueNotDefinedException(
           "[AdditionalPropertyService] [additionalProperty] - " +
             s"individual: $oIndividual, twoOrMoreProperties: $oTwoOrMore," +

@@ -6,8 +6,9 @@
 package services
 
 import java.time.LocalDate
-import data.ResultText.{RESULT_HEADING_GENERIC, RESULT_HEADING_TAX_RELIEF}
+import data.ResultText.RESULT_HEADING_GENERIC
 import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AcquisitionRelief, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
+import data.ResultText.RESULT_HEADING_TAX_RELIEF
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import models.sdltRebuild.TaxReliefDetails
@@ -1895,7 +1896,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
       forAll(zeroRateTaxReliefGen) {
         _ =>
           val res = testFreeholdCalcService.zeroRateTaxReliefForFreehold
-          res shouldBe CalculationResponse(Seq(expectedRes))
+          res shouldBe expectedRes
       }
     }
   }
@@ -1937,14 +1938,14 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
       )
 
         val res = testFreeholdCalcService.freeholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)
-        res shouldBe CalculationResponse(Seq(expectedRes))
+        res shouldBe expectedRes
 
     }
   }
 
-  "calculating freeholdResidentialAddPropApr16Onwards with budget tax relief" must {
+  "calculation for a zero percent tax relief" must {
 
-    "return the budget tax relief result for PreCompletionTransaction" in {
+    "return the zero percent tax relief result" in {
       val calcDetails =
         CalculationDetails(
           taxType = TaxTypes.premium,
@@ -1966,15 +1967,15 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
 
       val actual =
         testFreeholdCalcService
-          .freeholdResidentialAddPropApril16OnwardsWithBudgetTaxRelief
+          .zeroRateTaxReliefForFreehold
 
       actual shouldBe expectedRes
     }
   }
 
-  "calculating freeholdApril13Onwards with budget tax relief" must {
+  "calculation for freehold self assessed" must {
 
-    "return the budget tax relief result for PreCompletionTransaction" in {
+    "return the self assessed result" in {
       val calcDetails =
         CalculationDetails(
           taxType = TaxTypes.premium,
@@ -1986,9 +1987,10 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
           rate = Some(0),
           slices = None
         )
+
       val expectedRes = Result(
         totalTax = 0,
-        resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+        resultHeading = Some("Self-assessed"),
         resultHint = None,
         npv = None,
         taxCalcs = Seq(calcDetails)
@@ -1996,7 +1998,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
 
       val actual =
         testFreeholdCalcService
-          .freeholdApril13OnwardsWithBudgetTaxRelief
+          .freeholdSelfAssessed
 
       actual shouldBe expectedRes
     }
