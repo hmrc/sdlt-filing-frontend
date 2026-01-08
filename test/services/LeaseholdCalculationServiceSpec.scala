@@ -2359,8 +2359,8 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         npv = Some(npv),
         taxCalcs = calcDetails
       )
-      val res: CalculationResponse = service.zeroRateLeaseHoldFreePortRelief(Some(testLeaseDetails))
-      res shouldBe CalculationResponse(Seq(expectedRes))
+      val res: Result = service.zeroRateLeaseHoldFreePortRelief(Some(testLeaseDetails))
+      res shouldBe expectedRes
     }
   }
 

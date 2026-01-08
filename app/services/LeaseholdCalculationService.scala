@@ -771,9 +771,9 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       }
   }
 
-  def zeroRateLeaseHoldFreePortRelief(leaseDetails: Option[LeaseDetails]): CalculationResponse = {
+  def zeroRateLeaseHoldFreePortRelief(leaseDetails: Option[LeaseDetails]): Result = {
     val calculatedNpv = Some(getNPV("LeaseResidentialOrNonResidentialFreePortRelief", leaseDetails).toInt)
-    CalculationResponse(Seq(zeroRatedResult.copy(npv = calculatedNpv)))
+    zeroRatedResult.copy(npv = calculatedNpv)
   }
 
   val zeroRatedResult: Result =

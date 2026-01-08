@@ -6,12 +6,10 @@
 package services
 
 import data.FreeholdSliceRatesTables._
-import data.ResultText.RESULT_HEADING_TAX_RELIEF
 import data.{Dates, SlabRatesTables}
-import enums.{CalcTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import factories.FreeholdResultFactory
-import models.{CalculationDetails, CalculationResponse, Request, Result}
+import models.{Request, Result}
 
 import javax.inject.{Inject, Singleton}
 
@@ -507,46 +505,20 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
   }
 
-  val freeholdResidentialAddPropApril16OnwardsWithBudgetTaxRelief: Result = {
+  val freeholdSelfAssessed: Result = {
     FreeholdResultFactory
-      .freeholdResidentialAddPropApril2016OnwardsResultWithBudgetTaxRelief
+      .freeholdSelfAssessedRes
   }
 
-  val freeholdApril13OnwardsWithBudgetTaxRelief: Result = {
+  val zeroRateTaxReliefForFreehold: Result =
     FreeholdResultFactory
-      .freeholdApril2013OnwardsResultWithBudgetTaxRelief
-  }
+      .freeholdZeroRateTaxRelief
 
-  val zeroRateTaxReliefForFreehold: CalculationResponse =
-    CalculationResponse(
-      Seq(
-        Result(
-          totalTax = 0,
-          resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
-          resultHint = None,
-          npv = None,
-          taxCalcs = Seq(
-            CalculationDetails(
-              taxType = TaxTypes.premium,
-              calcType = CalcTypes.slab,
-              taxDue = 0,
-              detailHeading = None,
-              bandHeading = None,
-              detailFooter = None,
-              rate = Some(0),
-              slices = None
-            )
-          )
-        )
-      )
-    )
-
-  def freeholdAcquisitionTaxRelief(request: Request): CalculationResponse ={
+  def freeholdAcquisitionTaxRelief(request: Request): Result = {
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
       SlabRatesTables.freeholdAcquisitionTaxReliefRate.slabs
     )
     FreeholdResultFactory.freeholdAcquisitionTaxReliefRes(premiumResult)
-
   }
 }

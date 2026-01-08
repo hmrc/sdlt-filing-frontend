@@ -1669,7 +1669,6 @@ class ModelValidationSpec extends PlaySpec {
             "the taxReliefCode is not FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief and isLinked is true/false" in  {
               forAll(zeroRateWithoutFreePortReliefGen) {
                 value =>
-                  println(value)
                   val request = Request(
                     holdingType = HoldingTypes.leasehold,
                     propertyType = PropertyTypes.residential,

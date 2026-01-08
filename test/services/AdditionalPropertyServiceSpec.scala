@@ -5,7 +5,6 @@
 
 package services
 
-import enums.sdltRebuild.PreCompletionTransaction
 import exceptions.RequiredValueNotDefinedException
 import models.PropertyDetails
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -144,69 +143,6 @@ class AdditionalPropertyServiceSpec extends PlaySpec {
         .thrownBy(additionalPropertyService.additionalPropertyRatesApply(45000, propertyDetails, None))
         .should(have message "[AdditionalPropertyService] [additionalPropertyRatesApply]" +
           " - property details not defined in additional property calculation")
-    }
-    "return true for an individual with additional property and replacing main residence" when {
-      "the purchaser has budget tax relief (PreCompletionTransaction)" in {
-        val propertyDetails = Some(
-          PropertyDetails(
-            individual = true,
-            twoOrMoreProperties = Some(true),
-            replaceMainResidence = Some(true),
-            sharedOwnership = None,
-            currentValue = None
-          )
-        )
-
-        additionalPropertyService
-          .additionalPropertyRatesApply(
-            premium = 1000000,
-            oPropertyDetails = propertyDetails,
-            leaseDetails = None,
-            taxReliefCode = Some(PreCompletionTransaction)
-          ) shouldBe true
-      }
-    }
-    "return false for an individual with additional property who is replacing main residence" when {
-      "there is no budget tax relief (taxReliefCode is None)" in {
-        val propertyDetails = Some(
-          PropertyDetails(
-            individual = true,
-            twoOrMoreProperties = Some(true),
-            replaceMainResidence = Some(true),
-            sharedOwnership = None,
-            currentValue = None
-          )
-        )
-
-        additionalPropertyService
-          .additionalPropertyRatesApply(
-            premium = 45000,
-            oPropertyDetails = propertyDetails,
-            leaseDetails = None,
-            taxReliefCode = None
-          ) shouldBe false
-      }
-    }
-    "return false for an individual without additional property" when {
-      "the purchaser has budget tax relief (PreCompletionTransaction)" in {
-        val propertyDetails = Some(
-          PropertyDetails(
-            individual = true,
-            twoOrMoreProperties = Some(false),
-            replaceMainResidence = Some(false),
-            sharedOwnership = None,
-            currentValue = None
-          )
-        )
-
-        additionalPropertyService
-          .additionalPropertyRatesApply(
-            premium = 45000,
-            oPropertyDetails = propertyDetails,
-            leaseDetails = None,
-            taxReliefCode = Some(PreCompletionTransaction)
-          ) shouldBe false
-      }
     }
   }
 }

@@ -225,6 +225,60 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           request.json shouldBe responseJson
         }
       }
+
+      "with tax relief code: RightToBuy(22)" when {
+        "Property Type is Residential with an additional property and replacing main residence and the date is on or after 1st April 2016" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Freehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 4,
+                  |  "effectiveDateYear": 2016,
+                  |  "premium": 1000000,
+                  |  "highestRent": 0,
+                  |  "propertyDetails": {
+                  |    "individual": "Yes",
+                  |    "twoOrMoreProperties": "Yes",
+                  |    "replaceMainResidence": "Yes"
+                  |  },
+                  |  "isLinked": true,
+                  |  "taxReliefDetails": {
+                  |    "taxReliefCode": 22
+                  |  }
+                  |}""".stripMargin
+              )
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{
+              |  "result": [
+              |    {
+              |      "totalTax": 0,
+              |      "resultHeading": "Self-assessed",
+              |      "taxCalcs": [
+              |        {
+              |          "taxType": "premium",
+              |          "calcType": "slab",
+              |          "taxDue": 0,
+              |          "rate": 0
+              |        }
+              |      ]
+              |    }
+              |  ]
+              |}
+              |""".stripMargin
+          )
+
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+      }
     }
   }
 }

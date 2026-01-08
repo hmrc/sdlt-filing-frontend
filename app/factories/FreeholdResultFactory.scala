@@ -6,8 +6,9 @@
 package factories
 
 import data.ResultText._
+import enums.sdltRebuild.TaxReliefCode.FREEHOLD_ACQUISITION_RATE_FRACTION
 import enums.{CalcTypes, TaxTypes}
-import models.{CalculationDetails, CalculationResponse, Result}
+import models.{CalculationDetails, Result}
 import models.calculationtables.{SlabResult, SliceResult}
 import utils.StringUtils
 
@@ -418,8 +419,7 @@ object FreeholdResultFactory {
     )
   }
 
-  def freeholdResidentialAddPropApril2016OnwardsResultWithBudgetTaxRelief: Result = {
-
+  def freeholdZeroRateTaxRelief: Result = {
     Result(
       totalTax = 0,
       resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
@@ -440,11 +440,10 @@ object FreeholdResultFactory {
     )
   }
 
-  def freeholdApril2013OnwardsResultWithBudgetTaxRelief: Result = {
-
+  def freeholdSelfAssessedRes: Result = {
     Result(
       totalTax = 0,
-      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
       resultHint = None,
       npv = None,
       taxCalcs = Seq(
@@ -462,27 +461,23 @@ object FreeholdResultFactory {
     )
   }
 
-  def freeholdAcquisitionTaxReliefRes(slabResult: SlabResult): CalculationResponse = {
-    CalculationResponse(
-      Seq(
-        Result(
-          totalTax = slabResult.taxDue.toInt,
-          resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
-          resultHint = None,
-          npv = None,
-          taxCalcs = Seq(
-            CalculationDetails(
-              taxType = TaxTypes.premium,
-              calcType = CalcTypes.slab,
-              detailHeading = None,
-              bandHeading = None,
-              detailFooter = None,
-              taxDue = slabResult.taxDue.toInt,
-              rate = Some(slabResult.rate.toInt),
-              rateFraction = Some(5),
-              slices = None
-            )
-          )
+  def freeholdAcquisitionTaxReliefRes(slabResult: SlabResult): Result = {
+    Result(
+      totalTax = slabResult.taxDue.toInt,
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+      resultHint = None,
+      npv = None,
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          taxDue = slabResult.taxDue.toInt,
+          rate = Some(slabResult.rate.toInt),
+          rateFraction = Some(FREEHOLD_ACQUISITION_RATE_FRACTION),
+          slices = None
         )
       )
     )
