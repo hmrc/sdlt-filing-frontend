@@ -1,0 +1,527 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.purchaserAgent
+
+import base.SpecBase
+import models.address.{Address, Country}
+import models.{NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{times, verify, when}
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
+import play.api.libs.json.Json
+import play.api.mvc.Call
+import play.api.test.FakeRequest
+import play.api.test.Helpers.*
+import repositories.SessionRepository
+import services.AddressLookupService
+
+import java.time.Instant
+import scala.concurrent.Future
+
+class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
+
+  val testAddress: Address = Address(
+    "16 Coniston Court",
+    Some("Holland road"),
+    None,
+    None,
+    None,
+    Some("BN3 1JU"),
+    Some(Country(Some("UK"), Some("United Kingdom"))),
+    false
+  )
+
+  val testAddressLookupCall: Call = Call("GET", "http://localhost:9028/lookup-address/journey")
+
+  lazy val redirectToAddressLookupRoute = controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent().url
+  lazy val redirectToAddressLookupChangeRoute = controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent(changeRoute = Some("change")).url
+  lazy val addressLookupCallbackRoute = controllers.purchaserAgent.routes.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent(id = "test-id").url
+  lazy val addressLookupCallbackChangeRoute = controllers.purchaserAgent.routes.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent("test-id").url
+
+  val testUserAnswers = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("test-return-id"),
+    fullReturn = None,
+    data = Json.obj(
+      "purchaserAgentCurrent" -> Json.obj(
+        "agentName" -> "test" // TODO DTR-1817: Check when agent name page is in
+      )
+    ),
+    lastUpdated = Instant.now
+  )
+
+  val testUserAnswersMissingAgentName = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("test-return-id"),
+    fullReturn = None,
+    data = Json.obj(
+      "purchaserAgentCurrent" -> Json.obj()
+    ),
+    lastUpdated = Instant.now
+  )
+
+  "PurchaserAgentAddressController" - {
+
+    "redirectToAddressLookupPurchaserAgent" - {
+
+      "must redirect to address lookup service when no changeRoute is provided" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswers)))
+
+        when(mockAddressLookupService.getJourneyUrl(any(), any(), any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(testAddressLookupCall))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, redirectToAddressLookupRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual testAddressLookupCall.url
+
+          verify(mockAddressLookupService, times(1))
+            .getJourneyUrl(any(), eqTo(controllers.purchaserAgent.routes.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent()), eqTo(true), any(), any())(any(), any(), any())
+        }
+      }
+
+      "must redirect to address lookup service with change callback when changeRoute is provided" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getJourneyUrl(any(), any(), any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(testAddressLookupCall))
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, redirectToAddressLookupChangeRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual testAddressLookupCall.url
+
+          verify(mockAddressLookupService, times(1))
+            .getJourneyUrl(any(), eqTo(controllers.purchaserAgent.routes.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent()), eqTo(true), any(), any())(any(), any(), any())
+        }
+      }
+
+      "must redirect to agent name page when agent name is missing" in {
+        // TODO DTR-1817: To be removed when we have agent name
+        val mockAddressLookupService = mock[AddressLookupService]
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswersMissingAgentName)))
+        // TODO DTR-1817: To be removed when we have agent name
+        when(mockAddressLookupService.getJourneyUrl(any(), any(), any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(testAddressLookupCall))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswersMissingAgentName))
+          .overrides(
+            // TODO DTR-1817: To be removed when we have agent name
+            bind[AddressLookupService].toInstance(mockAddressLookupService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, redirectToAddressLookupChangeRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          // TODO DTR-1817: Will change when we have agent name
+          redirectLocation(result).value mustEqual testAddressLookupCall.url
+        }
+      }
+
+      "must redirect to Journey Recovery when no existing data is found" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, redirectToAddressLookupRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must handle service failure when getting journey URL" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswers)))
+
+        when(mockAddressLookupService.getJourneyUrl(any(), any(), any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Service unavailable")))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, redirectToAddressLookupRoute)
+
+          val result = route(application, request).value
+
+          whenReady(result.failed) { exception =>
+            exception mustBe a[RuntimeException]
+            exception.getMessage mustBe "Service unavailable"
+          }
+        }
+      }
+    }
+
+    "addressLookupCallbackPurchaserAgent" - {
+
+      "must redirect when address is successfully saved" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.successful(testAddress))
+        when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          // TODO: change this when we have the next page (DTR-1820 pa-2a)
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+
+          verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
+          verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
+        }
+      }
+
+      "must redirect to Journey Recovery when address save fails" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.successful(testAddress))
+        when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+          .thenReturn(Future.successful(false))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must handle failure when getting address by ID" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.failed(new RuntimeException("Address not found")))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackRoute)
+
+          val result = route(application, request).value
+
+          whenReady(result.failed) { exception =>
+            exception mustBe a[RuntimeException]
+            exception.getMessage mustBe "Address not found"
+          }
+        }
+      }
+
+      "must handle failure when saving address details" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.successful(testAddress))
+        when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Database error")))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackRoute)
+
+          val result = route(application, request).value
+
+          whenReady(result.failed) { exception =>
+            exception mustBe a[RuntimeException]
+            exception.getMessage mustBe "Database error"
+          }
+        }
+      }
+
+      "must redirect to Journey Recovery when no existing data is found" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must handle different address IDs" in {
+        val addressIds = List("id-123", "ABC-XYZ", "test-address-id")
+
+        addressIds.foreach { addressId =>
+          val mockAddressLookupService = mock[AddressLookupService]
+
+          when(mockAddressLookupService.getAddressById(eqTo(addressId))(any()))
+            .thenReturn(Future.successful(testAddress))
+          when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+            .thenReturn(Future.successful(true))
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[AddressLookupService].toInstance(mockAddressLookupService)
+            )
+            .build()
+
+          running(application) {
+            val callbackRoute = controllers.purchaserAgent.routes.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent(addressId).url
+            val request = FakeRequest(GET, callbackRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            // TODO: change this when we have the next page (DTR-1820 pa-2a)
+            redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+
+
+            verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
+          }
+        }
+      }
+    }
+
+    "addressLookupCallbackChangePurchaserAgent" -{
+
+      "must redirect to ReturnTaskList when address is successfully saved" in { // TODO DTR-1851: change this when we have the check your answers page
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.successful(testAddress))
+        when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackChangeRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+          verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
+          verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
+        }
+      }
+
+      "must redirect to Journey Recovery when address save fails" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.successful(testAddress))
+        when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+          .thenReturn(Future.successful(false))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackChangeRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must handle failure when getting address by ID" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.failed(new RuntimeException("Address not found")))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackChangeRoute)
+
+          val result = route(application, request).value
+
+          whenReady(result.failed) { exception =>
+            exception mustBe a[RuntimeException]
+            exception.getMessage mustBe "Address not found"
+          }
+        }
+      }
+
+      "must handle failure when saving address details" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.successful(testAddress))
+        when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Database error")))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackChangeRoute)
+
+          val result = route(application, request).value
+
+          whenReady(result.failed) { exception =>
+            exception mustBe a[RuntimeException]
+            exception.getMessage mustBe "Database error"
+          }
+        }
+      }
+
+      "must redirect to Journey Recovery when no existing data is found" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackChangeRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must handle different address IDs" in {
+        val addressIds = List("id-123", "ABC-XYZ", "test-address-id")
+
+        addressIds.foreach { addressId =>
+          val mockAddressLookupService = mock[AddressLookupService]
+
+          when(mockAddressLookupService.getAddressById(eqTo(addressId))(any()))
+            .thenReturn(Future.successful(testAddress))
+          when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+            .thenReturn(Future.successful(true))
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[AddressLookupService].toInstance(mockAddressLookupService)
+            )
+            .build()
+
+          running(application) {
+            val callbackChangeRoute = controllers.purchaserAgent.routes.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent(addressId).url
+            val request = FakeRequest(GET, callbackChangeRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            // TODO DTR-1851: change this when we have the check your answers page
+            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+            verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
+          }
+        }
+      }
+    }
+  }
+}
