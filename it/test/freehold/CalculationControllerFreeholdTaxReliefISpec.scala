@@ -279,6 +279,102 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           request.json shouldBe responseJson
         }
       }
+
+      "with tax relief code: FreeportsTaxSiteRelief(36)" in {
+        def request: WSResponse = ws.url(
+            calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                | "holdingType": "Freehold",
+                | "propertyType": "Residential",
+                | "effectiveDateDay": 1,
+                | "effectiveDateMonth": 4,
+                | "effectiveDateYear": 2013,
+                | "premium": 1000000,
+                | "highestRent": 0,
+                | "isLinked": false,
+                | "taxReliefDetails": {
+                |   "taxReliefCode": 36,
+                |   "isPartialRelief": false
+                | }
+                |}
+                |""".stripMargin
+            )
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            |  "result": [
+            |    {
+            |      "totalTax": 0,
+            |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+            |      "taxCalcs": [
+            |        {
+            |          "taxType": "premium",
+            |          "calcType": "slab",
+            |          "taxDue": 0,
+            |          "rate": 0
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+        )
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
+
+      "with tax relief code: InvestmentZonesTaxSiteRelief(37) " in {
+        def request: WSResponse = ws.url(
+            calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                | "holdingType": "Freehold",
+                | "propertyType": "Residential",
+                | "effectiveDateDay": 1,
+                | "effectiveDateMonth": 4,
+                | "effectiveDateYear": 2013,
+                | "premium": 1000000,
+                | "highestRent": 0,
+                | "isLinked": false,
+                | "taxReliefDetails": {
+                |   "taxReliefCode": 37,
+                |   "isPartialRelief": false
+                | }
+                |}
+                |""".stripMargin
+            )
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            |  "result": [
+            |    {
+            |      "totalTax": 0,
+            |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+            |      "taxCalcs": [
+            |        {
+            |          "taxType": "premium",
+            |          "calcType": "slab",
+            |          "taxDue": 0,
+            |          "rate": 0
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+        )
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
     }
   }
 }

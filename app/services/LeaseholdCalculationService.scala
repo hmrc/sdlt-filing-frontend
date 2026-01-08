@@ -6,10 +6,8 @@
 package services
 
 import data.LeaseholdSliceRatesTables._
-import data.ResultText.RESULT_HEADING_TAX_RELIEF
 import data.SignificantAmounts._
 import data.{Dates, SlabRatesTables}
-import enums.{CalcTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import factories.LeaseholdResultFactory
 import models._
@@ -771,39 +769,10 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       }
   }
 
-  def zeroRateLeaseHoldFreePortRelief(leaseDetails: Option[LeaseDetails]): Result = {
-    val calculatedNpv = Some(getNPV("LeaseResidentialOrNonResidentialFreePortRelief", leaseDetails).toInt)
-    zeroRatedResult.copy(npv = calculatedNpv)
-  }
+  def leaseholdZeroRateTaxReliefRes(leaseDetails: Option[LeaseDetails]): Result = {
+    val calculatedNpv = Some(getNPV("leaseHoldZeroRateTaxRelief", leaseDetails).toInt)
+    LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
 
-  val zeroRatedResult: Result =
-    Result(
-      totalTax = 0,
-      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
-      resultHint = None,
-      npv = None,
-      taxCalcs = Seq(
-        CalculationDetails(
-          taxType = TaxTypes.premium,
-          calcType = CalcTypes.slab,
-          taxDue = 0,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          rate = Some(0),
-          slices = None
-        ),
-        CalculationDetails(
-          taxType = TaxTypes.rent,
-          calcType = CalcTypes.slab,
-          taxDue = 0,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          rate = Some(0),
-          slices = None
-        )
-      )
-    )
+  }
 
 }

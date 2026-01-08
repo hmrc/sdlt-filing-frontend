@@ -7,8 +7,8 @@ package factories
 
 import data.ResultText._
 import enums.{CalcTypes, TaxTypes}
-import models.{CalculationDetails, Result}
 import models.calculationtables.{SlabResult, SliceResult}
+import models.{CalculationDetails, Result}
 import utils.StringUtils
 
 object LeaseholdResultFactory {
@@ -407,6 +407,38 @@ object LeaseholdResultFactory {
       taxCalcs = Seq(
         leaseCalcDetails,
         premiumCalcDetails
+      )
+    )
+  }
+
+
+  def leaseHoldZeroRateTaxRelief(calculatedNpv:Option[Int]): Result = {
+    Result(
+      totalTax = 0,
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+      resultHint = None,
+      npv = calculatedNpv,
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        ),
+        CalculationDetails(
+          taxType = TaxTypes.rent,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
       )
     )
   }
