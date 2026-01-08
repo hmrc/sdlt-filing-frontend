@@ -226,8 +226,7 @@ class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          // TODO: change this when we have the next page (DTR-1820 pa-2a)
-          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(NormalMode).url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -351,8 +350,7 @@ class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            // TODO: change this when we have the next page (DTR-1820 pa-2a)
-            redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+            redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(NormalMode).url
 
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())

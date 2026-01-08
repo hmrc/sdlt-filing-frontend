@@ -648,13 +648,20 @@ site.error.noReturnReference.checkYourAnswersLabel                              
 site.error.noReturnReference.error.required                                              = Please select an option
 site.error.noReturnReference.change.hidden                                               = NoReturnReference
 
-purchaserAgent.name.title                                                                = What is the agent’s name?
-purchaserAgent.name.checkYourAnswersLabel                                                = What is the agent’s name?
-purchaserAgent.name.error.required                                                       = Enter the agent’s name
-purchaserAgent.name.error.length                                                         = Agent’s name must be 28 characters or less
-purchaserAgent.name.error.invalid                                                        = Invalid error
-purchaserAgent.name.change.hidden                                                        = purchaserAgentName
-purchaserAgent.name.hint                                                                 = Include the branch name if there are multiple office locations, for example, Jones & Co. Leeds
+purchaserAgent.addContactDetailsForPurchaserAgent.title                            = Do you want to add contact details for the agent?
+purchaserAgent.addContactDetailsForPurchaserAgent.heading                          = Do you want to add contact details for {0}?
+purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel            = Do you want to add contact details for {0}?
+purchaserAgent.addContactDetailsForPurchaserAgent.error.required                   = Please select Yes or No
+purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                    = AddContactDetailsForPurchaserAgent
+purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                       = We'll only use these details to contact {0} about this return
+
+purchaserAgent.name.title                                                           = What is the agent’s name?
+purchaserAgent.name.checkYourAnswersLabel                                           = What is the agent’s name?
+purchaserAgent.name.error.required                                                  = Enter the agent’s name
+purchaserAgent.name.error.length                                                    = Agent’s name must be 28 characters or less
+purchaserAgent.name.error.invalid                                                   = Invalid error
+purchaserAgent.name.change.hidden                                                   = purchaserAgentName
+purchaserAgent.name.hint                                                            = Include the branch name if there are multiple office locations, for example, Jones & Co. Leeds
 
 purchaserAgent.contactDetails.title                                                      = What are the agent’s contact details? - About the purchaser’s agent
 purchaserAgent.contactDetails.heading                                                    = What are {0}’s contact details?
