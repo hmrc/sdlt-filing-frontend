@@ -151,8 +151,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(ConfirmNameOfThePurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
         }
 
-        "go from PurchaserAgentNamePage to PurchaserAgentAddress page" in { // TODO: Update to address lookup (DTR-1817)
-          navigator.nextPage(PurchaserAgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        "go from PurchaserAgentNamePage to PurchaserAgentAddress page" in {
+          navigator.nextPage(PurchaserAgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
         }
       }
     }

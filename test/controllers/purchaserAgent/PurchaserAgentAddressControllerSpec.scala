@@ -60,7 +60,7 @@ class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
     fullReturn = None,
     data = Json.obj(
       "purchaserAgentCurrent" -> Json.obj(
-        "agentName" -> "test" // TODO DTR-1817: Check when agent name page is in
+        "purchaserAgentName" -> "test"
       )
     ),
     lastUpdated = Instant.now
@@ -138,18 +138,11 @@ class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to agent name page when agent name is missing" in {
-        // TODO DTR-1817: To be removed when we have agent name
-        val mockAddressLookupService = mock[AddressLookupService]
         val mockSessionRepository = mock[SessionRepository]
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswersMissingAgentName)))
-        // TODO DTR-1817: To be removed when we have agent name
-        when(mockAddressLookupService.getJourneyUrl(any(), any(), any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(testAddressLookupCall))
 
         val application = applicationBuilder(userAnswers = Some(testUserAnswersMissingAgentName))
           .overrides(
-            // TODO DTR-1817: To be removed when we have agent name
-            bind[AddressLookupService].toInstance(mockAddressLookupService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -160,8 +153,7 @@ class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          // TODO DTR-1817: Will change when we have agent name
-          redirectLocation(result).value mustEqual testAddressLookupCall.url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
         }
       }
 

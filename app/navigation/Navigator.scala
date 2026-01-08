@@ -108,8 +108,8 @@ class Navigator @Inject()() {
     case ConfirmNameOfThePurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
-    case PurchaserAgentNamePage => // TODO: Update to address lookup (DTR-1817)
-      _ => routes.ReturnTaskListController.onPageLoad()
+    case PurchaserAgentNamePage =>
+      _ => controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
     case PurchaserAgentsContactDetailsPage => //TODO: update to correct route in DTR-1826 add reference
       - => controllers.routes.ReturnTaskListController.onPageLoad()
 

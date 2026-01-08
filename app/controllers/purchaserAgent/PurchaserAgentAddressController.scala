@@ -22,7 +22,7 @@ import controllers.routes
 import models.{Mode, NormalMode}
 import models.address.AddressLookupJourneyIdentifier.purchaserAgentQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
-import pages.purchaserAgent.PurchaserAgentAddressPage
+import pages.purchaserAgent.{PurchaserAgentAddressPage, PurchaserAgentNamePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -53,10 +53,7 @@ class PurchaserAgentAddressController @Inject()(
 
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          // TODO DTR-1817: check this when DTR-1814 pa-1 adds the purchaser agent name page
-//          val purchaserAgentName = userAnswers.get(NameOfPurchaserAgentPage).map(_.fullName)
-//          val purchaserAgentName = (userAnswers.data \ "purchaserAgentCurrent" \ "agentName").asOpt[String]
-          val purchaserAgentName = Some("Agent Name")
+          val purchaserAgentName = userAnswers.get(PurchaserAgentNamePage)
 
           purchaserAgentName match {
             case Some(name) =>
@@ -73,10 +70,9 @@ class PurchaserAgentAddressController @Inject()(
                 mandatoryFieldsConfigModel = addressConfig,
                 optName = Some(name)
               ).map(Redirect)
-
-            // TODO DTR-1817: change this when DTR-1814 pa-1 adds the purchaser agent name controller
-//            case None =>
-//            Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(mode)))
+              
+            case None =>
+              Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(mode)))
           }
 
         case None =>
@@ -91,7 +87,7 @@ class PurchaserAgentAddressController @Inject()(
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, PurchaserAgentAddressPage)
       } yield if(updated) {
-        // TODO DTR-1817: change this when we have the next page (DTR-1820 pa-2a)
+        // TODO: change this when we have the next page (DTR-1820 pa-2a)
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode))
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
