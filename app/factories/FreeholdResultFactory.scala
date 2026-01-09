@@ -6,7 +6,7 @@
 package factories
 
 import data.ResultText._
-import enums.sdltRebuild.TaxReliefCode.FREEHOLD_ACQUISITION_RATE_FRACTION
+import enums.sdltRebuild.TaxReliefCode.ACQUISITION_RATE_FRACTION
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, Result}
 import models.calculationtables.{SlabResult, SliceResult}
@@ -465,7 +465,7 @@ object FreeholdResultFactory {
           detailFooter = None,
           taxDue = slabResult.taxDue.toInt,
           rate = Some(slabResult.rate.toInt),
-          rateFraction = Some(FREEHOLD_ACQUISITION_RATE_FRACTION),
+          rateFraction = Some(ACQUISITION_RATE_FRACTION),
           slices = None
         )
       )

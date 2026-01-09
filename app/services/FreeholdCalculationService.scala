@@ -517,7 +517,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
   def freeholdAcquisitionTaxRelief(request: Request): Result = {
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
-      SlabRatesTables.freeholdAcquisitionTaxReliefRate.slabs
+      SlabRatesTables.acquisitionTaxReliefRate.slabs
     )
     FreeholdResultFactory.freeholdAcquisitionTaxReliefRes(premiumResult)
   }

@@ -6,6 +6,7 @@
 package factories
 
 import data.ResultText._
+import enums.sdltRebuild.TaxReliefCode.ACQUISITION_RATE_FRACTION
 import enums.{CalcTypes, TaxTypes}
 import models.calculationtables.{SlabResult, SliceResult}
 import models.{CalculationDetails, Result}
@@ -439,6 +440,45 @@ object LeaseholdResultFactory {
           rate = Some(0),
           slices = None
         )
+      )
+    )
+  }
+
+  def
+  leaseholdAcquisitionTaxReliefRes(premiumResult: SlabResult, leaseResult: SlabResult, npv: BigDecimal): Result = {
+
+    val premiumCalcDetails = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slab,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = premiumResult.taxDue.toInt,
+      rate = Some(premiumResult.rate.toInt),
+      rateFraction = Some(ACQUISITION_RATE_FRACTION),
+      slices = None
+    )
+
+    val leasedCalcDetails = CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slab,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = leaseResult.taxDue.toInt,
+      rate = Some(premiumResult.rate.toInt),
+      rateFraction = Some(ACQUISITION_RATE_FRACTION),
+      slices = None
+    )
+
+    Result(
+      totalTax = premiumCalcDetails.taxDue + leasedCalcDetails.taxDue,
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+      resultHint = None,
+      npv = Some(npv.toInt),
+      taxCalcs = Seq(
+        premiumCalcDetails,
+        leasedCalcDetails
       )
     )
   }

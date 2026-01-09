@@ -5,6 +5,7 @@
 
 package data
 
+import enums.sdltRebuild.TaxReliefCode
 import models.calculationtables.{Slab, SlabTable}
 
 object SlabRatesTables {
@@ -45,10 +46,10 @@ object SlabRatesTables {
     )
   )
 
-  val freeholdAcquisitionTaxReliefRate = SlabTable(
+  val acquisitionTaxReliefRate = SlabTable(
     slabs = Seq(
-      Slab(threshold = 0, rate = 0.5)
-    )
+      Slab(threshold = 0, rate = BigDecimal(s"0.${TaxReliefCode.ACQUISITION_RATE_FRACTION}"))
+      )
   )
 
 }
