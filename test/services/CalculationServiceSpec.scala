@@ -12,18 +12,18 @@ package services
 
 import data.ResultText.RESULT_HEADING_TAX_RELIEF
 import enums.sdltRebuild._
-
-import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.InvalidDateException
+import models._
 import models.sdltRebuild.TaxReliefDetails
-import models.{CalculationDetails, CalculationResponse, Result, _}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+
+import java.time.LocalDate
 
 class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneAppPerSuite
   with BeforeAndAfterEach  {
@@ -960,6 +960,68 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       }
     }
 
+    "select the leaseholdResidential additional property of an individual for April2016 onwards" when {
+      "when given a request with effective date is on 1/4/2016 when replace main residence checks true taxReliefCode is PreCompletionTransaction" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2016,4,1),
+          twoOrMoreProperties = Some(true),
+          replaceMainResidence = Some(true),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = None,
+          isLinked = false
+        )
+
+        val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
+
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdZeroRateTaxReliefRes(any())
+      }
+      "when given a request with effective date is after 1/4/2016 when replace main residence checks true  taxReliefCode is PreCompletionTransaction" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2021,6,1),
+          twoOrMoreProperties = Some(true),
+          replaceMainResidence = Some(true),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = None,
+          isLinked = false
+        )
+
+        val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
+
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdZeroRateTaxReliefRes(any())
+      }
+
+      "given relief code PreCompletionTransaction but effective date is before 1/4/2016 should fall back to normal calculation" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2012,6,1),
+          twoOrMoreProperties = Some(true),
+          replaceMainResidence = Some(true),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = None,
+          isLinked = false
+        )
+
+        noException shouldBe thrownBy {
+          testCalculationService.calculateTax(testRequest)
+        }
+
+        verify(mockLeaseholdCalculationService, never).leaseholdZeroRateTaxReliefRes(any())
+      }
+    }
+
     "select the leaseholdResidential function for July 2020 onwards" when {
       "given a request with an effective date of 31/7/2020" in{
         val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.residential, LocalDate.of(2020, 7, 31))
@@ -1259,11 +1321,11 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
-        when(mockLeaseholdCalculationService.zeroRateLeaseHoldFreePortRelief(testRequest.leaseDetails)).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseHoldFreePortRelief(any())
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdZeroRateTaxReliefRes(any())
       }
       "given relief code InvestmentZonesTaxSiteRelief" in {
         val testRequest = createRequestWithTaxRelief(
@@ -1276,11 +1338,12 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
-        when(mockLeaseholdCalculationService.zeroRateLeaseHoldFreePortRelief(testRequest.leaseDetails)).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseHoldFreePortRelief(any())
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdZeroRateTaxReliefRes(any())
+
       }
     }
     "select leaseHold freePort / non-residential property with tax relief code" when {
@@ -1295,11 +1358,11 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
-        when(mockLeaseholdCalculationService.zeroRateLeaseHoldFreePortRelief(testRequest.leaseDetails)).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseHoldFreePortRelief(any())
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdZeroRateTaxReliefRes(any())
       }
       "given relief code InvestmentZonesTaxSiteRelief" in {
         val testRequest = createRequestWithTaxRelief(
@@ -1312,11 +1375,11 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
-        when(mockLeaseholdCalculationService.zeroRateLeaseHoldFreePortRelief(testRequest.leaseDetails)).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseHoldFreePortRelief(any())
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdZeroRateTaxReliefRes(any())
       }
     }
     "select freeHold / residential property with tax relief code" when {

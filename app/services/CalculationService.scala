@@ -7,7 +7,7 @@ package services
 
 import data.Dates
 import enums.sdltRebuild.TaxReliefCode.zeroRateCodes
-import enums.sdltRebuild.{AcquisitionRelief, FreeportsTaxSiteRelief, InvestmentZonesTaxSiteRelief, PreCompletionTransaction, RightToBuy}
+import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.TaxReliefDetails
@@ -357,24 +357,20 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
   def calculateTaxRelief(request: Request,
                          taxReliefDetails: TaxReliefDetails): CalculationResponse = {
 
-    (request.holdingType, taxReliefDetails.taxReliefCode) match {
-      case (HoldingTypes.freehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief) =>
+    (request.holdingType, taxReliefDetails.taxReliefCode, request.isLinked) match {
+      case (HoldingTypes.freehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false) =>
         CalculationResponse(Seq(
           freeCalculationService.zeroRateTaxReliefForFreehold
         ))
-      case (HoldingTypes.freehold, taxReliefCode) if zeroRateCodes.contains(taxReliefCode) =>
+      case (HoldingTypes.freehold, taxReliefCode, false) if zeroRateCodes.contains(taxReliefCode) =>
         CalculationResponse(Seq(
           freeCalculationService.zeroRateTaxReliefForFreehold
         ))
-      case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief)  =>
-        CalculationResponse(Seq(
-          leaseCalculationService.zeroRateLeaseHoldFreePortRelief(request.leaseDetails)
-        ))
-      case (HoldingTypes.freehold, AcquisitionRelief) =>
+      case (HoldingTypes.freehold, AcquisitionRelief, false) =>
         CalculationResponse(Seq(
           freeCalculationService.freeholdAcquisitionTaxRelief(request)
         ))
-      case (HoldingTypes.freehold, PreCompletionTransaction) if
+      case (HoldingTypes.freehold, PreCompletionTransaction, false) if
         request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) &&
           request.propertyDetails.exists(_.individual) &&
           request.propertyType == PropertyTypes.residential &&
@@ -383,12 +379,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           freeCalculationService.zeroRateTaxReliefForFreehold
         ))
-      case (HoldingTypes.freehold, PreCompletionTransaction) if
+      case (HoldingTypes.freehold, PreCompletionTransaction, false) if
         request.effectiveDate.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) =>
         CalculationResponse(Seq(
           freeCalculationService.zeroRateTaxReliefForFreehold
         ))
-      case (HoldingTypes.freehold, RightToBuy) if
+      case (HoldingTypes.freehold, RightToBuy,true) if
         request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) &&
           request.isLinked &&
           request.propertyDetails.exists(_.individual) &&
@@ -398,7 +394,21 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           freeCalculationService.freeholdSelfAssessed
         ))
-      case (holdingType, taxReliefCode) =>
+      /* ------------- LeaseHoldCases--------------------------- */
+      case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false)  =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
+        ))
+      case(HoldingTypes.leasehold, PreCompletionTransaction, false) if
+        request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) &&
+          request.propertyType.equals(PropertyTypes.residential) &&
+          request.propertyDetails.exists(_.individual == true) &&
+          request.propertyDetails.exists(_.replaceMainResidence.contains(true)) &&
+          request.propertyDetails.exists(_.twoOrMoreProperties.contains(true)) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
+        ))
+      case (holdingType, taxReliefCode,_) =>
         logWarn(s"TaxRelief logic not yet implemented for taxReliefCode: $taxReliefCode and holding type: $holdingType")
         calculateTax(request.copy(taxReliefDetails = None))
     }
