@@ -21,7 +21,7 @@ import forms.purchaser.PurchaserPartnershipUtrFormProvider
 import models.purchaser.{PurchaserConfirmIdentity, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserPartnershipUtrPage}
+import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserUTRPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -60,7 +60,7 @@ class PurchaserPartnershipUtrController @Inject()(
         continueRoute = {
           (purchaserNameOpt, purchaserInformationOpt) match {
             case (Some(purchaserName), Some(purchaserInformationOpt)) if purchaserInformationOpt.equals(PurchaserConfirmIdentity.PartnershipUTR) =>
-              val preparedForm = request.userAnswers.get(PurchaserPartnershipUtrPage) match {
+              val preparedForm = request.userAnswers.get(PurchaserUTRPage) match {
                 case None => form
                 case Some(value) => form.fill(value)
               }
@@ -88,9 +88,9 @@ class PurchaserPartnershipUtrController @Inject()(
 
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserPartnershipUtrPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserUTRPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(PurchaserPartnershipUtrPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(PurchaserUTRPage, mode, updatedAnswers))
           )
 
         case _ => Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode)))

@@ -19,9 +19,9 @@ package pages.purchaser
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object PurchaserPartnershipUtrPage extends QuestionPage[String] {
+case object PurchaserUTRPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ "purchaserCurrent" \ toString
 
-  override def toString: String = "purchaserPartnershipUtr"
+  override def toString: String = "purchaserUTRPage"
 }

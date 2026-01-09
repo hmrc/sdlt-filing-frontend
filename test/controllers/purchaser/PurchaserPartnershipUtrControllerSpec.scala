@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.PurchaserPartnershipUtrPage
+import pages.purchaser.PurchaserUTRPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -130,7 +130,7 @@ class PurchaserPartnershipUtrControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = testUserAnswers.set(PurchaserPartnershipUtrPage, "answer").success.value
+      val userAnswers = testUserAnswers.set(PurchaserUTRPage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
