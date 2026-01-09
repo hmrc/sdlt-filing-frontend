@@ -18,11 +18,11 @@ package viewmodels.checkAnswers.purchaser
 
 import base.SpecBase
 import models.CheckMode
-import pages.purchaser.PurchaserCorporationTaxUTRPage
+import pages.purchaser.PurchaserUTRPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 
-class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
+class PurchaserUTRSummarySpec extends SpecBase{
   "when valid Corporation Tax UTR present" - {
 
     "must return summary list row with Corporation Tax UTR only" in {
@@ -33,9 +33,9 @@ class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
         implicit val msgs: Messages = messages(application)
 
         val userAnswers = emptyUserAnswers
-          .set(PurchaserCorporationTaxUTRPage, "1234567494").success.value
+          .set(PurchaserUTRPage, "1234567494").success.value
 
-        val result = PurchaserCorporationTaxUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = PurchaserUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.corporationTaxUTR.checkYourAnswersLabel")
 
@@ -43,7 +43,7 @@ class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
         htmlContent mustEqual "1234567494"
 
         result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
         result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.corporationTaxUTR.change.hidden")
       }
@@ -56,11 +56,11 @@ class PurchaserCorporationTaxUTRSummarySpec extends SpecBase{
         implicit val msgs: Messages = messages(application)
 
         val userAnswers = emptyUserAnswers
-          .set(PurchaserCorporationTaxUTRPage, "1234567494").success.value
+          .set(PurchaserUTRPage, "1234567494").success.value
 
-        val result = PurchaserCorporationTaxUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = PurchaserUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url
       }
     }
   }

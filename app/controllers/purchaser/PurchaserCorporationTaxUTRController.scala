@@ -21,7 +21,7 @@ import forms.purchaser.PurchaserCorporationTaxUTRFormProvider
 import models.purchaser.{PurchaserConfirmIdentity, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserCorporationTaxUTRPage}
+import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserUTRPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -59,7 +59,7 @@ class PurchaserCorporationTaxUTRController @Inject()(
         userAnswers,
         continueRoute = (nameOfPurchaser, purchaserConfirmIdentity) match {
           case (Some(purchaserName), Some(identity)) if identity == PurchaserConfirmIdentity.CorporationTaxUTR =>
-            val preparedForm = request.userAnswers.get(PurchaserCorporationTaxUTRPage) match {
+            val preparedForm = request.userAnswers.get(PurchaserUTRPage) match {
               case None => form
               case Some(formValue) => form.fill(formValue)
             }
@@ -87,9 +87,9 @@ class PurchaserCorporationTaxUTRController @Inject()(
 
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserCorporationTaxUTRPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserUTRPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(PurchaserCorporationTaxUTRPage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(PurchaserUTRPage, mode, updatedAnswers))
           )
       }
   }

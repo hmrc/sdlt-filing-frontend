@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserCorporationTaxUTRPage, WhoIsMakingThePurchasePage}
+import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserUTRPage, WhoIsMakingThePurchasePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -91,7 +91,7 @@ class PurchaserCorporationTaxUTRControllerSpec extends SpecBase with MockitoSuga
 
       "must populate the view correctly when the question has previously been answered" in {
 
-        val userAnswers = userAnswersWithPurchaserCompanyWithUTR.set(PurchaserCorporationTaxUTRPage, "answer").success.value
+        val userAnswers = userAnswersWithPurchaserCompanyWithUTR.set(PurchaserUTRPage, "answer").success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

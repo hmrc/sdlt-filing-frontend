@@ -66,11 +66,10 @@ class Navigator @Inject()() {
 
     case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage
          | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage
-         | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserPartnershipUtrPage
-         | PurchaserCorporationTaxUTRPage | RegistrationNumberPage | PurchaserTypeOfCompanyPage
-         | CompanyFormOfIdPage | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage
-         | ConfirmNameOfThePurchaserPage | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage
-         | AddPurchaserAgentReferenceNumberPage => true
+         | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserUTRPage
+          | RegistrationNumberPage | PurchaserTypeOfCompanyPage | CompanyFormOfIdPage 
+         | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage | ConfirmNameOfThePurchaserPage
+         | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage => true
 
     case _ => false
   }
@@ -92,9 +91,7 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
     case PurchaserFormOfIdIndividualPage =>
       _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
-    case PurchaserPartnershipUtrPage =>
-      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
-    case PurchaserCorporationTaxUTRPage =>
+    case PurchaserUTRPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case RegistrationNumberPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)

@@ -123,12 +123,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
         }
 
-        "go from PurchaserPartnershipUtrPage to PurchaserType Page" in {
-          navigator.nextPage(PurchaserPartnershipUtrPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
-        }
-
         "go from PurchaserCorporationTaxUTRPage to PurchaserType Page" in {
-          navigator.nextPage(PurchaserCorporationTaxUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          navigator.nextPage(PurchaserUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserTypePage to ReturnTaskList" in {

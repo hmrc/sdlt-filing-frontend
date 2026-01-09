@@ -17,26 +17,26 @@
 package viewmodels.checkAnswers.purchaser
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaser.PurchaserPartnershipUtrPage
+import pages.purchaser.PurchaserUTRPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object PurchaserPartnershipUtrSummary  {
+object PurchaserUTRSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserPartnershipUtrPage).map {
+    answers.get(PurchaserUTRPage).map {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "purchaser.partnershipUtr.checkYourAnswersLabel",
+          key     = "purchaser.corporationTaxUTR.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.partnershipUtr.change.hidden"))
+            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("purchaser.corporationTaxUTR.change.hidden"))
           )
         )
     }
