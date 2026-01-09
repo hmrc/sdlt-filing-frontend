@@ -17,30 +17,30 @@
 package controllers.purchaserAgent
 
 import controllers.actions.*
-import forms.purchaserAgent.PurchaserAgentsContactDetailsFormProvider
+import forms.purchaserAgent.AddPurchaserAgentReferenceNumberFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaserAgent.{PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage}
+import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.purchaserAgent.PurchaserAgentsContactDetailsView
+import views.html.purchaserAgent.AddPurchaserAgentReferenceNumberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PurchaserAgentsContactDetailsController @Inject()(
-                                                         override val messagesApi: MessagesApi,
-                                                         sessionRepository: SessionRepository,
-                                                         navigator: Navigator,
-                                                         identify: IdentifierAction,
-                                                         getData: DataRetrievalAction,
-                                                         requireData: DataRequiredAction,
-                                                         formProvider: PurchaserAgentsContactDetailsFormProvider,
-                                                         val controllerComponents: MessagesControllerComponents,
-                                                         view: PurchaserAgentsContactDetailsView
-                                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class AddPurchaserAgentReferenceNumberController @Inject()(
+                                                            override val messagesApi: MessagesApi,
+                                                            sessionRepository: SessionRepository,
+                                                            navigator: Navigator,
+                                                            identify: IdentifierAction,
+                                                            getData: DataRetrievalAction,
+                                                            requireData: DataRequiredAction,
+                                                            formProvider: AddPurchaserAgentReferenceNumberFormProvider,
+                                                            val controllerComponents: MessagesControllerComponents,
+                                                            view: AddPurchaserAgentReferenceNumberView
+                                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -52,9 +52,7 @@ class PurchaserAgentsContactDetailsController @Inject()(
           Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode))
 
         case Some(agentName) =>
-          //TODO - implement data guard check on previous page (do you want to add contact details)
-
-          val preparedForm = request.userAnswers.get(PurchaserAgentsContactDetailsPage) match {
+          val preparedForm = request.userAnswers.get(AddPurchaserAgentReferenceNumberPage) match {
             case None => form
             case Some(value) => form.fill(value)
           }
@@ -73,18 +71,22 @@ class PurchaserAgentsContactDetailsController @Inject()(
           )
 
         case Some(agentName) =>
-
-          //TODO - implement data guard check on previous page (do you want to add contact details)
-
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, agentName, mode))),
 
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserAgentsContactDetailsPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPurchaserAgentReferenceNumberPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(PurchaserAgentsContactDetailsPage, mode, updatedAnswers))
+              } yield {
+                if (value) {
+                  Redirect(navigator.nextPage(AddPurchaserAgentReferenceNumberPage, mode, updatedAnswers))
+                } else {
+                  //                  controllers.purchaserAgent.routes.PlaceholderController.onPageLoad()
+                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                }
+              }
           )
       }
   }

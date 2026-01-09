@@ -648,13 +648,13 @@ site.error.noReturnReference.checkYourAnswersLabel                              
 site.error.noReturnReference.error.required                                              = Please select an option
 site.error.noReturnReference.change.hidden                                               = NoReturnReference
 
-purchaserAgent.name.title                                                           = What is the agent’s name?
-purchaserAgent.name.checkYourAnswersLabel                                           = What is the agent’s name?
-purchaserAgent.name.error.required                                                  = Enter the agent’s name
-purchaserAgent.name.error.length                                                    = Agent’s name must be 28 characters or less
-purchaserAgent.name.error.invalid                                                   = Invalid error
-purchaserAgent.name.change.hidden                                                   = purchaserAgentName
-purchaserAgent.name.hint                                                            = Include the branch name if there are multiple office locations, for example, Jones & Co. Leeds
+purchaserAgent.name.title                                                                = What is the agent’s name?
+purchaserAgent.name.checkYourAnswersLabel                                                = What is the agent’s name?
+purchaserAgent.name.error.required                                                       = Enter the agent’s name
+purchaserAgent.name.error.length                                                         = Agent’s name must be 28 characters or less
+purchaserAgent.name.error.invalid                                                        = Invalid error
+purchaserAgent.name.change.hidden                                                        = purchaserAgentName
+purchaserAgent.name.hint                                                                 = Include the branch name if there are multiple office locations, for example, Jones & Co. Leeds
 
 purchaserAgent.contactDetails.title                                                      = What are the agent’s contact details? - About the purchaser’s agent
 purchaserAgent.contactDetails.heading                                                    = What are {0}’s contact details?
@@ -671,3 +671,10 @@ purchaserAgent.contactDetails.error.agentEmailAddress.length                    
 purchaserAgent.contactDetails.agentPhoneNumber.change.hidden                             = Agent phone number
 purchaserAgent.contactDetails.agentEmailAddress.change.hidden                            = Agent email address
 purchaserAgent.contactDetails.error.oneRequired                                          = At least one option is required
+
+purchaserAgent.addAgentReferenceNumber.title                                             = Do you want to add a reference for this return? - About the purchaser’s agent
+purchaserAgent.addAgentReferenceNumber.heading                                           = Do you want to add a reference for this return?
+purchaserAgent.addAgentReferenceNumber.p                                                 = This is the unique number or code that {0} will use to locate the return in their records
+purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel                             = addPurchaserAgentReferenceNumber
+purchaserAgent.addAgentReferenceNumber.error.required                                    = Please select yes or no
+purchaserAgent.addAgentReferenceNumber.change.hidden                                     = AddPurchaserAgentReferenceNumber

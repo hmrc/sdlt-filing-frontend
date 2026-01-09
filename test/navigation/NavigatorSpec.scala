@@ -135,7 +135,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserTypeOfCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
         }
 
-        "go from CompanyFormOfIdPage to PurchaserType page"in {
+        "go from CompanyFormOfIdPage to PurchaserType page" in {
           navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
@@ -154,6 +154,22 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserAgentNamePage to PurchaserAgentAddress page" in {
           navigator.nextPage(PurchaserAgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
         }
+
+        //TODO add a test to verify proper navigation from page before
+        //        "go from ___ to PurchaserAgentsContactDetailsPage page" in {
+        //          navigator.nextPage(PurchaserAgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
+        //        }
+
+        "go from PurchaserAgentsContactDetailsPage to AddPurchaserReferenceNumber page" in {
+          navigator.nextPage(PurchaserAgentsContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
+        }
+
+        //TODO DTR-1829 - link up route
+        "go from AddPurchaserReferenceNumber to EnterPurchaserReferenceNumber page" in {
+          navigator.nextPage(AddPurchaserAgentReferenceNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+          //          navigator.nextPage(AddPurchaserAgentReferenceNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.EnterPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
+        }
+
       }
     }
 
@@ -192,8 +208,8 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(NameOfPurchaserPage, NormalMode, userAnswers) mustBe
           controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
-         navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
-           controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+        navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
+          controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
       }
 
       "must return false for non-purchaser section pages" in {
