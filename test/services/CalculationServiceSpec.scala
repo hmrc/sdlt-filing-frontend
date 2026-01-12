@@ -1268,7 +1268,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
       }
 
-      "given a request with relief code PreCompletionTransaction and effective date of 6/4/2013" in {
+      "given a request with relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
         val testRequest = createRequestWithTaxRelief(
           HoldingTypes.freehold,
           PropertyTypes.residential,
@@ -1284,7 +1284,24 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
+      }
 
+      "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: falls back to normal calculation" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2013, 4, 5),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+
+        noException shouldBe thrownBy {
+          testCalculationService.calculateTax(testRequest)
+        }
+
+        verify(mockFreeholdCalculationService, never)
+          .zeroRateTaxReliefForFreehold
       }
 
       "given relief code AcquisitionRelief(14)" in {
@@ -1306,7 +1323,124 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         verify(mockFreeholdCalculationService, times(1)).freeholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)
       }
+    }
 
+    "select freehold / non-residential property with tax relief code" when {
+      "given a request with relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.nonResidential,
+          LocalDate.of(2013, 4, 6),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockFreeholdCalculationService.zeroRateTaxReliefForFreehold).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
+      }
+
+      "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: falls back to normal calculation" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.nonResidential,
+          LocalDate.of(2013, 4, 5),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+
+        noException shouldBe thrownBy {
+          testCalculationService.calculateTax(testRequest)
+        }
+
+        verify(mockFreeholdCalculationService, never)
+          .zeroRateTaxReliefForFreehold
+      }
+    }
+
+    "select leasehold / residential property with tax relief code" when {
+      "given relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2013, 4, 6),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe
+          CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1))
+          .leaseholdZeroRateTaxReliefRes(any())
+      }
+
+      "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: falls back to normal calculation" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2013, 4, 5),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+
+        noException shouldBe thrownBy {
+          testCalculationService.calculateTax(testRequest)
+        }
+
+        verify(mockLeaseholdCalculationService, never)
+          .leaseholdZeroRateTaxReliefRes(any())
+      }
+    }
+
+    "select leasehold / non-residential property with tax relief code" when {
+      "given relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.nonResidential,
+          LocalDate.of(2013, 4, 6),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe
+          CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1))
+          .leaseholdZeroRateTaxReliefRes(any())
+      }
+
+      "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: falls back to normal calculation" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.nonResidential,
+          LocalDate.of(2013, 4, 5),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+
+        noException shouldBe thrownBy {
+          testCalculationService.calculateTax(testRequest)
+        }
+
+        verify(mockLeaseholdCalculationService, never)
+          .leaseholdZeroRateTaxReliefRes(any())
+      }
     }
 
     "select leaseHold freePort / residential property with tax relief code" when {

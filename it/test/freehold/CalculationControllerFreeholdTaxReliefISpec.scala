@@ -104,7 +104,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
 
       "with TaxReliefCode: PreCompletionTransaction(34)" when {
 
-        "residential" in {
+        "Property Type is Residential and the date is on or after 6th April 2013" in {
           def request: WSResponse = ws.url(
               calculateUrl)
             .post(
@@ -137,7 +137,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           request.json shouldBe responseJson
         }
 
-        "non-residential" in {
+        "Property Type is Non-residential and the date is on or after 6th April 2013" in {
           def request: WSResponse = ws.url(
               calculateUrl)
             .post(

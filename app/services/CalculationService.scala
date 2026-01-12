@@ -380,7 +380,8 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           freeCalculationService.zeroRateTaxReliefForFreehold
         ))
       case (HoldingTypes.freehold, PreCompletionTransaction, false) if
-        request.effectiveDate.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) =>
+        request.effectiveDate.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) &&
+          (request.propertyDetails.isEmpty || request.propertyDetails.exists(_.twoOrMoreProperties.contains(false))) =>
         CalculationResponse(Seq(
           freeCalculationService.zeroRateTaxReliefForFreehold
         ))
@@ -408,7 +409,13 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
         ))
-      case (holdingType, taxReliefCode,_) =>
+      case (HoldingTypes.leasehold, PreCompletionTransaction, false) if
+        request.effectiveDate.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) &&
+          (request.propertyDetails.isEmpty || request.propertyDetails.exists(_.twoOrMoreProperties.contains(false))) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
+        ))
+      case (holdingType, taxReliefCode, _) =>
         logWarn(s"TaxRelief logic not yet implemented for taxReliefCode: $taxReliefCode and holding type: $holdingType")
         calculateTax(request.copy(taxReliefDetails = None))
     }

@@ -2363,6 +2363,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
       res shouldBe expectedRes
     }
   }
+
   "calculating leasehold ResidentialAddPropResidentialApril16OnwardsWithBudgetTaxRelief  for PreCompletionTransaction " must {
     "return zero tax response for all residential additional property and not Linked" in  new PredefinedNPVSetup(20216) {
       private val calcDetails: Seq[CalculationDetails] = Seq(
@@ -2400,4 +2401,42 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
     }
   }
 
+  "calculation for a zero percent tax relief" must {
+    "return the zero percent tax relief result" in  new PredefinedNPVSetup(50126) {
+      private val calcDetails: Seq[CalculationDetails] = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        ),
+        CalculationDetails(
+          taxType = TaxTypes.rent,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+      )
+
+      val expectedRes = Result(
+        totalTax = 0,
+        resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+        resultHint = None,
+        npv = Some(npv),
+        taxCalcs = calcDetails
+      )
+
+      val actual: Result = service.leaseholdZeroRateTaxReliefRes(Some(testLeaseDetails))
+
+      actual shouldBe expectedRes
+    }
+  }
 }
