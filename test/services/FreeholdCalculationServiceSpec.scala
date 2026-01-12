@@ -1937,24 +1937,12 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
   "calculation for freehold self assessed" must {
 
     "return the self assessed result" in {
-      val calcDetails =
-        CalculationDetails(
-          taxType = TaxTypes.premium,
-          calcType = CalcTypes.slab,
-          taxDue = 0,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          rate = Some(0),
-          slices = None
-        )
-
       val expectedRes = Result(
         totalTax = 0,
         resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
         resultHint = None,
         npv = None,
-        taxCalcs = Seq(calcDetails)
+        taxCalcs = Seq.empty
       )
 
       val actual =

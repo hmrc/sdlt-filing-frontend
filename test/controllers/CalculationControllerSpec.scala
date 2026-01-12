@@ -50,6 +50,14 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
     taxCalcs = Seq(calcDetails)
   )
 
+  def createSelfAssessedResult(msg: String): Result = Result(
+    totalTax = 0,
+    resultHeading = Some(msg),
+    resultHint = None,
+    npv = None,
+    taxCalcs = Seq.empty
+  )
+
   private val zeroRateFreePortReliefGen:Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(FreeportsTaxSiteRelief,InvestmentZonesTaxSiteRelief)
   private val zeroRateWithoutFreePortReliefGen: Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(PartExchange, ReLocationEmployment,
     CompulsoryPurchaseFacilitatingDevelopment, ComplianceWithPlanningObligations,
@@ -240,7 +248,7 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
 
       "return a 200" when {
         "TaxReliefCode is not  FreeportsTaxSiteRelief or InvestmentZonesTaxSiteRelief" when {
-          "isPartialRelief is true" in {
+          "isPartialRelief is true for self assessed" in {
             forAll(zeroRateWithoutFreePortReliefGen) {
               value =>
                 reset(mockCalculationService)
@@ -276,7 +284,7 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                      | }
                      |}
                      |""".stripMargin)
-                val response = CalculationResponse(Seq(createResult("given a valid json")))
+                val response = CalculationResponse(Seq(createSelfAssessedResult("given a valid json")))
 
                 when(mockCalculationService.calculateTax(any())).thenReturn(response)
 
@@ -384,14 +392,14 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                 verify(mockCalculationService, times(1)).calculateTax(any())
             }
           }
-          "isPartialRelief is true" in {
+          "isPartialRelief is true for self assessed" in {
             forAll(zeroRateFreePortReliefGen) {
               value =>
                 reset(mockCalculationService)
                 val jsonRequestIsPartialReliefTrue:JsValue = Json.parse(
                   s"""
                      |{
-                     |  "holdingType": "Freehold",
+                     |  "holdingType": "Leasehold",
                      |  "propertyType": "Non-residential",
                      |  "effectiveDateDay": 23,
                      |  "effectiveDateMonth": 3,
@@ -421,7 +429,7 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                      |}
                      |""".stripMargin)
 
-                val response = CalculationResponse(Seq(createResult("given a valid json")))
+                val response = CalculationResponse(Seq(createSelfAssessedResult("given a valid json")))
 
                 when(mockCalculationService.calculateTax(any())).thenReturn(response)
 

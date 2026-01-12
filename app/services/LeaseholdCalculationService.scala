@@ -782,7 +782,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   val leaseholdSelfAssessed: Result = {
     LeaseholdResultFactory
-      .leaseholdSelfAssessedRes
+      .leaseholdSelfAssessedResult
   }
 
 }

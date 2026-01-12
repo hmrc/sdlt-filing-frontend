@@ -443,35 +443,13 @@ object LeaseholdResultFactory {
     )
   }
 
-  val leaseholdSelfAssessedRes: Result = {
+  val leaseholdSelfAssessedResult: Result = {
     Result(
       totalTax = 0,
       resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
       resultHint = None,
-      npv = Some(0),
-      taxCalcs = Seq(
-        CalculationDetails(
-          taxType = TaxTypes.premium,
-          calcType = CalcTypes.slab,
-          taxDue = 0,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          rate = Some(0),
-          slices = None
-        ),
-        CalculationDetails(
-          taxType = TaxTypes.rent,
-          calcType = CalcTypes.slab,
-          taxDue = 0,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          rate = Some(0),
-          slices = None
-        )
-      )
+      npv = None,
+      taxCalcs = Seq.empty
     )
   }
-
 }

@@ -440,24 +440,13 @@ object FreeholdResultFactory {
     )
   }
 
-  def freeholdSelfAssessedRes: Result = {
+  def freeholdSelfAssessedResult: Result = {
     Result(
       totalTax = 0,
       resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
       resultHint = None,
       npv = None,
-      taxCalcs = Seq(
-        CalculationDetails(
-          taxType = TaxTypes.premium,
-          calcType = CalcTypes.slab,
-          taxDue = 0,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          rate = Some(0),
-          slices = None
-        )
-      )
+      taxCalcs = Seq.empty
     )
   }
 

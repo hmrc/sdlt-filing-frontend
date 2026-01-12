@@ -208,22 +208,8 @@ class CalculationControllerLeaseHoldTaxReliefISpec extends BaseSpec with GuiceOn
             | "result": [
             |  {
             |   "totalTax": 0,
-            |   "npv": 0,
             |   "resultHeading": "Self-assessed",
-            |   "taxCalcs": [
-            |     {
-            |      "taxType": "premium",
-            |      "calcType": "slab",
-            |      "taxDue": 0,
-            |      "rate": 0
-            |    },
-            |    {
-            |     "taxType": "rent",
-            |     "calcType": "slab",
-            |     "taxDue": 0,
-            |     "rate": 0
-            |    }
-            |   ]
+            |   "taxCalcs": []
             |  }
             | ]
             |}

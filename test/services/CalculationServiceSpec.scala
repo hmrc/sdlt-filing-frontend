@@ -69,6 +69,14 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       taxCalcs = Seq(calcDetails)
     )
 
+    def createSelfAssessedResult(msg: String) = Result(
+      totalTax = 0,
+      resultHeading = Some(msg),
+      resultHint = None,
+      npv = None,
+      taxCalcs = Seq.empty
+    )
+
     def createResultInSeq(msg: String) = Seq(
       createResult(msg)
     )
@@ -1379,7 +1387,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           isLinked = false
         )
 
-        val result = createResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockFreeholdCalculationService.freeholdSelfAssessed).thenReturn(result)
 
@@ -1609,7 +1617,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           isLinked = false
         )
 
-        val result = createResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockLeaseholdCalculationService.leaseholdSelfAssessed).thenReturn(result)
 
@@ -1663,7 +1671,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           isLinked = false
         )
 
-        val result = createResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockLeaseholdCalculationService.leaseholdSelfAssessed).thenReturn(result)
 
@@ -1686,7 +1694,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
           isLinked = true
         )
 
-        val result = createResult("Self-assessed")
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockFreeholdCalculationService.freeholdSelfAssessed)
           .thenReturn(result)
