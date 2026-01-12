@@ -5,7 +5,7 @@
 
 package services
 
-import data.ResultText.RESULT_HEADING_TAX_RELIEF
+import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
 
 import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
@@ -2397,6 +2397,41 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         taxCalcs = calcDetails
       )
       val res: Result = service.leaseholdZeroRateTaxReliefRes(Some(testLeaseDetailsResidentialAdditionalPropertyApril16Onwards))
+      res shouldBe expectedRes
+    }
+
+    "return empty tax response for self assessment " in new PredefinedNPVSetup(50126) {
+      private val calcDetails: Seq[CalculationDetails] = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        ),
+        CalculationDetails(
+          taxType = TaxTypes.rent,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+      )
+
+      val expectedRes: Result = Result(
+        totalTax = 0,
+        resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+        resultHint = None,
+        npv = Some(0),
+        taxCalcs = calcDetails
+      )
+      val res: Result = service.leaseholdSelfAssessed
       res shouldBe expectedRes
     }
   }

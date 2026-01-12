@@ -163,6 +163,75 @@ class CalculationControllerLeaseHoldTaxReliefISpec extends BaseSpec with GuiceOn
         request.status shouldBe OK
         request.json shouldBe responseJson
       }
+      "isPartialRelief is true and self assessment needed for Freeport Relief" in {
+        def request: WSResponse = ws.url(
+            calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Leasehold",
+                |  "propertyType": "Residential",
+                |  "effectiveDateDay": 6,
+                |  "effectiveDateMonth": 4,
+                |  "effectiveDateYear": 2013,
+                |  "premium": 1000000,
+                |  "highestRent": 0,
+                |  "leaseDetails": {
+                |    "startDateDay": 6,
+                |    "startDateMonth": 4,
+                |    "startDateYear": 2013,
+                |    "endDateDay": 6,
+                |    "endDateMonth": 4,
+                |    "endDateYear": 2014,
+                |    "leaseTerm": {
+                |      "years": 1,
+                |      "days": 1,
+                |      "daysInPartialYear": 365
+                |    },
+                |    "year1Rent": 999,
+                |    "year2Rent": 999
+                |  },
+                |  "isLinked": false,
+                |  "taxReliefDetails": {
+                |    "taxReliefCode": 36,
+                |    "isPartialRelief": true
+                |  }
+                |}
+                |""".stripMargin
+            )
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            | "result": [
+            |  {
+            |   "totalTax": 0,
+            |   "npv": 0,
+            |   "resultHeading": "Self-assessed",
+            |   "taxCalcs": [
+            |     {
+            |      "taxType": "premium",
+            |      "calcType": "slab",
+            |      "taxDue": 0,
+            |      "rate": 0
+            |    },
+            |    {
+            |     "taxType": "rent",
+            |     "calcType": "slab",
+            |     "taxDue": 0,
+            |     "rate": 0
+            |    }
+            |   ]
+            |  }
+            | ]
+            |}
+            |""".stripMargin
+        )
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
 
       "with TaxReliefCode: PreCompletionTransaction(34)" when {
 

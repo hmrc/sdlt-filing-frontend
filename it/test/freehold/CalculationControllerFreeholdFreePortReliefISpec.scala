@@ -24,8 +24,7 @@ class CalculationControllerFreeholdFreePortReliefISpec extends BaseSpec with Gui
   lazy val ws: WSClient = app.injector.instanceOf[WSClient]
 
   "Hitting the /calculate route " should {
-    "return a 200 and valid result for leasehold property type " when {
-
+    "return a 200 and valid result for freehold property type " when {
       "the TaxRelief Code is FreeportsTaxSiteRelief " in {
         def request: WSResponse = ws.url(
           calculateUrl)
@@ -104,6 +103,53 @@ class CalculationControllerFreeholdFreePortReliefISpec extends BaseSpec with Gui
             |    {
             |      "totalTax": 0,
             |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+            |      "taxCalcs": [
+            |        {
+            |          "taxType": "premium",
+            |          "calcType": "slab",
+            |          "taxDue": 0,
+            |          "rate": 0
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+        )
+        request.status shouldBe OK
+        request.json shouldBe responseJson
+      }
+      "isPartialRelief is true and self assessment needed for Freeport Relief" in {
+        def request: WSResponse = ws.url(
+            calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                | "holdingType": "Freehold",
+                | "propertyType": "Residential",
+                | "effectiveDateDay": 1,
+                | "effectiveDateMonth": 4,
+                | "effectiveDateYear": 2013,
+                | "premium": 1000000,
+                | "highestRent": 0,
+                | "isLinked": false,
+                | "taxReliefDetails": {
+                |   "taxReliefCode": 37,
+                |   "isPartialRelief": true
+                | }
+                |}
+                |""".stripMargin
+            )
+          )
+
+        val responseJson = Json.parse(
+          """
+            |{
+            |  "result": [
+            |    {
+            |      "totalTax": 0,
+            |      "resultHeading": "Self-assessed",
             |      "taxCalcs": [
             |        {
             |          "taxType": "premium",

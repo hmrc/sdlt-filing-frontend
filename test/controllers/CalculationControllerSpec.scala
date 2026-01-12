@@ -235,47 +235,6 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                 jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson("Validation error: List(ValidationFailure(No partial relief type defined.))")
             }
           }
-          "isPartialRelief is true" in {
-            forAll(zeroRateFreePortReliefGen) {
-              value =>
-                val jsonRequestWithoutIsPartialReliefNotDefined:JsValue = Json.parse(
-                  s"""
-                     |{
-                     |  "holdingType": "Leasehold",
-                     |  "propertyType": "Non-residential",
-                     |  "effectiveDateDay": 23,
-                     |  "effectiveDateMonth": 3,
-                     |  "effectiveDateYear": 2012,
-                     |  "premium": 1000000,
-                     |  "highestRent": 0,
-                     |  "leaseDetails": {
-                     |    "startDateDay": 23,
-                     |    "startDateMonth": 3,
-                     |    "startDateYear": 2012,
-                     |    "endDateDay": 23,
-                     |    "endDateMonth": 3,
-                     |    "endDateYear": 2013,
-                     |    "leaseTerm": {
-                     |      "years": 1,
-                     |      "days": 1,
-                     |      "daysInPartialYear": 365
-                     |    },
-                     |    "year1Rent": 999,
-                     |    "year2Rent": 999
-                     |  },
-                     |  "linked": "No",
-                     |  "taxReliefDetails": {
-                     |   "taxReliefCode": ${value.code},
-                     |   "isPartialRelief": true
-                     | }
-                     |}
-                     |""".stripMargin)
-                val fakeRequest = FakeRequest().withJsonBody(jsonRequestWithoutIsPartialReliefNotDefined)
-                val result = testCalculationController.calculateSDLTC(fakeRequest)
-                status(result) mustBe  BAD_REQUEST
-                jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson("Validation error: List(ValidationFailure(The value of partial relief must be false.))")
-            }
-          }
         }
       }
 
@@ -419,6 +378,54 @@ class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOne
                 when(mockCalculationService.calculateTax(any())).thenReturn(response)
 
                 val fakeRequest = FakeRequest().withJsonBody(jsonRequestWithoutIsPartialReliefNotDefined)
+                val result = testCalculationController.calculateSDLTC(fakeRequest)
+                status(result) mustBe OK
+                jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson(response)
+                verify(mockCalculationService, times(1)).calculateTax(any())
+            }
+          }
+          "isPartialRelief is true" in {
+            forAll(zeroRateFreePortReliefGen) {
+              value =>
+                reset(mockCalculationService)
+                val jsonRequestIsPartialReliefTrue:JsValue = Json.parse(
+                  s"""
+                     |{
+                     |  "holdingType": "Freehold",
+                     |  "propertyType": "Non-residential",
+                     |  "effectiveDateDay": 23,
+                     |  "effectiveDateMonth": 3,
+                     |  "effectiveDateYear": 2012,
+                     |  "premium": 1000000,
+                     |  "highestRent": 0,
+                     |  "leaseDetails": {
+                     |    "startDateDay": 23,
+                     |    "startDateMonth": 3,
+                     |    "startDateYear": 2012,
+                     |    "endDateDay": 23,
+                     |    "endDateMonth": 3,
+                     |    "endDateYear": 2013,
+                     |    "leaseTerm": {
+                     |      "years": 1,
+                     |      "days": 1,
+                     |      "daysInPartialYear": 365
+                     |    },
+                     |    "year1Rent": 999,
+                     |    "year2Rent": 999
+                     |  },
+                     |  "isLinked": false,
+                     |  "taxReliefDetails": {
+                     |   "taxReliefCode": ${value.code},
+                     |   "isPartialRelief": true
+                     | }
+                     |}
+                     |""".stripMargin)
+
+                val response = CalculationResponse(Seq(createResult("given a valid json")))
+
+                when(mockCalculationService.calculateTax(any())).thenReturn(response)
+
+                val fakeRequest = FakeRequest().withJsonBody(jsonRequestIsPartialReliefTrue)
                 val result = testCalculationController.calculateSDLTC(fakeRequest)
                 status(result) mustBe OK
                 jsonBodyOf(result.futureValue)(materializer) mustBe Json.toJson(response)
