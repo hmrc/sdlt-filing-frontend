@@ -14,6 +14,7 @@ import data.ResultText.RESULT_HEADING_TAX_RELIEF
 import enums.sdltRebuild._
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.InvalidDateException
+import generators.RequestGenerators
 import models._
 import models.sdltRebuild.TaxReliefDetails
 import org.mockito.ArgumentMatchers.any
@@ -22,11 +23,12 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
 import java.time.LocalDate
 
 class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneAppPerSuite
-  with BeforeAndAfterEach  {
+  with BeforeAndAfterEach with RequestGenerators {
 
   val april2021EffectiveDate: LocalDate = LocalDate.of(2021, 4, 1)
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
@@ -1247,6 +1249,105 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(freeportTestRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
+      }
+
+      "given freehold | property type: residental and non-residental | zero rate taxReliefCode :: expect return zero tax" in {
+        val calcDetails = CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+        val expectedRes = Result(
+          totalTax = 0,
+          resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+          resultHint = None,
+          npv = None,
+          taxCalcs = Seq(calcDetails)
+        )
+
+        val zeroRateTaxReliefForFreehold =
+          Result(
+            totalTax = 0,
+            resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+            resultHint = None,
+            npv = None,
+            taxCalcs = Seq(
+              CalculationDetails(
+                taxType = TaxTypes.premium,
+                calcType = CalcTypes.slab,
+                taxDue = 0,
+                detailHeading = None,
+                bandHeading = None,
+                detailFooter = None,
+                rate = Some(0),
+                slices = None
+              )
+            )
+          )
+
+        forAll( freeHoldRequestWithStandardPropertyTypesGenerator ) {
+          freeHoldRequest =>
+            reset(mockFreeholdCalculationService)
+            when(mockFreeholdCalculationService.zeroRateTaxReliefForFreehold).thenReturn(zeroRateTaxReliefForFreehold)
+            val res: CalculationResponse = testCalculationService.calculateTaxRelief(freeHoldRequest, freeHoldRequest.taxReliefDetails.get)
+            verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
+            res shouldBe CalculationResponse(Seq(expectedRes))
+        }
+      }
+
+      "given leasehold | non-residential and mixed property types | zero rate taxReliefCode :: expect return zero tax" in {
+        val calcDetails = CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+        val expectedRes = Result(
+          totalTax = 0,
+          resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+          resultHint = None,
+          npv = None,
+          taxCalcs = Seq(calcDetails)
+        )
+
+        val zeroRateTaxReliefForLeaseHold: Result =
+          Result(
+            totalTax = 0,
+            resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+            resultHint = None,
+            npv = None,
+            taxCalcs = Seq(
+              CalculationDetails(
+                taxType = TaxTypes.premium,
+                calcType = CalcTypes.slab,
+                taxDue = 0,
+                detailHeading = None,
+                bandHeading = None,
+                detailFooter = None,
+                rate = Some(0),
+                slices = None
+              )
+            )
+          )
+
+        forAll( leasedHoldNonResidentialMixedRequestGenerator ) {
+          freeHoldRequest =>
+            reset(mockLeaseholdCalculationService)
+            when(mockLeaseholdCalculationService.zeroRateLeaseNonResidentialMixedTaxReliefs(any()))
+              .thenReturn(zeroRateTaxReliefForLeaseHold)
+            val res: CalculationResponse = testCalculationService.calculateTaxRelief(freeHoldRequest, freeHoldRequest.taxReliefDetails.get)
+            verify(mockLeaseholdCalculationService, times(1)).zeroRateLeaseNonResidentialMixedTaxReliefs(any())
+            res shouldBe CalculationResponse(Seq(expectedRes))
+        }
       }
 
       "given relief code InvestmentZonesTaxSiteRelief(37)" in {

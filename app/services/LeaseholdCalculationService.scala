@@ -775,4 +775,9 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   }
 
+  def zeroRateLeaseNonResidentialMixedTaxReliefs(leaseDetails: Option[LeaseDetails]): Result = {
+    val calculatedNpv = Some(getNPV("LeasedNonResidentalAndMixedTaxReliefListed", leaseDetails).toInt)
+    LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
+  }
+
 }
