@@ -780,4 +780,9 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
   }
 
+  val leaseholdSelfAssessed: Result = {
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedRes
+  }
+
 }

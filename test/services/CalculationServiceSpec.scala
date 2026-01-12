@@ -10,7 +10,7 @@
 
 package services
 
-import data.ResultText.RESULT_HEADING_TAX_RELIEF
+import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
 import enums.sdltRebuild._
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.InvalidDateException
@@ -1353,7 +1353,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       "given relief code InvestmentZonesTaxSiteRelief(37)" in {
         val investmentTestRequest = createRequestWithTaxRelief(
           HoldingTypes.freehold,
-          PropertyTypes.nonResidential,
+          PropertyTypes.residential,
           LocalDate.of(2000, 11, 22),
           zeroTaxRelief = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
@@ -1367,6 +1367,25 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(investmentTestRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
+      }
+
+      "given self-assessed residential Freeport relief" in {
+        val freeportTestRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2000, 11, 22),
+          zeroTaxRelief = FreeportsTaxSiteRelief,
+          isPartialRelief = Some(true),
+          isLinked = false
+        )
+
+        val result = createResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessed).thenReturn(result)
+
+        testCalculationService.calculateTax(freeportTestRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessed
       }
 
       "given a request with relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
@@ -1580,6 +1599,24 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         verify(mockLeaseholdCalculationService, times(1)).leaseholdZeroRateTaxReliefRes(any())
 
       }
+      "given isPartialRelief is true with residential leasehold transaction" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2017, 11, 22),
+          zeroTaxRelief = FreeportsTaxSiteRelief,
+          isPartialRelief = Some(true),
+          isLinked = false
+        )
+
+        val result = createResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockLeaseholdCalculationService.leaseholdSelfAssessed).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessed
+      }
     }
     "select leaseHold freePort / non-residential property with tax relief code" when {
       "given relief code FreeportsTaxSiteRelief" in {
@@ -1615,6 +1652,24 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdZeroRateTaxReliefRes(any())
+      }
+      "given isPartialRelief is true with non-residential leasehold transaction" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.nonResidential,
+          LocalDate.of(2017, 11, 22),
+          zeroTaxRelief = FreeportsTaxSiteRelief,
+          isPartialRelief = Some(true),
+          isLinked = false
+        )
+
+        val result = createResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockLeaseholdCalculationService.leaseholdSelfAssessed).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessed
       }
     }
     "select freeHold / residential property with tax relief code" when {

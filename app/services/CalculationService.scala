@@ -358,6 +358,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
                          taxReliefDetails: TaxReliefDetails): CalculationResponse = {
     val nonResidentalAndMixed = Seq(PropertyTypes.nonResidential, PropertyTypes.mixed)
     (request.holdingType, taxReliefDetails.taxReliefCode, request.isLinked) match {
+      case (HoldingTypes.freehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false) if
+        taxReliefDetails.isPartialRelief.contains(true) =>
+        CalculationResponse(Seq(
+          freeCalculationService.freeholdSelfAssessed
+        ))
       case (HoldingTypes.freehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false) =>
         CalculationResponse(Seq(
           freeCalculationService.zeroRateTaxReliefForFreehold
@@ -396,6 +401,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           freeCalculationService.freeholdSelfAssessed
         ))
       /* ------------- LeaseHoldCases--------------------------- */
+      case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false) if
+        taxReliefDetails.isPartialRelief.contains(true) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdSelfAssessed
+        ))
       case (HoldingTypes.leasehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false)  =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
@@ -415,7 +425,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
         ))
-      case (HoldingTypes.leasehold, _, _) if nonResidentalAndMixed.contains(request.propertyType) && zeroRateLeaseHoldsTaxReliefCodes.contains(taxReliefDetails.taxReliefCode)  =>
+      case (HoldingTypes.leasehold, _, false) if nonResidentalAndMixed.contains(request.propertyType) && zeroRateLeaseHoldsTaxReliefCodes.contains(taxReliefDetails.taxReliefCode) =>
         CalculationResponse( Seq(leaseCalculationService.zeroRateLeaseNonResidentialMixedTaxReliefs(request.leaseDetails) ) )
       case (holdingType, taxReliefCode, _) =>
         logWarn(s"TaxRelief logic not yet implemented for taxReliefCode: $taxReliefCode and holding type: $holdingType")
