@@ -6,7 +6,7 @@
 package services
 
 import data.Dates
-import enums.sdltRebuild.TaxReliefCode.zeroRateCodes
+import enums.sdltRebuild.TaxReliefCode.{zeroRateCodes, zeroRateLeaseHoldsTaxReliefCodes}
 import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
@@ -356,7 +356,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
   def calculateTaxRelief(request: Request,
                          taxReliefDetails: TaxReliefDetails): CalculationResponse = {
-
+    val nonResidentalAndMixed = Seq(PropertyTypes.nonResidential, PropertyTypes.mixed)
     (request.holdingType, taxReliefDetails.taxReliefCode, request.isLinked) match {
       case (HoldingTypes.freehold, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false) =>
         CalculationResponse(Seq(
@@ -415,6 +415,8 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
         ))
+      case (HoldingTypes.leasehold, _, _) if nonResidentalAndMixed.contains(request.propertyType) && zeroRateLeaseHoldsTaxReliefCodes.contains(taxReliefDetails.taxReliefCode)  =>
+        CalculationResponse( Seq(leaseCalculationService.zeroRateLeaseNonResidentialMixedTaxReliefs(request.leaseDetails) ) )
       case (holdingType, taxReliefCode, _) =>
         logWarn(s"TaxRelief logic not yet implemented for taxReliefCode: $taxReliefCode and holding type: $holdingType")
         calculateTax(request.copy(taxReliefDetails = None))

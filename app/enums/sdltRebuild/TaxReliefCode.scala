@@ -84,6 +84,31 @@ object TaxReliefCode {
 
   val zeroRateCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[ZeroRate])
 
+  // 21 items for Leased::
+  val zeroRateLeaseHoldsTaxReliefCodes: Set[TaxReliefCode] = Set(
+    PartExchange,
+    ReLocationEmployment,
+    CompulsoryPurchaseFacilitatingDevelopment,
+    ComplianceWithPlanningObligations,
+    GroupRelief,
+    ReConstructionRelief,
+    DemutualisationOfInsuranceCompany,
+    DemutualisationOfBuildingSociety,
+    IncorporationOfLimitedLiabilityPartnership,
+    TransfersInvolvingPublicBodies,
+    TransferInConsequenceOfReorganisationOfParliamentaryConstituencies,
+    CharitiesTaxReliefs,
+    AcquisitionByBodiesEstablishedForNationalPurposes,
+    RegisteredSocialLandlords,
+    AlternativePropertyFinance,
+    CroftingCommunityRightToBuy,
+    DiplomaticPrivileges,
+    OtherTaxReliefs,
+    CombinationOfReliefs,
+    AlternativeFinanceInvestmentBondsRelief,
+    SeedingRelief
+  )
+
   val selfAssessedCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[SelfAssessed])
 
   val FREEHOLD_ACQUISITION_RATE_FRACTION = 5
