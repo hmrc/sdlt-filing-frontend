@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.purchaserAgent.AddContactDetailsForPurchaserAgentFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage}
+import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.purchaserAgent.AddContactDetailsForPurchaserAgentView
@@ -78,7 +78,7 @@ class AddContactDetailsForPurchaserAgentController @Inject()(
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
                 if (value) {
-                  Redirect(navigator.nextPage(PurchaserAgentsContactDetailsPage, mode, updatedAnswers))
+                  Redirect(navigator.nextPage(AddContactDetailsForPurchaserAgentPage, mode, updatedAnswers))
                 } else {
                   Redirect(controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode))
                 }
