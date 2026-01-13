@@ -2401,35 +2401,12 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
     }
 
     "return empty tax response for self assessment " in new PredefinedNPVSetup(50126) {
-      private val calcDetails: Seq[CalculationDetails] = Seq(
-        CalculationDetails(
-          taxType = TaxTypes.premium,
-          calcType = CalcTypes.slab,
-          taxDue = 0,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          rate = Some(0),
-          slices = None
-        ),
-        CalculationDetails(
-          taxType = TaxTypes.rent,
-          calcType = CalcTypes.slab,
-          taxDue = 0,
-          detailHeading = None,
-          bandHeading = None,
-          detailFooter = None,
-          rate = Some(0),
-          slices = None
-        )
-      )
-
       val expectedRes: Result = Result(
         totalTax = 0,
         resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
         resultHint = None,
-        npv = Some(0),
-        taxCalcs = calcDetails
+        npv = None,
+        taxCalcs = Seq.empty
       )
       val res: Result = service.leaseholdSelfAssessed
       res shouldBe expectedRes
