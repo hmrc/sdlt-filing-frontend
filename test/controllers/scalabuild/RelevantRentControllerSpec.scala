@@ -7,13 +7,15 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.RelevantRentFormProvider
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.RelevantRentView
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class RelevantRentControllerSpec extends ScalaSpecBase {
+class RelevantRentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/relevant-rent")
   val formProvider = new RelevantRentFormProvider()
   val form          = formProvider()

@@ -8,12 +8,14 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import play.api.mvc.Call
 import forms.scalabuild.NonUkResidentFormProvider
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.NonUkResidentView
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class NonUkResidentControllerSpec extends ScalaSpecBase {
+class NonUkResidentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/purchaser")
   val formProvider = new NonUkResidentFormProvider()
   val form          = formProvider()

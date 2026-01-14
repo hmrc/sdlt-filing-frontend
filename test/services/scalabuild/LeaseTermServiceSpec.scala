@@ -7,10 +7,12 @@ package services.scalabuild
 
 import base.ScalaSpecBase
 import models.LeaseTerm
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 import java.time.LocalDate
 
-class LeaseTermServiceSpec extends ScalaSpecBase {
+class LeaseTermServiceSpec extends AnyFreeSpec with ScalaSpecBase {
   val leaseTermService = new LeaseTermService
   val testCases = Seq(
     // TestCase(#, effectiveDate, leaseStart, leaseEnd, expectedYears, expectedDays, expectedDaysInPartialYear, notes)

@@ -7,13 +7,15 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.{ContractPost201603FormProvider, ExchangeContractsFormProvider}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import views.html.scalabuild.ExchangeContractsPreAndPostView
 
-class ExchangeContractsPreAndPostControllerSpec extends ScalaSpecBase {
+class ExchangeContractsPreAndPostControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/exchange-contracts-double")
   val exchangeFormProvider = new ExchangeContractsFormProvider()
   val contractPostFormProvider = new ContractPost201603FormProvider()

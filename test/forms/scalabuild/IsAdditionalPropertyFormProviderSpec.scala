@@ -4,10 +4,13 @@
  */
 
 package forms.scalabuild
-import base.ScalaSpecBase
-import play.api.data.{Form, FormError}
 
-class IsAdditionalPropertyFormProviderSpec extends ScalaSpecBase {
+import base.ScalaSpecBase
+import org.scalatest.freespec.AnyFreeSpec
+import play.api.data.{Form, FormError}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
+class IsAdditionalPropertyFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
   val form:Form[Boolean] = new IsAdditionalPropertyFormProvider().apply()
 
   "bind true" in {

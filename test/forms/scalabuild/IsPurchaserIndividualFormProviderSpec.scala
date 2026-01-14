@@ -4,10 +4,13 @@
  */
 
 package forms.scalabuild
-import base.ScalaSpecBase
-import play.api.data.{Form, FormError}
 
-class IsPurchaserIndividualFormProviderSpec extends ScalaSpecBase {
+import base.ScalaSpecBase
+import org.scalatest.freespec.AnyFreeSpec
+import play.api.data.{Form, FormError}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
+class IsPurchaserIndividualFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
   val form:Form[Boolean] = new IsPurchaserIndividualFormProvider().apply()
 
   "bind true" in {

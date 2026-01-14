@@ -5,12 +5,14 @@
 
 package controllers.scalabuild
 import base.ScalaSpecBase
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.StartGuidanceView
 import play.api.mvc.request.RequestAttrKey
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class StartGuidanceControllerSpec extends ScalaSpecBase {
+class StartGuidanceControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
 "Start Controller" - {
 

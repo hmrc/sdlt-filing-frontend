@@ -5,12 +5,13 @@
 
 package forms.scalabuild
 import base.ScalaSpecBase
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.FormError
 
 import java.time.LocalDate
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-
-class EffectiveDateFormProviderSpec extends ScalaSpecBase {
+class EffectiveDateFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
 
   val form = new EffectiveDateFormProvider()()
 

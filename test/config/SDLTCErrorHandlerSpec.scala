@@ -5,10 +5,10 @@
 
 package config
 
+import base.ScalaSpecBase
 import org.jsoup.Jsoup
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.Application
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Content
@@ -17,11 +17,11 @@ import views.html.error_template
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext}
 
-class SDLTCErrorHandlerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+class SDLTCErrorHandlerSpec extends AnyWordSpec with ScalaSpecBase with Injecting {
 
-
-  implicit val mcc: MessagesControllerComponents = fakeApplication().injector.instanceOf[MessagesControllerComponents]
-  implicit val appConfig: FrontendAppConfig = fakeApplication().injector.instanceOf[FrontendAppConfig]
+  val app: Application = application()
+  implicit val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
+  implicit val appConf: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   def contentAsString(of: Content): String = of.body
 
@@ -31,7 +31,7 @@ class SDLTCErrorHandlerSpec extends PlaySpec with GuiceOneAppPerSuite with Injec
       implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
       val errorTemplate: error_template = inject[error_template]
       val ec = inject[ExecutionContext]
-      val errorHandler = new SDLTCErrorHandler(mcc.messagesApi, errorTemplate, appConfig, ec)
+      val errorHandler = new SDLTCErrorHandler(mcc.messagesApi, errorTemplate, appConf, ec)
       val futureResult = errorHandler.internalServerErrorTemplate
       val htmlContent = Await.result(futureResult, 5.seconds)
       val document = Jsoup.parse(contentAsString(htmlContent))

@@ -8,13 +8,15 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.MarketValueFormProvider
 import models.scalabuild.MarketValueChoice.PayUpfront
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.MarketValueView
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class MarketValueControllerSpec extends ScalaSpecBase {
+class MarketValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/market-value")
   val formProvider = new MarketValueFormProvider(appConfig)

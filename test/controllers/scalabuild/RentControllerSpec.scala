@@ -8,17 +8,17 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.RentFormProvider
 import models.scalabuild.{LeaseContext, LeaseContextBuilder}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.data.FormBinding
+import play.api.inject.bind
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.RentView
-import play.api.data.FormBinding
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import play.api.inject.bind
 
-class RentControllerSpec extends ScalaSpecBase with MockitoSugar {
+class RentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   lazy val rentRoute = controllers.scalabuild.routes.RentController.onPageLoad().url
 
   "RentController" - {

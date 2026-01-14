@@ -7,17 +7,18 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.OwnsOtherPropertiesFormProvider
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.OwnsOtherPropertiesView
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-
-class OwnsOtherPropertiesControllerSpec extends ScalaSpecBase {
+class OwnsOtherPropertiesControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/owned-other-properties")
   val formProvider = new OwnsOtherPropertiesFormProvider()
-  val form          = formProvider()
+  val form = formProvider()
   lazy val ownsOtherPropertiesRoute = controllers.scalabuild.routes.OwnsOtherPropertiesController.onPageLoad().url
 
   "OwnsOtherProperty Controller" - {
@@ -29,7 +30,7 @@ class OwnsOtherPropertiesControllerSpec extends ScalaSpecBase {
         val result = route(application, request).value
         val view = application.injector.instanceOf[OwnsOtherPropertiesView]
 
-        status(result)          mustEqual OK
+        status(result) mustEqual OK
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
       }
     }
@@ -41,11 +42,12 @@ class OwnsOtherPropertiesControllerSpec extends ScalaSpecBase {
       running(application) {
         val request =
           FakeRequest(POST, ownsOtherPropertiesRoute)
-            .withFormUrlEncodedBody(("ownedOtherProperties", "true")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+            .withFormUrlEncodedBody(("ownedOtherProperties", "true"))
+            .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value
 
-        status(result)                 mustEqual SEE_OTHER
+        status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -57,7 +59,8 @@ class OwnsOtherPropertiesControllerSpec extends ScalaSpecBase {
       running(application) {
         val request =
           FakeRequest(POST, ownsOtherPropertiesRoute)
-            .withFormUrlEncodedBody(("ownedOtherProperties", "")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+            .withFormUrlEncodedBody(("ownedOtherProperties", ""))
+            .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val boundForm = form.bind(Map("ownedOtherProperties" -> ""))
 
@@ -65,7 +68,7 @@ class OwnsOtherPropertiesControllerSpec extends ScalaSpecBase {
 
         val result = route(application, request).value
 
-        status(result)          mustEqual BAD_REQUEST
+        status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
       }
     }

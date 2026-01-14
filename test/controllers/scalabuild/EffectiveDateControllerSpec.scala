@@ -7,6 +7,8 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.EffectiveDateFormProvider
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.request.RequestAttrKey
@@ -17,7 +19,7 @@ import views.html.scalabuild.EffectiveDateView
 
 import java.time.LocalDate
 
-class EffectiveDateControllerSpec extends ScalaSpecBase with MockitoSugar {
+class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with MockitoSugar {
 
   def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/non-uk-resident")
 

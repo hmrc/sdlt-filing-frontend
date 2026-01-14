@@ -5,28 +5,27 @@
 
 package controllers
 
-import org.apache.pekko.stream.Materializer
+import base.{BaseSpec, ScalaSpecBase}
+import enums.sdltRebuild._
 import enums.{CalcTypes, TaxTypes}
 import models.{CalculationDetails, CalculationResponse, Result}
+import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.any
+import org.scalacheck.Gen
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import org.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import play.api.Application
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import services.CalculationService
-import base.BaseSpec
-import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, FreeportsTaxSiteRelief, GroupRelief, IncorporationOfLimitedLiabilityPartnership, InvestmentZonesTaxSiteRelief, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
-import org.scalacheck.Gen
-import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
 
-class CalculationControllerSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerSuite {
+class CalculationControllerSpec extends BaseSpec with ScalaSpecBase {
 
-  val mockComponents: MessagesControllerComponents = fakeApplication().injector.instanceOf[MessagesControllerComponents]
+  val app: Application = application()
+  val mockComponents: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
   val mockCalculationService: CalculationService = mock[CalculationService]
   val testCalculationController = new CalculationController(mockCalculationService, mockComponents)
   val materializer: Materializer = app.materializer

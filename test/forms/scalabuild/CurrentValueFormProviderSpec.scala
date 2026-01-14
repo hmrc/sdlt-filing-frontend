@@ -7,9 +7,11 @@ package forms.scalabuild
 
 import base.ScalaSpecBase
 import models.scalabuild.CurrentValue
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.FormError
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class CurrentValueFormProviderSpec extends ScalaSpecBase {
+class CurrentValueFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
 
   val form = new CurrentValueFormProvider().apply()
 

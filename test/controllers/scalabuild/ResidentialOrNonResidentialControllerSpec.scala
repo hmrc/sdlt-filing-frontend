@@ -10,13 +10,15 @@ import play.api.mvc.Call
 import forms.scalabuild.ResidentialOrNonResidentialFormProvider
 import models.scalabuild.PropertyType
 import models.scalabuild.PropertyType.Residential
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.Form
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.ResidentialOrNonResidentialView
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class ResidentialOrNonResidentialControllerSpec extends ScalaSpecBase {
+class ResidentialOrNonResidentialControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/date")
   val formProvider = new ResidentialOrNonResidentialFormProvider()
   val form: Form[PropertyType] = formProvider()

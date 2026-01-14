@@ -4,16 +4,19 @@
  */
 
 package controllers.scalabuild
+
 import base.ScalaSpecBase
 import forms.scalabuild.MainResidenceFormProvider
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.Form
 import views.html.scalabuild.MainResidenceView
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.mvc.Call
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-  class MainResidenceControllerSpec extends ScalaSpecBase {
+  class MainResidenceControllerSpec extends AnyFreeSpec with ScalaSpecBase {
     def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/main-residence")
     val formProvider = new MainResidenceFormProvider()
     val form: Form[Boolean] = formProvider()

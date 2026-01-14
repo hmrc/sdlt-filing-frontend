@@ -7,15 +7,17 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.LeaseDatesFormProvider
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.LeaseDatesView
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 import java.time.LocalDate
 
-class LeaseDatesControllerSpec extends ScalaSpecBase {
+class LeaseDatesControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/lease-dates")
 

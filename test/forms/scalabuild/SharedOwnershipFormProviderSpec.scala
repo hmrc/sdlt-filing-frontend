@@ -6,9 +6,11 @@
 package forms.scalabuild
 
 import base.ScalaSpecBase
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.FormError
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class SharedOwnershipFormProviderSpec extends ScalaSpecBase {
+class SharedOwnershipFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
   val form = new SharedOwnershipFormProvider().apply()
 
   "bind true" in {

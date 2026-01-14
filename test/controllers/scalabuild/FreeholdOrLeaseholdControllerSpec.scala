@@ -7,7 +7,8 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.FreeholdOrLeaseholdFormProvider
 import models.scalabuild.HoldingTypes
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
@@ -15,7 +16,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.FreeholdOrLeaseholdView
 
-class FreeholdOrLeaseholdControllerSpec extends ScalaSpecBase with MockitoSugar {
+class FreeholdOrLeaseholdControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
   def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/property")
 

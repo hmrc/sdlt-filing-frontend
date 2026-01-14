@@ -6,9 +6,11 @@
 package forms.scalabuild
 
 import base.ScalaSpecBase
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.FormError
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class NonUkResidentFormProviderSpec extends ScalaSpecBase {
+class NonUkResidentFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
   val form = new NonUkResidentFormProvider().apply()
 
   "bind true" in {

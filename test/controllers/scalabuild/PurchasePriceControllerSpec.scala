@@ -7,13 +7,15 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.PurchasePriceFormProvider
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.mvc.Call
 import views.html.scalabuild.PurchasePriceView
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class PurchasePriceControllerSpec extends ScalaSpecBase {
+class PurchasePriceControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/purchase-price")
   val formProvider = new PurchasePriceFormProvider()
   val form          = formProvider()

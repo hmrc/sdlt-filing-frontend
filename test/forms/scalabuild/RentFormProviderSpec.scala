@@ -7,9 +7,11 @@ package forms.scalabuild
 
 import base.ScalaSpecBase
 import models.scalabuild.RentPeriods
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.{Form, FormError}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class RentFormProviderSpec extends ScalaSpecBase {
+class RentFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
   val count = 3
   val form: Form[RentPeriods] = new RentFormProvider().apply(count)
   "RentFormProvider" - {

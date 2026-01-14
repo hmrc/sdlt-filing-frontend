@@ -7,11 +7,13 @@ package forms.scalabuild
 
 import base.ScalaSpecBase
 import models.scalabuild.LeaseDates
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.FormError
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 import java.time.LocalDate
 
-class LeaseDatesFormProviderSpec extends ScalaSpecBase {
+class LeaseDatesFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
 
   val effectiveDate: LocalDate = LocalDate.of(2022, 2, 1)
   val form = new LeaseDatesFormProvider()(effectiveDate)

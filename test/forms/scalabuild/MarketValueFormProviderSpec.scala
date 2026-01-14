@@ -8,9 +8,11 @@ package forms.scalabuild
 import base.ScalaSpecBase
 import models.scalabuild.MarketValueChoice.{PayInStages, PayUpfront}
 import models.scalabuild.MarketValue
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.{Form, FormError}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class MarketValueFormProviderSpec extends ScalaSpecBase {
+class MarketValueFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
 
   val highLimit = BigDecimal(appConfig.highValue)
   val lowLimit = BigDecimal(appConfig.lowValue)

@@ -7,13 +7,15 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.SharedOwnershipFormProvider
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.SharedOwnershipView
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class SharedOwnershipControllerSpec extends ScalaSpecBase {
+class SharedOwnershipControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/shared-ownership")
   val formProvider = new SharedOwnershipFormProvider()

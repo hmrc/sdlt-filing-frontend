@@ -9,6 +9,8 @@ import base.ScalaSpecBase
 import play.api.mvc.Call
 import forms.scalabuild.CurrentValueFormProvider
 import models.scalabuild.CurrentValue.AtOrBelowThreshold
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
 import play.api.mvc.request.RequestAttrKey
@@ -16,7 +18,7 @@ import views.html.scalabuild.CurrentValueView
 
 import java.time.LocalDate
 
-class CurrentValueControllerSpec extends ScalaSpecBase {
+class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/current-value")
   val formProvider = new CurrentValueFormProvider()
@@ -33,7 +35,7 @@ class CurrentValueControllerSpec extends ScalaSpecBase {
         val result = route(application, request).value
         val view = application.injector.instanceOf[CurrentValueView]
 
-        status(result)          mustEqual OK
+        status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, lowerFtbLimit)(request, messages(application)).toString
       }
     }

@@ -6,6 +6,8 @@
 package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.IsAdditionalPropertyFormProvider
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import views.html.scalabuild.IsAdditionalPropertyView
 import play.api.mvc.request.RequestAttrKey
@@ -13,7 +15,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.mvc.Call
 
-class IsAdditionalPropertyControllerSpec extends ScalaSpecBase {
+class IsAdditionalPropertyControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/replace-main-residence")
   val formProvider = new IsAdditionalPropertyFormProvider()
   val form: Form[Boolean] = formProvider()

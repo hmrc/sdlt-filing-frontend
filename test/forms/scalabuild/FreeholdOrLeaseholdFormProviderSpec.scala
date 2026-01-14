@@ -7,9 +7,11 @@ package forms.scalabuild
 
 import base.ScalaSpecBase
 import models.scalabuild.HoldingTypes.{freehold, leasehold}
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.FormError
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class FreeholdOrLeaseholdFormProviderSpec extends ScalaSpecBase {
+class FreeholdOrLeaseholdFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
 
   val form = new FreeholdOrLeaseholdFormProvider().apply()
 

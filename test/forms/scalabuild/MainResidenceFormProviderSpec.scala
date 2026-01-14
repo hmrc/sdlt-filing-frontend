@@ -4,11 +4,14 @@
  */
 
 package forms.scalabuild
+
 import base.ScalaSpecBase
+import org.scalatest.freespec.AnyFreeSpec
 import play.api.data.{Form, FormError}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 
-class MainResidenceFormProviderSpec extends ScalaSpecBase {
+class MainResidenceFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
   val form:Form[Boolean] = new MainResidenceFormProvider().apply()
 
   "bind true" in {

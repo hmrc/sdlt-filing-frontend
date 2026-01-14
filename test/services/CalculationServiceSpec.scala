@@ -22,13 +22,11 @@ import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
 import java.time.LocalDate
 
-class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneAppPerSuite
-  with BeforeAndAfterEach with RequestGenerators {
+class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach with RequestGenerators {
 
   val april2021EffectiveDate: LocalDate = LocalDate.of(2021, 4, 1)
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)

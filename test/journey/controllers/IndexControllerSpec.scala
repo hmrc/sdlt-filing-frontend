@@ -13,14 +13,18 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.Status._
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
-import base.BaseSpec
+import base.{BaseSpec, ScalaSpecBase}
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.Application
+import play.api.test.Helpers.{defaultAwaitTimeout, status}
 
 import scala.concurrent.Future
 
-class IndexControllerSpec extends BaseSpec with MockitoSugar with GuiceOneServerPerSuite {
+class IndexControllerSpec extends AnyWordSpec with ScalaSpecBase {
 
   class Setup {
-    val mockComponents: MessagesControllerComponents = fakeApplication().injector.instanceOf[MessagesControllerComponents]
+    val app: Application = application()
+    val mockComponents: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
     val injectedViewInstance: index = app.injector.instanceOf[journey.views.html.index]
     implicit val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
