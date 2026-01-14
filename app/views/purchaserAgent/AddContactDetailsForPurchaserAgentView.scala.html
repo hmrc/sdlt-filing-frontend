@@ -33,7 +33,7 @@ caption: Caption
 @formHelper(action = controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
 @if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+@govukErrorSummary(ErrorSummaryViewModel(form))
 }
 
 @caption(messages("site.purchaserAgent.caption"))
@@ -59,7 +59,7 @@ content = HtmlContent(messages("agent.addVendorAgentContactDetails.hint.radio", 
 ))
 
 @govukButton(
-ButtonViewModel(messages("site.continue"))
+ButtonViewModel(messages("site.save.continue"))
 )
 }
 }

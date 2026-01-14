@@ -33,7 +33,7 @@ object AddContactDetailsForPurchaserAgentSummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"purchaserAgent.ddContactDetailsForPurchaserAgent.$answer"))
+            HtmlFormat.escape(messages(s"purchaserAgent.addContactDetailsForPurchaserAgent.$answer"))
           )
         )
 
