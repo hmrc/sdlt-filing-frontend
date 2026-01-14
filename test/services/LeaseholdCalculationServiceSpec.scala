@@ -6,11 +6,12 @@
 package services
 
 import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
-
+import enums.sdltRebuild.AcquisitionRelief
 import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import fixtures.{LeaseholdRequestFeature, LeaseholdResultFixture}
+import models.sdltRebuild.TaxReliefDetails
 import models.{CalculationDetails, Result, _}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
@@ -2451,4 +2452,67 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
       actual shouldBe expectedRes
     }
   }
+  "calculating leaseehold~ Acquisition Relief code 14" must {
+    "return tax response for AcquisitionRelief: residential and not linked" in new Setup {
+
+      val AcquisitionReliefTestRequest = Request(
+        HoldingTypes.leasehold,
+        PropertyTypes.residential,
+        LocalDate.of(2012, 3, 23),
+        nonUKResident = None,
+        premium = 1000000,
+        highestRent = BigDecimal(0),
+        propertyDetails = None,
+        leaseDetails = Some(LeaseDetails(
+          startDate = LocalDate.of(2012, 3, 23),
+          endDate = LocalDate.of(2013, 3, 23),
+          leaseTerm = LeaseTerm(
+            years = 1,
+            days = 1,
+            daysInPartialYear = 365
+          ),
+          year1Rent = 999,
+          year2Rent = Some(999),
+          None,
+          None,
+          None
+        )),
+        relevantRentDetails = None,
+        firstTimeBuyer = None,
+        taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
+      )
+
+      val calcDetails = Seq(CalculationDetails(
+        taxType = TaxTypes.premium,
+        calcType = CalcTypes.slab,
+        taxDue = 5000,
+        detailHeading = None,
+        bandHeading = None,
+        detailFooter = None,
+        rate = Some(0),
+        rateFraction = Some(5),
+        slices = None
+      ), CalculationDetails(
+        taxType = TaxTypes.rent,
+        calcType = CalcTypes.slab,
+        taxDue = 9,
+        detailHeading = None,
+        bandHeading = None,
+        detailFooter = None,
+        rate = Some(0),
+        rateFraction = Some(5),
+        slices = None
+      ))
+
+      val expectedRes = Result(
+        totalTax = 5009,
+        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+        resultHint = None,
+        npv = Some(1897),
+        taxCalcs = calcDetails
+      )
+      service.leaseholdAcquisitionTaxRelief(AcquisitionReliefTestRequest) shouldBe expectedRes
+    }
+  }
+
 }

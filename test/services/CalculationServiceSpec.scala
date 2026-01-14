@@ -1679,6 +1679,44 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessed
       }
+
+      "given relief code AcquisitionRelief(14)" in {
+        val AcquisitionReliefTestRequest = Request(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2012, 3, 23),
+          nonUKResident = None,
+          premium = 1000000,
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = Some(LeaseDetails(
+            startDate = LocalDate.of(2012, 3, 23),
+            endDate = LocalDate.of(2013, 3, 23),
+            leaseTerm = LeaseTerm(
+              years = 1,
+              days = 1,
+              daysInPartialYear = 365
+            ),
+            year1Rent = 999,
+            year2Rent = Some(999),
+            None,
+            None,
+            None
+          )),
+          relevantRentDetails = None,
+          firstTimeBuyer = None,
+          taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
+        )
+
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockLeaseholdCalculationService.leaseholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)).thenReturn(result)
+
+        testCalculationService.calculateTax(AcquisitionReliefTestRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)
+      }
+
     }
     "select freeHold / residential property with tax relief code" when {
       "given relief code RightToBuy and linked = true and additional property rates apply (self-assessed path)" in {

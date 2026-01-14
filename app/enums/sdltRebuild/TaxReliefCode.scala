@@ -111,7 +111,7 @@ object TaxReliefCode {
 
   val selfAssessedCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[SelfAssessed])
 
-  val FREEHOLD_ACQUISITION_RATE_FRACTION = 5
+  val ACQUISITION_RATE_FRACTION = 5
 
   implicit val reads: Reads[TaxReliefCode] =
     Reads {

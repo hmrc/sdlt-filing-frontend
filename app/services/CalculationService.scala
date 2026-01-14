@@ -386,7 +386,9 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         ))
       case (HoldingTypes.freehold, PreCompletionTransaction, false) if
         request.effectiveDate.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) &&
-          (request.propertyDetails.isEmpty || request.propertyDetails.exists(_.twoOrMoreProperties.contains(false))) =>
+          (request.propertyDetails.isEmpty ||
+          request.propertyDetails.exists(_.twoOrMoreProperties.contains(false)) ||
+          request.propertyDetails.exists(_.individual == false)) =>
         CalculationResponse(Seq(
           freeCalculationService.zeroRateTaxReliefForFreehold
         ))
@@ -410,6 +412,10 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
         ))
+      case (HoldingTypes.leasehold, AcquisitionRelief, false) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdAcquisitionTaxRelief(request)
+        ))
       case(HoldingTypes.leasehold, PreCompletionTransaction, false) if
         request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) &&
           request.propertyType.equals(PropertyTypes.residential) &&
@@ -421,7 +427,9 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         ))
       case (HoldingTypes.leasehold, PreCompletionTransaction, false) if
         request.effectiveDate.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) &&
-          (request.propertyDetails.isEmpty || request.propertyDetails.exists(_.twoOrMoreProperties.contains(false))) =>
+          (request.propertyDetails.isEmpty ||
+            request.propertyDetails.exists(_.twoOrMoreProperties.contains(false)) ||
+            request.propertyDetails.exists(_.individual == false)) =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
         ))
