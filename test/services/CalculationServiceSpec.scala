@@ -13,7 +13,7 @@ package services
 import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
 import enums.sdltRebuild._
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
-import exceptions.InvalidDateException
+import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import generators.RequestGenerators
 import models._
 import models.sdltRebuild.TaxReliefDetails
@@ -1016,7 +1016,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
         val testRequest = createRequestWithTaxRelief(
           HoldingTypes.leasehold,
           PropertyTypes.residential,
-          LocalDate.of(2012,6,1),
+          LocalDate.of(2016,3,31),
           twoOrMoreProperties = Some(true),
           replaceMainResidence = Some(true),
           zeroTaxRelief = PreCompletionTransaction,
@@ -1491,6 +1491,39 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
       }
     }
 
+    "select freehold / mixed property with tax relief code" when {
+      "given a request with relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.mixed,
+          LocalDate.of(2013, 4, 6),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockFreeholdCalculationService.zeroRateTaxReliefForFreehold).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).zeroRateTaxReliefForFreehold
+      }
+
+      "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: throws an exception" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.mixed,
+          LocalDate.of(2013, 4, 5),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+
+        the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message "Value not defined"
+      }
+    }
+
     "select leasehold / residential property with tax relief code" when {
       "given relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
         val testRequest = createRequestWithTaxRelief(
@@ -1568,6 +1601,41 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with GuiceOneApp
 
         verify(mockLeaseholdCalculationService, never)
           .leaseholdZeroRateTaxReliefRes(any())
+      }
+    }
+
+    "select leasehold / mixed property with tax relief code" when {
+      "given relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.mixed,
+          LocalDate.of(2013, 4, 6),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockLeaseholdCalculationService.leaseholdZeroRateTaxReliefRes(testRequest.leaseDetails)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe
+          CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1))
+          .leaseholdZeroRateTaxReliefRes(any())
+      }
+
+      "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: falls back to normal calculation" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.mixed,
+          LocalDate.of(2013, 4, 5),
+          zeroTaxRelief = PreCompletionTransaction,
+          isPartialRelief = Some(false),
+          isLinked = false
+        )
+
+        the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message "Value not defined"
       }
     }
 

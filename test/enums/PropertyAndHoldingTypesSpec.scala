@@ -35,6 +35,9 @@ class PropertyAndHoldingTypesSpec extends PlaySpec {
     "read 'Non-residential' to Json" in {
       Json.fromJson[PropertyTypes.Value](JsString("Non-residential")) shouldBe JsSuccess(PropertyTypes.nonResidential)
     }
+    "read 'Mixed' to Json" in {
+      Json.fromJson[PropertyTypes.Value](JsString("Mixed")) shouldBe JsSuccess(PropertyTypes.mixed)
+    }
 
     "fail to read 'ressssssssidential' to Json" in {
       Json.fromJson[PropertyTypes.Value](JsString("ressssssssidential")) shouldBe JsError(Seq(JsPath() -> Seq(JsonValidationError("invalid property type"))))
