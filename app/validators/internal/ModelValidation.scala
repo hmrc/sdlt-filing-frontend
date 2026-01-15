@@ -86,6 +86,7 @@ object ModelValidation extends DateUtil{
   private def validEffectiveDate(request: Request): ValidationResult = {
     request.propertyType match {
       case PropertyTypes.nonResidential => ValidationSuccess
+      case PropertyTypes.mixed => ValidationSuccess
       case PropertyTypes.residential =>
         if(request.effectiveDate.isBefore(MIN_RESIDENTIAL_DATE)) {
           ValidationFailure(s"Effective date of '${request.effectiveDate}' is before 22 March, 2012")
@@ -116,6 +117,7 @@ object ModelValidation extends DateUtil{
   private def validPropertyDetails(request: Request): ValidationResult = {
     request.propertyType match {
       case PropertyTypes.nonResidential => ValidationSuccess
+      case PropertyTypes.mixed => ValidationSuccess
       case PropertyTypes.residential =>
         if(request.effectiveDate.isAfter(END_OF_MARCH_2016)) {
           val propDetailsValidationResult = if(request.holdingType.equals(HoldingTypes.freehold)){
@@ -187,6 +189,7 @@ object ModelValidation extends DateUtil{
       case HoldingTypes.freehold => ValidationSuccess
       case HoldingTypes.leasehold => request.propertyType match {
         case PropertyTypes.residential => ValidationSuccess
+        case PropertyTypes.mixed => ValidationSuccess
         case PropertyTypes.nonResidential =>
           if(request.premium >= RELEVANT_RENT_PREMIUM_THRESHOLD)
             ValidationSuccess

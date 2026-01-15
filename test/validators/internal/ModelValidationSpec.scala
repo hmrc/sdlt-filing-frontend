@@ -1013,6 +1013,23 @@ class ModelValidationSpec extends PlaySpec {
           validRelevantRentDetails(request) shouldBe ValidationSuccess
         }
 
+        "property type is mixed" in {
+          val request = Request(
+            holdingType = HoldingTypes.leasehold,
+            propertyType = PropertyTypes.mixed,
+            effectiveDate = LocalDate.of(2017, 1, 31),
+            nonUKResident = None,
+            premium = 140000,
+            highestRent = 1000,
+            propertyDetails = None,
+            leaseDetails = Some(validLeaseDetails(800)),
+            relevantRentDetails = None,
+            taxReliefDetails = None,
+            firstTimeBuyer = None
+          )
+          validRelevantRentDetails(request) shouldBe ValidationSuccess
+        }
+
         "premium is >=£150000" in {
           val request = Request(
             holdingType = HoldingTypes.leasehold,
@@ -1472,6 +1489,23 @@ class ModelValidationSpec extends PlaySpec {
             relevantRentDetails = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
+          )
+
+          listValidationErrors(model) shouldBe Seq.empty
+        }
+        "property type is mixed" in {
+          val model = Request(
+            holdingType = HoldingTypes.leasehold,
+            propertyType = PropertyTypes.mixed,
+            effectiveDate = LocalDate.of(2014, 3, 20),
+            nonUKResident = None,
+            premium = 500000,
+            highestRent = 0,
+            propertyDetails = None,
+            leaseDetails = Some(validTestLeaseDetails),
+            relevantRentDetails = None,
+            taxReliefDetails = None,
+            firstTimeBuyer = None
           )
 
           listValidationErrors(model) shouldBe Seq.empty
