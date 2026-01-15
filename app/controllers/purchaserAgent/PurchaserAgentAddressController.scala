@@ -87,8 +87,7 @@ class PurchaserAgentAddressController @Inject()(
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, PurchaserAgentAddressPage)
       } yield if(updated) {
-        // TODO: change this when we have the next page (DTR-1820 pa-2a)
-        Redirect(controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode))
+        Redirect(controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(NormalMode))
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }

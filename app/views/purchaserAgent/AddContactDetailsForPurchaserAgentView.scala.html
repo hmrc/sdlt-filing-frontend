@@ -1,5 +1,5 @@
 @*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  *@
 
 @import viewmodels.LegendSize.Large
-@import models.purchaser.IsPurchaserActingAsTrustee
 @import views.html.components.Caption
 
 @this(
@@ -27,25 +26,37 @@ govukButton: GovukButton,
 caption: Caption
 )
 
-@(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaser.isPurchaserActingAsTrustee.title"))) {
+@layout(pageTitle = title(form, messages("purchaserAgent.addContactDetailsForPurchaserAgent.title"), section = Some(messages("site.purchaserAgent.caption"))) ) {
 
-@formHelper(action = controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+@formHelper(action = controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
 @if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+@govukErrorSummary(ErrorSummaryViewModel(form))
 }
 
-@caption(messages("addContactDetailsForPurchaserAgent.caption"))
+@caption(messages("site.purchaserAgent.caption"))
 
 @govukRadios(
 RadiosViewModel(
 field  = form("value"),
-legend = LegendViewModel(messages("purchaser.isPurchaserActingAsTrustee.heading", purchaserName)).asPageHeading(size = Large),
-items  = IsPurchaserActingAsTrustee.options
+legend = LegendViewModel(messages("purchaserAgent.addContactDetailsForPurchaserAgent.heading", agentName)).asPageHeading(size = Large),
+items = Seq(
+RadioItem(
+value = Some("true"),
+content = Text(messages("site.yes"))
+),
+RadioItem(
+value = Some("false"),
+content = Text(messages("site.no"))
 )
 )
+).withHint(
+HintViewModel(
+content = HtmlContent(messages("agent.addVendorAgentContactDetails.hint.radio", agentName))
+)
+))
 
 @govukButton(
 ButtonViewModel(messages("site.save.continue"))

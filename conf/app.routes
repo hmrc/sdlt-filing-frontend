@@ -228,6 +228,15 @@ GET         /about-the-purchasers-agent/agent-address-lookup                    
 GET         /about-the-purchasers-agent/agent-address-return                      controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
 GET         /about-the-purchasers-agent/agent-address-return/change               controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
 
+GET        /about-the-purchasers-agent/add-agent-contact-details                controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchasers-agent/add-agent-contact-details                controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchasers-agent/add-agent-contact-details/change         controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchasers-agent/add-agent-contact-details/change         controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchasers-agent/agent-address-lookup                   controllers.purchaserAgent.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-purchasers-agent/agent-address-return                   controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/agent-address-return/change            controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
+
 GET         /about-the-purchasers-agent/agent-name                                controllers.purchaserAgent.PurchaserAgentNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchasers-agent/agent-name                                controllers.purchaserAgent.PurchaserAgentNameController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-purchasers-agent/agent-name/change                         controllers.purchaserAgent.PurchaserAgentNameController.onPageLoad(mode: Mode = CheckMode)
