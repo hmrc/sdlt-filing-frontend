@@ -19,7 +19,7 @@ package generators
 import models.*
 import models.prelimQuestions.TransactionType
 import models.purchaser.{CompanyFormOfId, DoesPurchaserHaveNI, IsPurchaserActingAsTrustee, PurchaserAndVendorConnected, PurchaserConfirmIdentity, PurchaserTypeOfCompany, WhoIsMakingThePurchase}
-import models.purchaserAgent.PurchaserAgentsContactDetails
+import models.purchaserAgent.*
 import models.vendor.whoIsTheVendor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -41,6 +41,11 @@ trait ModelGenerators {
           Gen.const(PurchaserAgentsContactDetails(phone, email))
         }
       } yield valid
+    }
+
+  implicit lazy val arbitrarySelectPurchaserAgent: Arbitrary[SelectPurchaserAgent] =
+    Arbitrary {
+      Gen.oneOf(SelectPurchaserAgent.values.toSeq)
     }
 
   implicit lazy val arbitraryNoReturnReference: Arbitrary[NoReturnReference] =

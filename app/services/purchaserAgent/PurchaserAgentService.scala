@@ -16,27 +16,102 @@
 
 package services.purchaserAgent
 
-import models.{FullReturn, UserAnswers}
+import models.{FullReturn, Mode, NormalMode, UserAnswers}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import models.purchaserAgent.*
+import models.address.*
+import navigation.Navigator
+import pages.purchaserAgent.*
+import repositories.SessionRepository
 
+import scala.util.Try
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class PurchaserAgentService @Inject()() {
+class PurchaserAgentService @Inject(
+                                     sessionRepository: SessionRepository,
+                                     navigator: Navigator)(implicit ec: ExecutionContext) {
 
   def purchaserAgentExistsCheck(userAnswers: UserAnswers, continueRoute: Result): Result = {
-    
+
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
-        if(fullReturn.returnAgent.exists(_.exists(_.agentType.contains("PURCHASER")))) {
+        if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains("PURCHASER")))) {
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         } else {
           continueRoute
         }
       case _ => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
     }
-    
-    
   }
 
+  def populatePurchaserAgentInSession(agent: Agent, userAnswers: UserAnswers): Try[UserAnswers] = {
+
+    agent.agentId match {
+      case Some(agentId) =>
+
+        val purchaserAgentAddress = Address(
+          line1 = agent.address1,
+          line2 = agent.address2,
+          line3 = agent.address3,
+          line4 = agent.address4,
+          postcode = agent.postcode
+        )
+
+        val purchaserAgentsContactDetails = PurchaserAgentsContactDetails(
+          phoneNumber = agent.phone, emailAddress = agent.email
+        )
+
+        for {
+          withName <- userAnswers.set(PurchaserAgentNamePage, agent.name)
+          withAddress <- withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
+          finalAnswers <- withAddress.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
+        } yield finalAnswers
+
+      case _ =>
+        Try(throw new IllegalStateException(s"Purchaser ${agent.agentId} is missing"))
+    }
+  }
+
+  def clearPurchaserAgentAnswers(userAnswers: UserAnswers): Try[UserAnswers] = {
+    for {
+      clearedName <- userAnswers.remove(PurchaserAgentNamePage)
+      clearedAddress <- clearedName.remove(PurchaserAgentAddressPage)
+      clearedAnswers <- clearedAddress.remove(PurchaserAgentsContactDetailsPage)
+    } yield clearedAnswers
+  }
+
+  def agentSummaryList(agents: Seq[Agent]): Seq[(String, String, Option[String])] = {
+    agents.map(agent => (agent.name, agent.address3.getOrElse(""), agent.agentId))
+  }
+
+  def handleAgentSelection(
+                            value: String,
+                            agentList: Seq[Agent],
+                            userAnswers: UserAnswers,
+                            mode: Mode): Future[Result] = {
+    value match {
+      case value if value == SelectPurchaserAgent.AddNewAgent.toString =>
+        for {
+          clearedAnswers <- Future.fromTry(clearPurchaserAgentAnswers(userAnswers))
+          updatedAnswers <- Future.fromTry(clearedAnswers.set(SelectPurchaserAgentPage, value))
+          _ <- sessionRepository.set(updatedAnswers)
+        } yield Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode))
+
+      case agentId =>
+        agentList.find(_.agentId.contains(agentId)) match {
+          case None => Future.successful(
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          )
+
+          case Some(agent) =>
+            for {
+              answers <- Future.fromTry(userAnswers.set(SelectPurchaserAgentPage, agent.agentId.get))
+              updatedAnswers <- Future.fromTry(populatePurchaserAgentInSession(agent, answers))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(SelectPurchaserAgentPage, mode, updatedAnswers))
+        }
+    }
+  }
 }

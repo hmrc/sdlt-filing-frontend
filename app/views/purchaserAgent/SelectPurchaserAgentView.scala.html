@@ -1,0 +1,65 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.purchaserAgent.SelectPurchaserAgent
+@import views.html.components.Caption
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
+@import viewmodels.LegendSize.Large
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    h1: h1,
+    caption: Caption
+)
+
+@(form: Form[_], mode: Mode, purchaserName: String, agentList: Option[Seq[(String, String, Option[String])]])(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("purchaserAgent.selectPurchaserAgent.title"))) {
+
+    @formHelper(action = controllers.purchaserAgent.routes.SelectPurchaserAgentController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+        }
+
+        @caption(messages("site.purchaserAgent.caption"))
+
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("value"),
+                legend = LegendViewModel(messages("purchaserAgent.selectPurchaserAgent.heading", purchaserName)).asPageHeading(),
+                items  = agentList.getOrElse(Seq.empty).map { case (name, city, id) =>
+                  RadioItem(content = Text(s"$name, $city"), value = id)
+                } ++ Seq(
+                    RadioItem(divider = Some("or")),
+                    RadioItem(
+                        content = Text(messages("purchaserAgent.selectPurchaserAgent.addNewAgent")),
+                        value   = Some("addNewAgent")
+                    )
+                )
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
+    }
+}

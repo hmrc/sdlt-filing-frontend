@@ -161,4 +161,14 @@ class PurchaserService {
       }
     }
   }
+
+   def mainPurchaserName(userAnswers: UserAnswers): Option[NameOfPurchaser] =
+      for {
+        fullReturn <- userAnswers.fullReturn
+        purchasers <- fullReturn.purchaser
+        returnInfo <- fullReturn.returnInfo
+        mainId <- returnInfo.mainPurchaserID
+        purchaser <- purchasers.find(_.purchaserID.contains(mainId))
+        name <- createPurchaserName(purchaser)
+      } yield name
 }

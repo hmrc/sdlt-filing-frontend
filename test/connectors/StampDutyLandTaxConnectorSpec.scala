@@ -21,7 +21,9 @@ import config.FrontendAppConfig
 import constants.FullReturnConstants.*
 import models.*
 import models.prelimQuestions.PrelimReturn
+import models.purchaserAgent.SdltOrganisationResponse
 import models.vendor.*
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,6 +31,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 
+import java.net.URL
 import scala.concurrent.{ExecutionContext, Future}
 
 class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
@@ -2395,6 +2398,82 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         connector.createReturn(completePrelimReturn).futureValue
 
         verify(mockConfig, atLeastOnce()).stubBool
+      }
+    }
+
+    "getSdltOrganisation" - {
+
+      "must return SdltOrganisationResponse when request is successful" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val response = models.purchaserAgent.SdltOrganisationResponse(
+          storn = testStorn,
+          version = None,
+          agents = Nil
+        )
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.purchaserAgent.SdltOrganisationResponse]](any(), any()))
+          .thenReturn(Future.successful(Right(response)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        val result = connector.getSdltOrganisation(testStorn).futureValue
+
+        result mustBe response
+      }
+
+      "must handle Left response with UpstreamErrorResponse (500)" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+
+        val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Internal Server Error", 500)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.purchaserAgent.SdltOrganisationResponse]](any(), any()))
+          .thenReturn(Future.successful(Left(upstreamError)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+
+        whenReady(connector.getSdltOrganisation(testStorn).failed) { exception =>
+          exception mustBe upstreamError
+        }
+      }
+
+      "must use stub URL when stubBool is true" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val response = models.purchaserAgent.SdltOrganisationResponse(
+          storn = testStorn,
+          version = None,
+          agents = Nil
+        )
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(true)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, SdltOrganisationResponse]](any(), any()))
+          .thenReturn(Future.successful(Right(response)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        connector.getSdltOrganisation(testStorn).futureValue
+
+        val urlCaptor: ArgumentCaptor[URL] = ArgumentCaptor.forClass(classOf[URL])
+        verify(mockHttpClient).post(urlCaptor.capture())(any())
+
+        urlCaptor.getValue.toString must startWith(testStubUrl)
       }
     }
   }

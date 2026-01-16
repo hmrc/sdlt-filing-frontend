@@ -17,16 +17,31 @@
 package services.purchaserAgent
 
 import base.SpecBase
-import models.{FullReturn, ReturnAgent}
+import models.address.Address
+import models.purchaserAgent.{Agent, PurchaserAgentsContactDetails, SelectPurchaserAgent}
+import models.{FullReturn, NormalMode, ReturnAgent, UserAnswers}
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
+import repositories.SessionRepository
+import navigation.Navigator
+import org.mockito.ArgumentMatchers.{any, argThat}
+import org.mockito.Mockito.{verify, when}
+import pages.purchaserAgent.{PurchaserAgentAddressPage, PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage, SelectPurchaserAgentPage}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserAgentServiceSpec extends SpecBase {
 
-  private val service = new PurchaserAgentService()
+  private val mockSessionRepository = mock[SessionRepository]
+  private val mockNavigator = mock[Navigator]
+
+  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
+
+  private val service = new PurchaserAgentService(
+    sessionRepository = mockSessionRepository, navigator = mockNavigator
+  )
 
   private def emptyFullReturn: FullReturn = FullReturn(
     returnResourceRef = "REF123",
@@ -35,6 +50,38 @@ class PurchaserAgentServiceSpec extends SpecBase {
     purchaser = None,
     transaction = None,
     returnAgent = None
+  )
+
+  val testAgents: Seq[Agent] = Seq(Agent(
+    storn = "STN001",
+    agentId = Some("AGT001"),
+    name = "Joe Smith",
+    houseNumber = None,
+    address1 = "123 Street",
+    address2 = Some("Town"),
+    address3 = Some("City"),
+    address4 = Some("County"),
+    postcode = Some("AA1 1AA"),
+    phone = Some("0123456789"),
+    email = Some("test@example.com"),
+    dxAddress = Some("yes"),
+    agentResourceReference = "REF001"
+  ),
+    Agent(
+      storn = "STN001",
+      agentId = Some("AGT002"),
+      name = "Sarah Jones",
+      houseNumber = None,
+      address1 = "456 Street",
+      address2 = Some("Town"),
+      address3 = None,
+      address4 = Some("County"),
+      postcode = Some("AA2 2AA"),
+      phone = Some("0987654321"),
+      email = Some("sarah@example.com"),
+      dxAddress = Some("yes"),
+      agentResourceReference = "REF001"
+    )
   )
 
   val continueRoute: Result = Ok("Continue route")
@@ -209,6 +256,199 @@ class PurchaserAgentServiceSpec extends SpecBase {
           redirectLocation(Future.successful(result)) mustBe Some(
             controllers.routes.ReturnTaskListController.onPageLoad().url
           )
+        }
+      }
+    }
+
+    "populatePurchaserAgentInSession" - {
+
+      "must update user answers if agentId found" in {
+
+        val fullReturn = emptyFullReturn.copy(stornId = "STN001")
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+        val testAgent: Agent = Agent(
+          storn = "STN001",
+          agentId = Some("AGT001"),
+          name = "Joe Smith",
+          houseNumber = None,
+          address1 = "123 Street",
+          address2 = Some("Town"),
+          address3 = Some("City"),
+          address4 = Some("County"),
+          postcode = Some("AA1 1AA"),
+          phone = Some("0123456789"),
+          email = Some("test@example.com"),
+          dxAddress = Some("yes"),
+          agentResourceReference = "REF001")
+
+        val expectedAgentAddress = Address(
+          line1 = testAgent.address1,
+          line2 = testAgent.address2,
+          line3 = testAgent.address3,
+          line4 = testAgent.address4,
+          postcode = testAgent.postcode
+        )
+
+        val expectedContactDetails = PurchaserAgentsContactDetails(
+          phoneNumber = testAgent.phone, emailAddress = testAgent.email
+        )
+
+        val expectedUserAnswers = for {
+          withName <- userAnswers.set(PurchaserAgentNamePage, testAgent.name)
+          withAddress <- withName.set(PurchaserAgentAddressPage, expectedAgentAddress)
+          finalAnswers <- withAddress.set(PurchaserAgentsContactDetailsPage, expectedContactDetails)
+        } yield finalAnswers
+
+
+        val result = service.populatePurchaserAgentInSession(testAgent, userAnswers)
+        result mustBe expectedUserAnswers
+      }
+
+      "must throw IllegalStateException if agent not found" in {
+
+        val fullReturn = emptyFullReturn.copy(stornId = "STN001")
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+        val testAgent: Agent = Agent(
+          storn = "STN001",
+          agentId = None,
+          name = "Joe Smith",
+          houseNumber = None,
+          address1 = "123 Street",
+          address2 = Some("Town"),
+          address3 = Some("City"),
+          address4 = Some("County"),
+          postcode = Some("AA1 1AA"),
+          phone = Some("0123456789"),
+          email = Some("test@example.com"),
+          dxAddress = Some("yes"),
+          agentResourceReference = "REF001")
+
+        val result = service.populatePurchaserAgentInSession(testAgent, userAnswers)
+        result.isFailure mustBe true
+        result.failed.get mustBe a[IllegalStateException]
+      }
+
+    }
+
+    "clearPurchaserAgentAnswers" - {
+
+      "must clear user answers of purchaser agent details" in {
+
+        val expectedAgentAddress = Address(
+          line1 = "123 Street",
+          line2 = Some("Town"),
+          line3 = Some("City"),
+          line4 = Some("County"),
+          postcode = Some("AA1 1AA"),
+        )
+
+        val expectedContactDetails = PurchaserAgentsContactDetails(
+          phoneNumber = Some("0123456789"),
+          emailAddress = Some("test@example.com")
+        )
+
+        val testUserAnswers: UserAnswers = emptyUserAnswers
+          .set(PurchaserAgentNamePage, "John Smith").success.value
+          .set(PurchaserAgentAddressPage, expectedAgentAddress).success.value
+          .set(PurchaserAgentsContactDetailsPage, expectedContactDetails).success.value
+
+        val result = service.clearPurchaserAgentAnswers(testUserAnswers)
+        val clearedAnswers = result.get
+        clearedAnswers.get(PurchaserAgentNamePage) mustBe None
+        clearedAnswers.get(PurchaserAgentAddressPage) mustBe None
+        clearedAnswers.get(PurchaserAgentsContactDetailsPage) mustBe None
+      }
+
+    }
+
+    "agentSummaryList" - {
+
+      "must create summary list of agents" in {
+        val result = service.agentSummaryList(testAgents)
+        val expectedResult: Seq[(String, String, Option[String])] = Seq(
+          ("Joe Smith", "City", Some("AGT001")),
+          ("Sarah Jones", "", Some("AGT002"))
+        )
+        result mustBe expectedResult
+      }
+    }
+
+    "handleAgentSelection" - {
+
+      "when addNewAgent is selected" - {
+
+        "must clear purchaser agent answers and redirect to Agent Name page" in {
+          val updatedAnswers = emptyUserAnswers
+            .set(SelectPurchaserAgentPage, SelectPurchaserAgent.AddNewAgent.toString).success.value
+            .set(PurchaserAgentNamePage, "John Smith").success.value
+
+          when(mockSessionRepository.set(any()))
+            .thenReturn(Future.successful(true))
+
+          val result = service.handleAgentSelection(
+            SelectPurchaserAgent.AddNewAgent.toString,
+            agentList = Seq.empty,
+            userAnswers = updatedAnswers,
+            mode = NormalMode
+          )
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
+
+          verify(mockSessionRepository).set(argThat { answers =>
+            answers.get(PurchaserAgentNamePage).isEmpty &&
+            answers.get(PurchaserAgentAddressPage).isEmpty &&
+              answers.get(PurchaserAgentsContactDetailsPage).isEmpty
+          })
+        }
+      }
+
+      "when selected agentId does not exist" - {
+
+        "must redirect to journey recovery" in {
+          val result = service.handleAgentSelection(
+            value = "UNKNOWN_AGENT",
+            agentList = Seq.empty,
+            userAnswers = emptyUserAnswers,
+            mode = NormalMode
+          )
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "when selected agent exists with valid Id" - {
+
+        "must populate session and redirect using navigator" in {
+          val updatedAnswers = emptyUserAnswers
+            .set(SelectPurchaserAgentPage, "AGT001").success.value
+
+          when(mockSessionRepository.set(any()))
+            .thenReturn(Future.successful(true))
+
+          when(mockNavigator.nextPage(
+            any(),
+            any(),
+            any()
+          )).thenReturn(controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode))
+
+
+          val result = service.handleAgentSelection(
+            value = "AGT001",
+            agentList = testAgents,
+            userAnswers = updatedAnswers,
+            mode = NormalMode
+          )
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode).url
+
+          verify(mockSessionRepository).set(argThat { answers =>
+            answers.get(PurchaserAgentNamePage).contains("Joe Smith") &&
+              answers.get(PurchaserAgentAddressPage).exists(_.line1 == "123 Street") &&
+              answers.get(PurchaserAgentsContactDetailsPage).exists(_.emailAddress.contains("test@example.com"))
+          })
         }
       }
     }

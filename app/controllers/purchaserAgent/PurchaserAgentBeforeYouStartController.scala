@@ -19,7 +19,9 @@ package controllers.purchaserAgent
 import controllers.actions.*
 import forms.purchaserAgent.PurchaserAgentBeforeYouStartFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.purchaserAgent.PurchaserAgentBeforeYouStartPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -36,13 +38,14 @@ class PurchaserAgentBeforeYouStartController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         navigator: Navigator,
                                          formProvider: PurchaserAgentBeforeYouStartFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          purchaserAgentService: PurchaserAgentService,
                                          view: PurchaserAgentBeforeYouStartView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -71,8 +74,7 @@ class PurchaserAgentBeforeYouStartController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if(value) {
-              //TODO: change this to the next purchaser agent page - DTR-1811
-              Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
+              Redirect(navigator.nextPage(PurchaserAgentBeforeYouStartPage, mode, updatedAnswers))
             } else {
               Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             }
