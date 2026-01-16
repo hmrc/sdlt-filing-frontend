@@ -69,7 +69,7 @@ class Navigator @Inject()() {
          | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserUTRPage
           | RegistrationNumberPage | PurchaserTypeOfCompanyPage | CompanyFormOfIdPage
          | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage | ConfirmNameOfThePurchaserPage
-         | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage | AddContactDetailsForPurchaserAgentPage => true
+         | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage | PurchaserAgentBeforeYouStartPage  => true
 
     case _ => false
   }
@@ -106,6 +106,10 @@ class Navigator @Inject()() {
     case ConfirmNameOfThePurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
+    case PurchaserAgentBeforeYouStartPage =>
+      _ => controllers.purchaserAgent.routes.SelectPurchaserAgentController.onPageLoad(NormalMode)
+    case SelectPurchaserAgentPage =>
+      _ => controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
     case PurchaserAgentNamePage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
     case PurchaserAgentsContactDetailsPage =>

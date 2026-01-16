@@ -685,3 +685,11 @@ purchaserAgent.addAgentReferenceNumber.p                                        
 purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel                             = addPurchaserAgentReferenceNumber
 purchaserAgent.addAgentReferenceNumber.error.required                                    = Please select yes or no
 purchaserAgent.addAgentReferenceNumber.change.hidden                                     = AddPurchaserAgentReferenceNumber
+
+purchaserAgent.selectPurchaserAgent.title                                                = Select the purchaser’s agent - About the purchaser’s agent
+purchaserAgent.selectPurchaserAgent.heading                                              = Select {0}’s agent
+purchaserAgent.selectPurchaserAgent.existingAgent                                        = An existing agent
+purchaserAgent.selectPurchaserAgent.addNewAgent                                          = Add an agent for this return
+purchaserAgent.selectPurchaserAgent.checkYourAnswersLabel                                = selectPurchaserAgent
+purchaserAgent.selectPurchaserAgent.error.required                                       = Please select an option
+purchaserAgent.selectPurchaserAgent.change.hidden                                        = SelectPurchaserAgent

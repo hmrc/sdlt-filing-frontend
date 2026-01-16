@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url)
+  def onwardRoute = Call("GET", controllers.purchaserAgent.routes.SelectPurchaserAgentController.onPageLoad(NormalMode).url)
 
   val formProvider = new PurchaserAgentBeforeYouStartFormProvider()
   val form = formProvider()

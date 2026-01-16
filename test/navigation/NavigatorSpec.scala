@@ -147,14 +147,21 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(ConfirmNameOfThePurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
         }
 
+        "go from PurchaserAgentBeforeYouStartPage to SelectPurchaserAgentPage" in {
+          navigator.nextPage(PurchaserAgentBeforeYouStartPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.SelectPurchaserAgentController.onPageLoad(NormalMode)
+        }
+
+        "go from SelectPurchaserAgent page to AddPurchaserAgentReferenceNumber page" in {
+          navigator.nextPage(SelectPurchaserAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
+        }
+
         "go from PurchaserAgentNamePage to PurchaserAgentAddress page" in {
           navigator.nextPage(PurchaserAgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
         }
 
-        //TODO add a test to verify proper navigation from page before
-        //        "go from ___ to PurchaserAgentsContactDetailsPage page" in {
-        //          navigator.nextPage(PurchaserAgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
-        //        }
+        "go from AddContactDetailsForPurchaserAgentPage to PurchaserAgentsContactDetailsPage page" in {
+          navigator.nextPage(AddContactDetailsForPurchaserAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
+        }
 
         "go from PurchaserAgentsContactDetailsPage to AddPurchaserReferenceNumber page" in {
           navigator.nextPage(PurchaserAgentsContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
