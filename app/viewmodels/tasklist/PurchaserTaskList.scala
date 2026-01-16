@@ -36,6 +36,12 @@ object PurchaserTaskList {
     )
 
   def buildPurchaserRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+
+    val url = fullReturn.purchaser match {
+      //      case Some(list) if list.nonEmpty => controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+      case _ => controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+    }
+
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
@@ -43,8 +49,7 @@ object PurchaserTaskList {
       },
       messageKey = _ => "tasklist.purchaserQuestion.details",
       url = _ => _ => {
-        //change url when ready
-        controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+        url
       },
       tagId = "purchaserQuestionDetailRow",
       checks = scheme => Seq(fullReturn.purchaser.exists(_.nonEmpty)),
