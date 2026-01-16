@@ -1,6 +1,8 @@
 
 GET        /intro                            controllers.scalabuild.StartGuidanceController.onPageLoad()
 
+GET        /there-is-a-problem              controllers.scalabuild.JourneyRecoveryController.onPageLoad()
+
 GET        /holding                          controllers.scalabuild.FreeholdOrLeaseholdController.onPageLoad()
 POST       /holding                          controllers.scalabuild.FreeholdOrLeaseholdController.onSubmit()
 

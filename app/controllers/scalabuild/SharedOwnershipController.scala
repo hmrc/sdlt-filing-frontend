@@ -5,33 +5,47 @@
 
 package controllers.scalabuild
 
+import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.SharedOwnershipFormProvider
+import pages.scalabuild.SharedOwnershipPage
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.{Inject, Singleton}
 import views.html.scalabuild.SharedOwnershipView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SharedOwnershipController @Inject()(
                                            val controllerComponents: MessagesControllerComponents,
                                            view: SharedOwnershipView,
                                            formProvider: SharedOwnershipFormProvider,
-                                         ) extends FrontendBaseController {
+                                           sessionRepository: SessionRepository,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           identify: IdentifierAction
+                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view(form))
+
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(SharedOwnershipPage).fold(form)(value => form.fill(value))
+    Ok(view(preparedForm))
   }
 
-  def onSubmit(): Action[AnyContent] = Action.async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-        _ => Future.successful(Redirect(controllers.scalabuild.routes.SharedOwnershipController.onPageLoad().url))
+        value => for {
+          updatedAnswers <- Future
+            .fromTry(request.userAnswers.set(SharedOwnershipPage, value))
+          _ <- sessionRepository.set(updatedAnswers)
+        } yield Redirect(controllers.scalabuild.routes.SharedOwnershipController.onPageLoad().url)
       )
 
   }

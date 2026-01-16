@@ -13,4 +13,3 @@ case object HoldingPage extends QuestionPage[HoldingTypes] {
 
   override def toString: String = "holdingType"
 }
-

@@ -8,6 +8,7 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.ReplaceMainResidenceFormProvider
 import org.scalatest.freespec.AnyFreeSpec
+import pages.scalabuild.ReplaceMainResidencePage
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
@@ -33,6 +34,20 @@ class ReplaceMainResidenceControllerSpec extends AnyFreeSpec with ScalaSpecBase 
 
         status(result)          mustEqual OK
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = emptyUserAnswers
+        .set(ReplaceMainResidencePage, true).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, replaceMainResidenceRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[ReplaceMainResidenceView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(true))(request, messages(application)).toString
       }
     }
 

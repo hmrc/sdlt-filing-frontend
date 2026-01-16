@@ -10,7 +10,6 @@ import forms.scalabuild.EffectiveDateFormProvider
 import pages.scalabuild.EffectiveDatePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.i18n.Lang.logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -21,26 +20,23 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EffectiveDateController @Inject() (
-    val controllerComponents: MessagesControllerComponents,
-    view: EffectiveDateView,
-    formProvider: EffectiveDateFormProvider,
-    sessionRepository: SessionRepository,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    identify: IdentifierAction
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+class EffectiveDateController @Inject()(
+                                         val controllerComponents: MessagesControllerComponents,
+                                         view: EffectiveDateView,
+                                         formProvider: EffectiveDateFormProvider,
+                                         sessionRepository: SessionRepository,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         identify: IdentifierAction
+                                       )(implicit ec: ExecutionContext)
+  extends FrontendBaseController
     with I18nSupport {
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val form = formProvider()
     val dateFromForm = request.userAnswers.get(EffectiveDatePage)
     val preparedForm = dateFromForm match {
       case None => form
-      case Some(value) => {
-        logger.info(s"effectiveDate.value = $value")
-        form.fillAndValidate(value)
-      }
+      case Some(value) => form.fillAndValidate(value)
     }
     Ok(view(preparedForm))
   }

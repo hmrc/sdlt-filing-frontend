@@ -6,7 +6,7 @@
 package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.IsAdditionalPropertyFormProvider
-import pages.scalabuild.IsPurchaserIndividualPage
+import pages.scalabuild.IsAdditionalPropertyPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,7 +31,7 @@ class IsAdditionalPropertyController @Inject() (
     with I18nSupport {
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val form: Form[Boolean] = formProvider()
-    val preparedForm = request.userAnswers.get(IsPurchaserIndividualPage) match {
+    val preparedForm = request.userAnswers.get(IsAdditionalPropertyPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -47,7 +47,7 @@ class IsAdditionalPropertyController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(
-              request.userAnswers.set(IsPurchaserIndividualPage, value)
+              request.userAnswers.set(IsAdditionalPropertyPage, value)
             )
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(controllers.scalabuild.routes.ReplaceMainResidenceController.onPageLoad().url)

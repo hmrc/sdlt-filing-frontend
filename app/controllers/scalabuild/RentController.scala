@@ -5,44 +5,71 @@
 
 package controllers.scalabuild
 
+import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.RentFormProvider
-import models.scalabuild.LeaseContextBuilder
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import models.scalabuild.{LeaseContext, LeaseContextBuilder, RentPeriods, UserAnswers}
+import pages.scalabuild.{EffectiveDatePage, LeaseDatesPage, LeaseTermPage, RentPage}
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.scalabuild.RentView
 
-import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class RentController @Inject()(
                                 val controllerComponents: MessagesControllerComponents,
                                 leaseContextBuilder: LeaseContextBuilder,
                                 view: RentView,
                                 formProvider: RentFormProvider,
-                              ) extends FrontendBaseController {
+                                sessionRepository: SessionRepository,
+                                getData: DataRetrievalAction,
+                                requireData: DataRequiredAction,
+                                identify: IdentifierAction
+                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val leaseCtx = leaseContext()
-    val form = formProvider(leaseCtx.periodCount)
-    Ok(view(form, leaseCtx.periodCount))
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    leaseContext(request.userAnswers) match {
+      case Left(journeyRecovery) => journeyRecovery
+      case Right(leaseCtx) =>
+        val form: Form[RentPeriods] = formProvider(leaseCtx.periodCount)
+        val preparedForm = request.userAnswers.get(RentPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Ok(view(preparedForm, leaseCtx.periodCount))
+    }
   }
 
-  def onSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    val leaseCtx = leaseContext()
-    val form = formProvider(leaseCtx.periodCount)
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, leaseCtx.periodCount))),
-        _ => Future.successful(Redirect(controllers.scalabuild.routes.RentController.onPageLoad().url))
-      )
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    leaseContext(request.userAnswers) match {
+      case Left(journeyRecovery) => Future.successful(journeyRecovery)
+      case Right(leaseCtx) =>
+        val form: Form[RentPeriods] = formProvider(leaseCtx.periodCount)
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, leaseCtx.periodCount))),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RentPage, value))
+                userAnswersWithLeaseTerm <- Future.fromTry(updatedAnswers.set(LeaseTermPage, leaseCtx.term))
+                _ <- sessionRepository.set(userAnswersWithLeaseTerm)
+              } yield Redirect(controllers.scalabuild.routes.RentController.onPageLoad().url)
+          )
+    }
   }
 
-  private def leaseContext() = leaseContextBuilder.build(
-    effectiveDate = LocalDate.of(2025,2,28),//TODO: Fetch the selected effective date from the user answers
-    leaseStart = LocalDate.of(2025,2,28),//TODO: Fetch the selected lease start date from the user answers
-    leaseEnd = LocalDate.of(2029,2,27)//TODO: Fetch the selected lease end date from the user answers
-  )
+  private def leaseContext(userAnswers: UserAnswers): Either[Result, LeaseContext] = {
+    for {
+      effectiveDate <- userAnswers.get(EffectiveDatePage).toRight(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
+      leaseDates <- userAnswers.get(LeaseDatesPage).toRight(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
+    } yield leaseContextBuilder.build(
+      effectiveDate = effectiveDate,
+      leaseStart = leaseDates.startDate,
+      leaseEnd = leaseDates.endDate
+    )
+  }
 }

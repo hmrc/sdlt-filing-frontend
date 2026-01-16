@@ -6,10 +6,9 @@
 package services.scalabuild
 
 import base.ScalaSpecBase
-import models.LeaseTerm
+import models.scalabuild.LeaseTerm
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-
 import java.time.LocalDate
 
 class LeaseTermServiceSpec extends AnyFreeSpec with ScalaSpecBase {

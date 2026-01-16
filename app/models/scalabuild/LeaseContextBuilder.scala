@@ -30,7 +30,8 @@ class LeaseContextBuilder @Inject()(
 
     val totalPeriod = term.years + (if (term.days > 0) 1 else 0)
     LeaseContext(
-      periodCount = math.min(totalPeriod, 5)
+      periodCount = math.min(totalPeriod, 5),
+      term = term
     )
   }
 }

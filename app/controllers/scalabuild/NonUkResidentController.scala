@@ -14,7 +14,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import views.html.scalabuild.NonUkResidentView
 import forms.scalabuild.NonUkResidentFormProvider
-import pages.scalabuild.{IsPurchaserIndividualPage, NonUkResidentPage}
+import pages.scalabuild.NonUkResidentPage
 import play.api.i18n.I18nSupport
 import repositories.SessionRepository
 
@@ -31,7 +31,7 @@ class NonUkResidentController @Inject()(
                                        ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val form:Form[Boolean] = formProvider()
-    val preparedForm = request.userAnswers.get(IsPurchaserIndividualPage) match {
+    val preparedForm = request.userAnswers.get(NonUkResidentPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }

@@ -8,6 +8,7 @@ import base.ScalaSpecBase
 import forms.scalabuild.IsAdditionalPropertyFormProvider
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import pages.scalabuild.IsAdditionalPropertyPage
 import play.api.data.Form
 import views.html.scalabuild.IsAdditionalPropertyView
 import play.api.mvc.request.RequestAttrKey
@@ -32,6 +33,20 @@ class IsAdditionalPropertyControllerSpec extends AnyFreeSpec with ScalaSpecBase 
 
         status(result)          mustEqual OK
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = emptyUserAnswers
+        .set(IsAdditionalPropertyPage, true).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, isAdditionalPropertyRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[IsAdditionalPropertyView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(true))(request, messages(application)).toString
       }
     }
 

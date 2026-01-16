@@ -6,6 +6,7 @@
 package models.scalabuild
 
 import enums.{HoldingTypes, PropertyTypes}
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
@@ -23,11 +24,11 @@ case class Request(
                   effectiveDate: LocalDate,
                   nonUKResident: Option[Boolean],
                   premium: BigDecimal,
-                  highestRent: BigDecimal,
+                  highestRent: BigDecimal,//TODO: calculate the highest rent from the list of rents in the user answers when forming the request
                   propertyDetails: Option[PropertyDetails],
                   leaseDetails: Option[LeaseDetails],
                   relevantRentDetails: Option[RelevantRentDetails],
-                  firstTimeBuyer: Option[Boolean]
+                  firstTimeBuyer: Option[Boolean]//TODO: construct the value for this using the same logic in the datamarshallingservice.js and user answers
                   )
 
 case class PropertyDetails(
@@ -54,6 +55,10 @@ case class LeaseTerm(
                     days: Int,
                     daysInPartialYear: Int
                     )
+
+object LeaseTerm {
+  implicit val format: OFormat[LeaseTerm] = Json.format[LeaseTerm]
+}
 
 case class RelevantRentDetails(
                               exchangedContractsBeforeMar16: Option[Boolean],

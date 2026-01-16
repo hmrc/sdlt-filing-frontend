@@ -5,7 +5,6 @@
 
 package forms.scalabuild
 
-import config.scalabuild.FrontendAppConfig
 import forms.scalabuild.mappings.Mappings
 import models.scalabuild.{MarketValue, MarketValueChoice}
 import models.scalabuild.MarketValueChoice.{PayInStages, PayUpfront}
@@ -13,15 +12,9 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 
-import javax.inject.Inject
+class MarketValueFormProvider extends Mappings {
 
-
-class MarketValueFormProvider @Inject()(appConfig: FrontendAppConfig) extends Mappings {
-
-  def apply(isHigherFtbLimit: Boolean): Form[MarketValue] = {
-
-    val maxValue = if(isHigherFtbLimit) BigDecimal(appConfig.highValue) else BigDecimal(appConfig.lowValue)
-
+  def apply(maxValue: BigDecimal): Form[MarketValue] = {
     Form(
       mapping(
         "value" -> enumerable[MarketValueChoice]("marketValue.error.required"),
@@ -46,6 +39,7 @@ class MarketValueFormProvider @Inject()(appConfig: FrontendAppConfig) extends Ma
         )(MarketValue.apply)(MarketValue.unapply)
     )
   }
+
   private def maxValueContraints(max: BigDecimal) =
     inRange(BigDecimal(0), max, "marketValue.error.maxValue")
 }

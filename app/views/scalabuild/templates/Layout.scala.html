@@ -29,5 +29,5 @@ beforeContentBlock: Option[Html] = None, showBackLink: Boolean = true)(contentBl
     @problemLinkHelper()
 </div>
 }
-@hmrcStandardPage(HmrcStandardPageParams(backLink = if(showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None))(content)
+@hmrcStandardPage(HmrcStandardPageParams(pageTitle = pageTitle, backLink = if(showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None))(content)
 

@@ -17,8 +17,8 @@ class MarketValueFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
   val highLimit = BigDecimal(appConfig.highValue)
   val lowLimit = BigDecimal(appConfig.lowValue)
 
-  val formWithHighFtb: Form[MarketValue] = new MarketValueFormProvider(appConfig).apply(isHigherFtbLimit = true)
-  val formWithLowFtb: Form[MarketValue] = new MarketValueFormProvider(appConfig).apply(isHigherFtbLimit = false)
+  val formWithHighFtb: Form[MarketValue] = new MarketValueFormProvider().apply(highLimit)
+  val formWithLowFtb: Form[MarketValue] = new MarketValueFormProvider().apply(lowLimit)
 
   val requiredError = "marketValue.error.required"
   val nonNumericError = "marketValue.error.nonNumeric"

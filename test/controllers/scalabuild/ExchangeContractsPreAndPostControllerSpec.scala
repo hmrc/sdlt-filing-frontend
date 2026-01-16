@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.{ContractPost201603FormProvider, ExchangeContractsFormProvider}
+import pages.scalabuild.{ContractPost201603Page, ExchangeContractsPage}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.Call
@@ -17,6 +18,7 @@ import views.html.scalabuild.ExchangeContractsPreAndPostView
 
 class ExchangeContractsPreAndPostControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/exchange-contracts-double")
+
   val exchangeFormProvider = new ExchangeContractsFormProvider()
   val contractPostFormProvider = new ContractPost201603FormProvider()
   val exchangeForm = exchangeFormProvider()
@@ -33,6 +35,21 @@ class ExchangeContractsPreAndPostControllerSpec extends AnyFreeSpec with ScalaSp
         status(result) mustEqual OK
         contentAsString(result) mustEqual
           view(exchangeForm, contractPostForm)(request, messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = emptyUserAnswers
+                          .set(ContractPost201603Page, false).success.value
+                          .set(ExchangeContractsPage, true).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, exchangeContractsPreAndPostRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[ExchangeContractsPreAndPostView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(exchangeForm.fill(true), contractPostForm.fill(false))(request, messages(application)).toString
       }
     }
 

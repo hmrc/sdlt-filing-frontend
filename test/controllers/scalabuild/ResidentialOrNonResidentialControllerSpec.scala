@@ -11,6 +11,7 @@ import forms.scalabuild.ResidentialOrNonResidentialFormProvider
 import models.scalabuild.PropertyType
 import models.scalabuild.PropertyType.Residential
 import org.scalatest.freespec.AnyFreeSpec
+import pages.scalabuild.ResidentialOrNonResidentialPage
 import play.api.data.Form
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
@@ -20,6 +21,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class ResidentialOrNonResidentialControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/date")
+
   val formProvider = new ResidentialOrNonResidentialFormProvider()
   val form: Form[PropertyType] = formProvider()
   lazy val residentialOrNonResidentialRoute: String = routes.ResidentialOrNonResidentialController.onPageLoad().url
@@ -32,10 +34,25 @@ class ResidentialOrNonResidentialControllerSpec extends AnyFreeSpec with ScalaSp
         val result = route(application, request).value
         val view = application.injector.instanceOf[ResidentialOrNonResidentialView]
 
-        status(result)          mustEqual OK
+        status(result) mustEqual OK
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
       }
     }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = emptyUserAnswers
+        .set(ResidentialOrNonResidentialPage, Residential).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, residentialOrNonResidentialRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[ResidentialOrNonResidentialView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(Residential))(request, messages(application)).toString
+      }
+    }
+
 
     "must redirect to the next page when valid data is submitted" in {
 
@@ -48,7 +65,7 @@ class ResidentialOrNonResidentialControllerSpec extends AnyFreeSpec with ScalaSp
 
         val result = route(application, request).value
 
-        status(result)                 mustEqual SEE_OTHER
+        status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -68,7 +85,7 @@ class ResidentialOrNonResidentialControllerSpec extends AnyFreeSpec with ScalaSp
 
         val result = route(application, request).value
 
-        status(result)          mustEqual BAD_REQUEST
+        status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
       }
     }

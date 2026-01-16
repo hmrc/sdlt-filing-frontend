@@ -12,5 +12,5 @@ case object OwnsOtherPropertiesPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ propertyDetails \toString
 
-  override def toString: String = "twoOrMoreProperties"
+  override def toString: String = "ownedOtherProperties"
 }

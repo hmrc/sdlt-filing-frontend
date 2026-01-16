@@ -8,20 +8,23 @@ import config.scalabuild.FrontendAppConfig
 import models.scalabuild.UserAnswers
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.MockitoSugar
+import controllers.scalabuild.actions.{DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, FakeDataRetrievalAction, FakeIdentifierAction, IdentifierAction}
+import org.scalatest.{OptionValues, TryValues}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{OptionValues, TryValues}
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.FakeRequest
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.play.PlayMongoModule
 
 import java.time.{Clock, LocalDate, ZoneId}
 import scala.concurrent.Future
+
+import java.time.Instant
 
 trait ScalaSpecBase extends TryValues with OptionValues with ScalaFutures with MockitoSugar with Matchers {
 
@@ -38,19 +41,24 @@ trait ScalaSpecBase extends TryValues with OptionValues with ScalaFutures with M
   when(sessionRepositoryStub.set(any[UserAnswers]))
     .thenReturn(Future.successful(true))
 
-  protected def applicationBuilder(): GuiceApplicationBuilder = {
+  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .configure("play.http.router" -> "scalabuild.Routes")
       .disable[PlayMongoModule]
       .overrides(
-        bind[SessionRepository].toInstance(sessionRepositoryStub)
+        bind[SessionRepository].toInstance(sessionRepositoryStub),
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[DataRetrievalAction].toInstance(
+          new FakeDataRetrievalAction(userAnswers)
+        )
       )
   }
 
   protected def applicationBuilderWithDate(date: LocalDate): GuiceApplicationBuilder = {
     val fixedClock = Clock.fixed(date.atStartOfDay(ZoneId.of("Europe/London")).toInstant, ZoneId.of("Europe/London"))
     applicationBuilder().overrides(
-      bind[Clock].toInstance(fixedClock),
+      bind[Clock].toInstance(fixedClock)
     )
   }
 
@@ -58,4 +66,12 @@ trait ScalaSpecBase extends TryValues with OptionValues with ScalaFutures with M
     applicationBuilder().build()
 
   lazy val appConfig: FrontendAppConfig = application().injector.instanceOf[FrontendAppConfig]
+
+  val ukTimeZoneStringId = "Europe/London"
+  val internalId: String = "id"
+  val clock              = Clock.fixed(Instant.ofEpochMilli(1718118467838L), ZoneId.of(ukTimeZoneStringId))
+  val emptyUserAnswers: UserAnswers = UserAnswers(
+    internalId,
+    lastUpdated = Instant.now(clock)
+  )
 }

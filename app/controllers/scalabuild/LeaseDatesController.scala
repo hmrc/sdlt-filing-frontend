@@ -5,38 +5,65 @@
 
 package controllers.scalabuild
 
+import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.LeaseDatesFormProvider
+import models.scalabuild.LeaseDates
+import pages.scalabuild.{EffectiveDatePage, LeaseDatesPage}
 import play.api.data.Form
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.scalabuild.LeaseDatesView
-
-import java.time.LocalDate
 
 class LeaseDatesController @Inject()(
                                       val controllerComponents: MessagesControllerComponents,
                                       view: LeaseDatesView,
                                       formProvider: LeaseDatesFormProvider,
-                                    ) extends FrontendBaseController {
+                                      sessionRepository: SessionRepository,
+                                      getData: DataRetrievalAction,
+                                      requireData: DataRequiredAction,
+                                      identify: IdentifierAction
+                                    )(implicit ec: ExecutionContext)
+  extends FrontendBaseController
+    with I18nSupport {
 
-
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val form:Form[_] = formProvider(LocalDate.now())//TODO: Fetch the effective date from the user answers
-    Ok(view(form))
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    request.userAnswers.get(EffectiveDatePage).toRight(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
+      .fold(
+        result => result,
+        effectiveDate => {
+          val form = formProvider(effectiveDate)
+          val preparedForm = request.userAnswers.get(LeaseDatesPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm))
+        }
+      )
   }
 
-  def onSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    val form:Form[_] = formProvider(LocalDate.now())//TODO: Fetch the effective date from the user answers
-    form
-      .bindFromRequest()
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    request.userAnswers.get(EffectiveDatePage).toRight(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
       .fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors))),
-        _ =>
-          Future.successful(Redirect(controllers.scalabuild.routes.LeaseDatesController.onPageLoad().url))
+        result => Future.successful(result),
+        effectiveDate => {
+          val form: Form[LeaseDates] = formProvider(effectiveDate)
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors =>
+                Future.successful(BadRequest(view(formWithErrors))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseDatesPage, value))
+                  _ <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(controllers.scalabuild.routes.LeaseDatesController.onPageLoad().url)
+            )
+        }
       )
   }
 }

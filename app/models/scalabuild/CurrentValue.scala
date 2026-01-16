@@ -10,11 +10,18 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait CurrentValue
-object CurrentValue extends  Enumerable.Implicits {
-  case object AtOrBelowThreshold extends CurrentValue
+sealed trait CurrentValue {
+  def asBoolean: Boolean
+}
 
-  case object AboveThreshold extends CurrentValue
+object CurrentValue extends Enumerable.Implicits {
+  case object AtOrBelowThreshold extends CurrentValue {
+    override val asBoolean: Boolean = true
+  }
+
+  case object AboveThreshold extends CurrentValue {
+    override val asBoolean: Boolean = false
+  }
 
   val values: Seq[CurrentValue] = Seq(
     AtOrBelowThreshold,
@@ -35,6 +42,10 @@ object CurrentValue extends  Enumerable.Implicits {
         id = Some("currentValue-no")
       )
     )
+
+  def fromBoolean(value: Boolean): CurrentValue = {
+    if (value) AtOrBelowThreshold else AboveThreshold
+  }
 
   implicit val enumerable: Enumerable[CurrentValue] =
     Enumerable(values.map(v => v.toString -> v): _*)

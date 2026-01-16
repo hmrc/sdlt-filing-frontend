@@ -11,6 +11,6 @@ class MainResidenceFormProvider extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "replaceMainResidence" -> boolean("mainResidence.error.required")
+      "mainResidence" -> boolean("mainResidence.error.required")
     )
 }

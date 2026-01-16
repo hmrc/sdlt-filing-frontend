@@ -10,6 +10,7 @@ import forms.scalabuild.EffectiveDateFormProvider
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatestplus.mockito.MockitoSugar
+import pages.scalabuild.EffectiveDatePage
 import play.api.data.Form
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
@@ -25,6 +26,8 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
 
   val formProvider = new EffectiveDateFormProvider()
   val form: Form[LocalDate] = formProvider()
+  val thisYear = LocalDate.now().getYear
+  val validEffectiveDate = LocalDate.of(thisYear, 1, 1)
 
   lazy val effectiveDateControllerRoute: String = controllers.scalabuild.routes.EffectiveDateController.onPageLoad().url
 
@@ -47,6 +50,21 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
       }
     }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = emptyUserAnswers
+        .set(EffectiveDatePage, validEffectiveDate).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, effectiveDateControllerRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[EffectiveDateView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(validEffectiveDate))(request, messages(application)).toString
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
 
       val application = applicationBuilder().build()
@@ -55,14 +73,14 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
         val request =
           FakeRequest(POST, effectiveDateControllerRoute)
             .withFormUrlEncodedBody(
-                "effectiveDate.day"   -> "11",
-                "effectiveDate.month" -> "2",
-                "effectiveDate.year"  -> "2022"
+              "effectiveDate.day" -> "11",
+              "effectiveDate.month" -> "2",
+              "effectiveDate.year" -> s"$thisYear"
             ).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value
 
-        status(result)                 mustEqual SEE_OTHER
+        status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -75,22 +93,22 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
         val request =
           FakeRequest(POST, effectiveDateControllerRoute)
             .withFormUrlEncodedBody(
-              "effectiveDate.day"   -> "invalidData",
+              "effectiveDate.day" -> "invalidData",
               "effectiveDate.month" -> "2",
-              "effectiveDate.year"  -> "2022"
+              "effectiveDate.year" -> "2022"
             ).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val boundForm = form.bind(Map(
-          "effectiveDate.day"   -> "invalidData",
+          "effectiveDate.day" -> "invalidData",
           "effectiveDate.month" -> "2",
-          "effectiveDate.year"  -> "2022"
+          "effectiveDate.year" -> "2022"
         ))
 
         val view = application.injector.instanceOf[EffectiveDateView]
 
         val result = route(application, request).value
 
-        status(result)          mustEqual BAD_REQUEST
+        status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
       }
     }

@@ -1,54 +1,74 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  */
 
 package controllers.scalabuild
 
-import config.scalabuild.FrontendAppConfig
+import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.CurrentValueFormProvider
 import models.scalabuild.CurrentValue
+import pages.scalabuild.{CurrentValuePage, EffectiveDatePage}
 import play.api.data.Form
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.scalabuild.FtbLimitService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.scalabuild.CurrentValueView
 
-import java.time.{Clock, LocalDate}
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CurrentValueController @Inject()(
-                                        clock: Clock,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: CurrentValueView,
                                         formProvider: CurrentValueFormProvider,
-                                        appConfig: FrontendAppConfig
-                                      ) extends FrontendBaseController {
+                                        service: FtbLimitService,
+                                        sessionRepository: SessionRepository,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        identify: IdentifierAction
+                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form:Form[CurrentValue] = formProvider()
+  val form: Form[CurrentValue] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val effectiveDate = LocalDate.now(clock)//TODO: Fetch the selected effective date from the user answers
-    val ftbLimitValue = ftbLimit(effectiveDate)
-    Ok(view(form, ftbLimitValue))
-  }
-
-  def onSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    form
-      .bindFromRequest()
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    request.userAnswers.get(EffectiveDatePage).toRight(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
       .fold(
-        formWithErrors => {
-          val effectiveDate = LocalDate.now//TODO: Fetch the selected effective date from the user answers
-          val ftbLimitValue = ftbLimit(effectiveDate)
-          Future.successful(BadRequest(view(formWithErrors, ftbLimitValue)))},
-        _ => Future.successful(Redirect(controllers.scalabuild.routes.CurrentValueController.onPageLoad().url))
+        result => result,
+        effectiveDate => {
+          val ftbLimitValue = service.ftbLimit(effectiveDate)
+          val preparedForm = request.userAnswers.get(CurrentValuePage) match {
+            case None => form
+            case Some(value) => form.fill(CurrentValue.fromBoolean(value))
+          }
+          Ok(view(preparedForm, ftbLimitValue))
+        }
       )
   }
 
-  def ftbLimit(effectiveDate: LocalDate): Int = {
-    if(!effectiveDate.isBefore(appConfig.ftbStartDate) && effectiveDate.isBefore(appConfig.ftbEndDate))
-      appConfig.highValue
-    else
-      appConfig.lowValue
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    request.userAnswers.get(EffectiveDatePage).toRight(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
+      .fold(
+        result => Future.successful(result),
+        effectiveDate => {
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => {
+                val ftbLimitValue = service.ftbLimit(effectiveDate)
+                Future.successful(BadRequest(view(formWithErrors, ftbLimitValue)))
+              },
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(CurrentValuePage, value.asBoolean))
+                  _ <- sessionRepository.set(updatedAnswers)
+                }
+                yield Redirect(controllers.scalabuild.routes.CurrentValueController.onPageLoad().url)
+            )
+        }
+      )
   }
+
 }

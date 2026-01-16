@@ -7,7 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.PurchasePriceFormProvider
-import pages.scalabuild.PurchasePricePage
+import pages.scalabuild.PremiumPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +32,7 @@ class PurchasePriceController @Inject() (
     with I18nSupport {
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val form: Form[BigDecimal] = formProvider()
-    val preparedForm = request.userAnswers.get(PurchasePricePage) match {
+    val preparedForm = request.userAnswers.get(PremiumPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -48,7 +48,7 @@ class PurchasePriceController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(
-              request.userAnswers.set(PurchasePricePage, value)
+              request.userAnswers.set(PremiumPage, value)
             )
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(controllers.scalabuild.routes.PurchasePriceController.onPageLoad().url)

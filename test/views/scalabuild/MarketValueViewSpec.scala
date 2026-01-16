@@ -12,7 +12,7 @@ import views.html.scalabuild.MarketValueView
 class MarketValueViewSpec extends ViewTestFixture {
 
   val view: MarketValueView = app.injector.instanceOf[views.html.scalabuild.MarketValueView]
-  val form: Form[_] = app.injector.instanceOf[forms.scalabuild.MarketValueFormProvider].apply(isHigherFtbLimit = true)
+  val form: Form[_] = app.injector.instanceOf[forms.scalabuild.MarketValueFormProvider].apply(625000)
   override val htmlContent: HtmlFormat.Appendable = view.apply(form)(fakeRequest, messages)
 
   "MarketValueView" must {

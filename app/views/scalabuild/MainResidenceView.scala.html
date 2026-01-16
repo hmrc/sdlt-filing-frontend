@@ -28,13 +28,13 @@
 
         @govukRadios(
             RadiosViewModel.yesNoCustomIdSuffix(
-                field = form("replaceMainResidence"),
+                field = form("mainResidence"),
                 legend = LegendViewModel(messages("mainResidence.heading")).asPageHeading(),
                 yesId = "-yes",
                 noId = "-no"
             ).inline()
         )
-        @govukButton(ButtonViewModel("continue-button",messages("site.continue"))))
+        @govukButton(ButtonViewModel("continue-button",messages("site.continue")))
 
     }
 }

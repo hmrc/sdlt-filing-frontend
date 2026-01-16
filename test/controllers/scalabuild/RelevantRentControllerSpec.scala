@@ -8,6 +8,7 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.RelevantRentFormProvider
 import org.scalatest.freespec.AnyFreeSpec
+import pages.scalabuild.RelevantRentPage
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
@@ -20,6 +21,7 @@ class RelevantRentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
   val formProvider = new RelevantRentFormProvider()
   val form          = formProvider()
   lazy val relevantRentRoute = controllers.scalabuild.routes.RelevantRentController.onPageLoad().url
+  val relevantRent = BigDecimal(100000)
 
   "Relevant Rent Controller" - {
     "must return OK and the correct view for a GET" in {
@@ -35,6 +37,20 @@ class RelevantRentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
       }
     }
 
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = emptyUserAnswers.set(RelevantRentPage, relevantRent).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, relevantRentRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[RelevantRentView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(relevantRent))(request, messages(application)).toString
+      }
+    }
+
+
     "must redirect to the next page when valid data is submitted" in {
 
       val application = applicationBuilder().build()
@@ -42,7 +58,7 @@ class RelevantRentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
       running(application) {
         val request =
           FakeRequest(POST, relevantRentRoute)
-            .withFormUrlEncodedBody(("relevantRent", "100000")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+            .withFormUrlEncodedBody(("relevantRent", relevantRent.toString())).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value
 

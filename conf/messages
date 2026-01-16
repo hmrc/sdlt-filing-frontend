@@ -6,6 +6,10 @@ site.saveAndContinue = Save and continue
 site.yes = Yes
 site.no = No
 
+journeyRecovery.startAgain.title = Sorry, there is a problem with the service
+journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
+journeyRecovery.startAgain.guidance = Try again later.
+
 calc.error.badRequest400.title=Bad request - 400
 calc.error.badRequest400.heading=Bad request
 calc.error.badRequest400.message=Please check that you have entered the correct web address.

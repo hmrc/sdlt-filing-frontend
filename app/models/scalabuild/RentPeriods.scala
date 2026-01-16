@@ -5,6 +5,14 @@
 
 package models.scalabuild
 
+import play.api.libs.json.{Json, OFormat}
+
 case class RentPeriods(rents: List[BigDecimal])
 
-case class LeaseContext(periodCount: Int)
+object RentPeriods {
+  implicit val format: OFormat[RentPeriods] = Json.format[RentPeriods]
+}
+
+case class LeaseContext(periodCount: Int, term: LeaseTerm)
+
+
