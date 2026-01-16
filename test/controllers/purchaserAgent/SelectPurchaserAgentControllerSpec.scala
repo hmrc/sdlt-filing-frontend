@@ -125,7 +125,9 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
       "must return OK and the correct view for a GET when agent list exists" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
+
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
+
         when(
           mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
         ).thenReturn(Future.successful(SdltOrganisationResponse(storn = "STN005", agents = agentList, version = None)))
@@ -181,7 +183,20 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
       "must populate the view correctly on a GET when the question has previously been answered" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
+
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
+
+        when(
+          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
+        ).thenReturn(
+          Future.successful(
+            SdltOrganisationResponse(
+              storn = testStorn,
+              agents = agentList,
+              version = None
+            )
+          )
+        )
 
         val userAnswers = emptyUserAnswers
           .copy(fullReturn = Some(testFullReturn))
@@ -191,7 +206,8 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[PurchaserService].toInstance(mockPurchaserService),
-            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
+            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
+            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
           )
           .build()
 
@@ -431,6 +447,18 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         when(mockPurchaserAgentService.agentSummaryList(any()))
           .thenReturn(agentSummaryList)
 
+        when(
+          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
+        ).thenReturn(
+          Future.successful(
+            SdltOrganisationResponse(
+              storn = testStorn,
+              agents = agentList,
+              version = None
+            )
+          )
+        )
+
         when(mockPurchaserAgentService.handleAgentSelection(any(), any[Seq[Agent]], any(), any()))
           .thenReturn(
             Future.successful(
@@ -445,6 +473,8 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
+            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+
           )
           .build()
 
