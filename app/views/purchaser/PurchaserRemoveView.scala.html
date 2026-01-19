@@ -1,0 +1,128 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.purchaser.{PurchaserRemove, PurchaserRemoveData}
+@import views.html.components.h1
+@import views.html.components.Paragraph
+
+@this(
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton,
+        h1: h1,
+        paragraph: Paragraph
+)
+
+@(form: Form[_], mode: Mode, data: PurchaserRemoveData)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("purchaser.purchaserRemove.title"))) {
+
+    @formHelper(action = controllers.purchaser.routes.PurchaserRemoveController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+        }
+
+        @defining((data.purchaserCount, data.isMainPurchaser)) { case (count, isMain) =>
+            @if(count == 1 || !isMain) {
+                @govukRadios(
+                    RadiosViewModel(
+                        field  = form("value"),
+                        legend = LegendViewModel(
+                            messages("purchaser.purchaserRemove.headingSingle", data.purchaserToRemoveName.getOrElse(""))
+                        ).asPageHeading(),
+                        items  = Seq(
+                            RadioItem(
+                                content = Text(messages("site.yes")),
+                                value = Some(s"REMOVE-${data.purchaserId}"),
+                                id = Some("value_0")
+                            ),
+                            RadioItem(
+                                content = Text(messages("site.no")),
+                                value = Some("no"),
+                                id = Some("value_1")
+                            )
+                        )
+                    )
+                )
+            } else if(count == 2) {
+
+            @h1(messages("purchaser.purchaserRemove.double.heading", data.purchaserToRemoveName.getOrElse("")))
+            @paragraph(messages("purchaser.purchaserRemove.double.hint",
+                data.purchaserToRemoveName.getOrElse(""),
+                data.remainingPurchasers.headOption.map(_._2).getOrElse("")),
+                extraClasses = "govuk-hint")
+
+            @govukRadios(
+                RadiosViewModel(
+                    field  = form("value"),
+                    legend = LegendViewModel(messages(
+                        "purchaser.purchaserRemove.double.subheading"
+                    )).asPageSubHeading(),
+                    items  = Seq(
+                        RadioItem(
+                            content = Text(messages("purchaser.purchaserRemove.double.keep",  data.purchaserToRemoveName.getOrElse(""))),
+                            value = Some("keep"),
+                            id = Some("value_0")
+                        ),
+                        RadioItem(
+                            content = Text(messages("purchaser.purchaserRemove.double.remove",
+                                data.purchaserToRemoveName.getOrElse(""),
+                                data.remainingPurchasers.headOption.map(_._2).getOrElse(""))),
+                            value = Some(s"REMOVE-${data.remainingPurchasers.headOption.map(_._1).getOrElse("")}"),
+                            id = Some("value_1")
+                        )
+                    )
+                )
+            )
+            } else {
+
+            @h1(messages("purchaser.purchaserRemove.multi.heading", data.purchaserToRemoveName.getOrElse("")))
+            @paragraph(messages("purchaser.purchaserRemove.multi.hint", data.purchaserToRemoveName.getOrElse("")), extraClasses = "govuk-hint")
+
+            @defining(
+                RadioItem(
+                    content = Text(messages("purchaser.purchaserRemove.multi.keep", data.purchaserToRemoveName.getOrElse(""))),
+                    value = Some("keep"),
+                    id = Some("value_0")
+                ) +:
+                        RadioItem(divider = Some(messages("site.or"))) +:
+                                data.remainingPurchasers.zipWithIndex.map { case ((id, name), index) =>
+                                    RadioItem(
+                                        content = Text(messages("purchaser.purchaserRemove.multi.remove", data.purchaserToRemoveName.getOrElse(""), name)),
+                                        value = Some(s"PROMOTE-$id"),
+                                        id = Some(s"value_${index + 1}")
+                                    )
+                                }
+            ) { radioItems =>
+                @govukRadios(
+                    RadiosViewModel(
+                        field  = form("value"),
+                        legend = LegendViewModel(messages("purchaser.purchaserRemove.multi.subheading")).asPageSubHeading(),
+                        items  = radioItems
+                    )
+                )
+            }
+            }
+        }
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
+}

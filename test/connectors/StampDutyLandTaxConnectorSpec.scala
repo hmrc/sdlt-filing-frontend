@@ -1724,13 +1724,13 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = "NO",
-          isTrustee = "NO",
-          isConnectedToVendor = "NO",
-          isRepresentedByAgent = "YES",
+          isCompany = Some("NO"),
+          isTrustee = Some("NO"),
+          isConnectedToVendor = Some("NO"),
+          isRepresentedByAgent = Some("YES"),
           title = Some("Mr"),
           surname = Some("Jones Updated"),
-          address1 = "Park Avenue",
+          address1 = Some("Park Avenue"),
           nextPurchaserId = Some("PID-002")
         )
         val expectedResult = models.purchaser.UpdatePurchaserReturn(updated = true)
@@ -1758,11 +1758,11 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = "NO",
-          isTrustee = "NO",
-          isConnectedToVendor = "NO",
-          isRepresentedByAgent = "YES",
-          address1 = "Park Avenue"
+          isCompany = Some("NO"),
+          isTrustee = Some("NO"),
+          isConnectedToVendor = Some("NO"),
+          isRepresentedByAgent = Some("YES"),
+          address1 = Some("Park Avenue")
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Not Found", 404)
 
@@ -1789,11 +1789,11 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = "NO",
-          isTrustee = "NO",
-          isConnectedToVendor = "NO",
-          isRepresentedByAgent = "YES",
-          address1 = "Park Avenue"
+          isCompany = Some("NO"),
+          isTrustee = Some("NO"),
+          isConnectedToVendor = Some("NO"),
+          isRepresentedByAgent = Some("YES"),
+          address1 = Some("Park Avenue")
         )
         val runtimeException = new RuntimeException("Connection failed")
 
@@ -1821,11 +1821,11 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = "NO",
-          isTrustee = "NO",
-          isConnectedToVendor = "NO",
-          isRepresentedByAgent = "YES",
-          address1 = "Park Avenue"
+          isCompany = Some("NO"),
+          isTrustee = Some("NO"),
+          isConnectedToVendor = Some("NO"),
+          isRepresentedByAgent = Some("YES"),
+          address1 = Some("Park Avenue")
         )
         val expectedResult = models.purchaser.UpdatePurchaserReturn(updated = true)
 
@@ -1852,7 +1852,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val mockRequestBuilder = mock[RequestBuilder]
         val testRequest = models.purchaser.DeletePurchaserRequest(
           storn = "12345",
-          purchaserId = "PUR001",
+          purchaserResourceRef = "PUR001",
           returnResourceRef = "RRF-2024-001"
         )
         val expectedResult = models.purchaser.DeletePurchaserReturn(deleted = true)
@@ -1878,7 +1878,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val mockRequestBuilder = mock[RequestBuilder]
         val testRequest = models.purchaser.DeletePurchaserRequest(
           storn = "12345",
-          purchaserId = "PUR001",
+          purchaserResourceRef = "PUR001",
           returnResourceRef = "RRF-2024-001"
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Internal Server Error", 500)
@@ -1905,7 +1905,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val customHc = HeaderCarrier(sessionId = Some(uk.gov.hmrc.http.SessionId("test-session")))
         val testRequest = models.purchaser.DeletePurchaserRequest(
           storn = "12345",
-          purchaserId = "PUR001",
+          purchaserResourceRef = "PUR001",
           returnResourceRef = "RRF-2024-001"
         )
         val expectedResult = models.purchaser.DeletePurchaserReturn(deleted = true)
@@ -1930,7 +1930,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val mockRequestBuilder = mock[RequestBuilder]
         val testRequest = models.purchaser.DeletePurchaserRequest(
           storn = "12345",
-          purchaserId = "PUR001",
+          purchaserResourceRef = "PUR001",
           returnResourceRef = "RRF-2024-001"
         )
         val expectedResult = models.purchaser.DeletePurchaserReturn(deleted = true)
@@ -2400,6 +2400,352 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         verify(mockConfig, atLeastOnce()).stubBool
       }
     }
+
+    "updateReturnInfo" - {
+
+      "must return ReturnInfoReturn when request is successful" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001"),
+          mainVendorID = Some("VEN-001"),
+          mainLandID = Some("LAND-001"),
+          IRMarkGenerated = Some("YES"),
+          landCertForEachProp = Some("NO"),
+          declaration = Some("YES")
+        )
+        val expectedResult = ReturnInfoReturn(updated = true)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Right(expectedResult)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        val result = connector.updateReturnInfo(testRequest).futureValue
+
+        result mustBe expectedResult
+        result.updated mustBe true
+      }
+
+      "must return ReturnInfoReturn with minimal request data" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345"
+        )
+        val expectedResult = ReturnInfoReturn(updated = true)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Right(expectedResult)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        val result = connector.updateReturnInfo(testRequest).futureValue
+
+        result mustBe expectedResult
+        result.updated mustBe true
+      }
+
+      "must handle Left response with UpstreamErrorResponse (400)" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Bad Request", 400)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Left(upstreamError)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+
+        whenReady(connector.updateReturnInfo(testRequest).failed) { exception =>
+          exception mustBe upstreamError
+        }
+      }
+
+      "must handle Left response with UpstreamErrorResponse (404)" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Not Found", 404)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Left(upstreamError)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+
+        whenReady(connector.updateReturnInfo(testRequest).failed) { exception =>
+          exception mustBe upstreamError
+        }
+      }
+
+      "must handle Left response with UpstreamErrorResponse (500)" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Internal Server Error", 500)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Left(upstreamError)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+
+        whenReady(connector.updateReturnInfo(testRequest).failed) { exception =>
+          exception mustBe upstreamError
+        }
+      }
+
+      "must handle Left response with UpstreamErrorResponse (503)" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Service Unavailable", 503)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Left(upstreamError)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+
+        whenReady(connector.updateReturnInfo(testRequest).failed) { exception =>
+          exception mustBe upstreamError
+        }
+      }
+
+      "must handle general exceptions and throw exception" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val runtimeException = new RuntimeException("Connection failed")
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.failed(runtimeException))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+
+        whenReady(connector.updateReturnInfo(testRequest).failed) { exception =>
+          exception mustBe a[RuntimeException]
+          exception.getMessage mustBe "Connection failed"
+        }
+
+        verify(mockHttpClient, times(1)).post(any())(any())
+      }
+
+      "must use stub URL when stubBool is true" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val expectedResult = ReturnInfoReturn(updated = true)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(true)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Right(expectedResult)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        connector.updateReturnInfo(testRequest).futureValue
+
+        verify(mockHttpClient, times(1)).post(any())(any())
+      }
+
+      "must use backend URL when stubBool is false" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val expectedResult = ReturnInfoReturn(updated = true)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Right(expectedResult)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        connector.updateReturnInfo(testRequest).futureValue
+
+        verify(mockHttpClient, times(1)).post(any())(any())
+      }
+
+      "must pass implicit HeaderCarrier to http client" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val customHc = HeaderCarrier(sessionId = Some(uk.gov.hmrc.http.SessionId("test-session")))
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val expectedResult = ReturnInfoReturn(updated = true)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Right(expectedResult)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        connector.updateReturnInfo(testRequest)(customHc, request).futureValue
+
+        verify(mockHttpClient, times(1)).post(any())(any())
+      }
+
+      "must call withBody on request builder with correct JSON" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val expectedResult = ReturnInfoReturn(updated = true)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Right(expectedResult)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        connector.updateReturnInfo(testRequest).futureValue
+
+        verify(mockRequestBuilder, times(1)).withBody(any())(any(), any(), any())
+      }
+
+      "must call execute method on request builder" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val expectedResult = ReturnInfoReturn(updated = true)
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.successful(Right(expectedResult)))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+        connector.updateReturnInfo(testRequest).futureValue
+
+        verify(mockRequestBuilder, times(1)).execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any())
+      }
+
+      "must handle timeout exception" in {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+        val testRequest = ReturnInfoRequest(
+          returnResourceRef = "RRF-2024-001",
+          storn = "12345",
+          mainPurchaserID = Some("PUR-001")
+        )
+        val timeoutException = new java.util.concurrent.TimeoutException("Request timeout")
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, ReturnInfoReturn]](any(), any()))
+          .thenReturn(Future.failed(timeoutException))
+
+        val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+
+        whenReady(connector.updateReturnInfo(testRequest).failed) { exception =>
+          exception mustBe a[java.util.concurrent.TimeoutException]
+          exception.getMessage mustBe "Request timeout"
+        }
+      }
+    }
+
 
     "getSdltOrganisation" - {
 

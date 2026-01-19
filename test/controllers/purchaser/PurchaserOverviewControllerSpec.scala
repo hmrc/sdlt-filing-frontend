@@ -514,7 +514,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.PurchaserBeforeYouStartController.onPageLoad().url //TODO: Change to RemovePurchaserController DTR-1869
+          redirectLocation(result).value mustEqual routes.PurchaserRemoveController.onPageLoad().url
 
           verify(mockSessionRepository, times(1)).set(any())
         }
@@ -541,7 +541,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual routes.PurchaserBeforeYouStartController.onPageLoad().url //TODO: Change to RemovePurchaserController DTR-1869
+            redirectLocation(result).value mustEqual routes.PurchaserRemoveController.onPageLoad().url
           }
         }
       }

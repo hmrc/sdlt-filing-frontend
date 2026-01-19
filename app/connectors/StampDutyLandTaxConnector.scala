@@ -320,7 +320,24 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][getSdltOrganisation]")
       }
 
+  def updateReturnInfo(returnInfoRequest: ReturnInfoRequest)(implicit hc: HeaderCarrier,
+                                                                                     request: Request[_]): Future[ReturnInfoReturn] = {
+    http.post(url"$activeBase/filing/update/return-info")
+      .withBody(Json.toJson(returnInfoRequest))
+      .execute[Either[UpstreamErrorResponse, ReturnInfoReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateReturnInfo]")
+      }
+  }
 
+  
   private def logResponse(e: Throwable, method: String): Throwable = {
     logger.error(s"[$method] Error occurred: ${e.getMessage}", e)
     e

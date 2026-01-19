@@ -36,10 +36,10 @@ object SdltOrganisation {
 case class ReturnInfo(
                    returnID: Option[String] = None,
                    storn: Option[String] = None,
-                   purchaserCounter: Option[String] = None,      // Used in backend
-                   vendorCounter: Option[String] = None,          // Used in backend
-                   landCounter: Option[String] = None,            // Used in backend
-                   purgeDate: Option[String] = None,        // Used in backend
+                   purchaserCounter: Option[String] = None,
+                   vendorCounter: Option[String] = None,
+                   landCounter: Option[String] = None,
+                   purgeDate: Option[String] = None,
                    version: Option[String] = None,
                    mainPurchaserID: Option[String] = None,
                    mainVendorID: Option[String] = None,

@@ -19,7 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import constants.FullReturnConstants
 import models.prelimQuestions.PrelimReturn
-import models.{CreateReturnResult, FullReturn, GetReturnByRefRequest}
+import models._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -725,7 +725,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        val request = createVendorRequestJson.as[vendor.CreateVendorRequest]
         val result = connector.createVendor(request).futureValue
 
         result.vendorResourceRef mustBe "VRF-001"
@@ -746,7 +746,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        val request = createVendorRequestJson.as[vendor.CreateVendorRequest]
         val result = connector.createVendor(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -763,7 +763,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        val request = createVendorRequestJson.as[vendor.CreateVendorRequest]
         val result = connector.createVendor(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -781,7 +781,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        val request = createVendorRequestJson.as[vendor.CreateVendorRequest]
         connector.createVendor(request).futureValue
 
         server.verify(
@@ -801,7 +801,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createVendorRequestJson.as[models.vendor.CreateVendorRequest]
+        val request = createVendorRequestJson.as[vendor.CreateVendorRequest]
         connector.createVendor(request).futureValue
 
         server.verify(
@@ -835,7 +835,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val request = updateVendorRequestJson.as[vendor.UpdateVendorRequest]
         val result = connector.updateVendor(request).futureValue
 
         result.updated mustBe true
@@ -855,7 +855,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val request = updateVendorRequestJson.as[vendor.UpdateVendorRequest]
         val result = connector.updateVendor(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -872,7 +872,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val request = updateVendorRequestJson.as[vendor.UpdateVendorRequest]
         val result = connector.updateVendor(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -889,7 +889,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val request = updateVendorRequestJson.as[vendor.UpdateVendorRequest]
         val result = connector.updateVendor(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -907,7 +907,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateVendorRequestJson.as[models.vendor.UpdateVendorRequest]
+        val request = updateVendorRequestJson.as[vendor.UpdateVendorRequest]
         connector.updateVendor(request).futureValue
 
         server.verify(
@@ -938,7 +938,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val request = deleteVendorRequestJson.as[vendor.DeleteVendorRequest]
         val result = connector.deleteVendor(request).futureValue
 
         result.deleted mustBe true
@@ -958,7 +958,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val request = deleteVendorRequestJson.as[vendor.DeleteVendorRequest]
         val result = connector.deleteVendor(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -975,7 +975,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val request = deleteVendorRequestJson.as[vendor.DeleteVendorRequest]
         val result = connector.deleteVendor(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -992,7 +992,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val request = deleteVendorRequestJson.as[vendor.DeleteVendorRequest]
         val result = connector.deleteVendor(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1010,7 +1010,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val request = deleteVendorRequestJson.as[vendor.DeleteVendorRequest]
         connector.deleteVendor(request).futureValue
 
         server.verify(
@@ -1030,7 +1030,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteVendorRequestJson.as[models.vendor.DeleteVendorRequest]
+        val request = deleteVendorRequestJson.as[vendor.DeleteVendorRequest]
         val result = connector.deleteVendor(request).failed.futureValue
 
         result mustBe a[Throwable]
@@ -1063,7 +1063,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        val request = createReturnAgentRequestJson.as[CreateReturnAgentRequest]
         val result = connector.createReturnAgent(request).futureValue
 
         result.returnAgentId mustBe "RAID-001"
@@ -1083,7 +1083,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        val request = createReturnAgentRequestJson.as[CreateReturnAgentRequest]
         val result = connector.createReturnAgent(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1100,7 +1100,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        val request = createReturnAgentRequestJson.as[CreateReturnAgentRequest]
         val result = connector.createReturnAgent(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1118,7 +1118,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        val request = createReturnAgentRequestJson.as[CreateReturnAgentRequest]
         connector.createReturnAgent(request).futureValue
 
         server.verify(
@@ -1138,7 +1138,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createReturnAgentRequestJson.as[models.CreateReturnAgentRequest]
+        val request = createReturnAgentRequestJson.as[CreateReturnAgentRequest]
         connector.createReturnAgent(request).futureValue
 
         server.verify(
@@ -1174,7 +1174,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val request = updateReturnAgentRequestJson.as[UpdateReturnAgentRequest]
         val result = connector.updateReturnAgent(request).futureValue
 
         result.updated mustBe true
@@ -1194,7 +1194,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val request = updateReturnAgentRequestJson.as[UpdateReturnAgentRequest]
         val result = connector.updateReturnAgent(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1211,7 +1211,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val request = updateReturnAgentRequestJson.as[UpdateReturnAgentRequest]
         val result = connector.updateReturnAgent(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1228,7 +1228,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val request = updateReturnAgentRequestJson.as[UpdateReturnAgentRequest]
         val result = connector.updateReturnAgent(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1246,7 +1246,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateReturnAgentRequestJson.as[models.UpdateReturnAgentRequest]
+        val request = updateReturnAgentRequestJson.as[UpdateReturnAgentRequest]
         connector.updateReturnAgent(request).futureValue
 
         server.verify(
@@ -1277,7 +1277,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val request = deleteReturnAgentRequestJson.as[DeleteReturnAgentRequest]
         val result = connector.deleteReturnAgent(request).futureValue
 
         result.deleted mustBe true
@@ -1297,7 +1297,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val request = deleteReturnAgentRequestJson.as[DeleteReturnAgentRequest]
         val result = connector.deleteReturnAgent(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1314,7 +1314,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val request = deleteReturnAgentRequestJson.as[DeleteReturnAgentRequest]
         val result = connector.deleteReturnAgent(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1331,7 +1331,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val request = deleteReturnAgentRequestJson.as[DeleteReturnAgentRequest]
         val result = connector.deleteReturnAgent(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1349,7 +1349,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val request = deleteReturnAgentRequestJson.as[DeleteReturnAgentRequest]
         connector.deleteReturnAgent(request).futureValue
 
         server.verify(
@@ -1369,7 +1369,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteReturnAgentRequestJson.as[models.DeleteReturnAgentRequest]
+        val request = deleteReturnAgentRequestJson.as[DeleteReturnAgentRequest]
         connector.deleteReturnAgent(request).futureValue
 
         server.verify(
@@ -1410,7 +1410,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createPurchaserRequestJson.as[models.purchaser.CreatePurchaserRequest]
+        val request = createPurchaserRequestJson.as[purchaser.CreatePurchaserRequest]
         val result = connector.createPurchaser(request).futureValue
 
         result.purchaserResourceRef mustBe "PRF-001"
@@ -1431,7 +1431,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createPurchaserRequestJson.as[models.purchaser.CreatePurchaserRequest]
+        val request = createPurchaserRequestJson.as[purchaser.CreatePurchaserRequest]
         val result = connector.createPurchaser(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1448,7 +1448,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createPurchaserRequestJson.as[models.purchaser.CreatePurchaserRequest]
+        val request = createPurchaserRequestJson.as[purchaser.CreatePurchaserRequest]
         val result = connector.createPurchaser(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1466,7 +1466,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createPurchaserRequestJson.as[models.purchaser.CreatePurchaserRequest]
+        val request = createPurchaserRequestJson.as[purchaser.CreatePurchaserRequest]
         connector.createPurchaser(request).futureValue
 
         server.verify(
@@ -1502,7 +1502,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updatePurchaserRequestJson.as[models.purchaser.UpdatePurchaserRequest]
+        val request = updatePurchaserRequestJson.as[purchaser.UpdatePurchaserRequest]
         val result = connector.updatePurchaser(request).futureValue
 
         result.updated mustBe true
@@ -1522,7 +1522,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updatePurchaserRequestJson.as[models.purchaser.UpdatePurchaserRequest]
+        val request = updatePurchaserRequestJson.as[purchaser.UpdatePurchaserRequest]
         val result = connector.updatePurchaser(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1539,7 +1539,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updatePurchaserRequestJson.as[models.purchaser.UpdatePurchaserRequest]
+        val request = updatePurchaserRequestJson.as[purchaser.UpdatePurchaserRequest]
         val result = connector.updatePurchaser(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1557,7 +1557,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updatePurchaserRequestJson.as[models.purchaser.UpdatePurchaserRequest]
+        val request = updatePurchaserRequestJson.as[purchaser.UpdatePurchaserRequest]
         connector.updatePurchaser(request).futureValue
 
         server.verify(
@@ -1571,7 +1571,7 @@ class StampDutyLandTaxConnectorISpec
 
       val deletePurchaserRequestJson = Json.obj(
         "storn" -> "STORN12345",
-        "purchaserId" -> "PUR001",
+        "purchaserResourceRef" -> "PUR001",
         "returnResourceRef" -> "RRF-2024-001"
       )
 
@@ -1588,7 +1588,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val request = deletePurchaserRequestJson.as[purchaser.DeletePurchaserRequest]
         val result = connector.deletePurchaser(request).futureValue
 
         result.deleted mustBe true
@@ -1608,7 +1608,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val request = deletePurchaserRequestJson.as[purchaser.DeletePurchaserRequest]
         val result = connector.deletePurchaser(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1625,7 +1625,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val request = deletePurchaserRequestJson.as[purchaser.DeletePurchaserRequest]
         val result = connector.deletePurchaser(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1642,7 +1642,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val request = deletePurchaserRequestJson.as[purchaser.DeletePurchaserRequest]
         val result = connector.deletePurchaser(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1660,7 +1660,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deletePurchaserRequestJson.as[models.purchaser.DeletePurchaserRequest]
+        val request = deletePurchaserRequestJson.as[purchaser.DeletePurchaserRequest]
         connector.deletePurchaser(request).futureValue
 
         server.verify(
@@ -1693,7 +1693,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createCompanyDetailsRequestJson.as[models.purchaser.CreateCompanyDetailsRequest]
+        val request = createCompanyDetailsRequestJson.as[purchaser.CreateCompanyDetailsRequest]
         val result = connector.createCompanyDetails(request).futureValue
 
         result.companyDetailsId mustBe "CID-001"
@@ -1713,7 +1713,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createCompanyDetailsRequestJson.as[models.purchaser.CreateCompanyDetailsRequest]
+        val request = createCompanyDetailsRequestJson.as[purchaser.CreateCompanyDetailsRequest]
         val result = connector.createCompanyDetails(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1730,7 +1730,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createCompanyDetailsRequestJson.as[models.purchaser.CreateCompanyDetailsRequest]
+        val request = createCompanyDetailsRequestJson.as[purchaser.CreateCompanyDetailsRequest]
         val result = connector.createCompanyDetails(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1748,7 +1748,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = createCompanyDetailsRequestJson.as[models.purchaser.CreateCompanyDetailsRequest]
+        val request = createCompanyDetailsRequestJson.as[purchaser.CreateCompanyDetailsRequest]
         connector.createCompanyDetails(request).futureValue
 
         server.verify(
@@ -1780,7 +1780,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateCompanyDetailsRequestJson.as[models.purchaser.UpdateCompanyDetailsRequest]
+        val request = updateCompanyDetailsRequestJson.as[purchaser.UpdateCompanyDetailsRequest]
         val result = connector.updateCompanyDetails(request).futureValue
 
         result.updated mustBe true
@@ -1800,7 +1800,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateCompanyDetailsRequestJson.as[models.purchaser.UpdateCompanyDetailsRequest]
+        val request = updateCompanyDetailsRequestJson.as[purchaser.UpdateCompanyDetailsRequest]
         val result = connector.updateCompanyDetails(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1817,7 +1817,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateCompanyDetailsRequestJson.as[models.purchaser.UpdateCompanyDetailsRequest]
+        val request = updateCompanyDetailsRequestJson.as[purchaser.UpdateCompanyDetailsRequest]
         val result = connector.updateCompanyDetails(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1835,7 +1835,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = updateCompanyDetailsRequestJson.as[models.purchaser.UpdateCompanyDetailsRequest]
+        val request = updateCompanyDetailsRequestJson.as[purchaser.UpdateCompanyDetailsRequest]
         connector.updateCompanyDetails(request).futureValue
 
         server.verify(
@@ -1865,7 +1865,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val request = deleteCompanyDetailsRequestJson.as[purchaser.DeleteCompanyDetailsRequest]
         val result = connector.deleteCompanyDetails(request).futureValue
 
         result.deleted mustBe true
@@ -1885,7 +1885,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val request = deleteCompanyDetailsRequestJson.as[purchaser.DeleteCompanyDetailsRequest]
         val result = connector.deleteCompanyDetails(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1902,7 +1902,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val request = deleteCompanyDetailsRequestJson.as[purchaser.DeleteCompanyDetailsRequest]
         val result = connector.deleteCompanyDetails(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1919,7 +1919,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val request = deleteCompanyDetailsRequestJson.as[purchaser.DeleteCompanyDetailsRequest]
         val result = connector.deleteCompanyDetails(request).failed.futureValue
 
         result mustBe an[UpstreamErrorResponse]
@@ -1937,7 +1937,7 @@ class StampDutyLandTaxConnectorISpec
             )
         )
 
-        val request = deleteCompanyDetailsRequestJson.as[models.purchaser.DeleteCompanyDetailsRequest]
+        val request = deleteCompanyDetailsRequestJson.as[purchaser.DeleteCompanyDetailsRequest]
         connector.deleteCompanyDetails(request).futureValue
 
         server.verify(
@@ -1946,5 +1946,320 @@ class StampDutyLandTaxConnectorISpec
         )
       }
     }
+
+    "updateReturnInfo()" - {
+
+      val updateReturnInfoRequestJson = Json.obj(
+        "returnResourceRef" -> "RRF-2024-001",
+        "storn" -> "STORN12345",
+        "mainPurchaserID" -> "PUR-001",
+        "mainVendorID" -> "VEN-001",
+        "mainLandID" -> "LAND-001"
+      )
+
+      val updateReturnInfoReturnJson = Json.obj("updated" -> true)
+
+      "must return ReturnInfoReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnInfoReturnJson.toString())
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+        )
+      }
+
+      "must return ReturnInfoReturn with minimal request data" in {
+        val minimalRequestJson = Json.obj(
+          "returnResourceRef" -> "RRF-2024-001",
+          "storn" -> "STORN12345"
+        )
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnInfoReturnJson.toString())
+            )
+        )
+
+        val request = minimalRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+        )
+      }
+
+      "must send correct request body with mainPurchaserID and other fields" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnInfoReturnJson.toString())
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        connector.updateReturnInfo(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
+            .withRequestBody(matchingJsonPath("$.storn", equalTo("STORN12345")))
+            .withRequestBody(matchingJsonPath("$.mainPurchaserID", equalTo("PUR-001")))
+            .withRequestBody(matchingJsonPath("$.mainVendorID", equalTo("VEN-001")))
+            .withRequestBody(matchingJsonPath("$.mainLandID", equalTo("LAND-001")))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 503 Service Unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(503)
+                .withBody("Service Unavailable")
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 503
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnInfoReturnJson.toString())
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        connector.updateReturnInfo(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+        )
+      }
+
+      "must not make multiple requests for a single call" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnInfoReturnJson.toString())
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        connector.updateReturnInfo(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+        )
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnInfoReturnJson.toString())
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        connector.updateReturnInfo(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .withHeader("Content-Type", containing("application/json"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle timeout exception" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withFixedDelay(10000)
+                .withStatus(200)
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle request with all optional fields populated" in {
+        val completeRequestJson = Json.obj(
+          "returnResourceRef" -> "RRF-2024-001",
+          "storn" -> "STORN12345",
+          "mainPurchaserID" -> "PUR-001",
+          "mainVendorID" -> "VEN-001",
+          "mainLandID" -> "LAND-001",
+          "IRMarkGenerated" -> "YES",
+          "landCertForEachProp" -> "NO",
+          "declaration" -> "YES"
+        )
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnInfoReturnJson.toString())
+            )
+        )
+
+        val request = completeRequestJson.as[ReturnInfoRequest]
+        val result = connector.updateReturnInfo(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .withRequestBody(matchingJsonPath("$.IRMarkGenerated", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.landCertForEachProp", equalTo("NO")))
+            .withRequestBody(matchingJsonPath("$.declaration", equalTo("YES")))
+        )
+      }
+
+      "must use stub URL when stubBool is true" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateReturnInfoReturnJson.toString())
+            )
+        )
+
+        val request = updateReturnInfoRequestJson.as[ReturnInfoRequest]
+        connector.updateReturnInfo(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/return-info"))
+        )
+      }
+    }
+
   }
 }

@@ -23,6 +23,7 @@ import pages.vendor.DoYouKnowYourAgentReferencePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.purchaserAgent.DoYouKnowYourAgentReferenceSummary
 
 class DoYouKnowYourAgentReferenceSummarySpec extends SpecBase {
 

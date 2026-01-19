@@ -14,35 +14,29 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.vendor
 
 import models.{CheckMode, UserAnswers}
-import pages.vendor.WhoIsTheVendorPage
+import pages.vendor.VendorRepresentedByAgentPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object WhoIsTheVendorSummary  {
+object VendorRepresentedByAgentSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(WhoIsTheVendorPage).map {
+    answers.get(VendorRepresentedByAgentPage).map {
       answer =>
 
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"vendor.whoIsTheVendor.$answer"))
-          )
-        )
+        val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "vendor.whoIsTheVendor.checkYourAnswersLabel",
-          value   = value,
+          key     = "vendor.vendorRepresentedByAgent.checkYourAnswersLabel",
+          value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendor.whoIsTheVendor.change.hidden"))
+            ActionItemViewModel("site.change", controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("vendor.vendorRepresentedByAgent.change.hidden"))
           )
         )
     }
