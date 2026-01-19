@@ -19,7 +19,7 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.PurchaserTypeOfCompanyFormProvider
-import models.purchaser.{PurchaserTypeOfCompany, WhoIsMakingThePurchase}
+import models.purchaser.{PurchaserTypeOfCompany, PurchaserTypeOfCompanyAnswers, WhoIsMakingThePurchase}
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -103,7 +103,21 @@ class PurchaserTypeOfCompanyControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = testUserAnswersCompany.set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompany.values.toSet).success.value
+      val userAnswers = testUserAnswersCompany.set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
+        buildingAssociation = "YES",
+        centralGovernment = "NO",
+        individualOther = "NO",
+        insuranceAssurance = "NO",
+        localAuthority = "NO",
+        partnership = "NO",
+        propertyCompany = "NO",
+        publicCorporation = "NO",
+        otherCompany = "NO",
+        otherFinancialInstitute = "NO",
+        otherIncludingCharity = "NO",
+        superannuationOrPensionFund = "NO",
+        unincorporatedBuilder = "NO",
+        unincorporatedSoleTrader = "NO")).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -115,7 +129,7 @@ class PurchaserTypeOfCompanyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(PurchaserTypeOfCompany.values.toSet), NormalMode, "John Middle Doe")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(Set(PurchaserTypeOfCompany.Bank, PurchaserTypeOfCompany.BuildingAssociation)), NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
 

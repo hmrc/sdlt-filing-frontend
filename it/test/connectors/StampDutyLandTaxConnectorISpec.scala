@@ -1571,7 +1571,7 @@ class StampDutyLandTaxConnectorISpec
 
       val deletePurchaserRequestJson = Json.obj(
         "storn" -> "STORN12345",
-        "purchaserResourceRef" -> "PRF-001",
+        "purchaserId" -> "PUR001",
         "returnResourceRef" -> "RRF-2024-001"
       )
 

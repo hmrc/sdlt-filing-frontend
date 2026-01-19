@@ -200,13 +200,13 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
   private val validDeletePurchaserRequestJson = Json.obj(
     "storn" -> "STORN12345",
-    "purchaserResourceRef" -> "PRF-001",
+    "purchaserId" -> "PUR001",
     "returnResourceRef" -> "RRF-2024-001"
   )
 
   private val deletePurchaserRequest = DeletePurchaserRequest(
     storn = "STORN12345",
-    purchaserResourceRef = "PRF-001",
+    purchaserId = "PUR001",
     returnResourceRef = "RRF-2024-001"
   )
 
@@ -816,7 +816,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val result = Json.fromJson[DeletePurchaserRequest](validDeletePurchaserRequestJson).asEither.value
 
         result.storn mustBe "STORN12345"
-        result.purchaserResourceRef mustBe "PRF-001"
+        result.purchaserId mustBe "PUR001"
         result.returnResourceRef mustBe "RRF-2024-001"
       }
 
@@ -827,7 +827,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
       }
 
       "must fail to deserialize when purchaserResourceRef is missing" in {
-        val json = validDeletePurchaserRequestJson - "purchaserResourceRef"
+        val json = validDeletePurchaserRequestJson - "purchaserId"
         val result = Json.fromJson[DeletePurchaserRequest](json).asEither
         result.isLeft mustBe true
       }
@@ -849,7 +849,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val json = Json.toJson(deletePurchaserRequest)
 
         (json \ "storn").as[String] mustBe "STORN12345"
-        (json \ "purchaserResourceRef").as[String] mustBe "PRF-001"
+        (json \ "purchaserId").as[String] mustBe "PUR001"
         (json \ "returnResourceRef").as[String] mustBe "RRF-2024-001"
       }
     }
@@ -874,7 +874,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val modified = deletePurchaserRequest.copy(storn = "MODIFIED")
 
         modified.storn mustBe "MODIFIED"
-        modified.purchaserResourceRef mustBe deletePurchaserRequest.purchaserResourceRef
+        modified.purchaserId mustBe deletePurchaserRequest.purchaserId
       }
     }
   }

@@ -18,7 +18,7 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.PurchaserTypeOfCompanyFormProvider
-import models.purchaser.WhoIsMakingThePurchase
+import models.purchaser.{PurchaserTypeOfCompanyAnswers, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{NameOfPurchaserPage, PurchaserTypeOfCompanyPage}
@@ -33,17 +33,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserTypeOfCompanyController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: PurchaserTypeOfCompanyFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: PurchaserTypeOfCompanyView,
-                                        purchaserService: PurchaserService
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                  override val messagesApi: MessagesApi,
+                                                  sessionRepository: SessionRepository,
+                                                  navigator: Navigator,
+                                                  identify: IdentifierAction,
+                                                  getData: DataRetrievalAction,
+                                                  requireData: DataRequiredAction,
+                                                  formProvider: PurchaserTypeOfCompanyFormProvider,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  view: PurchaserTypeOfCompanyView,
+                                                  purchaserService: PurchaserService
+                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -53,16 +53,16 @@ class PurchaserTypeOfCompanyController @Inject()(
         purchaserType = WhoIsMakingThePurchase.Company,
         userAnswers = request.userAnswers,
         continueRoute = request.userAnswers.get(NameOfPurchaserPage) match {
-        case None =>
-          Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
-
-        case Some(purchaserName) =>
-          val preparedForm = request.userAnswers.get(PurchaserTypeOfCompanyPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-          Ok(view(preparedForm, mode, purchaserName.fullName))
-      }
+          case None =>
+            Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
+          case Some(purchaserName) =>
+            val preparedForm = request.userAnswers.get(PurchaserTypeOfCompanyPage) match {
+              case None => form
+              case Some(answersObject) =>
+                form.fill(PurchaserTypeOfCompanyAnswers.toSet(answersObject))
+            }
+            Ok(view(preparedForm, mode, purchaserName.fullName))
+        }
       )
   }
 
@@ -76,11 +76,14 @@ class PurchaserTypeOfCompanyController @Inject()(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName.fullName))),
 
-            value =>
+            selectedValues => {
+              val answersObject = PurchaserTypeOfCompanyAnswers.fromSet(selectedValues)
+
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserTypeOfCompanyPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserTypeOfCompanyPage, answersObject))
                 _ <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(PurchaserTypeOfCompanyPage, mode, updatedAnswers))
+            }
           )
       }
   }

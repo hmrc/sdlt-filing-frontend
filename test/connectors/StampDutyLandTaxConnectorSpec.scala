@@ -1852,7 +1852,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val mockRequestBuilder = mock[RequestBuilder]
         val testRequest = models.purchaser.DeletePurchaserRequest(
           storn = "12345",
-          purchaserResourceRef = "PRF-001",
+          purchaserId = "PUR001",
           returnResourceRef = "RRF-2024-001"
         )
         val expectedResult = models.purchaser.DeletePurchaserReturn(deleted = true)
@@ -1878,7 +1878,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val mockRequestBuilder = mock[RequestBuilder]
         val testRequest = models.purchaser.DeletePurchaserRequest(
           storn = "12345",
-          purchaserResourceRef = "PRF-001",
+          purchaserId = "PUR001",
           returnResourceRef = "RRF-2024-001"
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Internal Server Error", 500)
@@ -1905,7 +1905,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val customHc = HeaderCarrier(sessionId = Some(uk.gov.hmrc.http.SessionId("test-session")))
         val testRequest = models.purchaser.DeletePurchaserRequest(
           storn = "12345",
-          purchaserResourceRef = "PRF-001",
+          purchaserId = "PUR001",
           returnResourceRef = "RRF-2024-001"
         )
         val expectedResult = models.purchaser.DeletePurchaserReturn(deleted = true)
@@ -1930,7 +1930,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val mockRequestBuilder = mock[RequestBuilder]
         val testRequest = models.purchaser.DeletePurchaserRequest(
           storn = "12345",
-          purchaserResourceRef = "PRF-001",
+          purchaserId = "PUR001",
           returnResourceRef = "RRF-2024-001"
         )
         val expectedResult = models.purchaser.DeletePurchaserReturn(deleted = true)

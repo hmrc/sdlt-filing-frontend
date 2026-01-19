@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package models.purchaser
+package forms.purchaser
 
-import play.api.libs.json.*
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case class PurchaserFormOfIdIndividual(idNumberOrReference: String, countryIssued: String)
+import javax.inject.Inject
 
-object PurchaserFormOfIdIndividual {
+class PurchaserOverviewFormProvider @Inject() extends Mappings {
 
-  implicit val format: OFormat[PurchaserFormOfIdIndividual] = Json.format
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("purchaser.purchaserOverview.error.required")
+    )
 }
+
