@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.purchaserAgent
+package viewmodels.checkAnswers.vendor
 
 import models.{CheckMode, UserAnswers}
 import pages.vendor.DoYouKnowYourAgentReferencePage

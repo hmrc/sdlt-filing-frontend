@@ -143,5 +143,32 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
         }
       }
     }
+
+    "when no contact details are present" - {
+
+      "must return empty string" in {
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+          running(application) {
+            implicit val msgs: Messages = messages(application)
+
+            val userAnswers = emptyUserAnswers
+              .set(
+                PurchaserAgentsContactDetailsPage,
+                PurchaserAgentsContactDetails(
+                  phoneNumber = None,
+                  emailAddress = None
+                )
+              ).success.value
+
+            val result =
+              PurchaserAgentsContactDetailsSummary.row(userAnswers)
+                .getOrElse(fail("Failed to get summary list row"))
+
+            result.value.content.asHtml.toString() mustEqual ""
+        }
+      }
+    }
   }
 }

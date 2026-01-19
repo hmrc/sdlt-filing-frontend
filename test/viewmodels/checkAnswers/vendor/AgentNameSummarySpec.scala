@@ -73,6 +73,34 @@ class AgentNameSummarySpec extends SpecBase {
       }
     }
 
+    "when agent name is missing" - {
+
+      "must return a summary list row with a link to add the name and no actions" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+
+          val result = AgentNameSummary.row(Some(userAnswers))
+
+          result.key.content.asHtml.toString() mustEqual
+            msgs("agent.checkYourAnswers.agentName.label")
+
+          val html = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+
+          html must include(controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url)
+
+          html must include(msgs("agent.checkYourAnswers.agentName.agentMissing"))
+
+          result.actions mustBe None
+        }
+      }
+    }
+
+
     "must use CheckMode for the change link" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
