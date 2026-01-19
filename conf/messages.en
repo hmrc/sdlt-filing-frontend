@@ -37,6 +37,7 @@ site.purchaserAgent.caption                                                     
 site.purchaserAgent.beforeStart.caption                                             = Add an agent for the purchaser
 
 site.vendor.theVendor                                                               = the vendor
+site.purchaser.thePurchaser                                                              = the purchaser
 
 site.journeyRecovery.continue.title                                                 = Sorry, there is a problem with the service
 site.journeyRecovery.continue.heading                                               = Sorry, there is a problem with the service
@@ -586,27 +587,27 @@ purchaser.companyFormOfId.error.countryIssued.invalid                           
 purchaser.companyFormOfId.referenceId.change.hidden                                 = ID number or reference
 purchaser.companyFormOfId.countryIssued.change.hidden                               = Country of issue
 
-purchaser.purchaserTypeOfCompany.title                                                        = What type of company is the purchaser? - About the purchaser
-purchaser.purchaserTypeOfCompany.heading                                                      = What type of company is {0}?
-purchaser.purchaserTypeOfCompany.hint                                                         = Select up to four.
-purchaser.purchaserTypeOfCompany.bank                                                         = Bank
-purchaser.purchaserTypeOfCompany.buildingAssociation                                          = Building association
-purchaser.purchaserTypeOfCompany.centralGovernment                                            = Central government
-purchaser.purchaserTypeOfCompany.individualOther                                              = Individual other than sole trader
-purchaser.purchaserTypeOfCompany.insuranceAssurance                                           = Insurance/Assurance company
-purchaser.purchaserTypeOfCompany.localAuthority                                               = Local authority
-purchaser.purchaserTypeOfCompany.partnership                                                  = Partnership
-purchaser.purchaserTypeOfCompany.propertyCompany                                              = Property company
-purchaser.purchaserTypeOfCompany.publicCorporation                                            = Public corporation
-purchaser.purchaserTypeOfCompany.otherCompany                                                 = Other company
-purchaser.purchaserTypeOfCompany.otherFinancialInstitute                                      = Other financial institute
-purchaser.purchaserTypeOfCompany.otherIncludingCharity                                        = Other, including charity
-purchaser.purchaserTypeOfCompany.superannuationOrPensionFund                                  = Superannuation or pension fund
-purchaser.purchaserTypeOfCompany.unincorporatedBuilder                                        = Unincorporated builder
-purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                                     = Unincorporated sole trader other than builder
-purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                                        = What type of company is the purchaser? – About the purchaser
-purchaser.purchaserTypeOfCompany.error.required                                               = Select purchaserTypeOfCompany
-purchaser.purchaserTypeOfCompany.change.hidden                                                = PurchaserTypeOfCompany
+purchaser.purchaserTypeOfCompany.title                                              = What type of company is the purchaser? - About the purchaser
+purchaser.purchaserTypeOfCompany.heading                                            = What type of company is {0}?
+purchaser.purchaserTypeOfCompany.hint                                               = Select up to four.
+purchaser.purchaserTypeOfCompany.bank                                               = Bank
+purchaser.purchaserTypeOfCompany.buildingAssociation                                = Building association
+purchaser.purchaserTypeOfCompany.centralGovernment                                  = Central government
+purchaser.purchaserTypeOfCompany.individualOther                                    = Individual other than sole trader
+purchaser.purchaserTypeOfCompany.insuranceAssurance                                 = Insurance/Assurance company
+purchaser.purchaserTypeOfCompany.localAuthority                                     = Local authority
+purchaser.purchaserTypeOfCompany.partnership                                        = Partnership
+purchaser.purchaserTypeOfCompany.propertyCompany                                    = Property company
+purchaser.purchaserTypeOfCompany.publicCorporation                                  = Public corporation
+purchaser.purchaserTypeOfCompany.otherCompany                                       = Other company
+purchaser.purchaserTypeOfCompany.otherFinancialInstitute                            = Other financial institute
+purchaser.purchaserTypeOfCompany.otherIncludingCharity                              = Other, including charity
+purchaser.purchaserTypeOfCompany.superannuationOrPensionFund                        = Superannuation or pension fund
+purchaser.purchaserTypeOfCompany.unincorporatedBuilder                              = Unincorporated builder
+purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                           = Unincorporated sole trader other than builder
+purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                              = What type of company is the purchaser? – About the purchaser
+purchaser.purchaserTypeOfCompany.error.required                                     = Select purchaserTypeOfCompany
+purchaser.purchaserTypeOfCompany.change.hidden                                      = PurchaserTypeOfCompany
 
 purchaser.purchaserAndVendorConnected.title                                         = Are the purchaser and the vendor connected? - About the purchaser
 purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor(s) connected?
@@ -615,6 +616,17 @@ purchaser.purchaserAndVendorConnected.error.required                            
 purchaser.purchaserAndVendorConnected.change.hidden                                 = PurchaserAndVendorConnected
 purchaser.purchaserAndVendorConnected.hint                                          = A purchaser and vendor can be connected in different ways, like a marriage, civil partnership, family link or business interest
 
+# Purchaser Overview
+purchaser.purchaserOverview.title                                                   = Purchaser overview - About the purchaser
+purchaser.purchaserOverview.heading                                                 = Purchaser Overview
+purchaser.purchaserOverview.noPurchaser.subHeadingNoPurchasers                      = Do you need to add another purchaser?
+purchaser.purchaserOverview.limitReached                                            = To add a new purchaser, you must remove a purchaser or vendor
+purchaser.purchaserOverview.purchaserRemoved                                        = You have removed {0}
+purchaser.purchaserOverview.aPurchaser                                              = a purchaser
+purchaser.purchaserOverview.error.required                                          = Please select an option
+purchaser.purchaserOverview.noPurchaser.button                                      = Add a purchaser
+purchaser.purchaserOverview.summaryInfo.text                                        = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
+purchaser.purchaserOverview.noPurchaser.p1                                          = You have no purchasers listed. You must add a purchaser to complete this return.
 
 # Purchaser Agent
 purchaserAgent.BeforeYouStart.title                                                 = Before you start - About the purchaser’s agent

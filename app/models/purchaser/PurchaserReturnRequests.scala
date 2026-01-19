@@ -16,7 +16,10 @@
 
 package models.purchaser
 
+import models.UserAnswers
 import play.api.libs.json.{Json, OFormat}
+
+import scala.concurrent.Future
 
 case class CreatePurchaserRequest(
                                    stornId: String,
@@ -99,14 +102,32 @@ object UpdatePurchaserReturn {
   implicit val format: OFormat[UpdatePurchaserReturn] = Json.format[UpdatePurchaserReturn]
 }
 
-case class DeletePurchaserRequest(
+case class  DeletePurchaserRequest(
                                    storn: String,
-                                   purchaserResourceRef: String,
+                                   purchaserId: String,
                                    returnResourceRef: String
                                  )
 
 object DeletePurchaserRequest {
   implicit val format: OFormat[DeletePurchaserRequest] = Json.format[DeletePurchaserRequest]
+
+  def from(userAnswers: UserAnswers, purchaserId: String): Future[DeletePurchaserRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        fullReturn.purchaser
+          .flatMap(_.find(_.purchaserID.contains(purchaserId))) match {
+          case Some(_) => Future.successful(DeletePurchaserRequest(
+            storn = fullReturn.stornId,
+            purchaserId = purchaserId,
+            returnResourceRef = fullReturn.returnResourceRef
+          ))
+          case None =>
+            Future.failed(new NoSuchElementException("Purchaser not found"))
+        }
+      case None =>
+        Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class DeletePurchaserReturn(

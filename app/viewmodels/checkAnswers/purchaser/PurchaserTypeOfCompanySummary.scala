@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.purchaser
 
+import models.purchaser.PurchaserTypeOfCompanyAnswers
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserTypeOfCompanyPage
 import play.api.i18n.Messages
@@ -29,24 +30,27 @@ object PurchaserTypeOfCompanySummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(PurchaserTypeOfCompanyPage).map {
-      answers =>
+      answersObject =>
+
+        val selectedItems = PurchaserTypeOfCompanyAnswers.toSet(answersObject)
+          .map(_.toString)
+          .toSeq
 
         val value = ValueViewModel(
           HtmlContent(
-            answers.map {
-              answer => HtmlFormat.escape(messages(s"purchaser.purchaserTypeOfCompany.$answer")).toString
-            }
-            .mkString(",<br>")
+            selectedItems.map {
+                answer => HtmlFormat.escape(messages(s"purchaser.purchaserTypeOfCompany.$answer")).toString
+              }
+              .mkString(",<br>")
           )
         )
 
         SummaryListRowViewModel(
-          key     = "purchaser.purchaserTypeOfCompany.checkYourAnswersLabel",
-          value   = value,
+          key = "purchaser.purchaserTypeOfCompany.checkYourAnswersLabel",
+          value = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaser.purchaserTypeOfCompany.change.hidden"))
           )
         )
-    }
-}
+    }}

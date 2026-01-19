@@ -18,10 +18,9 @@ package viewmodels.checkAnswers.purchaser
 
 import base.SpecBase
 import models.CheckMode
-import models.purchaser.PurchaserTypeOfCompany
+import models.purchaser.PurchaserTypeOfCompanyAnswers
 import pages.purchaser.PurchaserTypeOfCompanyPage
 import play.api.i18n.Messages
-import play.api.libs.json.*
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
@@ -37,14 +36,28 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserTypeOfCompanyPage, Set(PurchaserTypeOfCompany.PropertyCompany)).success.value
+            .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
+              buildingAssociation = "NO",
+              centralGovernment = "NO",
+              individualOther = "NO",
+              insuranceAssurance = "NO",
+              localAuthority = "NO",
+              partnership = "NO",
+              propertyCompany = "NO",
+              publicCorporation = "NO",
+              otherCompany = "NO",
+              otherFinancialInstitute = "NO",
+              otherIncludingCharity = "NO",
+              superannuationOrPensionFund = "NO",
+              unincorporatedBuilder = "NO",
+              unincorporatedSoleTrader = "NO")).success.value
 
           val result = PurchaserTypeOfCompanySummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "Property company"
+          htmlContent mustEqual "Bank"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode).url
