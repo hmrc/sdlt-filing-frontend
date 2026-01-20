@@ -474,7 +474,7 @@ class PurchaserAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(eqTo(testAddress), eqTo(PurchaserAddressPage))(any(), any())
@@ -598,7 +598,7 @@ class PurchaserAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+            redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }

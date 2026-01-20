@@ -69,7 +69,8 @@ class PurchaserNationalInsuranceController @Inject()(
           purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
             purchaserType = WhoIsMakingThePurchase.Individual,
             userAnswers = request.userAnswers,
-            continueRoute = Ok(view(preparedForm, mode, purchaserName)))
+            continueRoute = Ok(view(preparedForm, mode, purchaserName)),
+            mode = mode)
           
         case (None, _) => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 

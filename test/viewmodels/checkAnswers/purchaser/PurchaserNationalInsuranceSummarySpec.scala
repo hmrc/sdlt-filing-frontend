@@ -39,7 +39,7 @@ class PurchaserNationalInsuranceSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserNationalInsurancePage, "AA123456A").success.value
 
-          val result = PurchaserNationalInsuranceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = PurchaserNationalInsuranceSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.nationalInsurance.checkYourAnswersLabel")
 
@@ -62,10 +62,33 @@ class PurchaserNationalInsuranceSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserNationalInsurancePage, "AA123465A").success.value
 
-          val result = PurchaserNationalInsuranceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = PurchaserNationalInsuranceSummary.row(Some(userAnswers))
 
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url
         }
+      }
+
+    }
+
+    "must return a summary list row with a link to enter national insurance number when userAnswers is empty" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+
+        val result = PurchaserNationalInsuranceSummary.row(Some(userAnswers))
+
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.nationalInsurance.checkYourAnswersLabel")
+
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+
+        htmlContent must include("govuk-link")
+        htmlContent must include(controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url)
+        htmlContent must include(msgs("purchaser.checkYourAnswers.purchaserNationalInsurance.missing"))
+        result.actions mustBe None
       }
     }
   }

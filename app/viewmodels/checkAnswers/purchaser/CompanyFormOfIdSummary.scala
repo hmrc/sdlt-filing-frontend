@@ -27,8 +27,8 @@ import viewmodels.implicits.*
 
 object CompanyFormOfIdSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(CompanyFormOfIdPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(CompanyFormOfIdPage)).map {
       answer =>
 
       val value = HtmlFormat.escape(answer.referenceId).toString + "<br/>" + HtmlFormat.escape(answer.countryIssued).toString
@@ -41,5 +41,16 @@ object CompanyFormOfIdSummary  {
               .withVisuallyHiddenText(messages("purchaser.companyFormOfId.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.companyFormOfId.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaser.companyFormOfId.checkYourAnswersLabel",
+        value = value
+      )
     }
 }

@@ -137,7 +137,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
               populatePurchaserService.populatePurchaserInSession(purchaser,
                 purchaserId, request.userAnswers))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad()) //TODO: Change to Purchaser CYA DTR-1788
+          } yield Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

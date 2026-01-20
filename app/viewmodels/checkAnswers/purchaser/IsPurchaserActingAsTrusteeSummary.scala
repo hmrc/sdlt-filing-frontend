@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.purchaser
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaser.IsPurchaserActingAsTrusteePage
+import pages.purchaser.{IsPurchaserActingAsTrusteePage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,23 +27,34 @@ import viewmodels.implicits.*
 
 object IsPurchaserActingAsTrusteeSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(IsPurchaserActingAsTrusteePage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(IsPurchaserActingAsTrusteePage)).map {
       answer =>
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"purchaser.isPurchaserActingAsTrustee.$answer"))
+            HtmlFormat.escape(messages(s"site.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel",
+          key     = messages("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaser.isPurchaserActingAsTrustee.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.iSPurchaserActingAsTrustee.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = messages("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
+        value = value
+      )
     }
 }

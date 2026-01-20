@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.purchaser
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaser.PurchaserAndVendorConnectedPage
+import pages.purchaser.{NameOfPurchaserPage, PurchaserAndVendorConnectedPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,8 +27,8 @@ import viewmodels.implicits.*
 
 object PurchaserAndVendorConnectedSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserAndVendorConnectedPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(PurchaserAndVendorConnectedPage)).map {
       answer =>
 
         val value = ValueViewModel(
@@ -38,12 +38,23 @@ object PurchaserAndVendorConnectedSummary  {
         )
 
         SummaryListRowViewModel(
-          key     = "purchaser.purchaserAndVendorConnected.checkYourAnswersLabel",
+          key     = messages("purchaser.purchaserAndVendorConnected.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaser.purchaserAndVendorConnected.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserAndVendorConnected.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = messages("purchaser.purchaserAndVendorConnected.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
+        value = value
+      )
     }
 }

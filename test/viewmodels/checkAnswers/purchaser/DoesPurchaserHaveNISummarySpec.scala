@@ -19,7 +19,7 @@ package viewmodels.checkAnswers.purchaser
 import base.SpecBase
 import models.CheckMode
 import models.purchaser.{DoesPurchaserHaveNI, NameOfPurchaser}
-import pages.purchaser.DoesPurchaserHaveNIPage
+import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -40,10 +40,12 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers
             .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.Yes).success.value
+            .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
-          val result = DoesPurchaserHaveNISummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel")
+          val result = DoesPurchaserHaveNISummary.row(Some(userAnswers))
+
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "Yes"
@@ -54,8 +56,29 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.doesPurchaserHaveNI.change.hidden")
         }
       }
+    }
 
+    "must return a summary list row with a link to enter name when userAnswers is empty" in {
 
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+          .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
+
+        val result = DoesPurchaserHaveNISummary.row(Some(userAnswers))
+
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
+
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+
+        htmlContent must include("govuk-link")
+        htmlContent must include(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(CheckMode).url)
+        htmlContent must include(msgs("purchaser.checkYourAnswers.doesPurchaserHaveNI.missing"))
+        result.actions mustBe None
+      }
     }
   }
 }

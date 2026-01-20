@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.purchaser
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaser.DoesPurchaserHaveNIPage
+import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,8 +27,8 @@ import viewmodels.implicits.*
 
 object DoesPurchaserHaveNISummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(DoesPurchaserHaveNIPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(DoesPurchaserHaveNIPage)).map {
       answer =>
 
         val value = ValueViewModel(
@@ -38,12 +38,23 @@ object DoesPurchaserHaveNISummary  {
         )
 
         SummaryListRowViewModel(
-          key     = "purchaser.doesPurchaserHaveNI.checkYourAnswersLabel",
+          key     = messages("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaser.doesPurchaserHaveNI.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.doesPurchaserHaveNI.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = messages("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
+        value = value
+      )
     }
 }

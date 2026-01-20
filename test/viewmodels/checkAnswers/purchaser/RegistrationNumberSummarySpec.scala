@@ -39,7 +39,7 @@ class RegistrationNumberSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(RegistrationNumberPage, "123456789").success.value
 
-          val result = RegistrationNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = RegistrationNumberSummary.row(Some(userAnswers))
 
            result.key.content.asHtml.toString() mustEqual msgs("purchaser.registrationNumber.checkYourAnswersLabel")
 

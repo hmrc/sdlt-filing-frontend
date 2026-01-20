@@ -52,7 +52,7 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
               unincorporatedBuilder = "NO",
               unincorporatedSoleTrader = "NO")).success.value
 
-          val result = PurchaserTypeOfCompanySummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = PurchaserTypeOfCompanySummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
 
@@ -66,6 +66,27 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
         }
       }
 
+      "must return a summary list row with a link to enter type of company when userAnswers is empty" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+
+          val result = PurchaserTypeOfCompanySummary.row(Some(userAnswers))
+
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("purchaser.checkYourAnswers.purchaserTypeOfCompany.missing"))
+          result.actions mustBe None
+        }
+      }
 
     }
   }

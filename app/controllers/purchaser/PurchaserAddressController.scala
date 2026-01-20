@@ -99,8 +99,7 @@ class PurchaserAddressController @Inject()(
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, PurchaserAddressPage)
       } yield if (updated) {
-        //change this when we have the check your answers page
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }

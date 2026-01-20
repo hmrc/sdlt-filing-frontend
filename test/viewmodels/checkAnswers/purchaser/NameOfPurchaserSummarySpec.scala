@@ -44,17 +44,17 @@ class NameOfPurchaserSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-          val result = NameOfPurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = NameOfPurchaserSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("nameOfPurchaser.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "Doe"
+          htmlContent mustEqual "John Middle Doe"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("nameOfPurchaser.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.nameOfThePurchaser.change.hidden")
         }
       }
     }
@@ -75,17 +75,17 @@ class NameOfPurchaserSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-          val result = NameOfPurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = NameOfPurchaserSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("nameOfPurchaser.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "Smith"
+          htmlContent mustEqual "Jane Smith"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("nameOfPurchaser.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.nameOfThePurchaser.change.hidden")
         }
       }
     }
@@ -106,9 +106,9 @@ class NameOfPurchaserSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-          val result = NameOfPurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = NameOfPurchaserSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("nameOfPurchaser.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "ACME Corporation"
@@ -116,7 +116,7 @@ class NameOfPurchaserSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("nameOfPurchaser.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.nameOfThePurchaser.change.hidden")
         }
       }
     }
@@ -128,9 +128,9 @@ class NameOfPurchaserSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = NameOfPurchaserSummary.row(emptyUserAnswers)
+          val result = NameOfPurchaserSummary.row(Some(emptyUserAnswers))
 
-          result mustBe None
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
         }
       }
     }
@@ -149,7 +149,7 @@ class NameOfPurchaserSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-        val result = NameOfPurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = NameOfPurchaserSummary.row(Some(userAnswers))
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must include("O&#x27;Brien")
@@ -173,7 +173,7 @@ class NameOfPurchaserSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-        val result = NameOfPurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = NameOfPurchaserSummary.row(Some(userAnswers))
 
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode).url
       }
@@ -193,7 +193,7 @@ class NameOfPurchaserSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-        val result = NameOfPurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = NameOfPurchaserSummary.row(Some(userAnswers))
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent mustEqual "test"

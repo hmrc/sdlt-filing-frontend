@@ -436,7 +436,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url
 
           verify(mockPopulatePurchaserService, times(1)).populatePurchaserInSession(eqTo(testPurchaser), eqTo("PUR001"), any())
           verify(mockSessionRepository, times(1)).set(any())

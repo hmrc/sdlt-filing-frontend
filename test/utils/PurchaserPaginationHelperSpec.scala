@@ -44,7 +44,7 @@ class PurchaserPaginationHelperSpec extends SpecBase {
     isCompany = Some("NO"),
     phone = Some("07123456789"),
     nino = Some("AB123456C"),
-    dateOfBirth = Some("15/03/1985")
+    dateOfBirth = Some("1985-03-15")
   )
 
   private val fullReturnWithIndividualPurchaser: FullReturn =

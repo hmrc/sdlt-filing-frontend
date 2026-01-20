@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import viewmodels.implicits.*
 
 object PurchaserAgentNameSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserAgentNamePage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(PurchaserAgentNamePage)).map {
       answer =>
 
         SummaryListRowViewModel(
@@ -39,5 +39,16 @@ object PurchaserAgentNameSummary  {
               .withVisuallyHiddenText(messages("purchaserAgent.name.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.PurchaserAgentName.Missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaserAgent.name.checkYourAnswersLabel",
+        value = value
+      )
     }
 }

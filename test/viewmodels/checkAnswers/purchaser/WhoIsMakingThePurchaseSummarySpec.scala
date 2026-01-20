@@ -38,12 +38,12 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
 
-          val result = WhoIsMakingThePurchaseSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Individual")
+          htmlContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url
@@ -63,12 +63,12 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
 
-          val result = WhoIsMakingThePurchaseSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Company")
+          htmlContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Company.checkYourAnswersLabel")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url
@@ -85,9 +85,9 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = WhoIsMakingThePurchaseSummary.row(emptyUserAnswers)
+          val result = WhoIsMakingThePurchaseSummary.row(Some(emptyUserAnswers))
 
-          result mustBe None
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
         }
       }
     }
@@ -100,7 +100,7 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
 
-        val result = WhoIsMakingThePurchaseSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
 
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url
       }
@@ -114,7 +114,7 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
 
-        val result = WhoIsMakingThePurchaseSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must not include "<script>"
@@ -133,14 +133,14 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
         val companyAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
 
-        val individualResult = WhoIsMakingThePurchaseSummary.row(individualAnswers).getOrElse(fail("Failed to get summary list row"))
-        val companyResult = WhoIsMakingThePurchaseSummary.row(companyAnswers).getOrElse(fail("Failed to get summary list row"))
+        val individualResult = WhoIsMakingThePurchaseSummary.row(Some(individualAnswers))
+        val companyResult = WhoIsMakingThePurchaseSummary.row(Some(companyAnswers))
 
         val individualContent = individualResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         val companyContent = companyResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
 
-        individualContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Individual")
-        companyContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Company")
+        individualContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel")
+        companyContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Company.checkYourAnswersLabel")
 
         individualContent must not equal companyContent
       }

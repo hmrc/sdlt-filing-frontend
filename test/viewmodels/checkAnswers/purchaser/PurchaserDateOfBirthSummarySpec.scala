@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.purchaser.PurchaserDateOfBirthPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 
 import java.time.LocalDate
 
@@ -37,7 +37,7 @@ class PurchaserDateOfBirthSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(PurchaserDateOfBirthPage, LocalDate.of(2000, 10, 26)).success.value
 
-        val result = PurchaserDateOfBirthSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = PurchaserDateOfBirthSummary.row(Some(userAnswers))
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.dateOfBirth.checkYourAnswersLabel")
 
@@ -50,5 +50,28 @@ class PurchaserDateOfBirthSummarySpec extends SpecBase {
         result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.dateOfBirth.change.hidden")
       }
     }
+
+    "must return a summary list row with a link to enter date of birth when userAnswers is empty" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+
+        val result = PurchaserDateOfBirthSummary.row(Some(userAnswers))
+
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.dateOfBirth.checkYourAnswersLabel")
+
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+
+        htmlContent must include("govuk-link")
+        htmlContent must include(controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode).url)
+        htmlContent must include(msgs("purchaser.checkYourAnswers.purchaserDateOfBirth.missing"))
+        result.actions mustBe None
+      }
+    }
+
   }
 }

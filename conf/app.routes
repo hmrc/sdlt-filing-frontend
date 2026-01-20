@@ -262,6 +262,9 @@ POST       /about-the-purchasers-agent/select-agent                             
 GET        /about-the-purchasers-agent/select-agent/change                               controllers.purchaserAgent.SelectPurchaserAgentController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchasers-agent/select-agent/change                               controllers.purchaserAgent.SelectPurchaserAgentController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-purchaser/check-answers                          controllers.purchaser.PurchaserCheckYourAnswersController.onPageLoad()
+POST       /about-the-purchaser/check-answers                          controllers.purchaser.PurchaserCheckYourAnswersController.onSubmit()
+
 GET         /about-the-purchasers-agent/agent-authorised-for-correspondence               controllers.purchaserAgent.PurchaserAgentAuthorisedController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchasers-agent/agent-authorised-for-correspondence               controllers.purchaserAgent.PurchaserAgentAuthorisedController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-purchasers-agent/agent-authorised-for-correspondence/change        controllers.purchaserAgent.PurchaserAgentAuthorisedController.onPageLoad(mode: Mode = CheckMode)

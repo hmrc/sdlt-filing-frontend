@@ -61,7 +61,7 @@ class IsPurchaserActingAsTrusteeController @Inject()(
           }
 
           val continueRoute = Ok(view(preparedForm, mode, nameOfPurchaser.fullName))
-          purchaserService.continueIfAddingMainPurchaser(request.userAnswers, continueRoute)
+          purchaserService.continueIfAddingMainPurchaser(request.userAnswers, continueRoute, mode)
       }
   }
 

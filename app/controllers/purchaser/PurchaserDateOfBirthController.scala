@@ -64,7 +64,8 @@ class PurchaserDateOfBirthController @Inject()(
          purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
            purchaserType = WhoIsMakingThePurchase.Individual,
            userAnswers = request.userAnswers,
-           continueRoute = Ok(view(preparedForm, purchaserName, mode)))
+           continueRoute = Ok(view(preparedForm, purchaserName, mode)),
+           mode = mode)
 
      }
   }

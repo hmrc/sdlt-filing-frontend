@@ -97,9 +97,10 @@ class PopulatePurchaserService {
 
     val isCompany = purchaser.isCompany.contains("YES")
     val companyDetailsID = userAnswers.fullReturn.flatMap(_.companyDetails.map(_.companyDetailsID)).flatten
+    val phoneDefined: Boolean = purchaser.phone.isDefined
 
-    (purchaser, mainPurchaserCheck, isCompany) match {
-      case (purchaser, true, true) if purchaser.phone.isDefined =>
+    (purchaser, mainPurchaserCheck, isCompany, phoneDefined) match {
+      case (purchaser, true, true, true) =>
         for {
           whoIsThePurchaserPage <- userAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company)
           withName <- whoIsThePurchaserPage.set(NameOfPurchaserPage, purchaserName)
@@ -108,7 +109,15 @@ class PopulatePurchaserService {
           withPhoneNumber <- withAddPhoneNumberAnswer.set(EnterPurchaserPhoneNumberPage, purchaser.phone.get)
           finalAnswers <- withPhoneNumber.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, companyDetailsID))
         } yield finalAnswers
-      case (purchaser, true, false) if purchaser.phone.isDefined => for {
+      case (purchaser, true, true, false) =>
+        for {
+          whoIsThePurchaserPage <- userAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company)
+          withName <- whoIsThePurchaserPage.set(NameOfPurchaserPage, purchaserName)
+          withAddress <- withName.set(PurchaserAddressPage, address)
+          withAddPhoneNumberAnswer <- withAddress.set(AddPurchaserPhoneNumberPage, false)
+          finalAnswers <- withAddPhoneNumberAnswer.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, companyDetailsID))
+        } yield finalAnswers
+      case (purchaser, true, false, true) => for {
         whoIsThePurchaserPage <- userAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual)
         withName <- whoIsThePurchaserPage.set(NameOfPurchaserPage, purchaserName)
         withAddress <- withName.set(PurchaserAddressPage, address)
@@ -116,9 +125,25 @@ class PopulatePurchaserService {
         withPhoneNumber <- withAddPhoneNumberAnswer.set(EnterPurchaserPhoneNumberPage, purchaser.phone.get)
         finalAnswers <- withPhoneNumber.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, None))
       } yield finalAnswers
-      case _ => for {
-        withName <- userAnswers.set(NameOfPurchaserPage, purchaserName)
+      case (purchaser, true, false, false) => for {
+        whoIsThePurchaserPage <- userAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual)
+        withName <- whoIsThePurchaserPage.set(NameOfPurchaserPage, purchaserName)
         withAddress <- withName.set(PurchaserAddressPage, address)
+        withAddPhoneNumberAnswer <- withAddress.set(AddPurchaserPhoneNumberPage, false)
+        finalAnswers <- withAddPhoneNumberAnswer.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, None))
+      } yield finalAnswers
+      case (purchaser, false, true, false) => for {
+        whoIsThePurchaserPage <- userAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company)
+        withName <- whoIsThePurchaserPage.set(NameOfPurchaserPage, purchaserName)
+        withAddPhoneNumberAnswer <- withName.set(AddPurchaserPhoneNumberPage, false)
+        withAddress <- withAddPhoneNumberAnswer.set(PurchaserAddressPage, address)
+        finalAnswers <- withAddress.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, None))
+      } yield finalAnswers
+      case _ => for {
+        whoIsThePurchaserPage <- userAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual)
+        withName <- whoIsThePurchaserPage.set(NameOfPurchaserPage, purchaserName)
+        withAddPhoneNumberAnswer <- withName.set(AddPurchaserPhoneNumberPage, false)
+        withAddress <- withAddPhoneNumberAnswer.set(PurchaserAddressPage, address)
         finalAnswers <- withAddress.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, None))
       } yield finalAnswers
     }

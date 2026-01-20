@@ -17,6 +17,7 @@
 package models
 
 import models.vendor.VendorSessionQuestions
+import models.purchaser.PurchaserSessionQuestions
 import play.api.libs.json.{Json, OFormat}
 
 import scala.concurrent.Future
@@ -89,6 +90,57 @@ case class Purchaser(
 
 object Purchaser {
   implicit val format: OFormat[Purchaser] = Json.format[Purchaser]
+
+  def from(userAnswers: Option[UserAnswers]): Future[Purchaser] = {
+    val purchaserSessionQuestions: PurchaserSessionQuestions = userAnswers.get.data.as[PurchaserSessionQuestions]
+      Future.successful(
+        Purchaser(
+          purchaserID = purchaserSessionQuestions.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID),
+          returnID = userAnswers.flatMap(_.returnId),
+          isCompany = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Company") Some("YES") else Some("NO"),
+          isTrustee =  purchaserSessionQuestions.purchaserCurrent.isPurchaserActingAsTrustee.map(_.toUpperCase),
+          isConnectedToVendor = purchaserSessionQuestions.purchaserCurrent.purchaserAndVendorConnected.map(_.toUpperCase),
+          title = None,
+          surname = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
+            Some(purchaserSessionQuestions.purchaserCurrent.nameOfPurchaser.name)
+          } else {
+            None
+          },
+          forename1 = purchaserSessionQuestions.purchaserCurrent.nameOfPurchaser.forename1,
+          forename2 = purchaserSessionQuestions.purchaserCurrent.nameOfPurchaser.forename2,
+          companyName =  if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Company") {
+            Some(purchaserSessionQuestions.purchaserCurrent.nameOfPurchaser.name)
+          } else {
+            None
+          },
+          houseNumber  = purchaserSessionQuestions.purchaserCurrent.purchaserAddress.houseNumber,
+          address1 = purchaserSessionQuestions.purchaserCurrent.purchaserAddress.line1,
+          address2 = purchaserSessionQuestions.purchaserCurrent.purchaserAddress.line2,
+          address3 = purchaserSessionQuestions.purchaserCurrent.purchaserAddress.line3,
+          address4 = purchaserSessionQuestions.purchaserCurrent.purchaserAddress.line4,
+          postcode  = purchaserSessionQuestions.purchaserCurrent.purchaserAddress.postcode,
+          phone  = purchaserSessionQuestions.purchaserCurrent.enterPurchaserPhoneNumber,
+          nino = purchaserSessionQuestions.purchaserCurrent.nationalInsuranceNumber,
+          purchaserResourceRef  = None,
+          nextPurchaserID = None,
+          lMigrated  = None, // Used in backend
+          createDate  = None, // Used in backend
+          lastUpdateDate = None, // Used in backend
+          isUkCompany = None,
+          hasNino  = purchaserSessionQuestions.purchaserCurrent.doesPurchaserHaveNI.map(_.toString.toLowerCase),
+          dateOfBirth  = purchaserSessionQuestions.purchaserCurrent.purchaserDateOfBirth.map(_.toString),
+          registrationNumber = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
+            purchaserSessionQuestions.purchaserCurrent.purchaserFormOfIdIndividual.map(_.idNumberOrReference)
+          } else {
+            purchaserSessionQuestions.purchaserCurrent.purchaserFormOfIdCompany.map(_.referenceId)
+          },
+          placeOfRegistration = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
+            purchaserSessionQuestions.purchaserCurrent.purchaserFormOfIdIndividual.map(_.countryIssued)
+          } else {
+            purchaserSessionQuestions.purchaserCurrent.purchaserFormOfIdCompany.map(_.countryIssued)
+          }
+    ) )
+  }
 }
 
 case class CompanyDetails(
@@ -116,8 +168,34 @@ case class CompanyDetails(
 
 object CompanyDetails {
   implicit val format: OFormat[CompanyDetails] = Json.format[CompanyDetails]
-}
 
+  def from(userAnswers: UserAnswers): Future[CompanyDetails] = {
+    val companyDetailsSessionQuestions: PurchaserSessionQuestions = userAnswers.data.as[PurchaserSessionQuestions]
+    Future.successful(
+      CompanyDetails(
+        companyDetailsID = companyDetailsSessionQuestions.purchaserCurrent.purchaserAndCompanyId.flatMap(_.companyDetailsID),
+        returnID = userAnswers.returnId,
+        purchaserID = companyDetailsSessionQuestions.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID),
+        UTR  = companyDetailsSessionQuestions.purchaserCurrent.purchaserUTRPage,
+        VATReference  = companyDetailsSessionQuestions.purchaserCurrent.registrationNumber,
+        companyTypeBank = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.bank),
+        companyTypeBuilder = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.unincorporatedBuilder),
+        companyTypeBuildsoc = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.buildingAssociation),
+        companyTypeCentgov = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.centralGovernment),
+        companyTypeIndividual = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.individualOther),
+        companyTypeInsurance = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.insuranceAssurance),
+        companyTypeLocalauth = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.localAuthority),
+        companyTypeOthercharity  = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.otherIncludingCharity),
+        companyTypeOthercompany = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.otherCompany),
+        companyTypeOtherfinancial = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.otherFinancialInstitute),
+        companyTypePartnership  = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.partnership),
+        companyTypeProperty = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.propertyCompany),
+        companyTypePubliccorp = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.publicCorporation),
+        companyTypeSoletrader = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.unincorporatedSoleTrader),
+        companyTypePensionfund = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.superannuationOrPensionFund)
+    ))
+  }
+}
 
 case class Vendor(
                    vendorID: Option[String] = None,

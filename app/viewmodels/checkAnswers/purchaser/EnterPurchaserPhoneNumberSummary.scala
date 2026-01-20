@@ -27,17 +27,28 @@ import viewmodels.implicits.*
 
 object EnterPurchaserPhoneNumberSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(EnterPurchaserPhoneNumberPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(EnterPurchaserPhoneNumberPage)).map {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "enterPurchaserPhoneNumber.checkYourAnswersLabel",
+          key     = "purchaser.enterPhoneNumber.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("enterPurchaserPhoneNumber.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.enterPhoneNumber.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.enterPurchaserPhoneNumber.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaser.enterPhoneNumber.checkYourAnswersLabel",
+        value = value
+      )
     }
 }
