@@ -58,7 +58,7 @@ class CalculationControllerSpec extends BaseSpec with ScalaSpecBase {
   )
 
   private val zeroRateFreePortReliefGen:Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(FreeportsTaxSiteRelief,InvestmentZonesTaxSiteRelief)
-  private val zeroRateWithoutFreePortReliefGen: Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(PartExchange, ReLocationEmployment,
+  private val zeroRateWithoutFreePortReliefGen: Gen[TaxReliefCode with StandardZeroRate] = Gen.oneOf(PartExchange, ReLocationEmployment,
     CompulsoryPurchaseFacilitatingDevelopment, ComplianceWithPlanningObligations,
     GroupRelief, ReConstructionRelief, DemutualisationOfInsuranceCompany,
     DemutualisationOfBuildingSociety, IncorporationOfLimitedLiabilityPartnership,

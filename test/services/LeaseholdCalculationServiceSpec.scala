@@ -2409,7 +2409,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         npv = None,
         taxCalcs = Seq.empty
       )
-      val res: Result = service.leaseholdSelfAssessed
+      val res: Result = service.leaseholdSelfAssessedRes
       res shouldBe expectedRes
     }
   }
@@ -2511,7 +2511,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         npv = Some(1897),
         taxCalcs = calcDetails
       )
-      service.leaseholdAcquisitionTaxRelief(AcquisitionReliefTestRequest) shouldBe expectedRes
+      service.leaseholdAcquisitionTaxReliefRes(AcquisitionReliefTestRequest) shouldBe expectedRes
     }
   }
 

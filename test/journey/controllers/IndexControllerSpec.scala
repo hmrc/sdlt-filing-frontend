@@ -7,13 +7,10 @@ package journey.controllers
 
 import config.FrontendAppConfig
 import journey.views.html.index
-import org.mockito.MockitoSugar
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.Status._
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
-import base.{BaseSpec, ScalaSpecBase}
+import base.ScalaSpecBase
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Application
 import play.api.test.Helpers.{defaultAwaitTimeout, status}

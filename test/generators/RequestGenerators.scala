@@ -16,9 +16,9 @@ import scala.util.Try
 
 trait RequestGenerators {
 
-  // 20 Items / ouf of 25 in TaxReliefCode
+  // 21 Items / ouf of 25 in TaxReliefCode
   // TODO: looks like something is missing already in the list below
-  private val zeroRateTaxReliefGen: Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(
+  private val zeroRateTaxReliefGen: Gen[TaxReliefCode with StandardZeroRate] = Gen.oneOf(Set(
     PartExchange,
     ReLocationEmployment,
     CompulsoryPurchaseFacilitatingDevelopment,
@@ -31,17 +31,19 @@ trait RequestGenerators {
     TransfersInvolvingPublicBodies,
     TransferInConsequenceOfReorganisationOfParliamentaryConstituencies,
     CharitiesTaxReliefs,
-    AcquisitionByBodiesEstablishedForNationalPurposes, RegisteredSocialLandlords,
+    AcquisitionByBodiesEstablishedForNationalPurposes,
+    RegisteredSocialLandlords,
     AlternativePropertyFinance,
     CroftingCommunityRightToBuy,
     DiplomaticPrivileges,
     OtherTaxReliefs,
     CombinationOfReliefs,
     AlternativeFinanceInvestmentBondsRelief,
-    SeedingRelief)
+    SeedingRelief
+  ))
 
   // 21 Items:: as per Jira Story specified / ouf of 25 in TaxReliefCode
-  private val zeroRateLeaseHoldsTaxReliefGen: Gen[TaxReliefCode] = Gen.oneOf(Set(
+  private val zeroRateLeaseHoldsTaxReliefGen: Gen[TaxReliefCode with StandardZeroRate] = Gen.oneOf(Set(
     PartExchange,
     ReLocationEmployment,
     CompulsoryPurchaseFacilitatingDevelopment,
@@ -74,7 +76,7 @@ trait RequestGenerators {
     LocalDate.of(year, month, day)
   }.toOption
 
-  private def taxReliefRequestGenerator(holdType: HoldingTypes.Value, propertyTypes: Seq[PropertyTypes.Value] = Seq.empty): Gen[Request] =
+  private def taxReliefRequestGenerator(holdType: HoldingTypes.Value, propertyTypes: Seq[PropertyTypes.Value]): Gen[Request] =
     for {
       taxRelief <- if (holdType == HoldingTypes.freehold) zeroRateTaxReliefGen else zeroRateLeaseHoldsTaxReliefGen
       anyPropertyType <- if (propertyTypes.isEmpty) Gen.oneOf(PropertyTypes.residential, PropertyTypes.nonResidential, PropertyTypes.mixed)
