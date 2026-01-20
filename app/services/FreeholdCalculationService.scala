@@ -505,12 +505,12 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
   }
 
-  val freeholdSelfAssessed: Result = {
+  val freeholdSelfAssessedRes: Result = {
     FreeholdResultFactory
       .freeholdSelfAssessedResult
   }
 
-  val zeroRateTaxReliefForFreehold: Result =
+  val freeholdZeroRateTaxReliefRes: Result =
     FreeholdResultFactory
       .freeholdZeroRateTaxRelief
 

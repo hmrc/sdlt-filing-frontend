@@ -5,7 +5,7 @@
 
 package validators.internal
 
-import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, FreeportsTaxSiteRelief, GroupRelief, IncorporationOfLimitedLiabilityPartnership, InvestmentZonesTaxSiteRelief, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
+import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, FreeportsTaxSiteRelief, GroupRelief, IncorporationOfLimitedLiabilityPartnership, InvestmentZonesTaxSiteRelief, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, StandardZeroRate, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
 
 import java.time.LocalDate
 import enums.{HoldingTypes, PropertyTypes}
@@ -70,7 +70,7 @@ class ModelValidationSpec extends PlaySpec {
   )
 
   private val zeroRateFreePortReliefGen:Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(FreeportsTaxSiteRelief,InvestmentZonesTaxSiteRelief)
-  private val zeroRateWithoutFreePortReliefGen: Gen[TaxReliefCode with ZeroRate] = Gen.oneOf(PartExchange, ReLocationEmployment,
+  private val zeroRateWithoutFreePortReliefGen: Gen[TaxReliefCode with StandardZeroRate] = Gen.oneOf(PartExchange, ReLocationEmployment,
     CompulsoryPurchaseFacilitatingDevelopment, ComplianceWithPlanningObligations,
     GroupRelief, ReConstructionRelief, DemutualisationOfInsuranceCompany,
     DemutualisationOfBuildingSociety, IncorporationOfLimitedLiabilityPartnership,

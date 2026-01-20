@@ -7,7 +7,7 @@ package services
 
 import java.time.LocalDate
 import data.ResultText.{RESULT_HEADING_GENERIC, RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
-import enums.sdltRebuild.{AcquisitionByBodiesEstablishedForNationalPurposes, AcquisitionRelief, AlternativeFinanceInvestmentBondsRelief, AlternativePropertyFinance, CharitiesTaxReliefs, CombinationOfReliefs, ComplianceWithPlanningObligations, CompulsoryPurchaseFacilitatingDevelopment, CroftingCommunityRightToBuy, DemutualisationOfBuildingSociety, DemutualisationOfInsuranceCompany, DiplomaticPrivileges, GroupRelief, IncorporationOfLimitedLiabilityPartnership, OtherTaxReliefs, PartExchange, ReConstructionRelief, ReLocationEmployment, RegisteredSocialLandlords, SeedingRelief, TaxReliefCode, TransferInConsequenceOfReorganisationOfParliamentaryConstituencies, TransfersInvolvingPublicBodies, ZeroRate}
+import enums.sdltRebuild.AcquisitionRelief
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import models.sdltRebuild.TaxReliefDetails
@@ -1928,7 +1928,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
 
       val actual =
         testFreeholdCalcService
-          .zeroRateTaxReliefForFreehold
+          .freeholdZeroRateTaxReliefRes
 
       actual shouldBe expectedRes
     }
@@ -1947,7 +1947,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
 
       val actual =
         testFreeholdCalcService
-          .freeholdSelfAssessed
+          .freeholdSelfAssessedRes
 
       actual shouldBe expectedRes
     }
