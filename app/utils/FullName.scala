@@ -34,4 +34,16 @@ object FullName {
       case (None, Some(f2), sn) => s"$f2 $sn"
       case (None, _, sn) => sn
     }
+
+  def optionalFullName(forename1: Option[String], forename2: Option[String], name: Option[String]): Option[String] =
+    (forename1, forename2, name) match {
+      case (Some(f1), Some(f2), Some(sn)) => Some(s"$f1 $f2 $sn")
+      case (Some(f1), Some(f2), None) => Some(s"$f1 $f2")
+      case (Some(f1), None, Some(sn)) => Some(s"$f1 $sn")
+      case (Some(f1), None, None) => Some(s"$f1")
+      case (None, Some(f2), Some(sn)) => Some(s"$f2 $sn")
+      case (None, Some(f2), None) => Some(s"$f2")
+      case (None, None, Some(sn)) => Some(s"$sn")
+      case (None, None, None) => None
+    }
 }

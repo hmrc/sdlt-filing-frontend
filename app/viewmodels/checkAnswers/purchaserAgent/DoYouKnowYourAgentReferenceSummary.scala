@@ -14,28 +14,35 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.purchaserAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.vendor.VendorOrCompanyNamePage
+import pages.vendor.DoYouKnowYourAgentReferencePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object VendorOrCompanyNameSummary  {
+object DoYouKnowYourAgentReferenceSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(VendorOrCompanyNamePage).map {
+    answers.get(DoYouKnowYourAgentReferencePage).map {
       answer =>
 
+        val value = ValueViewModel(
+          HtmlContent(
+            HtmlFormat.escape(messages(s"agent.doYouKnowYourAgentReference.$answer"))
+          )
+        )
+
         SummaryListRowViewModel(
-          key     = "vendorOrCompanyName.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlFormat.escape(answer.name).toString),
+          key     = "agent.doYouKnowYourAgentReference.checkYourAnswersLabel",
+          value   = value,
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendorOrCompanyName.change.hidden"))
+            ActionItemViewModel("site.change", controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("agent.doYouKnowYourAgentReference.change.hidden"))
           )
         )
     }

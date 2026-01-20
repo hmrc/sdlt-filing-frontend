@@ -19,6 +19,7 @@ site.save.continue                                                              
 site.success                                                                        = Success
 site.section.prefix                                                                 = This section is
 site.fullStop                                                                       = .
+site.or                                                                             = or
 
 # Site Errors
 site.error.generic.title                                                            = Generic Error (Content TBC)
@@ -72,6 +73,16 @@ error.summary.title                                                             
 index.title                                                                         = sdlt-filing-frontend
 index.heading                                                                       = sdlt-filing-frontend
 index.guidance                                                                      = Welcome to your new frontend. Please see the README file for a guide to getting started.
+
+# Error Pages
+site.error.noReturnReference.title                                                       = You cannot reach this page
+site.error.noReturnReference.heading                                                     = You cannot reach this page
+site.error.noReturnReference.hint                                                        = Select what you would like to do next
+site.error.noReturnReference.fileNewReturn                                               = File a new SDLT return
+site.error.noReturnReference.manageTaxes                                                 = Manage your Stamp Taxes
+site.error.noReturnReference.checkYourAnswersLabel                                       = You cannot reach this page
+site.error.noReturnReference.error.required                                              = Please select an option
+site.error.noReturnReference.change.hidden                                               = NoReturnReference
 
 # Task List
 taskList.title                                                                      = returnTaskList
@@ -616,6 +627,28 @@ purchaser.purchaserAndVendorConnected.error.required                            
 purchaser.purchaserAndVendorConnected.change.hidden                                 = PurchaserAndVendorConnected
 purchaser.purchaserAndVendorConnected.hint                                          = A purchaser and vendor can be connected in different ways, like a marriage, civil partnership, family link or business interest
 
+purchaser.purchaserRemove.title                                                     = Are you sure you want to remove the purchaser? – About the purchaser
+purchaser.purchaserRemove.headingSingle                                             = Are you sure you want to remove {0}?
+purchaser.purchaserRemove.remove                                                    = Remove 2
+purchaser.purchaserRemove.error.required                                            = Select purchaserRemove
+purchaser.purchaserRemove.change.hidden                                             = PurchaserRemove
+purchaser.purchaserRemove.double.heading                                            = Removing {0}
+purchaser.purchaserRemove.double.keep                                               = Keep {0}
+purchaser.purchaserRemove.double.remove                                             = Remove {0} and update {1}
+purchaser.purchaserRemove.double.hint                                               = If you remove {0}, then {1} will become the lead purchaser for this return. You will then need to update {1}’s details.
+purchaser.purchaserRemove.double.subheading                                         = What would you like to do?
+purchaser.purchaserRemove.multi.heading                                             = Removing {0}
+purchaser.purchaserRemove.multi.keep                                                = Keep {0}
+purchaser.purchaserRemove.multi.remove                                              = Remove {0} and update {1}
+purchaser.purchaserRemove.multi.hint                                                = If you remove {0}, you will need to select a new lead purchaser and update their details.
+purchaser.purchaserRemove.multi.subheading                                          = What would you like to do?
+
+purchaser.isPurchaserActingAsTrustee.title                                          = Is the purchaser acting as a trustee? - About the purchaser
+purchaser.isPurchaserActingAsTrustee.heading                                        = Is {0} acting as a trustee?
+purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is the purchaser acting as a trustee? - About the purchaser
+purchaser.isPurchaserActingAsTrustee.error.required                                 = Please select Yes or No
+purchaser.isPurchaserActingAsTrustee.change.hidden                                  = IsPurchaserActingAsTrustee
+
 # Purchaser Overview
 purchaser.purchaserOverview.title                                                   = Purchaser overview - About the purchaser
 purchaser.purchaserOverview.heading                                                 = Purchaser Overview
@@ -642,23 +675,6 @@ purchaserAgent.BeforeYouStart.p2                                                
 purchaserAgent.BeforeYouStart.b4                                                    = the agent’s reference number
 purchaserAgent.BeforeYouStart.b5                                                    = the agent’s authorisation to handle correspondence
 purchaserAgent.BeforeYouStart.subheading                                            = Do you want to add an agent for the purchaser?
-
-
-purchaser.isPurchaserActingAsTrustee.title                                          = Is the purchaser acting as a trustee? - About the purchaser
-purchaser.isPurchaserActingAsTrustee.heading                                        = Is {0} acting as a trustee?
-purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is the purchaser acting as a trustee? - About the purchaser
-purchaser.isPurchaserActingAsTrustee.error.required                                 = Please select Yes or No
-purchaser.isPurchaserActingAsTrustee.change.hidden                                  = IsPurchaserActingAsTrustee
-
-
-site.error.noReturnReference.title                                                       = You cannot reach this page
-site.error.noReturnReference.heading                                                     = You cannot reach this page
-site.error.noReturnReference.hint                                                        = Select what you would like to do next
-site.error.noReturnReference.fileNewReturn                                               = File a new SDLT return
-site.error.noReturnReference.manageTaxes                                                 = Manage your Stamp Taxes
-site.error.noReturnReference.checkYourAnswersLabel                                       = You cannot reach this page
-site.error.noReturnReference.error.required                                              = Please select an option
-site.error.noReturnReference.change.hidden                                               = NoReturnReference
 
 purchaserAgent.addContactDetailsForPurchaserAgent.title                            = Do you want to add contact details for the agent?
 purchaserAgent.addContactDetailsForPurchaserAgent.heading                          = Do you want to add contact details for {0}?

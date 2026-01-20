@@ -16,7 +16,7 @@
 
 package models.purchaser
 
-import models.UserAnswers
+import models.{Purchaser, UserAnswers}
 import play.api.libs.json.{Json, OFormat}
 
 import scala.concurrent.Future
@@ -65,17 +65,17 @@ case class UpdatePurchaserRequest(
                                    stornId: String,
                                    returnResourceRef: String,
                                    purchaserResourceRef: String,
-                                   isCompany: String,
-                                   isTrustee: String,
-                                   isConnectedToVendor: String,
-                                   isRepresentedByAgent: String,
+                                   isCompany: Option[String] = None,
+                                   isTrustee: Option[String] = None,
+                                   isConnectedToVendor: Option[String] = None,
+                                   isRepresentedByAgent: Option[String] = None,
                                    title: Option[String] = None,
                                    surname: Option[String] = None,
                                    forename1: Option[String] = None,
                                    forename2: Option[String] = None,
                                    companyName: Option[String] = None,
                                    houseNumber: Option[String] = None,
-                                   address1: String,
+                                   address1: Option[String] = None,
                                    address2: Option[String] = None,
                                    address3: Option[String] = None,
                                    address4: Option[String] = None,
@@ -92,6 +92,46 @@ case class UpdatePurchaserRequest(
 
 object UpdatePurchaserRequest {
   implicit val format: OFormat[UpdatePurchaserRequest] = Json.format[UpdatePurchaserRequest]
+
+  def from(userAnswers: UserAnswers, purchaser: Purchaser): Future[UpdatePurchaserRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        purchaser.purchaserResourceRef match {
+          case Some(ref) =>
+            Future.successful(UpdatePurchaserRequest(
+              stornId = fullReturn.stornId,
+              purchaserResourceRef = ref,
+              returnResourceRef = fullReturn.returnResourceRef,
+              isCompany = purchaser.isCompany,
+              isTrustee = purchaser.isTrustee,
+              isConnectedToVendor = purchaser.isConnectedToVendor,
+              isRepresentedByAgent = purchaser.isRepresentedByAgent,
+              title = purchaser.title,
+              surname = purchaser.surname,
+              forename1 = purchaser.forename1,
+              forename2 = purchaser.forename2,
+              companyName = purchaser.companyName,
+              houseNumber = purchaser.houseNumber,
+              address1 = purchaser.address1,
+              address2 = purchaser.address2,
+              address3 = purchaser.address3,
+              address4 = purchaser.address4,
+              postcode = purchaser.postcode,
+              phone = purchaser.phone,
+              nino = purchaser.nino,
+              nextPurchaserId = purchaser.nextPurchaserID,
+              isUkCompany = purchaser.isUkCompany,
+              hasNino = purchaser.hasNino,
+              dateOfBirth = purchaser.dateOfBirth,
+              registrationNumber = purchaser.registrationNumber,
+              placeOfRegistration = purchaser.placeOfRegistration
+            ))
+          case None => Future.failed(new NoSuchElementException(" Purchaser Resource ref not found"))
+        }
+      case None =>
+        Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class UpdatePurchaserReturn(
@@ -104,24 +144,24 @@ object UpdatePurchaserReturn {
 
 case class  DeletePurchaserRequest(
                                    storn: String,
-                                   purchaserId: String,
+                                   purchaserResourceRef: String,
                                    returnResourceRef: String
                                  )
 
 object DeletePurchaserRequest {
   implicit val format: OFormat[DeletePurchaserRequest] = Json.format[DeletePurchaserRequest]
 
-  def from(userAnswers: UserAnswers, purchaserId: String): Future[DeletePurchaserRequest] = {
+  def from(userAnswers: UserAnswers, purchaserID: String): Future[DeletePurchaserRequest] = {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
         fullReturn.purchaser
-          .flatMap(_.find(_.purchaserID.contains(purchaserId))) match {
-          case Some(_) => Future.successful(DeletePurchaserRequest(
+          .flatMap(_.find(_.purchaserID.contains(purchaserID))) match {
+          case Some(purchaser) if purchaser.purchaserResourceRef.isDefined => Future.successful(DeletePurchaserRequest(
             storn = fullReturn.stornId,
-            purchaserId = purchaserId,
-            returnResourceRef = fullReturn.returnResourceRef
+            purchaserResourceRef = purchaser.purchaserResourceRef.get,
+            returnResourceRef = fullReturn.returnResourceRef,
           ))
-          case None =>
+          case _ =>
             Future.failed(new NoSuchElementException("Purchaser not found"))
         }
       case None =>
@@ -215,6 +255,24 @@ case class DeleteCompanyDetailsRequest(
 
 object DeleteCompanyDetailsRequest {
   implicit val format: OFormat[DeleteCompanyDetailsRequest] = Json.format[DeleteCompanyDetailsRequest]
+
+  def from(userAnswers: UserAnswers, companyDetailsId: String): Future[DeleteCompanyDetailsRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        fullReturn.companyDetails match {
+          case Some(details) if details.companyDetailsID.contains(companyDetailsId) =>
+            Future.successful(DeleteCompanyDetailsRequest(
+            storn = fullReturn.stornId,
+            returnResourceRef = fullReturn.returnResourceRef
+          ))
+          case _ =>
+            Future.failed(new NoSuchElementException("Company Details" +
+              "not found"))
+        }
+      case None =>
+        Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class DeleteCompanyDetailsReturn(

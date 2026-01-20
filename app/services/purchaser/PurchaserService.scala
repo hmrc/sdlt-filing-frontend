@@ -26,7 +26,7 @@ import scala.util.Try
 
 class PurchaserService {
 
-  private def createPurchaserName(purchaser: Purchaser): Option[NameOfPurchaser] = {
+  def createPurchaserName(purchaser: Purchaser): Option[NameOfPurchaser] = {
     purchaser.companyName match {
       case Some(companyName) =>
         Some(NameOfPurchaser(

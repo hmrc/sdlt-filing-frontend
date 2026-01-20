@@ -26,10 +26,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
   private val validCreatePurchaserRequestJsonComplete = Json.obj(
     "stornId" -> "STORN12345",
     "returnResourceRef" -> "RRF-2024-001",
-    "isCompany" -> "N",
-    "isTrustee" -> "N",
-    "isConnectedToVendor" -> "N",
-    "isRepresentedByAgent" -> "Y",
+    "isCompany" -> "NO",
+    "isTrustee" -> "NO",
+    "isConnectedToVendor" -> "NO",
+    "isRepresentedByAgent" -> "YES",
     "title" -> "Mr",
     "surname" -> "Jones",
     "forename1" -> "David",
@@ -42,30 +42,30 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     "postcode" -> "SW1A 2AA",
     "phone" -> "02012345678",
     "nino" -> "AB123456C",
-    "hasNino" -> "Y",
+    "hasNino" -> "YES",
     "dateOfBirth" -> "1980-01-15"
   )
 
   private val validCreatePurchaserRequestJsonMinimal = Json.obj(
     "stornId" -> "STORN12345",
     "returnResourceRef" -> "RRF-2024-001",
-    "isCompany" -> "N",
-    "isTrustee" -> "N",
-    "isConnectedToVendor" -> "N",
-    "isRepresentedByAgent" -> "Y",
+    "isCompany" -> "NO",
+    "isTrustee" -> "NO",
+    "isConnectedToVendor" -> "NO",
+    "isRepresentedByAgent" -> "YES",
     "address1" -> "Park Avenue"
   )
 
   private val validCreatePurchaserRequestJsonCompany = Json.obj(
     "stornId" -> "STORN12345",
     "returnResourceRef" -> "RRF-2024-001",
-    "isCompany" -> "Y",
-    "isTrustee" -> "N",
-    "isConnectedToVendor" -> "N",
-    "isRepresentedByAgent" -> "Y",
+    "isCompany" -> "YES",
+    "isTrustee" -> "NO",
+    "isConnectedToVendor" -> "NO",
+    "isRepresentedByAgent" -> "YES",
     "companyName" -> "XYZ Properties Ltd",
     "address1" -> "Park Avenue",
-    "isUkCompany" -> "Y",
+    "isUkCompany" -> "YES",
     "registrationNumber" -> "12345678",
     "placeOfRegistration" -> "England and Wales"
   )
@@ -73,10 +73,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
   private val completeCreatePurchaserRequest = CreatePurchaserRequest(
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
-    isCompany = "N",
-    isTrustee = "N",
-    isConnectedToVendor = "N",
-    isRepresentedByAgent = "Y",
+    isCompany = "NO",
+    isTrustee = "NO",
+    isConnectedToVendor = "NO",
+    isRepresentedByAgent = "YES",
     title = Some("Mr"),
     surname = Some("Jones"),
     forename1 = Some("David"),
@@ -91,7 +91,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     phone = Some("02012345678"),
     nino = Some("AB123456C"),
     isUkCompany = None,
-    hasNino = Some("Y"),
+    hasNino = Some("YES"),
     dateOfBirth = Some("1980-01-15"),
     registrationNumber = None,
     placeOfRegistration = None
@@ -100,10 +100,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
   private val minimalCreatePurchaserRequest = CreatePurchaserRequest(
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
-    isCompany = "N",
-    isTrustee = "N",
-    isConnectedToVendor = "N",
-    isRepresentedByAgent = "Y",
+    isCompany = "NO",
+    isTrustee = "NO",
+    isConnectedToVendor = "NO",
+    isRepresentedByAgent = "YES",
     address1 = "Park Avenue"
   )
 
@@ -121,10 +121,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     "stornId" -> "STORN12345",
     "returnResourceRef" -> "RRF-2024-001",
     "purchaserResourceRef" -> "PRF-001",
-    "isCompany" -> "N",
-    "isTrustee" -> "N",
-    "isConnectedToVendor" -> "N",
-    "isRepresentedByAgent" -> "Y",
+    "isCompany" -> "NO",
+    "isTrustee" -> "NO",
+    "isConnectedToVendor" -> "NO",
+    "isRepresentedByAgent" -> "YES",
     "title" -> "Mr",
     "surname" -> "Jones Updated",
     "forename1" -> "David",
@@ -138,7 +138,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     "phone" -> "02012345678",
     "nino" -> "AB123456C",
     "nextPurchaserId" -> "PID-002",
-    "hasNino" -> "Y",
+    "hasNino" -> "YES",
     "dateOfBirth" -> "1980-01-15"
   )
 
@@ -146,10 +146,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     "stornId" -> "STORN12345",
     "returnResourceRef" -> "RRF-2024-001",
     "purchaserResourceRef" -> "PRF-001",
-    "isCompany" -> "N",
-    "isTrustee" -> "N",
-    "isConnectedToVendor" -> "N",
-    "isRepresentedByAgent" -> "Y",
+    "isCompany" -> "NO",
+    "isTrustee" -> "NO",
+    "isConnectedToVendor" -> "NO",
+    "isRepresentedByAgent" -> "YES",
     "address1" -> "Park Avenue"
   )
 
@@ -157,17 +157,17 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
     purchaserResourceRef = "PRF-001",
-    isCompany = "N",
-    isTrustee = "N",
-    isConnectedToVendor = "N",
-    isRepresentedByAgent = "Y",
+    isCompany = Some("NO"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("YES"),
     title = Some("Mr"),
     surname = Some("Jones Updated"),
     forename1 = Some("David"),
     forename2 = Some("Michael"),
     companyName = None,
     houseNumber = Some("25"),
-    address1 = "Park Avenue",
+    address1 = Some("Park Avenue"),
     address2 = Some("Flat 3"),
     address3 = Some("Central District"),
     address4 = Some("London"),
@@ -176,7 +176,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     nino = Some("AB123456C"),
     nextPurchaserId = Some("PID-002"),
     isUkCompany = None,
-    hasNino = Some("Y"),
+    hasNino = Some("YES"),
     dateOfBirth = Some("1980-01-15"),
     registrationNumber = None,
     placeOfRegistration = None
@@ -186,11 +186,11 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
     purchaserResourceRef = "PRF-001",
-    isCompany = "N",
-    isTrustee = "N",
-    isConnectedToVendor = "N",
-    isRepresentedByAgent = "Y",
-    address1 = "Park Avenue"
+    isCompany = Some("NO"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("YES"),
+    address1 = Some("Park Avenue")
   )
 
   private val validUpdatePurchaserReturnJsonTrue = Json.obj("updated" -> true)
@@ -200,13 +200,13 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
   private val validDeletePurchaserRequestJson = Json.obj(
     "storn" -> "STORN12345",
-    "purchaserId" -> "PUR001",
+    "purchaserResourceRef" -> "PUR001",
     "returnResourceRef" -> "RRF-2024-001"
   )
 
   private val deletePurchaserRequest = DeletePurchaserRequest(
     storn = "STORN12345",
-    purchaserId = "PUR001",
+    purchaserResourceRef = "PUR001",
     returnResourceRef = "RRF-2024-001"
   )
 
@@ -221,21 +221,21 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     "purchaserResourceRef" -> "PRF-001",
     "utr" -> "1234567890",
     "vatReference" -> "GB123456789",
-    "compTypeBank" -> "Y",
-    "compTypeBuilder" -> "N",
-    "compTypeBuildsoc" -> "N",
-    "compTypeCentgov" -> "N",
-    "compTypeIndividual" -> "N",
-    "compTypeInsurance" -> "N",
-    "compTypeLocalauth" -> "N",
-    "compTypeOcharity" -> "N",
-    "compTypeOcompany" -> "N",
-    "compTypeOfinancial" -> "N",
-    "compTypePartship" -> "N",
-    "compTypeProperty" -> "N",
-    "compTypePubliccorp" -> "N",
-    "compTypeSoletrader" -> "N",
-    "compTypePenfund" -> "N"
+    "compTypeBank" -> "YES",
+    "compTypeBuilder" -> "NO",
+    "compTypeBuildsoc" -> "NO",
+    "compTypeCentgov" -> "NO",
+    "compTypeIndividual" -> "NO",
+    "compTypeInsurance" -> "NO",
+    "compTypeLocalauth" -> "NO",
+    "compTypeOcharity" -> "NO",
+    "compTypeOcompany" -> "NO",
+    "compTypeOfinancial" -> "NO",
+    "compTypePartship" -> "NO",
+    "compTypeProperty" -> "NO",
+    "compTypePubliccorp" -> "NO",
+    "compTypeSoletrader" -> "NO",
+    "compTypePenfund" -> "NO"
   )
 
   private val validCreateCompanyDetailsRequestJsonMinimal = Json.obj(
@@ -250,21 +250,21 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     purchaserResourceRef = "PRF-001",
     utr = Some("1234567890"),
     vatReference = Some("GB123456789"),
-    compTypeBank = Some("Y"),
-    compTypeBuilder = Some("N"),
-    compTypeBuildsoc = Some("N"),
-    compTypeCentgov = Some("N"),
-    compTypeIndividual = Some("N"),
-    compTypeInsurance = Some("N"),
-    compTypeLocalauth = Some("N"),
-    compTypeOcharity = Some("N"),
-    compTypeOcompany = Some("N"),
-    compTypeOfinancial = Some("N"),
-    compTypePartship = Some("N"),
-    compTypeProperty = Some("N"),
-    compTypePubliccorp = Some("N"),
-    compTypeSoletrader = Some("N"),
-    compTypePenfund = Some("N")
+    compTypeBank = Some("YES"),
+    compTypeBuilder = Some("NO"),
+    compTypeBuildsoc = Some("NO"),
+    compTypeCentgov = Some("NO"),
+    compTypeIndividual = Some("NO"),
+    compTypeInsurance = Some("NO"),
+    compTypeLocalauth = Some("NO"),
+    compTypeOcharity = Some("NO"),
+    compTypeOcompany = Some("NO"),
+    compTypeOfinancial = Some("NO"),
+    compTypePartship = Some("NO"),
+    compTypeProperty = Some("NO"),
+    compTypePubliccorp = Some("NO"),
+    compTypeSoletrader = Some("NO"),
+    compTypePenfund = Some("NO")
   )
 
   private val minimalCreateCompanyDetailsRequest = CreateCompanyDetailsRequest(
@@ -282,21 +282,21 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     "purchaserResourceRef" -> "PRF-001",
     "utr" -> "9876543210",
     "vatReference" -> "GB987654321",
-    "compTypeBank" -> "N",
-    "compTypeBuilder" -> "Y",
-    "compTypeBuildsoc" -> "N",
-    "compTypeCentgov" -> "N",
-    "compTypeIndividual" -> "N",
-    "compTypeInsurance" -> "N",
-    "compTypeLocalauth" -> "N",
-    "compTypeOcharity" -> "N",
-    "compTypeOcompany" -> "N",
-    "compTypeOfinancial" -> "N",
-    "compTypePartship" -> "N",
-    "compTypeProperty" -> "N",
-    "compTypePubliccorp" -> "N",
-    "compTypeSoletrader" -> "N",
-    "compTypePenfund" -> "N"
+    "compTypeBank" -> "NO",
+    "compTypeBuilder" -> "YES",
+    "compTypeBuildsoc" -> "NO",
+    "compTypeCentgov" -> "NO",
+    "compTypeIndividual" -> "NO",
+    "compTypeInsurance" -> "NO",
+    "compTypeLocalauth" -> "NO",
+    "compTypeOcharity" -> "NO",
+    "compTypeOcompany" -> "NO",
+    "compTypeOfinancial" -> "NO",
+    "compTypePartship" -> "NO",
+    "compTypeProperty" -> "NO",
+    "compTypePubliccorp" -> "NO",
+    "compTypeSoletrader" -> "NO",
+    "compTypePenfund" -> "NO"
   )
 
   private val validUpdateCompanyDetailsRequestJsonMinimal = Json.obj(
@@ -311,21 +311,21 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     purchaserResourceRef = "PRF-001",
     utr = Some("9876543210"),
     vatReference = Some("GB987654321"),
-    compTypeBank = Some("N"),
-    compTypeBuilder = Some("Y"),
-    compTypeBuildsoc = Some("N"),
-    compTypeCentgov = Some("N"),
-    compTypeIndividual = Some("N"),
-    compTypeInsurance = Some("N"),
-    compTypeLocalauth = Some("N"),
-    compTypeOcharity = Some("N"),
-    compTypeOcompany = Some("N"),
-    compTypeOfinancial = Some("N"),
-    compTypePartship = Some("N"),
-    compTypeProperty = Some("N"),
-    compTypePubliccorp = Some("N"),
-    compTypeSoletrader = Some("N"),
-    compTypePenfund = Some("N")
+    compTypeBank = Some("NO"),
+    compTypeBuilder = Some("YES"),
+    compTypeBuildsoc = Some("NO"),
+    compTypeCentgov = Some("NO"),
+    compTypeIndividual = Some("NO"),
+    compTypeInsurance = Some("NO"),
+    compTypeLocalauth = Some("NO"),
+    compTypeOcharity = Some("NO"),
+    compTypeOcompany = Some("NO"),
+    compTypeOfinancial = Some("NO"),
+    compTypePartship = Some("NO"),
+    compTypeProperty = Some("NO"),
+    compTypePubliccorp = Some("NO"),
+    compTypeSoletrader = Some("NO"),
+    compTypePenfund = Some("NO")
   )
 
   private val minimalUpdateCompanyDetailsRequest = UpdateCompanyDetailsRequest(
@@ -367,10 +367,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
-        result.isCompany mustBe "N"
-        result.isTrustee mustBe "N"
-        result.isConnectedToVendor mustBe "N"
-        result.isRepresentedByAgent mustBe "Y"
+        result.isCompany mustBe "NO"
+        result.isTrustee mustBe "NO"
+        result.isConnectedToVendor mustBe "NO"
+        result.isRepresentedByAgent mustBe "YES"
         result.title mustBe Some("Mr")
         result.surname mustBe Some("Jones")
         result.forename1 mustBe Some("David")
@@ -383,7 +383,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         result.postcode mustBe Some("SW1A 2AA")
         result.phone mustBe Some("02012345678")
         result.nino mustBe Some("AB123456C")
-        result.hasNino mustBe Some("Y")
+        result.hasNino mustBe Some("YES")
         result.dateOfBirth mustBe Some("1980-01-15")
       }
 
@@ -392,10 +392,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
-        result.isCompany mustBe "N"
-        result.isTrustee mustBe "N"
-        result.isConnectedToVendor mustBe "N"
-        result.isRepresentedByAgent mustBe "Y"
+        result.isCompany mustBe "NO"
+        result.isTrustee mustBe "NO"
+        result.isConnectedToVendor mustBe "NO"
+        result.isRepresentedByAgent mustBe "YES"
         result.address1 mustBe "Park Avenue"
         result.title must not be defined
         result.surname must not be defined
@@ -486,10 +486,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
-        result.isCompany mustBe "Y"
+        result.isCompany mustBe "YES"
         result.companyName mustBe Some("XYZ Properties Ltd")
         result.address1 mustBe "Park Avenue"
-        result.isUkCompany mustBe Some("Y")
+        result.isUkCompany mustBe Some("YES")
         result.registrationNumber mustBe Some("12345678")
         result.placeOfRegistration mustBe Some("England and Wales")
       }
@@ -506,10 +506,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
         (json \ "stornId").as[String] mustBe "STORN12345"
         (json \ "returnResourceRef").as[String] mustBe "RRF-2024-001"
-        (json \ "isCompany").as[String] mustBe "N"
-        (json \ "isTrustee").as[String] mustBe "N"
-        (json \ "isConnectedToVendor").as[String] mustBe "N"
-        (json \ "isRepresentedByAgent").as[String] mustBe "Y"
+        (json \ "isCompany").as[String] mustBe "NO"
+        (json \ "isTrustee").as[String] mustBe "NO"
+        (json \ "isConnectedToVendor").as[String] mustBe "NO"
+        (json \ "isRepresentedByAgent").as[String] mustBe "YES"
         (json \ "title").asOpt[String] mustBe Some("Mr")
         (json \ "surname").asOpt[String] mustBe Some("Jones")
         (json \ "forename1").asOpt[String] mustBe Some("David")
@@ -527,7 +527,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
         (json \ "stornId").as[String] mustBe "STORN12345"
         (json \ "returnResourceRef").as[String] mustBe "RRF-2024-001"
-        (json \ "isCompany").as[String] mustBe "N"
+        (json \ "isCompany").as[String] mustBe "NO"
         (json \ "address1").as[String] mustBe "Park Avenue"
       }
 
@@ -671,10 +671,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
         result.purchaserResourceRef mustBe "PRF-001"
-        result.isCompany mustBe "N"
-        result.isTrustee mustBe "N"
-        result.isConnectedToVendor mustBe "N"
-        result.isRepresentedByAgent mustBe "Y"
+        result.isCompany mustBe Some("NO")
+        result.isTrustee mustBe Some("NO")
+        result.isConnectedToVendor mustBe Some("NO")
+        result.isRepresentedByAgent mustBe Some("YES")
         result.surname mustBe Some("Jones Updated")
         result.nextPurchaserId mustBe Some("PID-002")
       }
@@ -816,7 +816,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val result = Json.fromJson[DeletePurchaserRequest](validDeletePurchaserRequestJson).asEither.value
 
         result.storn mustBe "STORN12345"
-        result.purchaserId mustBe "PUR001"
+        result.purchaserResourceRef mustBe "PUR001"
         result.returnResourceRef mustBe "RRF-2024-001"
       }
 
@@ -827,7 +827,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
       }
 
       "must fail to deserialize when purchaserResourceRef is missing" in {
-        val json = validDeletePurchaserRequestJson - "purchaserId"
+        val json = validDeletePurchaserRequestJson - "purchaserResourceRef"
         val result = Json.fromJson[DeletePurchaserRequest](json).asEither
         result.isLeft mustBe true
       }
@@ -849,7 +849,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val json = Json.toJson(deletePurchaserRequest)
 
         (json \ "storn").as[String] mustBe "STORN12345"
-        (json \ "purchaserId").as[String] mustBe "PUR001"
+        (json \ "purchaserResourceRef").as[String] mustBe "PUR001"
         (json \ "returnResourceRef").as[String] mustBe "RRF-2024-001"
       }
     }
@@ -874,7 +874,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val modified = deletePurchaserRequest.copy(storn = "MODIFIED")
 
         modified.storn mustBe "MODIFIED"
-        modified.purchaserId mustBe deletePurchaserRequest.purchaserId
+        modified.purchaserResourceRef mustBe deletePurchaserRequest.purchaserResourceRef
       }
     }
   }
@@ -977,7 +977,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         result.purchaserResourceRef mustBe "PRF-001"
         result.utr mustBe Some("1234567890")
         result.vatReference mustBe Some("GB123456789")
-        result.compTypeBank mustBe Some("Y")
+        result.compTypeBank mustBe Some("YES")
       }
 
       "must deserialize valid JSON with only required fields" in {

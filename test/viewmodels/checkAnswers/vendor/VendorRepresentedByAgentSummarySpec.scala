@@ -22,7 +22,6 @@ import pages.vendor.VendorRepresentedByAgentPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import viewmodels.checkAnswers.VendorRepresentedByAgentSummary
 
 
 class VendorRepresentedByAgentSummarySpec extends SpecBase {

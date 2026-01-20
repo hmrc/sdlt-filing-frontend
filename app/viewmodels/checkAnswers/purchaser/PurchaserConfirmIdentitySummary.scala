@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.purchaser
 
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserConfirmIdentityPage

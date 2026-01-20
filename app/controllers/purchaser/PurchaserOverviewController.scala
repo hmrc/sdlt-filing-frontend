@@ -150,7 +150,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserId, maybeCompanyDetailsId)))
         _ <- sessionRepository.set(updatedAnswers)
-      } yield Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())//TODO: Change to RemovePurchaserController DTR-1869
+      } yield Redirect(controllers.purchaser.routes.PurchaserRemoveController.onPageLoad())
     }
 }
 
