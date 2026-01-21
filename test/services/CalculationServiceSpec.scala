@@ -23,6 +23,10 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import HoldingTypes._
+import PropertyTypes._
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.{eq => meq}
 
 import java.time.LocalDate
 
@@ -119,11 +123,11 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
                                    pType: PropertyTypes.Value, eDate: LocalDate,
                                    premiumAmount: BigDecimal= 0,
                                    twoOrMoreProperties: Option[Boolean] = Some(false),
-                                   replaceMainResidence: Option[Boolean] = Some(true),
+                                   replaceMainResidence: Option[Boolean] = Some(false),
                                    nonUKResident: Option[Boolean] = None,
-                                   zeroTaxRelief: TaxReliefCode,
-                                   isPartialRelief: Option[Boolean],
-                                   isLinked : Boolean
+                                   taxReliefCode: TaxReliefCode,
+                                   isPartialRelief: Option[Boolean] = Some(false),
+                                   isLinked : Boolean = false
                                   ) = {
       Request(
         holdingType = hType,
@@ -145,7 +149,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         relevantRentDetails = None,
         firstTimeBuyer = Some(true),
         isLinked = isLinked,
-        taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = zeroTaxRelief, isPartialRelief = isPartialRelief)),
+        taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = taxReliefCode, isPartialRelief = isPartialRelief)),
       )
     }
 
@@ -976,7 +980,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2016,4,1),
           twoOrMoreProperties = Some(true),
           replaceMainResidence = Some(true),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = None,
           isLinked = false
         )
@@ -996,7 +1000,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2021,6,1),
           twoOrMoreProperties = Some(true),
           replaceMainResidence = Some(true),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = None,
           isLinked = false
         )
@@ -1017,7 +1021,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2016,3,31),
           twoOrMoreProperties = Some(true),
           replaceMainResidence = Some(true),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = None,
           isLinked = false
         )
@@ -1225,7 +1229,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.residential,
           LocalDate.of(2017, 11, 22),
-          zeroTaxRelief = PartExchange,
+          taxReliefCode = PartExchange,
           isPartialRelief = None,
           isLinked = false
         )
@@ -1243,7 +1247,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.residential,
           LocalDate.of(2000, 11, 22),
-          zeroTaxRelief = FreeportsTaxSiteRelief,
+          taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1361,7 +1365,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.residential,
           LocalDate.of(2000, 11, 22),
-          zeroTaxRelief = InvestmentZonesTaxSiteRelief,
+          taxReliefCode = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1380,7 +1384,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.residential,
           LocalDate.of(2000, 11, 22),
-          zeroTaxRelief = FreeportsTaxSiteRelief,
+          taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(true),
           isLinked = false
         )
@@ -1399,7 +1403,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.residential,
           LocalDate.of(2013, 4, 6),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1417,7 +1421,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.residential,
           LocalDate.of(2013, 4, 5),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1436,7 +1440,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           PropertyTypes.residential,
           LocalDate.of(2000, 11, 22),
           premiumAmount = 1000000,
-          zeroTaxRelief = AcquisitionRelief,
+          taxReliefCode = AcquisitionRelief,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1457,7 +1461,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.nonResidential,
           LocalDate.of(2013, 4, 6),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1475,7 +1479,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.nonResidential,
           LocalDate.of(2013, 4, 5),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1495,7 +1499,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.mixed,
           LocalDate.of(2013, 4, 6),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1513,7 +1517,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.freehold,
           PropertyTypes.mixed,
           LocalDate.of(2013, 4, 5),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1528,7 +1532,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.residential,
           LocalDate.of(2013, 4, 6),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1548,7 +1552,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.residential,
           LocalDate.of(2013, 4, 5),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1568,7 +1572,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.nonResidential,
           LocalDate.of(2013, 4, 6),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1588,7 +1592,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.nonResidential,
           LocalDate.of(2013, 4, 5),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1608,7 +1612,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.mixed,
           LocalDate.of(2013, 4, 6),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1628,7 +1632,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.mixed,
           LocalDate.of(2013, 4, 5),
-          zeroTaxRelief = PreCompletionTransaction,
+          taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1645,7 +1649,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.residential,
           LocalDate.of(2017, 11, 22),
-          zeroTaxRelief = FreeportsTaxSiteRelief,
+          taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1662,7 +1666,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.residential,
           LocalDate.of(2017, 11, 22),
-          zeroTaxRelief = InvestmentZonesTaxSiteRelief,
+          taxReliefCode = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1680,7 +1684,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.residential,
           LocalDate.of(2017, 11, 22),
-          zeroTaxRelief = FreeportsTaxSiteRelief,
+          taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(true),
           isLinked = false
         )
@@ -1700,7 +1704,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.nonResidential,
           LocalDate.of(2017, 11, 22),
-          zeroTaxRelief = FreeportsTaxSiteRelief,
+          taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1717,7 +1721,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.nonResidential,
           LocalDate.of(2017, 11, 22),
-          zeroTaxRelief = InvestmentZonesTaxSiteRelief,
+          taxReliefCode = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
           isLinked = false
         )
@@ -1734,7 +1738,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           HoldingTypes.leasehold,
           PropertyTypes.nonResidential,
           LocalDate.of(2017, 11, 22),
-          zeroTaxRelief = FreeportsTaxSiteRelief,
+          taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(true),
           isLinked = false
         )
@@ -1786,91 +1790,157 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
 
     }
-    "select freeHold / residential property with tax relief code" when {
-      "given relief code RightToBuy and linked = true and additional property rates apply (self-assessed path)" in {
-        val testRequest = createRequestWithTaxRelief(
-          HoldingTypes.freehold,
-          PropertyTypes.residential,
-          LocalDate.of(2016, 4, 1),
-          premiumAmount = 600000,
-          zeroTaxRelief = RightToBuy,
-          isPartialRelief = Some(false),
-          twoOrMoreProperties = Some(true),
-          replaceMainResidence = Some(true),
-          isLinked = true
-        )
 
+    "select the freeholdSelfAssessedRes function" when {
+      "given a request with relief code RightToBuy and property Type is Residential with twoOrMoreProperties and isLinked = true" in {
+
+        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2016, 4, 1), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(true), isLinked = true)
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
-        when(mockFreeholdCalculationService.freeholdSelfAssessedRes)
-          .thenReturn(result)
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockFreeholdCalculationService, times(1))
-          .freeholdSelfAssessedRes
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
       }
-      "given relief code RightToBuy but linked = false should fall back to normal calculation" in {
-        val testRequest = createRequestWithTaxRelief(
-          HoldingTypes.freehold,
-          PropertyTypes.residential,
-          LocalDate.of(2016, 4, 1),
-          premiumAmount = 600000,
-          zeroTaxRelief = RightToBuy,
-          isPartialRelief = Some(false),
-          twoOrMoreProperties = Some(true),
-          replaceMainResidence = Some(true),
-          isLinked = false
+    }
+
+    "select the leaseholdSelfAssessedRes function" when {
+      "given a request with for a leasehold mixed property an effective date of 12/03/2008 (minimum mixed date inclusive)" in {
+
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, LocalDate.of(2008, 3, 12))
+        val result = createSelfAssessedResult("Self-assessed")
+
+        when(mockLeaseholdCalculationService.leaseholdSelfAssessedRes).thenReturn(result)
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
+        verifyNoMoreInteractions(mockFreeholdCalculationService)
+      }
+
+      "given a request with for a leasehold mixed property an effective date of 16/03/2016 (day before 17/03/2016)" in {
+
+        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, LocalDate.of(2016, 3, 16))
+        val result = createSelfAssessedResult("Self-assessed")
+
+        when(mockLeaseholdCalculationService.leaseholdSelfAssessedRes).thenReturn(result)
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
+        verifyNoMoreInteractions(mockFreeholdCalculationService)
+      }
+
+      "throw an exception for a leasehold mixed property mixed for a date outside of the allowed range" in {
+
+        val dates = Seq(
+          LocalDate.of(2016, 3, 17),
+          LocalDate.of(2008, 3, 11),
+          LocalDate.of(2017, 3, 17)
         )
 
-        noException shouldBe thrownBy {
-          testCalculationService.calculateTax(testRequest)
+        dates.foreach { date =>
+          val req = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, date)
+          val ex = the[InvalidDateException] thrownBy testCalculationService.calculateTax(req)
+          ex.getMessage mustBe s"Date of ${req.effectiveDate} is outside of range 2008-03-12 - 2016-03-17"
+        }
+      }
+
+      "given a request with relief code FirstTimeBuyersRelief and property type is Residential with no twoOrMoreProperties and effective date on or after 25/3/2010 or before 25/3/2012" in {
+
+        val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2011, 6, 1), twoOrMoreProperties = Some(false), taxReliefCode = FirstTimeBuyersRelief)
+        val result = createSelfAssessedResult("Self-assessed")
+
+        when(mockLeaseholdCalculationService.leaseholdSelfAssessedRes).thenReturn(result)
+        testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
+        verify(mockLeaseholdCalculationService, never).leaseholdZeroRateTaxReliefRes(any())
+        verifyNoMoreInteractions(mockFreeholdCalculationService)
+      }
+    }
+
+    "should fall back to normal calculation" when {
+      "given a request with relief code FirstTimeBuyersRelief & Residential Additional Property" in {
+
+        val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2012, 3, 23), twoOrMoreProperties = Some(true), taxReliefCode = FirstTimeBuyersRelief)
+        val result = createResult("leaseholdResidentialMar12toDec14")
+        val captor = ArgumentCaptor.forClass(classOf[Request])
+
+        when(mockLeaseholdCalculationService.leaseholdResidentialMar12toDec14(any[Request])).thenReturn(result)
+        testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialMar12toDec14(captor.capture())
+        captor.getValue.taxReliefDetails mustBe None
+        verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+      }
+
+      "given a request with a Non-residential Property" in {
+
+        val testRequest = createRequestWithTaxRelief(leasehold, nonResidential, LocalDate.of(2012, 3, 23), taxReliefCode = FirstTimeBuyersRelief)
+        val result = createResult("leaseholdNonResidentialMar12toMar16")
+        val captor = ArgumentCaptor.forClass(classOf[Request])
+
+        when(mockLeaseholdCalculationService.leaseholdNonResidentialMar12toMar16(any[Request], meq(false), meq(None))).thenReturn(result)
+        testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdNonResidentialMar12toMar16(captor.capture(), meq(false), meq(None))
+
+        captor.getValue.taxReliefDetails mustBe None
+        verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+      }
+
+      "given a request with a HoldingType of Freehold" in {
+
+        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2012, 1, 1), taxReliefCode = FirstTimeBuyersRelief)
+
+        intercept[InvalidDateException] {
+          testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get)
         }
 
-        verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+        verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
       }
-    }
-    "select the leaseholdSelfAssessed function for leasehold mixed property between March 2008 and March 2016" when {
-      "given a request with an effective date of 12/03/2008 (minimum mixed date inclusive)" in {
-        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, LocalDate.of(2008, 3, 12))
 
-        val result = createSelfAssessedResult("Self-assessed")
+      "given an effective date before the minimum allowed date" in {
 
-        when(mockLeaseholdCalculationService.leaseholdSelfAssessedRes).thenReturn(result)
+        val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2008, 3, 11), taxReliefCode = FirstTimeBuyersRelief)
+        val ex = the [InvalidDateException] thrownBy {
+          testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get)
+        }
 
+        ex.getMessage mustBe s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
+
+        verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+
+      "given an effective date after the maximum allowed date" in {
+
+        val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2016, 3, 17), taxReliefCode = FirstTimeBuyersRelief)
+        val result = createResult("leaseholdResidentialDec14Onwards")
+        val captor = ArgumentCaptor.forClass(classOf[Request])
+
+        when(mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards(any[Request], meq(false), meq(None), meq(false))).thenReturn(result)
+        testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialDec14Onwards(captor.capture(), meq(false), meq(None), meq(false))
+
+        captor.getValue.taxReliefDetails mustBe None
+        verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+      }
+
+      "given relief code RightToBuy but isLinked = false" in {
+
+        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2016, 4, 1), taxReliefCode = RightToBuy)
+        val result = createResult("freeholdResidentialDec14Onwards")
+        val requestCaptor = ArgumentCaptor.forClass(classOf[Request])
+
+        when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(any[Request](), meq(false), meq(false))).thenReturn(result)
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
-        verifyNoMoreInteractions(mockFreeholdCalculationService)
-      }
-      "given a request with an effective date of 16/03/2016 (day before 17/03/2016)" in {
-        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, LocalDate.of(2016, 3, 16))
-
-        val result = createSelfAssessedResult("Self-assessed")
-
-        when(mockLeaseholdCalculationService.leaseholdSelfAssessedRes).thenReturn(result)
-
-        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
-
-        verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
-        verifyNoMoreInteractions(mockFreeholdCalculationService)
-      }
-    }
-    "throw an exception for leasehold mixed" when {
-      "given a request with an effective date of exactly the maximum date 17/03/2016" in {
-        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, LocalDate.of(2016, 3, 17))
-        the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must
-          have message s"Date of ${testRequest.effectiveDate} is outside of range 2008-03-12 - 2016-03-17"
-      }
-      "given a request with an effective date, before the minimum date, of exactly 11/3/2008" in{
-        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, LocalDate.of(2008, 3, 11))
-        the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must
-          have message s"Date of ${testRequest.effectiveDate} is outside of range 2008-03-12 - 2016-03-17"
-      }
-      "given a request with an effective date, after the maximum date, of exactly 17/3/2017" in{
-        val testRequest = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, LocalDate.of(2017, 3, 17))
-        the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must
-          have message s"Date of ${testRequest.effectiveDate} is outside of range 2008-03-12 - 2016-03-17"
+        verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(requestCaptor.capture(), meq(false), meq(false))
+        requestCaptor.getValue.taxReliefDetails mustBe None
       }
     }
   }

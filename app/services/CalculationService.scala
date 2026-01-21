@@ -12,7 +12,7 @@ import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.TaxReliefDetails
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, isAfterMar2008AndBeforeMar2016}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012}
 import utils.DateUtil
 import utils.LoggerUtil._
 import PropertyTypes._
@@ -364,11 +364,10 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     // Property types from the AS-IS design are:
     // residential, nonResidential, mixed and residentialAdditionalProperty
 
-    val isResidentialAdditionalProperty =
-      request.propertyType.==(`residential`) &&
-        request.propertyDetails.exists(_.twoOrMoreProperties.contains(true))
+    val isAdditionalProperty =
+      request.propertyDetails.exists(_.twoOrMoreProperties.contains(true))
 
-    (request.holdingType, request.propertyType, isResidentialAdditionalProperty, taxReliefDetails.taxReliefCode, request.isLinked) match {
+    (request.holdingType, request.propertyType, isAdditionalProperty, taxReliefDetails.taxReliefCode, request.isLinked) match {
       case (`freehold`, _, _, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false)
         if taxReliefDetails.isPartialRelief.contains(true) =>
           CalculationResponse(Seq(
@@ -412,6 +411,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
         ))
+      case (`leasehold`, `residential`, false, FirstTimeBuyersRelief, _)
+        if isAfterMar2010AndBeforeMar2012(request.effectiveDate) =>
+          CalculationResponse(Seq(
+            leaseCalculationService.leaseholdSelfAssessedRes
+          ))
       case (`leasehold`, _, _, AcquisitionRelief, false) =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdAcquisitionTaxReliefRes(request)
@@ -436,10 +440,10 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           CalculationResponse(Seq(
             leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
           ))
-      case (holdingType, propertyType, isResidentialAdditionalProperty, taxReliefCode, isLinked) =>
+      case (holdingType, propertyType, isAdditionalProperty, taxReliefCode, isLinked) =>
         logWarn(s"TaxRelief logic not yet implemented for" +
           s"taxReliefCode: $taxReliefCode, holdingType: $holdingType, propertyType: $propertyType, " +
-          s"isResidentialAdditionalProperty: $isResidentialAdditionalProperty, isLinked: $isLinked")
+          s"isAdditionalProperty: $isAdditionalProperty, isLinked: $isLinked")
         calculateTax(request.copy(taxReliefDetails = None))
     }
   }

@@ -10,6 +10,8 @@ import java.time.LocalDate
 object Dates {
 
   val MIN_MIXED_PROPERTY_DATE: LocalDate = LocalDate.of(2008, 3, 12)
+  val MAR2010_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2010, 3, 25)
+  val MAR2012_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2012, 3, 25)
   val MIN_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2012, 3, 22)
   val APRIL2013_TAX_YEAR_START_DATE: LocalDate = LocalDate.of(2013, 4, 6)
   val DECEMBER2014_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2014, 12, 4)
