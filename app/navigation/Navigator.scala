@@ -67,9 +67,11 @@ class Navigator @Inject()() {
     case WhoIsMakingThePurchasePage | NameOfPurchaserPage | DoesPurchaserHaveNIPage
          | PurchaserNationalInsurancePage | PurchaserFormOfIdIndividualPage | AddPurchaserPhoneNumberPage
          | PurchaserDateOfBirthPage | EnterPurchaserPhoneNumberPage | PurchaserUTRPage
-          | RegistrationNumberPage | PurchaserTypeOfCompanyPage | CompanyFormOfIdPage
+         | RegistrationNumberPage | PurchaserTypeOfCompanyPage | CompanyFormOfIdPage
          | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage | ConfirmNameOfThePurchaserPage
-         | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage | PurchaserAgentBeforeYouStartPage  => true
+         | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage
+         | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage | PurchaserAgentBeforeYouStartPage
+         | PurchaserAgentAuthorisedPage => true
 
     case _ => false
   }
@@ -102,7 +104,7 @@ class Navigator @Inject()() {
     case CompanyFormOfIdPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
     case PurchaserAndVendorConnectedPage => //TODO: update post pr-cya - DTR-1788 page created - (DTR-1687 -Sprint 5)
-      - => controllers.routes.ReturnTaskListController.onPageLoad()
+      _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case ConfirmNameOfThePurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
@@ -113,13 +115,15 @@ class Navigator @Inject()() {
     case PurchaserAgentNamePage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent()
     case PurchaserAgentsContactDetailsPage =>
-      - => controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
+      _ => controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
     case AddPurchaserAgentReferenceNumberPage =>
-      - => controllers.routes.ReturnTaskListController.onPageLoad()
+      _ => controllers.routes.ReturnTaskListController.onPageLoad()
     //TODO DTR-1829 add onward route to enter agent reference controller
     // - => controllers.purchaserAgent.routes.EnterAgentReferenceController.onPageLoad(NormalMode)
     case AddContactDetailsForPurchaserAgentPage =>
-      - => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
+      _ => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
+    case PurchaserAgentAuthorisedPage =>//TODO: Update link to PA-CYA DTR-1851
+      _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
