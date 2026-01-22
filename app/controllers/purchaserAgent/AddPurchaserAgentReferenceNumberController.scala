@@ -83,8 +83,7 @@ class AddPurchaserAgentReferenceNumberController @Inject()(
                 if (value) {
                   Redirect(navigator.nextPage(AddPurchaserAgentReferenceNumberPage, mode, updatedAnswers))
                 } else {
-                  //                  controllers.purchaserAgent.routes.PlaceholderController.onPageLoad()
-                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                  Redirect(controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode))
                 }
               }
           )
