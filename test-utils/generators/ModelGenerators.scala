@@ -26,6 +26,11 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryPurchaserAgentAuthorised: Arbitrary[PurchaserAgentAuthorised] =
+    Arbitrary {
+      Gen.oneOf(PurchaserAgentAuthorised.values.toSeq)
+    }
+
   implicit lazy val arbitraryPurchaserAgentsContactDetails: Arbitrary[PurchaserAgentsContactDetails] =
     Arbitrary {
       for {

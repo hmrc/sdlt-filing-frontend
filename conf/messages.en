@@ -721,3 +721,9 @@ purchaserAgent.selectPurchaserAgent.addNewAgent                                 
 purchaserAgent.selectPurchaserAgent.checkYourAnswersLabel                                = selectPurchaserAgent
 purchaserAgent.selectPurchaserAgent.error.required                                       = Please select an option
 purchaserAgent.selectPurchaserAgent.change.hidden                                        = SelectPurchaserAgent
+
+purchaserAgent.purchaserAgentAuthorised.title                                            = Is the agent authorised to handle correspondence on behalf of the purchaser? - About the purchaser’s agent
+purchaserAgent.purchaserAgentAuthorised.heading                                          = Is {0} authorised to handle correspondence on behalf of the purchaser?
+purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                            = Is the agent authorised to handle correspondence on behalf of the purchaser?
+purchaserAgent.purchaserAgentAuthorised.error.required                                   = Select purchaserAgentAuthorised
+purchaserAgent.purchaserAgentAuthorised.change.hidden                                    = PurchaserAgentAuthorised
