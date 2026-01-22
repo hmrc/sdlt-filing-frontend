@@ -180,7 +180,7 @@ class AddPurchaserAgentReferenceNumberControllerSpec extends SpecBase with Mocki
         status(result) mustEqual SEE_OTHER
 
         //TODO - DTR-1832 - replace with proper route
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode).url
       }
     }
 
