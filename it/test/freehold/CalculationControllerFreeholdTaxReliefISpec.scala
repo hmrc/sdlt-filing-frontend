@@ -687,6 +687,44 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         request.status shouldBe OK
         request.json shouldBe selfAssessedResponse
       }
+      "with tax relief code: CollectiveEnfranchisementByLeaseholders(25)" in {
+
+        def request: WSResponse = ws.url(
+            calculateUrl)
+          .post(
+            Json.parse(
+              """{
+                |  "holdingType": "freehold",
+                |  "propertyType": "Non-residential",
+                |  "effectiveDateDay": 1,
+                |  "effectiveDateMonth": 1,
+                |  "effectiveDateYear": 2010,
+                |  "highestRent": "10000",
+                |  "premium": "0",
+                |  "taxReliefDetails": {
+                |    "taxReliefCode": 25
+                |  }
+                |}
+                |""".stripMargin
+            )
+          )
+
+        val selfAssessedResponse: JsValue = Json.parse(
+          """{
+            |  "result": [
+            |    {
+            |      "totalTax": 0,
+            |      "resultHeading": "Self-assessed",
+            |      "taxCalcs": []
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+        )
+
+        request.status shouldBe OK
+        request.json shouldBe selfAssessedResponse
+      }
     }
 
     "return Fallback result" when {
@@ -902,9 +940,120 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                |""".stripMargin
           )
 
-          request.json should not be selfAssessedResponse
-          request.status shouldBe OK
-          request.json shouldBe fallBackResult
+        request.json should not be selfAssessedResponse
+        request.status shouldBe OK
+        request.json shouldBe fallBackResult
+      }
+    }
+      "tax relief code:  CollectiveEnfranchisementByLeaseholders(25)" when {
+
+        "property type is before 23/04/2009" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """{
+                  |  "holdingType": "freehold",
+                  |  "propertyType": "Non-residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 1,
+                  |  "effectiveDateYear": 2008,
+                  |  "highestRent": "10000",
+                  |  "premium": "0",
+                  |  "taxReliefDetails": {
+                  |    "taxReliefCode": 25
+                  |  }
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          def response: JsValue = Json.parse(
+            """{
+              |  "result": [
+              |    {
+              |      "totalTax": 0,
+              |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+              |      "taxCalcs": [
+              |        {
+              |          "taxType": "premium",
+              |          "calcType": "slab",
+              |          "taxDue": 0,
+              |          "rate": 0
+              |        }
+              |      ]
+              |    }
+              |  ]
+              |}
+              |""".stripMargin
+          )
+
+          request.json shouldBe response
+        }
+
+        "property type is Residential, Freehold and before 22/03/2009" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """{
+                  |  "holdingType": "Freehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 1,
+                  |  "effectiveDateYear": 2008,
+                  |  "highestRent": "10000",
+                  |  "premium": "0",
+                  |  "taxReliefDetails": {
+                  |    "taxReliefCode": 25
+                  |  }
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          request.status shouldBe 400
+        }
+
+        "property type is Non-residential, Freehold and before 22/03/2009" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """{
+                  |  "holdingType": "Freehold",
+                  |  "propertyType": "Non-residential",
+                  |  "effectiveDateDay": 16,
+                  |  "effectiveDateMonth": 3,
+                  |  "effectiveDateYear": 2015,
+                  |  "premium": 1000000,
+                  |  "highestRent": 0
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          def response: JsValue = Json.parse(
+            """{
+              |  "result": [
+              |    {
+              |      "totalTax": 40000,
+              |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+              |      "taxCalcs": [
+              |        {
+              |          "taxType": "premium",
+              |          "calcType": "slab",
+              |          "taxDue": 40000,
+              |          "rate": 4
+              |        }
+              |      ]
+              |    }
+              |  ]
+              |}
+              |""".stripMargin
+          )
+
+          request.json shouldBe response
         }
       }
 
