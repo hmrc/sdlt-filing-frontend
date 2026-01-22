@@ -102,6 +102,47 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
 
+      "with tax relief code: PartExchange(8) / SelfAssessed" when {
+
+        "residential" in {
+
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{"holdingType": "Freehold",
+                  |"propertyType": "Residential",
+                  |"effectiveDateDay":22,
+                  |"effectiveDateMonth":2,
+                  |"effectiveDateYear":2013,
+                  |"premium": "10000",
+                  |"highestRent": 0,
+                  |"taxReliefDetails":{
+                  |"taxReliefCode": 8
+                  |},
+                  |"isLinked": true
+                  |}""".stripMargin
+              )
+            )
+
+          val responseJson = Json.parse(
+            """
+              |{
+              | "result":[ {
+              |   "totalTax": 0,
+              |   "resultHeading": "Self-assessed",
+              |   "taxCalcs": []
+              |  }
+              | ]
+              |}""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe responseJson
+        }
+
+      }
+
       "with TaxReliefCode: PreCompletionTransaction(34)" when {
 
         "Property Type is Residential and the date is on or after 6th April 2013" in {
@@ -402,6 +443,8 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         request.status shouldBe OK
         request.json shouldBe responseJson
       }
+
+
     }
   }
 }

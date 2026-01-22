@@ -5,6 +5,7 @@
 
 package generators
 
+import data.Dates.DECEMBER2014_RESIDENTIAL_DATE
 import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import models.sdltRebuild.TaxReliefDetails
@@ -67,14 +68,50 @@ trait RequestGenerators {
     SeedingRelief
   ))
 
+  private val zeroRateTaxReliefForSelfAssessedGen: Gen[TaxReliefCode with StandardZeroRate] = Gen.oneOf(Set(
+    PartExchange,
+    ReLocationEmployment,
+    CompulsoryPurchaseFacilitatingDevelopment,
+    ComplianceWithPlanningObligations,
+    GroupRelief,
+    ReConstructionRelief,
+    DemutualisationOfInsuranceCompany,
+    DemutualisationOfBuildingSociety,
+    IncorporationOfLimitedLiabilityPartnership,
+    TransfersInvolvingPublicBodies,
+    TransferInConsequenceOfReorganisationOfParliamentaryConstituencies,
+    CharitiesTaxReliefs,
+    AcquisitionByBodiesEstablishedForNationalPurposes,
+    RegisteredSocialLandlords,
+    AlternativePropertyFinance,
+    CroftingCommunityRightToBuy,
+    DiplomaticPrivileges,
+    OtherTaxReliefs,
+    CombinationOfReliefs,
+    AlternativeFinanceInvestmentBondsRelief
+  ))
+
+
   private val amountGen: Gen[Int] = Gen.oneOf(1 to 1000000)
-  private val dateGenerator: Gen[Option[LocalDate]] = for {
+  private val dateGenerator : Gen[Option[LocalDate]] = for {
     year <- Gen.oneOf(1990 to 2025)
     month <- Gen.oneOf(1 to 12)
     day <- Gen.oneOf(1 to 31)
   } yield Try {
     LocalDate.of(year, month, day)
   }.toOption
+
+  private val beforeDateGenerator: LocalDate => Gen[Option[LocalDate]] = (beforeDate: LocalDate) => for {
+    year <- Gen.oneOf(1990 to beforeDate.getYear)
+    month <- Gen.oneOf(1 to 12)
+    day <- Gen.oneOf(1 to 31)
+  } yield Try {
+    if (LocalDate.of(year, month, day).toEpochDay < beforeDate.toEpochDay)
+      Some(LocalDate.of(year, month, day))
+    else
+      None
+  }.toOption.flatten
+
 
   private def taxReliefRequestGenerator(holdType: HoldingTypes.Value, propertyTypes: Seq[PropertyTypes.Value]): Gen[Request] =
     for {
@@ -109,5 +146,36 @@ trait RequestGenerators {
 
   val freeHoldRequestWithStandardPropertyTypesGenerator: Gen[Request] = taxReliefRequestGenerator(HoldingTypes.freehold, Seq(PropertyTypes.residential, PropertyTypes.nonResidential))
   val leasedHoldNonResidentialMixedRequestGenerator: Gen[Request] = taxReliefRequestGenerator(HoldingTypes.leasehold, Seq(PropertyTypes.nonResidential, PropertyTypes.mixed))
+
+  val freeHoldSelfAssessedBeforeDateRequestGenerator: Gen[Request] = {
+    for {
+      propertyType <- Gen.oneOf(PropertyTypes.residential, PropertyTypes.nonResidential, PropertyTypes.mixed)
+      taxRelief <- zeroRateTaxReliefForSelfAssessedGen
+      nonZeroAmount <- amountGen
+      effectiveDate <- beforeDateGenerator(DECEMBER2014_RESIDENTIAL_DATE)
+    } yield
+      Request(
+        holdingType = HoldingTypes.freehold,
+        propertyType = propertyType,
+        effectiveDate = effectiveDate.getOrElse(DECEMBER2014_RESIDENTIAL_DATE.plusDays(-1)), // Before 04/12/2014 :: or any other date generate before
+        nonUKResident = None,
+        premium = nonZeroAmount,
+        highestRent = BigDecimal(0),
+        propertyDetails = Some(
+          PropertyDetails(
+            individual = true,
+            twoOrMoreProperties = Some(false),
+            replaceMainResidence = Some(true),
+            sharedOwnership = None,
+            currentValue = None
+          )
+        ),
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = Some(true),
+        isLinked = true,
+        taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = taxRelief, isPartialRelief = Some(false))),
+      )
+  }
 
 }
