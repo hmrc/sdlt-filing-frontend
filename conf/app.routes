@@ -259,6 +259,11 @@ POST        /about-the-purchasers-agent/add-agent-reference-number              
 GET         /about-the-purchasers-agent/add-agent-reference-number/change                 controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-purchasers-agent/add-agent-reference-number/change                 controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onSubmit(mode: Mode = CheckMode)
 
+GET         /about-the-purchasers-agent/enter-agent-reference-number                      controllers.purchaserAgent.PurchaserAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/enter-agent-reference-number                      controllers.purchaserAgent.PurchaserAgentReferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/enter-agent-reference-number/change               controllers.purchaserAgent.PurchaserAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/enter-agent-reference-number/change               controllers.purchaserAgent.PurchaserAgentReferenceController.onSubmit(mode: Mode = CheckMode)
+
 GET         /about-the-purchaser/remove-purchaser                                         controllers.purchaser.PurchaserRemoveController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchaser/remove-purchaser                                         controllers.purchaser.PurchaserRemoveController.onSubmit(mode: Mode = NormalMode)
 
