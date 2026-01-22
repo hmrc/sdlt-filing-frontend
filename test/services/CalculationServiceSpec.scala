@@ -1887,6 +1887,29 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
       }
+      "given the request with tax relief code  RightToBuy  and property type is  mixed property effective date is before 17/03/2016 and isLinked = true " in {
+        val testRequest = createRequestWithTaxRelief(freehold, mixed, LocalDate.of(2016, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = true)
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
+      "given the request with tax relief code  RightToBuy  and property type is  nonResidential property effective date is before 17/03/2016 and isLinked = true " in {
+
+        val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2016, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = true)
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
     }
 
     "select the leaseholdSelfAssessedRes function" when {
@@ -1959,7 +1982,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
       }
 
-      "given a request with a Non-residential Property" in {
+      "given a request with relief code FirstTimeBuyerRelief & Non-residential Property " in {
 
         val testRequest = createRequestWithTaxRelief(leasehold, nonResidential, LocalDate.of(2012, 3, 23), taxReliefCode = FirstTimeBuyersRelief)
         val result = createResult("leaseholdNonResidentialMar12toMar16")
@@ -1974,7 +1997,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
       }
 
-      "given a request with a HoldingType of Freehold" in {
+      "given a request with relief code FirstTimeBuyerRelief & HoldingType of Freehold" in {
 
         val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2012, 1, 1), taxReliefCode = FirstTimeBuyersRelief)
 
@@ -1986,7 +2009,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verifyNoMoreInteractions(mockLeaseholdCalculationService)
       }
 
-      "given an effective date before the minimum allowed date" in {
+      "given a relief code FirstTimeBuyerRelief & effective date before the minimum allowed date" in {
 
         val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2008, 3, 11), taxReliefCode = FirstTimeBuyersRelief)
         val ex = the [InvalidDateException] thrownBy {
@@ -1999,7 +2022,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verifyNoMoreInteractions(mockLeaseholdCalculationService)
       }
 
-      "given an effective date after the maximum allowed date" in {
+      "given a relief code FirstTimeBuyerRelief & effective date after the maximum allowed date" in {
 
         val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2016, 3, 17), taxReliefCode = FirstTimeBuyersRelief)
         val result = createResult("leaseholdResidentialDec14Onwards")
@@ -2025,6 +2048,52 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(requestCaptor.capture(), meq(false), meq(false))
         requestCaptor.getValue.taxReliefDetails mustBe None
+      }
+
+      "given a tax relief code  RightToBuy , Residential property & isLinked = true " when {
+        "effective date is between  2014/12/4 - 2016/03/31(including these dates)" in {
+
+          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2014, 12, 14), taxReliefCode = RightToBuy)
+          val result = createResult("freeholdResidentialDec14Onwards")
+          val requestCaptor = ArgumentCaptor.forClass(classOf[Request])
+
+          when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(any[Request](), meq(false), meq(false))).thenReturn(result)
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(requestCaptor.capture(), meq(false), meq(false))
+
+          requestCaptor.getValue.taxReliefDetails mustBe None
+        }
+        "effective date is in between 2012/3/22 - 2014/12/3(including these dates) " in {
+
+          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2012, 4, 12), taxReliefCode = RightToBuy)
+          val result = createResult("freeholdResidentialMar12toDec14")
+          val requestCaptor = ArgumentCaptor.forClass(classOf[Request])
+
+          when(mockFreeholdCalculationService.freeholdResidentialMar12toDec14(any[Request]())).thenReturn(result)
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdResidentialMar12toDec14(requestCaptor.capture())
+
+          requestCaptor.getValue.taxReliefDetails mustBe None
+        }
+        "effective date is before 2012/03/22" in {
+
+          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2010, 4, 12), taxReliefCode = RightToBuy)
+          val ex = the [InvalidDateException] thrownBy {
+            testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get)
+          }
+
+          ex.getMessage mustBe s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
+
+          verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+          verifyNoMoreInteractions(mockLeaseholdCalculationService)
+
+
+        }
+
       }
 
       "Tax Relief Code is ReliefFrom15PercentRate(35)" when {
