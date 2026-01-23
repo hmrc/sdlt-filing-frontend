@@ -31,6 +31,11 @@ trait ModelGenerators {
       Gen.oneOf(PurchaserAgentAuthorised.values.toSeq)
     }
 
+  implicit lazy val arbitraryRemovePurchaserAgent: Arbitrary[RemovePurchaserAgent] =
+    Arbitrary {
+      Gen.oneOf(RemovePurchaserAgent.values.toSeq)
+    }
+
   implicit lazy val arbitraryPurchaserAgentsContactDetails: Arbitrary[PurchaserAgentsContactDetails] =
     Arbitrary {
       for {

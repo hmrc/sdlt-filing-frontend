@@ -18,6 +18,8 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
+import scala.concurrent.Future
+
 case class CreateReturnAgentRequest(
                        stornId: String,
                        returnResourceRef: String,
@@ -85,6 +87,19 @@ case class DeleteReturnAgentRequest(
 
 object DeleteReturnAgentRequest {
   implicit val format: OFormat[DeleteReturnAgentRequest] = Json.format[DeleteReturnAgentRequest]
+
+  def from(userAnswers: UserAnswers, agentType: String): Future[DeleteReturnAgentRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        Future.successful(DeleteReturnAgentRequest(
+          storn = fullReturn.stornId,
+          returnResourceRef = fullReturn.returnResourceRef,
+          agentType = agentType
+        ))
+      case None =>
+        Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class DeleteReturnAgentReturn(

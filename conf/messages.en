@@ -773,3 +773,9 @@ purchaserAgent.purchaserAgentAuthorised.heading                                 
 purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                            = Is the agent authorised to handle correspondence on behalf of the purchaser?
 purchaserAgent.purchaserAgentAuthorised.error.required                                   = Select purchaserAgentAuthorised
 purchaserAgent.purchaserAgentAuthorised.change.hidden                                    = PurchaserAgentAuthorised
+
+purchaserAgent.removePurchaserAgent.title = Are you sure you want to remove the purchaser’s agent? - About the purchaser’s agent
+purchaserAgent.removePurchaserAgent.heading = Are you sure you want to remove {0}?
+removePurchaserAgent.checkYourAnswersLabel = removePurchaserAgent
+removePurchaserAgent.error.required = Select removePurchaserAgent
+removePurchaserAgent.change.hidden = RemovePurchaserAgent

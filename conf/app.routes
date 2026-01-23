@@ -270,6 +270,11 @@ POST        /about-the-purchasers-agent/agent-authorised-for-correspondence     
 GET         /about-the-purchasers-agent/agent-authorised-for-correspondence/change        controllers.purchaserAgent.PurchaserAgentAuthorisedController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-purchasers-agent/agent-authorised-for-correspondence/change        controllers.purchaserAgent.PurchaserAgentAuthorisedController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-purchasers-agent/remove-purchasers-agent                           controllers.purchaserAgent.RemovePurchaserAgentController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchasers-agent/remove-purchasers-agent                           controllers.purchaserAgent.RemovePurchaserAgentController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchasers-agent/remove-purchasers-agent/change                    controllers.purchaserAgent.RemovePurchaserAgentController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchasers-agent/remove-purchasers-agent/change                    controllers.purchaserAgent.RemovePurchaserAgentController.onSubmit(mode: Mode = CheckMode)
+
 GET         /about-the-vendors-agent/agent-name                                           controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-vendors-agent/agent-name                                           controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-vendors-agent/agent-name/change                                    controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = CheckMode)
