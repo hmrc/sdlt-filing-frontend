@@ -398,7 +398,7 @@ class PurchaserAgentServiceSpec extends SpecBase {
 
           verify(mockSessionRepository).set(argThat { answers =>
             answers.get(PurchaserAgentNamePage).isEmpty &&
-            answers.get(PurchaserAgentAddressPage).isEmpty &&
+              answers.get(PurchaserAgentAddressPage).isEmpty &&
               answers.get(PurchaserAgentsContactDetailsPage).isEmpty
           })
         }
@@ -451,6 +451,80 @@ class PurchaserAgentServiceSpec extends SpecBase {
               answers.get(PurchaserAgentsContactDetailsPage).exists(_.emailAddress.contains("test@example.com"))
           })
         }
+      }
+    }
+
+    "populateAssignedPurchaserAgentInSession" - {
+
+      "must populate purchaser agent pages when returnAgentID is present" in {
+
+        val fullReturn = emptyFullReturn
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+        val returnAgent = ReturnAgent(
+          returnAgentID = Some("AGENT123"),
+          agentType = Some("PURCHASER"),
+          name = Some("Assigned Purchaser Agent"),
+          houseNumber = None,
+          address1 = Some("1 Assigned Street"),
+          address2 = Some("Assigned Town"),
+          address3 = Some("Assigned City"),
+          address4 = None,
+          postcode = Some("ZZ1 1ZZ"),
+          phone = Some("07123456789"),
+          email = Some("assigned@example.com"),
+          reference = None
+        )
+
+        val expectedAddress = Address(
+          line1 = "1 Assigned Street",
+          line2 = Some("Assigned Town"),
+          line3 = Some("Assigned City"),
+          line4 = None,
+          postcode = Some("ZZ1 1ZZ")
+        )
+
+        val expectedContactDetails = PurchaserAgentsContactDetails(
+          phoneNumber = Some("07123456789"),
+          emailAddress = Some("assigned@example.com")
+        )
+
+        val result =
+          service.populateAssignedPurchaserAgentInSession(returnAgent, userAnswers)
+
+        result.isSuccess mustBe true
+
+        val updatedAnswers = result.get
+
+        updatedAnswers.get(PurchaserAgentNamePage) mustBe Some("Assigned Purchaser Agent")
+        updatedAnswers.get(PurchaserAgentAddressPage) mustBe Some(expectedAddress)
+        updatedAnswers.get(PurchaserAgentsContactDetailsPage) mustBe Some(expectedContactDetails)
+      }
+
+      "must fail with IllegalStateException when returnAgentID is missing" in {
+
+        val userAnswers = emptyUserAnswers
+
+        val returnAgent = ReturnAgent(
+          returnAgentID = None,
+          agentType = Some("PURCHASER"),
+          name = Some("Broken Agent"),
+          houseNumber = None,
+          address1 = Some("Broken Street"),
+          address2 = None,
+          address3 = None,
+          address4 = None,
+          postcode = Some("XX1 1XX"),
+          phone = None,
+          email = None,
+          reference = None
+        )
+
+        val result =
+          service.populateAssignedPurchaserAgentInSession(returnAgent, userAnswers)
+
+        result.isFailure mustBe true
+        result.failed.get mustBe a[IllegalStateException]
       }
     }
   }

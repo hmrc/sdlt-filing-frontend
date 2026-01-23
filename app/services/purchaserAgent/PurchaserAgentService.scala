@@ -16,7 +16,7 @@
 
 package services.purchaserAgent
 
-import models.{FullReturn, Mode, NormalMode, UserAnswers}
+import models.{Mode, NormalMode, ReturnAgent, UserAnswers}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import models.purchaserAgent.*
@@ -115,6 +115,34 @@ class PurchaserAgentService @Inject(
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(SelectPurchaserAgentPage, mode, updatedAnswers))
         }
+    }
+  }
+
+  def populateAssignedPurchaserAgentInSession(returnAgent: ReturnAgent, userAnswers: UserAnswers): Try[UserAnswers] = {
+
+    returnAgent.returnAgentID match {
+      case Some(agentId) =>
+
+        val purchaserAgentAddress = Address(
+          line1 = returnAgent.address1.get,
+          line2 = returnAgent.address2,
+          line3 = returnAgent.address3,
+          line4 = returnAgent.address4,
+          postcode = returnAgent.postcode
+        )
+
+        val purchaserAgentsContactDetails = PurchaserAgentsContactDetails(
+          phoneNumber = returnAgent.phone, emailAddress = returnAgent.email
+        )
+
+        for {
+          withName <- userAnswers.set(PurchaserAgentNamePage, returnAgent.name.get)
+          withAddress <- withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
+          finalAnswers <- withAddress.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
+        } yield finalAnswers
+
+      case _ =>
+        Try(throw new IllegalStateException(s"Purchaser ${returnAgent.returnAgentID} is missing"))
     }
   }
 }

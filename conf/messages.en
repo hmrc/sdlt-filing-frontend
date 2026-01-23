@@ -678,6 +678,15 @@ purchaser.purchaserOverview.summaryInfo.text                                    
 purchaser.purchaserOverview.noPurchaser.p1                                          = You have no purchasers listed. You must add a purchaser to complete this return.
 
 # Purchaser Agent
+purchaserAgent.overview.title                                                   = Purchaser’s agent overview - About the purchaser’s agent
+purchaserAgent.overview.heading                                                 = Purchaser’s agent overview
+purchaserAgent.overview.noPurchaser.subHeadingNoPurchasers                      = Do you want to add an agent for the purchaser?
+purchaserAgent.overview.limitReached                                            = To add a new purchaser agent, you must remove an agent
+purchaserAgent.overview.purchaserAgentRemoved                                   = You have removed {0}
+purchaserAgent.overview.aPurchaserAgent                                         = a purchaser’s agent
+purchaserAgent.overview.error.required                                          = Please select an option
+purchaserAgent.overview.noPurchaser.p1                                          = You have no agents listed for the purchaser.
+
 purchaserAgent.BeforeYouStart.title                                                 = Before you start - About the purchaser’s agent
 purchaserAgent.BeforeYouStart.heading                                               = Add an agent for the purchaser
 purchaserAgent.BeforeYouStart.checkYourAnswersLabel                                 = Add an agent for the purchaser

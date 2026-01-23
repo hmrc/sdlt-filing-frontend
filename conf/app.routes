@@ -47,10 +47,15 @@ GET         /preliminary-questions/address                                      
 GET         /preliminary-questions/address-return                                         controllers.preliminary.PrelimAddressController.addressLookupCallback(id: String ?= "", mode: Mode = NormalMode)
 GET         /preliminary-questions/address-return/change                                  controllers.preliminary.PrelimAddressController.addressLookupCallbackChange(id: String ?= "", mode: Mode = NormalMode)
 
-GET         /about-the-vendor/confirm-vendor-address                                      controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/confirm-vendor-address                                      controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/confirm-vendor-address/change                               controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/confirm-vendor-address/change                               controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/agent-name                                                         controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/agent-name                                                         controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/agent-name/change                                                  controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/agent-name/change                                                  controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-vendor/confirm-vendor-address                                             controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/confirm-vendor-address                                             controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/confirm-vendor-address/change                                      controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/confirm-vendor-address/change                                      controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-vendor/who-is-the-vendor                                           controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-vendor/who-is-the-vendor                                           controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = NormalMode)
@@ -244,10 +249,10 @@ POST        /about-the-purchasers-agent/add-agent-reference-number/change       
 GET         /about-the-purchaser/remove-purchaser                                         controllers.purchaser.PurchaserRemoveController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchaser/remove-purchaser                                         controllers.purchaser.PurchaserRemoveController.onSubmit(mode: Mode = NormalMode)
 
-GET         /about-the-purchasers-agent/enter-agent-reference-number                      controllers.purchaserAgent.PurchaserAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchasers-agent/enter-agent-reference-number                      controllers.purchaserAgent.PurchaserAgentReferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchasers-agent/enter-agent-reference-number/change               controllers.purchaserAgent.PurchaserAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchasers-agent/enter-agent-reference-number/change               controllers.purchaserAgent.PurchaserAgentReferenceController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-purchasers-agent/enter-agent-reference-number                             controllers.purchaserAgent.PurchaserAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/enter-agent-reference-number                             controllers.purchaserAgent.PurchaserAgentReferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/enter-agent-reference-number/change                      controllers.purchaserAgent.PurchaserAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/enter-agent-reference-number/change                      controllers.purchaserAgent.PurchaserAgentReferenceController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-purchasers-agent/select-agent                                      controllers.purchaserAgent.SelectPurchaserAgentController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchasers-agent/select-agent                                      controllers.purchaserAgent.SelectPurchaserAgentController.onSubmit(mode: Mode = NormalMode)
@@ -261,6 +266,16 @@ GET         /about-the-purchasers-agent/agent-authorised-for-correspondence     
 POST        /about-the-purchasers-agent/agent-authorised-for-correspondence               controllers.purchaserAgent.PurchaserAgentAuthorisedController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-purchasers-agent/agent-authorised-for-correspondence/change        controllers.purchaserAgent.PurchaserAgentAuthorisedController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-purchasers-agent/agent-authorised-for-correspondence/change        controllers.purchaserAgent.PurchaserAgentAuthorisedController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchasers-agent/purchasers-agent-overview                                    controllers.purchaserAgent.PurchaserAgentOverviewController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/purchasers-agent-overview                                    controllers.purchaserAgent.PurchaserAgentOverviewController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/purchasers-agent-overview/change-agent/:returnAgentId        controllers.purchaserAgent.PurchaserAgentOverviewController.changePurchaserAgent(returnAgentId: String)
+GET         /about-the-purchasers-agent/purchasers-agent-overview/remove-agent/:returnAgentId        controllers.purchaserAgent.PurchaserAgentOverviewController.removePurchaserAgent(returnAgentId: String)
+
+GET         /about-the-vendors-agent/agent-name                                                  controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendors-agent/agent-name                                                  controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendors-agent/agent-name/change                                           controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendors-agent/agent-name/change                                           controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-purchasers-agent/check-answers                                     controllers.purchaserAgent.PurchaserAgentCheckYourAnswersController.onPageLoad()
 POST        /about-the-purchasers-agent/check-answers                                     controllers.purchaserAgent.PurchaserAgentCheckYourAnswersController.onSubmit()
