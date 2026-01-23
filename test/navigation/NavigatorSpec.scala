@@ -163,18 +163,20 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AddContactDetailsForPurchaserAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
         }
 
-        "go from PurchaserAgentsContactDetailsPage to AddPurchaserReferenceNumber page" in {
+        "go from PurchaserAgentsContactDetailsPage to AddPurchaserAgentReferenceNumber page" in {
           navigator.nextPage(PurchaserAgentsContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
         }
 
-        //TODO DTR-1829 - link up route
-        "go from AddPurchaserReferenceNumber to EnterPurchaserReferenceNumber page" in {
-          navigator.nextPage(AddPurchaserAgentReferenceNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
-          //          navigator.nextPage(AddPurchaserAgentReferenceNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.EnterPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
+        "go from AddPurchaserAgentReferenceNumberPage to PurchaserAgentReference page" in {
+          navigator.nextPage(AddPurchaserAgentReferenceNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(NormalMode)
+        }
+
+        "go from PurchaserAgentReferencePage to PurchaserAgentAuthorised page" in {
+          navigator.nextPage(PurchaserAgentReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserAgentAuthorisedPage to ReturnTakList page" in {//TODO: Update link to PA-CYA DTR-1851
-          navigator.nextPage(AddPurchaserAgentReferenceNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+          navigator.nextPage(PurchaserAgentAuthorisedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
          }
 
       }

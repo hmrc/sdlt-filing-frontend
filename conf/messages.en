@@ -714,6 +714,15 @@ purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel                    
 purchaserAgent.addAgentReferenceNumber.error.required                                    = Please select yes or no
 purchaserAgent.addAgentReferenceNumber.change.hidden                                     = AddPurchaserAgentReferenceNumber
 
+purchaserAgent.reference.title                                                           = What is the agent’s reference for this return?
+purchaserAgent.reference.heading                                                         = What is {0}’s reference for this return?
+purchaserAgent.reference.checkYourAnswersLabel                                           = Agent reference
+purchaserAgent.reference.error.required                                                  = Enter purchaserAgentReference
+purchaserAgent.reference.error.length                                                    = PurchaserAgentReference must be 14 characters or less
+purchaserAgent.reference.error.invalid                                                   = Invalid error
+purchaserAgent.reference.change.hidden                                                   = Agent reference
+purchaserAgent.reference.hint                                                            = We’ll only use this to help reference this return
+
 purchaserAgent.selectPurchaserAgent.title                                                = Select the purchaser’s agent - About the purchaser’s agent
 purchaserAgent.selectPurchaserAgent.heading                                              = Select {0}’s agent
 purchaserAgent.selectPurchaserAgent.existingAgent                                        = An existing agent

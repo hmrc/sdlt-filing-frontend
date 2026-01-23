@@ -70,8 +70,8 @@ class Navigator @Inject()() {
          | RegistrationNumberPage | PurchaserTypeOfCompanyPage | CompanyFormOfIdPage
          | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage | ConfirmNameOfThePurchaserPage
          | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage
-         | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage | PurchaserAgentBeforeYouStartPage
-         | PurchaserAgentAuthorisedPage => true
+         | PurchaserAgentReferencePage | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage
+         | PurchaserAgentBeforeYouStartPage | PurchaserAgentAuthorisedPage => true
 
     case _ => false
   }
@@ -117,9 +117,9 @@ class Navigator @Inject()() {
     case PurchaserAgentsContactDetailsPage =>
       _ => controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode)
     case AddPurchaserAgentReferenceNumberPage =>
-      _ => controllers.routes.ReturnTaskListController.onPageLoad()
-    //TODO DTR-1829 add onward route to enter agent reference controller
-    // - => controllers.purchaserAgent.routes.EnterAgentReferenceController.onPageLoad(NormalMode)
+      _ => controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(NormalMode)
+    case PurchaserAgentReferencePage =>
+      _ => controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode)
     case AddContactDetailsForPurchaserAgentPage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
     case PurchaserAgentAuthorisedPage =>//TODO: Update link to PA-CYA DTR-1851
