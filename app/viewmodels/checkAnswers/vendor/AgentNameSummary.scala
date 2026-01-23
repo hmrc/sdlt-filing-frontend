@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.vendor
 
 import models.{CheckMode, UserAnswers}
-import pages.vendor.AgentNamePage
+import pages.vendorAgent.AgentNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -35,7 +35,7 @@ object AgentNameSummary  {
         key = "agent.checkYourAnswers.agentName.label",
         value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("agent.agentName.change.hidden"))
         )
       )
@@ -43,7 +43,7 @@ object AgentNameSummary  {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentMissing")}</a>""")
+          s"""<a href="${controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentMissing")}</a>""")
       )
 
       SummaryListRowViewModel(

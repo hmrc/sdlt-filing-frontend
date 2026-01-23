@@ -21,11 +21,12 @@ import forms.vendor.DoYouKnowYourAgentReferenceFormProvider
 import models.Mode
 import models.vendor.DoYouKnowYourAgentReference
 import navigation.Navigator
-import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage, VendorRepresentedByAgentPage}
+import pages.vendor.{DoYouKnowYourAgentReferencePage, VendorRepresentedByAgentPage}
+import pages.vendorAgent.AgentNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.vendor.AgentChecksService
+import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.DoYouKnowYourAgentReferenceView
 
@@ -59,7 +60,7 @@ class DoYouKnowYourAgentReferenceController @Inject()(
           Redirect(controllers.routes.IndexController.onPageLoad())
           
         case (None, _) =>
-          Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode))
+          Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode))
           
         case (Some(agentName), true) =>
           val preparedForm = request.userAnswers.get(DoYouKnowYourAgentReferencePage) match {
@@ -76,7 +77,7 @@ class DoYouKnowYourAgentReferenceController @Inject()(
 
       request.userAnswers.get(AgentNamePage) match {
         case None =>
-          Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode)))
+          Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode)))
           
         case Some(agentName) =>
           form.bindFromRequest().fold(

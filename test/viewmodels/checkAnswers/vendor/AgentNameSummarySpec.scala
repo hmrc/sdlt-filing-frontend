@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.vendor
 
 import base.SpecBase
 import models.CheckMode
-import pages.vendor.AgentNamePage
+import pages.vendorAgent.AgentNamePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -46,7 +46,7 @@ class AgentNameSummarySpec extends SpecBase {
           htmlContent mustEqual "Smith"
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("agent.agentName.change.hidden")
         }
@@ -85,7 +85,7 @@ class AgentNameSummarySpec extends SpecBase {
 
         val result = AgentNameSummary.row(Some(userAnswers))
 
-        result.actions.get.items.head.href mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url
       }
     }
   }

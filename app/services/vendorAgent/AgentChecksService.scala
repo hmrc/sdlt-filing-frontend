@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-package services.vendor
+package services.vendorAgent
 
 import models.UserAnswers
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 
 class AgentChecksService {
-  
+
+  def vendorAgentExistsCheck(userAnswers: UserAnswers, continueRoute: Result): Result = {
+
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))) {
+          //TODO change this to the vendor agent overview page
+          Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+        } else {
+          continueRoute
+        }
+      case _ => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+    }
+  }
+
   def checkMainVendorAgentRepresentedByAgent(userAnswers: UserAnswers, continueRoute: Result): Result = {
     userAnswers.fullReturn.map { fullReturn =>
       val returnAgentExists = fullReturn.returnAgent.isDefined
@@ -30,7 +44,7 @@ class AgentChecksService {
       val mainVendor = fullReturn.vendor.flatMap(_.find(_.vendorID == mainVendorId))
       val mainVendorExists = mainVendor.isDefined
       val mainVendorIsRepresentedByAgent = mainVendor.flatMap(_.isRepresentedByAgent).exists(_.equals("true"))
-      
+
       (returnAgentExists, isAgentTypeVendor, mainVendorExists, mainVendorIsRepresentedByAgent) match {
         case (false, _, false, _) => continueRoute
         case (true, false, false, _) => continueRoute

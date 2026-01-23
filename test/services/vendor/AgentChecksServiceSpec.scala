@@ -22,6 +22,7 @@ import models.{FullReturn, ReturnAgent, ReturnInfo, UserAnswers, Vendor}
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
+import services.vendorAgent.AgentChecksService
 
 import scala.concurrent.Future
 
