@@ -530,7 +530,7 @@ class CalculationControllerLeaseHoldTaxReliefISpec extends BaseSpec with GuiceOn
                   |    "year2Rent": 999
                   |  },
                   |  "taxReliefDetails": {
-                  |   "taxReliefCode": 35
+                  |   "taxReliefCode": 32
                   | }
                   |}
                   |""".stripMargin
@@ -585,7 +585,7 @@ class CalculationControllerLeaseHoldTaxReliefISpec extends BaseSpec with GuiceOn
                   |    "year2Rent": 999
                   |  },
                   |  "taxReliefDetails": {
-                  |   "taxReliefCode": 35
+                  |   "taxReliefCode": 32
                   | }
                   |}
                   |""".stripMargin
@@ -672,7 +672,7 @@ class CalculationControllerLeaseHoldTaxReliefISpec extends BaseSpec with GuiceOn
                   |   "replaceMainResidence": "Yes"
                   |  },
                   |  "taxReliefDetails": {
-                  |   "taxReliefCode": 35
+                  |   "taxReliefCode": 32
                   | }
                   |}
                   |""".stripMargin
