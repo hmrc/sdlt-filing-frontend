@@ -33,7 +33,7 @@ class PurchaserAgentReferenceFormProviderSpec extends StringFieldBehaviours {
     val fieldName = "value"
 
     "must bind valid form data" in {
-      val validNames = Seq(
+      val validRefs = Seq(
         "Mr test",
         "Test Meow",
         "Company",
@@ -41,15 +41,15 @@ class PurchaserAgentReferenceFormProviderSpec extends StringFieldBehaviours {
         "(555) 123-4567"
       )
 
-      validNames.foreach(validName =>
-        val result = form.bind(Map(fieldName -> validName))
+      validRefs.foreach(validRef =>
+        val result = form.bind(Map(fieldName -> validRef))
         result.errors must be(empty)
       )
     }
 
     "must not bind strings longer than 14 characters" in {
-      val longName = "a" * 15
-      val result = form.bind(Map(fieldName -> longName))
+      val longRef = "a" * 15
+      val result = form.bind(Map(fieldName -> longRef))
       result.errors must contain(FormError(fieldName, lengthKey, Seq(maxLength)))
     }
 
@@ -60,7 +60,7 @@ class PurchaserAgentReferenceFormProviderSpec extends StringFieldBehaviours {
     )
 
     "must reject invalid name formats" in {
-      val invalidNames = Seq(
+      val invalidRefs = Seq(
         "Hello #world",
         "Price: $50",
         "A < B",
@@ -69,8 +69,8 @@ class PurchaserAgentReferenceFormProviderSpec extends StringFieldBehaviours {
         "\"Line1\\nLine2\""
       )
 
-      invalidNames.foreach { invalidName =>
-        val result = form.bind(Map(fieldName -> invalidName))
+      invalidRefs.foreach { invalidRef =>
+        val result = form.bind(Map(fieldName -> invalidRef))
         result.errors must contain(
           FormError(fieldName, invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{};]*"))
         )
