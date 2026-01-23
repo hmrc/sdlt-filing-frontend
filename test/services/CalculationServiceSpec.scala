@@ -1993,6 +1993,87 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         requestCaptor.getValue.taxReliefDetails mustBe None
       }
     }
+
+    "return self assessed AcquisitionRelief(14)" when {
+      "given Residential property type and isLinked" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2013, 11, 22),
+          taxReliefCode = AcquisitionRelief,
+          isLinked = true
+        )
+
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+      }
+    }
+    "return Fallback result AcquisitionRelief(14)" when {
+      "given a Leasehold holding type" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.residential,
+          LocalDate.of(2013, 1, 21),
+          taxReliefCode = AcquisitionRelief,
+          isLinked = true
+        )
+
+        val result = createResult("leaseholdResidentialMar12toDec14")
+        val captor = ArgumentCaptor.forClass(classOf[Request])
+
+        when(mockLeaseholdCalculationService.leaseholdResidentialMar12toDec14(any[Request])).thenReturn(result)
+        testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialMar12toDec14(captor.capture())
+        captor.getValue.taxReliefDetails mustBe None
+        verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+      }
+
+      "given effective date after 4/12/2014" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2015, 1, 21),
+          taxReliefCode = AcquisitionRelief,
+          isLinked = true
+        )
+
+        val result = createResult("freeholdResidentialDec14Onwards")
+        val captor = ArgumentCaptor.forClass(classOf[Request])
+
+        when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))).thenReturn(result)
+        testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(captor.capture(), meq(false), meq(false))
+        captor.getValue.taxReliefDetails mustBe None
+        verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+      }
+
+      "isLinked is false" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.freehold,
+          PropertyTypes.residential,
+          LocalDate.of(2013, 1, 21),
+          taxReliefCode = AcquisitionRelief,
+          isLinked = false
+        )
+
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockFreeholdCalculationService.freeholdAcquisitionTaxRelief(testRequest)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdAcquisitionTaxRelief(testRequest)
+      }
+    }
   }
 
   "checkFTB" must {

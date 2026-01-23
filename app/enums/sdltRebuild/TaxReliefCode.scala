@@ -40,8 +40,8 @@ case object DiplomaticPrivileges                                               e
 case object OtherTaxReliefs                                                    extends TaxReliefCode(28) with StandardZeroRate
 case object CombinationOfReliefs                                               extends TaxReliefCode(29) with StandardZeroRate
 case object AlternativeFinanceInvestmentBondsRelief                            extends TaxReliefCode(31) with StandardZeroRate
+case object FirstTimeBuyersRelief                                              extends TaxReliefCode(32) with SelfAssessed
 case object PreCompletionTransaction                                           extends TaxReliefCode(34) with ZeroRate
-case object FirstTimeBuyersRelief                                              extends TaxReliefCode(35) with SelfAssessed
 case object FreeportsTaxSiteRelief                                             extends TaxReliefCode(36) with ZeroRate with SelfAssessed
 case object InvestmentZonesTaxSiteRelief                                       extends TaxReliefCode(37) with ZeroRate with SelfAssessed
 case object SeedingRelief                                                      extends TaxReliefCode(38) with StandardZeroRate
