@@ -6,17 +6,18 @@
 package services
 
 import data.Dates
-import enums.sdltRebuild.TaxReliefCode.{standardZeroRateFreeholdReliefCodes, standardZeroRateLeaseholdReliefCodes}
+import enums.sdltRebuild.TaxReliefCode.{selfAssessedFreeHold, standardZeroRateFreeholdReliefCodes, standardZeroRateLeaseholdReliefCodes}
 import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.TaxReliefDetails
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope}
 import utils.DateUtil
 import utils.LoggerUtil._
 import PropertyTypes._
 import HoldingTypes._
+import data.Dates.DECEMBER2014_RESIDENTIAL_DATE
 
 import javax.inject.{Inject, Singleton}
 
@@ -401,6 +402,9 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           CalculationResponse(Seq(
             freeCalculationService.freeholdSelfAssessedRes
           ))
+      case (`freehold`, _, _, taxReliefCode, true) if selfAssessedFreeHold.contains(taxReliefCode) && request.effectiveDate.isBefore(DECEMBER2014_RESIDENTIAL_DATE) =>
+        CalculationResponse(Seq(freeCalculationService.freeholdSelfAssessedRes))
+
       /* ------------- LeaseHoldCases--------------------------- */
       case (`leasehold`, _, _, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false)
         if taxReliefDetails.isPartialRelief.contains(true) =>

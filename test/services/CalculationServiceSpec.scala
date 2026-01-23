@@ -1360,6 +1360,56 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
       }
 
+      "given selfAssessed freeHold with before 04/12/2014 | taxReliefCode :: expect return zero tax" in {
+        val calcDetails = CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slab,
+          taxDue = 0,
+          detailHeading = None,
+          bandHeading = None,
+          detailFooter = None,
+          rate = Some(0),
+          slices = None
+        )
+        val expectedRes = Result(
+          totalTax = 0,
+          resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+          resultHint = None,
+          npv = None,
+          taxCalcs = Seq(calcDetails)
+        )
+
+        val zeroRateTaxReliefSelfAssessedFreeHold: Result =
+          Result(
+            totalTax = 0,
+            resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+            resultHint = None,
+            npv = None,
+            taxCalcs = Seq(
+              CalculationDetails(
+                taxType = TaxTypes.premium,
+                calcType = CalcTypes.slab,
+                taxDue = 0,
+                detailHeading = None,
+                bandHeading = None,
+                detailFooter = None,
+                rate = Some(0),
+                slices = None
+              )
+            )
+          )
+
+        forAll( freeHoldSelfAssessedBeforeDateRequestGenerator ) {
+          freeHoldSelfAssessedBeforeDateRequest =>
+            reset(mockFreeholdCalculationService)
+            when(mockFreeholdCalculationService.freeholdSelfAssessedRes)
+              .thenReturn(zeroRateTaxReliefSelfAssessedFreeHold)
+            val res: CalculationResponse = testCalculationService.calculateTaxRelief(freeHoldSelfAssessedBeforeDateRequest, freeHoldSelfAssessedBeforeDateRequest.taxReliefDetails.get)
+            verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+            res shouldBe CalculationResponse(Seq(expectedRes))
+        }
+      }
+
       "given relief code InvestmentZonesTaxSiteRelief(37)" in {
         val investmentTestRequest = createRequestWithTaxRelief(
           HoldingTypes.freehold,
