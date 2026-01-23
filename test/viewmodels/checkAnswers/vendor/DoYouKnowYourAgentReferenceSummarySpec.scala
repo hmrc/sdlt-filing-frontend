@@ -23,7 +23,7 @@ import pages.vendor.DoYouKnowYourAgentReferencePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import viewmodels.checkAnswers.purchaserAgent.DoYouKnowYourAgentReferenceSummary
+import viewmodels.checkAnswers.vendor.DoYouKnowYourAgentReferenceSummary
 
 class DoYouKnowYourAgentReferenceSummarySpec extends SpecBase {
 
@@ -53,7 +53,15 @@ class DoYouKnowYourAgentReferenceSummarySpec extends SpecBase {
         }
       }
 
+      "must return None when AddVendorAgentContactDetailsPage is not answered" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          DoYouKnowYourAgentReferenceSummary.row(emptyUserAnswers) mustBe None
+        }
+      }
     }
   }
 }

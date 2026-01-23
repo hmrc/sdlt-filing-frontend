@@ -121,6 +121,38 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
       }
     }
 
+    "when purchaser name is missing" - {
+
+      "must return a summary list row with a link to add the name and no actions" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
+
+
+          val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+
+          result.key.content.asHtml.toString() mustEqual
+            msgs("prelim.purchaser.name.checkYourAnswersLabel.purchaser")
+
+          val html = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+
+          html must include(
+            controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController
+              .onPageLoad(CheckMode).url
+          )
+
+          html must include(msgs("prelim.purchaser.name.link.message"))
+
+          result.actions mustBe None
+        }
+      }
+    }
+
     "must use CheckMode for the change link" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
