@@ -42,8 +42,8 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
       "with tax relief code: PartExchange(8)" when {
 
         "residential" in {
-          def request: WSResponse = ws.url(
-            calculateUrl)
+          def request: WSResponse = ws
+            .url(calculateUrl)
             .post(
               Json.parse(
                 """
@@ -63,8 +63,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
               )
             )
 
-          val responseJson = Json.parse(
-            """
+          val responseJson = Json.parse("""
               |{"result":[{"totalTax":0,
               |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |"taxCalcs":[{"taxType":"premium",
@@ -78,8 +77,8 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
 
         "non-residential" in {
-          def request: WSResponse = ws.url(
-              calculateUrl)
+          def request: WSResponse = ws
+            .url(calculateUrl)
             .post(
               Json.parse(
                 """
@@ -99,8 +98,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
               )
             )
 
-          val responseJson = Json.parse(
-            """
+          val responseJson = Json.parse("""
               |{"result":[{"totalTax":0,
               |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |"taxCalcs":[{"taxType":"premium",
@@ -158,8 +156,8 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
       "with TaxReliefCode: PreCompletionTransaction(34)" when {
 
         "Property Type is Residential and the date is on or after 6th April 2013" in {
-          def request: WSResponse = ws.url(
-              calculateUrl)
+          def request: WSResponse = ws
+            .url(calculateUrl)
             .post(
               Json.parse(
                 """
@@ -177,8 +175,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
               )
             )
 
-          val responseJson = Json.parse(
-            """
+          val responseJson = Json.parse("""
               |{"result":[{"totalTax":0,
               |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |"taxCalcs":[{"taxType":"premium",
@@ -192,8 +189,8 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
 
         "Property Type is Non-residential and the date is on or after 6th April 2013" in {
-          def request: WSResponse = ws.url(
-              calculateUrl)
+          def request: WSResponse = ws
+            .url(calculateUrl)
             .post(
               Json.parse(
                 """
@@ -211,8 +208,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
               )
             )
 
-          val responseJson = Json.parse(
-            """
+          val responseJson = Json.parse("""
               |{"result":[{"totalTax":0,
               |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |"taxCalcs":[{"taxType":"premium",
@@ -226,8 +222,8 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
 
         "Property Type is Mixed and the date is on or after 6th April 2013" in {
-          def request: WSResponse = ws.url(
-              calculateUrl)
+          def request: WSResponse = ws
+            .url(calculateUrl)
             .post(
               Json.parse(
                 """
@@ -245,8 +241,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
               )
             )
 
-          val responseJson = Json.parse(
-            """
+          val responseJson = Json.parse("""
               |{"result":[{"totalTax":0,
               |"resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |"taxCalcs":[{"taxType":"premium",
@@ -260,8 +255,8 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
 
         "Property Type is Residential with an additional property and the date is on or after 1st April 2016" in {
-          def request: WSResponse = ws.url(
-              calculateUrl)
+          def request: WSResponse = ws
+            .url(calculateUrl)
             .post(
               Json.parse(
                 """
@@ -344,14 +339,238 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           request.status shouldBe OK
           request.json shouldBe selfAssessedResponse
         }
+
+        "return a 200  when the property type is either non-residential or mixed, isLinked = true " when {
+
+          "Property type is mixed,effective date is before 17/03/2016 and " in {
+            def request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    |  "holdingType": "Freehold",
+                    |  "propertyType": "Mixed",
+                    |  "effectiveDateDay": 1,
+                    |  "effectiveDateMonth": 2,
+                    |  "effectiveDateYear": 2016,
+                    |  "premium": 1000000,
+                    |  "highestRent": 0,
+                    |  "isLinked": true,
+                    |  "taxReliefDetails": {
+                    |    "taxReliefCode": 22
+                    |  }
+                    |}""".stripMargin
+                )
+              )
+
+            val responseJson = Json.parse(
+              """
+                |{
+                |  "result": [
+                |    {
+                |      "totalTax": 0,
+                |      "resultHeading": "Self-assessed",
+                |      "taxCalcs": []
+                |    }
+                |  ]
+                |}
+                |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe responseJson
+          }
+
+          "Property type is non-residential, effective date is before 17/03/2016 " in {
+
+            def request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    |  "holdingType": "Freehold",
+                    |  "propertyType": "Non-residential",
+                    |  "effectiveDateDay": 1,
+                    |  "effectiveDateMonth": 2,
+                    |  "effectiveDateYear": 2016,
+                    |  "premium": 1000000,
+                    |  "highestRent": 0,
+                    |  "isLinked": true,
+                    |  "taxReliefDetails": {
+                    |    "taxReliefCode": 22
+                    |  }
+                    |}""".stripMargin
+                )
+              )
+
+            val responseJson = Json.parse(
+              """
+                |{
+                |  "result": [
+                |    {
+                |      "totalTax": 0,
+                |      "resultHeading": "Self-assessed",
+                |      "taxCalcs": []
+                |    }
+                |  ]
+                |}
+                |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe responseJson
+
+          }
+
+          "return a 200 and fallback to existing logic for Residential Property type " when {
+
+            "Property type is Residential, effective date is between 2012/3/22 - 2014/12/3(including these dates)" in {
+
+              def request: WSResponse = ws
+                .url(calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Freehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 12,
+                      |  "effectiveDateYear": 2014,
+                      |  "premium": 1000000,
+                      |  "highestRent": 0,
+                      |  "isLinked": true,
+                      |  "taxReliefDetails": {
+                      |    "taxReliefCode": 22
+                      |  }
+                      |}""".stripMargin
+                  )
+                )
+
+              val fallbackResult = Json.parse(
+                """
+                  |{
+                  |  "result": [
+                  |    {
+                  |      "totalTax": 40000,
+                  |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                  |      "taxCalcs": [
+                  |        {
+                  |          "taxType": "premium",
+                  |          "calcType": "slab",
+                  |          "taxDue": 40000,
+                  |          "rate": 4
+                  |        }
+                  |      ]
+                  |    }
+                  |  ]
+                  |}
+                  |""".stripMargin)
+
+
+              request.status shouldBe OK
+              request.json shouldBe fallbackResult
+
+            }
+
+            "Property type is Residential, effective date is between 2014/12/4 - 2016/03/31 (including these dates) " in {
+              def request: WSResponse = ws
+                .url(calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Freehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 1,
+                      |  "effectiveDateMonth": 2,
+                      |  "effectiveDateYear": 2015,
+                      |  "premium": 1000000,
+                      |  "highestRent": 0,
+                      |  "isLinked": true,
+                      |  "taxReliefDetails": {
+                      |    "taxReliefCode": 22
+                      |  }
+                      |}""".stripMargin
+                  )
+                )
+
+              val fallbackResult = Json.parse(
+                """
+                  |{
+                  |  "result": [
+                  |    {
+                  |      "totalTax": 43750,
+                  |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                  |      "taxCalcs": [
+                  |        {
+                  |          "taxType": "premium",
+                  |          "calcType": "slice",
+                  |          "taxDue": 43750,
+                  |          "detailHeading": "This is a breakdown of how the total amount of SDLT was calculated",
+                  |          "bandHeading": "Purchase price bands (£)",
+                  |          "detailFooter": "Total SDLT due",
+                  |          "slices": [
+                  |            {
+                  |              "from": 0,
+                  |              "to": 125000,
+                  |              "rate": 0,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 125000,
+                  |              "to": 250000,
+                  |              "rate": 2,
+                  |              "taxDue": 2500
+                  |            },
+                  |            {
+                  |              "from": 250000,
+                  |              "to": 925000,
+                  |              "rate": 5,
+                  |              "taxDue": 33750
+                  |            },
+                  |            {
+                  |              "from": 925000,
+                  |              "to": 1500000,
+                  |              "rate": 10,
+                  |              "taxDue": 7500
+                  |            },
+                  |            {
+                  |              "from": 1500000,
+                  |              "to": -1,
+                  |              "rate": 12,
+                  |              "taxDue": 0
+                  |            }
+                  |          ]
+                  |        }
+                  |      ]
+                  |    }
+                  |  ]
+                  |}
+                  |""".stripMargin)
+
+
+              request.status shouldBe OK
+              request.json shouldBe fallbackResult
+
+
+
+            }
+          }
+        }
+
       }
 
-      "with tax relief code: FreeportsTaxSiteRelief(36)" in {
-        def request: WSResponse = ws.url(
-            calculateUrl)
-          .post(
-            Json.parse(
-              """
+    }
+
+    "with tax relief code: FreeportsTaxSiteRelief(36)" in {
+      def request: WSResponse = ws
+        .url(calculateUrl)
+        .post(
+          Json.parse(
+            """
                 |{
                 | "holdingType": "Freehold",
                 | "propertyType": "Residential",
@@ -367,11 +586,11 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                 | }
                 |}
                 |""".stripMargin
-            )
           )
+        )
 
-        val responseJson = Json.parse(
-          """
+      val responseJson = Json.parse(
+        """
             |{
             |  "result": [
             |    {
@@ -389,17 +608,17 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
             |  ]
             |}
             |""".stripMargin
-        )
-        request.status shouldBe OK
-        request.json shouldBe responseJson
-      }
+      )
+      request.status shouldBe OK
+      request.json shouldBe responseJson
+    }
 
-      "with tax relief code: InvestmentZonesTaxSiteRelief(37) " in {
-        def request: WSResponse = ws.url(
-            calculateUrl)
-          .post(
-            Json.parse(
-              """
+    "with tax relief code: InvestmentZonesTaxSiteRelief(37) " in {
+      def request: WSResponse = ws
+        .url(calculateUrl)
+        .post(
+          Json.parse(
+            """
                 |{
                 | "holdingType": "Freehold",
                 | "propertyType": "Residential",
@@ -415,11 +634,11 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                 | }
                 |}
                 |""".stripMargin
-            )
           )
+        )
 
-        val responseJson = Json.parse(
-          """
+      val responseJson = Json.parse(
+        """
             |{
             |  "result": [
             |    {
@@ -437,7 +656,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
             |  ]
             |}
             |""".stripMargin
-        )
+      )
         request.status shouldBe OK
         request.json shouldBe responseJson
       }
@@ -913,4 +1132,3 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
       }
     }
   }
-}
