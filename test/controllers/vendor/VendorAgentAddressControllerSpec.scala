@@ -59,9 +59,11 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
     returnId = Some("test-return-id"),
     fullReturn = None,
     data = Json.obj(
+      "vendorAgentCurrent" -> Json.obj(
+        "agentName" -> "test",
+      ),
       "vendorCurrent" -> Json.obj(
         "whoIsTheVendor" -> "Company",
-        "agentName" -> "test"
       )
     ),
     lastUpdated = Instant.now
@@ -157,7 +159,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
         }
       }
 

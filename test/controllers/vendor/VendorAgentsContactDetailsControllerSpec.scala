@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendor.*
+import pages.vendorAgent.AgentNamePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -214,7 +215,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
       }
     }
 
@@ -232,7 +233,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
       }
     }
 

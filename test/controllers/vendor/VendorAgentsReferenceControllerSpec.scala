@@ -28,7 +28,8 @@ import org.mockito.Mockito.when
 import org.scalatest.prop.TableDrivenPropertyChecks.forAll
 import org.scalatest.prop.Tables.Table
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.{AgentNamePage, VendorAgentsReferencePage}
+import pages.vendor.VendorAgentsReferencePage
+import pages.vendorAgent.AgentNamePage
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
@@ -55,10 +56,12 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       userAnswersId,
       storn = "TESTSTORN",
       data = Json.obj(
+        "vendorAgentCurrent" -> Json.obj(
+          "agentName" -> "test",
+        ),
         "vendorCurrent" -> Json.obj(
           "whoIsTheVendor" -> "Company",
           "representedByAgent" -> true,
-          "agentName" -> "test",
           "doYouKnowYourAgentReference" -> "yes"
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
@@ -68,10 +71,12 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
     UserAnswers(
       userAnswersId, storn = "TESTSTORN",
       data = Json.obj(
+        "vendorAgentCurrent" -> Json.obj(
+          "agentName" -> "test",
+        ),
         "vendorCurrent" -> Json.obj(
           "whoIsTheVendor" -> "Company",
           "representedByAgent" -> true,
-          "agentName" -> "test",
           "doYouKnowYourAgentReference" -> "no"
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
@@ -82,10 +87,12 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       userAnswersId,
       storn = "TESTSTORN",
       data = Json.obj(
+        "vendorAgentCurrent" -> Json.obj(
+          "agentName" -> "test",
+        ),
         "vendorCurrent" -> Json.obj(
           "whoIsTheVendor" -> "Company",
-          "representedByAgent" -> true,
-          "agentName" -> "test"
+          "representedByAgent" -> true
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
     )
@@ -267,7 +274,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
       }
     }
 
@@ -389,7 +396,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
       }
     }
 

@@ -53,7 +53,7 @@ class VendorAgentAddressController @Inject()(
 
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          val vendorAgentName = (userAnswers.data \ "vendorCurrent" \ "agentName").asOpt[String]
+          val vendorAgentName = (userAnswers.data \ "vendorAgentCurrent" \ "agentName").asOpt[String]
           vendorAgentName match {
             case Some(name) =>
               val callback = if (changeRoute.isDefined) {
@@ -71,7 +71,7 @@ class VendorAgentAddressController @Inject()(
               ).map(Redirect)
 
             case None =>
-              Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode)))
+              Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode)))
           }
 
         case None =>

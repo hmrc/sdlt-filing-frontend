@@ -26,7 +26,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.AgentNamePage
+import pages.vendorAgent.AgentNamePage
 import play.api.Application
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
@@ -103,7 +103,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+            redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
           }
         }
 
@@ -129,8 +129,10 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
           data = Json.obj(
-            "vendorCurrent" -> Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
               "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
               "representedByAgent" -> true
             )
           )
@@ -162,8 +164,10 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           vendor = None
         )
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn), data = Json.obj(
-          "vendorCurrent" -> Json.obj(
+          "vendorAgentCurrent" -> Json.obj(
             "agentName" -> "test",
+          ),
+          "vendorCurrent" -> Json.obj(
             "representedByAgent" -> true
             )
           )
@@ -190,8 +194,10 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
         data = Json.obj(
-          "vendorCurrent" -> Json.obj(
+          "vendorAgentCurrent" -> Json.obj(
             "agentName" -> "test",
+          ),
+          "vendorCurrent" -> Json.obj(
             "doYouKnowYourAgentReference" -> "yes",
             "representedByAgent" -> true
           )
@@ -236,7 +242,13 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
-          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test","doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+          data = Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
+              "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true))
           )
 
 
@@ -272,7 +284,13 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
-          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test","doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+          data = Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
+              "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true))
         )
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -301,7 +319,13 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
-          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test","doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+          data = Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
+              "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true))
         )
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -339,7 +363,13 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
-          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test","doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+          data = Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
+              "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true))
         )
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -368,7 +398,13 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
-          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test", "doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+          data = Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
+              "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true))
         )
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -402,7 +438,13 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
-          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test", "doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+          data = Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
+              "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true))
         )
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -430,7 +472,13 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
         )
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn),
-          data = Json.obj( "vendorCurrent" -> Json.obj("agentName" -> "test", "doYouKnowYourAgentReference" -> "yes","representedByAgent" -> true))
+          data = Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
+              "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
+              "doYouKnowYourAgentReference" -> "yes",
+              "representedByAgent" -> true))
         )
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -454,8 +502,10 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
           data = Json.obj(
-            "vendorCurrent" -> Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
               "agentName" -> "test",
+            ),
+            "vendorCurrent" -> Json.obj(
               "doYouKnowYourAgentReference" -> "yes",
               "representedByAgent" -> true
             )
@@ -503,7 +553,7 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
         }
       }
 
@@ -542,8 +592,10 @@ class DoYouKnowYourAgentReferenceControllerSpec extends SpecBase with MockitoSug
 
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
             data = Json.obj(
-              "vendorCurrent" -> Json.obj(
+              "vendorAgentCurrent" -> Json.obj(
                 "agentName" -> "test",
+              ),
+              "vendorCurrent" -> Json.obj(
                 "doYouKnowYourAgentReference" -> "yes",
                 "representedByAgent" -> true
               )

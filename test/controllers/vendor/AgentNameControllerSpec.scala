@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.AgentNamePage
+import pages.vendorAgent.AgentNamePage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -43,7 +43,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
   val form = formProvider()
   val formKey = "agentName"
 
-  lazy val agentNameRoute = controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode).url
+  lazy val agentNameRoute = controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
 
   "AgentName Controller" - {
 
@@ -104,128 +104,9 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
       }
     }
+    
 
-    "must redirect to VendorCYA when agent is not type VENDOR and main vendor is not represented by agent" in {
-      val fullReturn = completeFullReturn.copy(
-        returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
-        returnAgent = Some(Seq(ReturnAgent(agentType = Some("SOLICITOR")))),
-        vendor = Some(Seq(Vendor(vendorID = Some("123"), isRepresentedByAgent = Some("false"))))
-      )
-
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, agentNameRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
-      }
-    }
-
-    "must redirect to VendorCYA there is no return agent and main vendor is not represented by agent" in {
-      val fullReturn = completeFullReturn.copy(
-        returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
-        returnAgent = None,
-        vendor = Some(Seq(Vendor(vendorID = Some("123"), isRepresentedByAgent = Some("false"))))
-      )
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, agentNameRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
-      }
-    }
-
-    "must redirect to error page when agent is type VENDOR and main vendor is not represented by agent" in { // Change to actual error page (TBC)
-      val fullReturn = completeFullReturn.copy(
-        returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
-        returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR")))),
-        vendor = Some(Seq(Vendor(vendorID = Some("123"), isRepresentedByAgent = Some("false"))))
-      )
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, agentNameRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.GenericErrorController.onPageLoad().url
-      }
-    }
-
-    "must redirect to error page when there is no return agent and main vendor is represented by agent" in { // Change to actual error page (TBC)
-      val fullReturn = completeFullReturn.copy(
-        returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
-        returnAgent = None,
-        vendor = Some(Seq(Vendor(vendorID = Some("123"), isRepresentedByAgent = Some("true"))))
-      )
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, agentNameRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.GenericErrorController.onPageLoad().url
-      }
-    }
-
-    "must redirect to error page when agent is not type VENDOR and main vendor is represented by agent" in { // Change to actual error page (TBC)
-      val fullReturn = completeFullReturn.copy(
-        returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
-        returnAgent = Some(Seq(ReturnAgent(agentType = Some("SOLICITOR")))),
-        vendor = Some(Seq(Vendor(vendorID = Some("123"), isRepresentedByAgent = Some("true"))))
-      )
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, agentNameRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.GenericErrorController.onPageLoad().url
-      }
-    }
-
-    "must redirect to error page when agent is type VENDOR and there are no vendors" in { // Change to actual error page (TBC)
-      val fullReturn = completeFullReturn.copy(
-        returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR")))),
-        vendor = None
-      )
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, agentNameRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.GenericErrorController.onPageLoad().url
-      }
-    }
-
-    "must redirect to journey recovery page when full return doesn't exist" in {
+    "must redirect to task list  page when full return doesn't exist" in {
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = None)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -236,7 +117,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
       }
     }
 

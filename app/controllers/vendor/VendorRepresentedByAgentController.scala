@@ -24,7 +24,7 @@ import pages.vendor.{VendorOrCompanyNamePage, VendorRepresentedByAgentPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.vendor.AgentChecksService
+import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.VendorRepresentedByAgentView
 

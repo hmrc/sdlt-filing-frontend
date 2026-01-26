@@ -31,13 +31,13 @@
 
 @layout(pageTitle = title(form, messages("agent.agentName.title"))) {
 
-    @formHelper(action = controllers.vendor.routes.AgentNameController.onSubmit(mode)) {
+    @formHelper(action = controllers.vendorAgent.routes.AgentNameController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @caption(messages("site.vendor.caption"))
+        @caption(messages("site.vendorAgent.caption"))
 
         @govukInput(
             InputViewModel(

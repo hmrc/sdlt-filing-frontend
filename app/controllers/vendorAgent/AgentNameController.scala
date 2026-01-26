@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.vendor
+package controllers.vendorAgent
 
 import controllers.actions.*
 import forms.vendor.AgentNameFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.vendor.AgentNamePage
+import pages.vendorAgent.AgentNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.vendor.AgentChecksService
+import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.AgentNameView
 
@@ -53,7 +53,7 @@ class AgentNameController @Inject()(
         case Some(value) => form.fill(value)
       }
       val continueRoute = Ok(view(preparedForm, mode))
-      agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
+      agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

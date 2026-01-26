@@ -259,7 +259,7 @@ case class ReturnAgent(
                         postcode: Option[String] = None,
                         phone: Option[String] = None,
                         email: Option[String] = None,
-                        DXAddress: Option[String] = None, // Used in backend
+                        DXAddress: Option[String] = None,
                         reference: Option[String] = None,
                         isAuthorised: Option[String] = None
                       )
@@ -269,7 +269,7 @@ object ReturnAgent {
 }
 
 case class Agent(
-                  agentId: Option[String] = None, // Used in backend
+                  agentId: Option[String] = None,
                   storn: Option[String] = None,
                   name: Option[String] = None,
                   houseNumber: Option[String] = None,
@@ -280,7 +280,7 @@ case class Agent(
                   postcode: Option[String] = None,
                   phone: Option[String] = None,
                   email: Option[String] = None,
-                  dxAddress: Option[String] = None, // Used in backend
+                  dxAddress: Option[String] = None,
                   agentResourceReference: Option[String] = None
                 )
 

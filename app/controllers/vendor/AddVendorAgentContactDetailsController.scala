@@ -20,11 +20,12 @@ import controllers.actions.*
 import forms.vendor.AddVendorAgentContactDetailsFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.vendor.{AddVendorAgentContactDetailsPage, AgentNamePage}
+import pages.vendor.AddVendorAgentContactDetailsPage
+import pages.vendorAgent.AgentNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.vendor.AgentChecksService
+import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.AddVendorAgentContactDetailsView
 
@@ -51,7 +52,7 @@ class AddVendorAgentContactDetailsController @Inject()(
 
       request.userAnswers.get(AgentNamePage) match {
         case None =>
-          Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode))
+          Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode))
 
         case Some(agentName) =>
           val preparedForm = request.userAnswers.get(AddVendorAgentContactDetailsPage) match {
@@ -70,7 +71,7 @@ class AddVendorAgentContactDetailsController @Inject()(
 
       request.userAnswers.get(AgentNamePage) match {
         case None =>
-          Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)))
+          Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)))
 
         case Some(agentName) =>
           form.bindFromRequest().fold(

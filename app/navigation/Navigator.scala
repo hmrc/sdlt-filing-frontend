@@ -23,6 +23,7 @@ import pages.preliminary.*
 import pages.purchaser.*
 import pages.purchaserAgent.*
 import pages.vendor.*
+import pages.vendorAgent.AgentNamePage
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -37,16 +38,13 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-
+      
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
     case VendorOrCompanyNamePage =>
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
     case ConfirmVendorAddressPage =>
       _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
-    case VendorRepresentedByAgentPage =>
-      _ => controllers.vendor.routes.AgentNameController.onPageLoad(NormalMode)
-
     case AgentNamePage =>
       _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case AddVendorAgentContactDetailsPage =>
@@ -55,7 +53,7 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode)
     case DoYouKnowYourAgentReferencePage =>
       _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
-    case VendorAgentsReferencePage => //TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
+    case VendorAgentsReferencePage =>
       _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
 
     case page if isPurchaserSection(page) => purchaserRoutes(page)
@@ -126,7 +124,7 @@ class Navigator @Inject()() {
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
-
+  
   private val checkRouteMap: Page => UserAnswers => Call = {
     //TODO: Change to Purchaser CYA when created - DTR-1788
     case WhoIsMakingThePurchasePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()

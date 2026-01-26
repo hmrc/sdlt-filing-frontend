@@ -21,11 +21,12 @@ import forms.vendor.VendorAgentsReferenceFormProvider
 import models.vendor.DoYouKnowYourAgentReference
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.vendor.{AgentNamePage, DoYouKnowYourAgentReferencePage, VendorAgentsReferencePage, VendorRepresentedByAgentPage}
+import pages.vendor.{DoYouKnowYourAgentReferencePage, VendorAgentsReferencePage, VendorRepresentedByAgentPage}
+import pages.vendorAgent.AgentNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.vendor.AgentChecksService
+import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendor.VendorAgentsReferenceView
 
@@ -56,7 +57,7 @@ class VendorAgentsReferenceController @Inject()(
       if (isRepresentedByAgent) {
         userAnswers.get(AgentNamePage) match {
           case None =>
-            Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode))
+            Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode))
 
           case Some(agentName) =>
             userAnswers.get(DoYouKnowYourAgentReferencePage) match {
@@ -88,7 +89,7 @@ class VendorAgentsReferenceController @Inject()(
 
       userAnswers.get(AgentNamePage) match {
         case None =>
-          Future.successful(Redirect(controllers.vendor.routes.AgentNameController.onPageLoad(mode)))
+          Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode)))
 
         case Some(agentName) =>
           val form = formProvider(agentName)

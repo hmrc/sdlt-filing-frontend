@@ -24,6 +24,7 @@ import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNa
 import pages.purchaser.*
 import pages.purchaserAgent.*
 import pages.vendor.*
+import pages.vendorAgent.AgentNamePage
 
 class NavigatorSpec extends SpecBase {
 
@@ -66,10 +67,6 @@ class NavigatorSpec extends SpecBase {
 
         "go from ConfirmVendorAddressPage to VendorRepresentedByAgent page" in {
           navigator.nextPage(ConfirmVendorAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(mode = NormalMode)
-        }
-
-        "go from VendorRepresentedByAgentPage to Agent Name page" in {
-          navigator.nextPage(VendorRepresentedByAgentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.AgentNameController.onPageLoad(mode = NormalMode)
         }
 
         "go from Agent name page to agent address lookup" in {
