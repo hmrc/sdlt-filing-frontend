@@ -17,7 +17,7 @@
 
 @(exchangeContractsForm: Form[_], contractPostForm: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("exchangeContracts.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.ExchangeContractsPreAndPostController.onSubmit(), Symbol("autoComplete") -> "off") {
 

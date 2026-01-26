@@ -27,6 +27,7 @@ footer.links.terms_and_conditions.text=Terms and conditions
 footer.links.help_page.text=Help using GOV.UK
 
 startGuidance.heading = Calculate Stamp Duty Land Tax (SDLT)
+startGuidance.title = Calculate Stamp Duty Land Tax (SDLT)
 startGuidance.content.l1 = This calculator can be used for property purchases that are:
 startGuidance.bullet.b1 = for first-time buyers
 startGuidance.bullet.b2 = replacing main residence
@@ -41,16 +42,19 @@ startGuidance.content.l5 = purchasing residential property for more than £500,0
 
 
 tenancy.heading = Is your transaction Freehold or Leasehold?
+tenancy.title = Is your transaction Freehold or Leasehold?
 tenancy.error.required = Select ''Freehold'' or ''Leasehold''
 tenancy.hint = Choose ''Freehold'' if it’s a freehold transaction or you’re acquiring an existing lease. Choose ''Leasehold'' if it’s a new lease.
 
 propertyType.heading = Is the transaction residential or non-residential?
+propertyType.title = Is the transaction residential or non-residential?
 propertyType.hint = If it's a mixed transaction, choose 'Non-residential'.
 propertyType.Residential = Residential
 propertyType.NonResidential = Non-Residential
 propertyType.error.required = Select ''Residential'' or ''Non-residential''
 
 effectiveDate.heading = Effective date of your transaction
+effectiveDate.title = Effective date of your transaction
 effectiveDate.hint.h1 = This is usually the completion date.
 effectiveDate.hint.h2 = For example, 31 3 2014.
 date.day = Day
@@ -62,6 +66,7 @@ effectiveDate.error.required = Effective Date must include {0}
 effectiveDate.error.invalid = Please enter a valid date
 
 nonUkResident.heading = Are any of the purchasers non-UK resident?
+nonUkResident.title = Are any of the purchasers non-UK resident?
 nonUkResident.details.title = What we mean by non-UK resident
 nonUkResident.details.d1 = Non-UK resident as an individual
 nonUkResident.details.d1.p1 = You are treated as non-UK resident for Stamp Duty Land Tax (SDLT) if you are not present in the UK for 183 days or more in the 12 months before the effective date of the purchase.
@@ -72,21 +77,22 @@ nonUkResident.details.d2.p3 = Special rules also apply for trusts and settlement
 nonUkResident.error.required = You must complete the effective date field
 nonUkResident.error.required = Select ''Yes'' or ''No''
 
-isPurchaserIndividual.heading = Are you purchasing the property as an individual?
-isPurchaserIndividual.hint = Choose ‘Yes’ if you’re buying on your own, or you’re married or in a civil partnership. Choose ‘No’ if you’re a company or trust.
-
 isAdditionalProperty.heading = Will the purchase of the property result in owning two or more properties?
+isAdditionalProperty.title = Will the purchase of the property result in owning two or more properties?
 
 ownsOtherProperties.heading = Have you ever owned or part owned another property?
+ownsOtherProperties.title = Have you ever owned or part owned another property?
 ownsOtherProperties.content = We only need to know about residential property, or property that has both residential and non-residential use. This includes freehold property, or leasehold property of at least 21 years. Select yes if you either:
 ownsOtherProperties.bullet.b1 = bought a property
 ownsOtherProperties.bullet.b2 = inherited a property
 ownsOtherProperties.bullet.b3 = are a beneficiary of a trust that owns a property
 
 replaceMainResidence.heading = Is the property being purchased replacing your main residence?
+replaceMainResidence.title = Is the property being purchased replacing your main residence?
 replaceMainResidence.hint = If your previous main residence has not yet been sold choose "No". A refund may be available if the previous main residence is sold within 3 years.
 
 purchasePrice.heading = Enter the purchase price
+purchasePrice.title = Enter the purchase price
 purchasePrice.hint = This is the chargeable consideration.
 purchasePrice.detail.title = Is your chargeable consideration less than £40,000?
 purchasePrice.detail.content = If the purchase price is less than £40,000, you don't need to pay SDLT or file a return.
@@ -94,32 +100,21 @@ purchasePrice.detail.content = If the purchase price is less than £40,000, you 
 mainResidence.heading = Will this property be your main residence?
 
 isPurchaserIndividual.heading = Are you purchasing the property as an individual?
+isPurchaserIndividual.title = Are you purchasing the property as an individual?
 isPurchaserIndividual.hint = Choose ‘Yes’ if you’re buying on your own, or you’re married or in a civil partnership. Choose ‘No’ if you’re a company or trust.
 
-isAdditionalProperty.heading = Will the purchase of the property result in owning two or more properties?
-
-ownsOtherProperties.heading = Have you ever owned or part owned another property?
-ownsOtherProperties.content = We only need to know about residential property, or property that has both residential and non-residential use. This includes freehold property, or leasehold property of at least 21 years. Select yes if you either:
-ownsOtherProperties.bullet.b1 = bought a property
-ownsOtherProperties.bullet.b2 = inherited a property
-ownsOtherProperties.bullet.b3 = are a beneficiary of a trust that owns a property
-
-replaceMainResidence.heading = Is the property being purchased replacing your main residence?
-replaceMainResidence.hint = If your previous main residence has not yet been sold choose "No". A refund may be available if the previous main residence is sold within 3 years.
-
-purchasePrice.heading = Enter the purchase price
-purchasePrice.hint = This is the chargeable consideration.
-purchasePrice.detail.title = Is your chargeable consideration less than £40,000?
-purchasePrice.detail.content = If the purchase price is less than £40,000, you don't need to pay SDLT or file a return.
 
 mainResidence.heading = Will this property be your main residence?
+mainResidence.title = Will this property be your main residence?
 
 section.sharedOwnership = Shared ownership scheme
 sharedOwnership.heading = Are you buying the property through a shared ownership scheme?
+sharedOwnership.title = Are you buying the property through a shared ownership scheme?
 sharedOwnership.error.required = Select ''Yes'' or ''No''
 sharedOwnership.p1 = The scheme must be operated by an approved qualifying body, like a housing association or local authority.
 
 currentValue.heading = What is the market value of the property?
+currentValue.title = What is the market value of the property?
 currentValue.p1 = This means the market value at the time of purchase. If the maximum share of the property ultimately obtainable is less than 100%, enter the value of that percentage.
 currentValue.error.required = Select a value
 currentValue.atOrBelowThreshold = £{0} or less
@@ -127,6 +122,7 @@ currentValue.aboveThreshold = More than £{0}
 currentValue.atOrBelowThreshold.hint = May qualify for First Time Buyers Relief.
 
 marketValue.heading = Do you want to pay SDLT on the market value or only on the percentage of the property you are buying?
+marketValue.title = Do you want to pay SDLT on the market value or only on the percentage of the property you are buying?
 marketValue.p1 = You can choose to pay SDLT on the market value of the property. This is known as a ‘market value election’.
 marketValue.details.title = How does this work?
 marketValue.details.d1.p1 = First Time Buyers Relief
@@ -148,6 +144,7 @@ marketValue.error.maxValue = Enter a value that is £{0} or less.
 marketValue.hint = You can choose to pay SDLT on the market value of the property. This is known as a ‘market value election’.
 
 leaseDates.startDate.heading = Start date shown in your lease
+leaseDates.startDate.title = Start date shown in your lease
 leaseDates.startDate.hint = This is the date your term starts.
 leaseDates.endDate.heading = End date shown in your lease
 leaseDates.endDate.hint1 = This is the date your term ends.
@@ -159,6 +156,7 @@ leaseEndDate.error.beforeEffectiveDate = End date can't be before the effective 
 leaseDate.error.invalid = Enter a valid date
 
 premium.heading = Total lease premium payable
+premium.title = Total lease premium payable
 premium.hint = Find this in your lease.
 premium.details.title = Is your lease premium less than £40,000?
 premium.details.para = You will not have to pay SDLT if the lease premium is less than £40,000 and no tax is due on the rent. You may still have to
@@ -167,16 +165,20 @@ premium.error.nonNumeric = Enter the premium again - don’t use any letters or 
 premium.error.required = Enter your Premium
 
 exchangeContracts.heading = Did you exchange contracts before 17 March 2016?
+exchangeContracts.title = Did you exchange contracts before 17 March 2016?
 exchangeContracts.error.required = Select ''Yes'' or ''No''
 
 contractPost201603.heading = Has your contract been changed on or after 17 March 2016?
+contractPost201603.title = Has your contract been changed on or after 17 March 2016?
 contractPost201603.error.required = Select ''Yes'' or ''No''
 
 relevantRent.heading = Relevant rental figure
+relevantRent.title = Relevant rental figure
 relevantRent.error.required = Please enter the rental figure
 relevantRent.error.nonNumeric = Enter the relevant rent again - don’t use any letters or characters including £
 
 rent.heading = Enter the annual rent due
+rent.title = Enter the annual rent due
 rent.fiveYear.heading = Enter the annual rent due for the first 5 years
 rent.period.label = Year {0} rent
 rents.error.required = Enter the annual rent for all the years

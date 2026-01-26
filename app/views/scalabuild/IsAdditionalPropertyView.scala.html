@@ -17,7 +17,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("isAdditionalProperty.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.IsAdditionalPropertyController.onSubmit(), Symbol("autoComplete") -> "off") {
 

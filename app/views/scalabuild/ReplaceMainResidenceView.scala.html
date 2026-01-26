@@ -19,7 +19,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("replaceMainResidence.title"))) {
 
 @formHelper(action = controllers.scalabuild.routes.ReplaceMainResidenceController.onSubmit(), Symbol("autoComplete") -> "off") {
 

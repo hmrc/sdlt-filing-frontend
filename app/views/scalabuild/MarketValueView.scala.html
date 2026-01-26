@@ -24,7 +24,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("marketValue.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.MarketValueController.onSubmit(), Symbol("autoComplete") -> "off") {
 

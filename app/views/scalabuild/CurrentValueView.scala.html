@@ -21,7 +21,7 @@
 )
 @(form: Form[_], ftbLimit: Int)(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("currentValue.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.CurrentValueController.onSubmit(), Symbol("autoComplete") -> "off") {
 

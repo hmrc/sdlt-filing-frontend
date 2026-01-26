@@ -18,7 +18,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("nonUkResident.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.NonUkResidentController.onSubmit(), Symbol("autoComplete") -> "off") {
 
