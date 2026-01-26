@@ -16,7 +16,7 @@ class IsPurchaserIndividualViewSpec extends ViewTestFixture {
 
   "IsPurchaserIndividualView" must {
     "render the correct content" in {
-
+      pagetitle must include(messages("isPurchaserIndividual.title"))
       heading mustBe messages("isPurchaserIndividual.heading")
       hintText must include(messages("isPurchaserIndividual.hint"))
 

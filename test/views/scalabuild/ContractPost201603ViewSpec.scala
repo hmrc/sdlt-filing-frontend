@@ -17,6 +17,7 @@ class ContractPost201603ViewSpec extends ViewTestFixture {
 
   "ContractPost201603 view" must {
     "render the correct content" in {
+      pagetitle must include(messages("contractPost201603.title"))
       heading mustBe messages("contractPost201603.heading")
     }
 

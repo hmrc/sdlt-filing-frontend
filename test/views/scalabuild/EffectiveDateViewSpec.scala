@@ -16,7 +16,7 @@ class EffectiveDateViewSpec extends ViewTestFixture {
 
   "EffectiveDateView" must {
     "render the correct content" in {
-
+      pagetitle must include(messages("effectiveDate.title"))
       heading mustBe messages("effectiveDate.heading")
       hintText must include(messages("effectiveDate.hint.h1"))
       hintText must include(messages("effectiveDate.hint.h2"))

@@ -18,6 +18,7 @@ class ResidentialOrNonResidentialViewSpec extends ViewTestFixture{
 
   "ResidentialOrNonResidentialView" must {
     "render the correct content" in {
+      pagetitle must include(messages("propertyType.title"))
       heading mustBe messages("propertyType.heading")
       hintText must include(messages("propertyType.hint"))
     }
