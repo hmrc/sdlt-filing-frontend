@@ -42,6 +42,7 @@ case object CombinationOfReliefs                                               e
 case object AlternativeFinanceInvestmentBondsRelief                            extends TaxReliefCode(31) with StandardZeroRate
 case object FirstTimeBuyersRelief                                              extends TaxReliefCode(32) with SelfAssessed
 case object PreCompletionTransaction                                           extends TaxReliefCode(34) with ZeroRate
+case object ReliefFrom15PercentRate                                            extends TaxReliefCode(35) with SelfAssessed
 case object FreeportsTaxSiteRelief                                             extends TaxReliefCode(36) with ZeroRate with SelfAssessed
 case object InvestmentZonesTaxSiteRelief                                       extends TaxReliefCode(37) with ZeroRate with SelfAssessed
 case object SeedingRelief                                                      extends TaxReliefCode(38) with StandardZeroRate
@@ -71,6 +72,7 @@ object TaxReliefCode {
     AlternativeFinanceInvestmentBondsRelief.fromCode,
     PreCompletionTransaction.fromCode,
     FirstTimeBuyersRelief.fromCode,
+    ReliefFrom15PercentRate.fromCode,
     SeedingRelief.fromCode,
     AcquisitionRelief.fromCode,
     FreeportsTaxSiteRelief.fromCode,

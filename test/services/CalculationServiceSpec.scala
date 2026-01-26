@@ -13,7 +13,7 @@ package services
 import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
 import enums.sdltRebuild._
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
-import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
+import exceptions.{InvalidDateException, InvalidTaxReliefCombinationException, RequiredValueNotDefinedException}
 import generators.RequestGenerators
 import models._
 import models.sdltRebuild.TaxReliefDetails
@@ -1574,6 +1574,18 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message "Value not defined"
       }
+
+      "given relief code ReliefFrom15PercentRate(35) :: throws an exception" in {
+        val testRequest = createRequestWithTaxRelief(
+          freehold,
+          mixed,
+          LocalDate.of(2013, 4, 6),
+          taxReliefCode = ReliefFrom15PercentRate,
+          isLinked = true
+        )
+
+        the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${testRequest.taxReliefDetails.map(_.taxReliefCode).get} does not apply to Mixed properties"
+      }
     }
 
     "select leasehold / residential property with tax relief code" when {
@@ -1853,6 +1865,28 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
       }
+
+      "given a request with relief code ReliefFrom15PercentRate :: property type is Residential, effective date is 6/4/2013 and isLinked is true" in {
+        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+      }
+
+      "given a request with relief code ReliefFrom15PercentRate :: property type is Residential, effective date is 3/12/2014 and isLinked is true" in {
+        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2014, 12, 3), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+      }
     }
 
     "select the leaseholdSelfAssessedRes function" when {
@@ -1992,6 +2026,60 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(requestCaptor.capture(), meq(false), meq(false))
         requestCaptor.getValue.taxReliefDetails mustBe None
       }
+
+      "Tax Relief Code is ReliefFrom15PercentRate(35)" when {
+        "holding type is Leasehold" in {
+          val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+          val result = createResult("leaseholdResidentialMar12toDec14")
+          val captor = ArgumentCaptor.forClass(classOf[Request])
+
+          when(mockLeaseholdCalculationService.leaseholdResidentialMar12toDec14(any[Request])).thenReturn(result)
+          testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialMar12toDec14(captor.capture())
+          captor.getValue.taxReliefDetails mustBe None
+          verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+        }
+
+        "property type is Non-residential" in {
+          val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+          val result = createResult("freeholdNonResidentialMar12toMar16")
+          val captor = ArgumentCaptor.forClass(classOf[Request])
+
+          when(mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16(any[Request], meq(false))).thenReturn(result)
+          testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar12toMar16(captor.capture(), meq(false))
+          captor.getValue.taxReliefDetails mustBe None
+          verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+        }
+
+        "effective date is before 6/4/2013" in {
+          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 5), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+          val result = createResult("freeholdResidentialMar12toDec14")
+          val captor = ArgumentCaptor.forClass(classOf[Request])
+
+          when(mockFreeholdCalculationService.freeholdResidentialMar12toDec14(any[Request])).thenReturn(result)
+          testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdResidentialMar12toDec14(captor.capture())
+          captor.getValue.taxReliefDetails mustBe None
+          verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+        }
+
+        "isLinked is false" in {
+          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate)
+          val result = createResult("freeholdResidentialMar12toDec14")
+          val captor = ArgumentCaptor.forClass(classOf[Request])
+
+          when(mockFreeholdCalculationService.freeholdResidentialMar12toDec14(any[Request])).thenReturn(result)
+          testCalculationService.calculateTaxRelief(testRequest, testRequest.taxReliefDetails.get) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdResidentialMar12toDec14(captor.capture())
+          captor.getValue.taxReliefDetails mustBe None
+          verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+        }
+      }
     }
 
     "return self assessed AcquisitionRelief(14)" when {
@@ -2072,6 +2160,32 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdAcquisitionTaxRelief(testRequest)
+      }
+    }
+
+    "throw an exception for leasehold mixed" when {
+      "given a request with tax relief code FirstTimeBuyersRelief(32) and effective date of 21/1/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.mixed,
+          LocalDate.of(2013, 1, 21),
+          taxReliefCode = FirstTimeBuyersRelief,
+          isLinked = true
+        )
+
+        the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${testRequest.taxReliefDetails.map(_.taxReliefCode).get} does not apply to Mixed properties"
+      }
+
+      "given a request with tax relief code ReliefFrom15PercentRate(35) and effective date of 6/4/2013" in {
+        val testRequest = createRequestWithTaxRelief(
+          HoldingTypes.leasehold,
+          PropertyTypes.mixed,
+          LocalDate.of(2013, 4, 6),
+          taxReliefCode = ReliefFrom15PercentRate,
+          isLinked = true
+        )
+
+        the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${testRequest.taxReliefDetails.map(_.taxReliefCode).get} does not apply to Mixed properties"
       }
     }
   }
