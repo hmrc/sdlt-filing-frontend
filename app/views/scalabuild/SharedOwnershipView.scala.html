@@ -21,7 +21,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("sharedOwnership.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.SharedOwnershipController.onSubmit(), Symbol("autoComplete") -> "off") {
 

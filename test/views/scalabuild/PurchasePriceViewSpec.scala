@@ -16,7 +16,7 @@ class PurchasePriceViewSpec extends ViewTestFixture {
 
   "PurchasePriceView" must {
     "render the correct content" in {
-
+      pagetitle must include(messages("purchasePrice.title"))
       heading mustBe messages("purchasePrice.heading")
       hintText must include(messages("purchasePrice.hint"))
       summaryText must include(messages("purchasePrice.detail.title"))

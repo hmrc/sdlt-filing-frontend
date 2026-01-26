@@ -16,6 +16,7 @@ class IsAdditionalPropertyViewSpec extends ViewTestFixture {
 
   "IsAdditionalPropertyView" must {
     "render the correct content" in {
+      pagetitle must include(messages("isAdditionalProperty.title"))
       heading mustBe messages("isAdditionalProperty.heading")
     }
     "render the correct values for the radio button choices" in {

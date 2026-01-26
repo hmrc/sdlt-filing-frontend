@@ -17,7 +17,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("exchangeContracts.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.ExchangeContractsController.onSubmit(), Symbol("autoComplete") -> "off") {
 

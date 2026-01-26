@@ -46,6 +46,7 @@ abstract class ViewTestFixture extends PlaySpec
   lazy val htmlString = htmlContent.body
   lazy val document: Document = Jsoup.parse(htmlString)
 
+  lazy val pagetitle = document.select("title").text()
   lazy val heading = document.select("h1").text()
   lazy val caption = document.select(".govuk-caption-xl").text()
   lazy val bodyText = document.select("p").text()

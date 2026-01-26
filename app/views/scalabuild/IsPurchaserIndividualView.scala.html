@@ -18,7 +18,7 @@ govukDetails : GovukDetails
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("isPurchaserIndividual.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.IsPurchaserIndividualController.onSubmit(), Symbol("autoComplete") -> "off") {
 

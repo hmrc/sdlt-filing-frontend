@@ -17,6 +17,7 @@ class ExchangeContractsViewSpec extends ViewTestFixture {
 
   "Exchange contracts view" must {
     "render the correct content" in {
+      pagetitle must include(messages("exchangeContracts.title"))
       heading mustBe messages("exchangeContracts.heading")
     }
 

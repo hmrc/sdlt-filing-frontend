@@ -15,7 +15,7 @@ class OwnsOtherPropertiesViewSpec extends ViewTestFixture {
 
   "OwnsOtherPropertiesView" must {
     "render the correct content" in {
-
+      pagetitle must include(messages("ownsOtherProperties.title"))
       heading mustBe messages("ownsOtherProperties.heading")
       bodyText must include(messages("ownsOtherProperties.content"))
       bullet must include(messages("ownsOtherProperties.bullet.b1"))

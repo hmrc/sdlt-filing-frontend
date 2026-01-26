@@ -14,6 +14,7 @@ class StartGuidanceViewSpec extends ViewTestFixture {
 
   "StartGuidanceView" must {
     "render the correct content" in {
+      pagetitle must include(messages("startGuidance.title"))
       heading mustBe messages("Calculate Stamp Duty Land Tax (SDLT)")
       bodyText must include("This calculator can be used for property purchases that are:")
       bodyText must include("The calculator will work out the SDLT payable for most transactions. You should")

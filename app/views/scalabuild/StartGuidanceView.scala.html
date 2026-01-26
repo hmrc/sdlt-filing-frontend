@@ -9,7 +9,7 @@
 )
 @()(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("startGuidance.title"))) {
     <h1 class="govuk-heading-xl">@messages("startGuidance.heading")</h1>
 
     <p class="govuk-body">@messages("startGuidance.content.l1")</p>

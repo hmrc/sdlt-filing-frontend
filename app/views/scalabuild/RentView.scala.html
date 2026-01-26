@@ -19,7 +19,7 @@
 
 @(form: Form[_], count: Int)(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("rent.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.RentController.onSubmit(), Symbol("autoComplete") -> "off") {
 

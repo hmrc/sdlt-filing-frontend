@@ -18,6 +18,7 @@ class PremiumViewSpec extends ViewTestFixture {
   "PremiumView" must {
 
     "render the correct content" in {
+      pagetitle must include(messages("premium.title"))
       heading mustBe messages("premium.heading")
       hintText must include(messages("premium.hint"))
       summaryText must include(messages("premium.details.title"))

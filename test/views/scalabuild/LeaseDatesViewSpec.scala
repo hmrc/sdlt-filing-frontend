@@ -22,6 +22,7 @@ class LeaseDatesViewSpec extends ViewTestFixture {
     "render the correct content" in {
       lazy val startDateHeading = document.select("#startDate").text()
       lazy val endDateHeading = document.select("#endDate").text()
+      pagetitle must include(messages("leaseDates.startDate.title"))
       startDateHeading mustBe messages("leaseDates.startDate.heading")
       hintText must include(messages("leaseDates.startDate.hint"))
       hintText must include(messages("effectiveDate.hint.h2"))

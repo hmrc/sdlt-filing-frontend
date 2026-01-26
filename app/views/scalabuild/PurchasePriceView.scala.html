@@ -20,7 +20,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("purchasePrice.title"))) {
 
 @formHelper(action = controllers.scalabuild.routes.PurchasePriceController.onSubmit(), Symbol("autoComplete") -> "off") {
 

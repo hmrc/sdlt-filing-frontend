@@ -17,7 +17,7 @@
 
 @(form: Form[_])(implicit request: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("tenancy.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.FreeholdOrLeaseholdController.onSubmit(), Symbol("autoComplete") -> "off") {
 

@@ -17,6 +17,7 @@ class SharedOwnershipViewSpec extends ViewTestFixture {
 
   "Shared ownership view" must {
     "render the correct content" in {
+      pagetitle must include(messages("sharedOwnership.title"))
       heading mustBe messages("sharedOwnership.heading")
       caption mustBe messages("section.sharedOwnership")
       bodyText mustBe messages("sharedOwnership.p1")

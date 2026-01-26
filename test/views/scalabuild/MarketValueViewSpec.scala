@@ -18,6 +18,7 @@ class MarketValueViewSpec extends ViewTestFixture {
   "MarketValueView" must {
     "render the correct content" in {
       caption mustBe messages("section.sharedOwnership")
+      pagetitle must include(messages("marketValue.title"))
       heading mustBe messages("marketValue.heading")
       hintText must include(messages("marketValue.hint"))
       bodyText must include(messages("marketValue.p2"))

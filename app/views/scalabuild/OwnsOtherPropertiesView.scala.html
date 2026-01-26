@@ -20,7 +20,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("ownsOtherProperties.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.OwnsOtherPropertiesController.onSubmit(), Symbol("autoComplete") -> "off") {
 

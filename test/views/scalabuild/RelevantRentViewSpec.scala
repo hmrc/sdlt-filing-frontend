@@ -18,6 +18,7 @@ class RelevantRentViewSpec extends ViewTestFixture {
   "RelevantRentView" must {
 
     "render the correct content" in {
+      pagetitle must include(messages("relevantRent.title"))
       heading mustBe messages("relevantRent.heading")
     }
 

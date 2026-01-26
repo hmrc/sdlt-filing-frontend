@@ -18,7 +18,7 @@
 
 @(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
 
-@layout() {
+@layout(pageTitle = Some(messages("leaseDates.startDate.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.LeaseDatesController.onSubmit(), Symbol("autoComplete") -> "off") {
 

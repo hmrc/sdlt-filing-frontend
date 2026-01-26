@@ -15,7 +15,7 @@ class ReplaceMainResidenceViewSpec extends ViewTestFixture {
 
   "ReplaceMainResidenceView" must {
     "render the correct content" in {
-
+      pagetitle must include(messages("replaceMainResidence.title"))
       heading mustBe messages("replaceMainResidence.heading")
       hintText must include(messages("replaceMainResidence.hint"))
 

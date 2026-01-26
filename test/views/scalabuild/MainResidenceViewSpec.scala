@@ -15,6 +15,7 @@ class MainResidenceViewSpec extends ViewTestFixture {
 
   "MainResidenceView" must {
     "render the correct content" in {
+      pagetitle must include(messages("mainResidence.title"))
       heading mustBe messages("mainResidence.heading")
     }
     "render the correct values for the radio button choices" in {

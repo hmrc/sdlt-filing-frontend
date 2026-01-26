@@ -19,6 +19,7 @@ class CurrentValueViewSpec extends ViewTestFixture {
   "CurrentValueView" must {
     "render the correct content" in {
       caption mustBe messages("section.sharedOwnership")
+      pagetitle must include(messages("currentValue.title"))
       heading mustBe messages("currentValue.heading")
       bodyText must include(messages("currentValue.p1"))
     }

@@ -18,6 +18,7 @@ class NonUkResidentViewSpec extends ViewTestFixture {
 
   "NonUkResidentView" must {
     "render the correct content" in {
+      pagetitle must include(messages("nonUkResident.title"))
       heading mustBe messages("nonUkResident.heading")
       summaryText must include(messages("nonUkResident.details.title"))
       bodyText must include(messages("nonUkResident.details.d1"))

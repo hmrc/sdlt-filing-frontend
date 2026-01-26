@@ -18,7 +18,7 @@ class FreeholdOrLeaseholdViewSpec extends ViewTestFixture {
 
   "FreeholdOrLeaseholdView" must {
     "render the correct content" in {
-
+      pagetitle must include(messages("tenancy.title"))
       heading mustBe messages("tenancy.heading")
       hintText must include(messages("tenancy.hint"))
     }
