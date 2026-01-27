@@ -19,10 +19,13 @@ package controllers.purchaserAgent
 import controllers.actions.*
 import forms.purchaserAgent.PurchaserAgentOverviewFormProvider
 import models.*
+import play.api.i18n.Lang.logger
+
 import scala.concurrent.ExecutionContext
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.FullReturnService
 import services.purchaserAgent.PurchaserAgentService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -39,6 +42,7 @@ class PurchaserAgentOverviewController @Inject()(
                                                   identify: IdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
+                                                  fullReturnService: FullReturnService,
                                                   sessionRepository: SessionRepository,
                                                   purchaserAgentService: PurchaserAgentService,
                                                   view: PurchaserAgentOverview,
@@ -51,29 +55,42 @@ class PurchaserAgentOverviewController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
 
-      request.userAnswers.fullReturn match {
-        case None =>
-          Future.successful(
+      val postAction = routes.PurchaserAgentBeforeYouStartController.onPageLoad(mode)
+      val effectiveReturnId = request.userAnswers.returnId
+
+      effectiveReturnId.fold(
+        Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
+      ) { id =>
+
+        fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.userAnswers.storn))
+          .flatMap { fullReturn =>
+            val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
+            sessionRepository.set(userAnswers).map { _ =>
+
+              val returnAgentList = fullReturn.returnAgent.getOrElse(Seq.empty)
+
+              val maybeAgent: Option[ReturnAgent] =
+                fullReturn.returnAgent
+                  .flatMap(PurchaserAgentHelper.getPurchaserAgent)
+
+              val maybeSummary: Option[SummaryList] =
+                maybeAgent.flatMap(agent =>
+                  PurchaserAgentHelper.buildSummary(Some(agent))
+                )
+
+              val errorCalc = maybeAgent.isDefined
+
+              returnAgentList match {
+                case Nil => Ok(view(None, postAction, form, NormalMode, errorCalc))
+
+                case agents => Ok(view(maybeSummary, postAction, form, mode, errorCalc))
+              }
+            }
+          } recover {
+          case ex =>
+            logger.error("[PurchaserOverviewController][onPageLoad] Unexpected failure", ex)
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-          )
-
-        case Some(fullReturn) =>
-          val postAction = routes.PurchaserAgentOverviewController.onSubmit()
-
-          val maybeAgent: Option[ReturnAgent] =
-            fullReturn.returnAgent
-              .flatMap(PurchaserAgentHelper.getPurchaserAgent)
-
-          val maybeSummary: Option[SummaryList] =
-            maybeAgent.flatMap(agent =>
-              PurchaserAgentHelper.buildSummary(Some(agent))
-            )
-
-          val errorCalc = maybeAgent.isDefined
-
-          Future.successful(
-            Ok(view(maybeSummary, postAction, form, mode, errorCalc))
-          )
+        }
       }
     }
 
