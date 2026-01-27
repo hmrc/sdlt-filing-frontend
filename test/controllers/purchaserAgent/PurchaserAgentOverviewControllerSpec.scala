@@ -17,6 +17,8 @@
 package controllers.purchaserAgent
 
 import base.SpecBase
+import connectors.StampDutyLandTaxConnector
+import constants.FullReturnConstants.*
 import models.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
@@ -25,65 +27,45 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.FullReturnService
 import services.purchaserAgent.PurchaserAgentService
-import connectors.StampDutyLandTaxConnector
 
 import scala.concurrent.Future
 import scala.util.Success
 
 class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
 
-  private val testReturnAgent = ReturnAgent(
-    returnAgentID = Some("AGENT001"),
-    agentType = Some("PURCHASER"),
-    name = Some("Agent Smith"),
-    address1 = Some("1 Agent Street"),
-    postcode = Some("AA1 1AA")
+  private val returnAgentId: String = completeReturnAgent.returnAgentID.getOrElse("NotFound")
+
+  private val userAnswersWithAgent = emptyUserAnswers.copy(
+    returnId = Some(completeFullReturn.returnResourceRef),
+    fullReturn = Some(completeFullReturn)
   )
 
-  private val fullReturnWithAgent = FullReturn(
-    stornId = "STORN123",
-    returnResourceRef = "RR123",
-    vendor = None,
-    purchaser = None,
-    returnAgent = Some(Seq(testReturnAgent))
+  private val userAnswersWithoutAgent = emptyUserAnswers.copy(
+    returnId = Some(completeFullReturn.returnResourceRef),
+    fullReturn = Some(completeFullReturn.copy(returnAgent = None))
   )
 
-  private val fullReturnWithoutAgent = FullReturn(
-    stornId = "STORN123",
-    returnResourceRef = "RR123",
-    vendor = None,
-    purchaser = None,
-    returnAgent = None
-  )
-
-  private val returnAgentId: String = testReturnAgent.returnAgentID.getOrElse("NotFound")
-
-  private val userAnswersWithAgent =
-    emptyUserAnswers.copy(fullReturn = Some(fullReturnWithAgent))
-
-  private val userAnswersWithoutAgent =
-    emptyUserAnswers.copy(fullReturn = Some(fullReturnWithoutAgent))
-
-  lazy val onPageLoadRoute =
-    routes.PurchaserAgentOverviewController.onPageLoad().url
-
-  lazy val onSubmitRoute =
-    routes.PurchaserAgentOverviewController.onSubmit().url
-
-  lazy val changeRoute =
-    routes.PurchaserAgentOverviewController.changePurchaserAgent(returnAgentId).url
-
-  lazy val removeRoute =
-    routes.PurchaserAgentOverviewController.removePurchaserAgent(returnAgentId).url
+  lazy val onPageLoadRoute = routes.PurchaserAgentOverviewController.onPageLoad().url
+  lazy val onSubmitRoute = routes.PurchaserAgentOverviewController.onSubmit().url
+  lazy val changeRoute = routes.PurchaserAgentOverviewController.changePurchaserAgent(returnAgentId).url
+  lazy val removeRoute = routes.PurchaserAgentOverviewController.removePurchaserAgent(returnAgentId).url
 
   "PurchaserAgentOverviewController" - {
 
     "onPageLoad" - {
 
       "must return OK when no purchaser agent exists" in {
+        val mockFullReturnService = mock[FullReturnService]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(userAnswersWithoutAgent.fullReturn.get))
+
         val application =
-          applicationBuilder(userAnswers = Some(userAnswersWithoutAgent)).build()
+          applicationBuilder(userAnswers = Some(userAnswersWithoutAgent))
+            .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
+            .build()
 
         running(application) {
           val request = FakeRequest(GET, onPageLoadRoute)
@@ -94,15 +76,22 @@ class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must return OK and render agent name when purchaser agent exists" in {
+        val mockFullReturnService = mock[FullReturnService]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(userAnswersWithAgent.fullReturn.get))
+
         val application =
-          applicationBuilder(userAnswers = Some(userAnswersWithAgent)).build()
+          applicationBuilder(userAnswers = Some(userAnswersWithAgent))
+            .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
+            .build()
 
         running(application) {
           val request = FakeRequest(GET, onPageLoadRoute)
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) must include("Agent Smith")
+          contentAsString(result) must include("Smith &amp; Partners LLP")
         }
       }
     }
@@ -123,7 +112,7 @@ class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to BeforeYouStart when user answers yes" in {
+      "must redirect to Purchaser Agent Before You Start page when no purchaser agent and answer yes" in {
         val application =
           applicationBuilder(userAnswers = Some(userAnswersWithoutAgent)).build()
 
@@ -139,7 +128,7 @@ class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to ReturnTaskList when user answers no" in {
+      "must redirect to ReturnTaskList when no purchaser agent and answer no" in {
         val application =
           applicationBuilder(userAnswers = Some(userAnswersWithoutAgent)).build()
 
@@ -216,7 +205,6 @@ class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "removePurchaserAgent" - {
-
       "must delete agent and redirect with flash when agent exists" in {
         val mockConnector = mock[StampDutyLandTaxConnector]
 
