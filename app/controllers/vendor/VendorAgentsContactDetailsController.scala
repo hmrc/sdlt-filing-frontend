@@ -18,11 +18,11 @@ package controllers.vendor
 
 import controllers.actions.*
 import forms.vendor.VendorAgentsContactDetailsFormProvider
-import models.vendor.VendorAgentsContactDetails
 import models.Mode
+import models.vendor.VendorAgentsContactDetails
 import navigation.Navigator
-import pages.vendor.{AddVendorAgentContactDetailsPage, VendorAgentsContactDetailsPage, VendorRepresentedByAgentPage}
-import pages.vendorAgent.AgentNamePage
+import pages.vendor.{VendorAgentsContactDetailsPage, VendorRepresentedByAgentPage}
+import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

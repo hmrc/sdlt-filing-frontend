@@ -23,7 +23,7 @@ import pages.preliminary.*
 import pages.purchaser.*
 import pages.purchaserAgent.*
 import pages.vendor.*
-import pages.vendorAgent.AgentNamePage
+import pages.vendorAgent.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -38,7 +38,7 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-      
+
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
     case VendorOrCompanyNamePage =>
@@ -124,7 +124,7 @@ class Navigator @Inject()() {
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
-  
+
   private val checkRouteMap: Page => UserAnswers => Call = {
     case WhoIsMakingThePurchasePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()

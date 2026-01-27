@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
 class AddVendorAgentContactDetailsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "agent.addVendorAgentContactDetails.error.required"
+  val requiredKey = "vendorAgent.addVendorAgentContactDetails.error.required"
   val invalidKey = "error.boolean"
   
   val form = new AddVendorAgentContactDetailsFormProvider()()

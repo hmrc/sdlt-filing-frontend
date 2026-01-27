@@ -24,7 +24,7 @@ import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNa
 import pages.purchaser.*
 import pages.purchaserAgent.*
 import pages.vendor.*
-import pages.vendorAgent.AgentNamePage
+import pages.vendorAgent.*
 
 class NavigatorSpec extends SpecBase {
 

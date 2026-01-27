@@ -28,6 +28,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendor.*
 import pages.vendorAgent.AgentNamePage
+import pages.vendorAgent.AddVendorAgentContactDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call

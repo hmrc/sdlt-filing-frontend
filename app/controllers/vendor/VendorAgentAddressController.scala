@@ -87,7 +87,7 @@ class VendorAgentAddressController @Inject()(
         updated <- addressLookupService.saveAddressDetails(address, VendorAgentAddressPage)
       } yield if(updated) {
         //change this when we have the next page
-        Redirect(controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode))
+        Redirect(controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode))
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }

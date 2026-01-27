@@ -14,36 +14,37 @@
  * limitations under the License.
  */
 
-package controllers.vendor
+package controllers.vendorAgent
 
 import controllers.actions.*
-import forms.vendor.AddVendorAgentContactDetailsFormProvider
+import forms.vendorAgent.AddVendorAgentContactDetailsFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.vendor.AddVendorAgentContactDetailsPage
+import pages.vendor.VendorAgentsContactDetailsPage
 import pages.vendorAgent.AgentNamePage
+import pages.vendorAgent.AddVendorAgentContactDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.vendor.AddVendorAgentContactDetailsView
+import views.html.vendorAgent.AddVendorAgentContactDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddVendorAgentContactDetailsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: AddVendorAgentContactDetailsFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: AddVendorAgentContactDetailsView,
-                                       agentChecksService: AgentChecksService
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                        override val messagesApi: MessagesApi,
+                                                        sessionRepository: SessionRepository,
+                                                        navigator: Navigator,
+                                                        identify: IdentifierAction,
+                                                        getData: DataRetrievalAction,
+                                                        requireData: DataRequiredAction,
+                                                        formProvider: AddVendorAgentContactDetailsFormProvider,
+                                                        val controllerComponents: MessagesControllerComponents,
+                                                        view: AddVendorAgentContactDetailsView,
+                                                        agentChecksService: AgentChecksService
+                                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -81,10 +82,11 @@ class AddVendorAgentContactDetailsController @Inject()(
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(AddVendorAgentContactDetailsPage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                removeDetails <- Future.fromTry(updatedAnswers.remove(VendorAgentsContactDetailsPage))
+                _ <- sessionRepository.set(removeDetails)
               } yield {
                 if (value) {
-                  Redirect(navigator.nextPage(AddVendorAgentContactDetailsPage, mode, updatedAnswers))
+                  Redirect(navigator.nextPage(AddVendorAgentContactDetailsPage, mode, removeDetails))
                 } else {
                   Redirect(controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode))
                 }

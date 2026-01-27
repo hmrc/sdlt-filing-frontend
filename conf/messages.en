@@ -39,7 +39,7 @@ site.purchaserAgent.beforeStart.caption                                         
 site.vendorAgent.caption                                                            = About the vendor’s agent
 
 site.vendor.theVendor                                                               = the vendor
-site.purchaser.thePurchaser                                                              = the purchaser
+site.purchaser.thePurchaser                                                         = the purchaser
 
 site.journeyRecovery.continue.title                                                 = Sorry, there is a problem with the service
 site.journeyRecovery.continue.heading                                               = Sorry, there is a problem with the service
@@ -375,12 +375,12 @@ vendor.whoIsTheVendor.error.required                                            
 
 # Agent Messages
 
-agent.addVendorAgentContactDetails.title                                            = Do you want to add contact details for the agent? - About the vendor
-agent.addVendorAgentContactDetails.hint.radio                                       = We’ll only use these details to contact {0} about this return
-agent.addVendorAgentContactDetails.heading                                          = Do you want to add contact details for {0}?
-agent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add vendor agent contact details?
-agent.addVendorAgentContactDetails.change.hidden                                    = Do you want to add vendor agent contact details?
-agent.addVendorAgentContactDetails.error.required                                   = Please select an option
+vendorAgent.addVendorAgentContactDetails.title                                            = Do you want to add contact details for the agent? - About the vendor
+vendorAgent.addVendorAgentContactDetails.hint.radio                                       = We’ll only use these details to contact {0} about this return
+vendorAgent.addVendorAgentContactDetails.heading                                          = Do you want to add contact details for {0}?
+vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add vendor agent contact details?
+vendorAgent.addVendorAgentContactDetails.change.hidden                                    = Do you want to add vendor agent contact details?
+vendorAgent.addVendorAgentContactDetails.error.required                                   = Please select an option
 
 agent.agentName.title                                                               = What is the agent’s name? – About the vendor’s agent
 agent.agentName.heading                                                             = What is the agent’s name?
@@ -715,9 +715,10 @@ site.error.noReturnReference.change.hidden                                      
 
 purchaserAgent.addContactDetailsForPurchaserAgent.title                             = Do you want to add contact details for the agent?
 purchaserAgent.addContactDetailsForPurchaserAgent.heading                           = Do you want to add contact details for {0}?
-purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel             = Do you want to add contact details for {0}?
 purchaserAgent.addContactDetailsForPurchaserAgent.error.required                    = Please select Yes or No
 purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                     = AddContactDetailsForPurchaserAgent
+purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                        = We’ll only use these details to contact {0} about this return
+purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel             = Do you want to add contact details for {0}?
 purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                        = We'll only use these details to contact {0} about this return
 
 purchaserAgent.name.title                                                           = What is the agent’s name?
