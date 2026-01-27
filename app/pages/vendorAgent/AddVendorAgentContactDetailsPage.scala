@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package pages.vendorAgent
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
+case object AddVendorAgentContactDetailsPage extends QuestionPage[Boolean] {
 
-class AddVendorAgentContactDetailsFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ "vendorAgentCurrent" \ toString
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("agent.addVendorAgentContactDetails.error.required")
-    )
+  override def toString: String = "addVendorAgentContactDetails"
 }

@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package controllers.vendor
+package controllers.vendorAgent
 
 import base.SpecBase
 import constants.FullReturnConstants.completeFullReturn
-import forms.vendor.AddVendorAgentContactDetailsFormProvider
+import forms.vendorAgent.AddVendorAgentContactDetailsFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.AddVendorAgentContactDetailsPage
 import pages.vendorAgent.AgentNamePage
+import pages.vendorAgent.AddVendorAgentContactDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.vendor.AddVendorAgentContactDetailsView
+import views.html.vendorAgent.AddVendorAgentContactDetailsView
 
 import scala.concurrent.Future
 
@@ -48,7 +48,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val addVendorAgentContactDetailsRoute: String = controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
+  lazy val addVendorAgentContactDetailsRoute: String = controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
   val formProvider = new AddVendorAgentContactDetailsFormProvider()
   val form: Form[Boolean] = formProvider()

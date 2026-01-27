@@ -1,269 +1,269 @@
 # microservice specific routes
 
-->          /hmrc-frontend                                                               hmrcfrontend.Routes
+->          /hmrc-frontend                                                                hmrcfrontend.Routes
 
-GET         /                                                                            controllers.IndexController.onPageLoad(returnId: Option[String] ?= None)
+GET         /                                                                             controllers.IndexController.onPageLoad(returnId: Option[String] ?= None)
 
-GET         /assets/*file                                                                controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                                                                 controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /language/:lang                                                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
+GET         /language/:lang                                                               controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /refresh-session                                                             controllers.KeepAliveController.keepAlive()
+GET         /refresh-session                                                              controllers.KeepAliveController.keepAlive()
 
-GET         /there-is-a-problem                                                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /there-is-a-problem                                                           controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /preliminary-questions/check-answers                                         controllers.preliminary.CheckYourAnswersController.onPageLoad()
-POST        /preliminary-questions/check-answers                                         controllers.preliminary.CheckYourAnswersController.onSubmit()
+GET         /preliminary-questions/check-answers                                          controllers.preliminary.CheckYourAnswersController.onPageLoad()
+POST        /preliminary-questions/check-answers                                          controllers.preliminary.CheckYourAnswersController.onSubmit()
 
-GET         /account/sign-out-survey                                                     controllers.auth.AuthController.signOut()
-GET         /account/sign-out                                                            controllers.auth.AuthController.signOutNoSurvey()
-GET         /account/signed-out                                                          controllers.auth.SignedOutController.onPageLoad()
+GET         /account/sign-out-survey                                                      controllers.auth.AuthController.signOut()
+GET         /account/sign-out                                                             controllers.auth.AuthController.signOutNoSurvey()
+GET         /account/signed-out                                                           controllers.auth.SignedOutController.onPageLoad()
 
-GET         /no-return-ref                                                               controllers.NoReturnReferenceController.onPageLoad()
-POST        /no-return-ref                                                               controllers.NoReturnReferenceController.onSubmit()
+GET         /no-return-ref                                                                controllers.NoReturnReferenceController.onPageLoad()
+POST        /no-return-ref                                                                controllers.NoReturnReferenceController.onSubmit()
 
-GET         /unauthorised                                                                controllers.UnauthorisedController.onPageLoad()
+GET         /unauthorised                                                                 controllers.UnauthorisedController.onPageLoad()
 
-GET         /preliminary-questions/purchaser-name                                        controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /preliminary-questions/purchaser-name                                        controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
-GET         /preliminary-questions/purchaser-name/change                                 controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /preliminary-questions/purchaser-name/change                                 controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
+GET         /preliminary-questions/purchaser-name                                         controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /preliminary-questions/purchaser-name                                         controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
+GET         /preliminary-questions/purchaser-name/change                                  controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /preliminary-questions/purchaser-name/change                                  controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /preliminary-questions/who-is-making-the-purchase                            controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)
-POST        /preliminary-questions/who-is-making-the-purchase                            controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = NormalMode)
-GET         /preliminary-questions/who-is-making-the-purchase/change                     controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
-POST        /preliminary-questions/who-is-making-the-purchase/change                     controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
+GET         /preliminary-questions/who-is-making-the-purchase                             controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST        /preliminary-questions/who-is-making-the-purchase                             controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = NormalMode)
+GET         /preliminary-questions/who-is-making-the-purchase/change                      controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST        /preliminary-questions/who-is-making-the-purchase/change                      controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
 
-GET         /returnTaskList                                                              controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
+GET         /returnTaskList                                                               controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
 
-GET         /preliminary-questions/before-you-start                                      controllers.preliminary.BeforeStartReturnController.onPageLoad()
+GET         /preliminary-questions/before-you-start                                       controllers.preliminary.BeforeStartReturnController.onPageLoad()
 
-GET         /preliminary-questions/transaction-type                                      controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = NormalMode)
-POST        /preliminary-questions/transaction-type                                      controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = NormalMode)
-GET         /preliminary-questions/transaction-type/change                               controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = CheckMode)
-POST        /preliminary-questions/transaction-type/change                               controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = CheckMode)
+GET         /preliminary-questions/transaction-type                                       controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = NormalMode)
+POST        /preliminary-questions/transaction-type                                       controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = NormalMode)
+GET         /preliminary-questions/transaction-type/change                                controllers.preliminary.TransactionTypeController.onPageLoad(mode: Mode = CheckMode)
+POST        /preliminary-questions/transaction-type/change                                controllers.preliminary.TransactionTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET         /preliminary-questions/address                                               controllers.preliminary.PrelimAddressController.redirectToAddressLookup(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
-GET         /preliminary-questions/address-return                                        controllers.preliminary.PrelimAddressController.addressLookupCallback(id: String ?= "", mode: Mode = NormalMode)
-GET         /preliminary-questions/address-return/change                                 controllers.preliminary.PrelimAddressController.addressLookupCallbackChange(id: String ?= "", mode: Mode = NormalMode)
+GET         /preliminary-questions/address                                                controllers.preliminary.PrelimAddressController.redirectToAddressLookup(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /preliminary-questions/address-return                                         controllers.preliminary.PrelimAddressController.addressLookupCallback(id: String ?= "", mode: Mode = NormalMode)
+GET         /preliminary-questions/address-return/change                                  controllers.preliminary.PrelimAddressController.addressLookupCallbackChange(id: String ?= "", mode: Mode = NormalMode)
 
 GET         /about-the-vendor/confirm-vendor-address                                      controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-vendor/confirm-vendor-address                                      controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-vendor/confirm-vendor-address/change                               controllers.vendor.ConfirmVendorAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendor/confirm-vendor-address/change                               controllers.vendor.ConfirmVendorAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-the-vendor/who-is-the-vendor                                          controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/who-is-the-vendor                                          controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/who-is-the-vendor/change                                   controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/who-is-the-vendor/change                                   controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/who-is-the-vendor                                           controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/who-is-the-vendor                                           controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/who-is-the-vendor/change                                    controllers.vendor.WhoIsTheVendorController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/who-is-the-vendor/change                                    controllers.vendor.WhoIsTheVendorController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-the-vendor/address                                                    controllers.vendor.VendorAddressController.redirectToAddressLookupVendor(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
-GET         /about-the-vendor/address-return                                             controllers.vendor.VendorAddressController.addressLookupCallbackVendor(id: String ?= "", mode: Mode = NormalMode)
-GET         /about-the-vendor/address-return/change                                      controllers.vendor.VendorAddressController.addressLookupCallbackChangeVendor(id: String ?= "", mode: Mode = NormalMode)
-
-
-GET         /about-the-vendor/vendor-name                                                controllers.vendor.VendorOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/vendor-name                                                controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/vendor-name/change                                         controllers.vendor.VendorOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/vendor-name/change                                         controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-vendor/vendor-agent                                               controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/vendor-agent                                               controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/vendor-agent/change                                        controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/vendor-agent/change                                        controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = CheckMode)
-
-GET         /generic-error                                                               controllers.GenericErrorController.onPageLoad()
-
-GET         /about-the-vendor/agent-address-lookup                                       controllers.vendor.VendorAgentAddressController.redirectToAddressLookupVendorAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
-GET         /about-the-vendor/agent-address-return                                       controllers.vendor.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)
-GET         /about-the-vendor/agent-address-return/change                                controllers.vendor.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
-
-GET         /about-the-vendor/vendor-overview                                            controllers.vendor.VendorOverviewController.onPageLoad(mode: Mode = NormalMode, paginationIndex: Int ?= 1)
-POST        /about-the-vendor/vendor-overview                                            controllers.vendor.VendorOverviewController.onSubmit(mode: Mode = NormalMode)
-
-GET         /about-the-vendor/vendor-overview/change-vendor/:vendorId                    controllers.vendor.VendorOverviewController.changeVendor(vendorId: String)
-GET         /about-the-vendor/vendor-overview/remove-vendor/:vendorId                    controllers.vendor.VendorOverviewController.removeVendor(vendorId: String)
-
-GET         /about-the-vendor/before-you-start                                           controllers.vendor.VendorBeforeYouStartController.onPageLoad()
-
-GET         /about-the-vendor/enter-agent-reference-number                               controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/enter-agent-reference-number                               controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/enter-agent-reference-number/change                        controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/enter-agent-reference-number/change                        controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-vendor/remove-vendor                                              controllers.vendor.RemoveVendorController.onPageLoad()
-POST        /about-the-vendor/remove-vendor                                              controllers.vendor.RemoveVendorController.onSubmit()
-
-GET         /about-the-vendor/agent-address-lookup                                       controllers.vendor.VendorAgentAddressController.redirectToAddressLookupVendorAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
-GET         /about-the-vendor/agent-address-return                                       controllers.vendor.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)
-GET         /about-the-vendor/agent-address-return/change                                controllers.vendor.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
-
-GET         /about-the-vendor/add-agent-contact-details                                  controllers.vendor.AddVendorAgentContactDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/add-agent-contact-details                                  controllers.vendor.AddVendorAgentContactDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/add-agent-contact-details/change                           controllers.vendor.AddVendorAgentContactDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/add-agent-contact-details/change                           controllers.vendor.AddVendorAgentContactDetailsController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/before-you-start                                        controllers.purchaser.PurchaserBeforeYouStartController.onPageLoad()
-
-GET         /about-the-purchaser/confirm-purchaser-name                                  controllers.purchaser.ConfirmNameOfThePurchaserController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/confirm-purchaser-name                                  controllers.purchaser.ConfirmNameOfThePurchaserController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/confirm-purchaser-name/change                           controllers.purchaser.ConfirmNameOfThePurchaserController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/confirm-purchaser-name/change                           controllers.purchaser.ConfirmNameOfThePurchaserController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/who-is-making-the-purchase                              controllers.purchaser.WhoIsMakingThePurchaseController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/who-is-making-the-purchase                              controllers.purchaser.WhoIsMakingThePurchaseController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/who-is-making-the-purchase/change                       controllers.purchaser.WhoIsMakingThePurchaseController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/who-is-making-the-purchase/change                       controllers.purchaser.WhoIsMakingThePurchaseController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/purchaser-name                                          controllers.purchaser.NameOfPurchaserController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/purchaser-name                                          controllers.purchaser.NameOfPurchaserController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/purchaser-name/change                                   controllers.purchaser.NameOfPurchaserController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/purchaser-name/change                                   controllers.purchaser.NameOfPurchaserController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/purchaser-address-lookup                                controllers.purchaser.PurchaserAddressController.redirectToAddressLookupPurchaser(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
-GET         /about-the-purchaser/purchaser-address-return                                controllers.purchaser.PurchaserAddressController.addressLookupCallbackPurchaser(id: String ?= "", mode: Mode = NormalMode)
-GET         /about-the-purchaser/purchaser-address-return/change                         controllers.purchaser.PurchaserAddressController.addressLookupCallbackChangePurchaser(id: String ?= "", mode: Mode = NormalMode)
-
-GET         /about-the-purchaser/form-of-id-individual                                   controllers.purchaser.PurchaserFormOfIdIndividualController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/form-of-id-individual                                   controllers.purchaser.PurchaserFormOfIdIndividualController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/form-of-id-individual/change                            controllers.purchaser.PurchaserFormOfIdIndividualController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/form-of-id-individual/change                            controllers.purchaser.PurchaserFormOfIdIndividualController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/date-of-birth                                           controllers.purchaser.PurchaserDateOfBirthController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/date-of-birth                                           controllers.purchaser.PurchaserDateOfBirthController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/date-of-birth/change                                    controllers.purchaser.PurchaserDateOfBirthController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/date-of-birth/change                                    controllers.purchaser.PurchaserDateOfBirthController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-vendor/enter-agent-contact-details                                controllers.vendor.VendorAgentsContactDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/enter-agent-contact-details                                controllers.vendor.VendorAgentsContactDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/enter-agent-contact-details/change                         controllers.vendor.VendorAgentsContactDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/enter-agent-contact-details/change                         controllers.vendor.VendorAgentsContactDetailsController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-vendor/add-agent-reference-number                                 controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/add-agent-reference-number                                 controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/add-agent-reference-number/change                          controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/add-agent-reference-number/change                          controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-vendor/check-answers                                              controllers.vendor.VendorCheckYourAnswersController.onPageLoad()
-POST        /about-the-vendor/check-answers                                              controllers.vendor.VendorCheckYourAnswersController.onSubmit()
-
-GET         /about-the-purchaser/add-purchaser-phone-number                              controllers.purchaser.AddPurchaserPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/add-purchaser-phone-number                              controllers.purchaser.AddPurchaserPhoneNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/add-purchaser-phone-number/change                       controllers.purchaser.AddPurchaserPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/add-purchaser-phone-number/change                       controllers.purchaser.AddPurchaserPhoneNumberController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/enter-purchaser-phone-number                            controllers.purchaser.EnterPurchaserPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/enter-purchaser-phone-number                            controllers.purchaser.EnterPurchaserPhoneNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/enter-purchaser-phone-number/change                     controllers.purchaser.EnterPurchaserPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/enter-purchaser-phone-number/change                     controllers.purchaser.EnterPurchaserPhoneNumberController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/enter-national-insurance-number                         controllers.purchaser.PurchaserNationalInsuranceController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/enter-national-insurance-number                         controllers.purchaser.PurchaserNationalInsuranceController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/enter-national-insurance-number/change                  controllers.purchaser.PurchaserNationalInsuranceController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/enter-national-insurance-number/change                  controllers.purchaser.PurchaserNationalInsuranceController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/add-national-insurance-number                           controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/add-national-insurance-number                           controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/add-national-insurance-number/change                    controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/add-national-insurance-number/change                    controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/confirm-purchaser-identity                              controllers.purchaser.PurchaserConfirmIdentityController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/confirm-purchaser-identity                              controllers.purchaser.PurchaserConfirmIdentityController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/confirm-purchaser-identity/change                       controllers.purchaser.PurchaserConfirmIdentityController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/confirm-purchaser-identity/change                       controllers.purchaser.PurchaserConfirmIdentityController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/does-purchaser-have-ni                                  controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/does-purchaser-have-ni                                  controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/does-purchaser-have-ni/change                           controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/does-purchaser-have-ni/change                           controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/partnership-utr                                         controllers.purchaser.PurchaserPartnershipUtrController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/partnership-utr                                         controllers.purchaser.PurchaserPartnershipUtrController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/partnership-utr/change                                  controllers.purchaser.PurchaserPartnershipUtrController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/partnership-utr/change                                  controllers.purchaser.PurchaserPartnershipUtrController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/vat-registration-number                                 controllers.purchaser.RegistrationNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/vat-registration-number                                 controllers.purchaser.RegistrationNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/vat-registration-number/change                          controllers.purchaser.RegistrationNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/vat-registration-number/change                          controllers.purchaser.RegistrationNumberController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/corporation-tax-utr                                     controllers.purchaser.PurchaserCorporationTaxUTRController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/corporation-tax-utr                                     controllers.purchaser.PurchaserCorporationTaxUTRController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/corporation-tax-utr/change                              controllers.purchaser.PurchaserCorporationTaxUTRController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/corporation-tax-utr/change                              controllers.purchaser.PurchaserCorporationTaxUTRController.onSubmit(mode: Mode = CheckMode)
-
-GET         /about-the-purchaser/form-of-id-company                                      controllers.purchaser.CompanyFormOfIdController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/form-of-id-company                                      controllers.purchaser.CompanyFormOfIdController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/form-of-id-company/change                               controllers.purchaser.CompanyFormOfIdController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/form-of-id-company/change                               controllers.purchaser.CompanyFormOfIdController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/address                                                     controllers.vendor.VendorAddressController.redirectToAddressLookupVendor(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-vendor/address-return                                              controllers.vendor.VendorAddressController.addressLookupCallbackVendor(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-vendor/address-return/change                                       controllers.vendor.VendorAddressController.addressLookupCallbackChangeVendor(id: String ?= "", mode: Mode = NormalMode)
 
 
-GET         /about-the-purchaser/type-of-company                                         controllers.purchaser.PurchaserTypeOfCompanyController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/type-of-company                                         controllers.purchaser.PurchaserTypeOfCompanyController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/type-of-company/change                                  controllers.purchaser.PurchaserTypeOfCompanyController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/type-of-company/change                                  controllers.purchaser.PurchaserTypeOfCompanyController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/vendor-name                                                 controllers.vendor.VendorOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/vendor-name                                                 controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/vendor-name/change                                          controllers.vendor.VendorOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/vendor-name/change                                          controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-the-purchaser/acting-as-a-trustee                                     controllers.purchaser.IsPurchaserActingAsTrusteeController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/acting-as-a-trustee                                     controllers.purchaser.IsPurchaserActingAsTrusteeController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/acting-as-a-trustee/change                              controllers.purchaser.IsPurchaserActingAsTrusteeController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/acting-as-a-trustee/change                              controllers.purchaser.IsPurchaserActingAsTrusteeController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/vendor-agent                                                controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/vendor-agent                                                controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/vendor-agent/change                                         controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/vendor-agent/change                                         controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-the-purchaser/purchaser-and-vendor-connected                          controllers.purchaser.PurchaserAndVendorConnectedController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/purchaser-and-vendor-connected                          controllers.purchaser.PurchaserAndVendorConnectedController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/purchaser-and-vendor-connected/change                   controllers.purchaser.PurchaserAndVendorConnectedController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/purchaser-and-vendor-connected/change                   controllers.purchaser.PurchaserAndVendorConnectedController.onSubmit(mode: Mode = CheckMode)
+GET         /generic-error                                                                controllers.GenericErrorController.onPageLoad()
 
-GET         /about-the-purchasers-agent/before-you-start                                 controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchasers-agent/before-you-start                                 controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchasers-agent/before-you-start/change                          controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchasers-agent/before-you-start/change                          controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/agent-address-lookup                                        controllers.vendor.VendorAgentAddressController.redirectToAddressLookupVendorAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-vendor/agent-address-return                                        controllers.vendor.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-vendor/agent-address-return/change                                 controllers.vendor.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
 
-GET         /about-the-purchaser/purchaser-overview                                      controllers.purchaser.PurchaserOverviewController.onPageLoad(mode: Mode = NormalMode, paginationIndex: Int ?= 1)
-POST        /about-the-purchaser/purchaser-overview                                      controllers.purchaser.PurchaserOverviewController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/purchaser-overview/change-purchaser/:purchaserId        controllers.purchaser.PurchaserOverviewController.changePurchaser(purchaserId: String)
-GET         /about-the-purchaser/purchaser-overview/remove-purchaser/:purchaserId        controllers.purchaser.PurchaserOverviewController.removePurchaser(purchaserId: String)
+GET         /about-the-vendor/vendor-overview                                             controllers.vendor.VendorOverviewController.onPageLoad(mode: Mode = NormalMode, paginationIndex: Int ?= 1)
+POST        /about-the-vendor/vendor-overview                                             controllers.vendor.VendorOverviewController.onSubmit(mode: Mode = NormalMode)
 
-GET         /about-the-purchasers-agent/agent-address-lookup                             controllers.purchaserAgent.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
-GET         /about-the-purchasers-agent/agent-address-return                             controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
-GET         /about-the-purchasers-agent/agent-address-return/change                      controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-vendor/vendor-overview/change-vendor/:vendorId                     controllers.vendor.VendorOverviewController.changeVendor(vendorId: String)
+GET         /about-the-vendor/vendor-overview/remove-vendor/:vendorId                     controllers.vendor.VendorOverviewController.removeVendor(vendorId: String)
 
-GET         /about-the-purchasers-agent/add-agent-contact-details                        controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchasers-agent/add-agent-contact-details                        controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchasers-agent/add-agent-contact-details/change                 controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchasers-agent/add-agent-contact-details/change                 controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/before-you-start                                            controllers.vendor.VendorBeforeYouStartController.onPageLoad()
 
-GET         /about-the-purchasers-agent/agent-name                                       controllers.purchaserAgent.PurchaserAgentNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchasers-agent/agent-name                                       controllers.purchaserAgent.PurchaserAgentNameController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchasers-agent/agent-name/change                                controllers.purchaserAgent.PurchaserAgentNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchasers-agent/agent-name/change                                controllers.purchaserAgent.PurchaserAgentNameController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/enter-agent-reference-number                                controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/enter-agent-reference-number                                controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/enter-agent-reference-number/change                         controllers.vendor.VendorAgentsReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/enter-agent-reference-number/change                         controllers.vendor.VendorAgentsReferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-the-purchasers-agent/enter-agent-contact-details                      controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchasers-agent/enter-agent-contact-details                      controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchasers-agent/enter-agent-contact-details/change               controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchasers-agent/enter-agent-contact-details/change               controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendor/remove-vendor                                               controllers.vendor.RemoveVendorController.onPageLoad()
+POST        /about-the-vendor/remove-vendor                                               controllers.vendor.RemoveVendorController.onSubmit()
 
-GET         /no-enrolment                                                                controllers.NoSdltEnrolmentErrorPageController.onPageLoad()
+GET         /about-the-vendor/agent-address-lookup                                        controllers.vendor.VendorAgentAddressController.redirectToAddressLookupVendorAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-vendor/agent-address-return                                        controllers.vendor.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-vendor/agent-address-return/change                                 controllers.vendor.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
 
-GET         /about-the-purchasers-agent/add-agent-reference-number                       controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchasers-agent/add-agent-reference-number                       controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchasers-agent/add-agent-reference-number/change                controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchasers-agent/add-agent-reference-number/change                controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-vendors-agent/add-agent-contact-details                            controllers.vendorAgent.AddVendorAgentContactDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendors-agent/add-agent-contact-details                            controllers.vendorAgent.AddVendorAgentContactDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendors-agent/add-agent-contact-details/change                     controllers.vendorAgent.AddVendorAgentContactDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendors-agent/add-agent-contact-details/change                     controllers.vendorAgent.AddVendorAgentContactDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /about-the-purchaser/remove-purchaser                                         controllers.purchaser.PurchaserRemoveController.onPageLoad(mode: Mode = NormalMode)
-POST       /about-the-purchaser/remove-purchaser                                         controllers.purchaser.PurchaserRemoveController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/before-you-start                                         controllers.purchaser.PurchaserBeforeYouStartController.onPageLoad()
+
+GET         /about-the-purchaser/confirm-purchaser-name                                   controllers.purchaser.ConfirmNameOfThePurchaserController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/confirm-purchaser-name                                   controllers.purchaser.ConfirmNameOfThePurchaserController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/confirm-purchaser-name/change                            controllers.purchaser.ConfirmNameOfThePurchaserController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/confirm-purchaser-name/change                            controllers.purchaser.ConfirmNameOfThePurchaserController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/who-is-making-the-purchase                               controllers.purchaser.WhoIsMakingThePurchaseController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/who-is-making-the-purchase                               controllers.purchaser.WhoIsMakingThePurchaseController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/who-is-making-the-purchase/change                        controllers.purchaser.WhoIsMakingThePurchaseController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/who-is-making-the-purchase/change                        controllers.purchaser.WhoIsMakingThePurchaseController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/purchaser-name                                           controllers.purchaser.NameOfPurchaserController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/purchaser-name                                           controllers.purchaser.NameOfPurchaserController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/purchaser-name/change                                    controllers.purchaser.NameOfPurchaserController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/purchaser-name/change                                    controllers.purchaser.NameOfPurchaserController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/purchaser-address-lookup                                 controllers.purchaser.PurchaserAddressController.redirectToAddressLookupPurchaser(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-purchaser/purchaser-address-return                                 controllers.purchaser.PurchaserAddressController.addressLookupCallbackPurchaser(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-purchaser/purchaser-address-return/change                          controllers.purchaser.PurchaserAddressController.addressLookupCallbackChangePurchaser(id: String ?= "", mode: Mode = NormalMode)
+
+GET         /about-the-purchaser/form-of-id-individual                                    controllers.purchaser.PurchaserFormOfIdIndividualController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/form-of-id-individual                                    controllers.purchaser.PurchaserFormOfIdIndividualController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/form-of-id-individual/change                             controllers.purchaser.PurchaserFormOfIdIndividualController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/form-of-id-individual/change                             controllers.purchaser.PurchaserFormOfIdIndividualController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/date-of-birth                                            controllers.purchaser.PurchaserDateOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/date-of-birth                                            controllers.purchaser.PurchaserDateOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/date-of-birth/change                                     controllers.purchaser.PurchaserDateOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/date-of-birth/change                                     controllers.purchaser.PurchaserDateOfBirthController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-vendor/enter-agent-contact-details                                 controllers.vendor.VendorAgentsContactDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/enter-agent-contact-details                                 controllers.vendor.VendorAgentsContactDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/enter-agent-contact-details/change                          controllers.vendor.VendorAgentsContactDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/enter-agent-contact-details/change                          controllers.vendor.VendorAgentsContactDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-vendor/add-agent-reference-number                                  controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-vendor/add-agent-reference-number                                  controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendor/add-agent-reference-number/change                           controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendor/add-agent-reference-number/change                           controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-vendor/check-answers                                               controllers.vendor.VendorCheckYourAnswersController.onPageLoad()
+POST        /about-the-vendor/check-answers                                               controllers.vendor.VendorCheckYourAnswersController.onSubmit()
+
+GET         /about-the-purchaser/add-purchaser-phone-number                               controllers.purchaser.AddPurchaserPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/add-purchaser-phone-number                               controllers.purchaser.AddPurchaserPhoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/add-purchaser-phone-number/change                        controllers.purchaser.AddPurchaserPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/add-purchaser-phone-number/change                        controllers.purchaser.AddPurchaserPhoneNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/enter-purchaser-phone-number                             controllers.purchaser.EnterPurchaserPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/enter-purchaser-phone-number                             controllers.purchaser.EnterPurchaserPhoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/enter-purchaser-phone-number/change                      controllers.purchaser.EnterPurchaserPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/enter-purchaser-phone-number/change                      controllers.purchaser.EnterPurchaserPhoneNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/enter-national-insurance-number                          controllers.purchaser.PurchaserNationalInsuranceController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/enter-national-insurance-number                          controllers.purchaser.PurchaserNationalInsuranceController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/enter-national-insurance-number/change                   controllers.purchaser.PurchaserNationalInsuranceController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/enter-national-insurance-number/change                   controllers.purchaser.PurchaserNationalInsuranceController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/add-national-insurance-number                            controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/add-national-insurance-number                            controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/add-national-insurance-number/change                     controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/add-national-insurance-number/change                     controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/confirm-purchaser-identity                               controllers.purchaser.PurchaserConfirmIdentityController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/confirm-purchaser-identity                               controllers.purchaser.PurchaserConfirmIdentityController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/confirm-purchaser-identity/change                        controllers.purchaser.PurchaserConfirmIdentityController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/confirm-purchaser-identity/change                        controllers.purchaser.PurchaserConfirmIdentityController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/does-purchaser-have-ni                                   controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/does-purchaser-have-ni                                   controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/does-purchaser-have-ni/change                            controllers.purchaser.DoesPurchaserHaveNIController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/does-purchaser-have-ni/change                            controllers.purchaser.DoesPurchaserHaveNIController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/partnership-utr                                          controllers.purchaser.PurchaserPartnershipUtrController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/partnership-utr                                          controllers.purchaser.PurchaserPartnershipUtrController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/partnership-utr/change                                   controllers.purchaser.PurchaserPartnershipUtrController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/partnership-utr/change                                   controllers.purchaser.PurchaserPartnershipUtrController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/vat-registration-number                                  controllers.purchaser.RegistrationNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/vat-registration-number                                  controllers.purchaser.RegistrationNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/vat-registration-number/change                           controllers.purchaser.RegistrationNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/vat-registration-number/change                           controllers.purchaser.RegistrationNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/corporation-tax-utr                                      controllers.purchaser.PurchaserCorporationTaxUTRController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/corporation-tax-utr                                      controllers.purchaser.PurchaserCorporationTaxUTRController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/corporation-tax-utr/change                               controllers.purchaser.PurchaserCorporationTaxUTRController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/corporation-tax-utr/change                               controllers.purchaser.PurchaserCorporationTaxUTRController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/form-of-id-company                                       controllers.purchaser.CompanyFormOfIdController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/form-of-id-company                                       controllers.purchaser.CompanyFormOfIdController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/form-of-id-company/change                                controllers.purchaser.CompanyFormOfIdController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/form-of-id-company/change                                controllers.purchaser.CompanyFormOfIdController.onSubmit(mode: Mode = CheckMode)
+
+
+GET         /about-the-purchaser/type-of-company                                          controllers.purchaser.PurchaserTypeOfCompanyController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/type-of-company                                          controllers.purchaser.PurchaserTypeOfCompanyController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/type-of-company/change                                   controllers.purchaser.PurchaserTypeOfCompanyController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/type-of-company/change                                   controllers.purchaser.PurchaserTypeOfCompanyController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/acting-as-a-trustee                                      controllers.purchaser.IsPurchaserActingAsTrusteeController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/acting-as-a-trustee                                      controllers.purchaser.IsPurchaserActingAsTrusteeController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/acting-as-a-trustee/change                               controllers.purchaser.IsPurchaserActingAsTrusteeController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/acting-as-a-trustee/change                               controllers.purchaser.IsPurchaserActingAsTrusteeController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/purchaser-and-vendor-connected                           controllers.purchaser.PurchaserAndVendorConnectedController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/purchaser-and-vendor-connected                           controllers.purchaser.PurchaserAndVendorConnectedController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/purchaser-and-vendor-connected/change                    controllers.purchaser.PurchaserAndVendorConnectedController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/purchaser-and-vendor-connected/change                    controllers.purchaser.PurchaserAndVendorConnectedController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchasers-agent/before-you-start                                  controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/before-you-start                                  controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/before-you-start/change                           controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/before-you-start/change                           controllers.purchaserAgent.PurchaserAgentBeforeYouStartController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/purchaser-overview                                       controllers.purchaser.PurchaserOverviewController.onPageLoad(mode: Mode = NormalMode, paginationIndex: Int ?= 1)
+POST        /about-the-purchaser/purchaser-overview                                       controllers.purchaser.PurchaserOverviewController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/purchaser-overview/change-purchaser/:purchaserId         controllers.purchaser.PurchaserOverviewController.changePurchaser(purchaserId: String)
+GET         /about-the-purchaser/purchaser-overview/remove-purchaser/:purchaserId         controllers.purchaser.PurchaserOverviewController.removePurchaser(purchaserId: String)
+
+GET         /about-the-purchasers-agent/agent-address-lookup                              controllers.purchaserAgent.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-purchasers-agent/agent-address-return                              controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/agent-address-return/change                       controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
+
+GET         /about-the-purchasers-agent/add-agent-contact-details                         controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/add-agent-contact-details                         controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/add-agent-contact-details/change                  controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/add-agent-contact-details/change                  controllers.purchaserAgent.AddContactDetailsForPurchaserAgentController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchasers-agent/agent-name                                        controllers.purchaserAgent.PurchaserAgentNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/agent-name                                        controllers.purchaserAgent.PurchaserAgentNameController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/agent-name/change                                 controllers.purchaserAgent.PurchaserAgentNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/agent-name/change                                 controllers.purchaserAgent.PurchaserAgentNameController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchasers-agent/enter-agent-contact-details                       controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/enter-agent-contact-details                       controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/enter-agent-contact-details/change                controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/enter-agent-contact-details/change                controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET         /no-enrolment                                                                 controllers.NoSdltEnrolmentErrorPageController.onPageLoad()
+
+GET         /about-the-purchasers-agent/add-agent-reference-number                        controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/add-agent-reference-number                        controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/add-agent-reference-number/change                 controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/add-agent-reference-number/change                 controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-purchaser/remove-purchaser                                         controllers.purchaser.PurchaserRemoveController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/remove-purchaser                                         controllers.purchaser.PurchaserRemoveController.onSubmit(mode: Mode = NormalMode)
 
 GET         /about-the-purchasers-agent/enter-agent-reference-number                      controllers.purchaserAgent.PurchaserAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchasers-agent/enter-agent-reference-number                      controllers.purchaserAgent.PurchaserAgentReferenceController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-purchasers-agent/enter-agent-reference-number/change               controllers.purchaserAgent.PurchaserAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-purchasers-agent/enter-agent-reference-number/change               controllers.purchaserAgent.PurchaserAgentReferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET        /about-the-purchasers-agent/select-agent                                      controllers.purchaserAgent.SelectPurchaserAgentController.onPageLoad(mode: Mode = NormalMode)
-POST       /about-the-purchasers-agent/select-agent                                      controllers.purchaserAgent.SelectPurchaserAgentController.onSubmit(mode: Mode = NormalMode)
-GET        /about-the-purchasers-agent/select-agent/change                               controllers.purchaserAgent.SelectPurchaserAgentController.onPageLoad(mode: Mode = CheckMode)
-POST       /about-the-purchasers-agent/select-agent/change                               controllers.purchaserAgent.SelectPurchaserAgentController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-purchasers-agent/select-agent                                      controllers.purchaserAgent.SelectPurchaserAgentController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchasers-agent/select-agent                                      controllers.purchaserAgent.SelectPurchaserAgentController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchasers-agent/select-agent/change                               controllers.purchaserAgent.SelectPurchaserAgentController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchasers-agent/select-agent/change                               controllers.purchaserAgent.SelectPurchaserAgentController.onSubmit(mode: Mode = CheckMode)
 
-GET        /about-the-purchaser/check-answers                          controllers.purchaser.PurchaserCheckYourAnswersController.onPageLoad()
-POST       /about-the-purchaser/check-answers                          controllers.purchaser.PurchaserCheckYourAnswersController.onSubmit()
+GET         /about-the-purchaser/check-answers                                            controllers.purchaser.PurchaserCheckYourAnswersController.onPageLoad()
+POST        /about-the-purchaser/check-answers                                            controllers.purchaser.PurchaserCheckYourAnswersController.onSubmit()
 
 GET         /about-the-purchasers-agent/agent-authorised-for-correspondence               controllers.purchaserAgent.PurchaserAgentAuthorisedController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchasers-agent/agent-authorised-for-correspondence               controllers.purchaserAgent.PurchaserAgentAuthorisedController.onSubmit(mode: Mode = NormalMode)

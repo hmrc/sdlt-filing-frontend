@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.vendorAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.vendor.AddVendorAgentContactDetailsPage
+import pages.vendorAgent.AddVendorAgentContactDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
@@ -32,11 +32,11 @@ object AddVendorAgentContactDetailsSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "agent.addVendorAgentContactDetails.checkYourAnswersLabel",
+          key     = "vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendor.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("agent.addVendorAgentContactDetails.change.hidden"))
+            ActionItemViewModel("site.change", controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("vendorAgent.addVendorAgentContactDetails.change.hidden"))
           )
         )
     }

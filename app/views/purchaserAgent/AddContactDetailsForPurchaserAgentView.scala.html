@@ -18,48 +18,48 @@
 @import views.html.components.Caption
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-govukErrorSummary: GovukErrorSummary,
-govukRadios: GovukRadios,
-govukButton: GovukButton,
-caption: Caption
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaserAgent.addContactDetailsForPurchaserAgent.title"), section = Some(messages("site.purchaserAgent.caption"))) ) {
+@layout(pageTitle = title(form, messages("purchaserAgent.addContactDetailsForPurchaserAgent.title"), section = Some(messages("site.purchaserAgent.caption")))) {
 
-@formHelper(action = controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form))
-}
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-@caption(messages("site.purchaserAgent.caption"))
+        @caption(messages("site.purchaserAgent.caption"))
 
-@govukRadios(
-RadiosViewModel(
-field  = form("value"),
-legend = LegendViewModel(messages("purchaserAgent.addContactDetailsForPurchaserAgent.heading", agentName)).asPageHeading(size = Large),
-items = Seq(
-RadioItem(
-value = Some("true"),
-content = Text(messages("site.yes"))
-),
-RadioItem(
-value = Some("false"),
-content = Text(messages("site.no"))
-)
-)
-).withHint(
-HintViewModel(
-content = HtmlContent(messages("agent.addVendorAgentContactDetails.hint.radio", agentName))
-)
-))
+        @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(messages("purchaserAgent.addContactDetailsForPurchaserAgent.heading", agentName)).asPageHeading(size = Large),
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
+            ).withHint(
+                HintViewModel(
+                    content = HtmlContent(messages("purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio", agentName))
+                )
+            ))
 
-@govukButton(
-ButtonViewModel(messages("site.save.continue"))
-)
-}
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
+    }
 }

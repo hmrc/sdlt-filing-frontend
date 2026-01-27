@@ -28,20 +28,20 @@
 
 @(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("agent.addVendorAgentContactDetails.title", agentName))) {
+@layout(pageTitle = title(form, messages("vendorAgent.addVendorAgentContactDetails.title", agentName))) {
 
-    @formHelper(action = controllers.vendor.routes.AddVendorAgentContactDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @caption(messages("site.vendor.caption"))
+        @caption(messages("site.vendorAgent.caption"))
 
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("agent.addVendorAgentContactDetails.heading", agentName)).asPageHeading(size = Large),
+                legend = LegendViewModel(messages("vendorAgent.addVendorAgentContactDetails.heading", agentName)).asPageHeading(size = Large),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),
@@ -52,7 +52,7 @@
                         content = Text(messages("site.no"))
                     )
                 )
-            ).withHint(HintViewModel(HtmlContent(Html(messages("agent.addVendorAgentContactDetails.hint.radio", agentName)))))
+            ).withHint(HintViewModel(HtmlContent(Html(messages("vendorAgent.addVendorAgentContactDetails.hint.radio", agentName)))))
         )
 
         @govukButton(
