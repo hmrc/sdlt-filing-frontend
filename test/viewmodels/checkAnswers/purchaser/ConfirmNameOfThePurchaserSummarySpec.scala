@@ -38,7 +38,7 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
 
-          val result = ConfirmNameOfThePurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = ConfirmNameOfThePurchaserSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("nameOfThePurchaser.checkYourAnswersLabel")
 
@@ -63,7 +63,7 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
 
-          val result = ConfirmNameOfThePurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = ConfirmNameOfThePurchaserSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("nameOfThePurchaser.checkYourAnswersLabel")
 
@@ -85,9 +85,10 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = ConfirmNameOfThePurchaserSummary.row(emptyUserAnswers)
+          val result = ConfirmNameOfThePurchaserSummary.row(Some(emptyUserAnswers))
 
-          result mustBe None
+          result.key.content.asHtml.toString() mustEqual msgs("nameOfThePurchaser.checkYourAnswersLabel")
+
         }
       }
     }
@@ -100,7 +101,7 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
 
-        val result = ConfirmNameOfThePurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = ConfirmNameOfThePurchaserSummary.row(Some(userAnswers))
 
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onPageLoad(CheckMode).url
       }
@@ -114,7 +115,7 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
 
-        val result = ConfirmNameOfThePurchaserSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = ConfirmNameOfThePurchaserSummary.row(Some(userAnswers))
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must not include "<script>"

@@ -101,8 +101,8 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
     case CompanyFormOfIdPage =>
       _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
-    case PurchaserAndVendorConnectedPage => //TODO: update post pr-cya - DTR-1788 page created - (DTR-1687 -Sprint 5)
-      _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case PurchaserAndVendorConnectedPage =>
+      _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case ConfirmNameOfThePurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
@@ -126,9 +126,22 @@ class Navigator @Inject()() {
   }
   
   private val checkRouteMap: Page => UserAnswers => Call = {
-    //TODO: Change to Purchaser CYA when created - DTR-1788
-    case WhoIsMakingThePurchasePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-    case NameOfPurchaserPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+    case WhoIsMakingThePurchasePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case NameOfPurchaserPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case AddPurchaserPhoneNumberPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case EnterPurchaserPhoneNumberPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case PurchaserAndVendorConnectedPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case IsPurchaserActingAsTrusteePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case CompanyFormOfIdPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case PurchaserFormOfIdIndividualPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case ConfirmNameOfThePurchaserPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case DoesPurchaserHaveNIPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case PurchaserConfirmIdentityPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case PurchaserUTRPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case PurchaserDateOfBirthPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case PurchaserNationalInsurancePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case PurchaserTypeOfCompanyPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case RegistrationNumberPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
 
     case VendorOrCompanyNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case AgentNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
@@ -137,8 +150,10 @@ class Navigator @Inject()() {
 
     case PurchaserIsIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case PurchaserSurnameOrCompanyNamePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-    case PurchaserFormOfIdIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+
+
     case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }
 

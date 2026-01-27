@@ -62,7 +62,8 @@ class PurchaserTypeOfCompanyController @Inject()(
                 form.fill(PurchaserTypeOfCompanyAnswers.toSet(answersObject))
             }
             Ok(view(preparedForm, mode, purchaserName.fullName))
-        }
+        },
+        mode = mode
       )
   }
 

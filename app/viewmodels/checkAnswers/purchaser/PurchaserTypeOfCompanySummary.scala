@@ -26,15 +26,15 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object PurchaserTypeOfCompanySummary  {
+object PurchaserTypeOfCompanySummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserTypeOfCompanyPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(PurchaserTypeOfCompanyPage)).map {
       answersObject =>
 
         val selectedItems = PurchaserTypeOfCompanyAnswers.toSet(answersObject)
           .map(_.toString)
-          .toSeq
+          .toSeq.sorted
 
         val value = ValueViewModel(
           HtmlContent(
@@ -53,4 +53,17 @@ object PurchaserTypeOfCompanySummary  {
               .withVisuallyHiddenText(messages("purchaser.purchaserTypeOfCompany.change.hidden"))
           )
         )
-    }}
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserTypeOfCompany.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaser.purchaserTypeOfCompany.checkYourAnswersLabel",
+        value = value
+      )
+    }
+}
+

@@ -61,7 +61,8 @@ class PurchaserConfirmIdentityController @Inject()(
           purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
             purchaserType = WhoIsMakingThePurchase.Company,
             userAnswers = request.userAnswers,
-            continueRoute = Ok(view(preparedForm, mode, purchaserName.fullName)))
+            continueRoute = Ok(view(preparedForm, mode, purchaserName.fullName)),
+            mode = mode)
       }
   }
 

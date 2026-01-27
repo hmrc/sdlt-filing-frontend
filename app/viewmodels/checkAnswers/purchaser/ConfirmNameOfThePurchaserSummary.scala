@@ -27,8 +27,8 @@ import viewmodels.implicits.*
 
 object ConfirmNameOfThePurchaserSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ConfirmNameOfThePurchaserPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(ConfirmNameOfThePurchaserPage)).map {
       answer =>
 
         val value = ValueViewModel(
@@ -45,5 +45,16 @@ object ConfirmNameOfThePurchaserSummary {
               .withVisuallyHiddenText(messages("nameOfThePurchaser.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.confirmNameOfThePurchaser.Missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "nameOfThePurchaser.checkYourAnswersLabel",
+        value = value
+      )
     }
 }

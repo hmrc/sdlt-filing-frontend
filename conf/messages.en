@@ -76,14 +76,14 @@ index.heading                                                                   
 index.guidance                                                                      = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
 # Error Pages
-site.error.noReturnReference.title                                                       = You cannot reach this page
-site.error.noReturnReference.heading                                                     = You cannot reach this page
-site.error.noReturnReference.hint                                                        = Select what you would like to do next
-site.error.noReturnReference.fileNewReturn                                               = File a new SDLT return
-site.error.noReturnReference.manageTaxes                                                 = Manage your Stamp Taxes
-site.error.noReturnReference.checkYourAnswersLabel                                       = You cannot reach this page
-site.error.noReturnReference.error.required                                              = Please select an option
-site.error.noReturnReference.change.hidden                                               = NoReturnReference
+site.error.noReturnReference.title                                                  = You cannot reach this page
+site.error.noReturnReference.heading                                                = You cannot reach this page
+site.error.noReturnReference.hint                                                   = Select what you would like to do next
+site.error.noReturnReference.fileNewReturn                                          = File a new SDLT return
+site.error.noReturnReference.manageTaxes                                            = Manage your Stamp Taxes
+site.error.noReturnReference.checkYourAnswersLabel                                  = You cannot reach this page
+site.error.noReturnReference.error.required                                         = Please select an option
+site.error.noReturnReference.change.hidden                                          = NoReturnReference
 
 # Task List
 taskList.title                                                                      = returnTaskList
@@ -220,30 +220,29 @@ addressLookup.purchaserQuestionsAddress.countryPicker.title                     
 addressLookup.purchaserQuestionsAddress.countryPicker.heading                       = Find {0}’s address
 
 # Purchaser Agent Address Lookup
-addressLookup.purchaserAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the purchaser’s agent
-addressLookup.purchaserAgentQuestionsAddress.lookupPage.heading                        = Find {0}’s address
-addressLookup.purchaserAgentQuestionsAddress.lookupPage.filterLabel                    = Property name or number (optional)
-addressLookup.purchaserAgentQuestionsAddress.lookupPage.submitLabel                    = Continue
-addressLookup.purchaserAgentQuestionsAddress.lookupPage.manualAddressLinkText          = Enter the address manually
-addressLookup.purchaserAgentQuestionsAddress.selectPage.title                          = Choose {0}’s address - About the purchaser’s agent
-addressLookup.purchaserAgentQuestionsAddress.selectPage.heading                        = Choose {0}’s address
-addressLookup.purchaserAgentQuestionsAddress.selectPage.editAddressLinkText            = Enter address manually
-addressLookup.purchaserAgentQuestionsAddress.selectPage.submitLabel                    = Continue
-addressLookup.purchaserAgentQuestionsAddress.editPage.title                            = Enter {0}’s address - About the purchaser’s agent
-addressLookup.purchaserAgentQuestionsAddress.editPage.heading                          = Enter {0}’s address
-addressLookup.purchaserAgentQuestionsAddress.editPage.line1Label                       = Address line 1
-addressLookup.purchaserAgentQuestionsAddress.editPage.line2Label                       = Address line 2
-addressLookup.purchaserAgentQuestionsAddress.editPage.line3Label                       = Address line 3
-addressLookup.purchaserAgentQuestionsAddress.editPage.postcodeLabel                    = Postcode
-addressLookup.purchaserAgentQuestionsAddress.editPage.countryLabel                     = County
-addressLookup.purchaserAgentQuestionsAddress.editPage.submitLabel                      = Continue
-addressLookup.purchaserAgentQuestionsAddress.confirmPage.title                         = Review and confirm {0}’s address - About the purchaser’s agent
-addressLookup.purchaserAgentQuestionsAddress.confirmPage.heading                       = Review and confirm {0}’s address
-addressLookup.purchaserAgentQuestionsAddress.confirmPage.changeLinkText                = Edit this address
-addressLookup.purchaserAgentQuestionsAddress.confirmPage.submitLabel                   = Confirm address
-addressLookup.purchaserAgentQuestionsAddress.countryPicker.title                       = Find {0}’s address - About the purchaser’s agent
-addressLookup.purchaserAgentQuestionsAddress.countryPicker.heading                     = Find {0}’s address
-
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.title                       = Find {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.heading                     = Find {0}’s address
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.filterLabel                 = Property name or number (optional)
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.submitLabel                 = Continue
+addressLookup.purchaserAgentQuestionsAddress.lookupPage.manualAddressLinkText       = Enter the address manually
+addressLookup.purchaserAgentQuestionsAddress.selectPage.title                       = Choose {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.selectPage.heading                     = Choose {0}’s address
+addressLookup.purchaserAgentQuestionsAddress.selectPage.editAddressLinkText         = Enter address manually
+addressLookup.purchaserAgentQuestionsAddress.selectPage.submitLabel                 = Continue
+addressLookup.purchaserAgentQuestionsAddress.editPage.title                         = Enter {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.editPage.heading                       = Enter {0}’s address
+addressLookup.purchaserAgentQuestionsAddress.editPage.line1Label                    = Address line 1
+addressLookup.purchaserAgentQuestionsAddress.editPage.line2Label                    = Address line 2
+addressLookup.purchaserAgentQuestionsAddress.editPage.line3Label                    = Address line 3
+addressLookup.purchaserAgentQuestionsAddress.editPage.postcodeLabel                 = Postcode
+addressLookup.purchaserAgentQuestionsAddress.editPage.countryLabel                  = County
+addressLookup.purchaserAgentQuestionsAddress.editPage.submitLabel                   = Continue
+addressLookup.purchaserAgentQuestionsAddress.confirmPage.title                      = Review and confirm {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.confirmPage.heading                    = Review and confirm {0}’s address
+addressLookup.purchaserAgentQuestionsAddress.confirmPage.changeLinkText             = Edit this address
+addressLookup.purchaserAgentQuestionsAddress.confirmPage.submitLabel                = Confirm address
+addressLookup.purchaserAgentQuestionsAddress.countryPicker.title                    = Find {0}’s address - About the purchaser’s agent
+addressLookup.purchaserAgentQuestionsAddress.countryPicker.heading                  = Find {0}’s addre
 # Vendor Agent Address Lookup
 addressLookup.vendorAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.lookupPage.heading                        = Find {0}’s address
@@ -435,9 +434,12 @@ purchaser.addPurchaserPhoneNumber.error.required                                
 purchaser.addPurchaserPhoneNumber.title                                             = Do you want to add a phone number for the purchaser? - About the purchaser
 purchaser.addPurchaserPhoneNumber.heading                                           = Do you want to add a phone number for {0}?
 purchaser.addPurchaserPhoneNumber.hint                                              = We’ll only use this to contact {0} about this return
-purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel                             = Do you want to add a phone number for the purchaser?
-purchaser.addPurchaserPhoneNumber.change.hidden                                     = Do you want to add a phone number for the purchaser?
+purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel                             = Do you want to add a phone number for {0}?
+purchaser.addPurchaserPhoneNumber.change.hidden                                     = Purchaser phone number yes or no
 
+purchaser.checkYourAnswers.purchaserAddress.label                                   = Address
+purchaser.checkYourAnswers.purchaserAddress.addressMissing                          = Enter purchaser address
+purchaser.checkYourAnswers.purchaserAddress.hidden                                  = Purchaser address
 purchaser.address.checkYourAnswersLabel                                             = Property address
 purchaser.address.change.hidden                                                     = Property address
 purchaser.address.link.message                                                      = Enter property address
@@ -460,7 +462,7 @@ purchaser.confirmIdentity.corporationTaxUniqueTaxpayerReference                 
 purchaser.confirmIdentity.partnershipUniqueTaxpayerReference                        = Partnership Unique Taxpayer Reference (UTR)
 purchaser.confirmIdentity.confirmIdentityDivider                                    = or
 purchaser.confirmIdentity.anotherFormOfId                                           = Another form of ID
-purchaser.confirmIdentity.checkYourAnswersLabel                                     = What information can you provide about the purchaser?
+purchaser.confirmIdentity.checkYourAnswersLabel                                     = Form of ID
 purchaser.confirmIdentity.error.required                                            = Please select what information can you provide about the purchaser
 purchaser.confirmIdentity.change.hidden                                             = Purchaser information
 
@@ -474,12 +476,12 @@ purchaser.corporationTaxUTR.h1                                                  
 purchaser.corporationTaxUTR.p                                                       = It will be on tax returns and other letters about Corporation Tax. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 purchaser.corporationTaxUTR.h2                                                      = What is {0}’s Corporation Tax UTR?
 purchaser.corporationTaxUTR.hint                                                    = Their UTR should be 10 digits long
-purchaser.corporationTaxUTR.checkYourAnswersLabel                                   = Corporation Tax Unique Taxpayer Reference (UTR)
+purchaser.corporationTaxUTR.checkYourAnswersLabel                                   = UTR
 purchaser.corporationTaxUTR.error.required                                          = Enter Corporation Tax Unique Taxpayer Reference (UTR)
 purchaser.corporationTaxUTR.error.length                                            = Corporation Tax Unique Taxpayer Reference (UTR) must be 10 characters
 purchaser.corporationTaxUTR.error.regex.invalid                                     = Enter a valid UTR
 purchaser.corporationTaxUTR.error.invalid                                           = Enter a valid UTR
-purchaser.corporationTaxUTR.change.hidden                                           = Corporation Tax Unique Taxpayer Reference (UTR)
+purchaser.corporationTaxUTR.change.hidden                                           = UTR
 
 purchaser.dateOfBirth.title                                                         = What is the purchaser’s date of birth? - About the purchaser
 purchaser.dateOfBirth.heading                                                       = What is {0}’s date of birth?
@@ -490,20 +492,22 @@ purchaser.dateOfBirth.error.required.two                                        
 purchaser.dateOfBirth.error.required                                                = The date must include {0}
 purchaser.dateOfBirth.error.invalid                                                 = Enter a valid date
 purchaser.dateOfBirth.change.hidden                                                 = Purchaser’s date of birth
+purchaser.dateOfBirth.error.date.range.max                                          = The date can’t be in the future
 
 purchaser.doesPurchaserHaveNI.title                                                 = Does the purchaser have a National Insurance number? - About the purchaser
 purchaser.doesPurchaserHaveNI.heading                                               = Does {0} have a National Insurance number?
-purchaser.doesPurchaserHaveNI.checkYourAnswersLabel                                 = Does the purchaser have a National Insurance number?
+purchaser.doesPurchaserHaveNI.checkYourAnswersLabel                                 = Does {0} have a National Insurance number?
 purchaser.doesPurchaserHaveNI.change.hidden                                         = Purchaser National Insurance number
 purchaser.doesPurchaserHaveNI.error.required                                        = Please select an option
 
 purchaser.enterPhoneNumber.title                                                    = What is the purchaser’s phone number? - About the purchaser
 purchaser.enterPhoneNumber.heading                                                  = What is {0}’s phone number?
 purchaser.enterPhoneNumber.hint                                                     = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
-purchaser.enterPhoneNumber.checkYourAnswersLabel                                    = What is the purchaser’s phone number?
+purchaser.enterPhoneNumber.checkYourAnswersLabel                                    = Contact number
 purchaser.enterPhoneNumber.error.required                                           = Please enter a value
 purchaser.enterPhoneNumber.error.length                                             = The phone number must be 14 characters or less
 purchaser.enterPhoneNumber.change.hidden                                            = What is the purchaser’s phone number?
+purchaser.enterPhoneNumber.change.hidden                                            = Purchaser contact number
 
 purchaser.formOfIdIndividual.title                                                  = Provide a form of ID for the purchaser - About the purchaser
 purchaser.formOfIdIndividual.heading                                                = Provide a form of ID for {0}
@@ -517,7 +521,7 @@ purchaser.formOfIdIndividual.li5                                                
 purchaser.formOfIdIndividual.p3                                                     = You must include country of issue
 purchaser.formOfIdIndividual.idNumberOrReference                                    = ID number or reference
 purchaser.formOfIdIndividual.countryIssued                                          = Country of issue
-purchaser.formOfIdIndividual.checkYourAnswersLabel                                  = PurchaserFormOfIdIndividual
+purchaser.formOfIdIndividual.checkYourAnswersLabel                                  = ID and country of issue
 purchaser.formOfIdIndividual.error.idNumberOrReference.required                     = Enter ID number or reference
 purchaser.formOfIdIndividual.error.idNumberOrReference.length                       = ID number or reference must be 14 characters or less
 purchaser.formOfIdIndividual.error.idNumberOrReference.invalid                      = ID number or reference is invalid
@@ -534,6 +538,8 @@ purchaser.individual.nameOfThePurchaser.heading                                 
 purchaser.individual.nameOfThePurchaser.firstName                                   = First name
 purchaser.individual.nameOfThePurchaser.middleName                                  = Middle names
 purchaser.individual.nameOfThePurchaser.surname                                     = Surname
+purchaser.nameOfThePurchaser.checkYourAnswersLabel                                  = Name
+purchaser.nameOfThePurchaser.change.hidden                                          = Purchaser name
 
 purchaser.name.form.regex.error                                                     = Invalid Error
 purchaser.name.form.no.input.error                                                  = Nothing has been added
@@ -542,7 +548,7 @@ purchaser.name.error.required                                                   
 purchaser.nationalInsurance.title                                                   = What is the purchaser’s National Insurance number? - About the purchaser
 purchaser.nationalInsurance.heading                                                 = What is {0}’s national insurance number?
 purchaser.nationalInsurance.hint                                                    = It’s on their National Insurance card, benefit letter, payslip or P60 - for example, QQ 12 34 56 C
-purchaser.nationalInsurance.checkYourAnswersLabel                                   = What is the purchaser’s National Insurance number?
+purchaser.nationalInsurance.checkYourAnswersLabel                                   = National Insurance number
 purchaser.nationalInsurance.error.required                                          = Please enter the national insurance number
 purchaser.nationalInsurance.error.length                                            = National insurance number must be {0} characters or less
 purchaser.nationalInsurance.error.invalid                                           = Please enter a valid national insurance number
@@ -574,12 +580,16 @@ purchaser.registrationNumber.hint                                               
 purchaser.whoIsMakingThePurchase.title                                              = Who is making the purchase? - About the purchaser
 purchaser.whoIsMakingThePurchase.heading                                            = Who is making the purchase?
 purchaser.whoIsMakingThePurchase.Company                                            = A company
+purchaser.whoIsMakingThePurchase.Company.checkYourAnswersLabel                      = Company
 purchaser.whoIsMakingThePurchase.Company.hintText                                   = This means any form of organisation, such as a company, council or charity
 purchaser.whoIsMakingThePurchase.Individual                                         = An individual
+purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel                   = Individual
+
 purchaser.whoIsMakingThePurchase.Individual.hintText                                = This means a person liable to pay Stamp Duty Land Tax (SDLT)
-purchaser.whoIsMakingThePurchase.checkYourAnswersLabel                              = Who is making the purchase?
+purchaser.whoIsMakingThePurchase.checkYourAnswersLabel                              = Type of purchaser
+purchaser.checkYourAnswers.whoIsMakingThePurchaser.Missing                          = Enter type of purchaser
 purchaser.whoIsMakingThePurchase.error.required                                     = Select an answer
-purchaser.whoIsMakingThePurchase.change.hidden                                      = Who is making the purchase?
+purchaser.whoIsMakingThePurchase.change.hidden                                      = Type of purchaser
 
 purchaser.companyFormOfId.title                                                     = Provide a form of ID for the purchaser - About the purchaser
 purchaser.companyFormOfId.heading                                                   = Provide a form of ID for {0}
@@ -589,7 +599,7 @@ purchaser.companyFormOfId.li2                                                   
 purchaser.companyFormOfId.li3                                                       = a registration number issued by any recognised local or national authority
 purchaser.companyFormOfId.referenceId                                               = ID number or reference
 purchaser.companyFormOfId.countryIssued                                             = Country of issue
-purchaser.companyFormOfId.checkYourAnswersLabel                                     = CompanyFormOfId
+purchaser.companyFormOfId.checkYourAnswersLabel                                     = ID and country of issue
 purchaser.companyFormOfId.error.referenceId.required                                = Enter ID number or reference
 purchaser.companyFormOfId.error.referenceId.length                                  = ID number or reference must be 14 characters or less
 purchaser.companyFormOfId.error.referenceId.invalid                                 = ID number or reference is invalid
@@ -617,15 +627,15 @@ purchaser.purchaserTypeOfCompany.otherIncludingCharity                          
 purchaser.purchaserTypeOfCompany.superannuationOrPensionFund                        = Superannuation or pension fund
 purchaser.purchaserTypeOfCompany.unincorporatedBuilder                              = Unincorporated builder
 purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                           = Unincorporated sole trader other than builder
-purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                              = What type of company is the purchaser? – About the purchaser
-purchaser.purchaserTypeOfCompany.error.required                                     = Select purchaserTypeOfCompany
-purchaser.purchaserTypeOfCompany.change.hidden                                      = PurchaserTypeOfCompany
+purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                              = Type of company
+purchaser.purchaserTypeOfCompany.error.required                                     = Select type of company
+purchaser.purchaserTypeOfCompany.change.hidden                                      = Purchaser type of company
 
 purchaser.purchaserAndVendorConnected.title                                         = Are the purchaser and the vendor connected? - About the purchaser
 purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor(s) connected?
-purchaser.purchaserAndVendorConnected.checkYourAnswersLabel                         = purchaserAndVendorConnected
+purchaser.purchaserAndVendorConnected.checkYourAnswersLabel                         = Are {0} and the vendor connected?
 purchaser.purchaserAndVendorConnected.error.required                                = Please select an option
-purchaser.purchaserAndVendorConnected.change.hidden                                 = PurchaserAndVendorConnected
+purchaser.purchaserAndVendorConnected.change.hidden                                 = Purchaser and vendor connected yes or no
 purchaser.purchaserAndVendorConnected.hint                                          = A purchaser and vendor can be connected in different ways, like a marriage, civil partnership, family link or business interest
 
 purchaser.purchaserRemove.title                                                     = Are you sure you want to remove the purchaser? – About the purchaser
@@ -646,9 +656,9 @@ purchaser.purchaserRemove.multi.subheading                                      
 
 purchaser.isPurchaserActingAsTrustee.title                                          = Is the purchaser acting as a trustee? - About the purchaser
 purchaser.isPurchaserActingAsTrustee.heading                                        = Is {0} acting as a trustee?
-purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is the purchaser acting as a trustee? - About the purchaser
+purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is {0} acting as a trustee?
 purchaser.isPurchaserActingAsTrustee.error.required                                 = Please select Yes or No
-purchaser.isPurchaserActingAsTrustee.change.hidden                                  = IsPurchaserActingAsTrustee
+purchaser.isPurchaserActingAsTrustee.change.hidden                                  = Purchaser acting as trustee yes or no
 
 # Purchaser Overview
 purchaser.purchaserOverview.title                                                   = Purchaser overview - About the purchaser
@@ -677,12 +687,38 @@ purchaserAgent.BeforeYouStart.b4                                                
 purchaserAgent.BeforeYouStart.b5                                                    = the agent’s authorisation to handle correspondence
 purchaserAgent.BeforeYouStart.subheading                                            = Do you want to add an agent for the purchaser?
 
-purchaserAgent.addContactDetailsForPurchaserAgent.title                            = Do you want to add contact details for the agent?
-purchaserAgent.addContactDetailsForPurchaserAgent.heading                          = Do you want to add contact details for {0}?
-purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel            = Do you want to add contact details for {0}?
-purchaserAgent.addContactDetailsForPurchaserAgent.error.required                   = Please select Yes or No
-purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                    = AddContactDetailsForPurchaserAgent
-purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                       = We'll only use these details to contact {0} about this return
+purchaser.checkYourAnswers.iSPurchaserActingAsTrustee.missing                       = Select answer
+purchaser.checkYourAnswers.companyFormOfId.missing                                  = Enter another form of ID
+purchaser.checkYourAnswers.IndividualFormOfId.missing                               = Enter another form of ID
+purchaser.checkYourAnswers.confirmNameOfThePurchaser.Missing                        = confirmNameOfThePurchaser
+purchaser.checkYourAnswers.doesPurchaserHaveNI.missing                              = Select answer
+purchaser.checkYourAnswers.nameOfPurchaser.missing                                  = Enter name
+purchaser.checkYourAnswers.purchaserAndVendorConnected.missing                      = Select answer
+purchaser.checkYourAnswers.purchaserDateOfBirth.missing                             = Enter date of birth
+purchaser.checkYourAnswers.purchaserNationalInsurance.missing                       = Enter National Insurance number
+purchaser.checkYourAnswers.purchaserTypeOfCompany.missing                           = Select type of company
+purchaser.checkYourAnswers.registrationNumber.missing                               = Enter registration number
+purchaser.checkYourAnswers.addPurchaserPhoneNumber.missing                          = Select answer
+purchaser.checkYourAnswers.confirmIdentity.missing                                  = Select answer
+purchaser.checkYourAnswers.enterPurchaserPhoneNumber.missing                        = Enter contact number
+purchaser.checkYourAnswers.purchaserCorporationTaxUTR.missing                       = Enter UTR
+
+
+site.error.noReturnReference.title                                                  = You cannot reach this page
+site.error.noReturnReference.heading                                                = You cannot reach this page
+site.error.noReturnReference.hint                                                   = Select what you would like to do next
+site.error.noReturnReference.fileNewReturn                                          = File a new SDLT return
+site.error.noReturnReference.manageTaxes                                            = Manage your Stamp Taxes
+site.error.noReturnReference.checkYourAnswersLabel                                  = You cannot reach this page
+site.error.noReturnReference.error.required                                         = Please select an option
+site.error.noReturnReference.change.hidden                                          = NoReturnReference
+
+purchaserAgent.addContactDetailsForPurchaserAgent.title                             = Do you want to add contact details for the agent?
+purchaserAgent.addContactDetailsForPurchaserAgent.heading                           = Do you want to add contact details for {0}?
+purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel             = Do you want to add contact details for {0}?
+purchaserAgent.addContactDetailsForPurchaserAgent.error.required                    = Please select Yes or No
+purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                     = AddContactDetailsForPurchaserAgent
+purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                        = We'll only use these details to contact {0} about this return
 
 purchaserAgent.name.title                                                           = What is the agent’s name?
 purchaserAgent.name.checkYourAnswersLabel                                           = What is the agent’s name?

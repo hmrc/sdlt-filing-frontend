@@ -20,14 +20,15 @@ import models.{CheckMode, UserAnswers}
 import pages.purchaser.RegistrationNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object RegistrationNumberSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RegistrationNumberPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(RegistrationNumberPage)).map {
       answer =>
 
         SummaryListRowViewModel(
@@ -38,5 +39,16 @@ object RegistrationNumberSummary  {
               .withVisuallyHiddenText(messages("purchaser.registrationNumber.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.RegistrationNumberController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.registrationNumber.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaser.registrationNumber.checkYourAnswersLabel",
+        value = value
+      )
     }
 }

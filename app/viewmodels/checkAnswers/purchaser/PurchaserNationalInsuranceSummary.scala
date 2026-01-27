@@ -27,8 +27,8 @@ import viewmodels.implicits.*
 
 object PurchaserNationalInsuranceSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserNationalInsurancePage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(PurchaserNationalInsurancePage)).map {
       answer =>
 
         SummaryListRowViewModel(
@@ -39,5 +39,16 @@ object PurchaserNationalInsuranceSummary  {
               .withVisuallyHiddenText(messages("purchaser.nationalInsurance.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserNationalInsurance.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaser.nationalInsurance.checkYourAnswersLabel",
+        value = value
+      )
     }
 }

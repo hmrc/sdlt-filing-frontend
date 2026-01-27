@@ -27,20 +27,33 @@ import viewmodels.implicits.*
 
 object NameOfPurchaserSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NameOfPurchaserPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
+    
+    val purchaserName = answers.flatMap(_.get(NameOfPurchaserPage))
+    answers.flatMap(_.get(NameOfPurchaserPage)).map {
       answer =>
         
-//reformat for check your answers when needed
-      val value = HtmlFormat.escape(answer.name).toString
+      val value = HtmlFormat.escape(answer.fullName).toString
 
         SummaryListRowViewModel(
-          key     = "nameOfPurchaser.checkYourAnswersLabel",
+          key     = messages("purchaser.nameOfThePurchaser.checkYourAnswersLabel",purchaserName),
           value   = ValueViewModel(HtmlContent(value)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("nameOfPurchaser.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaser.nameOfThePurchaser.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.nameOfPurchaser.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = messages("purchaser.nameOfThePurchaser.checkYourAnswersLabel",purchaserName),
+        value = value
+      )
     }
+  }
 }

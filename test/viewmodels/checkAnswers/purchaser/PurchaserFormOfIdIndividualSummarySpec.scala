@@ -39,7 +39,7 @@ class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", "Germany")).success.value
 
-          val result = PurchaserFormOfIdIndividualSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = PurchaserFormOfIdIndividualSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.formOfIdIndividual.checkYourAnswersLabel")
 
@@ -64,7 +64,7 @@ class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", "Germany")).success.value
 
-          val result = PurchaserFormOfIdIndividualSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = PurchaserFormOfIdIndividualSummary.row(Some(userAnswers))
 
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(CheckMode).url
         }

@@ -18,10 +18,14 @@ package models
 
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 
-class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues {
+import java.time.Instant
+
+class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues  {
 
   private val validSdltOrganisationJson = Json.obj(
     "isReturnUser" -> "true",
@@ -47,6 +51,292 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
     "isCompany" -> "false",
     "surname" -> "Smith",
     "forename1" -> "John"
+  )
+
+  private val validPurchaserCompanyObject = Purchaser(
+    purchaserID = Some("PUR123"),
+    returnID = Some("12345"),
+    isCompany = Some("YES"),
+    isTrustee = Some("YES"),
+    isConnectedToVendor = Some("YES"),
+    isRepresentedByAgent = None,
+    title = None,
+    surname = None,
+    forename1 = None,
+    forename2 = None,
+    companyName = Some("Company"),
+    houseNumber = None,
+    address1 = Some("Street 1"),
+    address2 = Some("Street 2"),
+    address3 = Some("Street 3"),
+    address4 = Some("Street 4"),
+    postcode = Some("CR7 8LU"),
+    phone = Some("+447874363636"),
+    nino = None,
+    purchaserResourceRef  = None,
+    nextPurchaserID = None,
+    lMigrated  = None,
+    createDate  = None,
+    lastUpdateDate = None,
+    isUkCompany = None,
+    hasNino = None,
+    dateOfBirth = None,
+    registrationNumber = None,
+    placeOfRegistration = None
+  )
+
+  private val userAnswersPurchaserCompany = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = None,
+    data = Json.obj(
+      "purchaserCurrent" -> Json.obj(
+        "purchaserAndCompanyId" -> Json.obj(
+          "purchaserID" -> "PUR123",
+          "companyDetailsID" -> "COMPDET001",
+        ),
+        "ConfirmNameOfThePurchaser" -> "yes",
+        "whoIsMakingThePurchase" -> "Company",
+        "nameOfPurchaser" -> Json.obj(
+          "forename1" -> JsNull,
+          "forename2" -> JsNull,
+          "name" -> "Company",
+        ),
+        "purchaserAddress" -> Json.obj(
+          "houseNumber" -> JsNull,
+          "line1" -> "Street 1",
+          "line2" -> "Street 2",
+          "line3" -> "Street 3",
+          "line4" -> "Street 4",
+          "line5" -> "Street 5",
+          "postcode" -> "CR7 8LU",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        ),
+        "addPurchaserPhoneNumber" -> true,
+        "enterPurchaserPhoneNumber" -> "+447874363636",
+        "doesPurchaserHaveNI" -> JsNull,
+        "nationalInsuranceNumber" -> JsNull,
+        "purchaserFormOfIdIndividual" -> JsNull,
+        "purchaserDateOfBirth" -> JsNull,
+        "purchaserConfirmIdentity" -> JsNull,
+        "registrationNumber" -> "VAT123",
+        "purchaserUTRPage" -> "UTR1234",
+        "purchaserFormOfIdCompany" -> JsNull,
+        "purchaserTypeOfCompany" -> Json.obj(
+          "bank" -> "YES",
+          "buildingAssociation" -> "NO",
+          "centralGovernment" -> "NO",
+          "individualOther" -> "NO",
+          "insuranceAssurance" -> "NO",
+          "localAuthority" -> "NO",
+          "partnership" -> "NO",
+          "propertyCompany" -> "NO",
+          "publicCorporation" -> "NO",
+          "otherCompany" -> "NO",
+          "otherFinancialInstitute" -> "NO",
+          "otherIncludingCharity" -> "NO",
+          "superannuationOrPensionFund" -> "NO",
+          "unincorporatedBuilder" -> "NO",
+          "unincorporatedSoleTrader" -> "NO"
+        ),
+        "isPurchaserActingAsTrustee" -> "yes",
+        "purchaserAndVendorConnected" -> "yes",
+      )),
+    lastUpdated = Instant.now)
+
+  private val userAnswersPurchaserCompanyWithMultipleTypes = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = None,
+    data = Json.obj(
+      "purchaserCurrent" -> Json.obj(
+        "purchaserAndCompanyId" -> Json.obj(
+          "purchaserID" -> "PUR123",
+          "companyDetailsID" -> "COMPDET001",
+        ),
+        "ConfirmNameOfThePurchaser" -> "yes",
+        "whoIsMakingThePurchase" -> "Company",
+        "nameOfPurchaser" -> Json.obj(
+          "forename1" -> JsNull,
+          "forename2" -> JsNull,
+          "name" -> "Company",
+        ),
+        "purchaserAddress" -> Json.obj(
+          "houseNumber" -> JsNull,
+          "line1" -> "Street 1",
+          "line2" -> "Street 2",
+          "line3" -> "Street 3",
+          "line4" -> "Street 4",
+          "line5" -> "Street 5",
+          "postcode" -> "CR7 8LU",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        ),
+        "addPurchaserPhoneNumber" -> true,
+        "enterPurchaserPhoneNumber" -> "+447874363636",
+        "doesPurchaserHaveNI" -> JsNull,
+        "nationalInsuranceNumber" -> JsNull,
+        "purchaserFormOfIdIndividual" -> JsNull,
+        "purchaserDateOfBirth" -> JsNull,
+        "purchaserConfirmIdentity" -> JsNull,
+        "registrationNumber" -> "VAT123",
+        "purchaserUTRPage" -> "UTR1234",
+        "purchaserFormOfIdCompany" -> JsNull,
+        "purchaserTypeOfCompany" -> Json.obj(
+          "bank" -> "YES",
+          "buildingAssociation" -> "YES",
+          "centralGovernment" -> "NO",
+          "individualOther" -> "NO",
+          "insuranceAssurance" -> "NO",
+          "localAuthority" -> "NO",
+          "partnership" -> "NO",
+          "propertyCompany" -> "NO",
+          "publicCorporation" -> "NO",
+          "otherCompany" -> "NO",
+          "otherFinancialInstitute" -> "NO",
+          "otherIncludingCharity" -> "NO",
+          "superannuationOrPensionFund" -> "NO",
+          "unincorporatedBuilder" -> "NO",
+          "unincorporatedSoleTrader" -> "NO"
+        ),
+        "isPurchaserActingAsTrustee" -> "yes",
+        "purchaserAndVendorConnected" -> "yes",
+      )),
+    lastUpdated = Instant.now)
+
+  private val validPurchaserIndividualObject = Purchaser(
+    purchaserID = Some("PUR123"),
+    returnID = Some("12345"),
+    isCompany = Some("NO"),
+    isTrustee = Some("YES"),
+    isConnectedToVendor = Some("YES"),
+    isRepresentedByAgent = None,
+    title = None,
+    surname = Some("Name"),
+    forename1 = Some("Name"),
+    forename2 = Some("Name"),
+    companyName = None,
+    houseNumber = None,
+    address1 = Some("Street 1"),
+    address2 = Some("Street 2"),
+    address3 = Some("Street 3"),
+    address4 = Some("Street 4"),
+    postcode = Some("CR7 8LU"),
+    phone = Some("+447874363636"),
+    nino = Some("Nino1234"),
+    purchaserResourceRef = None,
+    nextPurchaserID = None,
+    lMigrated = None,
+    createDate = None,
+    lastUpdateDate = None,
+    isUkCompany = None,
+    hasNino = Some("yes"),
+    dateOfBirth = Some("2000-02-02"),
+    registrationNumber = None,
+    placeOfRegistration = None
+  )
+
+  private val userAnswersPurchaserIndividual = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = None,
+    data = Json.obj(
+      "purchaserCurrent" -> Json.obj(
+        "purchaserAndCompanyId" -> Json.obj(
+          "purchaserID" -> "PUR123",
+          "companyDetailsID" -> JsNull,
+        ),
+        "ConfirmNameOfThePurchaser" -> "yes",
+        "whoIsMakingThePurchase" -> "Individual",
+        "nameOfPurchaser" -> Json.obj(
+          "forename1" -> "Name",
+          "forename2" -> "Name",
+          "name" -> "Name",
+        ),
+        "purchaserAddress" -> Json.obj(
+          "houseNumber" -> JsNull,
+          "line1" -> "Street 1",
+          "line2" -> "Street 2",
+          "line3" -> "Street 3",
+          "line4" -> "Street 4",
+          "line5" -> "Street 5",
+          "postcode" -> "CR7 8LU",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        ),
+        "addPurchaserPhoneNumber" -> true,
+        "enterPurchaserPhoneNumber" -> "+447874363636",
+        "doesPurchaserHaveNI" -> "yes",
+        "nationalInsuranceNumber" -> "Nino1234",
+        "purchaserFormOfIdIndividual" -> JsNull,
+        "purchaserDateOfBirth" -> "2000-02-02",
+        "purchaserConfirmIdentity" -> JsNull,
+        "registrationNumber" -> JsNull,
+        "purchaserUTRPage" -> JsNull,
+        "purchaserFormOfIdCompany" -> JsNull,
+        "purchaserTypeOfCompany" -> JsNull,
+        "isPurchaserActingAsTrustee" -> "yes",
+        "purchaserAndVendorConnected" -> "yes",
+      )),
+    lastUpdated = Instant.now)
+
+  private val validCompanyDetails = CompanyDetails(
+    companyDetailsID = Some("COMPDET001"),
+    returnID = Some("12345"),
+    purchaserID = Some("PUR123"),
+    UTR = Some("UTR1234"),
+    VATReference = Some("VAT123"),
+    companyTypeBank = Some("YES"),
+    companyTypeBuilder = Some("NO"),
+    companyTypeBuildsoc = Some("NO"),
+    companyTypeCentgov = Some("NO"),
+    companyTypeIndividual = Some("NO"),
+    companyTypeInsurance = Some("NO"),
+    companyTypeLocalauth = Some("NO"),
+    companyTypeOthercharity = Some("NO"),
+    companyTypeOthercompany = Some("NO"),
+    companyTypeOtherfinancial = Some("NO"),
+    companyTypePartnership = Some("NO"),
+    companyTypeProperty = Some("NO"),
+    companyTypePubliccorp = Some("NO"),
+    companyTypeSoletrader = Some("NO"),
+    companyTypePensionfund = Some("NO")
+  )
+
+  private val validCompanyDetailsWithMultipleTypes = CompanyDetails(
+    companyDetailsID = Some("COMPDET001"),
+    returnID = Some("12345"),
+    purchaserID = Some("PUR123"),
+    UTR = Some("UTR1234"),
+    VATReference = Some("VAT123"),
+    companyTypeBank = Some("YES"),
+    companyTypeBuilder = Some("NO"),
+    companyTypeBuildsoc = Some("YES"),
+    companyTypeCentgov = Some("NO"),
+    companyTypeIndividual = Some("NO"),
+    companyTypeInsurance = Some("NO"),
+    companyTypeLocalauth = Some("NO"),
+    companyTypeOthercharity = Some("NO"),
+    companyTypeOthercompany = Some("NO"),
+    companyTypeOtherfinancial = Some("NO"),
+    companyTypePartnership = Some("NO"),
+    companyTypeProperty = Some("NO"),
+    companyTypePubliccorp = Some("NO"),
+    companyTypeSoletrader = Some("NO"),
+    companyTypePensionfund = Some("NO")
   )
 
   private val validVendorJson = Json.obj(
@@ -252,6 +542,24 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         result mustEqual validPurchaser
       }
     }
+
+    ".from" - {
+      "when purchaser type in session is Company" - {
+        "must create a purchaser of type Company" in {
+          val outcome = Purchaser.from(Some(userAnswersPurchaserCompanyWithMultipleTypes)).futureValue
+          val expected = validPurchaserCompanyObject
+          outcome shouldBe expected
+        }
+      }
+
+      "when purchaser type in session is Individual" - {
+        "must create a purchaser of type Individual" in {
+          val outcome = Purchaser.from(Some(userAnswersPurchaserIndividual)).futureValue
+          val expected = validPurchaserIndividualObject
+          outcome shouldBe expected
+        }
+      }
+    }
   }
 
   "CompanyDetails" - {
@@ -285,6 +593,25 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
         result mustEqual companyDetails
       }
+    }
+
+    ".from" - {
+      "when purchaser type is Company and has one types" - {
+        "must create Company Details" in {
+          val outcome = CompanyDetails.from(userAnswersPurchaserCompany).futureValue
+          val expected = validCompanyDetails
+          outcome shouldBe expected
+        }
+      }
+
+      "when purchaser type is Company and has multiple types" - {
+        "must create Company Details" in {
+          val outcome = CompanyDetails.from(userAnswersPurchaserCompanyWithMultipleTypes).futureValue
+          val expected = validCompanyDetailsWithMultipleTypes
+          outcome shouldBe expected
+        }
+      }
+
     }
   }
 

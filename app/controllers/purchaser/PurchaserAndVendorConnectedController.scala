@@ -60,7 +60,7 @@ class PurchaserAndVendorConnectedController @Inject()(
           }
 
           val continueRoute = Ok(view(preparedForm, mode, purchaserName))
-          purchaserService.continueIfAddingMainPurchaser(request.userAnswers, continueRoute)
+          purchaserService.continueIfAddingMainPurchaser(request.userAnswers, continueRoute, mode)
 
         case None => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
       }

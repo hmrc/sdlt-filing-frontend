@@ -19,6 +19,7 @@ package viewmodels.checkAnswers.purchaser
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserDateOfBirthPage
 import play.api.i18n.{Lang, Messages}
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.DateTimeFormats.dateTimeFormat
 import viewmodels.govuk.summarylist.*
@@ -26,8 +27,8 @@ import viewmodels.implicits.*
 
 object PurchaserDateOfBirthSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserDateOfBirthPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(PurchaserDateOfBirthPage)).map {
       answer =>
 
         implicit val lang: Lang = messages.lang
@@ -40,5 +41,16 @@ object PurchaserDateOfBirthSummary  {
               .withVisuallyHiddenText(messages("purchaser.dateOfBirth.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserDateOfBirth.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaser.dateOfBirth.checkYourAnswersLabel",
+        value = value
+      )
     }
 }

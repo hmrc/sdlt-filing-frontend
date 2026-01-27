@@ -19,7 +19,7 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.AddPurchaserPhoneNumberFormProvider
 import models.purchaser.WhoIsMakingThePurchase
-import models.{Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -90,14 +90,22 @@ class AddPurchaserPhoneNumberController @Inject()(
                   case (true, _) =>
                     Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
 
-                  case (false, Some(WhoIsMakingThePurchase.Individual)) =>
-                    Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
+                  case (false, Some(WhoIsMakingThePurchase.Individual)) => if (mode == CheckMode) {
+                Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
+                }
+                else {
+                Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
+                }
+                case (false, Some(WhoIsMakingThePurchase.Company)) => if (mode == CheckMode) {
 
-                  case (false, Some(WhoIsMakingThePurchase.Company)) =>
-                    Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode))
+                    Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
+                  }
+                  else {
+                    Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(mode))
 
+                  }
                   case _ =>
-                    Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
+                    Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode))
                 }
               }
           )

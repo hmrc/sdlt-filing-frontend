@@ -38,7 +38,7 @@ class PurchaserAgentNameSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserAgentNamePage, "Smith").success.value
 
-          val result = PurchaserAgentNameSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = PurchaserAgentNameSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.name.checkYourAnswersLabel")
 
@@ -62,7 +62,7 @@ class PurchaserAgentNameSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserAgentNamePage, "O'Brien & Sons <Ltd>").success.value
 
-          val result = PurchaserAgentNameSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = PurchaserAgentNameSummary.row(Some(userAnswers))
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("O&#x27;Brien")
@@ -83,7 +83,7 @@ class PurchaserAgentNameSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(PurchaserAgentNamePage, "Smith").success.value
 
-        val result = PurchaserAgentNameSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = PurchaserAgentNameSummary.row(Some(userAnswers))
 
         result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url
       }

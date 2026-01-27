@@ -114,7 +114,6 @@ class CompanyFormOfIdControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    //TODO: DTR-1788 - redirect to CYA
     "must redirect to generic error controller if individual for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswersIndividual)).build()
@@ -125,7 +124,7 @@ class CompanyFormOfIdControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.GenericErrorController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
       }
     }
 

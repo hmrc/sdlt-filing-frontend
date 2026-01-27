@@ -283,6 +283,54 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(RegistrationNumberPage) mustBe Some("VAT123")
         }
 
+        "must successfully populate session for main purchaser individual without phone number" in {
+
+          val individualPurchaserNoPhone = Purchaser(
+            purchaserID = Some("PUR001"),
+            forename1 = Some("John"),
+            forename2 = Some("Michael"),
+            surname = Some("Smith"),
+            address1 = Some("20 Test Road"),
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = Some("L1 1AA"),
+            isCompany = Some("NO"),
+            phone = None,
+            nino = Some("AB123456C"),
+            dateOfBirth = Some("15/03/1985")
+          )
+
+          val fullReturnWithIndividualMainPurchaserNoPhone: FullReturn =
+            emptyFullReturn.copy(purchaser = Some(Seq(individualPurchaserNoPhone)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))),
+              companyDetails = Some(companyDetails))
+
+          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+            .copy(fullReturn = Some(fullReturnWithIndividualMainPurchaserNoPhone))
+
+
+          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+          val result = service.populatePurchaserInSession(individualPurchaserNoPhone, "PUR001", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = Some("John"),
+            forename2 = Some("Michael"),
+            name = "Smith"
+          ))
+          updatedAnswers.get(AddPurchaserPhoneNumberPage) mustBe Some(false)
+          updatedAnswers.get(EnterPurchaserPhoneNumberPage) mustBe None
+          updatedAnswers.get(DoesPurchaserHaveNIPage) mustBe Some(DoesPurchaserHaveNI.Yes)
+          updatedAnswers.get(PurchaserNationalInsurancePage) mustBe Some("AB123456C")
+          updatedAnswers.get(PurchaserDateOfBirthPage) mustBe Some(LocalDate.of(1985, 3, 15))
+        }
+
         "must successfully populate session for non-main purchaser company" in {
 
           val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
@@ -311,7 +359,103 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           ))
         }
 
+        "must successfully populate session for main purchaser company without phone number" in {
 
+          val companyPurchaserNoPhone = Purchaser(
+            purchaserID = Some("PUR002"),
+            companyName = Some("Test Company Ltd"),
+            address1 = Some("10 Test Street"),
+            address2 = Some("Floor 2"),
+            address3 = Some("Manchester"),
+            address4 = Some("Greater Manchester"),
+            postcode = Some("M1 1AA"),
+            isCompany = Some("YES"),
+            phone = None
+          )
+
+          val fullReturnWithCompanyMainPurchaserNoPhone: FullReturn =
+            emptyFullReturn.copy(purchaser = Some(Seq(companyPurchaserNoPhone)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR002"))),
+              companyDetails = Some(companyDetails))
+
+          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+            .copy(fullReturn = Some(fullReturnWithCompanyMainPurchaserNoPhone))
+
+          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+          val result = service.populatePurchaserInSession(companyPurchaserNoPhone, "PUR002", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = None,
+            forename2 = None,
+            name = "Test Company Ltd"
+          ))
+          updatedAnswers.get(PurchaserAddressPage) mustBe Some(Address(
+            line1 = "10 Test Street",
+            line2 = Some("Floor 2"),
+            line3 = Some("Manchester"),
+            line4 = Some("Greater Manchester"),
+            postcode = Some("M1 1AA")
+          ))
+          updatedAnswers.get(AddPurchaserPhoneNumberPage) mustBe Some(false)
+          updatedAnswers.get(EnterPurchaserPhoneNumberPage) mustBe None
+          updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR002", Some("COMP001")))
+          updatedAnswers.get(PurchaserConfirmIdentityPage) mustBe Some(PurchaserConfirmIdentity.VatRegistrationNumber)
+          updatedAnswers.get(RegistrationNumberPage) mustBe Some("VAT123")
+        }
+
+        "must successfully populate session for purchaser company without phone number" in {
+
+          val companyPurchaserNoPhone = Purchaser(
+            purchaserID = Some("PUR003"),
+            companyName = Some("Test Company Ltd"),
+            address1 = Some("10 Test Street"),
+            address2 = Some("Floor 2"),
+            address3 = Some("Manchester"),
+            address4 = Some("Greater Manchester"),
+            postcode = Some("M1 1AA"),
+            isCompany = Some("YES"),
+            phone = None
+          )
+
+          val fullReturnWithCompanyMainPurchaserNoPhone: FullReturn =
+            emptyFullReturn.copy(purchaser = Some(Seq(companyPurchaserNoPhone)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR002"))))
+
+          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+            .copy(fullReturn = Some(fullReturnWithCompanyMainPurchaserNoPhone))
+
+          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+          val result = service.populatePurchaserInSession(companyPurchaserNoPhone, "PUR003", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = None,
+            forename2 = None,
+            name = "Test Company Ltd"
+          ))
+          updatedAnswers.get(PurchaserAddressPage) mustBe Some(Address(
+            line1 = "10 Test Street",
+            line2 = Some("Floor 2"),
+            line3 = Some("Manchester"),
+            line4 = Some("Greater Manchester"),
+            postcode = Some("M1 1AA")
+          ))
+          updatedAnswers.get(AddPurchaserPhoneNumberPage) mustBe Some(false)
+          updatedAnswers.get(EnterPurchaserPhoneNumberPage) mustBe None
+          updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR003", None))
+        }
+        
         "must successfully populate session for non-main purchaser individual" in {
 
           val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")

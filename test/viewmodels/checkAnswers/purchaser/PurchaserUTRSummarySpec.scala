@@ -35,7 +35,7 @@ class PurchaserUTRSummarySpec extends SpecBase{
         val userAnswers = emptyUserAnswers
           .set(PurchaserUTRPage, "1234567494").success.value
 
-        val result = PurchaserUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = PurchaserUTRSummary.row(Some(userAnswers))
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.corporationTaxUTR.checkYourAnswersLabel")
 
@@ -58,7 +58,7 @@ class PurchaserUTRSummarySpec extends SpecBase{
         val userAnswers = emptyUserAnswers
           .set(PurchaserUTRPage, "1234567494").success.value
 
-        val result = PurchaserUTRSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = PurchaserUTRSummary.row(Some(userAnswers))
 
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url
       }

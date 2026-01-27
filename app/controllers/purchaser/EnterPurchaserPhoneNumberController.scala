@@ -19,7 +19,7 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.EnterPurchaserPhoneNumberFormProvider
 import models.purchaser.{NameOfPurchaser, WhoIsMakingThePurchase}
-import models.{Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{EnterPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -87,8 +87,13 @@ class EnterPurchaserPhoneNumberController @Inject()(
                 updatedAnswers.get(WhoIsMakingThePurchasePage) match {
                   case Some(WhoIsMakingThePurchase.Individual) =>
                     Redirect(navigator.nextPage(EnterPurchaserPhoneNumberPage, mode, updatedAnswers))
-                  case Some(WhoIsMakingThePurchase.Company) =>
-                    Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode))
+                  case Some(WhoIsMakingThePurchase.Company) => if (mode == CheckMode) {
+                    Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
+                  }
+                   else {
+                    Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(mode))
+                   }
+
                   case None =>
                     Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode))
                 }

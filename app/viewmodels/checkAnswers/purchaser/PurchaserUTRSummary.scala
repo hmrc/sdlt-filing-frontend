@@ -27,17 +27,28 @@ import viewmodels.implicits.*
 
 object PurchaserUTRSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserUTRPage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(PurchaserUTRPage)).map {
       answer =>
 
         SummaryListRowViewModel(
           key     = "purchaser.corporationTaxUTR.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
+          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaser.corporationTaxUTR.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserCorporationTaxUTR.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaser.corporationTaxUTR.checkYourAnswersLabel",
+        value = value
+      )
     }
 }

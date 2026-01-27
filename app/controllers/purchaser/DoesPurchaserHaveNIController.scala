@@ -63,7 +63,8 @@ class DoesPurchaserHaveNIController @Inject()(
           purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
             purchaserType = WhoIsMakingThePurchase.Individual,
             userAnswers = request.userAnswers,
-            continueRoute =  Ok(view(preparedForm, mode, purchaserName.fullName)))
+            continueRoute =  Ok(view(preparedForm, mode, purchaserName.fullName)),
+            mode = mode)
         }
   }
 

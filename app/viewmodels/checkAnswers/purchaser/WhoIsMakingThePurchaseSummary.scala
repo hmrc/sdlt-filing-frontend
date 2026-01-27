@@ -27,13 +27,13 @@ import viewmodels.implicits.*
 
 object WhoIsMakingThePurchaseSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(WhoIsMakingThePurchasePage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(WhoIsMakingThePurchasePage)).map {
       answer =>
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"purchaser.whoIsMakingThePurchase.$answer"))
+            HtmlFormat.escape(messages(s"purchaser.whoIsMakingThePurchase.$answer.checkYourAnswersLabel"))
           )
         )
 
@@ -45,5 +45,16 @@ object WhoIsMakingThePurchaseSummary  {
               .withVisuallyHiddenText(messages("purchaser.whoIsMakingThePurchase.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.whoIsMakingThePurchaser.Missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key = "purchaser.whoIsMakingThePurchase.checkYourAnswersLabel",
+        value = value
+      )
     }
 }

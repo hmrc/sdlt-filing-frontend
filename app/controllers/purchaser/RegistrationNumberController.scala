@@ -65,7 +65,8 @@ class RegistrationNumberController @Inject()(
               Ok(view(preparedForm, mode, purchaserFullName))
             case _ => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
           }
-        }
+        },
+          mode = mode
       )
   }
   

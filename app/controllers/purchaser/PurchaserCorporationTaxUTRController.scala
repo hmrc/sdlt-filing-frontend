@@ -67,7 +67,8 @@ class PurchaserCorporationTaxUTRController @Inject()(
 
           case (Some(purchaserName), _) => Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode))
           case (None, _) => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
-        }
+        },
+        mode = mode
       )
   }
 

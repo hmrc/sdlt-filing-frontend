@@ -16,8 +16,9 @@
 
 package viewmodels.checkAnswers.purchaser
 
+import models.purchaser.PurchaserConfirmIdentity
 import models.{CheckMode, UserAnswers}
-import pages.purchaser.PurchaserConfirmIdentityPage
+import pages.purchaser.{PurchaserConfirmIdentityPage, PurchaserUTRPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -25,12 +26,12 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object PurchaserConfirmIdentitySummary  {
+object PurchaserConfirmIdentitySummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserConfirmIdentityPage).map {
-      answer =>
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
 
+    answers.flatMap(_.get(PurchaserConfirmIdentityPage)) match {
+      case Some(answer) =>
         val value = ValueViewModel(
           HtmlContent(
             HtmlFormat.escape(messages(s"purchaser.confirmIdentity.$answer"))
@@ -38,12 +39,43 @@ object PurchaserConfirmIdentitySummary  {
         )
 
         SummaryListRowViewModel(
-          key     = "purchaser.confirmIdentity.checkYourAnswersLabel",
-          value   = value,
+          key = "purchaser.confirmIdentity.checkYourAnswersLabel",
+          value = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("purchaser.confirmIdentity.change.hidden"))
           )
         )
+
+      case None =>
+        val doesUtrExist = answers.flatMap(_.get(PurchaserUTRPage)).isDefined
+
+        if(doesUtrExist) {
+          val value = ValueViewModel(
+            HtmlContent(
+              HtmlFormat.escape(messages(s"purchaser.corporationTaxUTR.checkYourAnswersLabel"))
+            )
+          )
+
+          SummaryListRowViewModel(
+            key = "purchaser.confirmIdentity.checkYourAnswersLabel",
+            value = value,
+            actions = Seq(
+              ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("purchaser.confirmIdentity.change.hidden"))
+            )
+          )
+        } else {
+          val value = ValueViewModel(
+            HtmlContent(
+              s"""<a href="${controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.confirmIdentity.missing")}</a>""")
+          )
+
+          SummaryListRowViewModel(
+            key = "purchaser.confirmIdentity.checkYourAnswersLabel",
+            value = value
+          )
+        }
+      }
     }
-}
+  }

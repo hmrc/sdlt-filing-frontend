@@ -71,7 +71,8 @@ class PurchaserPartnershipUtrController @Inject()(
             case _ =>
               Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(NormalMode))
           }
-        }
+        },
+        mode = mode
       )
   }
 
