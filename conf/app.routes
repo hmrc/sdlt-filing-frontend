@@ -273,6 +273,8 @@ POST        /about-the-vendors-agent/agent-name                                 
 GET         /about-the-vendors-agent/agent-name/change                                    controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendors-agent/agent-name/change                                    controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = CheckMode)
 
+GET         /about-the-vendors-agent/before-you-start                                     controllers.vendorAgent.VendorAgentBeforeYouStartController.onPageLoad()
+POST        /about-the-vendors-agent/before-you-start                                     controllers.vendorAgent.VendorAgentBeforeYouStartController.onSubmit()
 
 GET         /about-the-vendors-agent/agent-address-lookup                             controllers.vendorAgent.VendorAgentAddressController.redirectToAddressLookupVendorAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
 GET         /about-the-vendors-agent/agent-address-return                             controllers.vendorAgent.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)

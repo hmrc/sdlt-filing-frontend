@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{FullReturn, NormalMode}
+import models.FullReturn
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -44,7 +44,7 @@ object VendorAgentTaskList {
         controllers.vendor.routes.VendorOverviewController.onPageLoad().url
     } else {
       //TODO: Change to the Vendor agent Before You Start Page - DTR-2067
-      controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+      controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
     }
     
     TaskListRowBuilder(

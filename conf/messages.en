@@ -40,7 +40,6 @@ site.vendorAgent.caption                                                        
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
-site.purchaser.thePurchaser                                                         = the purchaser
 site.agent.theAgent                                                                 = the agent
 
 site.journeyRecovery.continue.title                                                 = Sorry, there is a problem with the service
@@ -794,3 +793,17 @@ purchaserAgent.removePurchaserAgent.heading                                     
 purchaserAgent.removePurchaserAgent.checkYourAnswersLabel                                = removePurchaserAgent
 purchaserAgent.removePurchaserAgent.error.required                                       = Please select an option
 purchaserAgent.removePurchaserAgent.change.hidden                                        = RemovePurchaserAgent
+
+vendorAgent.BeforeYouStart.title                                              = Before you start – About the vendor’s agent
+vendorAgent.BeforeYouStart.heading                                            = Add an agent for the vendor
+vendorAgent.BeforeYouStart.p1                                                 = If the vendor is represented by an agent, we will ask for:
+vendorAgent.BeforeYouStart.bullet1                                            = the agent’s name
+vendorAgent.BeforeYouStart.bullet2                                            = the agent’s address
+vendorAgent.BeforeYouStart.bullet3                                            = the agent’s contact details
+vendorAgent.BeforeYouStart.bullet4                                            = the agent’s reference number
+vendorAgent.BeforeYouStart.p2                                                 = You can also provide:
+vendorAgent.BeforeYouStart.bullet4                                            = the agent’s reference number
+vendorAgent.BeforeYouStart.subheading                                         = Do you want to add an agent for the vendor?
+vendorAgent.BeforeYouStart.checkYourAnswersLabel                              = Add an agent for the vendor
+vendorAgent.BeforeYouStart.error.required                                     = Select Yes or No
+vendorAgent.BeforeYouStart.change.hidden                                      = if you want to add an agent for the vendor
