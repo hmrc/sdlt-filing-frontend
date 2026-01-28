@@ -46,7 +46,7 @@ class Navigator @Inject()() {
     case ConfirmVendorAddressPage =>
       _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
     case AgentNamePage =>
-      _ => controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
+      _ => controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case AddVendorAgentContactDetailsPage =>
       _ => controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode)
     case VendorAgentsContactDetailsPage =>

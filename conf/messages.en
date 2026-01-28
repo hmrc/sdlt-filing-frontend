@@ -774,3 +774,6 @@ purchaserAgent.purchaserAgentAuthorised.heading                                 
 purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                            = Is the agent authorised to handle correspondence on behalf of the purchaser?
 purchaserAgent.purchaserAgentAuthorised.error.required                                   = Select purchaserAgentAuthorised
 purchaserAgent.purchaserAgentAuthorised.change.hidden                                    = PurchaserAgentAuthorised
+
+vendorAgentAddress.title = vendorAgentAddress
+vendorAgentAddress.heading = vendorAgentAddress
