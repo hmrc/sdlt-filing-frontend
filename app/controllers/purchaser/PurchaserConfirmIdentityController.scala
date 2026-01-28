@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.purchaser.PurchaserConfirmIdentityFormProvider
 import models.purchaser.{PurchaserConfirmIdentity, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
-import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage}
+import pages.purchaser.{CompanyFormOfIdPage, NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserUTRPage, RegistrationNumberPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -78,8 +78,16 @@ class PurchaserConfirmIdentityController @Inject()(
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName.fullName))),
 
             value =>
+              val afterRemovingUtr = request.userAnswers
+                .set(PurchaserConfirmIdentityPage, value)
+                .flatMap(_.remove(PurchaserUTRPage))
+
+              val afterRemovingVatReg = afterRemovingUtr.flatMap(_.remove(RegistrationNumberPage))
+
+              val afterRemovingFormId = afterRemovingVatReg.flatMap(_.remove(CompanyFormOfIdPage))
+
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserConfirmIdentityPage, value))
+                updatedAnswers <- Future.fromTry(afterRemovingFormId)
                 _ <- sessionRepository.set(updatedAnswers)
               } yield Redirect(purchaserService.confirmIdentityNextPage(value, mode))
           )

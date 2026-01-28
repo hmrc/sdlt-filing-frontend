@@ -66,6 +66,13 @@ final case class UserAnswers(
         page.cleanup(None, updatedAnswers)
     }
   }
+
+  def removeAll(pages: Seq[Settable[_]]): Try[UserAnswers] = {
+    pages.foldLeft(Try(this)) { (acc, page) =>
+      acc.flatMap(_.remove(page))
+    }
+  }
+  
 }
 
 object UserAnswers {

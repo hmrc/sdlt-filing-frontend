@@ -29,6 +29,7 @@ import repositories.SessionRepository
 import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendorAgent.AddVendorAgentContactDetailsView
+import scala.util.Success
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -82,7 +83,10 @@ class AddVendorAgentContactDetailsController @Inject()(
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(AddVendorAgentContactDetailsPage, value))
-                removeDetails <- Future.fromTry(updatedAnswers.remove(VendorAgentsContactDetailsPage))
+                removeDetails <- Future.fromTry {
+                  if !value then updatedAnswers.remove(VendorAgentsContactDetailsPage)
+                  else Success(updatedAnswers)
+                }
                 _ <- sessionRepository.set(removeDetails)
               } yield {
                 if (value) {
