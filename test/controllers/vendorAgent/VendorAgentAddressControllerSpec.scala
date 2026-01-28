@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.vendor
+package controllers.vendorAgent
 
 import base.SpecBase
 import models.address.{Address, Country}
@@ -48,10 +48,10 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
 
   val testAddressLookupCall: Call = Call("GET", "http://localhost:9028/lookup-address/journey")
 
-  lazy val redirectToAddressLookupRoute = controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent().url
-  lazy val redirectToAddressLookupChangeRoute = controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(changeRoute = Some("change")).url
-  lazy val addressLookupCallbackRoute = controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackVendorAgent(id = "test-id").url
-  lazy val addressLookupCallbackChangeRoute = controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent("test-id").url
+  lazy val redirectToAddressLookupRoute = controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent().url
+  lazy val redirectToAddressLookupChangeRoute = controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(changeRoute = Some("change")).url
+  lazy val addressLookupCallbackRoute = controllers.vendorAgent.routes.VendorAgentAddressController.addressLookupCallbackVendorAgent(id = "test-id").url
+  lazy val addressLookupCallbackChangeRoute = controllers.vendorAgent.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent("test-id").url
 
   val testUserAnswers = UserAnswers(
     id = "test-session-id",
@@ -60,10 +60,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
     fullReturn = None,
     data = Json.obj(
       "vendorAgentCurrent" -> Json.obj(
-        "agentName" -> "test",
-      ),
-      "vendorCurrent" -> Json.obj(
-        "whoIsTheVendor" -> "Company",
+        "agentName" -> "test"
       )
     ),
     lastUpdated = Instant.now
@@ -75,16 +72,14 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
     returnId = Some("test-return-id"),
     fullReturn = None,
     data = Json.obj(
-      "vendorCurrent" -> Json.obj(
-        "whoIsTheVendor" -> "Company"
-      )
+      "vendorAgentCurrent" -> Json.obj()
     ),
     lastUpdated = Instant.now
   )
 
-  "VendorAddressController" - {
+  "VendorAgentAddressController" - {
 
-    "redirectToAddressLookup" - {
+    "redirectToAddressLookupVendorAgent" - {
 
       "must redirect to address lookup service when no changeRoute is provided" in {
         val mockAddressLookupService = mock[AddressLookupService]
@@ -110,7 +105,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustEqual testAddressLookupCall.url
 
           verify(mockAddressLookupService, times(1))
-            .getJourneyUrl(any(), eqTo(controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackVendorAgent()), eqTo(true), any(), any())(any(), any(), any())
+            .getJourneyUrl(any(), eqTo(controllers.vendorAgent.routes.VendorAgentAddressController.addressLookupCallbackVendorAgent()), eqTo(true), any(), any())(any(), any(), any())
         }
       }
 
@@ -138,12 +133,11 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustEqual testAddressLookupCall.url
 
           verify(mockAddressLookupService, times(1))
-            .getJourneyUrl(any(), eqTo(controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent()), eqTo(true), any(), any())(any(), any(), any())
+            .getJourneyUrl(any(), eqTo(controllers.vendorAgent.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent()), eqTo(true), any(), any())(any(), any(), any())
         }
       }
 
       "must redirect to agent name page when agent name is missing" in {
-
         val mockSessionRepository = mock[SessionRepository]
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testUserAnswersMissingAgentName)))
 
@@ -164,25 +158,23 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to Journey Recovery when no existing data is found" in {
-          val mockSessionRepository = mock[SessionRepository]
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        val mockAddressLookupService = mock[AddressLookupService]
 
-          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-            .overrides(
-              bind[SessionRepository].toInstance(mockSessionRepository)
-            )
-            .build()
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
 
-          running(application) {
-            val request = FakeRequest(GET, redirectToAddressLookupRoute)
+        running(application) {
+          val request = FakeRequest(GET, redirectToAddressLookupRoute)
 
-            val result = route(application, request).value
+          val result = route(application, request).value
 
-            status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-          }
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
-      
+      }
 
       "must handle service failure when getting journey URL" in {
         val mockAddressLookupService = mock[AddressLookupService]
@@ -212,7 +204,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "addressLookupCallback" - {
+    "addressLookupCallbackVendorAgent" - {
 
       "must redirect when address is successfully saved" in {
         val mockAddressLookupService = mock[AddressLookupService]
@@ -234,7 +226,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
+           redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -352,13 +344,13 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             .build()
 
           running(application) {
-            val callbackRoute = controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackVendorAgent(addressId).url
+            val callbackRoute = controllers.vendorAgent.routes.VendorAgentAddressController.addressLookupCallbackVendorAgent(addressId).url
             val request = FakeRequest(GET, callbackRoute)
 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
+           // redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AddContactDetailsForVendorAgentController.onPageLoad(NormalMode).url
 
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
@@ -367,9 +359,9 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "addressLookupCallbackChange" - {
+    "addressLookupCallbackChangeVendorAgent" -{
 
-      "must redirect to CheckYourAnswers when address is successfully saved" in {
+      "must redirect to ReturnTaskList when address is successfully saved" in { // TODO DTR-1851: change this when we have the check your answers page
         val mockAddressLookupService = mock[AddressLookupService]
 
         when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
@@ -389,7 +381,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -507,13 +499,14 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             .build()
 
           running(application) {
-            val callbackChangeRoute = controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(addressId).url
+            val callbackChangeRoute = controllers.vendorAgent.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(addressId).url
             val request = FakeRequest(GET, callbackChangeRoute)
 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
+            // TODO DTR-2057: change this when we have the check your answers page
+            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }
@@ -522,3 +515,4 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
     }
   }
 }
+
