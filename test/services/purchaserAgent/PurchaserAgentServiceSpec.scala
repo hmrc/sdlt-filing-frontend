@@ -28,7 +28,7 @@ import repositories.SessionRepository
 import navigation.Navigator
 import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.Mockito.{verify, when}
-import pages.purchaserAgent.{PurchaserAgentAddressPage, PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage, SelectPurchaserAgentPage}
+import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentAddressPage, PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage, SelectPurchaserAgentPage}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -295,7 +295,8 @@ class PurchaserAgentServiceSpec extends SpecBase {
 
         val expectedUserAnswers = for {
           withName <- userAnswers.set(PurchaserAgentNamePage, testAgent.name)
-          withAddress <- withName.set(PurchaserAgentAddressPage, expectedAgentAddress)
+          withAddAddress <- withName.set(AddContactDetailsForPurchaserAgentPage, true)
+          withAddress <- withAddAddress.set(PurchaserAgentAddressPage, expectedAgentAddress)
           finalAnswers <- withAddress.set(PurchaserAgentsContactDetailsPage, expectedContactDetails)
         } yield finalAnswers
 

@@ -21,55 +21,81 @@ import models.CheckMode
 import pages.purchaserAgent.AddPurchaserAgentReferenceNumberPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class AddPurchaserAgentReferenceNumberSummarySpec extends SpecBase {
 
   "AddPurchaserPhoneNumberSummarySpec" - {
 
-    "must return a SummaryListRow with 'yes' text and change link" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "when add purchaser agent reference number is present" - {
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+      "must return a SummaryListRow with 'yes' text and change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, true).success.value
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        val result = AddPurchaserAgentReferenceNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, true).success.value
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel")
+          val result = AddPurchaserAgentReferenceNumberSummary.row(userAnswers)
 
-        val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel")
 
-        contentString mustEqual msgs("site.yes")
+          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
 
-        result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url
-        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addAgentReferenceNumber.change.hidden")
+          contentString mustEqual msgs("site.yes")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addAgentReferenceNumber.change.hidden")
+        }
+      }
+
+      "must return a SummaryListRow with 'no' text and change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, false).success.value
+
+          val result = AddPurchaserAgentReferenceNumberSummary.row(userAnswers)
+
+          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel")
+
+          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+
+          contentString mustEqual msgs("site.no")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addAgentReferenceNumber.change.hidden")
+        }
       }
     }
 
-    "must return a SummaryListRow with 'no' text and change link" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "when add purchaser agent reference number is not present" - {
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+      "must return a SummaryListRow with a link to if they want to add reference number" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, false).success.value
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        val result = AddPurchaserAgentReferenceNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = AddPurchaserAgentReferenceNumberSummary.row(emptyUserAnswers)
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel")
 
-        val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("purchaserAgent.checkYourAnswers.addReferenceNumber.missing"))
 
-        contentString mustEqual msgs("site.no")
-
-        result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url
-        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addAgentReferenceNumber.change.hidden")
+          result.actions mustBe None
+        }
       }
     }
   }

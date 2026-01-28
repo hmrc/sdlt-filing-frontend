@@ -361,7 +361,7 @@ class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
 
     "addressLookupCallbackChangePurchaserAgent" -{
 
-      "must redirect to ReturnTaskList when address is successfully saved" in { // TODO DTR-1851: change this when we have the check your answers page
+      "must redirect to check your answers when address is successfully saved" in {
         val mockAddressLookupService = mock[AddressLookupService]
 
         when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
@@ -381,7 +381,7 @@ class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -505,8 +505,7 @@ class PurchaserAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            // TODO DTR-1851: change this when we have the check your answers page
-            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+            redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }

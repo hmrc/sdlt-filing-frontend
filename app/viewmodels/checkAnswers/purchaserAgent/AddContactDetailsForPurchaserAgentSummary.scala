@@ -17,9 +17,8 @@
 package viewmodels.checkAnswers.purchaserAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaserAgent.AddContactDetailsForPurchaserAgentPage
+import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage}
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
@@ -27,23 +26,33 @@ import viewmodels.implicits.*
 
 object AddContactDetailsForPurchaserAgentSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
+    val changeRoute = controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url
+    val nameOfPurchaserAgent = answers.get(PurchaserAgentNamePage).getOrElse(messages("site.agent.theAgent"))
+    val label = messages("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", nameOfPurchaserAgent)
+
     answers.get(AddContactDetailsForPurchaserAgentPage).map {
       answer =>
 
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"purchaserAgent.addContactDetailsForPurchaserAgent.$answer"))
-          )
-        )
+        val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel",
-          value   = value,
+          key     = label,
+          value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden"))
+            ActionItemViewModel("site.change", changeRoute)
+              .withVisuallyHiddenText(messages("purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden", nameOfPurchaserAgent))
           )
         )
+    }.getOrElse {
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.addContactDetails.missing")}</a>""")
+      )
+      SummaryListRowViewModel(
+        key = label,
+        value = value
+      )
     }
+  }
 }

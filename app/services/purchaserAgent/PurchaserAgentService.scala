@@ -63,9 +63,12 @@ class PurchaserAgentService @Inject(
           phoneNumber = agent.phone, emailAddress = agent.email
         )
 
+        val addPaContactDetails = agent.phone.isDefined || agent.email.isDefined
+
         for {
           withName <- userAnswers.set(PurchaserAgentNamePage, agent.name)
-          withAddress <- withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
+          withAddAddress <- withName.set(AddContactDetailsForPurchaserAgentPage, addPaContactDetails)
+          withAddress <- withAddAddress.set(PurchaserAgentAddressPage, purchaserAgentAddress)
           finalAnswers <- withAddress.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
         } yield finalAnswers
 

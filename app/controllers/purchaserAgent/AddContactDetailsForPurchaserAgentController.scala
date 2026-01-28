@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.purchaserAgent.AddContactDetailsForPurchaserAgentFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage}
+import pages.purchaserAgent.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.purchaserAgent.AddContactDetailsForPurchaserAgentView
@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class AddContactDetailsForPurchaserAgentController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -75,12 +76,16 @@ class AddContactDetailsForPurchaserAgentController @Inject()(
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(AddContactDetailsForPurchaserAgentPage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                finalAnswers <- Future.fromTry {
+                  if !value then updatedAnswers.remove(PurchaserAgentsContactDetailsPage)
+                  else Success(updatedAnswers)
+                }
+                _ <- sessionRepository.set(finalAnswers)
               } yield {
-                if (value) {
-                  Redirect(navigator.nextPage(AddContactDetailsForPurchaserAgentPage, mode, updatedAnswers))
+                if (!value && mode == NormalMode) {
+                  Redirect(controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(mode))
                 } else {
-                  Redirect(controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode))
+                  Redirect(navigator.nextPage(AddContactDetailsForPurchaserAgentPage, mode, finalAnswers))
                 }
               }
           )

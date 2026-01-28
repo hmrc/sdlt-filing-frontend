@@ -17,40 +17,51 @@
 package viewmodels.checkAnswers.purchaserAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaserAgent.PurchaserAgentsContactDetailsPage
+import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentsContactDetailsPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object PurchaserAgentsContactDetailsSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserAgentsContactDetailsPage).map {
-      answer =>
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    val label = messages("purchaserAgent.contactDetails.checkYourAnswersLabel")
+    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode).url
 
-        val value: String = (answer.phoneNumber, answer.emailAddress) match {
+    (answers.get(PurchaserAgentsContactDetailsPage), answers.get(AddContactDetailsForPurchaserAgentPage)) match {
+      case (Some(contactDetails), _) =>
+        val value: String = (contactDetails.phoneNumber, contactDetails.emailAddress) match {
           case (Some(phone), Some(email)) =>
             HtmlFormat.escape(phone).toString + "<br/>" +
               HtmlFormat.escape(email).toString
-
           case (Some(phone), None) =>
             HtmlFormat.escape(phone).toString
-
           case (None, Some(email)) =>
             HtmlFormat.escape(email).toString
           case (None, None) => ""
         }
 
-        SummaryListRowViewModel(
-          key = "purchaserAgent.contactDetails.checkYourAnswersLabel",
+        Some(SummaryListRowViewModel(
+          key = label,
           value = ValueViewModel(HtmlContent(value)),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("purchaserAgent.contactDetails.change.hidden"))
           )
+        ))
+      case (None, Some(true)) =>
+        val value = ValueViewModel(
+          HtmlContent(
+            s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.contactDetails.missing")}</a>""")
         )
+        Some(SummaryListRowViewModel(
+          key = label,
+          value = value
+        ))
+      case _ => None
     }
+  }
 }

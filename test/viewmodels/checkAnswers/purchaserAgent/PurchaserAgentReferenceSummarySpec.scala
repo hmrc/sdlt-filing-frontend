@@ -18,44 +18,72 @@ package viewmodels.checkAnswers.purchaserAgent
 
 import base.SpecBase
 import models.CheckMode
-import pages.purchaserAgent.PurchaserAgentReferencePage
+import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentReferencePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 class PurchaserAgentReferenceSummarySpec extends SpecBase {
 
   "PurchaserAgentReferenceSummary" - {
 
-    "must return a SummaryListRow with PurchaserAgentReferencePage is set and show change link" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "when reference number is present" - {
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+      "must return a SummaryListRow with change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val userAnswers = emptyUserAnswers.set(PurchaserAgentReferencePage, "123456").success.value
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        val result = PurchaserAgentReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val userAnswers = emptyUserAnswers.set(PurchaserAgentReferencePage, "123456").success.value
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.reference.checkYourAnswersLabel")
+          val result = PurchaserAgentReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        val contentString = result.value.content.asHtml.toString()
+          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.reference.checkYourAnswersLabel")
 
-        contentString mustEqual "123456"
+          val contentString = result.value.content.asHtml.toString()
 
-        result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode).url
-        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.reference.change.hidden")
+          contentString mustEqual "123456"
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.reference.change.hidden")
+        }
       }
     }
 
-    "must return None when PurchaserAgentReferencePage is not answered" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "when reference number is not present" - {
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+      "must return a SummaryListRow with a link to enter reference number when add reference number is true" in {
+        val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, true).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        PurchaserAgentReferenceSummary.row(emptyUserAnswers) mustBe None
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val result = PurchaserAgentReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.reference.checkYourAnswersLabel")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("purchaserAgent.checkYourAnswers.referenceNumber.missing"))
+
+          result.actions mustBe None
+        }
+      }
+
+      "must return None when add reference number is false" in {
+        val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, false).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          PurchaserAgentReferenceSummary.row(emptyUserAnswers) mustBe None
+        }
       }
     }
   }
