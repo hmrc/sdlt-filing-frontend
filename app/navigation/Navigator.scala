@@ -22,8 +22,9 @@ import pages.*
 import pages.preliminary.*
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.vendor.*
 import pages.vendorAgent.*
+import pages.vendor.*
+import pages.vendorAgent.AgentNamePage
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -122,6 +123,8 @@ class Navigator @Inject()() {
       _ => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
     case PurchaserAgentAuthorisedPage =>//TODO: Update link to PA-CYA DTR-1851
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case VendorAgentBeforeYouStartPage =>//TODO: When built route for DTR-2083
+      _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -150,8 +153,6 @@ class Navigator @Inject()() {
 
     case PurchaserIsIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case PurchaserSurnameOrCompanyNamePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-
-
     case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()

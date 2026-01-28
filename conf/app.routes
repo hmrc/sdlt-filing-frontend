@@ -274,3 +274,6 @@ GET         /about-the-vendors-agent/agent-name                                 
 POST        /about-the-vendors-agent/agent-name                                           controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-vendors-agent/agent-name/change                                    controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendors-agent/agent-name/change                                    controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-vendors-agent/before-you-start                                     controllers.vendorAgent.VendorAgentBeforeYouStartController.onPageLoad()
+POST        /about-the-vendors-agent/before-you-start                                     controllers.vendorAgent.VendorAgentBeforeYouStartController.onSubmit()
