@@ -18,13 +18,14 @@ package controllers.purchaserAgent
 
 import base.SpecBase
 import forms.purchaserAgent.AddPurchaserAgentReferenceNumberFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentNamePage}
+import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentNamePage, PurchaserAgentReferencePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -153,7 +154,6 @@ class AddPurchaserAgentReferenceNumberControllerSpec extends SpecBase with Mocki
 
         status(result) mustEqual SEE_OTHER
 
-        //TODO - DTR-1829 - replace with proper route
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -180,6 +180,63 @@ class AddPurchaserAgentReferenceNumberControllerSpec extends SpecBase with Mocki
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must clear reference number and redirect to next page when no submitted in check mode" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswersWithReferenceNumber = userAnswersWithAgentName
+        .set(PurchaserAgentReferencePage, "REF123").success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersWithReferenceNumber))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(PurchaserAgentReferencePage).isDefined mustBe false
+      }
+    }
+
+    "must redirect to next page when yes submitted in check mode" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersWithAgentName))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 

@@ -40,6 +40,8 @@ site.vendorAgent.caption                                                        
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
+site.purchaser.thePurchaser                                                         = the purchaser
+site.agent.theAgent                                                                 = the agent
 
 site.journeyRecovery.continue.title                                                 = Sorry, there is a problem with the service
 site.journeyRecovery.continue.heading                                               = Sorry, there is a problem with the service
@@ -243,6 +245,10 @@ addressLookup.purchaserAgentQuestionsAddress.confirmPage.changeLinkText         
 addressLookup.purchaserAgentQuestionsAddress.confirmPage.submitLabel                = Confirm address
 addressLookup.purchaserAgentQuestionsAddress.countryPicker.title                    = Find {0}’s address - About the purchaser’s agent
 addressLookup.purchaserAgentQuestionsAddress.countryPicker.heading                  = Find {0}’s addre
+
+purchaserAgent.address.checkYourAnswersLabel                                        = Agent address
+purchaserAgent.address.change.hidden                                                = Agent address
+
 # Vendor Agent Address Lookup
 addressLookup.vendorAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the Vendor
 addressLookup.vendorAgentQuestionsAddress.lookupPage.heading                        = Find {0}’s address
@@ -716,17 +722,16 @@ site.error.noReturnReference.change.hidden                                      
 purchaserAgent.addContactDetailsForPurchaserAgent.title                             = Do you want to add contact details for the agent?
 purchaserAgent.addContactDetailsForPurchaserAgent.heading                           = Do you want to add contact details for {0}?
 purchaserAgent.addContactDetailsForPurchaserAgent.error.required                    = Please select Yes or No
-purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                     = AddContactDetailsForPurchaserAgent
+purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                     = If you want to add contact details for {0}
 purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                        = We’ll only use these details to contact {0} about this return
 purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel             = Do you want to add contact details for {0}?
-purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                        = We'll only use these details to contact {0} about this return
 
 purchaserAgent.name.title                                                           = What is the agent’s name?
-purchaserAgent.name.checkYourAnswersLabel                                           = What is the agent’s name?
+purchaserAgent.name.checkYourAnswersLabel                                           = Agent name
 purchaserAgent.name.error.required                                                  = Enter the agent’s name
 purchaserAgent.name.error.length                                                    = Agent’s name must be 28 characters or less
 purchaserAgent.name.error.invalid                                                   = Invalid error
-purchaserAgent.name.change.hidden                                                   = purchaserAgentName
+purchaserAgent.name.change.hidden                                                   = Agent name
 purchaserAgent.name.hint                                                            = Include the branch name if there are multiple office locations, for example, Jones & Co. Leeds
 
 purchaserAgent.contactDetails.title                                                      = What are the agent’s contact details? - About the purchaser’s agent
@@ -734,7 +739,7 @@ purchaserAgent.contactDetails.heading                                           
 purchaserAgent.contactDetails.agentPhoneNumber                                           = Agent phone number
 purchaserAgent.contactDetails.agentPhoneNumber.caption                                   = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 purchaserAgent.contactDetails.agentEmailAddress                                          = Agent email address
-purchaserAgent.contactDetails.checkYourAnswersLabel                                      = PurchaserAgentsContactDetails
+purchaserAgent.contactDetails.checkYourAnswersLabel                                      = Agent contact details
 purchaserAgent.contactDetails.error.agentPhoneNumber.required                            = Enter Agent phone number
 purchaserAgent.contactDetails.error.agentEmailAddress.required                           = Enter Agent email address
 purchaserAgent.contactDetails.error.agentPhoneNumber.invalid                             = Invalid phone number
@@ -743,14 +748,15 @@ purchaserAgent.contactDetails.error.agentPhoneNumber.length                     
 purchaserAgent.contactDetails.error.agentEmailAddress.length                             = Agent email address must be 36 characters or less
 purchaserAgent.contactDetails.agentPhoneNumber.change.hidden                             = Agent phone number
 purchaserAgent.contactDetails.agentEmailAddress.change.hidden                            = Agent email address
+purchaserAgent.contactDetails.change.hidden                                              = Agent contact details
 purchaserAgent.contactDetails.error.oneRequired                                          = At least one option is required
 
 purchaserAgent.addAgentReferenceNumber.title                                             = Do you want to add a reference for this return? - About the purchaser’s agent
 purchaserAgent.addAgentReferenceNumber.heading                                           = Do you want to add a reference for this return?
 purchaserAgent.addAgentReferenceNumber.p                                                 = This is the unique number or code that {0} will use to locate the return in their records
-purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel                             = addPurchaserAgentReferenceNumber
+purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel                             = Do you want to add a reference for this return?
 purchaserAgent.addAgentReferenceNumber.error.required                                    = Please select yes or no
-purchaserAgent.addAgentReferenceNumber.change.hidden                                     = AddPurchaserAgentReferenceNumber
+purchaserAgent.addAgentReferenceNumber.change.hidden                                     = If you want to add a reference for this return
 
 purchaserAgent.reference.title                                                           = What is the agent’s reference for this return?
 purchaserAgent.reference.heading                                                         = What is {0}’s reference for this return?
@@ -771,6 +777,14 @@ purchaserAgent.selectPurchaserAgent.change.hidden                               
 
 purchaserAgent.purchaserAgentAuthorised.title                                            = Is the agent authorised to handle correspondence on behalf of the purchaser? - About the purchaser’s agent
 purchaserAgent.purchaserAgentAuthorised.heading                                          = Is {0} authorised to handle correspondence on behalf of the purchaser?
-purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                            = Is the agent authorised to handle correspondence on behalf of the purchaser?
+purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                            = Is {0} authorised for correspondence?
 purchaserAgent.purchaserAgentAuthorised.error.required                                   = Select purchaserAgentAuthorised
-purchaserAgent.purchaserAgentAuthorised.change.hidden                                    = PurchaserAgentAuthorised
+purchaserAgent.purchaserAgentAuthorised.change.hidden                                    = If {0} is authorised for correspondence
+
+purchaserAgent.checkYourAnswers.name.missing                                             = Enter name
+purchaserAgent.checkYourAnswers.address.missing                                          = Enter address
+purchaserAgent.checkYourAnswers.addContactDetails.missing                                = Select if you want to add contact details
+purchaserAgent.checkYourAnswers.contactDetails.missing                                   = Enter contact details
+purchaserAgent.checkYourAnswers.referenceNumber.missing                                  = Enter reference number
+purchaserAgent.checkYourAnswers.addReferenceNumber.missing                               = Select if you want to add a reference number
+purchaserAgent.checkYourAnswers.authorised.missing                                       = Select if the agent is authorised for correspondence

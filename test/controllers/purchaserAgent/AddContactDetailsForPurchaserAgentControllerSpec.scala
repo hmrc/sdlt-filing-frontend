@@ -19,12 +19,14 @@ package controllers.purchaserAgent
 import base.SpecBase
 import controllers.routes
 import forms.purchaserAgent.AddContactDetailsForPurchaserAgentFormProvider
-import models.NormalMode
+import models.purchaserAgent.PurchaserAgentsContactDetails
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage}
+import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -108,7 +110,7 @@ class AddContactDetailsForPurchaserAgentControllerSpec extends SpecBase with Moc
       }
     }
 
-    "must redirect to the next page when no is chosen" in {
+    "must redirect to add purchaser agent reference number page when no is chosen" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -131,6 +133,64 @@ class AddContactDetailsForPurchaserAgentControllerSpec extends SpecBase with Moc
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must clear contact details and redirect to next page when no is chosen in check mode" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswersWithContactDetails = userAnswers.set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(
+        phoneNumber = Some("1234567890"),
+        emailAddress = Some("test@email.com")
+      )).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersWithContactDetails))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(PurchaserAgentsContactDetailsPage).isDefined mustBe false
+      }
+    }
+
+    "must redirect to next page when yes is chosen in check mode" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 

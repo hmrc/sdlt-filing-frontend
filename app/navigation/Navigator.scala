@@ -120,8 +120,8 @@ class Navigator @Inject()() {
       _ => controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode)
     case AddContactDetailsForPurchaserAgentPage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
-    case PurchaserAgentAuthorisedPage =>//TODO: Update link to PA-CYA DTR-1851
-      _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case PurchaserAgentAuthorisedPage =>
+      _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -153,6 +153,16 @@ class Navigator @Inject()() {
 
 
     case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+
+    case SelectPurchaserAgentPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+    case PurchaserAgentNamePage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+    case PurchaserAgentAddressPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+    case AddContactDetailsForPurchaserAgentPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+    case PurchaserAgentsContactDetailsPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+    case AddPurchaserAgentReferenceNumberPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+    case PurchaserAgentReferencePage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+    case PurchaserAgentAuthorisedPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }

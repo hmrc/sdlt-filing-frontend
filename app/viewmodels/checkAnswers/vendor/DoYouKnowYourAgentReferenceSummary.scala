@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.purchaserAgent
+package viewmodels.checkAnswers.vendor
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaserAgent.SelectPurchaserAgentPage
+import pages.vendor.DoYouKnowYourAgentReferencePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -25,24 +25,24 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object SelectPurchaserAgentSummary  {
+object DoYouKnowYourAgentReferenceSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SelectPurchaserAgentPage).map {
+    answers.get(DoYouKnowYourAgentReferencePage).map {
       answer =>
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"selectPurchaserAgent.$answer"))
+            HtmlFormat.escape(messages(s"agent.doYouKnowYourAgentReference.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "purchaserAgent.selectPurchaserAgent.checkYourAnswersLabel",
+          key     = "agent.doYouKnowYourAgentReference.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaserAgent.routes.SelectPurchaserAgentController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserAgent.selectPurchaserAgent.change.hidden"))
+            ActionItemViewModel("site.change", controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("agent.doYouKnowYourAgentReference.change.hidden"))
           )
         )
     }
