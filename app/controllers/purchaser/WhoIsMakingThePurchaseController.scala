@@ -19,11 +19,11 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.WhoIsMakingThePurchaseFormProvider
 import models.Mode
-import navigation.Navigator
+import models.purchaser.WhoIsMakingThePurchase
 import pages.purchaser.WhoIsMakingThePurchasePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import services.purchaser.PurchaserSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.WhoIsMakingThePurchaseView
 
@@ -32,14 +32,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WhoIsMakingThePurchaseController @Inject()(
                                        override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: WhoIsMakingThePurchaseFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: WhoIsMakingThePurchaseView
+                                       view: WhoIsMakingThePurchaseView,
+                                       purchaserSessionService: PurchaserSessionService
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -63,10 +62,10 @@ class WhoIsMakingThePurchaseController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhoIsMakingThePurchasePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhoIsMakingThePurchasePage, mode, updatedAnswers))
+            purchaserSessionService.companyOrIndividualPurchaserRemoveFromSession(
+              userAnswers = request.userAnswers,
+              value = value,
+              mode = mode)
       )
   }
 }
