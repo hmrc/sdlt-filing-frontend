@@ -62,7 +62,7 @@ object CreateReturnAgentRequest {
               phoneNumber = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.phoneNumber),
               email = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.emailAddress),
               agentReference = paSessionQuestions.purchaserAgentReference,
-              isAuthorised = paSessionQuestions.purchaserAgentAuthorised.map(_.toUpperCase)
+              isAuthorised = Some(paSessionQuestions.purchaserAgentAuthorised.toUpperCase)
             ))
           case Vendor => ???
         }
@@ -121,7 +121,7 @@ object UpdateReturnAgentRequest {
               phoneNumber = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.phoneNumber),
               email = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.emailAddress),
               agentReference = paSessionQuestions.purchaserAgentReference,
-              isAuthorised = paSessionQuestions.purchaserAgentAuthorised.map(_.toUpperCase)
+              isAuthorised = Some(paSessionQuestions.purchaserAgentAuthorised.toUpperCase)
             ))
           case Vendor => ???
         }
