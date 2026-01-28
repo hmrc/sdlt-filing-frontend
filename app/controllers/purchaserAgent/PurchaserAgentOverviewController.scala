@@ -20,7 +20,6 @@ import controllers.actions.*
 import forms.purchaserAgent.PurchaserAgentOverviewFormProvider
 import models.*
 import play.api.i18n.Lang.logger
-
 import scala.concurrent.ExecutionContext
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
@@ -55,13 +54,11 @@ class PurchaserAgentOverviewController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
 
-      val postAction = routes.PurchaserAgentBeforeYouStartController.onPageLoad(mode)
       val effectiveReturnId = request.userAnswers.returnId
 
       effectiveReturnId.fold(
         Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
       ) { id =>
-
         fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.userAnswers.storn))
           .flatMap { fullReturn =>
             val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
@@ -78,12 +75,10 @@ class PurchaserAgentOverviewController @Inject()(
                   PurchaserAgentHelper.buildSummary(Some(agent))
                 )
 
-              val errorCalc = maybeAgent.isDefined
-
               returnAgentList match {
-                case Nil => Ok(view(None, postAction, form, NormalMode, errorCalc))
+                case Nil => Ok(view(None, form, mode))
 
-                case agents => Ok(view(maybeSummary, postAction, form, mode, errorCalc))
+                case agents => Ok(view(maybeSummary, form, mode))
               }
             }
           } recover {
@@ -97,36 +92,25 @@ class PurchaserAgentOverviewController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
 
-      val maybeAgent: Option[ReturnAgent] = request.userAnswers.fullReturn
-        .flatMap(_.returnAgent)
-        .flatMap(PurchaserAgentHelper.getPurchaserAgent)
+      val maybeAgent: Option[ReturnAgent] =
+        request.userAnswers.fullReturn.flatMap(_.returnAgent)
+          .flatMap(PurchaserAgentHelper.getPurchaserAgent)
 
-      maybeAgent match {
-        case Some(_) =>
-          Future.successful(
-            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-          )
-
-        case None =>
-          val postAction = routes.PurchaserAgentOverviewController.onSubmit()
-          val errorCalc = maybeAgent.isDefined
-
-          form.bindFromRequest().fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(None, postAction, formWithErrors, mode, errorCalc))),
-
-            value =>
-              if (value) {
-                Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode)))
-                //TODO - implement below link redirect when CYA is complete
-                //Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad(NormalMode)))
-              } else {
-                Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
-              }
-          )
-      }
+      form.bindFromRequest().fold(
+        formWithErrors => {
+          maybeAgent match {
+            case None => Future.successful(BadRequest(view(None, formWithErrors, mode)))
+            case Some(_) => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+          }
+        },
+        value =>
+          if (value) {
+            Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode)))
+          } else {
+            Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+          }
+      )
     }
-
 
   def changePurchaserAgent(returnAgentId: String): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>

@@ -38,7 +38,7 @@ class Navigator @Inject()() {
       _ => controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup()
     case TransactionTypePage =>
       _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-      
+
     case WhoIsTheVendorPage =>
       _ => controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
     case VendorOrCompanyNamePage =>
@@ -69,7 +69,7 @@ class Navigator @Inject()() {
          | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage | ConfirmNameOfThePurchaserPage
          | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage
          | PurchaserAgentReferencePage | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage
-         | PurchaserAgentBeforeYouStartPage | PurchaserAgentAuthorisedPage => true
+         | PurchaserAgentBeforeYouStartPage | PurchaserAgentOverviewPage | PurchaserAgentAuthorisedPage => true
 
     case _ => false
   }
@@ -106,6 +106,8 @@ class Navigator @Inject()() {
     case ConfirmNameOfThePurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
+    case PurchaserAgentOverviewPage =>
+      _ => controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode)
     case PurchaserAgentBeforeYouStartPage =>
       _ => controllers.purchaserAgent.routes.SelectPurchaserAgentController.onPageLoad(NormalMode)
     case SelectPurchaserAgentPage =>
@@ -120,11 +122,11 @@ class Navigator @Inject()() {
       _ => controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode)
     case AddContactDetailsForPurchaserAgentPage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
-    case PurchaserAgentAuthorisedPage =>//TODO: Update link to PA-CYA DTR-1851
+    case PurchaserAgentAuthorisedPage => //TODO: Update link to PA-CYA DTR-1851
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
-  
+
   private val checkRouteMap: Page => UserAnswers => Call = {
     case WhoIsMakingThePurchasePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
