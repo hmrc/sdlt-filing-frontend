@@ -553,6 +553,65 @@ class CalculationControllerLeaseHoldTaxReliefISpec extends BaseSpec with GuiceOn
           request.json shouldBe result
         }
       }
+      "The TaxRelief Code is CollectiveEnfranchisementByLeaseholders(25)" when {
+
+        "date within the range on or after 23/04/2009" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """{
+                  |  "holdingType": "leasehold",
+                  |  "propertyType": "Non-residential",
+                  |  "effectiveDateDay": 23,
+                  |  "effectiveDateMonth": 3,
+                  |  "effectiveDateYear": 2010,
+                  |  "highestRent": "10000",
+                  |  "premium": "0",
+                  |  "leaseDetails": {
+                  |    "startDateDay": 23,
+                  |    "startDateMonth": 3,
+                  |    "startDateYear": 2010,
+                  |    "endDateDay": 23,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2015,
+                  |    "leaseTerm": {
+                  |      "years": 5,
+                  |      "days": 1,
+                  |      "daysInPartialYear": 366
+                  |    },
+                  |    "year1Rent": "3000",
+                  |    "year2Rent": "5000",
+                  |    "year3Rent": "10000",
+                  |    "year4Rent": "4000",
+                  |    "year5Rent": "6000"
+                  |  },
+                  |  "taxReliefDetails": {
+                  |    "taxReliefCode": 25
+                  |  }
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          val selfAssessedResponse: JsValue = Json.parse(
+            """{
+              |  "result": [
+              |    {
+              |      "totalTax": 0,
+              |      "resultHeading": "Self-assessed",
+              |      "taxCalcs": []
+              |    }
+              |  ]
+              |}
+              |""".stripMargin
+          )
+
+          request.status shouldBe OK
+          request.json shouldBe selfAssessedResponse
+        }
+      }
+
     }
     "return a 200 and and fall back to existing logic for leasehold property type" when {
       "The TaxRelief Code is FirstTimeBuyersRelief" when {
@@ -726,6 +785,94 @@ class CalculationControllerLeaseHoldTaxReliefISpec extends BaseSpec with GuiceOn
           request.json shouldBe fallBackResult
         }
       }
+      "The TaxRelief Code is CollectiveEnfranchisementByLeaseholders(25)" when {
+
+        "property type is Non-residential, Leasehold and before 22/03/2009" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """{
+                  |  "holdingType": "leasehold",
+                  |  "propertyType": "Non-residential",
+                  |  "effectiveDateDay": 1,
+                  |  "effectiveDateMonth": 1,
+                  |  "effectiveDateYear": 2007,
+                  |  "highestRent": "10000",
+                  |  "premium": "0",
+                  |  "leaseDetails": {
+                  |    "startDateDay": 1,
+                  |    "startDateMonth": 1,
+                  |    "startDateYear": 2007,
+                  |    "endDateDay": 1,
+                  |    "endDateMonth": 1,
+                  |    "endDateYear": 2014,
+                  |    "leaseTerm": {
+                  |      "years": 7,
+                  |      "days": 1,
+                  |      "daysInPartialYear": 366
+                  |    },
+                  |    "year1Rent": "3000",
+                  |    "year2Rent": "5000",
+                  |    "year3Rent": "10000",
+                  |    "year4Rent": "4000",
+                  |    "year5Rent": "6000"
+                  |  },
+                  |  "taxReliefDetails": {
+                  |    "taxReliefCode": 25
+                  |  }
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          val response: JsValue = Json.parse(
+            """{
+              |  "result": [
+              |    {
+              |      "totalTax": 0,
+              |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+              |      "npv": 41138,
+              |      "taxCalcs": [
+              |        {
+              |          "taxType": "rent",
+              |          "calcType": "slice",
+              |          "taxDue": 0,
+              |          "detailHeading": "This is a breakdown of how the amount of SDLT on the rent was calculated",
+              |          "bandHeading": "Rent bands (£)",
+              |          "detailFooter": "SDLT due on the rent",
+              |          "slices": [
+              |            {
+              |              "from": 0,
+              |              "to": 150000,
+              |              "rate": 0,
+              |              "taxDue": 0
+              |            },
+              |            {
+              |              "from": 150000,
+              |              "to": -1,
+              |              "rate": 1,
+              |              "taxDue": 0
+              |            }
+              |          ]
+              |        },
+              |        {
+              |          "taxType": "premium",
+              |          "calcType": "slab",
+              |          "taxDue": 0,
+              |          "rate": 0
+              |        }
+              |      ]
+              |    }
+              |  ]
+              |}
+              |""".stripMargin
+          )
+          request.status shouldBe OK
+          request.json shouldBe response
+        }
+      }
     }
+
   }
 }

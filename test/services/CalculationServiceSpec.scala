@@ -27,7 +27,6 @@ import HoldingTypes._
 import PropertyTypes._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{eq => meq}
-
 import java.time.LocalDate
 
 class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach with RequestGenerators {
@@ -35,13 +34,15 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
   val april2021EffectiveDate: LocalDate = LocalDate.of(2021, 4, 1)
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
   val july2021EffectiveDate: LocalDate = LocalDate.of(2021, 7, 1)
+  val APRIL2009_EFFECTIVE_DATE: LocalDate = LocalDate.of(2009, 4, 23)
   val mockLeaseholdCalculationService: LeaseholdCalculationService = mock[LeaseholdCalculationService]
   val mockFreeholdCalculationService: FreeholdCalculationService = mock[FreeholdCalculationService]
   val mockAdditionalPropertyService: AdditionalPropertyService = mock[AdditionalPropertyService]
   val testCalculationService = new CalculationService(
     mockLeaseholdCalculationService,
     mockFreeholdCalculationService,
-    mockAdditionalPropertyService
+    mockAdditionalPropertyService,
+
   )
 
   override def beforeEach(): Unit = {
@@ -1572,7 +1573,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           isLinked = false
         )
 
-        the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message "Value not defined"
+        the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${PreCompletionTransaction} does not apply to Mixed properties"
       }
 
       "given relief code ReliefFrom15PercentRate(35) :: throws an exception" in {
@@ -1699,9 +1700,8 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           isLinked = false
         )
 
-        testCalculationService.calculateTax(testRequest)
+        the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${PreCompletionTransaction} does not apply to Mixed properties"
 
-        verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
       }
     }
 
@@ -1852,6 +1852,100 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
 
     }
+
+    "Given relief code CollectiveEnfranchisementByLeaseholders(25)" when{
+        "effective date is on or after 23/04/2009 and is freehold" in {
+          val testRequest = Request(
+            HoldingTypes.freehold,
+            PropertyTypes.residential,
+            APRIL2009_EFFECTIVE_DATE,
+            nonUKResident = None,
+            premium = 1000000,
+            highestRent = BigDecimal(0),
+            propertyDetails = None,
+            leaseDetails = None,
+            relevantRentDetails = None,
+            firstTimeBuyer = None,
+            taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
+          )
+
+          val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF)
+
+          when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+        }
+
+      "effective date is before 23/04/2009" in {
+        val badTestRequest = Request(
+          HoldingTypes.freehold,
+          PropertyTypes.nonResidential,
+          LocalDate.of(2009, 4, 22),
+          nonUKResident = None,
+          premium = 0,
+          highestRent = BigDecimal(10000),
+          propertyDetails = None,
+          leaseDetails = None,
+          relevantRentDetails = None,
+          firstTimeBuyer = None,
+          taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
+        )
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+        val captor = ArgumentCaptor.forClass(classOf[Request])
+
+        when(mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16(any[Request], meq(false)))
+          .thenReturn(result)
+
+        testCalculationService.calculateTax(badTestRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1))
+          .freeholdNonResidentialMar12toMar16(captor.capture(), meq(false))
+
+        captor.getValue.taxReliefDetails mustBe None
+
+        verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+      }
+
+      "effective date is on or after 23/04/2009 and is leasehold" in {
+        val testRequest = Request(
+          HoldingTypes.leasehold,
+          PropertyTypes.nonResidential,
+          APRIL2009_EFFECTIVE_DATE,
+          nonUKResident = None,
+          premium = 1000000,
+          highestRent = BigDecimal(0),
+          propertyDetails = None,
+          leaseDetails = Some(LeaseDetails(
+            startDate = LocalDate.of(2009, 3, 23),
+            endDate = LocalDate.of(2010, 3, 23),
+            leaseTerm = LeaseTerm(
+              years = 1,
+              days = 1,
+              daysInPartialYear = 365
+            ),
+            year1Rent = 999,
+            year2Rent = Some(999),
+            None,
+            None,
+            None
+          )),
+          relevantRentDetails = None,
+          firstTimeBuyer = None,
+          taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
+        )
+
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF)
+
+        when(mockLeaseholdCalculationService.leaseholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
+      }
+    }
+
 
     "select the freeholdSelfAssessedRes function" when {
       "given a request with relief code RightToBuy and property Type is Residential with twoOrMoreProperties and isLinked = true" in {

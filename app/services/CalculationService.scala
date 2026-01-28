@@ -368,6 +368,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
       request.propertyDetails.exists(_.twoOrMoreProperties.contains(true))
 
     (request.holdingType, request.propertyType, isAdditionalProperty, taxReliefDetails.taxReliefCode, request.isLinked) match {
+      /* ------------- FreeHoldCases--------------------------- */
+      case (`freehold`, _, _, CollectiveEnfranchisementByLeaseholders, _)
+        if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>
+        CalculationResponse(Seq(
+          freeCalculationService.freeholdSelfAssessedRes
+        ))
       case (`freehold`, _, _, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false)
         if taxReliefDetails.isPartialRelief.contains(true) =>
           CalculationResponse(Seq(
@@ -379,7 +385,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         ))
       case (`freehold`, _, _, taxReliefCode, false)
         if standardZeroRateFreeholdReliefCodes.contains(taxReliefCode) =>
-          CalculationResponse(Seq(
+        CalculationResponse(Seq(
             freeCalculationService.freeholdZeroRateTaxReliefRes
           ))
       case (`freehold`, _, _, AcquisitionRelief, false) =>
@@ -420,6 +426,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           freeCalculationService.freeholdSelfAssessedRes
         ))
       /* ------------- LeaseHoldCases--------------------------- */
+      case (`leasehold`, _, _, CollectiveEnfranchisementByLeaseholders, _)
+        if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdSelfAssessedRes
+        ))
       case (`leasehold`, _, _, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, false)
         if taxReliefDetails.isPartialRelief.contains(true) =>
           CalculationResponse(Seq(
@@ -453,7 +464,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           CalculationResponse(Seq(
             leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
           ))
-      case (_, `mixed`, _, FirstTimeBuyersRelief|ReliefFrom15PercentRate, _) =>
+      case (_, `mixed`, _, _, _) =>
         throw new InvalidTaxReliefCombinationException(s"taxReliefCode: ${taxReliefDetails.taxReliefCode} does not apply to Mixed properties")
       case (holdingType, propertyType, isAdditionalProperty, taxReliefCode, isLinked) =>
         logWarn(s"TaxRelief logic not yet implemented for" +
