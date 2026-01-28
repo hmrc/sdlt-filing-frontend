@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.purchaser
+package viewmodels.checkAnswers.purchaserAgent
 
 import models.{CheckMode, UserAnswers}
 import pages.purchaserAgent.PurchaserAgentNamePage
@@ -27,28 +27,29 @@ import viewmodels.implicits.*
 
 object PurchaserAgentNameSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
-    answers.flatMap(_.get(PurchaserAgentNamePage)).map {
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
+    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url
+    val label = messages("purchaserAgent.name.checkYourAnswersLabel")
+    answers.get(PurchaserAgentNamePage).map {
       answer =>
 
         SummaryListRowViewModel(
-          key     = "purchaserAgent.name.checkYourAnswersLabel",
+          key     = label,
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("purchaserAgent.name.change.hidden"))
           )
         )
     }.getOrElse {
-
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.PurchaserAgentName.Missing")}</a>""")
+          s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.name.missing")}</a>""")
       )
-
       SummaryListRowViewModel(
-        key = "purchaserAgent.name.checkYourAnswersLabel",
+        key = label,
         value = value
       )
     }
+  }
 }

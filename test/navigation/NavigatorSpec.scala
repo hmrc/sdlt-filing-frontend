@@ -172,8 +172,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserAgentReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode)
         }
 
-        "go from PurchaserAgentAuthorisedPage to ReturnTakList page" in {//TODO: Update link to PA-CYA DTR-1851
-          navigator.nextPage(PurchaserAgentAuthorisedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        "go from PurchaserAgentAuthorisedPage to PurchaserAgentCheckYourAnswers page" in {
+          navigator.nextPage(PurchaserAgentAuthorisedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
          }
 
       }

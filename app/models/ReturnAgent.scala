@@ -16,7 +16,11 @@
 
 package models
 
+import models.AgentType.{Purchaser, Vendor}
+import models.purchaserAgent.PurchaserAgentSessionQuestions
 import play.api.libs.json.{Json, OFormat}
+
+import scala.concurrent.Future
 
 case class CreateReturnAgentRequest(
                        stornId: String,
@@ -37,6 +41,35 @@ case class CreateReturnAgentRequest(
 
 object CreateReturnAgentRequest {
   implicit val format: OFormat[CreateReturnAgentRequest] = Json.format[CreateReturnAgentRequest]
+  
+  def from(userAnswers: UserAnswers, agentType: AgentType): Future[CreateReturnAgentRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        agentType match {
+          case Purchaser =>
+            val paSessionQuestions: PurchaserAgentSessionQuestions = (userAnswers.data \ "purchaserAgentCurrent").as[PurchaserAgentSessionQuestions]
+            Future.successful(CreateReturnAgentRequest(
+              stornId = fullReturn.stornId,
+              returnResourceRef = fullReturn.returnResourceRef,
+              agentType = agentType.toString,
+              name = paSessionQuestions.purchaserAgentName,
+              houseNumber = paSessionQuestions.purchaserAgentAddress.houseNumber,
+              addressLine1 = paSessionQuestions.purchaserAgentAddress.line1,
+              addressLine2 = paSessionQuestions.purchaserAgentAddress.line2,
+              addressLine3 = paSessionQuestions.purchaserAgentAddress.line3,
+              addressLine4 = paSessionQuestions.purchaserAgentAddress.line4,
+              postcode = paSessionQuestions.purchaserAgentAddress.postcode,
+              phoneNumber = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.phoneNumber),
+              email = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.emailAddress),
+              agentReference = paSessionQuestions.purchaserAgentReference,
+              isAuthorised = paSessionQuestions.purchaserAgentAuthorised.map(_.toUpperCase)
+            ))
+          case Vendor => ???
+        }
+      case None =>
+        Future.failed(new NoSuchElementException("[CreateReturnAgentRequest] Full return not found"))
+    }
+  }
 }
 
 case class CreateReturnAgentReturn(
@@ -67,6 +100,35 @@ case class UpdateReturnAgentRequest(
 
 object UpdateReturnAgentRequest {
   implicit val format: OFormat[UpdateReturnAgentRequest] = Json.format[UpdateReturnAgentRequest]
+  
+  def from(userAnswers: UserAnswers, agentType: AgentType): Future[UpdateReturnAgentRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        agentType match {
+          case Purchaser =>
+            val paSessionQuestions: PurchaserAgentSessionQuestions = (userAnswers.data \ "purchaserAgentCurrent").as[PurchaserAgentSessionQuestions]
+            Future.successful(UpdateReturnAgentRequest(
+              stornId = fullReturn.stornId,
+              returnResourceRef = fullReturn.returnResourceRef,
+              agentType = agentType.toString,
+              name = paSessionQuestions.purchaserAgentName,
+              houseNumber = paSessionQuestions.purchaserAgentAddress.houseNumber,
+              addressLine1 = paSessionQuestions.purchaserAgentAddress.line1,
+              addressLine2 = paSessionQuestions.purchaserAgentAddress.line2,
+              addressLine3 = paSessionQuestions.purchaserAgentAddress.line3,
+              addressLine4 = paSessionQuestions.purchaserAgentAddress.line4,
+              postcode = paSessionQuestions.purchaserAgentAddress.postcode,
+              phoneNumber = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.phoneNumber),
+              email = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.emailAddress),
+              agentReference = paSessionQuestions.purchaserAgentReference,
+              isAuthorised = paSessionQuestions.purchaserAgentAuthorised.map(_.toUpperCase)
+            ))
+          case Vendor => ???
+        }
+      case None =>
+        Future.failed(new NoSuchElementException("[UpdateReturnAgentRequest] Full return not found"))
+    }
+  }
 }
 
 case class UpdateReturnAgentReturn(

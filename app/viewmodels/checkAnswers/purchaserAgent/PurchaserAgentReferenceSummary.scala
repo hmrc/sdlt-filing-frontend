@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.purchaserAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaserAgent.PurchaserAgentReferencePage
+import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentReferencePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -27,17 +27,31 @@ import viewmodels.implicits.*
 
 object PurchaserAgentReferenceSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PurchaserAgentReferencePage).map {
-      answer =>
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    val label = messages("purchaserAgent.reference.checkYourAnswersLabel")
+    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode).url
+    
+    (answers.get(PurchaserAgentReferencePage), answers.get(AddPurchaserAgentReferenceNumberPage)) match {
+      case (Some(paReference), _) =>
 
-        SummaryListRowViewModel(
+        Some(SummaryListRowViewModel(
           key     = "purchaserAgent.reference.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
+          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(paReference).toString)),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("purchaserAgent.reference.change.hidden"))
           )
+        ))
+      case (None, Some(true)) =>
+        val value = ValueViewModel(
+          HtmlContent(
+            s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.referenceNumber.missing")}</a>""")
         )
+        Some(SummaryListRowViewModel(
+          key = label,
+          value = value
+        ))
+      case _ => None
     }
+  }
 }
