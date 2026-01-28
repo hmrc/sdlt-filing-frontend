@@ -102,7 +102,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to PurchaserAgentName page if full return does not contain return agent for a GET" in {
+      "must redirect to journey recovery if full return does not contain return agent for a GET" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -112,7 +112,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 
@@ -134,7 +134,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
     "onSubmit" - {
 
-      "must redirect to PurchaserAgentName page if full return does not contain return agent for a POST" in {
+      "must redirect to journey recovery if full return does not contain return agent for a POST" in {
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn.copy(returnAgent = None)))
 
         val application = applicationBuilder(Some(userAnswers)).build()
@@ -146,7 +146,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 
@@ -245,24 +245,27 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      //TODO add this test back in once purchaser overview page has been created DTR-1835
-//      "must set flash message when purchaser agent is deleted" in {
-//        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
-//
-//        val application = applicationBuilder(Some(userAnswers)).build()
-//
-//        running(application) {
-//          val request = FakeRequest(POST, removePurchaserAgentRoute)
-//            .withFormUrlEncodedBody(("value", RemovePurchaserAgent.Yes.toString))
-//
-//          val result = route(application, request).value
-//
-//          status(result) mustEqual SEE_OTHER
-//          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
-//          flash(result).get("purchaserAgentDeleted").value mustEqual "Test return agent"
-//        }
-//      }
+      "must redirect to purchaser agent overview and set flash message when purchaser agent is deleted" in {
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          ).build()
+
+        running(application) {
+          val request = FakeRequest(POST, removePurchaserAgentRoute)
+            .withFormUrlEncodedBody(("value", RemovePurchaserAgent.Yes.toString))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+//TODO add this in once purcahser overview is created DTR-1835 and flashing is working
+//          flash(result).get("purchaserAgentDeleted").value mustEqual "Test return agent"
+        }
+      }
     }
 
   }

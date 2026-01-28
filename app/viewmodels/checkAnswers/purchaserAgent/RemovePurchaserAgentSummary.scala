@@ -33,16 +33,16 @@ object RemovePurchaserAgentSummary  {
 
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"removePurchaserAgent.$answer"))
+            HtmlFormat.escape(messages(s"site.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key     = "removePurchaserAgent.checkYourAnswersLabel",
+          key     = "purchaserAgent.removePurchaserAgent.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaserAgent.routes.RemovePurchaserAgentController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("removePurchaserAgent.change.hidden"))
+              .withVisuallyHiddenText(messages("purchaserAgent.removePurchaserAgent.change.hidden"))
           )
         )
     }

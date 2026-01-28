@@ -18,14 +18,14 @@ package viewmodels.checkAnswers.purchaserAgent
 
 import base.SpecBase
 import models.CheckMode
-import pages.purchaserAgent.AddPurchaserAgentReferenceNumberPage
+import models.purchaserAgent.RemovePurchaserAgent
+import pages.purchaserAgent.RemovePurchaserAgentPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class RemovePurchaserAgentSummarySpec extends SpecBase {
 
-  "AddPurchaserPhoneNumberSummarySpec" - {
+  "RemovePurchaserAgentSummary" - {
 
     "must return a SummaryListRow with 'yes' text and change link" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -33,20 +33,20 @@ class RemovePurchaserAgentSummarySpec extends SpecBase {
       running(application) {
         implicit val msgs: Messages = messages(application)
 
-        val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, true).success.value
+        val userAnswers = emptyUserAnswers.set(RemovePurchaserAgentPage, RemovePurchaserAgent.Yes).success.value
 
-        val result = AddPurchaserAgentReferenceNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = RemovePurchaserAgentSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel")
+        result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.removePurchaserAgent.checkYourAnswersLabel")
 
-        val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+        val contentString = result.value.content.asHtml.toString()
 
         contentString mustEqual msgs("site.yes")
 
         result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.RemovePurchaserAgentController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addAgentReferenceNumber.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.removePurchaserAgent.change.hidden")
       }
     }
 
@@ -56,20 +56,42 @@ class RemovePurchaserAgentSummarySpec extends SpecBase {
       running(application) {
         implicit val msgs: Messages = messages(application)
 
-        val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, false).success.value
+        val userAnswers = emptyUserAnswers.set(RemovePurchaserAgentPage, RemovePurchaserAgent.No).success.value
 
-        val result = AddPurchaserAgentReferenceNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = RemovePurchaserAgentSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel")
+        result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.removePurchaserAgent.checkYourAnswersLabel")
 
-        val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+        val contentString = result.value.content.asHtml.toString()
 
         contentString mustEqual msgs("site.no")
 
         result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.RemovePurchaserAgentController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addAgentReferenceNumber.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.removePurchaserAgent.change.hidden")
+      }
+    }
+
+    "must use check mode for the change link" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+          .set(
+            RemovePurchaserAgentPage, RemovePurchaserAgent.Yes
+          ).success.value
+
+        val result =
+          RemovePurchaserAgentSummary.row(userAnswers)
+            .getOrElse(fail("Failed to get summary list row"))
+
+        result.actions.get.items.head.href mustEqual
+          controllers.purchaserAgent.routes.RemovePurchaserAgentController
+            .onPageLoad(CheckMode).url
       }
     }
   }

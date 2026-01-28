@@ -18,7 +18,7 @@ package controllers.purchaserAgent
 
 import controllers.actions.*
 import forms.purchaserAgent.RemovePurchaserAgentFormProvider
-import models.{DeleteReturnAgentRequest, Mode, NormalMode, ReturnVersionUpdateRequest}
+import models.{DeleteReturnAgentRequest, Mode, ReturnVersionUpdateRequest}
 import models.purchaserAgent.RemovePurchaserAgent
 import pages.purchaserAgent.RemovePurchaserAgentPage
 import play.api.data.Form
@@ -53,7 +53,7 @@ class RemovePurchaserAgentController @Inject()(
 
       maybePurchaserAgentName match {
         case None =>
-          Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode))
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
         case Some(name) =>
           val preparedForm = request.userAnswers.get(RemovePurchaserAgentPage) match {
@@ -72,7 +72,7 @@ class RemovePurchaserAgentController @Inject()(
 
       maybePurchaserAgentName match {
         case None =>
-          Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
         case Some(name) =>
           form.bindFromRequest().fold(
