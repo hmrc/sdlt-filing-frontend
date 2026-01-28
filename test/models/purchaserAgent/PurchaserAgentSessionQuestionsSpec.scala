@@ -62,7 +62,8 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
         "postcode" ->  "W9 2NP",
         "country" -> JsNull,
         "addressValidated" -> false
-      )
+      ),
+      "purchaserAgentAuthorised" -> "YES"
     )
   }
 
@@ -99,7 +100,7 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
               emailAddress = Some("test@example.com")
             )),
             purchaserAgentReference = Some("1234"),
-            purchaserAgentAuthorised = Some("YES")
+            purchaserAgentAuthorised = "YES"
           )
 
         result shouldBe expectedResult
@@ -121,7 +122,8 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
               postcode = "W9 2NP",
               country = None,
               addressValidated = false
-            )
+            ),
+            purchaserAgentAuthorised = "YES"
           )
 
         result shouldBe expectedResult

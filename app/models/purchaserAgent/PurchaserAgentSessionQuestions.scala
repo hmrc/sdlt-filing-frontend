@@ -23,7 +23,7 @@ case class PurchaserAgentSessionQuestions(
                                            purchaserAgentAddress: PurchaserAgentSessionAddress,
                                            purchaserAgentsContactDetails: Option[PurchaserAgentsContactDetails] = None,
                                            purchaserAgentReference: Option[String] = None,
-                                           purchaserAgentAuthorised: Option[String] = None
+                                           purchaserAgentAuthorised: String
                                          )
 
 object PurchaserAgentSessionQuestions {
