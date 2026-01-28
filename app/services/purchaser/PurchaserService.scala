@@ -264,7 +264,9 @@ class PurchaserService {
   def purchaserSessionOptionalQuestionsValidation(sessionData: PurchaserSessionQuestions, userAnswers: UserAnswers): Boolean = {
       val isPurchaserMain: Boolean =
         sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID) == userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
-      if(isPurchaserMain) {
+      val isPurchaserFirstMain = sessionData.purchaserCurrent.ConfirmNameOfThePurchaser.contains(ConfirmNameOfThePurchaser.Yes)
+
+      if(isPurchaserMain || isPurchaserFirstMain) {
         sessionData.purchaserCurrent.whoIsMakingThePurchase match {
           case WhoIsMakingThePurchase.Individual.toString =>
             individualMainPurchase(sessionData)

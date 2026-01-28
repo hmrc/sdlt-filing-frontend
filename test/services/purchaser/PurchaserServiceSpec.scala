@@ -1409,7 +1409,7 @@ class PurchaserServiceSpec extends SpecBase {
           val purchaserSessionQuestions = PurchaserSessionQuestions(
             PurchaserCurrent(
               purchaserAndCompanyId = Some(PurchaserAndCompanyId(purchaserID = "PUR001", companyDetailsID = Some("COMPDET001"))),
-              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
+              ConfirmNameOfThePurchaser = None,
               whoIsMakingThePurchase = "Individual",
               nameOfPurchaser = NameOfPurchaser(forename1 = Some("Name1"), forename2 = Some("Name2"), name = "Samsung"),
               purchaserAddress = PurchaserSessionAddress(
@@ -1649,7 +1649,7 @@ class PurchaserServiceSpec extends SpecBase {
           val purchaserSessionQuestions = PurchaserSessionQuestions(
             PurchaserCurrent(
               purchaserAndCompanyId = Some(PurchaserAndCompanyId(purchaserID = "PUR001", companyDetailsID = Some("COMPDET001"))),
-              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
+              ConfirmNameOfThePurchaser = None,
               whoIsMakingThePurchase = "Company",
               nameOfPurchaser = NameOfPurchaser(forename1 = Some("Name1"), forename2 = Some("Name2"), name = "Samsung"),
               purchaserAddress = PurchaserSessionAddress(
@@ -1924,7 +1924,7 @@ class PurchaserServiceSpec extends SpecBase {
             PurchaserSessionQuestions(purchaserCurrent =
               PurchaserCurrent(
                 purchaserAndCompanyId = Some(PurchaserAndCompanyId(purchaserID = "PUR002", companyDetailsID = Some("COMPDET001"))),
-                ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
+                ConfirmNameOfThePurchaser = None,
                 whoIsMakingThePurchase = "Company",
                 nameOfPurchaser = NameOfPurchaser(forename1 = Some("Name1"), forename2 = Some("Name2"), name = "Samsung"),
                 purchaserAddress = PurchaserSessionAddress(
@@ -1982,6 +1982,111 @@ class PurchaserServiceSpec extends SpecBase {
                   userAnswers = userAnswers
                 ) mustBe result
               }
+            }
+          }
+        }
+      }
+
+      "when user answers Confirm Name of the Purchaser Page" - {
+        val purchaserSessionQuestions = PurchaserSessionQuestions(
+          PurchaserCurrent(
+            purchaserAndCompanyId = Some(PurchaserAndCompanyId(purchaserID = "PUR001", companyDetailsID = Some("COMPDET001"))),
+            ConfirmNameOfThePurchaser = None,
+            whoIsMakingThePurchase = "Individual",
+            nameOfPurchaser = NameOfPurchaser(forename1 = Some("Name1"), forename2 = Some("Name2"), name = "Samsung"),
+            purchaserAddress = PurchaserSessionAddress(
+              houseNumber = Some("1"),
+              line1 = Some("Street 1"),
+              line2 = Some("Street 2"),
+              line3 = Some("Street 3"),
+              line4 = Some("Street 4"),
+              line5 = Some("Street 5"),
+              postcode = Some("CR7 8LU"),
+              country = Some(PurchaserSessionCountry(
+                code = Some("GB"),
+                name = Some("UK")
+              )),
+              addressValidated = Some(true)),
+            addPurchaserPhoneNumber = true,
+            enterPurchaserPhoneNumber = Some("+447874363636"),
+            doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+            nationalInsuranceNumber = Some("AA123456A"),
+            purchaserFormOfIdIndividual = Some(PurchaserFormOfIdIndividual(idNumberOrReference = "ref", countryIssued = "country")),
+            purchaserDateOfBirth = Some(LocalDate.of(2000, 2, 2)),
+            purchaserConfirmIdentity = Some(PurchaserConfirmIdentity.VatRegistrationNumber),
+            registrationNumber = Some("VAT1234"),
+            purchaserUTRPage = Some("UTR1234"),
+            purchaserFormOfIdCompany = Some(CompanyFormOfId(referenceId = "ID12345", countryIssued = "country")),
+            purchaserTypeOfCompany = Some(
+              PurchaserTypeOfCompanyAnswers(
+                bank = "YES",
+                buildingAssociation = "NO",
+                centralGovernment = "NO",
+                individualOther = "NO",
+                insuranceAssurance = "NO",
+                localAuthority = "NO",
+                partnership = "NO",
+                propertyCompany = "NO",
+                publicCorporation = "NO",
+                otherCompany = "NO",
+                otherFinancialInstitute = "NO",
+                otherIncludingCharity = "NO",
+                superannuationOrPensionFund = "NO",
+                unincorporatedBuilder = "NO",
+                unincorporatedSoleTrader = "NO")
+            ),
+            isPurchaserActingAsTrustee = Some("yes"),
+            purchaserAndVendorConnected = Some("yes"),
+          ))
+        val dataWithConfirmNameYesComplete = purchaserSessionQuestions.copy(
+          purchaserCurrent =
+            purchaserSessionQuestions.purchaserCurrent.copy(
+              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
+              addPurchaserPhoneNumber = true,
+              enterPurchaserPhoneNumber = Some("+447874363636")
+            )
+        )
+        val dataWithConfirmNameYesIncomplete = purchaserSessionQuestions.copy(
+          purchaserCurrent =
+            purchaserSessionQuestions.purchaserCurrent.copy(
+              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
+              addPurchaserPhoneNumber = true,
+              enterPurchaserPhoneNumber = None
+            )
+        )
+        val dataWithConfirmNameNoComplete = purchaserSessionQuestions.copy(
+          purchaserCurrent =
+            purchaserSessionQuestions.purchaserCurrent.copy(
+              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.No),
+              addPurchaserPhoneNumber = true,
+              enterPurchaserPhoneNumber = Some("+447874363636")
+            )
+        )
+        val dataWithConfirmNameNoIncomplete = purchaserSessionQuestions.copy(
+          purchaserCurrent =
+            purchaserSessionQuestions.purchaserCurrent.copy(
+              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.No),
+              addPurchaserPhoneNumber = true,
+              enterPurchaserPhoneNumber = None
+            )
+        )
+
+        val confirmNameOfThePurchaserCases = Table(
+          ("confirmNameOfThePurchaser", "status", "sessionData", "result"),
+          ("yes", "complete", dataWithConfirmNameYesComplete, true),
+          ("yes", "incomplete", dataWithConfirmNameYesIncomplete, false),
+          ("no", "complete", dataWithConfirmNameNoComplete, true),
+          ("no", "incomplete", dataWithConfirmNameNoIncomplete, false)
+        )
+
+        forAll(confirmNameOfThePurchaserCases) { (confirmNameOfThePurchaser, status, sessionData, result) =>
+
+          s"when user answered $confirmNameOfThePurchaser and purchaser is $status" - {
+            s"must return $result" in {
+              service.purchaserSessionOptionalQuestionsValidation(
+                sessionData = sessionData,
+                userAnswers = userAnswers
+              ) mustBe result
             }
           }
         }
