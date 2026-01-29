@@ -16,7 +16,7 @@
 
 @import viewmodels.LegendSize.Large
 @import views.html.components.Caption
-@import models.vendor.DoYouKnowYourAgentReference
+@import models.vendorAgent.VendorAgentsAddReference
 
 @this(
     layout: templates.Layout,
@@ -29,22 +29,22 @@
 
 @(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("agent.doYouKnowYourAgentReference.title"))) {
+@layout(pageTitle = title(form, messages("vendorAgent.VendorAgentsAddReference.title"))) {
 
-    @formHelper(action = controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        @caption(messages("site.vendor.caption"))
+        @caption(messages("site.vendorAgent.caption"))
 
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("agent.doYouKnowYourAgentReference.heading",agentName)).asPageHeading(size = Large),
-                items  = DoYouKnowYourAgentReference.options
-            ).withHint(HintViewModel(HtmlContent(Html(messages("agent.doYouKnowYourAgentReference.p", agentName)))))
+                legend = LegendViewModel(messages("vendorAgent.VendorAgentsAddReference.heading")).asPageHeading(size = Large),
+                items  = VendorAgentsAddReference.options
+            ).withHint(HintViewModel(HtmlContent(Html(messages("vendorAgent.VendorAgentsAddReference.p", agentName)))))
          )
 
         @govukButton(

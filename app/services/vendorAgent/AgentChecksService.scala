@@ -27,7 +27,7 @@ class AgentChecksService {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
         if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))) {
-          //TODO change this to the vendor agent overview page
+          //TODO DTR-2060: change this to the vendor agent overview page
           Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
         } else {
           continueRoute

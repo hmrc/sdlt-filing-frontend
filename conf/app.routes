@@ -136,11 +136,6 @@ POST        /about-the-vendor/enter-agent-contact-details                       
 GET         /about-the-vendor/enter-agent-contact-details/change                          controllers.vendor.VendorAgentsContactDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendor/enter-agent-contact-details/change                          controllers.vendor.VendorAgentsContactDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-the-vendor/add-agent-reference-number                                  controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/add-agent-reference-number                                  controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/add-agent-reference-number/change                           controllers.vendor.DoYouKnowYourAgentReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/add-agent-reference-number/change                           controllers.vendor.DoYouKnowYourAgentReferenceController.onSubmit(mode: Mode = CheckMode)
-
 GET         /about-the-vendor/check-answers                                               controllers.vendor.VendorCheckYourAnswersController.onPageLoad()
 POST        /about-the-vendor/check-answers                                               controllers.vendor.VendorCheckYourAnswersController.onSubmit()
 
@@ -290,3 +285,7 @@ GET         /about-the-vendors-agent/agent-address-lookup                       
 GET         /about-the-vendors-agent/agent-address-return                             controllers.vendorAgent.VendorAgentAddressController.addressLookupCallbackVendorAgent(id: String ?= "", mode: Mode = NormalMode)
 GET         /about-the-vendors-agent/agent-address-return/change                      controllers.vendorAgent.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
 
+GET         /about-the-vendors-agent/add-agent-reference-number                           controllers.vendorAgent.VendorAgentsAddReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /aabout-the-vendors-agent/add-agent-reference-number                          controllers.vendorAgent.VendorAgentsAddReferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-vendors-agent/add-agent-reference-number/change                    controllers.vendorAgent.VendorAgentsAddReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-vendors-agent/add-agent-reference-number/change                    controllers.vendorAgent.VendorAgentsAddReferenceController.onSubmit(mode: Mode = CheckMode)

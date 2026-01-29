@@ -50,8 +50,9 @@ class Navigator @Inject()() {
     case AddVendorAgentContactDetailsPage =>
       _ => controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode)
     case VendorAgentsContactDetailsPage =>
-      _ => controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode)
-    case DoYouKnowYourAgentReferencePage =>
+      _ => controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(NormalMode)
+    case VendorAgentsAddReferencePage =>
+      // TODO DTR-2098: Redirect to Screen va-3b - What is [agentName]'s reference for this return?
       _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
     case VendorAgentsReferencePage =>
       _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()

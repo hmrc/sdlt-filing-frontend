@@ -17,38 +17,36 @@
 package controllers.vendorAgent
 
 import controllers.actions.*
-import forms.vendorAgent.AddVendorAgentContactDetailsFormProvider
+import forms.vendorAgent.VendorAgentsAddReferenceFormProvider
 import models.{Mode, NormalMode}
+import models.vendorAgent.VendorAgentsAddReference
 import navigation.Navigator
-import pages.vendor.VendorAgentsContactDetailsPage
-import pages.vendorAgent.AgentNamePage
-import pages.vendorAgent.AddVendorAgentContactDetailsPage
+import pages.vendorAgent.{AgentNamePage, VendorAgentsAddReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.vendorAgent.AddVendorAgentContactDetailsView
-import scala.util.Success
+import views.html.vendorAgent.VendorAgentsAddReferenceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddVendorAgentContactDetailsController @Inject()(
-                                                        override val messagesApi: MessagesApi,
-                                                        sessionRepository: SessionRepository,
-                                                        navigator: Navigator,
-                                                        identify: IdentifierAction,
-                                                        getData: DataRetrievalAction,
-                                                        requireData: DataRequiredAction,
-                                                        formProvider: AddVendorAgentContactDetailsFormProvider,
-                                                        val controllerComponents: MessagesControllerComponents,
-                                                        view: AddVendorAgentContactDetailsView,
-                                                        agentChecksService: AgentChecksService
-                                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class VendorAgentsAddReferenceController @Inject()(
+                                                    override val messagesApi: MessagesApi,
+                                                    sessionRepository: SessionRepository,
+                                                    navigator: Navigator,
+                                                    identify: IdentifierAction,
+                                                    getData: DataRetrievalAction,
+                                                    requireData: DataRequiredAction,
+                                                    formProvider: VendorAgentsAddReferenceFormProvider,
+                                                    agentChecksService: AgentChecksService,
+                                                    val controllerComponents: MessagesControllerComponents,
+                                                    view: VendorAgentsAddReferenceView
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
-
+  
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -57,16 +55,15 @@ class AddVendorAgentContactDetailsController @Inject()(
           Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode))
 
         case Some(agentName) =>
-          val preparedForm = request.userAnswers.get(AddVendorAgentContactDetailsPage) match {
+          val preparedForm = request.userAnswers.get(VendorAgentsAddReferencePage) match {
             case None => form
             case Some(value) => form.fill(value)
           }
 
           val continueRoute = Ok(view(preparedForm, mode, agentName))
-          agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
+          agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute)
       }
   }
-
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -82,20 +79,19 @@ class AddVendorAgentContactDetailsController @Inject()(
 
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(AddVendorAgentContactDetailsPage, value))
-                removeDetails <- Future.fromTry {
-                  if !value then updatedAnswers.remove(VendorAgentsContactDetailsPage)
-                  else Success(updatedAnswers)
-                }
-                _ <- sessionRepository.set(removeDetails)
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsAddReferencePage, value))
+                _ <- sessionRepository.set(updatedAnswers)
               } yield {
-                if (value) {
-                  Redirect(navigator.nextPage(AddVendorAgentContactDetailsPage, mode, removeDetails))
+                if (value.toString.equals("yes")) {
+                  // TODO DTR-2098: Redirect to Screen va-3b - What is [agentName]'s reference for this return?
+                  Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
                 } else {
-                  Redirect(controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(NormalMode))
+                  // TODO DTR-2057: Redirect to Vendor Agent CYA
+                  Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
                 }
               }
           )
       }
   }
 }
+

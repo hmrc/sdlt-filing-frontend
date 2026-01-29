@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.behaviours.OptionFieldBehaviours
-import models.vendor.DoYouKnowYourAgentReference
+import models.vendorAgent.VendorAgentsAddReference
 import play.api.data.FormError
 
-class DoYouKnowYourAgentReferenceFormProviderSpec extends OptionFieldBehaviours {
+class VendorAgentsAddReferenceFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new DoYouKnowYourAgentReferenceFormProvider()()
+  val form = new VendorAgentsAddReferenceFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "agent.doYouKnowYourAgentReference.error.required"
+    val requiredKey = "vendorAgent.VendorAgentsAddReference.error.required"
 
-    behave like optionsField[DoYouKnowYourAgentReference](
+    behave like optionsField[VendorAgentsAddReference](
       form,
       fieldName,
-      validValues  = DoYouKnowYourAgentReference.values,
+      validValues  = VendorAgentsAddReference.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package pages.vendor
+package pages.vendorAgent
 
-import models.vendor.DoYouKnowYourAgentReference
+import models.vendorAgent.VendorAgentsAddReference
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object DoYouKnowYourAgentReferencePage extends QuestionPage[DoYouKnowYourAgentReference] {
+case object VendorAgentsAddReferencePage extends QuestionPage[VendorAgentsAddReference] {
 
-  override def path: JsPath = JsPath \ "vendorCurrent" \ toString
+  override def path: JsPath = JsPath \ "vendorAgentCurrent" \ toString
 
-  override def toString: String = "doYouKnowYourAgentReference"
+  override def toString: String = "vendorAgentsAddReference"
 }
