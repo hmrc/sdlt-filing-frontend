@@ -125,7 +125,7 @@ class PurchaserAgentOverviewController @Inject()(
             updatedAnswers <- Future.fromTry(
               purchaserAgentService.populateAssignedPurchaserAgentInSession(maybeAgent.get, request.userAnswers))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode)) //TODO: Change to Purchaser Agent CYA
+          } yield Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -143,10 +143,10 @@ class PurchaserAgentOverviewController @Inject()(
       Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
 
       //todo - implement when remove page is completed
-      //      for {
-      //        updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserAgentOverviewRemovePage, PurchaserAgentId(maybeReturnAgentId)))
-      //        _ <- sessionRepository.set(updatedAnswers)
-      //      } yield Redirect(controllers.purchaserAgent.routes.PurchaserAgentRemoveController.onPageLoad())
+      //            for {
+      //              updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserAgentOverviewRemovePage, PurchaserAgentId(maybeReturnAgentId)))
+      //              _ <- sessionRepository.set(updatedAnswers)
+      //            } yield Redirect(controllers.purchaserAgent.routes.PurchaserAgentRemoveController.onPageLoad())
     }
 
 }

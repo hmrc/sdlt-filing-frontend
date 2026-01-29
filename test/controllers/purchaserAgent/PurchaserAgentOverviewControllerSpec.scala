@@ -183,7 +183,7 @@ class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url
+            routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url
 
           verify(mockSessionRepository).set(any())
         }
