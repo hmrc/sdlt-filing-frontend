@@ -55,6 +55,8 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
     case VendorAgentsReferencePage =>
       _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+    case VendorAgentBeforeYouStartPage =>
+      _ => controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)
 
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
@@ -122,7 +124,7 @@ class Navigator @Inject()() {
       _ => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
     case PurchaserAgentAuthorisedPage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
-    case VendorAgentBeforeYouStartPage =>//TODO: When built route for DTR-2083
+    case VendorAgentBeforeYouStartPage =>
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }

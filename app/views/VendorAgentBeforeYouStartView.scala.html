@@ -25,32 +25,35 @@ govukErrorSummary: GovukErrorSummary,
 govukRadios: GovukRadios,
 govukButton: GovukButton,
 h1: h1,
-p: Paragraph
+p: Paragraph,
+caption: Caption
 )
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("vendorAgent.BeforeYouStart.title"), section = Some(messages("site.vendorAgent.caption")))) {
+@layout(pageTitle = title(form, messages("vendorAgent.BeforeYouStart.title"))) {
 
 @formHelper(action = controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onSubmit(), Symbol("autoComplete") -> "off") {
 
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))
 }
+@caption(messages("site.vendorAgent.caption"))
 
 @h1(messages("vendorAgent.BeforeYouStart.heading"))
 
 @p(messages("vendorAgent.BeforeYouStart.p1"))
+@p(messages("vendorAgent.BeforeYouStart.p2"))
 
 <ul class="govuk-list govuk-list--bullet">
     <li>@messages("vendorAgent.BeforeYouStart.bullet1")</li>
     <li>@messages("vendorAgent.BeforeYouStart.bullet2")</li>
-    <li>@messages("vendorAgent.BeforeYouStart.bullet3")</li>
 </ul>
 
-@p(messages("vendorAgent.BeforeYouStart.p2"))
+@p(messages("vendorAgent.BeforeYouStart.p3"))
 
 <ul class="govuk-list govuk-list--bullet">
+    <li>@messages("vendorAgent.BeforeYouStart.bullet3")</li>
     <li>@messages("vendorAgent.BeforeYouStart.bullet4")</li>
 </ul>
 
@@ -72,7 +75,7 @@ content = Text(messages("site.no"))
 )
 
 @govukButton(
-ButtonViewModel(messages("site.save.continue"))
+ButtonViewModel(messages("site.continue"))
 )
 }
 }

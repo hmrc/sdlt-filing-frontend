@@ -42,7 +42,7 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
 
   lazy val vendorAgentBeforeYouStartRoute = controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
 
-  "AgentForVendorBeforeYouStart Controller" - {
+  "VendorAgentBeforeYouStart Controller" - {
 
     "must return OK and the correct view for a GET" in {
 

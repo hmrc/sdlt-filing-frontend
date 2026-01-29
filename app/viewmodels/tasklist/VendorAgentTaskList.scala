@@ -43,7 +43,6 @@ object VendorAgentTaskList {
       //TODO: Change to the Vendor agent Overview page - DTR-2060
         controllers.vendor.routes.VendorOverviewController.onPageLoad().url
     } else {
-      //TODO: Change to the Vendor agent Before You Start Page - DTR-2067
       controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
     }
     

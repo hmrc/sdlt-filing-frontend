@@ -32,11 +32,11 @@ import viewmodels.implicits.*
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "agentForVendorBeforeYouStart.checkYourAnswersLabel",
+          key     = "vendorAgent.BeforeYouStart.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url)
-              .withVisuallyHiddenText(messages("agentForVendorBeforeYouStart.change.hidden"))
+              .withVisuallyHiddenText(messages("vendorAgent.BeforeYouStart.change.hidden"))
         )
         )
     }

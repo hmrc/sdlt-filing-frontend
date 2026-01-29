@@ -21,7 +21,7 @@ import play.api.libs.json.JsPath
 
 case object VendorAgentBeforeYouStartPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "vendorAgentCurrent" \toString
 
   override def toString: String = "vendorAgentBeforeYouStart"
 }
