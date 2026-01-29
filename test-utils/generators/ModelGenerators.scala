@@ -30,7 +30,7 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(PurchaserAgentAuthorised.values.toSeq)
     }
-
+  
   implicit lazy val arbitraryPurchaserAgentsContactDetails: Arbitrary[PurchaserAgentsContactDetails] =
     Arbitrary {
       for {

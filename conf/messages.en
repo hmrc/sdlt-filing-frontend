@@ -788,3 +788,9 @@ purchaserAgent.checkYourAnswers.contactDetails.missing                          
 purchaserAgent.checkYourAnswers.referenceNumber.missing                                  = Enter reference number
 purchaserAgent.checkYourAnswers.addReferenceNumber.missing                               = Select if you want to add a reference number
 purchaserAgent.checkYourAnswers.authorised.missing                                       = Select if the agent is authorised for correspondence
+
+purchaserAgent.removePurchaserAgent.title                                                = Are you sure you want to remove the purchaser’s agent? - About the purchaser’s agent
+purchaserAgent.removePurchaserAgent.heading                                              = Are you sure you want to remove {0}?
+purchaserAgent.removePurchaserAgent.checkYourAnswersLabel                                = removePurchaserAgent
+purchaserAgent.removePurchaserAgent.error.required                                       = Please select an option
+purchaserAgent.removePurchaserAgent.change.hidden                                        = RemovePurchaserAgent

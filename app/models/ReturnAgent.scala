@@ -147,6 +147,19 @@ case class DeleteReturnAgentRequest(
 
 object DeleteReturnAgentRequest {
   implicit val format: OFormat[DeleteReturnAgentRequest] = Json.format[DeleteReturnAgentRequest]
+
+  def from(userAnswers: UserAnswers, agentType: AgentType): Future[DeleteReturnAgentRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        Future.successful(DeleteReturnAgentRequest(
+          storn = fullReturn.stornId,
+          returnResourceRef = fullReturn.returnResourceRef,
+          agentType = agentType.toString
+        ))
+      case None =>
+        Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class DeleteReturnAgentReturn(
