@@ -26,7 +26,8 @@ import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import pages.preliminary.PurchaserAddressPage
-import pages.vendor.{VendorAddressPage, VendorAgentAddressPage}
+import pages.vendor.VendorAddressPage
+import pages.vendorAgent.VendorAgentAddressPage
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import repositories.SessionRepository
