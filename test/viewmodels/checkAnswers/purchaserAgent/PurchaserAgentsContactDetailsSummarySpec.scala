@@ -19,9 +19,10 @@ package viewmodels.checkAnswers.purchaserAgent
 import base.SpecBase
 import models.CheckMode
 import models.purchaserAgent.PurchaserAgentsContactDetails
-import pages.purchaserAgent.PurchaserAgentsContactDetailsPage
+import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentsContactDetailsPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
 
@@ -117,7 +118,7 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
         }
       }
 
-      "must use check mode for the change link" in {
+      "must return a summary list row with an empty string when email and phone number are not set" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -128,7 +129,7 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
             .set(
               PurchaserAgentsContactDetailsPage,
               PurchaserAgentsContactDetails(
-                phoneNumber = Some("0123456789"),
+                phoneNumber = None,
                 emailAddress = None
               )
             ).success.value
@@ -137,9 +138,41 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
             PurchaserAgentsContactDetailsSummary.row(userAnswers)
               .getOrElse(fail("Failed to get summary list row"))
 
-          result.actions.get.items.head.href mustEqual
-            controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController
-              .onPageLoad(CheckMode).url
+          result.value.content.asHtml.toString() mustEqual ""
+        }
+      }
+    }
+
+    "when contact details are not present" - {
+
+      "must return a SummaryListRow with a link to enter contact details when add contact details is true" in {
+        val userAnswers = emptyUserAnswers.set(AddContactDetailsForPurchaserAgentPage, true).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val result = PurchaserAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.contactDetails.checkYourAnswersLabel")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("purchaserAgent.checkYourAnswers.contactDetails.missing"))
+
+          result.actions mustBe None
+        }
+      }
+
+      "must return None when add contact details is false" in {
+        val userAnswers = emptyUserAnswers.set(AddContactDetailsForPurchaserAgentPage, false).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          PurchaserAgentsContactDetailsSummary.row(emptyUserAnswers) mustBe None
         }
       }
     }

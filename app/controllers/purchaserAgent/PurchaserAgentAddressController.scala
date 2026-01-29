@@ -99,8 +99,7 @@ class PurchaserAgentAddressController @Inject()(
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, PurchaserAgentAddressPage)
       } yield if(updated) {
-        //TODO DTR-1851: change this when we have the check your answers page
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }

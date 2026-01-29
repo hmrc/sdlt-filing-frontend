@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.purchaser
+package viewmodels.checkAnswers.purchaserAgent
 
 import base.SpecBase
 import models.CheckMode
@@ -38,7 +38,7 @@ class PurchaserAgentNameSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserAgentNamePage, "Smith").success.value
 
-          val result = PurchaserAgentNameSummary.row(Some(userAnswers))
+          val result = PurchaserAgentNameSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.name.checkYourAnswersLabel")
 
@@ -62,7 +62,7 @@ class PurchaserAgentNameSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserAgentNamePage, "O'Brien & Sons <Ltd>").success.value
 
-          val result = PurchaserAgentNameSummary.row(Some(userAnswers))
+          val result = PurchaserAgentNameSummary.row(userAnswers)
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("O&#x27;Brien")
@@ -72,20 +72,26 @@ class PurchaserAgentNameSummarySpec extends SpecBase {
         }
       }
     }
+    
+    "when agent name is not present" - {
 
-    "must use CheckMode for the change link" in {
+      "must return a summary list row with a link to enter agent name" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+          val result = PurchaserAgentNameSummary.row(emptyUserAnswers)
 
-        val userAnswers = emptyUserAnswers
-          .set(PurchaserAgentNamePage, "Smith").success.value
+          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.name.checkYourAnswersLabel")
 
-        val result = PurchaserAgentNameSummary.row(Some(userAnswers))
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("purchaserAgent.checkYourAnswers.name.missing"))
 
-        result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url
+          result.actions mustBe None
+        }
       }
     }
   }

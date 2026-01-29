@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.purchaserAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaserAgent.PurchaserAgentAuthorisedPage
+import pages.purchaserAgent.{PurchaserAgentAuthorisedPage, PurchaserAgentNamePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,7 +27,11 @@ import viewmodels.implicits.*
 
 object PurchaserAgentAuthorisedSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
+    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(CheckMode).url
+    val nameOfPurchaserAgent = answers.get(PurchaserAgentNamePage).getOrElse(messages("site.agent.theAgent"))
+    val label = messages("purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel", nameOfPurchaserAgent)
+
     answers.get(PurchaserAgentAuthorisedPage).map {
       answer =>
 
@@ -38,12 +42,22 @@ object PurchaserAgentAuthorisedSummary  {
         )
 
         SummaryListRowViewModel(
-          key     = "purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel",
+          key     = label,
           value   = value,
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel"))
+            ActionItemViewModel("site.change", changeRoute)
+              .withVisuallyHiddenText(messages("purchaserAgent.purchaserAgentAuthorised.change.hidden", nameOfPurchaserAgent))
           )
         )
+    }.getOrElse {
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.authorised.missing")}</a>""")
+      )
+      SummaryListRowViewModel(
+        key = label,
+        value = value
+      )
     }
+  }
 }

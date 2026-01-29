@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.purchaserAgent.AddPurchaserAgentReferenceNumberFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentNamePage}
+import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentNamePage, PurchaserAgentReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +29,7 @@ import views.html.purchaserAgent.AddPurchaserAgentReferenceNumberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class AddPurchaserAgentReferenceNumberController @Inject()(
                                                             override val messagesApi: MessagesApi,
@@ -78,12 +79,16 @@ class AddPurchaserAgentReferenceNumberController @Inject()(
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPurchaserAgentReferenceNumberPage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                finalAnswers <- Future.fromTry {
+                  if !value then updatedAnswers.remove(PurchaserAgentReferencePage)
+                  else Success(updatedAnswers)
+                }
+                _ <- sessionRepository.set(finalAnswers)
               } yield {
-                if (value) {
-                  Redirect(navigator.nextPage(AddPurchaserAgentReferenceNumberPage, mode, updatedAnswers))
+                if (!value && mode == NormalMode) {
+                  Redirect(controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(mode))
                 } else {
-                  Redirect(controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode))
+                  Redirect(navigator.nextPage(AddPurchaserAgentReferenceNumberPage, mode, finalAnswers))
                 }
               }
           )
