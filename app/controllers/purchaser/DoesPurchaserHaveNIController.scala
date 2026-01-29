@@ -18,9 +18,10 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.DoesPurchaserHaveNIFormProvider
+import models.purchaser.DoesPurchaserHaveNI
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage}
+import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserDateOfBirthPage, PurchaserFormOfIdIndividualPage, PurchaserNationalInsurancePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -28,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.DoesPurchaserHaveNIView
 import services.purchaser.PurchaserService
 import models.purchaser.WhoIsMakingThePurchase
+import scala.util.Success
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -80,8 +82,31 @@ class DoesPurchaserHaveNIController @Inject()(
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName.fullName))),
 
             value =>
+              val afterRemovingNino = if (value == DoesPurchaserHaveNI.No) {
+                request.userAnswers.remove(PurchaserNationalInsurancePage)
+              } else {
+                Success(request.userAnswers)
+              }
+
+              val afterRemovingDOB = afterRemovingNino.flatMap { answers =>
+                if (value == DoesPurchaserHaveNI.No) {
+                  answers.remove(PurchaserDateOfBirthPage)
+                } else {
+                  Success(answers)
+                }
+              }
+
+              val afterRemovingFormId = afterRemovingDOB.flatMap { answers =>
+                if (value == DoesPurchaserHaveNI.Yes) {
+                  answers.remove(PurchaserFormOfIdIndividualPage)
+                } else {
+                  Success(answers)
+                }
+              }
+
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoesPurchaserHaveNIPage, value))
+                cleaned <- Future.fromTry(afterRemovingFormId)
+                updatedAnswers <- Future.fromTry(cleaned.set(DoesPurchaserHaveNIPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
                 if (value.toString.equals("yes")) {

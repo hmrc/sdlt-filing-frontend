@@ -21,12 +21,13 @@ import forms.purchaser.AddPurchaserPhoneNumberFormProvider
 import models.purchaser.WhoIsMakingThePurchase
 import models.{CheckMode, Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import pages.purchaser.{AddPurchaserPhoneNumberPage, EnterPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.AddPurchaserPhoneNumberView
+import scala.util.Success
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -83,12 +84,16 @@ class AddPurchaserPhoneNumberController @Inject()(
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPurchaserPhoneNumberPage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                removePhoneNumber <- Future.fromTry {
+                  if !value then updatedAnswers.remove(EnterPurchaserPhoneNumberPage)
+                  else Success(updatedAnswers)
+                }
+                _ <- sessionRepository.set(removePhoneNumber)
               } yield {
-                (value, updatedAnswers.get(WhoIsMakingThePurchasePage)) match {
+                (value, removePhoneNumber.get(WhoIsMakingThePurchasePage)) match {
 
                   case (true, _) =>
-                    Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, updatedAnswers))
+                    Redirect(navigator.nextPage(AddPurchaserPhoneNumberPage, mode, removePhoneNumber))
 
                   case (false, Some(WhoIsMakingThePurchase.Individual)) => if (mode == CheckMode) {
                 Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
