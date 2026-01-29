@@ -265,6 +265,9 @@ POST        /about-the-purchasers-agent/agent-authorised-for-correspondence/chan
 GET         /about-the-purchasers-agent/check-answers                                     controllers.purchaserAgent.PurchaserAgentCheckYourAnswersController.onPageLoad()
 POST        /about-the-purchasers-agent/check-answers                                     controllers.purchaserAgent.PurchaserAgentCheckYourAnswersController.onSubmit()
 
+GET        /about-the-purchasers-agent/remove-purchasers-agent                           controllers.purchaserAgent.RemovePurchaserAgentController.onPageLoad()
+POST       /about-the-purchasers-agent/remove-purchasers-agent                           controllers.purchaserAgent.RemovePurchaserAgentController.onSubmit()
+
 GET         /about-the-vendors-agent/agent-name                                           controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-vendors-agent/agent-name                                           controllers.vendorAgent.AgentNameController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-vendors-agent/agent-name/change                                    controllers.vendorAgent.AgentNameController.onPageLoad(mode: Mode = CheckMode)
