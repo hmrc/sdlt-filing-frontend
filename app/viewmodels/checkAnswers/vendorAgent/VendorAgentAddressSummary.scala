@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.vendor
+package viewmodels.checkAnswers.vendorAgent
 
 import models.UserAnswers
 import models.address.{Address, Country}
-import pages.vendor.VendorAgentAddressPage
+import pages.vendorAgent.VendorAgentAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -26,10 +26,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AgentAddressSummary {
+
+object VendorAgentAddressSummary {
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
     answers.flatMap(_.get(VendorAgentAddressPage)).map { answer =>
-      
+
       val listOfAgentAddressDetails = List(
         answer.line1,
         answer.line2,
@@ -53,23 +54,24 @@ object AgentAddressSummary {
       )
 
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.agentAddress.label",
+        key = "agent.checkYourAnswers.agentAddress.label",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url)
-            .withVisuallyHiddenText(messages("vendor.checkYourAnswers.agentAddress"))
+          ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url)
+            .withVisuallyHiddenText(messages("agent.checkYourAnswers.agentAddress"))
         )
       )
     }.getOrElse{
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url}" class="govuk-link">${messages("vendor.checkYourAnswers.agentName.agentAddressMissing")}</a>""")
+          s"""<a href="${controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentAddressMissing")}</a>""")
       )
-      
+
       SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.agentAddress.label",
+        key = "agent.checkYourAnswers.agentAddress.label",
         value = value
       )
     }
 }
+

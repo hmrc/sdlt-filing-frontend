@@ -244,7 +244,7 @@ addressLookup.purchaserAgentQuestionsAddress.confirmPage.heading                
 addressLookup.purchaserAgentQuestionsAddress.confirmPage.changeLinkText             = Edit this address
 addressLookup.purchaserAgentQuestionsAddress.confirmPage.submitLabel                = Confirm address
 addressLookup.purchaserAgentQuestionsAddress.countryPicker.title                    = Find {0}’s address - About the purchaser’s agent
-addressLookup.purchaserAgentQuestionsAddress.countryPicker.heading                  = Find {0}’s addre
+addressLookup.purchaserAgentQuestionsAddress.countryPicker.heading                  = Find {0}’s address
 
 purchaserAgent.address.checkYourAnswersLabel                                        = Agent address
 purchaserAgent.address.change.hidden                                                = Agent address

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.vendor
+package controllers.vendorAgent
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
+import models.{Mode, NormalMode}
 import models.address.AddressLookupJourneyIdentifier.vendorAgentQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
-import models.{Mode, NormalMode}
-import pages.vendor.VendorAgentAddressPage
-import play.api.i18n.I18nSupport
+import pages.vendorAgent.{AgentNamePage, VendorAgentAddressPage}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.AddressLookupService
@@ -32,15 +32,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class VendorAgentAddressController @Inject()(
-                                         val controllerComponents: MessagesControllerComponents,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         addressLookupService: AddressLookupService,
-                                         sessionRepository: SessionRepository
-                                       )(implicit ec: ExecutionContext)
-  extends FrontendBaseController
-    with I18nSupport {
+                                              override val messagesApi: MessagesApi,
+                                              identify: IdentifierAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              addressLookupService: AddressLookupService,
+                                              sessionRepository: SessionRepository
+                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def redirectToAddressLookupVendorAgent(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
@@ -53,13 +52,14 @@ class VendorAgentAddressController @Inject()(
 
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          val vendorAgentName = (userAnswers.data \ "vendorAgentCurrent" \ "agentName").asOpt[String]
+          val vendorAgentName = userAnswers.get(AgentNamePage)
+
           vendorAgentName match {
             case Some(name) =>
               val callback = if (changeRoute.isDefined) {
-                controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent()
+                controllers.vendorAgent.routes.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent()
               } else {
-                controllers.vendor.routes.VendorAgentAddressController.addressLookupCallbackVendorAgent()
+                controllers.vendorAgent.routes.VendorAgentAddressController.addressLookupCallbackVendorAgent()
               }
 
               addressLookupService.getJourneyUrl(
@@ -79,16 +79,15 @@ class VendorAgentAddressController @Inject()(
       }
     }
 
-
   def addressLookupCallbackVendorAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, VendorAgentAddressPage)
-      } yield if(updated) {
-        //change this when we have the next page
+      } yield if (updated) {
         Redirect(controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode))
-      } else {
+      }
+      else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }
   }
@@ -98,10 +97,11 @@ class VendorAgentAddressController @Inject()(
       for {
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, VendorAgentAddressPage)
-      } yield if(updated) {
-        Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+      } yield if (updated) {
+        //TODO DTR-: change this when we have the check your answers page
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
-        Redirect(routes.JourneyRecoveryController.onPageLoad())
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
   }
 }

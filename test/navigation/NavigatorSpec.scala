@@ -70,7 +70,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from Agent name page to agent address lookup" in {
-          navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
+          navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
         }
 
         "go from VendorAgentsContactDetailsPage to return task list controller" in {
@@ -225,7 +225,7 @@ class NavigatorSpec extends SpecBase {
           controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode)
 
         navigator.nextPage(AgentNamePage, NormalMode, userAnswers) mustBe
-          controllers.vendor.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
+          controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
       }
     }
   }
