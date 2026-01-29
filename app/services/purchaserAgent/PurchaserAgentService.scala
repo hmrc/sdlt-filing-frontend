@@ -135,10 +135,19 @@ class PurchaserAgentService @Inject(
           phoneNumber = returnAgent.phone, emailAddress = returnAgent.email
         )
 
+        val authorised: PurchaserAgentAuthorised = returnAgent.isAuthorised match {
+          case Some("yes") | Some("YES") => PurchaserAgentAuthorised.Yes
+          case _ => PurchaserAgentAuthorised.No
+        }
+
         for {
           withName <- userAnswers.set(PurchaserAgentNamePage, returnAgent.name.get)
           withAddress <- withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
-          finalAnswers <- withAddress.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
+          addContact <- withAddress.set(AddContactDetailsForPurchaserAgentPage, returnAgent.phone.isDefined || returnAgent.email.isDefined)
+          withContact <- addContact.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
+          addReference <- withContact.set(AddPurchaserAgentReferenceNumberPage, returnAgent.reference.isDefined)
+          withReference <- addReference.set(PurchaserAgentReferencePage, returnAgent.reference.get)
+          finalAnswers <- withReference.set(PurchaserAgentAuthorisedPage, authorised)
         } yield finalAnswers
 
       case _ =>

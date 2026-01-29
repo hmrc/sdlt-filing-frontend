@@ -36,15 +36,15 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserAgentCheckYourAnswersController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       sessionRepository: SessionRepository,
-                                       backendConnector: StampDutyLandTaxConnector,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: PurchaserAgentCheckYourAnswersView
-                                     )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                          override val messagesApi: MessagesApi,
+                                                          identify: IdentifierAction,
+                                                          getData: DataRetrievalAction,
+                                                          requireData: DataRequiredAction,
+                                                          sessionRepository: SessionRepository,
+                                                          backendConnector: StampDutyLandTaxConnector,
+                                                          val controllerComponents: MessagesControllerComponents,
+                                                          view: PurchaserAgentCheckYourAnswersView
+                                                        )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -101,8 +101,7 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
       updateReturnAgentReturn <- backendConnector.updateReturnAgent(updateReturnAgentRequest) if version.newVersion.isDefined
     } yield {
       if (updateReturnAgentReturn.updated) {
-        // TODO go to overview DTR-1835
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
       } else {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
       }
@@ -115,8 +114,7 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
       createReturnAgentReturn <- backendConnector.createReturnAgent(createReturnAgentRequest)
     } yield {
       if (createReturnAgentReturn.returnAgentId.nonEmpty) {
-        // TODO go to overview DTR-1835
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
       } else {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
       }
