@@ -19,7 +19,6 @@ package controllers.vendorAgent
 import base.SpecBase
 import controllers.routes
 import forms.vendorAgent.VendorAgentBeforeYouStartFormProvider
-import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -30,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.VendorAgentBeforeYouStartView
+import navigation.{Navigator, FakeNavigator}
 
 import scala.concurrent.Future
 
@@ -87,6 +87,7 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -99,10 +100,10 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
-
+    
     "must redirect to task list when no is selected" in {
 
       val mockSessionRepository = mock[SessionRepository]
