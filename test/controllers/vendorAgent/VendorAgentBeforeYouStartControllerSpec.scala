@@ -28,7 +28,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.VendorAgentBeforeYouStartView
+import views.html.vendorAgent.VendorAgentBeforeYouStartView
 import navigation.{Navigator, FakeNavigator}
 
 import scala.concurrent.Future
