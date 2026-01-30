@@ -66,22 +66,10 @@ class PurchaserAgentOverviewController @Inject()(
             val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
             sessionRepository.set(userAnswers).map { _ =>
 
-              val returnAgentList = fullReturn.returnAgent.getOrElse(Seq.empty)
+              val maybeAgent: Option[ReturnAgent] = fullReturn.returnAgent.flatMap(PurchaserAgentHelper.getPurchaserAgent)
+              val maybeSummary: Option[SummaryList] = maybeAgent.flatMap(agent => PurchaserAgentHelper.buildSummary(Some(agent)))
 
-              val maybeAgent: Option[ReturnAgent] =
-                fullReturn.returnAgent
-                  .flatMap(PurchaserAgentHelper.getPurchaserAgent)
-
-              val maybeSummary: Option[SummaryList] =
-                maybeAgent.flatMap(agent =>
-                  PurchaserAgentHelper.buildSummary(Some(agent))
-                )
-
-              returnAgentList match {
-                case Nil => Ok(view(None, form, mode))
-
-                case agents => Ok(view(maybeSummary, form, mode))
-              }
+              Ok(view(maybeSummary, form, mode))
             }
           } recover {
           case ex =>

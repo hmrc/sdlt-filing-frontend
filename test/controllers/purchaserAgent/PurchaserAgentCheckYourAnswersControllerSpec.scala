@@ -271,6 +271,28 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
+
+      "must redirect back to check your answers for a POST if questions are not validated" in {
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(completeFullReturn))
+          .set(PurchaserAgentNamePage, "Agent name").success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url
+        }
+      }
     }
   }
 }
