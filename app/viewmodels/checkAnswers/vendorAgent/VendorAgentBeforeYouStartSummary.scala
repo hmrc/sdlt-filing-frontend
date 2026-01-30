@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,28 @@
 
 package viewmodels.checkAnswers.vendorAgent
 
-import models.{CheckMode, UserAnswers}
-import pages.vendorAgent.AddVendorAgentContactDetailsPage
+import models.UserAnswers
+import pages.vendorAgent.VendorAgentBeforeYouStartPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AddVendorAgentContactDetailsSummary  {
+  object VendorAgentBeforeYouStartSummary  {
+
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AddVendorAgentContactDetailsPage).map {
+    answers.get(VendorAgentBeforeYouStartPage).map {
       answer =>
+
         val value = if (answer) "site.yes" else "site.no"
+
         SummaryListRowViewModel(
-          key     = "vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel",
+          key     = "vendorAgent.BeforeYouStart.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendorAgent.addVendorAgentContactDetails.change.hidden"))
-          )
+            ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url)
+              .withVisuallyHiddenText(messages("vendorAgent.BeforeYouStart.change.hidden"))
+        )
         )
     }
 }

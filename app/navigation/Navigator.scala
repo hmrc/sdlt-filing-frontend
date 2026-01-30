@@ -55,6 +55,8 @@ class Navigator @Inject()() {
       _ => controllers.vendor.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
     case VendorAgentsReferencePage =>
       _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+    case VendorAgentBeforeYouStartPage =>
+      _ => controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)
 
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
@@ -150,8 +152,6 @@ class Navigator @Inject()() {
 
     case PurchaserIsIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case PurchaserSurnameOrCompanyNamePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
-
-
     case TransactionTypePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
 
     case SelectPurchaserAgentPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
