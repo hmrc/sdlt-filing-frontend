@@ -18,6 +18,7 @@ package controllers.purchaserAgent
 
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
+import constants.FullReturnConstants.{completeFullReturn, completeReturnAgent}
 import controllers.routes
 import forms.purchaserAgent.RemovePurchaserAgentFormProvider
 import models.{DeleteReturnAgentReturn, FullReturn, Purchaser, ReturnAgent, ReturnInfo, ReturnVersionUpdateReturn, UserAnswers}
@@ -25,12 +26,13 @@ import org.mockito.ArgumentMatchers.any
 import play.api.inject.bind
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaserAgent.RemovePurchaserAgentPage
+import pages.purchaserAgent.{PurchaserAgentOverviewPage, RemovePurchaserAgentPage}
 import play.api.data.Form
 import play.api.inject
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.purchaserAgent.RemovePurchaserAgentView
 
@@ -53,8 +55,8 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
     returnResourceRef = "REF001",
     returnInfo = Some(
       ReturnInfo(
-      version = Some("2")
-    )),
+        version = Some("2")
+      )),
     returnAgent = Some(Seq(
       ReturnAgent(
         returnAgentID = Some("RA001"),
@@ -71,7 +73,13 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
       "must return OK and the correct view for a GET" in {
 
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val agentId =
+          testFullReturn.returnAgent.value.head.returnAgentID.value
+
+        val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
+          .success
+          .value
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -83,14 +91,20 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val view = application.injector.instanceOf[RemovePurchaserAgentView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, "Test return agent")(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, completeReturnAgent.name.get)(request, messages(application)).toString
         }
       }
 
       "must populate the view correctly on a GET when the question has previously been answered" in {
 
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val agentId =
+          testFullReturn.returnAgent.value.head.returnAgentID.value
+
+        val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
+          .success
+          .value
           .set(RemovePurchaserAgentPage, true).success.value
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -100,13 +114,13 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) must include("Test return agent")
+          contentAsString(result) must include(HtmlFormat.escape(completeReturnAgent.name.get).toString)
           contentAsString(result) must include("Yes")
           contentAsString(result) must include("checked")
         }
       }
 
-      "must redirect to journey recovery if full return does not contain return agent for a GET" in {
+      "must redirect to purchaser agent overview page if full return does not contain return agent for a GET" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -116,7 +130,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
         }
       }
 
@@ -138,7 +152,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
     "onSubmit" - {
 
-      "must redirect to journey recovery if full return does not contain return agent for a POST" in {
+      "must redirect to purchaser agent overview page if full return does not contain return agent for a POST" in {
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn.copy(returnAgent = None)))
 
         val application = applicationBuilder(Some(userAnswers)).build()
@@ -150,12 +164,18 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
         }
       }
 
       "must return a Bad Request and errors when invalid data is submitted" in {
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val agentId =
+          testFullReturn.returnAgent.value.head.returnAgentID.value
+
+        val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
+          .success
+          .value
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -171,7 +191,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, "Test return agent")(request, messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, completeReturnAgent.name.get)(request, messages(application)).toString
         }
       }
 
@@ -192,7 +212,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to purchaser overview when no is selected" in {
+      "must redirect to purchaser agent overview when no is selected" in {
         val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -204,11 +224,11 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
         }
       }
 
-      "must redirect to purchaser overview when backend fails" in {
+      "must redirect to purchaser agent overview when backend fails" in {
         val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
 
         when(mockConnector.updateReturnVersion(any())(any[HeaderCarrier], any[Request[_]]))
@@ -226,12 +246,19 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
         }
       }
 
       "must redirect to purchaser agent overview and set flash message when purchaser agent is deleted" in {
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val agentId =
+          testFullReturn.returnAgent.value.head.returnAgentID.value
+
+        val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
+          .success
+          .value
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
+
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
         when(
@@ -257,8 +284,8 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-          flash(result).get("purchaserDeleted").value mustEqual "Test return agent"
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
+          flash(result).get("purchaserAgentDeleted").value mustEqual completeReturnAgent.name.get
         }
       }
     }

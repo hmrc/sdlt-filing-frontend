@@ -19,15 +19,15 @@ package controllers.purchaserAgent
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.completeFullReturn
-import models.{CreateReturnAgentReturn, NormalMode, ReturnVersionUpdateReturn, UpdateReturnAgentReturn}
+import models.{CreateReturnAgentRequest, CreateReturnAgentReturn, NormalMode, ReturnVersionUpdateReturn, UpdateReturnAgentRequest, UpdateReturnAgentReturn}
 import models.address.{Address, Country}
 import models.purchaserAgent.PurchaserAgentAuthorised
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{atLeastOnce, reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import repositories.SessionRepository
-import pages.purchaserAgent.{PurchaserAgentAddressPage, PurchaserAgentAuthorisedPage, PurchaserAgentNamePage}
+import pages.purchaserAgent.{PurchaserAgentAddressPage, PurchaserAgentAuthorisedPage, PurchaserAgentNamePage, PurchaserAgentOverviewPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -142,11 +142,14 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
     "onSubmit" - {
 
       "must update return agent if data is valid and returnAgentId is set" in {
-        val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId
+        val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId.set(PurchaserAgentOverviewPage, "AGENT123").success.value
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-        when(mockBackendConnector.updateReturnVersion(any())(any(), any())).thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(1))))
-        when(mockBackendConnector.updateReturnAgent(any())(any(), any())).thenReturn(Future.successful(UpdateReturnAgentReturn(true)))
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(1))))
+        when(mockBackendConnector.updateReturnAgent(any[UpdateReturnAgentRequest])(any(), any()))
+          .thenReturn(Future.successful(UpdateReturnAgentReturn(true)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -159,9 +162,9 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
-          verify(mockBackendConnector, times(1)).updateReturnAgent(any())(any(), any())
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
+
+          verify(mockBackendConnector, times(1)).updateReturnAgent(any[UpdateReturnAgentRequest])(any(), any())
         }
       }
 
@@ -169,7 +172,8 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
         val userAnswers = userAnswersWithCompleteAnswers
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-        when(mockBackendConnector.createReturnAgent(any())(any(), any())).thenReturn(Future.successful(CreateReturnAgentReturn("RA-001")))
+        when(mockBackendConnector.createReturnAgent(any[CreateReturnAgentRequest])(any(), any()))
+          .thenReturn(Future.successful(CreateReturnAgentReturn("RA-001")))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -182,17 +186,19 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-          verify(mockBackendConnector, times(1)).createReturnAgent(any())(any(), any())
+
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
+          verify(mockBackendConnector, atLeastOnce()).createReturnAgent(any[CreateReturnAgentRequest])(any(), any())
         }
       }
 
       "must redirect to same page when update call returns false" in {
         val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId
+          .set(PurchaserAgentOverviewPage, "TestAgent").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockBackendConnector.updateReturnVersion(any())(any(), any())).thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(1))))
-        when(mockBackendConnector.updateReturnAgent(any())(any(), any())).thenReturn(Future.successful(UpdateReturnAgentReturn(false)))
+        when(mockBackendConnector.updateReturnAgent(any[UpdateReturnAgentRequest])(any(), any())).thenReturn(Future.successful(UpdateReturnAgentReturn(false)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))

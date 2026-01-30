@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pages.purchaserAgent
+package forms.purchaserAgent
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object RemovePurchaserAgentPage extends QuestionPage[Boolean] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class PurchaserAgentOverviewFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "removePurchaserAgent"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("purchaserAgent.overview.error.required")
+    )
 }
+

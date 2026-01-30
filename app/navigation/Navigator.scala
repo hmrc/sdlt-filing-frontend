@@ -126,7 +126,7 @@ class Navigator @Inject()() {
       _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
-
+  
   private val checkRouteMap: Page => UserAnswers => Call = {
     case WhoIsMakingThePurchasePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
@@ -162,7 +162,6 @@ class Navigator @Inject()() {
     case AddPurchaserAgentReferenceNumberPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case PurchaserAgentReferencePage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case PurchaserAgentAuthorisedPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
-
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }

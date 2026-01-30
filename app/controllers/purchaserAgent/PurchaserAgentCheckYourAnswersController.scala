@@ -19,32 +19,32 @@ package controllers.purchaserAgent
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.AgentType.Purchaser
-import models.{CreateReturnAgentRequest, NormalMode, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
 import models.purchaserAgent.PurchaserAgentSessionQuestions
+import models.{CreateReturnAgentRequest, NormalMode, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
+import pages.purchaserAgent.PurchaserAgentOverviewPage
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.purchaserAgent.*
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.purchaserAgent.PurchaserAgentCheckYourAnswersView
-import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserAgentCheckYourAnswersController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       sessionRepository: SessionRepository,
-                                       backendConnector: StampDutyLandTaxConnector,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: PurchaserAgentCheckYourAnswersView
-                                     )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                          override val messagesApi: MessagesApi,
+                                                          identify: IdentifierAction,
+                                                          getData: DataRetrievalAction,
+                                                          requireData: DataRequiredAction,
+                                                          sessionRepository: SessionRepository,
+                                                          backendConnector: StampDutyLandTaxConnector,
+                                                          val controllerComponents: MessagesControllerComponents,
+                                                          view: PurchaserAgentCheckYourAnswersView
+                                                        )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -74,23 +74,25 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      sessionRepository.get(request.userAnswers.id).flatMap {
-        case Some(userAnswers) =>
-          (userAnswers.data \ "purchaserAgentCurrent").validate[PurchaserAgentSessionQuestions] match {
-            case JsSuccess(sessionData, _) =>
-              if ((userAnswers.data \ "purchaserAgentCurrent" \ "returnAgentId").asOpt[String].isDefined) {
-                updateReturnAgent(userAnswers)
-              } else {
-                createReturnAgent(userAnswers)
-              }
-            case JsError(e) =>
-              Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()))
-          }
-        case None =>
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      }
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+
+    sessionRepository.get(request.userAnswers.id).flatMap {
+      case Some(userAnswers) =>
+        (userAnswers.data \ "purchaserAgentCurrent").validate[PurchaserAgentSessionQuestions] match {
+          case JsSuccess(sessionData, _) =>
+            request.userAnswers.get(PurchaserAgentOverviewPage).map { returnAgentId =>
+              updateReturnAgent(userAnswers)
+            }.getOrElse(createReturnAgent(userAnswers))
+
+          case JsError(_) =>
+            Future.successful(
+              Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
+            )
+        }
+
+      case None =>
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
   }
 
   private def updateReturnAgent(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
@@ -101,8 +103,7 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
       updateReturnAgentReturn <- backendConnector.updateReturnAgent(updateReturnAgentRequest) if version.newVersion.isDefined
     } yield {
       if (updateReturnAgentReturn.updated) {
-        // TODO go to overview DTR-1835
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
       } else {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
       }
@@ -115,8 +116,7 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
       createReturnAgentReturn <- backendConnector.createReturnAgent(createReturnAgentRequest)
     } yield {
       if (createReturnAgentReturn.returnAgentId.nonEmpty) {
-        // TODO go to overview DTR-1835
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
       } else {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
       }

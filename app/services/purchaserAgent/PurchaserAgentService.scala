@@ -16,7 +16,7 @@
 
 package services.purchaserAgent
 
-import models.{FullReturn, Mode, NormalMode, UserAnswers}
+import models.{Mode, NormalMode, ReturnAgent, UserAnswers}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import models.purchaserAgent.*
@@ -115,6 +115,44 @@ class PurchaserAgentService @Inject(
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(SelectPurchaserAgentPage, mode, updatedAnswers))
         }
+    }
+  }
+
+  def populateAssignedPurchaserAgentInSession(returnAgent: ReturnAgent, userAnswers: UserAnswers): Try[UserAnswers] = {
+
+    returnAgent.returnAgentID match {
+      case Some(agentId) =>
+
+        val purchaserAgentAddress = Address(
+          line1 = returnAgent.address1.get,
+          line2 = returnAgent.address2,
+          line3 = returnAgent.address3,
+          line4 = returnAgent.address4,
+          postcode = returnAgent.postcode
+        )
+
+        val purchaserAgentsContactDetails = PurchaserAgentsContactDetails(
+          phoneNumber = returnAgent.phone, emailAddress = returnAgent.email
+        )
+
+        val authorised: PurchaserAgentAuthorised = returnAgent.isAuthorised match {
+          case Some("yes") | Some("YES") => PurchaserAgentAuthorised.Yes
+          case _ => PurchaserAgentAuthorised.No
+        }
+
+        for {
+          withId <- userAnswers.set(PurchaserAgentOverviewPage, agentId)
+          withName <- withId.set(PurchaserAgentNamePage, returnAgent.name.get)
+          withAddress <- withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
+          addContact <- withAddress.set(AddContactDetailsForPurchaserAgentPage, returnAgent.phone.isDefined || returnAgent.email.isDefined)
+          withContact <- addContact.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
+          addReference <- withContact.set(AddPurchaserAgentReferenceNumberPage, returnAgent.reference.isDefined)
+          withReference <- addReference.set(PurchaserAgentReferencePage, returnAgent.reference.get)
+          finalAnswers <- withReference.set(PurchaserAgentAuthorisedPage, authorised)
+        } yield finalAnswers
+
+      case _ =>
+        Try(throw new IllegalStateException(s"Purchaser ${returnAgent.returnAgentID} is missing"))
     }
   }
 }

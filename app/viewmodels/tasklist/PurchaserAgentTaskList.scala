@@ -36,16 +36,15 @@ object PurchaserAgentTaskList {
     )
 
   def buildPurchaserAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
-    
+
     val purchaserAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains("PURCHASER")))
 
-    val url = if(purchaserAgentCheck) {
-      //TODO: Change to the purchaser agent overview page - DTR-1835
-        controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+    val url = if (purchaserAgentCheck) {
+      controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
     } else {
       controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
     }
-    
+
     TaskListRowBuilder(
       isOptional = true,
       canEdit = {
@@ -53,7 +52,9 @@ object PurchaserAgentTaskList {
         case _ => true
       },
       messageKey = _ => "tasklist.purchaserAgentQuestion.details",
-      url = _ => _ => {url},
+      url = _ => _ => {
+        url
+      },
       tagId = "purchaserQuestionDetailRow",
       checks = scheme => Seq(purchaserAgentCheck),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))

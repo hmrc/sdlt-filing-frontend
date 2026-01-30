@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package pages.purchaserAgent
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object RemovePurchaserAgentPage extends QuestionPage[Boolean] {
+case object PurchaserAgentOverviewPage extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "purchaserAgentCurrent" \ toString
 
-  override def toString: String = "removePurchaserAgent"
+  override def toString: String = "purchaserAgentId"
 }
