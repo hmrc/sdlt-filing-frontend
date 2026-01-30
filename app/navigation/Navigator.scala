@@ -124,8 +124,6 @@ class Navigator @Inject()() {
       _ => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
     case PurchaserAgentAuthorisedPage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
-    case VendorAgentBeforeYouStartPage =>
-      _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
