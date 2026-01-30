@@ -473,7 +473,8 @@ class PurchaserAgentServiceSpec extends SpecBase {
           postcode = Some("ZZ1 1ZZ"),
           phone = Some("07123456789"),
           email = Some("assigned@example.com"),
-          reference = None
+          reference = Some("ABF1241"),
+          isAuthorised = Some("NO")
         )
 
         val expectedAddress = Address(

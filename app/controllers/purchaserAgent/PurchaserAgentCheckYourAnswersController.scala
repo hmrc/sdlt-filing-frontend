@@ -20,16 +20,14 @@ import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.AgentType.Purchaser
 import models.{CreateReturnAgentRequest, NormalMode, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
-import models.purchaserAgent.PurchaserAgentSessionQuestions
+import pages.purchaserAgent.PurchaserAgentOverviewPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.purchaserAgent.*
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.purchaserAgent.PurchaserAgentCheckYourAnswersView
-import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -76,21 +74,19 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          (userAnswers.data \ "purchaserAgentCurrent").validate[PurchaserAgentSessionQuestions] match {
-            case JsSuccess(sessionData, _) =>
-              if ((userAnswers.data \ "purchaserAgentCurrent" \ "returnAgentId").asOpt[String].isDefined) {
-                updateReturnAgent(userAnswers)
-              } else {
-                createReturnAgent(userAnswers)
-              }
-            case JsError(e) =>
-              Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()))
-          }
+
+          request.userAnswers.get(PurchaserAgentOverviewPage).map { returnAgentId =>
+            updateReturnAgent(userAnswers)
+          }.getOrElse(createReturnAgent(userAnswers))
+
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
+
+
   }
 
   private def updateReturnAgent(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {

@@ -19,7 +19,9 @@ package controllers.purchaserAgent
 import controllers.actions.*
 import forms.purchaserAgent.PurchaserAgentOverviewFormProvider
 import models.*
+import pages.purchaserAgent.PurchaserAgentOverviewPage
 import play.api.i18n.Lang.logger
+
 import scala.concurrent.ExecutionContext
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
@@ -123,7 +125,7 @@ class PurchaserAgentOverviewController @Inject()(
         case Some(purchaserAgent) =>
           for {
             updatedAnswers <- Future.fromTry(
-              purchaserAgentService.populateAssignedPurchaserAgentInSession(maybeAgent.get, request.userAnswers))
+              purchaserAgentService.populateAssignedPurchaserAgentInSession(purchaserAgent, request.userAnswers))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
 
@@ -135,18 +137,19 @@ class PurchaserAgentOverviewController @Inject()(
   def removePurchaserAgent(returnAgentId: String): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
 
-      //      val maybeReturnAgentId: String = request.userAnswers.fullReturn
-      //        .flatMap(_.returnAgent)
-      //        .flatMap(PurchaserAgentHelper.getPurchaserAgent).get
-      //        .returnAgentID.getOrElse("NoReturnIdFound")
+      val maybeAgent: Option[ReturnAgent] = request.userAnswers.fullReturn
+        .flatMap(_.returnAgent)
+        .flatMap(PurchaserAgentHelper.getPurchaserAgent)
 
-      Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+      maybeAgent match {
+        case Some(purchaserAgent) =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserAgentOverviewPage, returnAgentId))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(controllers.purchaserAgent.routes.RemovePurchaserAgentController.onPageLoad())
 
-      //todo - implement when remove page is completed
-      //            for {
-      //              updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserAgentOverviewRemovePage, PurchaserAgentId(maybeReturnAgentId)))
-      //              _ <- sessionRepository.set(updatedAnswers)
-      //            } yield Redirect(controllers.purchaserAgent.routes.PurchaserAgentRemoveController.onPageLoad())
+        case None =>
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
     }
-
 }

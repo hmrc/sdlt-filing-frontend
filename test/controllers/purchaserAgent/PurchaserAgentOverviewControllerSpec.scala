@@ -17,7 +17,6 @@
 package controllers.purchaserAgent
 
 import base.SpecBase
-import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.*
 import models.*
 import org.mockito.ArgumentMatchers.any
@@ -205,17 +204,10 @@ class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "removePurchaserAgent" - {
-      "must delete agent and redirect with flash when agent exists" in {
-        val mockConnector = mock[StampDutyLandTaxConnector]
-
-        when(mockConnector.deleteReturnAgent(any())(any(), any()))
-          .thenReturn(Future.successful(DeleteReturnAgentReturn(deleted = true)))
+      "must redirect to removePurchaserAgent view when agent exists" in {
 
         val application =
           applicationBuilder(userAnswers = Some(userAnswersWithAgent))
-            .overrides(
-              bind[StampDutyLandTaxConnector].toInstance(mockConnector)
-            )
             .build()
 
         running(application) {
@@ -224,7 +216,7 @@ class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            controllers.routes.ReturnTaskListController.onPageLoad().url
+            controllers.purchaserAgent.routes.RemovePurchaserAgentController.onPageLoad().url
         }
       }
     }

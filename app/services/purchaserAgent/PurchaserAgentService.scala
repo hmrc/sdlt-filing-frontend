@@ -141,7 +141,8 @@ class PurchaserAgentService @Inject(
         }
 
         for {
-          withName <- userAnswers.set(PurchaserAgentNamePage, returnAgent.name.get)
+          withId <- userAnswers.set(PurchaserAgentOverviewPage, agentId)
+          withName <- withId.set(PurchaserAgentNamePage, returnAgent.name.get)
           withAddress <- withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
           addContact <- withAddress.set(AddContactDetailsForPurchaserAgentPage, returnAgent.phone.isDefined || returnAgent.email.isDefined)
           withContact <- addContact.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)

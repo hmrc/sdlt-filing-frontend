@@ -19,9 +19,9 @@ package pages.purchaserAgent
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object PurchaserAgentOverviewPage extends QuestionPage[Boolean] {
+case object PurchaserAgentOverviewPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ "purchaserAgentCurrent" \ toString
 
-  override def toString: String = "purchaserAgentOverview"
+  override def toString: String = "purchaserAgentId"
 }
