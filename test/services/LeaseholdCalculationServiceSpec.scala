@@ -2182,6 +2182,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         contractChangedSinceMar16 = Some(false),
         relevantRent = Some(relevantRent)
       )),
+      isLinked = None,
       taxReliefDetails = None,
       firstTimeBuyer = None
     )
@@ -2266,6 +2267,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         contractChangedSinceMar16 = Some(false),
         relevantRent = Some(relevantRent)
       )),
+      isLinked = None,
       taxReliefDetails = None,
       firstTimeBuyer = None
     )
@@ -2479,6 +2481,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         )),
         relevantRentDetails = None,
         firstTimeBuyer = None,
+        isLinked = None,
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
       )
 

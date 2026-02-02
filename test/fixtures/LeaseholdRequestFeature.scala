@@ -32,6 +32,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -54,6 +55,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -76,6 +78,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -98,6 +101,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -120,6 +124,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -144,6 +149,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -166,6 +172,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -188,6 +195,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -210,6 +218,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -240,6 +249,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         relevantRent = Some(999)
       )
     ),
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -264,6 +274,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -288,6 +299,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -310,6 +322,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -334,6 +347,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -362,6 +376,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
         relevantRent = Some(999)
       )
     ),
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -384,6 +399,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -406,6 +422,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -428,6 +445,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -450,6 +468,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )

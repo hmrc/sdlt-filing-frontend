@@ -13,7 +13,7 @@ package services
 import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
 import enums.sdltRebuild._
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
-import exceptions.{InvalidDateException, InvalidTaxReliefCombinationException, RequiredValueNotDefinedException}
+import exceptions.{InvalidDateException, InvalidTaxReliefCombinationException}
 import generators.RequestGenerators
 import models._
 import models.sdltRebuild.TaxReliefDetails
@@ -94,6 +94,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       propertyDetails = None,
       leaseDetails = None,
       relevantRentDetails = None,
+      isLinked = None,
       taxReliefDetails = None,
       firstTimeBuyer = None
     )
@@ -116,6 +117,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       ),
       leaseDetails = None,
       relevantRentDetails = None,
+      isLinked = None,
       taxReliefDetails = None,
       firstTimeBuyer = Some(true)
     )
@@ -128,7 +130,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
                                    nonUKResident: Option[Boolean] = None,
                                    taxReliefCode: TaxReliefCode,
                                    isPartialRelief: Option[Boolean] = Some(false),
-                                   isLinked : Boolean = false
+                                   isLinked: Option[Boolean] = None
                                   ) = {
       Request(
         holdingType = hType,
@@ -983,7 +985,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           replaceMainResidence = Some(true),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = None,
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
@@ -1003,7 +1005,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           replaceMainResidence = Some(true),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = None,
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
@@ -1024,7 +1026,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           replaceMainResidence = Some(true),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = None,
-          isLinked = false
+          isLinked = Some(false)
         )
 
         noException shouldBe thrownBy {
@@ -1232,7 +1234,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2017, 11, 22),
           taxReliefCode = PartExchange,
           isPartialRelief = None,
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1250,7 +1252,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2000, 11, 22),
           taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
@@ -1418,7 +1420,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2000, 11, 22),
           taxReliefCode = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
@@ -1437,7 +1439,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2000, 11, 22),
           taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(true),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
@@ -1456,7 +1458,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 6),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
@@ -1474,7 +1476,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 5),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = None
         )
 
         noException shouldBe thrownBy {
@@ -1493,7 +1495,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           premiumAmount = 1000000,
           taxReliefCode = AcquisitionRelief,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
@@ -1514,7 +1516,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 6),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
@@ -1532,7 +1534,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 5),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         noException shouldBe thrownBy {
@@ -1552,7 +1554,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 6),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
@@ -1570,7 +1572,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 5),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${PreCompletionTransaction} does not apply to Mixed properties"
@@ -1582,7 +1584,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           mixed,
           LocalDate.of(2013, 4, 6),
           taxReliefCode = ReliefFrom15PercentRate,
-          isLinked = true
+          isLinked = Some(true)
         )
 
         the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${testRequest.taxReliefDetails.map(_.taxReliefCode).get} does not apply to Mixed properties"
@@ -1597,7 +1599,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 6),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
@@ -1617,7 +1619,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 5),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         noException shouldBe thrownBy {
@@ -1637,7 +1639,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 6),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
@@ -1657,7 +1659,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 5),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         noException shouldBe thrownBy {
@@ -1677,7 +1679,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 6),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
 
@@ -1697,7 +1699,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2013, 4, 5),
           taxReliefCode = PreCompletionTransaction,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${PreCompletionTransaction} does not apply to Mixed properties"
@@ -1713,7 +1715,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2017, 11, 22),
           taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1730,7 +1732,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2017, 11, 22),
           taxReliefCode = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1748,7 +1750,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2017, 11, 22),
           taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(true),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
@@ -1768,7 +1770,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2017, 11, 22),
           taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1785,7 +1787,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2017, 11, 22),
           taxReliefCode = InvestmentZonesTaxSiteRelief,
           isPartialRelief = Some(false),
-          isLinked = false
+          isLinked = Some(false)
         )
         val result = createResult("Results of calculation based on SDLT rules for the effective date entered")
 
@@ -1802,7 +1804,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           LocalDate.of(2017, 11, 22),
           taxReliefCode = FreeportsTaxSiteRelief,
           isPartialRelief = Some(true),
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
@@ -1839,6 +1841,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           )),
           relevantRentDetails = None,
           firstTimeBuyer = None,
+          isLinked = Some(false),
           taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
         )
 
@@ -1866,6 +1869,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
             leaseDetails = None,
             relevantRentDetails = None,
             firstTimeBuyer = None,
+            isLinked = None,
             taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
           )
 
@@ -1890,6 +1894,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           leaseDetails = None,
           relevantRentDetails = None,
           firstTimeBuyer = None,
+          isLinked = None,
           taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
         )
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
@@ -1933,6 +1938,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           )),
           relevantRentDetails = None,
           firstTimeBuyer = None,
+          isLinked = None,
           taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
         )
 
@@ -1950,7 +1956,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
     "select the freeholdSelfAssessedRes function" when {
       "given a request with relief code RightToBuy and property Type is Residential with twoOrMoreProperties and isLinked = true" in {
 
-        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2016, 4, 1), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(true), isLinked = true)
+        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2016, 4, 1), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(true), isLinked = Some(true))
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
@@ -1961,7 +1967,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
 
       "given a request with relief code ReliefFrom15PercentRate :: property type is Residential, effective date is 6/4/2013 and isLinked is true" in {
-        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(true))
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
@@ -1972,7 +1978,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
 
       "given a request with relief code ReliefFrom15PercentRate :: property type is Residential, effective date is 3/12/2014 and isLinked is true" in {
-        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2014, 12, 3), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+        val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2014, 12, 3), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(true))
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
@@ -1982,7 +1988,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
       }
       "given the request with tax relief code  RightToBuy  and property type is  mixed property effective date is before 17/03/2016 and isLinked = true " in {
-        val testRequest = createRequestWithTaxRelief(freehold, mixed, LocalDate.of(2016, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = true)
+        val testRequest = createRequestWithTaxRelief(freehold, mixed, LocalDate.of(2016, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = Some(true))
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
@@ -1994,7 +2000,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
       "given the request with tax relief code  RightToBuy  and property type is  nonResidential property effective date is before 17/03/2016 and isLinked = true " in {
 
-        val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2016, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = true)
+        val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2016, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = Some(true))
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
@@ -2192,7 +2198,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
       "Tax Relief Code is ReliefFrom15PercentRate(35)" when {
         "holding type is Leasehold" in {
-          val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+          val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(true))
           val result = createResult("leaseholdResidentialMar12toDec14")
           val captor = ArgumentCaptor.forClass(classOf[Request])
 
@@ -2205,7 +2211,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
 
         "property type is Non-residential" in {
-          val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+          val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(true))
           val result = createResult("freeholdNonResidentialMar12toMar16")
           val captor = ArgumentCaptor.forClass(classOf[Request])
 
@@ -2218,7 +2224,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
 
         "effective date is before 6/4/2013" in {
-          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 5), taxReliefCode = ReliefFrom15PercentRate, isLinked = true)
+          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 5), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(true))
           val result = createResult("freeholdResidentialMar12toDec14")
           val captor = ArgumentCaptor.forClass(classOf[Request])
 
@@ -2252,7 +2258,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           PropertyTypes.residential,
           LocalDate.of(2013, 11, 22),
           taxReliefCode = AcquisitionRelief,
-          isLinked = true
+          isLinked = Some(true)
         )
 
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
@@ -2271,7 +2277,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           PropertyTypes.residential,
           LocalDate.of(2013, 1, 21),
           taxReliefCode = AcquisitionRelief,
-          isLinked = true
+          isLinked = Some(true)
         )
 
         val result = createResult("leaseholdResidentialMar12toDec14")
@@ -2292,7 +2298,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           PropertyTypes.residential,
           LocalDate.of(2015, 1, 21),
           taxReliefCode = AcquisitionRelief,
-          isLinked = true
+          isLinked = Some(true)
         )
 
         val result = createResult("freeholdResidentialDec14Onwards")
@@ -2313,7 +2319,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           PropertyTypes.residential,
           LocalDate.of(2013, 1, 21),
           taxReliefCode = AcquisitionRelief,
-          isLinked = false
+          isLinked = Some(false)
         )
 
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
@@ -2333,7 +2339,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           PropertyTypes.mixed,
           LocalDate.of(2013, 1, 21),
           taxReliefCode = FirstTimeBuyersRelief,
-          isLinked = true
+          isLinked = Some(true)
         )
 
         the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${testRequest.taxReliefDetails.map(_.taxReliefCode).get} does not apply to Mixed properties"
@@ -2345,7 +2351,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           PropertyTypes.mixed,
           LocalDate.of(2013, 4, 6),
           taxReliefCode = ReliefFrom15PercentRate,
-          isLinked = true
+          isLinked = Some(true)
         )
 
         the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${testRequest.taxReliefDetails.map(_.taxReliefCode).get} does not apply to Mixed properties"

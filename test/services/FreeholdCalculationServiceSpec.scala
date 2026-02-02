@@ -51,7 +51,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
   }
 
   def baseRequestIndividual(premium: BigDecimal, effectiveDate: LocalDate, nonUKResident: Option[Boolean] = None,
-                            taxReliefDetails: Option[TaxReliefDetails] = None, linked : Boolean = false): Request = Request(
+                            taxReliefDetails: Option[TaxReliefDetails] = None, linked: Option[Boolean] = None): Request = Request(
     holdingType = HoldingTypes.freehold,
     propertyType = PropertyTypes.residential,
     effectiveDate = effectiveDate,
@@ -84,12 +84,13 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
 
   def baseRequestCompany(premium: BigDecimal, effectiveDate: LocalDate, nonUKResident: Option[Boolean] = None,
-                         taxReliefDetails: Option[TaxReliefDetails] = None, linked : Boolean = false): Request = Request(
+                         taxReliefDetails: Option[TaxReliefDetails] = None, linked : Option[Boolean] = None): Request = Request(
     holdingType = HoldingTypes.freehold,
     propertyType = PropertyTypes.nonResidential,
     effectiveDate = effectiveDate,
@@ -130,6 +131,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
       )
     ),
     relevantRentDetails = None,
+    isLinked = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -1830,6 +1832,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
           ),
           relevantRentDetails = None,
           taxReliefDetails = None,
+          isLinked = None,
           firstTimeBuyer = None
         )
 
@@ -1876,6 +1879,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
         leaseDetails = None,
         relevantRentDetails = None,
         firstTimeBuyer = None,
+        isLinked = None,
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
       )
 

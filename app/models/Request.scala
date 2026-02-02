@@ -60,7 +60,7 @@ object Request {
     (__ \ "leaseDetails").readNullable[LeaseDetails] and
     (__ \ "relevantRentDetails").readNullable[RelevantRentDetails] and
     (__ \ "firstTimeBuyer").readNullable[Boolean](yesNoToBooleanReads) and
-    (__ \ "isLinked").readNullable[Boolean].map(_.getOrElse(false)) and
+    (__ \ "isLinked").readNullable[Boolean] and
     (__ \ "taxReliefDetails").readNullable[TaxReliefDetails]
   )(Request.apply _)
 }
@@ -76,7 +76,7 @@ case class Request(
                   leaseDetails: Option[LeaseDetails],
                   relevantRentDetails: Option[RelevantRentDetails],
                   firstTimeBuyer: Option[Boolean],
-                  isLinked: Boolean = false,
+                  isLinked: Option[Boolean],
                   taxReliefDetails: Option[TaxReliefDetails]
                   )
 

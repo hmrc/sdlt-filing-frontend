@@ -94,6 +94,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -126,6 +127,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -158,6 +160,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -190,6 +193,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -222,6 +226,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -254,6 +259,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -288,6 +294,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -320,6 +327,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -352,6 +360,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -388,6 +397,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -421,6 +431,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -454,6 +465,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -486,6 +498,7 @@ class ModelValidationSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
         relevantRentDetails = None,
+        isLinked = None,
         taxReliefDetails = None,
           firstTimeBuyer = None
       )
@@ -518,6 +531,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(tempLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -553,6 +567,7 @@ class ModelValidationSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
         relevantRentDetails = None,
+        isLinked = None,
         taxReliefDetails = None,
           firstTimeBuyer = None
       )
@@ -586,6 +601,7 @@ class ModelValidationSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
         relevantRentDetails = None,
+        isLinked = None,
         taxReliefDetails = None,
           firstTimeBuyer = None
       )
@@ -618,6 +634,7 @@ class ModelValidationSpec extends PlaySpec {
         propertyDetails = None,
         leaseDetails = Some(tempLeaseDetails),
         relevantRentDetails = None,
+        isLinked = None,
         taxReliefDetails = None,
           firstTimeBuyer = None
       )
@@ -990,6 +1007,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = None,
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1007,6 +1025,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1024,6 +1043,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
             firstTimeBuyer = None
           )
@@ -1041,6 +1061,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(800)),
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1058,6 +1079,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validLeaseDetails(2000)),
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1075,6 +1097,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validLeaseDetails(800)),
           relevantRentDetails = Some(testRelevantRentDetails),
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1093,6 +1116,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = Some(testRelevantRentDetails),
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1109,6 +1133,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validLeaseDetails(800)),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1231,6 +1256,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1256,6 +1282,7 @@ class ModelValidationSpec extends PlaySpec {
           ),
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1273,6 +1300,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1299,6 +1327,7 @@ class ModelValidationSpec extends PlaySpec {
             ),
             leaseDetails = None,
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
             firstTimeBuyer = Some(true)
           )
@@ -1324,6 +1353,7 @@ class ModelValidationSpec extends PlaySpec {
             ),
             leaseDetails = None,
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
             firstTimeBuyer = None
           )
@@ -1349,6 +1379,7 @@ class ModelValidationSpec extends PlaySpec {
             ),
             leaseDetails = None,
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
             firstTimeBuyer = None
           )
@@ -1371,6 +1402,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = None,
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
             firstTimeBuyer = None
           )
@@ -1396,6 +1428,7 @@ class ModelValidationSpec extends PlaySpec {
             ),
             leaseDetails = None,
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
             firstTimeBuyer = None
           )
@@ -1418,6 +1451,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1435,6 +1469,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1453,6 +1488,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = None,
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1470,6 +1506,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1487,6 +1524,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1504,6 +1542,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = None,
             leaseDetails = Some(validTestLeaseDetails),
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
             firstTimeBuyer = None
           )
@@ -1523,6 +1562,7 @@ class ModelValidationSpec extends PlaySpec {
             propertyDetails = Some(validPropertyDetails),
             leaseDetails = None,
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1553,6 +1593,7 @@ class ModelValidationSpec extends PlaySpec {
               year5Rent = Some(10000)
             )),
             relevantRentDetails = None,
+            isLinked = None,
             taxReliefDetails = None,
           firstTimeBuyer = None
           )
@@ -1575,6 +1616,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1595,6 +1637,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1615,6 +1658,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1635,6 +1679,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetails),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1655,6 +1700,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = Some(validTestLeaseDetailsAllLessTan2000),
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )
@@ -1692,6 +1738,7 @@ class ModelValidationSpec extends PlaySpec {
                     leaseDetails = None,
                     relevantRentDetails = None,
                     firstTimeBuyer = None,
+                    isLinked = None,
                     taxReliefDetails = Some(TaxReliefDetails(
                       taxReliefCode = value,
                       isPartialRelief = Some(false)
@@ -1722,6 +1769,7 @@ class ModelValidationSpec extends PlaySpec {
                     leaseDetails = None,
                     relevantRentDetails = None,
                     firstTimeBuyer = None,
+                    isLinked = None,
                     taxReliefDetails = Some(TaxReliefDetails(
                       taxReliefCode = value,
                       isPartialRelief = Some(true)
@@ -1753,7 +1801,7 @@ class ModelValidationSpec extends PlaySpec {
                     leaseDetails = None,
                     relevantRentDetails = None,
                     firstTimeBuyer = None,
-                    isLinked = true,
+                    isLinked = Some(true),
                     taxReliefDetails = Some(TaxReliefDetails(
                       taxReliefCode = value,
                       isPartialRelief = None
@@ -1786,6 +1834,7 @@ class ModelValidationSpec extends PlaySpec {
                     leaseDetails = None,
                     relevantRentDetails = None,
                     firstTimeBuyer = None,
+                    isLinked = None,
                     taxReliefDetails = Some(TaxReliefDetails(
                       taxReliefCode = value,
                       isPartialRelief = Some(false)
@@ -1817,6 +1866,7 @@ class ModelValidationSpec extends PlaySpec {
                     leaseDetails = None,
                     relevantRentDetails = None,
                     firstTimeBuyer = None,
+                    isLinked = None,
                     taxReliefDetails = Some(TaxReliefDetails(
                       taxReliefCode = value,
                       isPartialRelief = Some(true)
@@ -1848,6 +1898,7 @@ class ModelValidationSpec extends PlaySpec {
                     leaseDetails = None,
                     relevantRentDetails = None,
                     firstTimeBuyer = None,
+                    isLinked = None,
                     taxReliefDetails = Some(TaxReliefDetails(
                       taxReliefCode = value,
                       isPartialRelief = Some(true)
@@ -1882,6 +1933,7 @@ class ModelValidationSpec extends PlaySpec {
                     leaseDetails = None,
                     relevantRentDetails = None,
                     firstTimeBuyer = None,
+                    isLinked = Some(false),
                     taxReliefDetails = Some(TaxReliefDetails(
                       taxReliefCode = value,
                       isPartialRelief = None
@@ -1914,6 +1966,7 @@ class ModelValidationSpec extends PlaySpec {
                     leaseDetails = None,
                     relevantRentDetails = None,
                     firstTimeBuyer = None,
+                    isLinked = Some(false),
                     taxReliefDetails = Some(TaxReliefDetails(
                       taxReliefCode = value,
                       isPartialRelief = None
@@ -1937,6 +1990,7 @@ class ModelValidationSpec extends PlaySpec {
           propertyDetails = None,
           leaseDetails = None,
           relevantRentDetails = None,
+          isLinked = None,
           taxReliefDetails = None,
           firstTimeBuyer = None
         )

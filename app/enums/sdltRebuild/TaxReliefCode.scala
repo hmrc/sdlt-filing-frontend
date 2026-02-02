@@ -87,28 +87,7 @@ object TaxReliefCode {
 
   val standardZeroRateLeaseholdReliefCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[StandardZeroRate])
 
-  val selfAssessedFreeHold: Set[TaxReliefCode] = Set(
-    PartExchange,
-    ReLocationEmployment,
-    CompulsoryPurchaseFacilitatingDevelopment,
-    ComplianceWithPlanningObligations,
-    GroupRelief,
-    ReConstructionRelief,
-    DemutualisationOfInsuranceCompany,
-    DemutualisationOfBuildingSociety,
-    IncorporationOfLimitedLiabilityPartnership,
-    TransfersInvolvingPublicBodies,
-    TransferInConsequenceOfReorganisationOfParliamentaryConstituencies,
-    CharitiesTaxReliefs,
-    AcquisitionByBodiesEstablishedForNationalPurposes,
-    RegisteredSocialLandlords,
-    AlternativePropertyFinance,
-    CroftingCommunityRightToBuy,
-    DiplomaticPrivileges,
-    OtherTaxReliefs,
-    CombinationOfReliefs,
-    AlternativeFinanceInvestmentBondsRelief
-  )
+  val selfAssessedFreeHoldReliefCodes: Set[TaxReliefCode] = standardZeroRateFreeholdReliefCodes.filterNot(_ == SeedingRelief)
 
   val selfAssessedCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[SelfAssessed])
 
