@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.vendorAgent
 
 import base.SpecBase
 import models.CheckMode
-import models.vendor.DoYouKnowYourAgentReference
-import pages.vendor.DoYouKnowYourAgentReferencePage
+import models.vendorAgent.VendorAgentsAddReference
+import pages.vendorAgent.VendorAgentsAddReferencePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import viewmodels.checkAnswers.vendor.DoYouKnowYourAgentReferenceSummary
 
-class DoYouKnowYourAgentReferenceSummarySpec extends SpecBase {
+class VendorAgentsAddReferenceSummarySpec extends SpecBase {
 
-  "DoYouKnowYourAgentReferenceSummary" - {
+  "VendorAgentsAddReferenceSummary" - {
 
     "when purchaser name is present" - {
 
@@ -37,23 +36,21 @@ class DoYouKnowYourAgentReferenceSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(DoYouKnowYourAgentReferencePage, DoYouKnowYourAgentReference.Yes).success.value
+            .set(VendorAgentsAddReferencePage, VendorAgentsAddReference.Yes).success.value
 
-          val result = DoYouKnowYourAgentReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsAddReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("agent.doYouKnowYourAgentReference.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "agent.doYouKnowYourAgentReference.yes"
+          htmlContent mustEqual "vendorAgent.VendorAgentsAddReference.yes"
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("agent.doYouKnowYourAgentReference.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.VendorAgentsAddReference.change.hidden")
         }
       }
-
-
     }
   }
 }

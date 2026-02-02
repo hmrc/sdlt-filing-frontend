@@ -170,7 +170,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.DoYouKnowYourAgentReferenceController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(NormalMode).url
 
       }
     }

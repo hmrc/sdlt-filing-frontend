@@ -20,7 +20,7 @@ import base.SpecBase
 import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.vendor.VendorAgentsReferenceFormProvider
-import models.vendor.DoYouKnowYourAgentReference
+import models.vendorAgent.VendorAgentsAddReference
 import models.{NormalMode, ReturnAgent, ReturnInfo, UserAnswers, Vendor}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -58,11 +58,11 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       data = Json.obj(
         "vendorAgentCurrent" -> Json.obj(
           "agentName" -> "test",
+          "vendorAgentsAddReference" -> "yes"
         ),
         "vendorCurrent" -> Json.obj(
           "whoIsTheVendor" -> "Company",
           "representedByAgent" -> true,
-          "doYouKnowYourAgentReference" -> "yes"
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
     )
@@ -73,11 +73,11 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       data = Json.obj(
         "vendorAgentCurrent" -> Json.obj(
           "agentName" -> "test",
+          "vendorAgentsAddReference" -> "no"
         ),
         "vendorCurrent" -> Json.obj(
           "whoIsTheVendor" -> "Company",
           "representedByAgent" -> true,
-          "doYouKnowYourAgentReference" -> "no"
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
     )
@@ -223,13 +223,13 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
 
       val testScenarios =
         Table(
-          ("doYouKnowYourAgentReference", "userAnswers"),
-          (Some(DoYouKnowYourAgentReference.No), userAnswersWithAgentReferenceUnknown),
+          ("vendorAgentsAddReference", "userAnswers"),
+          (Some(VendorAgentsAddReference.No), userAnswersWithAgentReferenceUnknown),
           (None, userAnswersWithoutAgentReferenceEmptyAnswer)
         )
 
       forAll(testScenarios) { (value, userAnswers) =>
-        s"when doYouKnowYourAgentReference is ${value.getOrElse("None")}" in {
+        s"when vendorAgentsAddReference is ${value.getOrElse("None")}" in {
 
           val application =
             applicationBuilder(userAnswers = Some(userAnswers)).build()

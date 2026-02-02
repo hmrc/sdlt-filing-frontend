@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.mappings.Mappings
-import models.vendor.DoYouKnowYourAgentReference
+import models.vendorAgent.VendorAgentsAddReference
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class DoYouKnowYourAgentReferenceFormProvider @Inject() extends Mappings {
+class VendorAgentsAddReferenceFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[DoYouKnowYourAgentReference] =
+  def apply(): Form[VendorAgentsAddReference] =
     Form(
-      "value" -> enumerable[DoYouKnowYourAgentReference]("agent.doYouKnowYourAgentReference.error.required")
+      "value" -> enumerable[VendorAgentsAddReference]("vendorAgent.VendorAgentsAddReference.error.required")
     )
 }

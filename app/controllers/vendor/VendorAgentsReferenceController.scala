@@ -18,11 +18,11 @@ package controllers.vendor
 
 import controllers.actions.*
 import forms.vendor.VendorAgentsReferenceFormProvider
-import models.vendor.DoYouKnowYourAgentReference
+import models.vendorAgent.VendorAgentsAddReference
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.vendor.{DoYouKnowYourAgentReferencePage, VendorAgentsReferencePage, VendorRepresentedByAgentPage}
-import pages.vendorAgent.AgentNamePage
+import pages.vendor.{VendorAgentsReferencePage, VendorRepresentedByAgentPage}
+import pages.vendorAgent.{AgentNamePage, VendorAgentsAddReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -60,8 +60,8 @@ class VendorAgentsReferenceController @Inject()(
             Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode))
 
           case Some(agentName) =>
-            userAnswers.get(DoYouKnowYourAgentReferencePage) match {
-              case Some(value) if value == DoYouKnowYourAgentReference.Yes =>
+            userAnswers.get(VendorAgentsAddReferencePage) match {
+              case Some(value) if value == VendorAgentsAddReference.Yes =>
                 val form = formProvider(agentName)
 
                 val preparedForm = request.userAnswers.get(VendorAgentsReferencePage) match {

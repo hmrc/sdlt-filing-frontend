@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package models.vendor
+package models.vendorAgent
 
 import models.{Enumerable, WithName}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait DoYouKnowYourAgentReference
+sealed trait VendorAgentsAddReference
 
-object DoYouKnowYourAgentReference extends Enumerable.Implicits {
+object VendorAgentsAddReference extends Enumerable.Implicits {
 
-  case object Yes extends WithName("yes") with DoYouKnowYourAgentReference
-  case object No extends WithName("no") with DoYouKnowYourAgentReference
+  case object Yes extends WithName("yes") with VendorAgentsAddReference
+  case object No extends WithName("no") with VendorAgentsAddReference
 
-  val values: Seq[DoYouKnowYourAgentReference] = Seq(
+  val values: Seq[VendorAgentsAddReference] = Seq(
     Yes, No
   )
 
@@ -41,6 +41,6 @@ object DoYouKnowYourAgentReference extends Enumerable.Implicits {
       )
   }
 
-  implicit val enumerable: Enumerable[DoYouKnowYourAgentReference] =
+  implicit val enumerable: Enumerable[VendorAgentsAddReference] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

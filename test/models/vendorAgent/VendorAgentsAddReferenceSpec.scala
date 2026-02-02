@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.vendor
+package models.vendorAgent
 
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -24,40 +24,40 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class DoYouKnowYourAgentReferenceSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class VendorAgentsAddReferenceSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
-  "DoYouKnowYourAgentReference" - {
+  "VendorAgentsAddReference" - {
 
     "must deserialise valid values" in {
 
-      val gen = Gen.oneOf(DoYouKnowYourAgentReference.values.toSeq)
+      val gen = Gen.oneOf(VendorAgentsAddReference.values.toSeq)
 
       forAll(gen) {
-        doYouKnowYourAgentReference =>
+        VendorAgentsAddReference =>
 
-          JsString(doYouKnowYourAgentReference.toString).validate[DoYouKnowYourAgentReference].asOpt.value mustEqual doYouKnowYourAgentReference
+          JsString(VendorAgentsAddReference.toString).validate[VendorAgentsAddReference].asOpt.value mustEqual VendorAgentsAddReference
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!DoYouKnowYourAgentReference.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!VendorAgentsAddReference.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
 
-          JsString(invalidValue).validate[DoYouKnowYourAgentReference] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[VendorAgentsAddReference] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = Gen.oneOf(DoYouKnowYourAgentReference.values.toSeq)
+      val gen = Gen.oneOf(VendorAgentsAddReference.values.toSeq)
 
       forAll(gen) {
-        doYouKnowYourAgentReference =>
+        VendorAgentsAddReference =>
 
-          Json.toJson(doYouKnowYourAgentReference) mustEqual JsString(doYouKnowYourAgentReference.toString)
+          Json.toJson(VendorAgentsAddReference) mustEqual JsString(VendorAgentsAddReference.toString)
       }
     }
   }
