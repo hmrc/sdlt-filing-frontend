@@ -225,8 +225,8 @@ object ModelValidation extends DateUtil{
     val taxReliefCode = request.taxReliefDetails.map(_.taxReliefCode)
     val isPartialRelief = request.taxReliefDetails.flatMap(_.isPartialRelief)
     (taxReliefCode,request.isLinked, isPartialRelief) match  {
-      case (Some(FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief), false, Some(_)) => ValidationSuccess
-      case (Some(FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief), false, None ) =>  ValidationFailure(s"No partial relief type defined.")
+      case (Some(FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief), Some(false), Some(_)) => ValidationSuccess
+      case (Some(FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief), Some(false), None ) =>  ValidationFailure(s"No partial relief type defined.")
       case _ => ValidationSuccess
     }
   }

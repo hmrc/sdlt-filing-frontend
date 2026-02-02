@@ -140,7 +140,7 @@ trait RequestGenerators {
         leaseDetails = None,
         relevantRentDetails = None,
         firstTimeBuyer = Some(true),
-        isLinked = false,
+        isLinked = Some(false),
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = taxRelief, isPartialRelief = Some(false))),
       )
 
@@ -173,7 +173,7 @@ trait RequestGenerators {
         leaseDetails = None,
         relevantRentDetails = None,
         firstTimeBuyer = Some(true),
-        isLinked = true,
+        isLinked = Some(true),
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = taxRelief, isPartialRelief = Some(false))),
       )
   }
