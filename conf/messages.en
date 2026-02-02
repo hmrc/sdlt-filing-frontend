@@ -404,6 +404,7 @@ vendorAgent.agentsReference.error.length                                        
 vendorAgent.agentsReference.change.hidden                                           = Agent’s Reference
 vendorAgent.agentsReference.error.invalid                                           = Agent’s Reference is invalid
 vendorAgent.checkYourAnswers.agentsReference.agentMissing                           = Enter agent reference
+vendorAgent.agentsReference.reference.hint                                          = We’ll only use this to help reference this return
 
 agent.checkYourAnswers.agentName.label                                              = Agent name
 agent.checkYourAnswers.agentName.agentMissing                                       = Enter agent name
