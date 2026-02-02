@@ -418,22 +418,23 @@ vendorAgent.VendorAgentsAddReference.change.hidden                              
 vendorAgent.VendorAgentsAddReference.p                                              = This is the unique number or code that {0} will use to locate the return in their records.
 vendorAgent.VendorAgentsAddReference.error.required                                 = Please select an option
 
-agent.vendorAgentsContactDetails.title                                              = What are the agent’s contact details? - About the vendor
-agent.vendorAgentsContactDetails.heading                                            = What are {0}’s contact details?
-agent.vendorAgentsContactDetails.agentPhoneNumber                                   = Agent phone number
-agent.vendorAgentsContactDetails.agentEmailAddress                                  = Agent email address
-agent.vendorAgentsContactDetails.agentPhoneNumber.caption                           = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
-agent.vendorAgentsContactDetails.agentEmailAddress.caption                          = We’ll only use this to send a receipt
-agent.vendorAgentsContactDetails.checkYourAnswersLabel                              = VendorAgentsContactDetails
-agent.vendorAgentsContactDetails.error.agentPhoneNumber.required                    = Enter the agent’s phone number
-agent.vendorAgentsContactDetails.error.agentEmailAddress.required                   = Enter the agent’s email address
-agent.vendorAgentsContactDetails.error.agentPhoneNumber.length                      = The agent’s phone number must be {0} characters or less
-agent.vendorAgentsContactDetails.error.agentEmailAddress.length                     = The agent’s email address must be {0} characters or less
-agent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid                     = The agent’s phone number must only include numbers 0 to 9, plus signs, spaces, dashes, hyphens and brackets
-agent.vendorAgentsContactDetails.error.agentEmailAddress.invalid                    = The agent’s email address must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
-agent.vendorAgentsContactDetails.agentPhoneNumber.change.hidden                     = Agent phone number
-agent.vendorAgentsContactDetails.agentEmailAddress.change.hidden                    = Agent email address
-vendorAgent.reference.hint                                                          = We’ll only use this to help reference this return
+vendorAgent.vendorAgentsContactDetails.title                                              = What are the agent’s contact details? - About the vendor’s agent
+vendorAgent.vendorAgentsContactDetails.heading                                            = What are {0}’s contact details?
+vendorAgent.vendorAgentsContactDetails.agentPhoneNumber                                   = Agent phone number
+vendorAgent.vendorAgentsContactDetails.agentEmailAddress                                  = Agent email address
+vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.caption                           = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
+vendorAgent.vendorAgentsContactDetails.agentEmailAddress.caption                          = We’ll only use this to send a receipt
+vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel                              = VendorAgentsContactDetails
+vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.required                    = Enter the agent’s phone number
+vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.required                   = Enter the agent’s email address
+vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length                      = The agent’s phone number must be {0} characters or less
+vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.length                     = The agent’s email address must be {0} characters or less
+vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid                     = The agent’s phone number must only include numbers 0 to 9, plus signs, spaces, dashes, hyphens and brackets
+vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid                    = The agent’s email address must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
+vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.change.hidden                     = Agent phone number
+vendorAgent.vendorAgentsContactDetails.agentEmailAddress.change.hidden                    = Agent email address
+vendorAgent.vendorAgentsContactDetails.error.oneRequired                                  = At least one option is required
+
 
 # Purchaser Messages
 

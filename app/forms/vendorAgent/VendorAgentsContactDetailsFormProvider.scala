@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.mappings.Mappings
-import models.vendor.VendorAgentsContactDetails
+import models.vendorAgent.VendorAgentsContactDetails
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
@@ -35,12 +35,20 @@ class VendorAgentsContactDetailsFormProvider @Inject() extends Mappings {
   def apply(): Form[VendorAgentsContactDetails] = Form(
     mapping(
       "phoneNumber" -> optionalText()
-        .verifying(optionalMaxLength(agentNumberMaxLength,"agent.vendorAgentsContactDetails.error.agentPhoneNumber.length"))
-        .verifying(optionalRegexp(formNumberRegex, "agent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"))
+        .verifying(optionalMaxLength(agentNumberMaxLength,"vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length"))
+        .verifying(optionalRegexp(formNumberRegex, "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"))
       ,
       "emailAddress" -> optionalText()
-        .verifying(optionalMaxLength(agentEmailMaxLength, "agent.vendorAgentsContactDetails.error.agentEmailAddress.length"))
-        .verifying(optionalRegexp(formEmailRegex, "agent.vendorAgentsContactDetails.error.agentEmailAddress.invalid"))
-    )(VendorAgentsContactDetails.apply)(x => Some((x.phoneNumber, x.emailAddress)))
+        .verifying(optionalMaxLength(agentEmailMaxLength, "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.length"))
+        .verifying(optionalRegexp(formEmailRegex, "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid"))
+  )(VendorAgentsContactDetails.apply)( x =>
+    Some((x.phoneNumber, x.emailAddress))
+    )
+    .verifying(
+      "vendorAgent.vendorAgentsContactDetails.error.oneRequired",
+      details =>
+        details.phoneNumber.exists(_.trim.nonEmpty) ||
+          details.emailAddress.exists(_.trim.nonEmpty)
+    )
   )
  }

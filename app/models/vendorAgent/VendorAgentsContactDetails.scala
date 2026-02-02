@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package pages.vendor
+package models.vendorAgent
 
-import models.vendor.VendorAgentsContactDetails
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import play.api.libs.json.*
 
-case object VendorAgentsContactDetailsPage extends QuestionPage[VendorAgentsContactDetails] {
+case class VendorAgentsContactDetails (phoneNumber: Option[String], emailAddress: Option[String])
 
-  override def path: JsPath = JsPath \ "vendorCurrent" \ toString
+object VendorAgentsContactDetails {
 
-  override def toString: String = "agentsContactDetails"
+  implicit val format: OFormat[VendorAgentsContactDetails] = Json.format
 }

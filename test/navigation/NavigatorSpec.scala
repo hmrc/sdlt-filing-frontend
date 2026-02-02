@@ -78,7 +78,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from AddVendorAgentContactDetailsPage to Vendor Agents Contact Detail page" in {
-          navigator.nextPage(AddVendorAgentContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(mode = NormalMode)
+          navigator.nextPage(AddVendorAgentContactDetailsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(mode = NormalMode)
         }
 
         "go from VendorAgentsAddReference Page to Agent Reference page" in {

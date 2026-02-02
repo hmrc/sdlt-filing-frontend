@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.vendor
+package viewmodels.checkAnswers.vendorAgent
 
 import base.SpecBase
 import models.CheckMode
-import models.vendor.VendorAgentsContactDetails
-import pages.vendor.VendorAgentsContactDetailsPage
+import models.vendorAgent.VendorAgentsContactDetails
+import pages.vendorAgent.VendorAgentsContactDetailsPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 
@@ -41,7 +41,7 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
           val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("agent.vendorAgentsContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml must include("123456")
@@ -49,9 +49,9 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           valueHtml must include("test@example.com")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("agent.vendorAgentsContactDetails.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.vendorAgentsContactDetails.change.hidden")
         }
       }
 
@@ -67,7 +67,7 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
           val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
 
-          result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
         }
       }
     }
@@ -86,7 +86,7 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
           val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("agent.vendorAgentsContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml must include("123456")
@@ -94,7 +94,7 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           valueHtml mustNot include("test@example.com")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
         }
       }
     }
@@ -113,7 +113,7 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
           val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("agent.vendorAgentsContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml must include("test@example.com")
@@ -121,7 +121,7 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           valueHtml mustNot include("123456")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
         }
       }
     }
@@ -140,13 +140,13 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
           val result = VendorAgentsContactDetailsSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("agent.vendorAgentsContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml must include("-")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
         }
       }
     }
@@ -162,11 +162,11 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
           val result = VendorAgentsContactDetailsSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("agent.vendorAgentsContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml must include(controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-          valueHtml must include(msgs("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
+          valueHtml must include(controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+          valueHtml must include(msgs("vendorAgent.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
           valueHtml must include("govuk-link")
 
 
@@ -186,11 +186,11 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
           val result = VendorAgentsContactDetailsSummary.row(None)
 
-          result.key.content.asHtml.toString() mustEqual msgs("agent.vendorAgentsContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml must include(controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-          valueHtml must include(msgs("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
+          valueHtml must include(controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+          valueHtml must include(msgs("vendorAgent.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
         }
       }
     }

@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.vendor
+package controllers.vendorAgent
 
 import controllers.actions.*
-import forms.vendor.VendorAgentsContactDetailsFormProvider
-import models.Mode
-import models.vendor.VendorAgentsContactDetails
+import forms.vendorAgent.VendorAgentsContactDetailsFormProvider
+import models.{Mode, NormalMode}
+import models.vendorAgent.VendorAgentsContactDetails
 import navigation.Navigator
-import pages.vendor.{VendorAgentsContactDetailsPage, VendorRepresentedByAgentPage}
-import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage}
+import pages.vendorAgent.{AgentNamePage, VendorAgentsContactDetailsPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.vendor.VendorAgentsContactDetailsView
+import views.html.vendorAgent.VendorAgentsContactDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,24 +52,19 @@ class VendorAgentsContactDetailsController @Inject()(
     implicit request =>
 
       val maybeAgentName: Option[String] = request.userAnswers.get(AgentNamePage)
-      val isRepresentedByAgent = request.userAnswers.get(VendorRepresentedByAgentPage).getOrElse(false)
-      val knowsAgentDetails: Boolean = request.userAnswers.get(AddVendorAgentContactDetailsPage).getOrElse(false)
 
-      (maybeAgentName, isRepresentedByAgent, knowsAgentDetails) match {
-        case (_, false, _) | (_, _, false) =>
-          //TODO: update to check your answers once created DTR-2057
-          Redirect(controllers.routes.IndexController.onPageLoad())
+      maybeAgentName match {
 
-        case (None, _, _) =>
-          Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode))
+        case None =>
+          Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode))
 
-        case (Some(agentName), _, _) =>
+        case Some(agentName) =>
           val preparedForm = request.userAnswers.get(VendorAgentsContactDetailsPage) match {
             case None => form
             case Some(value) => form.fill(value)
           }
           val continueRoute = Ok(view(preparedForm, mode, agentName))
-          agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
+          agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute)
       }
   }
 

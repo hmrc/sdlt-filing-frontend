@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package controllers.vendor
+package controllers.vendorAgent
 
 import base.SpecBase
 import constants.FullReturnConstants
 import controllers.routes
-import forms.vendor.VendorAgentsContactDetailsFormProvider
-import models.vendor.VendorAgentsContactDetails
+import forms.vendorAgent.VendorAgentsContactDetailsFormProvider
+import models.vendorAgent.VendorAgentsContactDetails
 import models.{FullReturn, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendor.*
-import pages.vendorAgent.AgentNamePage
-import pages.vendorAgent.AddVendorAgentContactDetailsPage
+import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorAgentsContactDetailsPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.vendor.VendorAgentsContactDetailsView
+import views.html.vendorAgent.VendorAgentsContactDetailsView
 
 import scala.concurrent.Future
 
@@ -46,7 +45,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
   val formProvider = new VendorAgentsContactDetailsFormProvider()
   val form: Form[VendorAgentsContactDetails] = formProvider()
 
-  lazy val vendorAgentsContactDetailsRoute: String = controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode).url
+  lazy val vendorAgentsContactDetailsRoute: String = controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode).url
 
   val userAnswersWithAgentDetails: UserAnswers = emptyUserAnswers
     .set(AgentNamePage, "Jones & Co, Leeds").success.value
@@ -66,24 +65,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
 
   "VendorAgentsContactDetails Controller" - {
-
-    //TODO: update to VendorAgent CYA page created DTR-2057
-    "must redirect to index controller if knowsAgentDetails is false" in {
-
-      val userAnswers = emptyUserAnswers
-        .set(AgentNamePage, "Jones & Co, Leeds").success.value
-        .set(VendorRepresentedByAgentPage, true).success.value
-        .set(AddVendorAgentContactDetailsPage, false).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-        val request = FakeRequest(GET, vendorAgentsContactDetailsRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
-      }
 
     "must return OK and the correct view for a GET when agent name exists and is represented by agent is true" in {
 
@@ -152,26 +133,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
-    "must redirect when no data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithAgentDetails)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, vendorAgentsContactDetailsRoute)
-            .withFormUrlEncodedBody(
-              ("phoneNumber", ""),
-              ("emailAddress", "")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(NormalMode).url
-
       }
     }
 
