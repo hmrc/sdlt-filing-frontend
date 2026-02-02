@@ -25,20 +25,20 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object VendorAgentsContactDetailsSummary  {
+object VendorAgentsContactDetailsSummary {
 
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
     answers.flatMap(_.get(VendorAgentsContactDetailsPage)).map { answer =>
-        val value: Option[String] = (answer.phoneNumber, answer.emailAddress) match {
-          case (Some(phone), Some(email)) =>
-            Some(HtmlFormat.escape(phone).toString + "<br/>" + HtmlFormat.escape(email).toString)
-          case (_, Some(email)) =>
-            Some(HtmlFormat.escape(email).toString)
-          case (Some(phone), _) =>
-            Some(HtmlFormat.escape(phone).toString)
-          case _ =>
-            None
-        }
+      val value: Option[String] = (answer.phoneNumber, answer.emailAddress) match {
+        case (Some(phone), Some(email)) =>
+          Some(HtmlFormat.escape(phone).toString + "<br/>" + HtmlFormat.escape(email).toString)
+        case (_, Some(email)) =>
+          Some(HtmlFormat.escape(email).toString)
+        case (Some(phone), _) =>
+          Some(HtmlFormat.escape(phone).toString)
+        case _ =>
+          None
+      }
 
         value match {
           case Some(details) =>
@@ -62,10 +62,10 @@ object VendorAgentsContactDetailsSummary  {
         }
     }.getOrElse{
 
-    val value = ValueViewModel(
-      HtmlContent( //TODO: DTR-2057 revisit cya here
-        s"""<a href="${controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendorAgent.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
-    )
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url}" class="govuk-link">${messages("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
+      )
 
     SummaryListRowViewModel(
       key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",

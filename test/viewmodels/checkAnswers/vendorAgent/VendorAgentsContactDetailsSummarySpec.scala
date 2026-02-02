@@ -165,8 +165,8 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml must include(controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-          valueHtml must include(msgs("vendorAgent.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
+          valueHtml must include(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url)
+          valueHtml must include(msgs("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
           valueHtml must include("govuk-link")
 
 
@@ -189,8 +189,8 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml must include(controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-          valueHtml must include(msgs("vendorAgent.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
+          valueHtml must include(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url)
+          valueHtml must include(msgs("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing"))
         }
       }
     }

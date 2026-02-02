@@ -86,8 +86,7 @@ class VendorAgentsAddReferenceController @Inject()(
                   // TODO DTR-2098: Redirect to Screen va-3b - What is [agentName]'s reference for this return?
                   Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
                 } else {
-                  // TODO DTR-2057: Redirect to Vendor Agent CYA
-                  Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+                  Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
                 }
               }
           )

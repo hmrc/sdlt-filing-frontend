@@ -86,10 +86,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(VendorAgentsAddReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
         }
 
-        // TODO: Redirect should change to AgentCYA when created - DTR-2057
         "go from Agent Reference page to CYA page" in {
-         // navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorCheckYourAnswersController.onPageLoad()
-          navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()  //TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
+          navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
         }
       }
 

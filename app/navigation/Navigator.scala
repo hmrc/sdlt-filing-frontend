@@ -55,7 +55,7 @@ class Navigator @Inject()() {
     case VendorAgentsAddReferencePage =>
       _ => controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
     case VendorAgentsReferencePage =>
-      _ => controllers.routes.ReturnTaskListController.onPageLoad() // TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
+      _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
     case VendorAgentBeforeYouStartPage =>
       _ => controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)
 
