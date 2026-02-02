@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.mappings.Mappings
 import play.api.data.Form
@@ -28,8 +28,8 @@ class VendorAgentsReferenceFormProvider @Inject() extends Mappings {
 
   def apply(agentName: String)(implicit messages: Messages): Form[String] =
     Form(
-      "agentReference" -> text(messages("agent.agentsReference.error.required", agentName))
-        .verifying(maxLength(14, "agent.agentsReference.error.length"))
-        .verifying(regexp(formRegex, "agent.agentsReference.error.invalid"))
+      "agentReference" -> text(messages("vendorAgent.agentsReference.error.required", agentName))
+        .verifying(maxLength(14, "vendorAgent.agentsReference.error.length"))
+        .verifying(regexp(formRegex, "vendorAgent.agentsReference.error.invalid"))
     )
 }
