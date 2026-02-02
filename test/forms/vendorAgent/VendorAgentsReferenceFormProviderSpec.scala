@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
@@ -23,9 +23,9 @@ import play.api.test.Helpers.stubMessages
 
 class VendorAgentsReferenceFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "agent.agentsReference.error.required"
-  val lengthKey = "agent.agentsReference.error.length"
-  val invalidKey = "agent.agentsReference.error.invalid"
+  val requiredKey = "vendorAgent.agentsReference.error.required"
+  val lengthKey = "vendorAgent.agentsReference.error.length"
+  val invalidKey = "vendorAgent.agentsReference.error.invalid"
   val maxLength = 14
   val agentName = "Name"
 

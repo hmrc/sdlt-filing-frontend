@@ -396,13 +396,14 @@ agent.agentName.error.length                                                    
 agent.agentName.error.invalid                                                       = AgentName is invalid
 agent.agentName.change.hidden                                                       = Agent’s name
 
-agent.agentsReference.title                                                         = What is the agent’s reference for this return? - About the vendor
-agent.agentsReference.heading                                                       = What is {0}’s reference for this return?
-agent.agentsReference.checkYourAnswersLabel                                         = Agent’s Reference
-agent.agentsReference.error.required                                                = Enter {0}’s agent reference number
-agent.agentsReference.error.length                                                  = Agent’s reference must be 14 characters or less
-agent.agentsReference.change.hidden                                                 = Agent’s Reference
-agent.agentsReference.error.invalid                                                 = Agent’s Reference is invalid
+vendorAgent.agentsReference.title                                                   = What is the agent’s reference for this return? - About the vendor’s agent
+vendorAgent.agentsReference.heading                                                 = What is {0}’s reference for this return?
+vendorAgent.agentsReference.checkYourAnswersLabel                                   = Agent’s Reference
+vendorAgent.agentsReference.error.required                                          = Enter {0}’s agent reference number
+vendorAgent.agentsReference.error.length                                            = Agent’s reference must be 14 characters or less
+vendorAgent.agentsReference.change.hidden                                           = Agent’s Reference
+vendorAgent.agentsReference.error.invalid                                           = Agent’s Reference is invalid
+vendorAgent.checkYourAnswers.agentsReference.agentMissing                           = Enter agent reference
 
 agent.checkYourAnswers.agentName.label                                              = Agent name
 agent.checkYourAnswers.agentName.agentMissing                                       = Enter agent name
@@ -432,7 +433,7 @@ agent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid                 
 agent.vendorAgentsContactDetails.error.agentEmailAddress.invalid                    = The agent’s email address must only include letters a to z without accents, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 agent.vendorAgentsContactDetails.agentPhoneNumber.change.hidden                     = Agent phone number
 agent.vendorAgentsContactDetails.agentEmailAddress.change.hidden                    = Agent email address
-
+vendorAgent.reference.hint                                                          = We’ll only use this to help reference this return
 
 # Purchaser Messages
 
