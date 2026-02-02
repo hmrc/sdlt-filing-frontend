@@ -31,6 +31,7 @@ site.error.noSdltEnrolmentErrorPage.p = To file a Stamp Duty Land Tax (SDLT) ret
 site.error.noSdltEnrolmentErrorPage.link.message = add this tax to your account
 
 # Section Captions
+site.beforeYouStart.heading                                                         = Before you start
 site.vendor.caption                                                                 = About the vendor
 site.purchaser.caption                                                              = About the purchaser
 site.agent.caption                                                                  = About the agent
@@ -804,7 +805,6 @@ purchaserAgent.removePurchaserAgent.error.required                              
 purchaserAgent.removePurchaserAgent.change.hidden                                        = RemovePurchaserAgent
 
 vendorAgent.BeforeYouStart.title                                              = Before you start - About the vendor’s agent
-vendorAgent.BeforeYouStart.heading                                            = Before you start
 vendorAgent.BeforeYouStart.p1                                                 = In this section, you need to tell us about the vendor’s agent.
 vendorAgent.BeforeYouStart.p2                                                 = We will ask for:
 vendorAgent.BeforeYouStart.bullet1                                            = the agent’s name
