@@ -133,7 +133,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode).url
       }
     }
 

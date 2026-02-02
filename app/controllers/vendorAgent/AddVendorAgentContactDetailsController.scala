@@ -20,8 +20,7 @@ import controllers.actions.*
 import forms.vendorAgent.AddVendorAgentContactDetailsFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.vendor.VendorAgentsContactDetailsPage
-import pages.vendorAgent.AgentNamePage
+import pages.vendorAgent.{AgentNamePage, VendorAgentsContactDetailsPage}
 import pages.vendorAgent.AddVendorAgentContactDetailsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -63,7 +62,7 @@ class AddVendorAgentContactDetailsController @Inject()(
           }
 
           val continueRoute = Ok(view(preparedForm, mode, agentName))
-          agentChecksService.checkMainVendorAgentRepresentedByAgent(request.userAnswers, continueRoute)
+          agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute)
       }
   }
 

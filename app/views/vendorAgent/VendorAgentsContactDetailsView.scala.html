@@ -30,34 +30,34 @@
 
 @(form: Form[_], mode: Mode, agentName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("agent.vendorAgentsContactDetails.title"))) {
+@layout(pageTitle = title(form, messages("vendorAgent.vendorAgentsContactDetails.title"))) {
 
-    @formHelper(action = controllers.vendor.routes.VendorAgentsContactDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @caption(messages("site.vendor.caption"))
+        @caption(messages("site.vendorAgent.caption"))
 
         @govukFieldset(
             Fieldset(
                 legend = Some(
                     LegendViewModel(
-                        messages("agent.vendorAgentsContactDetails.heading", agentName)
+                        messages("vendorAgent.vendorAgentsContactDetails.heading", agentName)
                     ).asPageHeading(size = Large)
                 ),
                 html = HtmlFormat.fill(Seq(
                     govukInput(
                         InputViewModel(
                             field = form("phoneNumber"),
-                            label = LabelViewModel(messages("agent.vendorAgentsContactDetails.agentPhoneNumber"))
+                            label = LabelViewModel(messages("vendorAgent.vendorAgentsContactDetails.agentPhoneNumber"))
                         )
                         .withWidth(Full)
                         .withHint(
                             HintViewModel(
                                 HtmlContent(
-                                    Html(messages("agent.vendorAgentsContactDetails.agentPhoneNumber.caption"))
+                                    Html(messages("vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.caption"))
                                 )
                             )
                         )
@@ -66,7 +66,7 @@
                     govukInput(
                         InputViewModel(
                             field = form("emailAddress"),
-                            label = LabelViewModel(messages("agent.vendorAgentsContactDetails.agentEmailAddress"))
+                            label = LabelViewModel(messages("vendorAgent.vendorAgentsContactDetails.agentEmailAddress"))
                         )
                         .withWidth(Full)
                     )

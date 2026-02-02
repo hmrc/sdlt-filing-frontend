@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.behaviours.StringFieldBehaviours
-import models.vendor.VendorAgentsContactDetails
 import play.api.data.FormError
 
 class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
@@ -27,8 +26,8 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
   ".phoneNumber" - {
 
     val fieldName = "phoneNumber"
-    val lengthKey = "agent.vendorAgentsContactDetails.error.agentPhoneNumber.length"
-    val invalidKey = "agent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"
+    val lengthKey = "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length"
+    val invalidKey = "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"
     val maxLength = 14
 
     "must bind valid phone number form data" in {
@@ -143,8 +142,8 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
   ".emailAddress" - {
 
     val fieldName = "emailAddress"
-    val lengthKey = "agent.vendorAgentsContactDetails.error.agentEmailAddress.length"
-    val invalidKey = "agent.vendorAgentsContactDetails.error.agentEmailAddress.invalid"
+    val lengthKey = "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.length"
+    val invalidKey = "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid"
     val maxLength = 36
 
     "must bind valid email address form data" in {
@@ -193,22 +192,6 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
       result.get.emailAddress mustBe None
     }
 
-    "must bind when both fields are empty" in {
-      val result = form.bind(
-        Map(
-          "phoneNumber" -> "",
-          "emailAddress" -> ""
-        )
-      )
-      result.errors mustBe empty
-      result.get mustBe VendorAgentsContactDetails(None, None)
-    }
-
-    "must bind when both fields are missing" in {
-      val result = form.bind(Map.empty[String, String])
-      result.errors mustBe empty
-      result.get mustBe VendorAgentsContactDetails(None, None)
-    }
 
     "must not bind strings longer than 36 characters" in {
       val longEmail = ("a" * maxLength) + "@test.com"
@@ -266,6 +249,19 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
         )
         result.errors mustBe empty
         result.get.emailAddress mustBe None
+      }
+    }
+
+    "oneRequired validation" - {
+
+      "must fail when both phoneNumber and emailAddress are empty" in {
+        val result = form.bind(Map("phoneNumber" -> "", "emailAddress" -> ""))
+        result.errors must contain(FormError("", "vendorAgent.vendorAgentsContactDetails.error.oneRequired"))
+      }
+
+      "must fail when both phoneNumber and emailAddress are missing" in {
+        val result = form.bind(Map.empty[String, String])
+        result.errors must contain(FormError("", "vendorAgent.vendorAgentsContactDetails.error.oneRequired"))
       }
     }
   }

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.vendor
+package viewmodels.checkAnswers.vendorAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.vendor.VendorAgentsContactDetailsPage
+import pages.vendorAgent.VendorAgentsContactDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -43,20 +43,20 @@ object VendorAgentsContactDetailsSummary  {
         value match {
           case Some(details) =>
             SummaryListRowViewModel(
-              key = "agent.vendorAgentsContactDetails.checkYourAnswersLabel",
+              key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent(details)),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("agent.vendorAgentsContactDetails.change.hidden"))
+                ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
               )
             )
           case _ =>
             SummaryListRowViewModel(
-              key = "agent.vendorAgentsContactDetails.checkYourAnswersLabel",
+              key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
               value = ValueViewModel(HtmlContent("-")),
               actions = Seq(
-                ActionItemViewModel("site.change", controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("agent.vendorAgentsContactDetails.change.hidden"))
+                ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+                  .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
               )
             )
         }
@@ -64,11 +64,11 @@ object VendorAgentsContactDetailsSummary  {
 
     val value = ValueViewModel(
       HtmlContent( //TODO: DTR-2057 revisit cya here
-        s"""<a href="${controllers.vendor.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
+        s"""<a href="${controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendorAgent.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
     )
 
     SummaryListRowViewModel(
-      key = "agent.vendorAgentsContactDetails.checkYourAnswersLabel",
+      key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
       value = value
     )
   }
