@@ -281,6 +281,8 @@ GET         /about-the-vendors-agent/agent-address-return                       
 GET         /about-the-vendors-agent/agent-address-return/change                      controllers.vendorAgent.VendorAgentAddressController.addressLookupCallbackChangeVendorAgent(id: String ?= "", mode: Mode = NormalMode)
 
 GET         /about-the-vendors-agent/add-agent-reference-number                           controllers.vendorAgent.VendorAgentsAddReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /aabout-the-vendors-agent/add-agent-reference-number                          controllers.vendorAgent.VendorAgentsAddReferenceController.onSubmit(mode: Mode = NormalMode)
+POST        /about-the-vendors-agent/add-agent-reference-number                           controllers.vendorAgent.VendorAgentsAddReferenceController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-vendors-agent/add-agent-reference-number/change                    controllers.vendorAgent.VendorAgentsAddReferenceController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendors-agent/add-agent-reference-number/change                    controllers.vendorAgent.VendorAgentsAddReferenceController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-land/before-you-start                                              controllers.land.LandBeforeYouStartController.onPageLoad()

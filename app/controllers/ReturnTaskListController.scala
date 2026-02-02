@@ -57,7 +57,8 @@ class ReturnTaskListController @Inject()(
             Some(VendorTaskList.build(fullReturn)),
             Some(VendorAgentTaskList.build(fullReturn)),
             Some(PurchaserTaskList.build(fullReturn)),
-            Some(PurchaserAgentTaskList.build(fullReturn))
+            Some(PurchaserAgentTaskList.build(fullReturn)),
+            Some(LandTaskList.build(fullReturn))
           ).flatten
           Ok(view(sections: _*))
         }

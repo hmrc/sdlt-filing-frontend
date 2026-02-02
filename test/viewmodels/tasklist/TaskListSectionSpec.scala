@@ -111,7 +111,7 @@ class TaskListSectionSpec extends SpecBase {
 
           val result = TaskListSections.sections(fullReturnComplete)
 
-          result.size mustBe 4
+          result.size mustBe 5
           result.head mustBe a[TaskListSection]
         }
       }
@@ -128,7 +128,7 @@ class TaskListSectionSpec extends SpecBase {
 
           val result = TaskListSections.sections(fullReturnIncomplete)
 
-          result.size mustBe 4
+          result.size mustBe 5
           result.head mustBe a[TaskListSection]
         }
       }
