@@ -40,36 +40,36 @@ object VendorAgentsContactDetailsSummary {
           None
       }
 
-        value match {
-          case Some(details) =>
-            SummaryListRowViewModel(
-              key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent(details)),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
-              )
+      value match {
+        case Some(details) =>
+          SummaryListRowViewModel(
+            key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
+            value = ValueViewModel(HtmlContent(details)),
+            actions = Seq(
+              ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
             )
-          case _ =>
-            SummaryListRowViewModel(
-              key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent("-")),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
-              )
+          )
+        case _ =>
+          SummaryListRowViewModel(
+            key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
+            value = ValueViewModel(HtmlContent("-")),
+            actions = Seq(
+              ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
             )
-        }
-    }.getOrElse{
+          )
+      }
+    }.getOrElse {
 
       val value = ValueViewModel(
         HtmlContent(
           s"""<a href="${controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url}" class="govuk-link">${messages("agent.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
       )
 
-    SummaryListRowViewModel(
-      key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
-      value = value
-    )
-  }
+      SummaryListRowViewModel(
+        key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
+        value = value
+      )
+    }
 }
