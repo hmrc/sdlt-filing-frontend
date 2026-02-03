@@ -45,7 +45,7 @@ object PurchaserAgentAddressSummary {
     }.getOrElse {
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.address.missing")}</a>""")
+          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.address.missing")}</a>""")
       )
       SummaryListRowViewModel(
         key = label,

@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.vendorAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.vendorAgent.VendorAgentsReferencePage
+import pages.vendorAgent.{VendorAgentsAddReferencePage, VendorAgentsReferencePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -27,28 +27,32 @@ import viewmodels.implicits.*
 
 object VendorAgentsReferenceSummary {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
-    answers.flatMap(_.get(VendorAgentsReferencePage)).map {
-      answer =>
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    val label = messages("vendorAgent.agentsReference.checkYourAnswersLabel")
+    val changeRoute = controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url
 
-        SummaryListRowViewModel(
-          key = "vendorAgent.agentsReference.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
+    (answers.get(VendorAgentsReferencePage), answers.get(VendorAgentsAddReferencePage)) match {
+      case (Some(vaReference), _) =>
+
+        Some(SummaryListRowViewModel(
+          key = label,
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(vaReference).toString)),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("vendorAgent.agentsReference.change.hidden"))
           )
+        ))
+      case (None, Some(true)) =>
+        val value = ValueViewModel(
+          HtmlContent(
+            s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.referenceNumber.missing")}</a>""")
         )
-    }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendorAgent.checkYourAnswers.agentsReference.agentMissing")}</a>""")
-      )
+        Some(SummaryListRowViewModel(
+          key = label,
+          value = value
+        ))
+      case _ => None
 
-      SummaryListRowViewModel(
-        key = "vendorAgent.agentsReference.checkYourAnswersLabel",
-        value = value
-      )
     }
   }
 }

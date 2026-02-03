@@ -55,7 +55,7 @@ object PurchaserAgentsContactDetailsSummary {
       case (None, Some(true)) =>
         val value = ValueViewModel(
           HtmlContent(
-            s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.contactDetails.missing")}</a>""")
+            s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.contactDetails.missing")}</a>""")
         )
         Some(SummaryListRowViewModel(
           key = label,

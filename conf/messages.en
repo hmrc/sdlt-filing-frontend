@@ -388,7 +388,7 @@ vendor.whoIsTheVendor.error.required                                            
 vendorAgent.addVendorAgentContactDetails.title                                            = Do you want to add contact details for the agent? - About the vendor
 vendorAgent.addVendorAgentContactDetails.hint.radio                                       = We’ll only use these details to contact {0} about this return
 vendorAgent.addVendorAgentContactDetails.heading                                          = Do you want to add contact details for {0}?
-vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add vendor agent contact details?
+vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add contact details for {0}?
 vendorAgent.addVendorAgentContactDetails.change.hidden                                    = Do you want to add vendor agent contact details?
 vendorAgent.addVendorAgentContactDetails.error.required                                   = Please select an option
 
@@ -797,13 +797,13 @@ purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                   
 purchaserAgent.purchaserAgentAuthorised.error.required                                   = Select purchaserAgentAuthorised
 purchaserAgent.purchaserAgentAuthorised.change.hidden                                    = If {0} is authorised for correspondence
 
-purchaserAgent.checkYourAnswers.name.missing                                             = Enter name
-purchaserAgent.checkYourAnswers.address.missing                                          = Enter address
-purchaserAgent.checkYourAnswers.addContactDetails.missing                                = Select if you want to add contact details
-purchaserAgent.checkYourAnswers.contactDetails.missing                                   = Enter contact details
-purchaserAgent.checkYourAnswers.referenceNumber.missing                                  = Enter reference number
-purchaserAgent.checkYourAnswers.addReferenceNumber.missing                               = Select if you want to add a reference number
-purchaserAgent.checkYourAnswers.authorised.missing                                       = Select if the agent is authorised for correspondence
+returnAgent.checkYourAnswers.name.missing                                             = Enter name
+returnAgent.checkYourAnswers.address.missing                                          = Enter address
+returnAgent.checkYourAnswers.addContactDetails.missing                                = Select if you want to add contact details
+returnAgent.checkYourAnswers.contactDetails.missing                                   = Enter contact details
+returnAgent.checkYourAnswers.referenceNumber.missing                                  = Enter reference number
+returnAgent.checkYourAnswers.addReferenceNumber.missing                               = Select if you want to add a reference number
+returnAgent.checkYourAnswers.authorised.missing                                       = Select if the agent is authorised for correspondence
 
 purchaserAgent.removePurchaserAgent.title                                                = Are you sure you want to remove the purchaser’s agent? - About the purchaser’s agent
 purchaserAgent.removePurchaserAgent.heading                                              = Are you sure you want to remove {0}?

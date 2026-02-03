@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.vendor
+package viewmodels.checkAnswers.vendorAgent
 
 import models.{CheckMode, UserAnswers}
 import pages.vendorAgent.AgentNamePage
@@ -25,30 +25,33 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AgentNameSummary  {
+object AgentNameSummary {
 
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
+    val changeRoute = controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url
+    val label = messages("agent.checkYourAnswers.agentName.label")
+    answers.get(AgentNamePage).map {
+      answer =>
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
-    answers.flatMap(_.get(AgentNamePage)).map { answer =>
-
-      SummaryListRowViewModel(
-        key = "agent.checkYourAnswers.agentName.label",
-        value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("agent.agentName.change.hidden"))
+        SummaryListRowViewModel(
+          key = label,
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
+          actions = Seq(
+            ActionItemViewModel("site.change", changeRoute)
+              .withVisuallyHiddenText(messages("agent.agentName.change.hidden"))
+          )
         )
-      )
     }.getOrElse {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentMissing")}</a>""")
+          s"""<a href="$changeRoute" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentMissing")}</a>""")
       )
 
       SummaryListRowViewModel(
-        key = "agent.checkYourAnswers.agentName.label",
+        key = label,
         value = value
       )
     }
+  }
 }

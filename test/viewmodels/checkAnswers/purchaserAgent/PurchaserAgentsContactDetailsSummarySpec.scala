@@ -159,7 +159,7 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("purchaserAgent.checkYourAnswers.contactDetails.missing"))
+          htmlContent must include(msgs("returnAgent.checkYourAnswers.contactDetails.missing"))
 
           result.actions mustBe None
         }

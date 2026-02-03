@@ -29,6 +29,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.purchaserAgent.*
+import viewmodels.checkAnswers.vendorAgent.{AddVendorAgentContactDetailsSummary, AgentNameSummary, VendorAgentAddressSummary, VendorAgentsAddReferenceSummary, VendorAgentsContactDetailsSummary, VendorAgentsReferenceSummary}
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.vendorAgent.VendorAgentCheckYourAnswersView
 
@@ -58,16 +59,15 @@ class VendorAgentCheckYourAnswersController @Inject()(
           Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
         } else {
           val summaryList = SummaryListViewModel(
-
             //todo return to this once all vendorAgent pages are updated
             rows = Seq(
-              Some(PurchaserAgentNameSummary.row(request.userAnswers)),
-              Some(PurchaserAgentAddressSummary.row(request.userAnswers)),
-              Some(AddContactDetailsForPurchaserAgentSummary.row(request.userAnswers)),
-              PurchaserAgentsContactDetailsSummary.row(request.userAnswers),
-              Some(AddPurchaserAgentReferenceNumberSummary.row(request.userAnswers)),
-              PurchaserAgentReferenceSummary.row(request.userAnswers),
-              Some(PurchaserAgentAuthorisedSummary.row(request.userAnswers))
+              Some(AgentNameSummary.row(request.userAnswers)),
+              Some(VendorAgentAddressSummary.row(request.userAnswers)),
+              Some(AddVendorAgentContactDetailsSummary.row(request.userAnswers)),
+              VendorAgentsContactDetailsSummary.row(request.userAnswers),
+              Some(VendorAgentsAddReferenceSummary.row(request.userAnswers)),
+              VendorAgentsReferenceSummary.row(request.userAnswers),
+              //              Some(PurchaserAgentAuthorisedSummary.row(request.userAnswers)) //to remove??
             ).flatten
           )
 

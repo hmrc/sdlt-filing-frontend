@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.vendor
+package viewmodels.checkAnswers.purchaserAgent
 
 import base.SpecBase
 import models.CheckMode
@@ -22,6 +22,7 @@ import pages.vendorAgent.AgentNamePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.vendorAgent.AgentNameSummary
 
 class AgentNameSummarySpec extends SpecBase {
 

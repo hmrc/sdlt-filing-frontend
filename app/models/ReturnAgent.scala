@@ -18,30 +18,31 @@ package models
 
 import models.AgentType.{Purchaser, Vendor}
 import models.purchaserAgent.PurchaserAgentSessionQuestions
+import models.vendorAgent.VendorAgentSessionQuestions
 import play.api.libs.json.{Json, OFormat}
 
 import scala.concurrent.Future
 
 case class CreateReturnAgentRequest(
-                       stornId: String,
-                       returnResourceRef: String,
-                       agentType: String,
-                       name: String,
-                       houseNumber: Option[Int] = None,
-                       addressLine1: String,
-                       addressLine2: Option[String] = None,
-                       addressLine3: Option[String] = None,
-                       addressLine4: Option[String] = None,
-                       postcode: String,
-                       phoneNumber: Option[String] = None,
-                       email: Option[String] = None,
-                       agentReference: Option[String] = None,
-                       isAuthorised: Option[String] = None
-                       )
+                                     stornId: String,
+                                     returnResourceRef: String,
+                                     agentType: String,
+                                     name: String,
+                                     houseNumber: Option[Int] = None,
+                                     addressLine1: String,
+                                     addressLine2: Option[String] = None,
+                                     addressLine3: Option[String] = None,
+                                     addressLine4: Option[String] = None,
+                                     postcode: String,
+                                     phoneNumber: Option[String] = None,
+                                     email: Option[String] = None,
+                                     agentReference: Option[String] = None,
+                                     isAuthorised: Option[String] = None
+                                   )
 
 object CreateReturnAgentRequest {
   implicit val format: OFormat[CreateReturnAgentRequest] = Json.format[CreateReturnAgentRequest]
-  
+
   def from(userAnswers: UserAnswers, agentType: AgentType): Future[CreateReturnAgentRequest] = {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
@@ -64,7 +65,24 @@ object CreateReturnAgentRequest {
               agentReference = paSessionQuestions.purchaserAgentReference,
               isAuthorised = Some(paSessionQuestions.purchaserAgentAuthorised.toUpperCase)
             ))
-          case Vendor => ???
+          case Vendor =>
+            val vaSessionQuestions: VendorAgentSessionQuestions = (userAnswers.data \ "vendorAgentCurrent").as[VendorAgentSessionQuestions]
+            Future.successful(CreateReturnAgentRequest(
+              stornId = fullReturn.stornId,
+              returnResourceRef = fullReturn.returnResourceRef,
+              agentType = agentType.toString,
+              name = vaSessionQuestions.vendorAgentName,
+              houseNumber = vaSessionQuestions.vendorAgentAddress.houseNumber,
+              addressLine1 = vaSessionQuestions.vendorAgentAddress.line1,
+              addressLine2 = vaSessionQuestions.vendorAgentAddress.line2,
+              addressLine3 = vaSessionQuestions.vendorAgentAddress.line3,
+              addressLine4 = vaSessionQuestions.vendorAgentAddress.line4,
+              postcode = vaSessionQuestions.vendorAgentAddress.postcode,
+              phoneNumber = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.phoneNumber),
+              email = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.emailAddress),
+              agentReference = vaSessionQuestions.vendorAgentReference,
+              isAuthorised = Some(vaSessionQuestions.vendorAgentAuthorised.toUpperCase)
+            ))
         }
       case None =>
         Future.failed(new NoSuchElementException("[CreateReturnAgentRequest] Full return not found"))
@@ -73,8 +91,8 @@ object CreateReturnAgentRequest {
 }
 
 case class CreateReturnAgentReturn(
-                               returnAgentId: String
-                              )
+                                    returnAgentId: String
+                                  )
 
 object CreateReturnAgentReturn {
   implicit val format: OFormat[CreateReturnAgentReturn] = Json.format[CreateReturnAgentReturn]
@@ -82,25 +100,25 @@ object CreateReturnAgentReturn {
 
 
 case class UpdateReturnAgentRequest(
-                               stornId: String,
-                               returnResourceRef: String,
-                               agentType: String,
-                               name: String,
-                               houseNumber: Option[Int] = None,
-                               addressLine1: String,
-                               addressLine2: Option[String] = None,
-                               addressLine3: Option[String] = None,
-                               addressLine4: Option[String] = None,
-                               postcode: String,
-                               phoneNumber: Option[String] = None,
-                               email: Option[String] = None,
-                               agentReference: Option[String] = None,
-                               isAuthorised: Option[String] = None
-                              )
+                                     stornId: String,
+                                     returnResourceRef: String,
+                                     agentType: String,
+                                     name: String,
+                                     houseNumber: Option[Int] = None,
+                                     addressLine1: String,
+                                     addressLine2: Option[String] = None,
+                                     addressLine3: Option[String] = None,
+                                     addressLine4: Option[String] = None,
+                                     postcode: String,
+                                     phoneNumber: Option[String] = None,
+                                     email: Option[String] = None,
+                                     agentReference: Option[String] = None,
+                                     isAuthorised: Option[String] = None
+                                   )
 
 object UpdateReturnAgentRequest {
   implicit val format: OFormat[UpdateReturnAgentRequest] = Json.format[UpdateReturnAgentRequest]
-  
+
   def from(userAnswers: UserAnswers, agentType: AgentType): Future[UpdateReturnAgentRequest] = {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
@@ -123,7 +141,24 @@ object UpdateReturnAgentRequest {
               agentReference = paSessionQuestions.purchaserAgentReference,
               isAuthorised = Some(paSessionQuestions.purchaserAgentAuthorised.toUpperCase)
             ))
-          case Vendor => ???
+          case Vendor =>
+            val vaSessionQuestions: VendorAgentSessionQuestions = (userAnswers.data \ "vendorAgentCurrent").as[VendorAgentSessionQuestions]
+            Future.successful(UpdateReturnAgentRequest(
+              stornId = fullReturn.stornId,
+              returnResourceRef = fullReturn.returnResourceRef,
+              agentType = agentType.toString,
+              name = vaSessionQuestions.vendorAgentName,
+              houseNumber = vaSessionQuestions.vendorAgentAddress.houseNumber,
+              addressLine1 = vaSessionQuestions.vendorAgentAddress.line1,
+              addressLine2 = vaSessionQuestions.vendorAgentAddress.line2,
+              addressLine3 = vaSessionQuestions.vendorAgentAddress.line3,
+              addressLine4 = vaSessionQuestions.vendorAgentAddress.line4,
+              postcode = vaSessionQuestions.vendorAgentAddress.postcode,
+              phoneNumber = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.phoneNumber),
+              email = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.emailAddress),
+              agentReference = vaSessionQuestions.vendorAgentReference,
+              isAuthorised = Some(vaSessionQuestions.vendorAgentAuthorised.toUpperCase)
+            ))
         }
       case None =>
         Future.failed(new NoSuchElementException("[UpdateReturnAgentRequest] Full return not found"))
@@ -140,10 +175,10 @@ object UpdateReturnAgentReturn {
 }
 
 case class DeleteReturnAgentRequest(
-                               storn: String,
-                               returnResourceRef: String,
-                               agentType: String
-                             )
+                                     storn: String,
+                                     returnResourceRef: String,
+                                     agentType: String
+                                   )
 
 object DeleteReturnAgentRequest {
   implicit val format: OFormat[DeleteReturnAgentRequest] = Json.format[DeleteReturnAgentRequest]
