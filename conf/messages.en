@@ -38,6 +38,7 @@ site.agent.caption                                                              
 site.purchaserAgent.caption                                                         = About the purchaser’s agent
 site.purchaserAgent.beforeStart.caption                                             = Add an agent for the purchaser
 site.vendorAgent.caption                                                            = About the vendor’s agent
+site.land.caption                                                                   = About the land
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -102,6 +103,8 @@ tasklist.purchaserAgentQuestion.details                                         
 tasklist.purchaserAgentQuestion.heading                                             = Purchaser Agent Questions
 tasklist.vendorAgentQuestion.details                                                = Vendor Agent Questions
 tasklist.vendorAgentQuestion.heading                                                = Vendor Agent Questions
+tasklist.landQuestion.details                                                       = Land Questions
+tasklist.landQuestion.heading                                                       = Land Questions
 tasklist.inProgress                                                                 = In Progress
 tasklist.cannotStartYet                                                             = Can not Start
 tasklist.failed                                                                     = Failed
@@ -820,3 +823,17 @@ vendorAgent.BeforeYouStart.subheading                                         = 
 vendorAgent.BeforeYouStart.checkYourAnswersLabel                              = Add an agent for the vendor
 vendorAgent.BeforeYouStart.error.required                                     = Select Yes or No
 vendorAgent.BeforeYouStart.change.hidden                                      = if you want to add an agent for the vendor
+
+land.BeforeYouStart.p1                                                        = In this section, you need to tell us about the land or property being purchased.
+land.BeforeYouStart.p2                                                        = We will ask for:
+land.BeforeYouStart.bullet1                                                   = the type of property
+land.BeforeYouStart.bullet2                                                   = if an interest is being transferred or created
+land.BeforeYouStart.bullet3                                                   = the address of the land or property
+land.BeforeYouStart.bullet4                                                   = the local authority code
+land.BeforeYouStart.bullet5                                                   = if you’ll be sending plans by post
+land.BeforeYouStart.bullet6                                                   = if there’s any minerals or mineral rights
+land.BeforeYouStart.p3                                                        = You can also provide:
+land.BeforeYouStart.bullet7                                                   = a title or folio number
+land.BeforeYouStart.bullet8                                                   = an NLPG UPRN
+land.BeforeYouStart.bullet9                                                   = if the transaction involves agricultural or developmental land
+land.BeforeYouStart.bullet10                                                  = the area of the land

@@ -41,7 +41,8 @@ object TaskListSections {
     Some(PrelimTaskList.build(fullReturn)),
     Some(VendorTaskList.build(fullReturn)),
     Some(PurchaserTaskList.build(fullReturn)),
-    Some(PurchaserAgentTaskList.build(fullReturn))
+    Some(PurchaserAgentTaskList.build(fullReturn)),
+    Some(LandTaskList.build(fullReturn))
   ).flatten
   def allComplete(fullReturn: FullReturn)
                  (implicit messagesApi: Messages, appConfig: FrontendAppConfig, hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Boolean =
