@@ -291,3 +291,8 @@ GET         /about-the-land/type-of-property                                    
 POST        /about-the-land/type-of-property                                              controllers.land.LandTypeOfPropertyController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-land/type-of-property/change                                       controllers.land.LandTypeOfPropertyController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-land/type-of-property/change                                       controllers.land.LandTypeOfPropertyController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-land/interest-transferred-or-created                                controllers.land.LandInterestTransferredOrCreatedController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/interest-transferred-or-created                                controllers.land.LandInterestTransferredOrCreatedController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/interest-transferred-or-created/change                         controllers.land.LandInterestTransferredOrCreatedController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/interest-transferred-or-created/change                         controllers.land.LandInterestTransferredOrCreatedController.onSubmit(mode: Mode = CheckMode)

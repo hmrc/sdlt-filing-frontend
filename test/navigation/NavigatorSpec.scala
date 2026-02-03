@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.*
 import pages.*
-import pages.land.LandTypeOfPropertyPage
+import pages.land.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
@@ -183,9 +183,13 @@ class NavigatorSpec extends SpecBase {
       "land routes" - {
 
         "go from LandTypeOfPropertyPage to InterestTransferredOrCreated page" in { //TODO update to lr-2 DTR-2426
-          navigator.nextPage(LandTypeOfPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode)
+          navigator.nextPage(LandTypeOfPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(NormalMode)
         }
 
+        // TODO DTR-2430: Redirect to SDLT - Confirm the address of the land or property
+        "go from LandInterestTransferredOrCreatedPage to ConfirmAddressOfLandOrProperty page" in {
+          navigator.nextPage(LandInterestTransferredOrCreatedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
+        }
       }
     }
 

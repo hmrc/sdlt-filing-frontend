@@ -17,7 +17,7 @@
 package generators
 
 import models.*
-import models.land.LandTypeOfProperty
+import models.land.*
 import models.prelimQuestions.TransactionType
 import models.purchaser.*
 import models.purchaserAgent.*
@@ -30,6 +30,11 @@ trait ModelGenerators {
   implicit lazy val arbitraryLandTypeOfProperty: Arbitrary[LandTypeOfProperty] =
     Arbitrary {
       Gen.oneOf(LandTypeOfProperty.values.toSeq)
+    }
+
+  implicit lazy val arbitraryLandInterestTransferredOrCreated: Arbitrary[LandInterestTransferredOrCreated] =
+    Arbitrary {
+      Gen.oneOf(LandInterestTransferredOrCreated.values.toSeq)
     }
 
   implicit lazy val arbitraryPurchaserAgentAuthorised: Arbitrary[PurchaserAgentAuthorised] =
