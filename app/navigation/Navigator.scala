@@ -24,6 +24,7 @@ import pages.purchaser.*
 import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
+import pages.land.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -58,7 +59,8 @@ class Navigator @Inject()() {
     case VendorAgentBeforeYouStartPage =>
       _ => controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)
 
-    case page if isPurchaserSection(page) => purchaserRoutes(page)
+    case purchaserPage if isPurchaserSection(purchaserPage) => purchaserRoutes(purchaserPage)
+    case landPage if isLandSection(landPage) => landRoutes(landPage)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -124,6 +126,19 @@ class Navigator @Inject()() {
       _ => controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode)
     case PurchaserAgentAuthorisedPage =>
       _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+    case _ => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def isLandSection(page: Page): Boolean = page match {
+
+    case LandTypeOfPropertyPage => true
+
+    case _ => false
+  }
+
+  private def landRoutes(page: Page): UserAnswers => Call = page match {
+    case LandTypeOfPropertyPage => //TODO update to lr-2 DTR-2426
+      _ => controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
   

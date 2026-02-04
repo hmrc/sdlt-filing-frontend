@@ -54,6 +54,6 @@
 
     @govukButton(
         ButtonViewModel(messages("site.continue"))
-        .asLink(controllers.routes.ReturnTaskListController.onPageLoad().url)
+        .asLink(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url)
     )
 }

@@ -837,3 +837,17 @@ land.BeforeYouStart.bullet7                                                   = 
 land.BeforeYouStart.bullet8                                                   = an NLPG UPRN
 land.BeforeYouStart.bullet9                                                   = if the transaction involves agricultural or developmental land
 land.BeforeYouStart.bullet10                                                  = the area of the land
+
+land.landTypeOfProperty.heading                                               = What is the type of property?
+land.landTypeOfProperty.01                                                    = 01 - Residential
+land.landTypeOfProperty.01.hintText                                           = A building used, suitable for use, or being constructed as a dwelling, including the garden, grounds and any right of way
+land.landTypeOfProperty.02                                                    = 02 - Mixed
+land.landTypeOfProperty.02.hintText                                           = Where part of the property is residential
+land.landTypeOfProperty.03                                                    = 03 - Non-residential
+land.landTypeOfProperty.03.hintText                                           = Where the whole property is non-residential
+land.landTypeOfProperty.04                                                    = 04 - Additional residential property liable to a higher rate
+land.landTypeOfProperty.04.hintText                                           = Where the purchaser owns more than one residential property at any one time
+land.landTypeOfProperty.checkYourAnswersLabel                                 = What is the type of property?
+land.landTypeOfProperty.error.required                                        = Please select an option
+land.landTypeOfProperty.change.hidden                                         = Type of property
+land.checkYourAnswers.landTypeOfProperty.missing                              = Select type of property

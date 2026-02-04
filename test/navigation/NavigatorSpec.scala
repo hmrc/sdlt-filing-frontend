@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.*
 import pages.*
+import pages.land.LandTypeOfPropertyPage
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
@@ -176,6 +177,14 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserAgentAuthorisedPage to PurchaserAgentCheckYourAnswers page" in {
           navigator.nextPage(PurchaserAgentAuthorisedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
          }
+
+      }
+
+      "land routes" - {
+
+        "go from LandTypeOfPropertyPage to InterestTransferredOrCreated page" in { //TODO update to lr-2 DTR-2426
+          navigator.nextPage(LandTypeOfPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode)
+        }
 
       }
     }
