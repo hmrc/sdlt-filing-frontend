@@ -19,7 +19,10 @@ package controllers.vendorAgent
 import controllers.actions.*
 import forms.vendorAgent.VendorAgentsAddReferenceFormProvider
 import models.{Mode, NormalMode}
-import models.vendorAgent.VendorAgentsAddReference
+import pages.vendorAgent.VendorAgentsReferencePage
+
+import scala.util.Success
+//import models.vendorAgent.VendorAgentsAddReference
 import navigation.Navigator
 import pages.vendorAgent.{AgentNamePage, VendorAgentsAddReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,6 +34,7 @@ import views.html.vendorAgent.VendorAgentsAddReferenceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+//import scala.util.Success
 
 class VendorAgentsAddReferenceController @Inject()(
                                                     override val messagesApi: MessagesApi,
@@ -43,7 +47,7 @@ class VendorAgentsAddReferenceController @Inject()(
                                                     agentChecksService: AgentChecksService,
                                                     val controllerComponents: MessagesControllerComponents,
                                                     view: VendorAgentsAddReferenceView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -65,6 +69,45 @@ class VendorAgentsAddReferenceController @Inject()(
       }
   }
 
+  //  def onSubmit(mode: Mode): Action[AnyContent] =
+  //    (identify andThen getData andThen requireData).async { implicit request =>
+  //
+  //      request.userAnswers.get(AgentNamePage) match {
+  //        case None =>
+  //          Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)))
+  //
+  //        case Some(agentName) =>
+  //          form.bindFromRequest().fold(
+  //            formWithErrors =>
+  //              Future.successful(BadRequest(view(formWithErrors, mode, agentName))),
+  //
+  //            value =>
+  //              for {
+  //                updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsAddReferencePage, value))
+  //                finalAnswers <- Future.fromTry {
+  //                  value match {
+  //                    case VendorAgentsAddReference.No =>
+  //                      updatedAnswers.remove(PurchaserAgentReferencePage)
+  //                    case VendorAgentsAddReference.Yes =>
+  //                      Success(updatedAnswers)
+  //                  }
+  //                }
+  //
+  //                _ <- sessionRepository.set(finalAnswers)
+  //              } yield {
+  //                value match {
+  //                  case VendorAgentsAddReference.Yes =>
+  //                    Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
+  //
+  //                  case VendorAgentsAddReference.No =>
+  //                    Redirect(
+  //                      controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+  //                    )
+  //                }
+  //              }
+  //          )
+  //      }
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -80,17 +123,21 @@ class VendorAgentsAddReferenceController @Inject()(
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsAddReferencePage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                finalAnswers <- Future.fromTry {
+                  if value.toString.equals("no") then updatedAnswers.remove(VendorAgentsReferencePage)
+                  else Success(updatedAnswers)
+                }
+                _ <- sessionRepository.set(finalAnswers)
               } yield {
-                if (value.toString.equals("yes")) {
+                if (value.toString.equals("no")) {
                   // TODO DTR-2098: Redirect to Screen va-3b - What is [agentName]'s reference for this return?
-                  Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
-                } else {
                   Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
+                } else {
+                  // TODO DTR-2057: Redirect to Vendor Agent CYA
+                  Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
                 }
               }
           )
       }
   }
 }
-

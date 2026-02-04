@@ -49,7 +49,7 @@ class VendorAgentAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAgentAddressPage, address).success.value
 
-          val result = VendorAgentAddressSummary.row(Some(userAnswers))
+          val result = VendorAgentAddressSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("agent.checkYourAnswers.agentAddress.label")
 
@@ -64,7 +64,7 @@ class VendorAgentAddressSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("agent.checkYourAnswers.agentAddress")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("agent.checkYourAnswers.agentAddress.label")
         }
       }
 
@@ -87,7 +87,7 @@ class VendorAgentAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAgentAddressPage, address).success.value
 
-          val result = VendorAgentAddressSummary.row(Some(userAnswers))
+          val result = VendorAgentAddressSummary.row(userAnswers)
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "123 Test Street"
@@ -113,10 +113,10 @@ class VendorAgentAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAgentAddressPage, address).success.value
 
-          val result = VendorAgentAddressSummary.row(Some(userAnswers))
+          val result = VendorAgentAddressSummary.row(userAnswers)
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "123 Test Street, Test Area, Test County, AA1 1AA"
+          htmlContent mustEqual "123 Test Street<br>Test Area<br>Test County<br>AA1 1AA"
         }
       }
 
@@ -139,7 +139,7 @@ class VendorAgentAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAgentAddressPage, address).success.value
 
-          val result = VendorAgentAddressSummary.row(Some(userAnswers))
+          val result = VendorAgentAddressSummary.row(userAnswers)
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("France")
@@ -166,7 +166,7 @@ class VendorAgentAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAgentAddressPage, address).success.value
 
-          val result = VendorAgentAddressSummary.row(Some(userAnswers))
+          val result = VendorAgentAddressSummary.row(userAnswers)
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("&amp;")
@@ -185,14 +185,14 @@ class VendorAgentAddressSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = VendorAgentAddressSummary.row(Some(emptyUserAnswers))
+          val result = VendorAgentAddressSummary.row(emptyUserAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("agent.checkYourAnswers.agentAddress.label")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url)
-          htmlContent must include(msgs("agent.checkYourAnswers.agentName.agentAddressMissing"))
+          htmlContent must include(msgs("returnAgent.checkYourAnswers.address.missing"))
 
           result.actions mustBe None
         }
@@ -205,14 +205,14 @@ class VendorAgentAddressSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = VendorAgentAddressSummary.row(None)
+          val result = VendorAgentAddressSummary.row(emptyUserAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("agent.checkYourAnswers.agentAddress.label")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url)
-          htmlContent must include(msgs("agent.checkYourAnswers.agentName.agentAddressMissing"))
+          htmlContent must include(msgs("returnAgent.checkYourAnswers.address.missing"))
 
           result.actions mustBe None
         }
@@ -238,7 +238,7 @@ class VendorAgentAddressSummarySpec extends SpecBase {
 
         val userAnswers = emptyUserAnswers.set(VendorAgentAddressPage, address).success.value
 
-        val result = VendorAgentAddressSummary.row(Some(userAnswers))
+        val result = VendorAgentAddressSummary.row(userAnswers)
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must include("123 Test Street")

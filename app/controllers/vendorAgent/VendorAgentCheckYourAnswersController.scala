@@ -28,7 +28,6 @@ import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.purchaserAgent.*
 import viewmodels.checkAnswers.vendorAgent.{AddVendorAgentContactDetailsSummary, AgentNameSummary, VendorAgentAddressSummary, VendorAgentsAddReferenceSummary, VendorAgentsContactDetailsSummary, VendorAgentsReferenceSummary}
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.vendorAgent.VendorAgentCheckYourAnswersView
@@ -49,32 +48,38 @@ class VendorAgentCheckYourAnswersController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      for {
-        result <- sessionRepository.get(request.userAnswers.id)
-      } yield {
 
-        val isDataEmpty = result.exists(_.data.value.isEmpty)
+      val result = Some(request.userAnswers)
 
-        if (isDataEmpty) {
-          Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
-        } else {
-          val summaryList = SummaryListViewModel(
-            //todo return to this once all vendorAgent pages are updated
-            rows = Seq(
-              Some(AgentNameSummary.row(request.userAnswers)),
-              Some(VendorAgentAddressSummary.row(request.userAnswers)),
-              Some(AddVendorAgentContactDetailsSummary.row(request.userAnswers)),
-              VendorAgentsContactDetailsSummary.row(request.userAnswers),
-              Some(VendorAgentsAddReferenceSummary.row(request.userAnswers)),
-              VendorAgentsReferenceSummary.row(request.userAnswers),
-              //              Some(PurchaserAgentAuthorisedSummary.row(request.userAnswers)) //to remove??
-            ).flatten
-          )
+      val isDataEmpty = result.exists(_.data.value.isEmpty)
 
-          Ok(view(summaryList))
-        }
+      //todo reinstate once overview is done
+      //      for {
+      //        result <- sessionRepository.get(request.userAnswers.id)
+      //      } yield {
+      //
+      //        val isDataEmpty = result.exists(_.data.value.isEmpty)
+
+      if (isDataEmpty) {
+        Future.successful(Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad()))
+      } else {
+        val summaryList = SummaryListViewModel(
+          //todo return to this once all vendorAgent pages are updated
+          rows = Seq(
+            Some(AgentNameSummary.row(request.userAnswers)),
+            Some(VendorAgentAddressSummary.row(request.userAnswers)),
+            Some(AddVendorAgentContactDetailsSummary.row(request.userAnswers)),
+            VendorAgentsContactDetailsSummary.row(request.userAnswers),
+            Some(VendorAgentsAddReferenceSummary.row(request.userAnswers)),
+            VendorAgentsReferenceSummary.row(request.userAnswers),
+            //              Some(PurchaserAgentAuthorisedSummary.row(request.userAnswers)) //to remove??
+          ).flatten
+        )
+
+        Future.successful(Ok(view(summaryList)))
       }
   }
+  //}
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
 

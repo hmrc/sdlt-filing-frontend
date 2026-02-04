@@ -17,7 +17,7 @@
 package controllers.vendorAgent
 
 import controllers.actions.*
-import forms.vendor.AgentNameFormProvider
+import forms.vendorAgent.AgentNameFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.vendorAgent.AgentNamePage
@@ -26,23 +26,23 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.vendorAgent.AgentChecksService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.vendor.AgentNameView
+import views.html.vendorAgent.AgentNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AgentNameController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AgentNameFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        agentChecksService: AgentChecksService,
-                                        view: AgentNameView
-                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     override val messagesApi: MessagesApi,
+                                     sessionRepository: SessionRepository,
+                                     navigator: Navigator,
+                                     identify: IdentifierAction,
+                                     getData: DataRetrievalAction,
+                                     requireData: DataRequiredAction,
+                                     formProvider: AgentNameFormProvider,
+                                     val controllerComponents: MessagesControllerComponents,
+                                     agentChecksService: AgentChecksService,
+                                     view: AgentNameView
+                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -65,7 +65,7 @@ class AgentNameController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentNamePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(AgentNamePage, mode, updatedAnswers))
       )
   }

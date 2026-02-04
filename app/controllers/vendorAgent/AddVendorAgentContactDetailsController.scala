@@ -88,10 +88,10 @@ class AddVendorAgentContactDetailsController @Inject()(
                 }
                 _ <- sessionRepository.set(removeDetails)
               } yield {
-                if (value) {
-                  Redirect(navigator.nextPage(AddVendorAgentContactDetailsPage, mode, removeDetails))
-                } else {
+                if (!value && mode == NormalMode) {
                   Redirect(controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(NormalMode))
+                } else {
+                  Redirect(navigator.nextPage(AddVendorAgentContactDetailsPage, mode, removeDetails))
                 }
               }
           )

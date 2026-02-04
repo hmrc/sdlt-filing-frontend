@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
@@ -41,7 +41,7 @@ class AgentNameFormProviderSpec extends StringFieldBehaviours {
         "(555) 123-4567"
       )
 
-      validNames.foreach( validName =>
+      validNames.foreach(validName =>
         val result = form.bind(Map(fieldName -> validName))
         result.errors must be(empty)
       )
@@ -60,7 +60,7 @@ class AgentNameFormProviderSpec extends StringFieldBehaviours {
     )
 
     "must reject invalid name formats" in {
-      val invalidNames= Seq(
+      val invalidNames = Seq(
         "Hello #world",
         "Price: $50",
         "A < B",

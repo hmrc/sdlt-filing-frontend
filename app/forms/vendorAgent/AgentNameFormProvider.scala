@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.vendor
+package forms.vendorAgent
 
 import forms.mappings.Mappings
 import play.api.data.Form

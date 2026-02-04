@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.vendorAgent
 
+import models.vendorAgent.VendorAgentsAddReference
 import models.{CheckMode, UserAnswers}
 import pages.vendorAgent.{VendorAgentsAddReferencePage, VendorAgentsReferencePage}
 import play.api.i18n.Messages
@@ -42,7 +43,7 @@ object VendorAgentsReferenceSummary {
               .withVisuallyHiddenText(messages("vendorAgent.agentsReference.change.hidden"))
           )
         ))
-      case (None, Some(true)) =>
+      case (None, Some(VendorAgentsAddReference.Yes)) =>
         val value = ValueViewModel(
           HtmlContent(
             s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.referenceNumber.missing")}</a>""")

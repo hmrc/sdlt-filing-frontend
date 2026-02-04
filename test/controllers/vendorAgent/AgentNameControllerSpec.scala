@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.vendor
+package controllers.vendorAgent
 
 import base.SpecBase
 import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
-import forms.vendor.AgentNameFormProvider
-import models.{FullReturn, NormalMode, ReturnAgent, ReturnInfo, UserAnswers, Vendor}
+import forms.vendorAgent.AgentNameFormProvider
+import models.{NormalMode, ReturnAgent, ReturnInfo, UserAnswers, Vendor}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,7 +31,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.vendor.AgentNameView
+import views.html.vendorAgent.AgentNameView
 
 import scala.concurrent.Future
 
@@ -104,7 +104,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
       }
     }
-    
+
 
     "must redirect to task list  page when full return doesn't exist" in {
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = None)

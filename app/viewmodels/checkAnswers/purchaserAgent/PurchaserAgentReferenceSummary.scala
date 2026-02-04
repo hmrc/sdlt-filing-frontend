@@ -35,7 +35,7 @@ object PurchaserAgentReferenceSummary {
       case (Some(paReference), _) =>
 
         Some(SummaryListRowViewModel(
-          key = label,
+          key = "purchaserAgent.reference.checkYourAnswersLabel",
           value = ValueViewModel(HtmlContent(HtmlFormat.escape(paReference).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", changeRoute)

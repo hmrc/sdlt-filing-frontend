@@ -35,7 +35,7 @@ object VendorAgentsAddReferenceSummary {
       answer =>
 
         val value = ValueViewModel(
-          HtmlContent(HtmlFormat.escape(messages(s"vendorAgent.VendorAgentsAddReference.$answer")))
+          HtmlContent(HtmlFormat.escape(messages(s"site.$answer")))
         )
 
         SummaryListRowViewModel(
