@@ -69,45 +69,6 @@ class VendorAgentsAddReferenceController @Inject()(
       }
   }
 
-  //  def onSubmit(mode: Mode): Action[AnyContent] =
-  //    (identify andThen getData andThen requireData).async { implicit request =>
-  //
-  //      request.userAnswers.get(AgentNamePage) match {
-  //        case None =>
-  //          Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)))
-  //
-  //        case Some(agentName) =>
-  //          form.bindFromRequest().fold(
-  //            formWithErrors =>
-  //              Future.successful(BadRequest(view(formWithErrors, mode, agentName))),
-  //
-  //            value =>
-  //              for {
-  //                updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsAddReferencePage, value))
-  //                finalAnswers <- Future.fromTry {
-  //                  value match {
-  //                    case VendorAgentsAddReference.No =>
-  //                      updatedAnswers.remove(PurchaserAgentReferencePage)
-  //                    case VendorAgentsAddReference.Yes =>
-  //                      Success(updatedAnswers)
-  //                  }
-  //                }
-  //
-  //                _ <- sessionRepository.set(finalAnswers)
-  //              } yield {
-  //                value match {
-  //                  case VendorAgentsAddReference.Yes =>
-  //                    Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
-  //
-  //                  case VendorAgentsAddReference.No =>
-  //                    Redirect(
-  //                      controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
-  //                    )
-  //                }
-  //              }
-  //          )
-  //      }
-
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -130,10 +91,8 @@ class VendorAgentsAddReferenceController @Inject()(
                 _ <- sessionRepository.set(finalAnswers)
               } yield {
                 if (value.toString.equals("no")) {
-                  // TODO DTR-2098: Redirect to Screen va-3b - What is [agentName]'s reference for this return?
                   Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
                 } else {
-                  // TODO DTR-2057: Redirect to Vendor Agent CYA
                   Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
                 }
               }

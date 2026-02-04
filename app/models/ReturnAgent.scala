@@ -80,8 +80,7 @@ object CreateReturnAgentRequest {
               postcode = vaSessionQuestions.vendorAgentAddress.postcode,
               phoneNumber = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.phoneNumber),
               email = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.emailAddress),
-              agentReference = vaSessionQuestions.vendorAgentReference,
-              isAuthorised = Some(vaSessionQuestions.vendorAgentAuthorised.toUpperCase)
+              agentReference = vaSessionQuestions.vendorAgentReference
             ))
         }
       case None =>
@@ -156,8 +155,7 @@ object UpdateReturnAgentRequest {
               postcode = vaSessionQuestions.vendorAgentAddress.postcode,
               phoneNumber = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.phoneNumber),
               email = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.emailAddress),
-              agentReference = vaSessionQuestions.vendorAgentReference,
-              isAuthorised = Some(vaSessionQuestions.vendorAgentAuthorised.toUpperCase)
+              agentReference = vaSessionQuestions.vendorAgentReference
             ))
         }
       case None =>

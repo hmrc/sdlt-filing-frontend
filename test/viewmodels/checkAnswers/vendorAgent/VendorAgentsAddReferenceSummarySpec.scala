@@ -22,7 +22,6 @@ import models.vendorAgent.VendorAgentsAddReference
 import pages.vendorAgent.VendorAgentsAddReferencePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-//import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class VendorAgentsAddReferenceSummarySpec extends SpecBase {
 

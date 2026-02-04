@@ -1,0 +1,132 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package viewmodels.checkAnswers.vendorAgent
+
+import base.SpecBase
+import models.CheckMode
+import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage}
+import play.api.i18n.Messages
+import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+
+
+class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
+
+  "AddContactDetailsForPurchaserAgentSummarySpec" - {
+
+    "when add contact details for vendor agent is present" - {
+
+      "must return a SummaryListRow with 'yes' text and change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(AddVendorAgentContactDetailsPage, true).success.value
+            .set(AgentNamePage, "Agent name").success.value
+
+          val result = AddVendorAgentContactDetailsSummary.row(userAnswers)
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
+
+          val contentString = result.value.content.asHtml.toString()
+
+          contentString mustEqual msgs("site.yes")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden")
+        }
+      }
+
+      "must return a SummaryListRow with 'yes' text and change link when agent name is not present" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(AddVendorAgentContactDetailsPage, true).success.value
+
+          val result = AddVendorAgentContactDetailsSummary.row(userAnswers)
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
+
+          val contentString = result.value.content.asHtml.toString()
+
+          contentString mustEqual msgs("site.yes")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden")
+        }
+      }
+
+      "must return a SummaryListRow with 'no' text and change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(AddVendorAgentContactDetailsPage, false).success.value
+            .set(AgentNamePage, "Agent name").success.value
+
+          val result = AddVendorAgentContactDetailsSummary.row(userAnswers)
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel", "Agent name")
+
+          val contentString = result.value.content.asHtml.toString()
+
+          contentString mustEqual msgs("site.no")
+
+          result.actions.get.items.size mustEqual 1
+
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden", "Agent name")
+        }
+      }
+    }
+
+    "when add contact details for purchaser agent is not present" - {
+
+      "must return a SummaryListRow with a link to if they want to add contact details" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val result = AddVendorAgentContactDetailsSummary.row(emptyUserAnswers)
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("returnAgent.checkYourAnswers.addContactDetails.missing"))
+
+          result.actions mustBe None
+        }
+      }
+    }
+  }
+}
+

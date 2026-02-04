@@ -23,7 +23,6 @@ case class VendorAgentSessionQuestions(
                                         vendorAgentAddress: VendorAgentSessionAddress,
                                         vendorAgentsContactDetails: Option[VendorAgentsContactDetails] = None,
                                         vendorAgentReference: Option[String] = None,
-                                        vendorAgentAuthorised: String
                                       )
 
 object VendorAgentSessionQuestions {

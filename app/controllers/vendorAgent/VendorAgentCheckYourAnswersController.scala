@@ -49,43 +49,35 @@ class VendorAgentCheckYourAnswersController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val result = Some(request.userAnswers)
+      for {
+        result <- sessionRepository.get(request.userAnswers.id)
+      } yield {
 
-      val isDataEmpty = result.exists(_.data.value.isEmpty)
+        val isDataEmpty = result.exists(_.data.value.isEmpty)
 
-      //todo reinstate once overview is done
-      //      for {
-      //        result <- sessionRepository.get(request.userAnswers.id)
-      //      } yield {
-      //
-      //        val isDataEmpty = result.exists(_.data.value.isEmpty)
+        if (isDataEmpty) {
+          Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
+        } else {
+          val summaryList = SummaryListViewModel(
+            rows = Seq(
+              Some(AgentNameSummary.row(request.userAnswers)),
+              Some(VendorAgentAddressSummary.row(request.userAnswers)),
+              Some(AddVendorAgentContactDetailsSummary.row(request.userAnswers)),
+              VendorAgentsContactDetailsSummary.row(request.userAnswers),
+              Some(VendorAgentsAddReferenceSummary.row(request.userAnswers)),
+              VendorAgentsReferenceSummary.row(request.userAnswers)
+            ).flatten
+          )
 
-      if (isDataEmpty) {
-        Future.successful(Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad()))
-      } else {
-        val summaryList = SummaryListViewModel(
-          //todo return to this once all vendorAgent pages are updated
-          rows = Seq(
-            Some(AgentNameSummary.row(request.userAnswers)),
-            Some(VendorAgentAddressSummary.row(request.userAnswers)),
-            Some(AddVendorAgentContactDetailsSummary.row(request.userAnswers)),
-            VendorAgentsContactDetailsSummary.row(request.userAnswers),
-            Some(VendorAgentsAddReferenceSummary.row(request.userAnswers)),
-            VendorAgentsReferenceSummary.row(request.userAnswers),
-            //              Some(PurchaserAgentAuthorisedSummary.row(request.userAnswers)) //to remove??
-          ).flatten
-        )
-
-        Future.successful(Ok(view(summaryList)))
+          Ok(view(summaryList))
+        }
       }
   }
-  //}
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
 
     sessionRepository.get(request.userAnswers.id).flatMap {
       case Some(userAnswers) =>
-        //look at vendorAgentSessionQuestions maybe
         (userAnswers.data \ "vendorAgentCurrent").validate[VendorAgentSessionQuestions] match {
           case JsSuccess(sessionData, _) =>
             //TODO DTR-2060 - update to VendorAgentOverviewPage
