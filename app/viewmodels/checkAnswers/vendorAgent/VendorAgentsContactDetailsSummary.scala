@@ -35,11 +35,11 @@ object VendorAgentsContactDetailsSummary {
       case (Some(contactDetails), _) =>
         val value: String = (contactDetails.phoneNumber, contactDetails.emailAddress) match {
           case (Some(phone), Some(email)) =>
-            HtmlFormat.escape(phone).toString + "<br/>" + HtmlFormat.escape(email).toString
+            "Tel: " + HtmlFormat.escape(phone).toString + "<br/>" + "Email: " + HtmlFormat.escape(email).toString
           case (_, Some(email)) =>
-            HtmlFormat.escape(email).toString
+            "Email: " + HtmlFormat.escape(email).toString
           case (Some(phone), _) =>
-            HtmlFormat.escape(phone).toString
+            "Tel: " + HtmlFormat.escape(phone).toString
           case (None, None) => ""
         }
 
