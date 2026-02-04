@@ -131,17 +131,19 @@ class Navigator @Inject()() {
 
   private def isLandSection(page: Page): Boolean = page match {
 
-    case LandTypeOfPropertyPage => true
+    case LandTypeOfPropertyPage | LandInterestTransferredOrCreatedPage => true
 
     case _ => false
   }
 
   private def landRoutes(page: Page): UserAnswers => Call = page match {
-    case LandTypeOfPropertyPage => //TODO update to lr-2 DTR-2426
-      _ => controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode)
+    case LandTypeOfPropertyPage =>
+      _ => controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(NormalMode)
+    case LandInterestTransferredOrCreatedPage =>
+      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO DTR-2430: Redirect to SDLT - Confirm the address of the land or property
     case _ => _ => routes.IndexController.onPageLoad()
   }
-  
+
   private val checkRouteMap: Page => UserAnswers => Call = {
     case WhoIsMakingThePurchasePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
