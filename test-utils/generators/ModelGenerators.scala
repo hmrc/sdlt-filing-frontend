@@ -17,6 +17,7 @@
 package generators
 
 import models.*
+import models.land.LandTypeOfProperty
 import models.prelimQuestions.TransactionType
 import models.purchaser.*
 import models.purchaserAgent.*
@@ -25,6 +26,11 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryLandTypeOfProperty: Arbitrary[LandTypeOfProperty] =
+    Arbitrary {
+      Gen.oneOf(LandTypeOfProperty.values.toSeq)
+    }
 
   implicit lazy val arbitraryPurchaserAgentAuthorised: Arbitrary[PurchaserAgentAuthorised] =
     Arbitrary {
