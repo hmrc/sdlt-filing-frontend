@@ -254,16 +254,16 @@ purchaserAgent.address.checkYourAnswersLabel                                    
 purchaserAgent.address.change.hidden                                                = Agent address
 
 # Vendor Agent Address Lookup
-addressLookup.vendorAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the Vendor’s agent
+addressLookup.vendorAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.lookupPage.heading                        = Find {0}’s address
 addressLookup.vendorAgentQuestionsAddress.lookupPage.filterLabel                    = Property name or number (optional)
 addressLookup.vendorAgentQuestionsAddress.lookupPage.submitLabel                    = Continue
 addressLookup.vendorAgentQuestionsAddress.lookupPage.manualAddressLinkText          = Enter the address manually
-addressLookup.vendorAgentQuestionsAddress.selectPage.title                          = Choose {0}’s address - About the Vendor’s agent
+addressLookup.vendorAgentQuestionsAddress.selectPage.title                          = Choose {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.selectPage.heading                        = Choose {0}’s address
 addressLookup.vendorAgentQuestionsAddress.selectPage.editAddressLinkText            = Enter address manually
 addressLookup.vendorAgentQuestionsAddress.selectPage.submitLabel                    = Continue
-addressLookup.vendorAgentQuestionsAddress.editPage.title                            = Enter {0}’s address - About the Vendor’s agent
+addressLookup.vendorAgentQuestionsAddress.editPage.title                            = Enter {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.editPage.heading                          = Enter {0}’s address
 addressLookup.vendorAgentQuestionsAddress.editPage.line1Label                       = Address line 1
 addressLookup.vendorAgentQuestionsAddress.editPage.line2Label                       = Address line 2
@@ -271,11 +271,11 @@ addressLookup.vendorAgentQuestionsAddress.editPage.line3Label                   
 addressLookup.vendorAgentQuestionsAddress.editPage.postcodeLabel                    = Postcode
 addressLookup.vendorAgentQuestionsAddress.editPage.countryLabel                     = County
 addressLookup.vendorAgentQuestionsAddress.editPage.submitLabel                      = Continue
-addressLookup.vendorAgentQuestionsAddress.confirmPage.title                         = Review and confirm {0}’s address - About the Vendor’s agent
+addressLookup.vendorAgentQuestionsAddress.confirmPage.title                         = Review and confirm {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.confirmPage.heading                       = Review and confirm {0}’s address
 addressLookup.vendorAgentQuestionsAddress.confirmPage.changeLinkText                = Edit this address
 addressLookup.vendorAgentQuestionsAddress.confirmPage.submitLabel                   = Confirm address
-addressLookup.vendorAgentQuestionsAddress.countryPicker.title                       = Find {0}’s address - About the Vendor’s agent
+addressLookup.vendorAgentQuestionsAddress.countryPicker.title                       = Find {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.countryPicker.heading                     = Find {0}’s address
 
 # Vendor Address Lookup
@@ -296,16 +296,16 @@ addressLookup.vendorQuestionsAddress.editPage.line3Label                        
 addressLookup.vendorQuestionsAddress.editPage.postcodeLabel                         = Postcode
 addressLookup.vendorQuestionsAddress.editPage.countryLabel                          = County
 addressLookup.vendorQuestionsAddress.editPage.submitLabel                           = Continue
-addressLookup.vendorQuestionsAddress.confirmPage.title                              = Review and confirm {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.confirmPage.title                              = Review and confirm {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.confirmPage.heading                            = Review and confirm {0}’s address
 addressLookup.vendorQuestionsAddress.confirmPage.changeLinkText                     = Edit this address
 addressLookup.vendorQuestionsAddress.confirmPage.submitLabel                        = Confirm address
-addressLookup.vendorQuestionsAddress.countryPicker.title                            = Find {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.countryPicker.title                            = Find {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.countryPicker.heading                          = Find {0}’s address
 
 
 # Vendor Messages
-vendor.beforeStart.title                                                            = Before you start - About the Vendor
+vendor.beforeStart.title                                                            = Before you start - About the vendor
 vendor.beforeStart.p1                                                               = Within this section of the return, you will need to tell us details about the vendor selling the property or land.
 vendor.beforeStart.p2                                                               = We will ask for:
 vendor.beforeStart.bullet1                                                          = the vendor’s name
@@ -331,7 +331,7 @@ vendor.company.heading                                                          
 vendor.company.checkYourAnswersLabel                                                = Company name
 vendor.company.change.hidden                                                        = Company name
 
-vendor.confirmVendorAddress.title                                                   = Confirm {0}’s address - About the Vendor
+vendor.confirmVendorAddress.title                                                   = Confirm {0}’s address - About the vendor
 vendor.confirmVendorAddress.heading                                                 = Confirm {0}’s address
 vendor.confirmVendorAddress.isAddress                                               = Is this {0}’s address?
 vendor.confirmVendorAddress.error.required                                          = Please select an option
@@ -360,7 +360,7 @@ vendor.vendorRepresentedByAgent.checkYourAnswersLabel                           
 vendor.vendorRepresentedByAgent.change.hidden                                       = Represented by an agent
 vendor.vendorRepresentedByAgent.error.required                                      = Please select an option
 
-vendor.vendorOverview.title                                                         = Vendor Overview - About the Vendor
+vendor.vendorOverview.title                                                         = Vendor Overview - About the vendor
 vendor.vendorOverview.heading                                                       = Vendor Overview
 vendor.vendorOverview.limitReached                                                  = To add a new vendor, you must remove a purchaser or vendor
 vendor.vendorOverview.no-vendors                                                    = You do not have any vendors added.
