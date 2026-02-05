@@ -18,10 +18,8 @@ package viewmodels.checkAnswers.vendorAgent
 
 import models.UserAnswers
 import models.address.Address.toHtml
-//import models.address.{Address, Country}
 import pages.vendorAgent.VendorAgentAddressPage
 import play.api.i18n.Messages
-//import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
@@ -55,50 +53,3 @@ object VendorAgentAddressSummary {
     }
   }
 }
-
-
-//val listOfAgentAddressDetails = List(
-//        answer.line1,
-//        answer.line2,
-//        answer.line3,
-//        answer.line4,
-//        answer.line5,
-//        answer.postcode,
-//        answer.country
-//      )
-//
-//      val list = listOfAgentAddressDetails.collect {
-//        case Some(Country(Some(code), Some(name))) => name
-//        case Some(detail) => detail
-//        case detail => detail
-//      }.filter(x => x != None)
-//
-//      val prelimAddressString = list.mkString(", ")
-//
-//      val value = ValueViewModel(
-//        HtmlContent(HtmlFormat.escape(prelimAddressString))
-//      )
-//
-//      SummaryListRowViewModel(
-//        key = "agent.checkYourAnswers.agentAddress.label",
-//        value = value,
-//        actions = Seq(
-//          ActionItemViewModel("site.change", changeRoute)
-//            .withVisuallyHiddenText(messages("agent.checkYourAnswers.agentAddress"))
-//        )
-//      )
-//    }.getOrElse{
-//
-//      val value = ValueViewModel(
-//        HtmlContent(
-//          s"""<a href="${controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentAddressMissing")}</a>""")
-//      )
-//
-//      SummaryListRowViewModel(
-//        key = "agent.checkYourAnswers.agentAddress.label",
-//        value = value
-//      )
-//    }
-//  }
-//}
-//
