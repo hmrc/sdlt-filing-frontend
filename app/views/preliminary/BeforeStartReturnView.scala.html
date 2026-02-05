@@ -15,17 +15,21 @@
  *@
 
 @import views.html.components._
+@import views.html.components.Caption
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
         h1: h1,
-        p: Paragraph
+        p: Paragraph,
+        caption: Caption
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("prelim.beforeStart.title"))) {
+
+    @caption(messages("site.prelim.caption"))
 
     @h1(messages("prelim.beforeStart.heading"))
 
@@ -35,8 +39,8 @@
 
     @p(messages("prelim.beforeStart.p3"))
 
-     @govukButton(
+    @govukButton(
         ButtonViewModel(messages("site.continue"))
-            .asLink(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(NormalMode).url)
+        .asLink(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(NormalMode).url)
     )
 }

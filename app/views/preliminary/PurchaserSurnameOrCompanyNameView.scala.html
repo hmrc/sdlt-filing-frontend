@@ -17,6 +17,7 @@
 @import viewmodels.InputWidth.*
 @import viewmodels.LabelSize.Large
 @import views.html.components.h1
+@import views.html.components.Caption
 
 @this(
         layout: templates.Layout,
@@ -24,7 +25,8 @@
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
         govukButton: GovukButton,
-        h1: h1
+        h1: h1,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, companyOrIndividual: String)(implicit request: Request[_], messages: Messages)
@@ -39,11 +41,13 @@
                 @govukErrorSummary(ErrorSummaryViewModel(form))
             }
 
+            @caption(messages("site.prelim.caption"))
+
             @govukInput(
                 InputViewModel(
                     field = form("purchaserSurnameOrCompanyName"),
                     label = LabelViewModel(messages(s"$key.heading"))
-                        .asPageHeading(size = Large)
+                    .asPageHeading(size = Large)
                 )
                 .withWidth(Full)
             )
