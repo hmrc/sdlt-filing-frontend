@@ -50,7 +50,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
   val userAnswersWithName: UserAnswers = emptyUserAnswers.copy(
     data = Json.obj(
       "vendorAgentCurrent" -> Json.obj(
-        "agentName" -> "test",
+        "vendorAgentName" -> "test",
       )
     ),
     fullReturn = Some(fullReturnWithNonVendorAgent)
@@ -93,7 +93,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
           data = Json.obj(
             "vendorAgentCurrent" -> Json.obj(
-              "agentName" -> "test",
+              "vendorAgentName" -> "test",
               "vendorAgentsAddReference" -> "yes"
             )
           )

@@ -21,14 +21,14 @@ import controllers.actions.*
 import models.AgentType.Vendor
 import models.vendorAgent.VendorAgentSessionQuestions
 import models.{CreateReturnAgentRequest, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
-import pages.purchaserAgent.PurchaserAgentOverviewPage
+import pages.vendorAgent.VendorAgentOverviewPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.vendorAgent.{AddVendorAgentContactDetailsSummary, AgentNameSummary, VendorAgentAddressSummary, VendorAgentsAddReferenceSummary, VendorAgentsContactDetailsSummary, VendorAgentsReferenceSummary}
+import viewmodels.checkAnswers.vendorAgent.*
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.vendorAgent.VendorAgentCheckYourAnswersView
 
@@ -80,8 +80,7 @@ class VendorAgentCheckYourAnswersController @Inject()(
       case Some(userAnswers) =>
         (userAnswers.data \ "vendorAgentCurrent").validate[VendorAgentSessionQuestions] match {
           case JsSuccess(sessionData, _) =>
-            //TODO DTR-2060 - update to VendorAgentOverviewPage
-            request.userAnswers.get(PurchaserAgentOverviewPage).map { returnAgentId =>
+            request.userAnswers.get(VendorAgentOverviewPage).map { returnAgentId =>
               updateReturnAgent(userAnswers)
             }.getOrElse(createReturnAgent(userAnswers))
 
@@ -104,8 +103,8 @@ class VendorAgentCheckYourAnswersController @Inject()(
       updateReturnAgentReturn <- backendConnector.updateReturnAgent(updateReturnAgentRequest) if version.newVersion.isDefined
     } yield {
       if (updateReturnAgentReturn.updated) {
-        //TODO DTR-2060 - update to VendorAgentOverviewController
-        Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+        Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
+          .flashing("vendorAgentUpdated" -> updateReturnAgentRequest.name)
       } else {
         Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
       }
@@ -118,8 +117,8 @@ class VendorAgentCheckYourAnswersController @Inject()(
       createReturnAgentReturn <- backendConnector.createReturnAgent(createReturnAgentRequest)
     } yield {
       if (createReturnAgentReturn.returnAgentId.nonEmpty) {
-        //TODO DTR-2060 - update to VendorAgentOverviewController
-        Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+        Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
+          .flashing("vendorAgentCreated" -> createReturnAgentRequest.name)
       } else {
         Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
       }

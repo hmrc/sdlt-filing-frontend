@@ -113,7 +113,7 @@ class VendorAgentOverviewController @Inject()(
             updatedAnswers <- Future.fromTry(
               vendorAgentService.populateAssignedVendorAgentInSession(vendorAgent, request.userAnswers))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO change to CYA
+          } yield Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
