@@ -55,7 +55,7 @@ class Navigator @Inject()() {
     case VendorAgentsAddReferencePage =>
       _ => controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
     case VendorAgentsReferencePage =>
-      _ => controllers.routes.ReturnTaskListController.onPageLoad() // TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
+      _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
     case VendorAgentBeforeYouStartPage =>
       _ => controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)
 
@@ -163,9 +163,15 @@ class Navigator @Inject()() {
     case RegistrationNumberPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
 
     case VendorOrCompanyNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
-    case AgentNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case WhoIsTheVendorPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case VendorRepresentedByAgentPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+
+    case AgentNamePage => _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+    case VendorAgentAddressPage => _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+    case AddVendorAgentContactDetailsPage => _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+    case VendorAgentsContactDetailsPage => _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+    case VendorAgentsAddReferencePage => _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+    case VendorAgentsReferencePage => _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
 
     case PurchaserIsIndividualPage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
     case PurchaserSurnameOrCompanyNamePage => _ => controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()

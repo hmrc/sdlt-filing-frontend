@@ -22,7 +22,6 @@ import models.vendorAgent.VendorAgentsAddReference
 import pages.vendorAgent.VendorAgentsAddReferencePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class VendorAgentsAddReferenceSummarySpec extends SpecBase {
 
@@ -38,12 +37,11 @@ class VendorAgentsAddReferenceSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(VendorAgentsAddReferencePage, VendorAgentsAddReference.Yes).success.value
 
-          val result = VendorAgentsAddReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsAddReferenceSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel")
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "vendorAgent.VendorAgentsAddReference.yes"
+          result.value.content.asHtml.toString() mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url

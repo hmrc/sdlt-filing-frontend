@@ -226,7 +226,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-           redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -350,8 +350,8 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-           // redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AddContactDetailsForVendorAgentController.onPageLoad(NormalMode).url
 
+            redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }
@@ -359,9 +359,9 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "addressLookupCallbackChangeVendorAgent" -{
+    "addressLookupCallbackChangeVendorAgent" - {
 
-      "must redirect to ReturnTaskList when address is successfully saved" in { // TODO DTR-1851: change this when we have the check your answers page
+      "must redirect to CYA when address is successfully saved" in {
         val mockAddressLookupService = mock[AddressLookupService]
 
         when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
@@ -381,7 +381,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -505,8 +505,8 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            // TODO DTR-2057: change this when we have the check your answers page
-            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+            redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }

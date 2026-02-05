@@ -92,7 +92,7 @@ class AddPurchaserAgentReferenceNumberSummarySpec extends SpecBase {
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.purchaserAgent.routes.AddPurchaserAgentReferenceNumberController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("purchaserAgent.checkYourAnswers.addReferenceNumber.missing"))
+          htmlContent must include(msgs("returnAgent.checkYourAnswers.addReferenceNumber.missing"))
 
           result.actions mustBe None
         }

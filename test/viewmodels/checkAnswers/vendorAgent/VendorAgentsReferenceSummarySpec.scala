@@ -18,7 +18,8 @@ package viewmodels.checkAnswers.vendorAgent
 
 import base.SpecBase
 import models.CheckMode
-import pages.vendorAgent.VendorAgentsReferencePage
+import models.vendorAgent.VendorAgentsAddReference
+import pages.vendorAgent.{VendorAgentsAddReferencePage, VendorAgentsReferencePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -30,7 +31,7 @@ class VendorAgentsReferenceSummarySpec extends SpecBase {
 
     "when agent reference is present" - {
 
-      "must return a summary list row with agent referecne label" in {
+      "must return a summary list row with agent reference label" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -39,7 +40,7 @@ class VendorAgentsReferenceSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAgentsReferencePage, "12345678").success.value
 
-          val result = VendorAgentsReferenceSummary.row(Some(userAnswers))
+          val result = VendorAgentsReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.agentsReference.checkYourAnswersLabel")
 
@@ -63,28 +64,40 @@ class VendorAgentsReferenceSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(VendorAgentsReferencePage, "12345678").success.value
 
-        val result = VendorAgentsReferenceSummary.row(Some(userAnswers))
+        val result = VendorAgentsReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
         result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url
       }
     }
 
-    "must return a SummaryListRow with a link to if they want to add agent reference details" in {
+    "must return a SummaryListRow with a link to enter reference number when add reference number is true" in {
+      val userAnswers = emptyUserAnswers.set(VendorAgentsAddReferencePage, VendorAgentsAddReference.Yes).success.value
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         implicit val msgs: Messages = messages(application)
 
-        val result = VendorAgentsReferenceSummary.row(Some(emptyUserAnswers))
+        val result = VendorAgentsReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-        result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.agentsReference.checkYourAnswersLabel", "the agent")
+        result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.agentsReference.checkYourAnswersLabel")
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must include("govuk-link")
         htmlContent must include(controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("vendorAgent.checkYourAnswers.agentsReference.agentMissing"))
+        htmlContent must include(msgs("returnAgent.checkYourAnswers.referenceNumber.missing"))
 
         result.actions mustBe None
+      }
+    }
+
+    "must return None when add reference number is false" in {
+      val userAnswers = emptyUserAnswers.set(VendorAgentsAddReferencePage, VendorAgentsAddReference.No).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        VendorAgentsReferenceSummary.row(emptyUserAnswers) mustBe None
       }
     }
   }

@@ -24,7 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AddContactDetailsForPurchaserAgentSummary  {
+object AddContactDetailsForPurchaserAgentSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
     val changeRoute = controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url
@@ -37,8 +37,8 @@ object AddContactDetailsForPurchaserAgentSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = label,
-          value   = ValueViewModel(value),
+          key = label,
+          value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden", nameOfPurchaserAgent))
@@ -47,7 +47,7 @@ object AddContactDetailsForPurchaserAgentSummary  {
     }.getOrElse {
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.addContactDetails.missing")}</a>""")
+          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.addContactDetails.missing")}</a>""")
       )
       SummaryListRowViewModel(
         key = label,

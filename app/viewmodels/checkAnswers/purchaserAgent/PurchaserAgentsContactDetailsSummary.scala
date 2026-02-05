@@ -35,12 +35,12 @@ object PurchaserAgentsContactDetailsSummary {
       case (Some(contactDetails), _) =>
         val value: String = (contactDetails.phoneNumber, contactDetails.emailAddress) match {
           case (Some(phone), Some(email)) =>
-            HtmlFormat.escape(phone).toString + "<br/>" +
+            "Tel: " + HtmlFormat.escape(phone).toString + "<br/>" + "Email: " +
               HtmlFormat.escape(email).toString
           case (Some(phone), None) =>
-            HtmlFormat.escape(phone).toString
+            "Tel: " + HtmlFormat.escape(phone).toString
           case (None, Some(email)) =>
-            HtmlFormat.escape(email).toString
+            "Email: " + HtmlFormat.escape(email).toString
           case (None, None) => ""
         }
 
@@ -55,7 +55,7 @@ object PurchaserAgentsContactDetailsSummary {
       case (None, Some(true)) =>
         val value = ValueViewModel(
           HtmlContent(
-            s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.contactDetails.missing")}</a>""")
+            s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.contactDetails.missing")}</a>""")
         )
         Some(SummaryListRowViewModel(
           key = label,

@@ -70,6 +70,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(ConfirmVendorAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(mode = NormalMode)
         }
 
+        "go from Vendor Agent Before You Start page to agent name page" in {
+          navigator.nextPage(VendorAgentBeforeYouStartPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode = NormalMode)
+        }
+
         "go from Agent name page to agent address lookup" in {
           navigator.nextPage(AgentNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
         }
@@ -86,10 +90,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(VendorAgentsAddReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(NormalMode)
         }
 
-        // TODO: Redirect should change to AgentCYA when created - DTR-2057
         "go from Agent Reference page to CYA page" in {
-         // navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorCheckYourAnswersController.onPageLoad()
-          navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()  //TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
+          navigator.nextPage(VendorAgentsReferencePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -176,7 +178,7 @@ class NavigatorSpec extends SpecBase {
 
         "go from PurchaserAgentAuthorisedPage to PurchaserAgentCheckYourAnswers page" in {
           navigator.nextPage(PurchaserAgentAuthorisedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
-         }
+        }
 
       }
 
@@ -201,14 +203,46 @@ class NavigatorSpec extends SpecBase {
       "must go from any purchaser page to CheckYourAnswers" in {
         navigator.nextPage(WhoIsMakingThePurchasePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         navigator.nextPage(NameOfPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(AddPurchaserPhoneNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(EnterPurchaserPhoneNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserAndVendorConnectedPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(IsPurchaserActingAsTrusteePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(CompanyFormOfIdPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         navigator.nextPage(PurchaserFormOfIdIndividualPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(ConfirmNameOfThePurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(DoesPurchaserHaveNIPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserConfirmIdentityPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserUTRPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserDateOfBirthPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserNationalInsurancePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserTypeOfCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(RegistrationNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
       }
 
       "must go from any vendor page to VendorCheckYourAnswers" in {
         navigator.nextPage(WhoIsTheVendorPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
         navigator.nextPage(VendorOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
         navigator.nextPage(VendorRepresentedByAgentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(AgentNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
+      }
+
+      "must go from any vendorAgent page to VendorAgentCheckYourAnswers" in {
+        navigator.nextPage(AgentNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(VendorAgentAddressPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(AddVendorAgentContactDetailsPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(VendorAgentsContactDetailsPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(VendorAgentsAddReferencePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(VendorAgentsReferencePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
+      }
+
+      "must go from any purchaserAgent page to PurchaserAgentCheckYourAnswers" in {
+        navigator.nextPage(SelectPurchaserAgentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserAgentNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserAgentAddressPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(AddContactDetailsForPurchaserAgentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserAgentsContactDetailsPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(AddPurchaserAgentReferenceNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserAgentReferencePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserAgentAuthorisedPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
       }
 
       "must go from any preliminary page to CheckYourAnswers" in {

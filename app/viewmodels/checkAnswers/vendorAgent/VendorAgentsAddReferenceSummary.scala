@@ -20,30 +20,42 @@ import models.{CheckMode, UserAnswers}
 import pages.vendorAgent.VendorAgentsAddReferencePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object VendorAgentsAddReferenceSummary  {
+object VendorAgentsAddReferenceSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
+    val changeRoute = controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url
+    val label = messages("vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel")
+
     answers.get(VendorAgentsAddReferencePage).map {
       answer =>
 
         val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"vendorAgent.VendorAgentsAddReference.$answer"))
-          )
+          HtmlContent(HtmlFormat.escape(messages(s"site.$answer")))
         )
 
         SummaryListRowViewModel(
-          key     = "vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel",
-          value   = value,
+          key = label,
+          value = value,
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("vendorAgent.VendorAgentsAddReference.change.hidden"))
           )
         )
+    }.getOrElse {
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.addReferenceNumber.missing")}</a>""")
+      )
+      SummaryListRowViewModel(
+        key = label,
+        value = value
+      )
     }
+  }
 }
+

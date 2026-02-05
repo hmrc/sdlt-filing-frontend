@@ -53,7 +53,7 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual
             msgs("purchaserAgent.contactDetails.checkYourAnswersLabel")
 
-          result.value.content.asHtml.toString() mustEqual "0123456789"
+          result.value.content.asHtml.toString() mustEqual "Tel: 0123456789"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual
@@ -89,7 +89,7 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
             PurchaserAgentsContactDetailsSummary.row(userAnswers)
               .getOrElse(fail("Failed to get summary list row"))
 
-          result.value.content.asHtml.toString() mustEqual "test@example.com"
+          result.value.content.asHtml.toString() mustEqual "Email: test@example.com"
         }
       }
 
@@ -114,7 +114,7 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
               .getOrElse(fail("Failed to get summary list row"))
 
           result.value.content.asHtml.toString() mustEqual
-            "0123456789<br/>test@example.com"
+            "Tel: 0123456789<br/>Email: test@example.com"
         }
       }
 
@@ -159,7 +159,7 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("purchaserAgent.checkYourAnswers.contactDetails.missing"))
+          htmlContent must include(msgs("returnAgent.checkYourAnswers.contactDetails.missing"))
 
           result.actions mustBe None
         }

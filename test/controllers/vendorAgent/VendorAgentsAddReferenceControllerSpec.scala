@@ -175,11 +175,11 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
 
           val result = route(application, request).value
 
-          status(result) mustEqual  SEE_OTHER
-            redirectLocation(result).value mustEqual onwardRoute.url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardRoute.url
         }
       }
-      //TODO DTR-2057: update to VendorAgent CYA
+
       "must redirect to check your answers when 'no' is selected" in {
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -199,7 +199,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
         }
       }
 
@@ -236,7 +236,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual view(boundForm, NormalMode, agentName)(request, messages(application)).toString
         }
-        }
+      }
 
       "redirect to Journey Recovery for a POST if no existing data is found" in {
 

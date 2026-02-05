@@ -17,59 +17,51 @@
 package viewmodels.checkAnswers.vendorAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.vendorAgent.VendorAgentsContactDetailsPage
+import pages.vendorAgent.{AddVendorAgentContactDetailsPage, VendorAgentsContactDetailsPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object VendorAgentsContactDetailsSummary  {
+object VendorAgentsContactDetailsSummary {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
-    answers.flatMap(_.get(VendorAgentsContactDetailsPage)).map { answer =>
-        val value: Option[String] = (answer.phoneNumber, answer.emailAddress) match {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    val label = messages("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
+    val changeRoute = controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+
+    (answers.get(VendorAgentsContactDetailsPage), answers.get(AddVendorAgentContactDetailsPage)) match {
+      case (Some(contactDetails), _) =>
+        val value: String = (contactDetails.phoneNumber, contactDetails.emailAddress) match {
           case (Some(phone), Some(email)) =>
-            Some(HtmlFormat.escape(phone).toString + "<br/>" + HtmlFormat.escape(email).toString)
+            "Tel: " + HtmlFormat.escape(phone).toString + "<br/>" + "Email: " + HtmlFormat.escape(email).toString
           case (_, Some(email)) =>
-            Some(HtmlFormat.escape(email).toString)
+            "Email: " + HtmlFormat.escape(email).toString
           case (Some(phone), _) =>
-            Some(HtmlFormat.escape(phone).toString)
-          case _ =>
-            None
+            "Tel: " + HtmlFormat.escape(phone).toString
+          case (None, None) => ""
         }
 
-        value match {
-          case Some(details) =>
-            SummaryListRowViewModel(
-              key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent(details)),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
-              )
-            )
-          case _ =>
-            SummaryListRowViewModel(
-              key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
-              value = ValueViewModel(HtmlContent("-")),
-              actions = Seq(
-                ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-                  .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
-              )
-            )
-        }
-    }.getOrElse{
+        Some(SummaryListRowViewModel(
+          key = label,
+          value = ValueViewModel(HtmlContent(value)),
+          actions = Seq(
+            ActionItemViewModel("site.change", changeRoute)
+              .withVisuallyHiddenText(messages("vendorAgent.addVendorAgentContactDetails.change.hidden"))
+          )
+        ))
 
-    val value = ValueViewModel(
-      HtmlContent( //TODO: DTR-2057 revisit cya here
-        s"""<a href="${controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("vendorAgent.checkYourAnswers.agentContactDetails.agentDetailsMissing")}</a>""")
-    )
-
-    SummaryListRowViewModel(
-      key = "vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel",
-      value = value
-    )
+      case (None, Some(true)) =>
+        val value = ValueViewModel(
+          HtmlContent(
+            s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.contactDetails.missing")}</a>""")
+        )
+        Some(SummaryListRowViewModel(
+          key = label,
+          value = value
+        ))
+      case _ => None
+    }
   }
 }

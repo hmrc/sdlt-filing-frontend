@@ -36,16 +36,16 @@ object VendorAgentTaskList {
     )
 
   def buildVendorAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
-    
+
     val vendorAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))
 
-    val url = if(vendorAgentCheck) {
+    val url = if (vendorAgentCheck) {
       //TODO: Change to the Vendor agent Overview page - DTR-2060
-        controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+      controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
     } else {
       controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
     }
-    
+
     TaskListRowBuilder(
       isOptional = true,
       canEdit = {
@@ -53,7 +53,9 @@ object VendorAgentTaskList {
         case _ => true
       },
       messageKey = _ => "tasklist.vendorAgentQuestion.details",
-      url = _ => _ => {url},
+      url = _ => _ => {
+        url
+      },
       tagId = "vendorQuestionDetailRow",
       checks = scheme => Seq(vendorAgentCheck),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))

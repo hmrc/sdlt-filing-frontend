@@ -285,6 +285,9 @@ POST        /about-the-vendors-agent/add-agent-reference-number                 
 GET         /about-the-vendors-agent/add-agent-reference-number/change                    controllers.vendorAgent.VendorAgentsAddReferenceController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendors-agent/add-agent-reference-number/change                    controllers.vendorAgent.VendorAgentsAddReferenceController.onSubmit(mode: Mode = CheckMode)
 
+GET         /about-the-vendors-agent/check-answers                                                   controllers.vendorAgent.VendorAgentCheckYourAnswersController.onPageLoad()
+POST        /about-the-vendors-agent/check-answers                                                   controllers.vendorAgent.VendorAgentCheckYourAnswersController.onSubmit()
+
 GET         /about-the-land/before-you-start                                              controllers.land.LandBeforeYouStartController.onPageLoad()
 
 GET         /about-the-land/type-of-property                                              controllers.land.LandTypeOfPropertyController.onPageLoad(mode: Mode = NormalMode)

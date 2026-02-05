@@ -98,8 +98,7 @@ class VendorAgentAddressController @Inject()(
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, VendorAgentAddressPage)
       } yield if (updated) {
-        //TODO DTR-: change this when we have the check your answers page
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
       } else {
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }

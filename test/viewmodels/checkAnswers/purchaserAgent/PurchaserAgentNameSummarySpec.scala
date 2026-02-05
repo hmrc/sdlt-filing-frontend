@@ -72,7 +72,7 @@ class PurchaserAgentNameSummarySpec extends SpecBase {
         }
       }
     }
-    
+
     "when agent name is not present" - {
 
       "must return a summary list row with a link to enter agent name" in {
@@ -88,7 +88,7 @@ class PurchaserAgentNameSummarySpec extends SpecBase {
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
           htmlContent must include(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("purchaserAgent.checkYourAnswers.name.missing"))
+          htmlContent must include(msgs("returnAgent.checkYourAnswers.name.missing"))
 
           result.actions mustBe None
         }

@@ -45,7 +45,7 @@ object AddPurchaserAgentReferenceNumberSummary {
     }.getOrElse {
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.addReferenceNumber.missing")}</a>""")
+          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.addReferenceNumber.missing")}</a>""")
       )
       SummaryListRowViewModel(
         key = label,

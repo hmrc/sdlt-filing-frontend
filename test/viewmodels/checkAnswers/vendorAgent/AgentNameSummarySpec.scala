@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.vendor
+package viewmodels.checkAnswers.vendorAgent
 
 import base.SpecBase
 import models.CheckMode
@@ -38,7 +38,7 @@ class AgentNameSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(AgentNamePage, "Smith").success.value
 
-          val result = AgentNameSummary.row(Some(userAnswers))
+          val result = AgentNameSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("agent.checkYourAnswers.agentName.label")
 
@@ -62,7 +62,7 @@ class AgentNameSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(AgentNamePage, "O'Brien & Sons <Ltd>").success.value
 
-          val result = AgentNameSummary.row(Some(userAnswers))
+          val result = AgentNameSummary.row(userAnswers)
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("O&#x27;Brien")
@@ -83,7 +83,7 @@ class AgentNameSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(AgentNamePage, "Smith").success.value
 
-        val result = AgentNameSummary.row(Some(userAnswers))
+        val result = AgentNameSummary.row(userAnswers)
 
         result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url
       }

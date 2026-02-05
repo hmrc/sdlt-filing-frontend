@@ -26,6 +26,7 @@ sealed trait VendorAgentsAddReference
 object VendorAgentsAddReference extends Enumerable.Implicits {
 
   case object Yes extends WithName("yes") with VendorAgentsAddReference
+
   case object No extends WithName("no") with VendorAgentsAddReference
 
   val values: Seq[VendorAgentsAddReference] = Seq(
@@ -36,8 +37,8 @@ object VendorAgentsAddReference extends Enumerable.Implicits {
     case (value, index) =>
       RadioItem(
         content = Text(messages(s"site.${value.toString}")),
-        value   = Some(value.toString),
-        id      = Some(s"value_$index")
+        value = Some(value.toString),
+        id = Some(s"value_$index")
       )
   }
 

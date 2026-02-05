@@ -25,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object PurchaserAgentAuthorisedSummary  {
+object PurchaserAgentAuthorisedSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
     val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(CheckMode).url
@@ -42,8 +42,8 @@ object PurchaserAgentAuthorisedSummary  {
         )
 
         SummaryListRowViewModel(
-          key     = label,
-          value   = value,
+          key = label,
+          value = value,
           actions = Seq(
             ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("purchaserAgent.purchaserAgentAuthorised.change.hidden", nameOfPurchaserAgent))
@@ -52,7 +52,7 @@ object PurchaserAgentAuthorisedSummary  {
     }.getOrElse {
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("purchaserAgent.checkYourAnswers.authorised.missing")}</a>""")
+          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.authorised.missing")}</a>""")
       )
       SummaryListRowViewModel(
         key = label,

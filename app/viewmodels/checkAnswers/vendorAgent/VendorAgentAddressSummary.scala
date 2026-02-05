@@ -17,61 +17,39 @@
 package viewmodels.checkAnswers.vendorAgent
 
 import models.UserAnswers
-import models.address.{Address, Country}
+import models.address.Address.toHtml
 import pages.vendorAgent.VendorAgentAddressPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-
 object VendorAgentAddressSummary {
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
-    answers.flatMap(_.get(VendorAgentAddressPage)).map { answer =>
-
-      val listOfAgentAddressDetails = List(
-        answer.line1,
-        answer.line2,
-        answer.line3,
-        answer.line4,
-        answer.line5,
-        answer.postcode,
-        answer.country
-      )
-
-      val list = listOfAgentAddressDetails.collect {
-        case Some(Country(Some(code), Some(name))) => name
-        case Some(detail) => detail
-        case detail => detail
-      }.filter(x => x != None)
-
-      val prelimAddressString = list.mkString(", ")
-
-      val value = ValueViewModel(
-        HtmlContent(HtmlFormat.escape(prelimAddressString))
-      )
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
+    val changeRoute = controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url
+    val label = messages("agent.checkYourAnswers.agentAddress.label")
+    answers.get(VendorAgentAddressPage).map { answer =>
 
       SummaryListRowViewModel(
-        key = "agent.checkYourAnswers.agentAddress.label",
-        value = value,
+        key = label,
+        value = ValueViewModel(HtmlContent(toHtml(answer))),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url)
-            .withVisuallyHiddenText(messages("agent.checkYourAnswers.agentAddress"))
+          ActionItemViewModel(
+            "site.change",
+            changeRoute
+          ).withVisuallyHiddenText(messages("agent.checkYourAnswers.agentAddress.label"))
         )
       )
-    }.getOrElse{
-
+    }.getOrElse {
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="${controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url}" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentAddressMissing")}</a>""")
+          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.address.missing")}</a>""")
       )
-
       SummaryListRowViewModel(
-        key = "agent.checkYourAnswers.agentAddress.label",
+        key = label,
         value = value
       )
     }
+  }
 }
-

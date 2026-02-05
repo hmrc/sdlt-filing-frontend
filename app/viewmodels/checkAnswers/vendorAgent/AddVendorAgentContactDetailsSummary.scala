@@ -19,22 +19,40 @@ package viewmodels.checkAnswers.vendorAgent
 import models.{CheckMode, UserAnswers}
 import pages.vendorAgent.AddVendorAgentContactDetailsPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AddVendorAgentContactDetailsSummary  {
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+object AddVendorAgentContactDetailsSummary {
+
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
+
+    val changeRoute = controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
+    val label = messages("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
+
     answers.get(AddVendorAgentContactDetailsPage).map {
       answer =>
+
         val value = if (answer) "site.yes" else "site.no"
+
         SummaryListRowViewModel(
-          key     = "vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
+          key = label,
+          value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("vendorAgent.addVendorAgentContactDetails.change.hidden"))
           )
         )
+    }.getOrElse {
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.addContactDetails.missing")}</a>""")
+      )
+      SummaryListRowViewModel(
+        key = label,
+        value = value
+      )
     }
+  }
 }

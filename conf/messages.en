@@ -254,16 +254,16 @@ purchaserAgent.address.checkYourAnswersLabel                                    
 purchaserAgent.address.change.hidden                                                = Agent address
 
 # Vendor Agent Address Lookup
-addressLookup.vendorAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.lookupPage.heading                        = Find {0}’s address
 addressLookup.vendorAgentQuestionsAddress.lookupPage.filterLabel                    = Property name or number (optional)
 addressLookup.vendorAgentQuestionsAddress.lookupPage.submitLabel                    = Continue
 addressLookup.vendorAgentQuestionsAddress.lookupPage.manualAddressLinkText          = Enter the address manually
-addressLookup.vendorAgentQuestionsAddress.selectPage.title                          = Choose {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.selectPage.title                          = Choose {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.selectPage.heading                        = Choose {0}’s address
 addressLookup.vendorAgentQuestionsAddress.selectPage.editAddressLinkText            = Enter address manually
 addressLookup.vendorAgentQuestionsAddress.selectPage.submitLabel                    = Continue
-addressLookup.vendorAgentQuestionsAddress.editPage.title                            = Enter {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.editPage.title                            = Enter {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.editPage.heading                          = Enter {0}’s address
 addressLookup.vendorAgentQuestionsAddress.editPage.line1Label                       = Address line 1
 addressLookup.vendorAgentQuestionsAddress.editPage.line2Label                       = Address line 2
@@ -271,24 +271,24 @@ addressLookup.vendorAgentQuestionsAddress.editPage.line3Label                   
 addressLookup.vendorAgentQuestionsAddress.editPage.postcodeLabel                    = Postcode
 addressLookup.vendorAgentQuestionsAddress.editPage.countryLabel                     = County
 addressLookup.vendorAgentQuestionsAddress.editPage.submitLabel                      = Continue
-addressLookup.vendorAgentQuestionsAddress.confirmPage.title                         = Review and confirm {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.confirmPage.title                         = Review and confirm {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.confirmPage.heading                       = Review and confirm {0}’s address
 addressLookup.vendorAgentQuestionsAddress.confirmPage.changeLinkText                = Edit this address
 addressLookup.vendorAgentQuestionsAddress.confirmPage.submitLabel                   = Confirm address
-addressLookup.vendorAgentQuestionsAddress.countryPicker.title                       = Find {0}’s address - About the Vendor
+addressLookup.vendorAgentQuestionsAddress.countryPicker.title                       = Find {0}’s address - About the vendor’s agent
 addressLookup.vendorAgentQuestionsAddress.countryPicker.heading                     = Find {0}’s address
 
 # Vendor Address Lookup
-addressLookup.vendorQuestionsAddress.lookupPage.title                               = Find {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.lookupPage.title                               = Find {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.lookupPage.heading                             = Find {0}’s address
 addressLookup.vendorQuestionsAddress.lookupPage.filterLabel                         = Property name or number (optional)
 addressLookup.vendorQuestionsAddress.lookupPage.submitLabel                         = Continue
 addressLookup.vendorQuestionsAddress.lookupPage.manualAddressLinkText               = Enter the address manually
-addressLookup.vendorQuestionsAddress.selectPage.title                               = Choose {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.selectPage.title                               = Choose {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.selectPage.heading                             = Choose {0}’s address
 addressLookup.vendorQuestionsAddress.selectPage.editAddressLinkText                 = Enter address manually
 addressLookup.vendorQuestionsAddress.selectPage.submitLabel                         = Continue
-addressLookup.vendorQuestionsAddress.editPage.title                                 = Enter {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.editPage.title                                 = Enter {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.editPage.heading                               = Enter {0}’s address
 addressLookup.vendorQuestionsAddress.editPage.line1Label                            = Address line 1
 addressLookup.vendorQuestionsAddress.editPage.line2Label                            = Address line 2
@@ -296,16 +296,16 @@ addressLookup.vendorQuestionsAddress.editPage.line3Label                        
 addressLookup.vendorQuestionsAddress.editPage.postcodeLabel                         = Postcode
 addressLookup.vendorQuestionsAddress.editPage.countryLabel                          = County
 addressLookup.vendorQuestionsAddress.editPage.submitLabel                           = Continue
-addressLookup.vendorQuestionsAddress.confirmPage.title                              = Review and confirm {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.confirmPage.title                              = Review and confirm {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.confirmPage.heading                            = Review and confirm {0}’s address
 addressLookup.vendorQuestionsAddress.confirmPage.changeLinkText                     = Edit this address
 addressLookup.vendorQuestionsAddress.confirmPage.submitLabel                        = Confirm address
-addressLookup.vendorQuestionsAddress.countryPicker.title                            = Find {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.countryPicker.title                            = Find {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.countryPicker.heading                          = Find {0}’s address
 
 
 # Vendor Messages
-vendor.beforeStart.title                                                            = Before you start - About the Vendor
+vendor.beforeStart.title                                                            = Before you start - About the vendor
 vendor.beforeStart.p1                                                               = Within this section of the return, you will need to tell us details about the vendor selling the property or land.
 vendor.beforeStart.p2                                                               = We will ask for:
 vendor.beforeStart.bullet1                                                          = the vendor’s name
@@ -313,7 +313,7 @@ vendor.beforeStart.bullet2                                                      
 vendor.beforeStart.bullet3                                                          = if the vendor has an agent
 
 vendor.checkYourAnswers.vendorType.label                                            = Vendor type
-vendor.checkYourAnswers.vendorTypeMissing                                           = Enter Vendor type
+vendor.checkYourAnswers.vendorTypeMissing                                           = Enter vendor type
 vendor.checkYourAnswers.hidden                                                      = Individual or Company
 vendor.checkYourAnswers.Individual                                                  = Individual
 vendor.checkYourAnswers.Company                                                     = Company
@@ -331,7 +331,7 @@ vendor.company.heading                                                          
 vendor.company.checkYourAnswersLabel                                                = Company name
 vendor.company.change.hidden                                                        = Company name
 
-vendor.confirmVendorAddress.title                                                   = Confirm {0}’s address - About the Vendor
+vendor.confirmVendorAddress.title                                                   = Confirm {0}’s address - About the vendor
 vendor.confirmVendorAddress.heading                                                 = Confirm {0}’s address
 vendor.confirmVendorAddress.isAddress                                               = Is this {0}’s address?
 vendor.confirmVendorAddress.error.required                                          = Please select an option
@@ -360,7 +360,7 @@ vendor.vendorRepresentedByAgent.checkYourAnswersLabel                           
 vendor.vendorRepresentedByAgent.change.hidden                                       = Represented by an agent
 vendor.vendorRepresentedByAgent.error.required                                      = Please select an option
 
-vendor.vendorOverview.title                                                         = Vendor Overview - About the Vendor
+vendor.vendorOverview.title                                                         = Vendor Overview - About the vendor
 vendor.vendorOverview.heading                                                       = Vendor Overview
 vendor.vendorOverview.limitReached                                                  = To add a new vendor, you must remove a purchaser or vendor
 vendor.vendorOverview.no-vendors                                                    = You do not have any vendors added.
@@ -385,11 +385,11 @@ vendor.whoIsTheVendor.error.required                                            
 
 # Agent Messages
 
-vendorAgent.addVendorAgentContactDetails.title                                            = Do you want to add contact details for the agent? - About the vendor
+vendorAgent.addVendorAgentContactDetails.title                                            = Do you want to add contact details for the agent? - About the vendor’s agent
 vendorAgent.addVendorAgentContactDetails.hint.radio                                       = We’ll only use these details to contact {0} about this return
 vendorAgent.addVendorAgentContactDetails.heading                                          = Do you want to add contact details for {0}?
-vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add vendor agent contact details?
-vendorAgent.addVendorAgentContactDetails.change.hidden                                    = Do you want to add vendor agent contact details?
+vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add contact details for the agent?
+vendorAgent.addVendorAgentContactDetails.change.hidden                                    = Agent contact details
 vendorAgent.addVendorAgentContactDetails.error.required                                   = Please select an option
 
 agent.agentName.title                                                               = What is the agent’s name? – About the vendor’s agent
@@ -402,7 +402,8 @@ agent.agentName.change.hidden                                                   
 
 vendorAgent.agentsReference.title                                                   = What is the agent’s reference for this return? - About the vendor’s agent
 vendorAgent.agentsReference.heading                                                 = What is {0}’s reference for this return?
-vendorAgent.agentsReference.checkYourAnswersLabel                                   = Agent’s Reference
+vendorAgent.agentsReference.heading                                                 = What is {0}’s reference for this return?
+vendorAgent.agentsReference.checkYourAnswersLabel                                   = Agent Reference
 vendorAgent.agentsReference.error.required                                          = Enter {0}’s agent reference number
 vendorAgent.agentsReference.error.length                                            = Agent’s reference must be 14 characters or less
 vendorAgent.agentsReference.change.hidden                                           = Agent’s Reference
@@ -418,8 +419,8 @@ agent.checkYourAnswers.agentContactDetails.agentDetailsMissing                  
 
 vendorAgent.VendorAgentsAddReference.title                                          = Do you want to add a reference for this return? - About the vendor’s agent
 vendorAgent.VendorAgentsAddReference.heading                                        = Do you want to add a reference for this return?
-vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel                          = Do you know your agent reference?
-vendorAgent.VendorAgentsAddReference.change.hidden                                  = Do you know your agent reference?
+vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel                          = Do you want to add a reference for this return?
+vendorAgent.VendorAgentsAddReference.change.hidden                                  = Do you want to add a reference for this return?
 vendorAgent.VendorAgentsAddReference.p                                              = This is the unique number or code that {0} will use to locate the return in their records.
 vendorAgent.VendorAgentsAddReference.error.required                                 = Please select an option
 
@@ -429,7 +430,7 @@ vendorAgent.vendorAgentsContactDetails.agentPhoneNumber                         
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress                                  = Agent email address
 vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.caption                           = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress.caption                          = We’ll only use this to send a receipt
-vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel                              = VendorAgentsContactDetails
+vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel                              = Agent contact details
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.required                    = Enter the agent’s phone number
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.required                   = Enter the agent’s email address
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length                      = The agent’s phone number must be {0} characters or less
@@ -797,13 +798,13 @@ purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                   
 purchaserAgent.purchaserAgentAuthorised.error.required                                   = Select purchaserAgentAuthorised
 purchaserAgent.purchaserAgentAuthorised.change.hidden                                    = If {0} is authorised for correspondence
 
-purchaserAgent.checkYourAnswers.name.missing                                             = Enter name
-purchaserAgent.checkYourAnswers.address.missing                                          = Enter address
-purchaserAgent.checkYourAnswers.addContactDetails.missing                                = Select if you want to add contact details
-purchaserAgent.checkYourAnswers.contactDetails.missing                                   = Enter contact details
-purchaserAgent.checkYourAnswers.referenceNumber.missing                                  = Enter reference number
-purchaserAgent.checkYourAnswers.addReferenceNumber.missing                               = Select if you want to add a reference number
-purchaserAgent.checkYourAnswers.authorised.missing                                       = Select if the agent is authorised for correspondence
+returnAgent.checkYourAnswers.name.missing                                             = Enter name
+returnAgent.checkYourAnswers.address.missing                                          = Enter address
+returnAgent.checkYourAnswers.addContactDetails.missing                                = Select if you want to add contact details
+returnAgent.checkYourAnswers.contactDetails.missing                                   = Enter contact details
+returnAgent.checkYourAnswers.referenceNumber.missing                                  = Enter reference number
+returnAgent.checkYourAnswers.addReferenceNumber.missing                               = Select if you want to add a reference number
+returnAgent.checkYourAnswers.authorised.missing                                       = Select if the agent is authorised for correspondence
 
 purchaserAgent.removePurchaserAgent.title                                                = Are you sure you want to remove the purchaser’s agent? - About the purchaser’s agent
 purchaserAgent.removePurchaserAgent.heading                                              = Are you sure you want to remove {0}?

@@ -18,8 +18,11 @@ package controllers.vendorAgent
 
 import controllers.actions.*
 import forms.vendorAgent.VendorAgentsAddReferenceFormProvider
-import models.{Mode, NormalMode}
 import models.vendorAgent.VendorAgentsAddReference
+import models.{Mode, NormalMode}
+import pages.vendorAgent.VendorAgentsReferencePage
+
+import scala.util.Success
 import navigation.Navigator
 import pages.vendorAgent.{AgentNamePage, VendorAgentsAddReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -43,10 +46,10 @@ class VendorAgentsAddReferenceController @Inject()(
                                                     agentChecksService: AgentChecksService,
                                                     val controllerComponents: MessagesControllerComponents,
                                                     view: VendorAgentsAddReferenceView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
-  
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -80,18 +83,19 @@ class VendorAgentsAddReferenceController @Inject()(
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsAddReferencePage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                finalAnswers <- Future.fromTry {
+                  if value == VendorAgentsAddReference.No then updatedAnswers.remove(VendorAgentsReferencePage)
+                  else Success(updatedAnswers)
+                }
+                _ <- sessionRepository.set(finalAnswers)
               } yield {
-                if (value.toString.equals("yes")) {
-                  // TODO DTR-2098: Redirect to Screen va-3b - What is [agentName]'s reference for this return?
-                  Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
+                if (value == VendorAgentsAddReference.No) {
+                  Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
                 } else {
-                  // TODO DTR-2057: Redirect to Vendor Agent CYA
-                  Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+                  Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
                 }
               }
           )
       }
   }
 }
-

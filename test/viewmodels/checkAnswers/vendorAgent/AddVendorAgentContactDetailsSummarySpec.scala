@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.purchaserAgent
+package viewmodels.checkAnswers.vendorAgent
 
 import base.SpecBase
 import models.CheckMode
-import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage}
+import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 
-class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
+class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
 
   "AddContactDetailsForPurchaserAgentSummarySpec" - {
 
-    "when add contact details for purchaser agent is present" - {
+    "when add contact details for vendor agent is present" - {
 
       "must return a SummaryListRow with 'yes' text and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -37,21 +37,21 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(AddContactDetailsForPurchaserAgentPage, true).success.value
-            .set(PurchaserAgentNamePage, "Agent name").success.value
+            .set(AddVendorAgentContactDetailsPage, true).success.value
+            .set(AgentNamePage, "Agent name").success.value
 
-          val result = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+          val result = AddVendorAgentContactDetailsSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", "Agent name")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
 
           val contentString = result.value.content.asHtml.toString()
 
           contentString mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden", "Agent name")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden")
         }
       }
 
@@ -62,20 +62,20 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(AddContactDetailsForPurchaserAgentPage, true).success.value
+            .set(AddVendorAgentContactDetailsPage, true).success.value
 
-          val result = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+          val result = AddVendorAgentContactDetailsSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", "the agent")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
 
           val contentString = result.value.content.asHtml.toString()
 
           contentString mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden", "the agent")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden")
         }
       }
 
@@ -86,12 +86,12 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(AddContactDetailsForPurchaserAgentPage, false).success.value
-            .set(PurchaserAgentNamePage, "Agent name").success.value
+            .set(AddVendorAgentContactDetailsPage, false).success.value
+            .set(AgentNamePage, "Agent name").success.value
 
-          val result = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+          val result = AddVendorAgentContactDetailsSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", "Agent name")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel", "Agent name")
 
           val contentString = result.value.content.asHtml.toString()
 
@@ -99,9 +99,9 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
 
           result.actions.get.items.size mustEqual 1
 
-          result.actions.get.items.head.href mustEqual controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden", "Agent name")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden", "Agent name")
         }
       }
     }
@@ -114,13 +114,13 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = AddContactDetailsForPurchaserAgentSummary.row(emptyUserAnswers)
+          val result = AddVendorAgentContactDetailsSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", "the agent")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
-          htmlContent must include(controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url)
+          htmlContent must include(controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url)
           htmlContent must include(msgs("returnAgent.checkYourAnswers.addContactDetails.missing"))
 
           result.actions mustBe None
