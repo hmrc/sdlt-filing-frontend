@@ -10,7 +10,6 @@ import data.{Dates, SlabRatesTables}
 import exceptions.RequiredValueNotDefinedException
 import factories.FreeholdResultFactory
 import models.{Request, Result}
-
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -521,4 +520,14 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     )
     FreeholdResultFactory.freeholdAcquisitionTaxReliefRes(premiumResult)
   }
+
+  def freeholdRightToBuyBeforeMarch2016(request: Request): Result = {
+    val sliceResult = baseCalculationService.calculateTaxDueSlice(
+      request.premium,
+      freeholdMixedNonResidentialRightToBuyBeforeMarch2016Rates.slices
+    )
+    FreeholdResultFactory.freeholdRightToBuyBeforeMarch2016(sliceResult)
+  }
+
+
 }

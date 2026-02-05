@@ -1457,6 +1457,150 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           }
         }
       }
+
+      // SDLT - Tax Calc Case - 8 - Non Leased
+      "the effective date is before March 17 :: 2016 :: Right to buy transactions:: 22" when {
+
+        "by property type:" when {
+
+          "Mixed" in {
+            def request: WSResponse = ws.url(
+                calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    |  "holdingType": "Freehold",
+                    |  "propertyType": "Mixed",
+                    |  "effectiveDateDay": 16,
+                    |  "effectiveDateMonth": 3,
+                    |  "effectiveDateYear": 2016,
+                    |  "premium": 300000,
+                    |  "highestRent": 0,
+                    |  "isLinked": false,
+                    |  "taxReliefDetails": {
+                    |    "taxReliefCode": 22
+                    |  }
+                    |}""".stripMargin))
+
+            val responseJson = Json.parse(
+              """
+                |{
+                | "result":[
+                |  {
+                |  "totalTax":2500,
+                |  "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                |  "taxCalcs":[
+                |   {
+                |    "taxType":"premium",
+                |    "calcType":"slice",
+                |    "taxDue":2500,
+                |    "slices": [
+                |       {
+                |        "from": 0,
+                |        "to": 150000,
+                |        "rate": 0,
+                |        "taxDue": 0
+                |       },
+                |       {
+                |        "from": 150000,
+                |        "to": 250000,
+                |        "rate": 1,
+                |        "taxDue": 1000
+                |       },
+                |       {
+                |        "from": 250000,
+                |        "to": 500000,
+                |        "rate": 3,
+                |        "taxDue": 1500
+                |       },
+                |       {
+                |        "from": 500000,
+                |        "to": -1,
+                |        "rate": 4,
+                |        "taxDue": 0
+                |       }
+                |     ]
+                |    }
+                |   ]
+                |  }
+                | ]
+                |}""".stripMargin)
+
+            request.status shouldBe OK
+            request.json shouldBe responseJson
+          }
+
+          "Non-residential" in {
+            def request: WSResponse = ws.url(
+                calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    |  "holdingType": "Freehold",
+                    |  "propertyType": "Non-residential",
+                    |  "effectiveDateDay": 16,
+                    |  "effectiveDateMonth": 3,
+                    |  "effectiveDateYear": 2015,
+                    |  "premium": 750000,
+                    |  "highestRent": 0,
+                    |  "isLinked": false,
+                    |  "taxReliefDetails": {
+                    |     "taxReliefCode": 22
+                    |  }
+                    |}""".stripMargin))
+
+            val responseJson = Json.parse(
+              """
+                |{
+                | "result":[
+                |  {
+                |  "totalTax":18500,
+                |  "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                |  "taxCalcs":[
+                |   {
+                |    "taxType":"premium",
+                |    "calcType":"slice",
+                |    "taxDue":18500,
+                |    "slices": [
+                |       {
+                |        "from": 0,
+                |        "to": 150000,
+                |        "rate": 0,
+                |        "taxDue": 0
+                |       },
+                |       {
+                |        "from": 150000,
+                |        "to": 250000,
+                |        "rate": 1,
+                |        "taxDue": 1000
+                |       },
+                |       {
+                |        "from": 250000,
+                |        "to": 500000,
+                |        "rate": 3,
+                |        "taxDue": 7500
+                |       },
+                |       {
+                |        "from": 500000,
+                |        "to": -1,
+                |        "rate": 4,
+                |        "taxDue": 10000
+                |       }
+                |     ]
+                |    }
+                |   ]
+                |  }
+                | ]
+                |}""".stripMargin)
+
+            request.status shouldBe OK
+            request.json shouldBe responseJson
+          }
+        }
+      }
+
     }
   }
 }

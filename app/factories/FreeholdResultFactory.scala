@@ -471,4 +471,21 @@ object FreeholdResultFactory {
       )
     )
   }
+
+  def freeholdRightToBuyBeforeMarch2016(sliceResult: SliceResult): Result = {
+    Result(
+      totalTax = sliceResult.taxDue.toInt,
+      resultHeading = Some(RESULT_HEADING_GENERIC),
+      npv = None,
+      taxCalcs = Seq(
+        CalculationDetails(
+          taxType = TaxTypes.premium,
+          calcType = CalcTypes.slice,
+          taxDue = sliceResult.taxDue.toInt,
+          slices = Some(sliceResult.slices)
+        )
+      )
+    )
+  }
+
 }
