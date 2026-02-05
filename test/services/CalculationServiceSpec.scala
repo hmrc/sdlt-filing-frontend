@@ -11,25 +11,28 @@
 package services
 
 import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
+import enums.HoldingTypes._
+import enums.PropertyTypes._
 import enums.sdltRebuild._
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.{InvalidDateException, InvalidTaxReliefCombinationException}
 import generators.RequestGenerators
 import models._
 import models.sdltRebuild.TaxReliefDetails
-import org.mockito.ArgumentMatchers.any
-import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import HoldingTypes._
-import PropertyTypes._
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{eq => meq}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+
 import java.time.LocalDate
 
-class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach with RequestGenerators {
+class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAfterEach
+  with RequestGenerators with ScalaCheckPropertyChecks {
+
+  implicit override val generatorDrivenConfig: PropertyCheckConfiguration =
+    PropertyCheckConfiguration(minSuccessful = 50)
 
   val april2021EffectiveDate: LocalDate = LocalDate.of(2021, 4, 1)
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
@@ -1505,6 +1508,18 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         testCalculationService.calculateTax(AcquisitionReliefTestRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdAcquisitionTaxRelief(AcquisitionReliefTestRequest)
+      }
+
+      "given relief code Right to buy transactions(22)" in {
+        val result = createResult(RESULT_HEADING_TAX_RELIEF)
+
+        forAll( freeHoldRightToBuy ) {
+          freeHoldRightToRequest =>
+            reset(mockFreeholdCalculationService)
+            when(mockFreeholdCalculationService.freeholdRightToBuyBeforeMarch2016(freeHoldRightToRequest)).thenReturn(result)
+            testCalculationService.calculateTax(freeHoldRightToRequest) shouldBe CalculationResponse(Seq(result))
+            verify(mockFreeholdCalculationService, times(1)).freeholdRightToBuyBeforeMarch2016(freeHoldRightToRequest)
+        }
       }
     }
 

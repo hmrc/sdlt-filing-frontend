@@ -383,6 +383,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           freeCalculationService.freeholdZeroRateTaxReliefRes
         ))
+
+      case (`freehold`, `mixed` | `nonResidential`, _ , RightToBuy, Some(false)) if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+        CalculationResponse(Seq(
+          freeCalculationService.freeholdRightToBuyBeforeMarch2016(request)
+        ))
+
       case (`freehold`, _, _, taxReliefCode, Some(false))
         if standardZeroRateFreeholdReliefCodes.contains(taxReliefCode) =>
         CalculationResponse(Seq(
@@ -425,6 +431,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           freeCalculationService.freeholdSelfAssessedRes
         ))
+
       /* ------------- LeaseHoldCases--------------------------- */
       case (`leasehold`, _, _, CollectiveEnfranchisementByLeaseholders, None)
         if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>

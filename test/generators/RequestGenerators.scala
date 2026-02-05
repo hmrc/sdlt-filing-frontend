@@ -178,4 +178,35 @@ trait RequestGenerators {
       )
   }
 
+  val freeHoldRightToBuy: Gen[Request] =
+    for {
+      propertyType <- Gen.oneOf(PropertyTypes.mixed, PropertyTypes.nonResidential)
+      nonZeroAmount <- amountGen
+      anyDay <- beforeDateGenerator(LocalDate.of(2016, 3, 17))
+    } yield
+      Request(
+        holdingType = HoldingTypes.freehold,
+        propertyType = propertyType,
+        effectiveDate = anyDay.getOrElse(LocalDate.of(2016, 3, 16)),
+        nonUKResident = None,
+        premium = nonZeroAmount,
+        highestRent = BigDecimal(0),
+        propertyDetails = Some(
+          PropertyDetails(
+            individual = true,
+            twoOrMoreProperties = Some(false),
+            replaceMainResidence = Some(true),
+            sharedOwnership = None,
+            currentValue = None
+          )
+        ),
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = Some(true),
+        isLinked = Some(false),
+        taxReliefDetails = Some(
+          TaxReliefDetails(taxReliefCode = RightToBuy,
+          isPartialRelief = Some(false))),
+      )
+
 }
