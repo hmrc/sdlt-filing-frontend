@@ -18,7 +18,7 @@ package controllers.vendorAgent
 
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
-import models.AgentType.Purchaser
+import models.AgentType.Vendor
 import models.vendorAgent.VendorAgentSessionQuestions
 import models.{CreateReturnAgentRequest, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
 import pages.purchaserAgent.PurchaserAgentOverviewPage
@@ -100,7 +100,7 @@ class VendorAgentCheckYourAnswersController @Inject()(
     for {
       updateRequest <- ReturnVersionUpdateRequest.from(userAnswers)
       version <- backendConnector.updateReturnVersion(updateRequest)
-      updateReturnAgentRequest <- UpdateReturnAgentRequest.from(userAnswers, Purchaser) if version.newVersion.isDefined
+      updateReturnAgentRequest <- UpdateReturnAgentRequest.from(userAnswers, Vendor) if version.newVersion.isDefined
       updateReturnAgentReturn <- backendConnector.updateReturnAgent(updateReturnAgentRequest) if version.newVersion.isDefined
     } yield {
       if (updateReturnAgentReturn.updated) {
@@ -114,7 +114,7 @@ class VendorAgentCheckYourAnswersController @Inject()(
 
   private def createReturnAgent(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
-      createReturnAgentRequest <- CreateReturnAgentRequest.from(userAnswers, Purchaser)
+      createReturnAgentRequest <- CreateReturnAgentRequest.from(userAnswers, Vendor)
       createReturnAgentReturn <- backendConnector.createReturnAgent(createReturnAgentRequest)
     } yield {
       if (createReturnAgentReturn.returnAgentId.nonEmpty) {

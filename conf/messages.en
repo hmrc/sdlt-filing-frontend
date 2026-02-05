@@ -389,7 +389,7 @@ vendorAgent.addVendorAgentContactDetails.title                                  
 vendorAgent.addVendorAgentContactDetails.hint.radio                                       = We’ll only use these details to contact {0} about this return
 vendorAgent.addVendorAgentContactDetails.heading                                          = Do you want to add contact details for {0}?
 vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add contact details for the agent?
-vendorAgent.addVendorAgentContactDetails.change.hidden                                    = Do you want to add vendor agent contact details?
+vendorAgent.addVendorAgentContactDetails.change.hidden                                    = Agent contact details
 vendorAgent.addVendorAgentContactDetails.error.required                                   = Please select an option
 
 agent.agentName.title                                                               = What is the agent’s name? – About the vendor’s agent
