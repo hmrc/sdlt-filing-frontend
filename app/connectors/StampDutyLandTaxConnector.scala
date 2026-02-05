@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.*
+import models.land._
 import models.prelimQuestions.PrelimReturn
 import models.vendor.*
 import models.purchaser.*
@@ -337,6 +338,58 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       }
   }
 
+
+  def createLand(createLandRequest: CreateLandRequest)(implicit hc: HeaderCarrier,
+                                                       request: Request[_]): Future[CreateLandReturn] = {
+    http.post(url"$activeBase/filing/create/land")
+      .withBody(Json.toJson(createLandRequest))
+      .execute[Either[UpstreamErrorResponse, CreateLandReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][createLand]")
+      }
+  }
+
+  def updateLand(updateLandRequest: UpdateLandRequest)(implicit hc: HeaderCarrier,
+                                                       request: Request[_]): Future[UpdateLandReturn] = {
+    http.post(url"$activeBase/filing/update/land")
+      .withBody(Json.toJson(updateLandRequest))
+      .execute[Either[UpstreamErrorResponse, UpdateLandReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateLand]")
+      }
+  }
+
+  def deleteLand(deleteLandRequest: DeleteLandRequest)(implicit hc: HeaderCarrier,
+                                                       request: Request[_]): Future[DeleteLandReturn] = {
+    http.post(url"$activeBase/filing/delete/land")
+      .withBody(Json.toJson(deleteLandRequest))
+      .execute[Either[UpstreamErrorResponse, DeleteLandReturn]]
+      .flatMap {
+        case Right(resp) =>
+          Future.successful(
+            resp)
+        case Left(error) =>
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteLand]")
+      }
+  }
+  
   
   private def logResponse(e: Throwable, method: String): Throwable = {
     logger.error(s"[$method] Error occurred: ${e.getMessage}", e)

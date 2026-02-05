@@ -2261,5 +2261,734 @@ class StampDutyLandTaxConnectorISpec
       }
     }
 
+    "createLand()" - {
+
+      val createLandRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "100001",
+        "propertyType" -> "RESIDENTIAL",
+        "interestTransferredCreated" -> "FREEHOLD",
+        "houseNumber" -> "42",
+        "addressLine1" -> "High Street",
+        "addressLine2" -> "Kensington",
+        "addressLine3" -> "London",
+        "postcode" -> "SW1A 1AA",
+        "landArea" -> "500",
+        "areaUnit" -> "SQUARE_METERS",
+        "localAuthorityNumber" -> "LA12345",
+        "mineralRights" -> "YES",
+        "nlpgUprn" -> "100012345678",
+        "willSendPlansByPost" -> "NO",
+        "titleNumber" -> "TN123456"
+      )
+
+      val createLandReturnJson = Json.obj(
+        "landResourceRef" -> "100001",
+        "landId" -> "1"
+      )
+
+      "must return CreateLandReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLandReturnJson.toString())
+            )
+        )
+
+        val request = createLandRequestJson.as[land.CreateLandRequest]
+        val result = connector.createLand(request).futureValue
+
+        result.landResourceRef mustBe "100001"
+        result.landId mustBe "1"
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+        )
+      }
+
+      "must return CreateLandReturn for minimal request" in {
+        val minimalRequestJson = Json.obj(
+          "stornId" -> "STORN12345",
+          "returnResourceRef" -> "100001",
+          "propertyType" -> "RESIDENTIAL",
+          "interestTransferredCreated" -> "FREEHOLD",
+          "addressLine1" -> "High Street"
+        )
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLandReturnJson.toString())
+            )
+        )
+
+        val request = minimalRequestJson.as[land.CreateLandRequest]
+        val result = connector.createLand(request).futureValue
+
+        result.landResourceRef mustBe "100001"
+        result.landId mustBe "1"
+      }
+
+      "must send correct request body with propertyType and interestTransferredCreated" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLandReturnJson.toString())
+            )
+        )
+
+        val request = createLandRequestJson.as[land.CreateLandRequest]
+        connector.createLand(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .withRequestBody(matchingJsonPath("$.propertyType", equalTo("RESIDENTIAL")))
+            .withRequestBody(matchingJsonPath("$.interestTransferredCreated", equalTo("FREEHOLD")))
+            .withRequestBody(matchingJsonPath("$.addressLine1", equalTo("High Street")))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = createLandRequestJson.as[land.CreateLandRequest]
+        val result = connector.createLand(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = createLandRequestJson.as[land.CreateLandRequest]
+        val result = connector.createLand(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLandReturnJson.toString())
+            )
+        )
+
+        val request = createLandRequestJson.as[land.CreateLandRequest]
+        connector.createLand(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+        )
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLandReturnJson.toString())
+            )
+        )
+
+        val request = createLandRequestJson.as[land.CreateLandRequest]
+        connector.createLand(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .withHeader("Content-Type", containing("application/json"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val request = createLandRequestJson.as[land.CreateLandRequest]
+        val result = connector.createLand(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = createLandRequestJson.as[land.CreateLandRequest]
+        val result = connector.createLand(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle different property types" in {
+        val residentialRequestJson = createLandRequestJson ++ Json.obj("propertyType" -> "RESIDENTIAL")
+        val nonResidentialRequestJson = createLandRequestJson ++ Json.obj("propertyType" -> "NON_RESIDENTIAL")
+        val mixedRequestJson = createLandRequestJson ++ Json.obj("propertyType" -> "MIXED")
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLandReturnJson.toString())
+            )
+        )
+
+        val request1 = residentialRequestJson.as[land.CreateLandRequest]
+        val request2 = nonResidentialRequestJson.as[land.CreateLandRequest]
+        val request3 = mixedRequestJson.as[land.CreateLandRequest]
+
+        connector.createLand(request1).futureValue.landId mustBe "1"
+        connector.createLand(request2).futureValue.landId mustBe "1"
+        connector.createLand(request3).futureValue.landId mustBe "1"
+      }
+
+      "must handle different interest types" in {
+        val freeholdRequestJson = createLandRequestJson ++ Json.obj("interestTransferredCreated" -> "FREEHOLD")
+        val leaseholdRequestJson = createLandRequestJson ++ Json.obj("interestTransferredCreated" -> "LEASEHOLD")
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLandReturnJson.toString())
+            )
+        )
+
+        val request1 = freeholdRequestJson.as[land.CreateLandRequest]
+        val request2 = leaseholdRequestJson.as[land.CreateLandRequest]
+
+        connector.createLand(request1).futureValue.landId mustBe "1"
+        connector.createLand(request2).futureValue.landId mustBe "1"
+      }
+    }
+
+    "updateLand()" - {
+
+      val updateLandRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "100001",
+        "landResourceRef" -> "100001",
+        "propertyType" -> "RESIDENTIAL",
+        "interestTransferredCreated" -> "FREEHOLD",
+        "houseNumber" -> "42",
+        "addressLine1" -> "High Street",
+        "addressLine2" -> "Kensington",
+        "addressLine3" -> "London",
+        "postcode" -> "SW1A 1AA",
+        "landArea" -> "500",
+        "areaUnit" -> "SQUARE_METERS",
+        "localAuthorityNumber" -> "LA12345",
+        "mineralRights" -> "YES",
+        "nlpgUprn" -> "100012345678",
+        "willSendPlansByPost" -> "NO",
+        "titleNumber" -> "TN123456",
+        "nextLandId" -> "100002"
+      )
+
+      val updateLandReturnJson = Json.obj("updated" -> true)
+
+      "must return UpdateLandReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLandReturnJson.toString())
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        val result = connector.updateLand(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+        )
+      }
+
+      "must return UpdateLandReturn for minimal request" in {
+        val minimalRequestJson = Json.obj(
+          "stornId" -> "STORN12345",
+          "returnResourceRef" -> "100001",
+          "landResourceRef" -> "100001",
+          "propertyType" -> "RESIDENTIAL",
+          "interestTransferredCreated" -> "FREEHOLD",
+          "addressLine1" -> "High Street"
+        )
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLandReturnJson.toString())
+            )
+        )
+
+        val request = minimalRequestJson.as[land.UpdateLandRequest]
+        val result = connector.updateLand(request).futureValue
+
+        result.updated mustBe true
+      }
+
+      "must send correct request body with landResourceRef field" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLandReturnJson.toString())
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        connector.updateLand(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .withRequestBody(matchingJsonPath("$.landResourceRef", equalTo("100001")))
+            .withRequestBody(matchingJsonPath("$.propertyType", equalTo("RESIDENTIAL")))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        val result = connector.updateLand(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        val result = connector.updateLand(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        val result = connector.updateLand(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLandReturnJson.toString())
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        connector.updateLand(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+        )
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLandReturnJson.toString())
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        connector.updateLand(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .withHeader("Content-Type", containing("application/json"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        val result = connector.updateLand(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = updateLandRequestJson.as[land.UpdateLandRequest]
+        val result = connector.updateLand(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle different property types" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLandReturnJson.toString())
+            )
+        )
+
+        val residentialRequestJson = updateLandRequestJson ++ Json.obj("propertyType" -> "RESIDENTIAL")
+        val nonResidentialRequestJson = updateLandRequestJson ++ Json.obj("propertyType" -> "NON_RESIDENTIAL")
+        val mixedRequestJson = updateLandRequestJson ++ Json.obj("propertyType" -> "MIXED")
+
+        val request1 = residentialRequestJson.as[land.UpdateLandRequest]
+        val request2 = nonResidentialRequestJson.as[land.UpdateLandRequest]
+        val request3 = mixedRequestJson.as[land.UpdateLandRequest]
+
+        connector.updateLand(request1).futureValue.updated mustBe true
+        connector.updateLand(request2).futureValue.updated mustBe true
+        connector.updateLand(request3).futureValue.updated mustBe true
+      }
+    }
+
+    "deleteLand()" - {
+
+      val deleteLandRequestJson = Json.obj(
+        "storn" -> "STORN12345",
+        "returnResourceRef" -> "100001",
+        "landResourceRef" -> "100001"
+      )
+
+      val deleteLandReturnJson = Json.obj("deleted" -> true)
+
+      "must return DeleteLandReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLandReturnJson.toString())
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        val result = connector.deleteLand(request).futureValue
+
+        result.deleted mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+        )
+      }
+
+      "must send correct request body with all required fields" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLandReturnJson.toString())
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        connector.deleteLand(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .withRequestBody(matchingJsonPath("$.storn", equalTo("STORN12345")))
+            .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("100001")))
+            .withRequestBody(matchingJsonPath("$.landResourceRef", equalTo("100001")))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        val result = connector.deleteLand(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        val result = connector.deleteLand(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        val result = connector.deleteLand(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLandReturnJson.toString())
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        connector.deleteLand(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+        )
+      }
+
+      "must not make multiple requests for a single call" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLandReturnJson.toString())
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        connector.deleteLand(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+        )
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLandReturnJson.toString())
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        connector.deleteLand(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .withHeader("Content-Type", containing("application/json"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        val result = connector.deleteLand(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        val result = connector.deleteLand(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle different resource reference formats" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLandReturnJson.toString())
+            )
+        )
+
+        val request1Json = deleteLandRequestJson ++ Json.obj("landResourceRef" -> "100001")
+        val request2Json = deleteLandRequestJson ++ Json.obj("landResourceRef" -> "999999")
+        val request3Json = deleteLandRequestJson ++ Json.obj("landResourceRef" -> "LRF-2024-001")
+
+        val request1 = request1Json.as[land.DeleteLandRequest]
+        val request2 = request2Json.as[land.DeleteLandRequest]
+        val request3 = request3Json.as[land.DeleteLandRequest]
+
+        connector.deleteLand(request1).futureValue.deleted mustBe true
+        connector.deleteLand(request2).futureValue.deleted mustBe true
+        connector.deleteLand(request3).futureValue.deleted mustBe true
+      }
+
+      "must use stub URL when stubBool is true" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLandReturnJson.toString())
+            )
+        )
+
+        val request = deleteLandRequestJson.as[land.DeleteLandRequest]
+        connector.deleteLand(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/land"))
+        )
+      }
+    }
+
   }
 }
