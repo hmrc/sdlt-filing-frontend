@@ -403,7 +403,7 @@ agent.agentName.change.hidden                                                   
 vendorAgent.agentsReference.title                                                   = What is the agent’s reference for this return? - About the vendor’s agent
 vendorAgent.agentsReference.heading                                                 = What is {0}’s reference for this return?
 vendorAgent.agentsReference.heading                                                 = What is {0}’s reference for this return?
-vendorAgent.agentsReference.checkYourAnswersLabel                                   = Agent’s Reference
+vendorAgent.agentsReference.checkYourAnswersLabel                                   = Agent Reference
 vendorAgent.agentsReference.error.required                                          = Enter {0}’s agent reference number
 vendorAgent.agentsReference.error.length                                            = Agent’s reference must be 14 characters or less
 vendorAgent.agentsReference.change.hidden                                           = Agent’s Reference
@@ -430,7 +430,7 @@ vendorAgent.vendorAgentsContactDetails.agentPhoneNumber                         
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress                                  = Agent email address
 vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.caption                           = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress.caption                          = We’ll only use this to send a receipt
-vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel                              = Agent contact details?
+vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel                              = Agent contact details
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.required                    = Enter the agent’s phone number
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.required                   = Enter the agent’s email address
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length                      = The agent’s phone number must be {0} characters or less
