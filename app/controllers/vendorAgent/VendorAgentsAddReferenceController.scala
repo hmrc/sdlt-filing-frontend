@@ -18,11 +18,11 @@ package controllers.vendorAgent
 
 import controllers.actions.*
 import forms.vendorAgent.VendorAgentsAddReferenceFormProvider
+import models.vendorAgent.VendorAgentsAddReference
 import models.{Mode, NormalMode}
 import pages.vendorAgent.VendorAgentsReferencePage
 
 import scala.util.Success
-//import models.vendorAgent.VendorAgentsAddReference
 import navigation.Navigator
 import pages.vendorAgent.{AgentNamePage, VendorAgentsAddReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +34,6 @@ import views.html.vendorAgent.VendorAgentsAddReferenceView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-//import scala.util.Success
 
 class VendorAgentsAddReferenceController @Inject()(
                                                     override val messagesApi: MessagesApi,
@@ -85,12 +84,12 @@ class VendorAgentsAddReferenceController @Inject()(
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsAddReferencePage, value))
                 finalAnswers <- Future.fromTry {
-                  if value.toString.equals("no") then updatedAnswers.remove(VendorAgentsReferencePage)
+                  if value == VendorAgentsAddReference.No then updatedAnswers.remove(VendorAgentsReferencePage)
                   else Success(updatedAnswers)
                 }
                 _ <- sessionRepository.set(finalAnswers)
               } yield {
-                if (value.toString.equals("no")) {
+                if (value == VendorAgentsAddReference.No) {
                   Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
                 } else {
                   Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))
