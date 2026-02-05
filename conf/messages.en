@@ -279,16 +279,16 @@ addressLookup.vendorAgentQuestionsAddress.countryPicker.title                   
 addressLookup.vendorAgentQuestionsAddress.countryPicker.heading                     = Find {0}’s address
 
 # Vendor Address Lookup
-addressLookup.vendorQuestionsAddress.lookupPage.title                               = Find {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.lookupPage.title                               = Find {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.lookupPage.heading                             = Find {0}’s address
 addressLookup.vendorQuestionsAddress.lookupPage.filterLabel                         = Property name or number (optional)
 addressLookup.vendorQuestionsAddress.lookupPage.submitLabel                         = Continue
 addressLookup.vendorQuestionsAddress.lookupPage.manualAddressLinkText               = Enter the address manually
-addressLookup.vendorQuestionsAddress.selectPage.title                               = Choose {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.selectPage.title                               = Choose {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.selectPage.heading                             = Choose {0}’s address
 addressLookup.vendorQuestionsAddress.selectPage.editAddressLinkText                 = Enter address manually
 addressLookup.vendorQuestionsAddress.selectPage.submitLabel                         = Continue
-addressLookup.vendorQuestionsAddress.editPage.title                                 = Enter {0}’s address - About the Vendor
+addressLookup.vendorQuestionsAddress.editPage.title                                 = Enter {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.editPage.heading                               = Enter {0}’s address
 addressLookup.vendorQuestionsAddress.editPage.line1Label                            = Address line 1
 addressLookup.vendorQuestionsAddress.editPage.line2Label                            = Address line 2
@@ -313,7 +313,7 @@ vendor.beforeStart.bullet2                                                      
 vendor.beforeStart.bullet3                                                          = if the vendor has an agent
 
 vendor.checkYourAnswers.vendorType.label                                            = Vendor type
-vendor.checkYourAnswers.vendorTypeMissing                                           = Enter Vendor type
+vendor.checkYourAnswers.vendorTypeMissing                                           = Enter vendor type
 vendor.checkYourAnswers.hidden                                                      = Individual or Company
 vendor.checkYourAnswers.Individual                                                  = Individual
 vendor.checkYourAnswers.Company                                                     = Company
