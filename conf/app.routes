@@ -287,6 +287,6 @@ POST        /about-the-vendors-agent/add-agent-reference-number/change          
 
 GET         /about-the-land/before-you-start                                              controllers.land.LandBeforeYouStartController.onPageLoad()
 
-GET         /about-the-land/land-address-lookup                             controllers.land.LandAddressController.redirectToAddressLookupLand(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
-GET         /about-the-land/land-address-return                             controllers.land.LandAddressController.addressLookupCallbackLand(id: String ?= "", mode: Mode = NormalMode)
-GET         /about-the-land/land-address-return/change                      controllers.land.LandAddressController.addressLookupCallbackChangeLand(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-land/land-address-lookup                                        controllers.land.LandAddressController.redirectToAddressLookupLand(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-land/land-address-return                                        controllers.land.LandAddressController.addressLookupCallbackLand(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-land/land-address-return/change                                 controllers.land.LandAddressController.addressLookupCallbackChangeLand(id: String ?= "", mode: Mode = NormalMode)

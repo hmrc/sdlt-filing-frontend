@@ -20,8 +20,8 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.landQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
-import models.{Mode, NormalMode}
-import pages.vendorAgent.VendorAgentAddressPage
+import models.Mode
+import pages.land.LandAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -52,13 +52,13 @@ class LandAddressController @Inject()(
 
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) =>
-          
+
               val callback = if (changeRoute.isDefined) {
                 controllers.land.routes.LandAddressController.addressLookupCallbackChangeLand()
               } else {
                 controllers.land.routes.LandAddressController.addressLookupCallbackLand()
               }
-              
+
               addressLookupService.getJourneyUrl(
                 journeyId,
                 callback,
@@ -75,9 +75,10 @@ class LandAddressController @Inject()(
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
-        updated <- addressLookupService.saveAddressDetails(address, VendorAgentAddressPage)
+        updated <- addressLookupService.saveAddressDetails(address, LandAddressPage)
       } yield if (updated) {
-        Redirect(controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode))
+        //TODO Update when DTR-2444 is built
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       }
       else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
@@ -88,7 +89,7 @@ class LandAddressController @Inject()(
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
-        updated <- addressLookupService.saveAddressDetails(address, VendorAgentAddressPage)
+        updated <- addressLookupService.saveAddressDetails(address, LandAddressPage)
       } yield if (updated) {
         //TODO DTR-: change this when we have the check your answers page
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())

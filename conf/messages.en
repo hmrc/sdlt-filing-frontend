@@ -303,16 +303,16 @@ addressLookup.vendorQuestionsAddress.countryPicker.title                        
 addressLookup.vendorQuestionsAddress.countryPicker.heading                          = Find {0}’s address
 
 # Land Address Lookup
-addressLookup.landQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the Vendor
+addressLookup.landQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the Land Address
 addressLookup.landQuestionsAddress.lookupPage.heading                        = Find the address of the land or property
 addressLookup.landQuestionsAddress.lookupPage.filterLabel                    = Property name or number (optional)
 addressLookup.landQuestionsAddress.lookupPage.submitLabel                    = Continue
 addressLookup.landQuestionsAddress.lookupPage.manualAddressLinkText          = Enter the address manually
-addressLookup.landQuestionsAddress.selectPage.title                          = Choose {0}’s address - About the Vendor
+addressLookup.landQuestionsAddress.selectPage.title                          = Choose {0}’s address - About the Land Address
 addressLookup.landQuestionsAddress.selectPage.heading                        = Choose {0}’s address
 addressLookup.landQuestionsAddress.selectPage.editAddressLinkText            = Enter address manually
 addressLookup.landQuestionsAddress.selectPage.submitLabel                    = Continue
-addressLookup.landQuestionsAddress.editPage.title                            = Enter {0}’s address - About the Vendor
+addressLookup.landQuestionsAddress.editPage.title                            = Enter {0}’s address - About the Land Address
 addressLookup.landQuestionsAddress.editPage.heading                          = Enter {0}’s address
 addressLookup.landQuestionsAddress.editPage.line1Label                       = Address line 1
 addressLookup.landQuestionsAddress.editPage.line2Label                       = Address line 2
@@ -320,11 +320,11 @@ addressLookup.landQuestionsAddress.editPage.line3Label                       = A
 addressLookup.landQuestionsAddress.editPage.postcodeLabel                    = Postcode
 addressLookup.landQuestionsAddress.editPage.countryLabel                     = County
 addressLookup.landQuestionsAddress.editPage.submitLabel                      = Continue
-addressLookup.landQuestionsAddress.confirmPage.title                         = Review and confirm {0}’s address - About the Vendor
+addressLookup.landQuestionsAddress.confirmPage.title                         = Review and confirm {0}’s address - About the Land Address
 addressLookup.landQuestionsAddress.confirmPage.heading                       = Review and confirm {0}’s address
 addressLookup.landQuestionsAddress.confirmPage.changeLinkText                = Edit this address
 addressLookup.landQuestionsAddress.confirmPage.submitLabel                   = Confirm address
-addressLookup.landQuestionsAddress.countryPicker.title                       = Find {0}’s address - About the Vendor
+addressLookup.landQuestionsAddress.countryPicker.title                       = Find {0}’s address - About the Land Address
 addressLookup.landQuestionsAddress.countryPicker.heading                     = Find {0}’s address
 
 # Vendor Messages
