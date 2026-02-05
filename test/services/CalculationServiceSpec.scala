@@ -10,12 +10,12 @@
 
 package services
 
-import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
+import data.ResultText.{RESULT_HEADING_GENERIC, RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
 import enums.HoldingTypes._
 import enums.PropertyTypes._
 import enums.sdltRebuild._
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
-import exceptions.{InvalidDateException, InvalidTaxReliefCombinationException}
+import exceptions.{InvalidDateException, InvalidTaxReliefCombinationException, RequiredValueNotDefinedException}
 import generators.RequestGenerators
 import models._
 import models.sdltRebuild.TaxReliefDetails
@@ -67,6 +67,8 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       rate = None,
       slices = None
     )
+
+    val generateIsLinkedFalseAndNoneValue :Gen[Option[Boolean]] = Gen.oneOf(None, Some(false))
 
     val generateIsLinkedAllPossibleValues : Gen[Option[Boolean]] = Gen.oneOf(None, Some(false), Some(true))
 
@@ -2030,6 +2032,43 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
     }
 
+    "select the freeHoldSelfAssessedRes function given the request with no taxReliefDetails" when {
+      "property type is nonResidential, date is onOrAfter 17/03/2016 and isLinked = true" in {
+        val testRequest = createRequest(
+          freehold,
+          nonResidential,
+          LocalDate.of(2016, 3, 17),
+          Some(true)
+        )
+
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) mustEqual CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
+      "property type is mixed, date is onOrAfter 17/03/2016 and isLinked = true" in {
+        val testRequest = createRequest(
+          freehold,
+          mixed,
+          LocalDate.of(2017, 3, 18),
+          Some(true)
+        )
+
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) mustEqual CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
+    }
+
     "select the leaseholdSelfAssessedRes function" when {
       "given a request with for a leasehold mixed property an effective date of 12/03/2008 (minimum mixed date inclusive)" in {
 
@@ -2356,6 +2395,48 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
       }
     }
+
+    "given no taxRelief details, for Freehold Non-residential property type " when {
+      "effective date is before 2016/3/17 and isLinked = true, false or None" in {
+        forAll(generateIsLinkedAllPossibleValues) {
+          isLinkedValue =>
+            val testRequest = createRequest(
+              freehold,
+              nonResidential,
+              LocalDate.of(2012, 3, 16),
+              isLinkedValue
+            )
+
+            val result = createResult(RESULT_HEADING_GENERIC)
+
+            when(mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16(any[Request], any())).thenReturn(result)
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+        }
+
+      }
+      "effective date is on or after 2016/3/17 and isLinked = false or None " in {
+        forAll(generateIsLinkedFalseAndNoneValue) {
+          isLinkedValue =>
+            val testRequest = createRequest(
+              freehold,
+              nonResidential,
+              LocalDate.of(2019, 3, 16),
+              isLinkedValue
+            )
+
+            val result = createResultInSeq("freeholdNonResidential, March2016 onwards")
+
+            when(mockFreeholdCalculationService.freeholdNonResidentialMar16Onwards(any[Request])).thenReturn(result)
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
+
+        }
+
+      }
+
+    }
+
     "return Fallback result AcquisitionRelief(14)" when {
       "given a Leasehold holding type" in {
         val testRequest = createRequestWithTaxRelief(
@@ -2458,6 +2539,21 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
               the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Date of ${testRequest.effectiveDate} is outside of range 2008-03-12 - 2016-03-17"
           }
+      }
+
+      "given a request without taxRelief details for FreeHold mixed property type" when {
+        "isLinked = false or None,  and for any Dates " in {
+          forAll(generateIsLinkedFalseAndNoneValue) {
+            isLinkedValue =>
+              val testRequest = createRequest(
+                freehold,
+                mixed,
+                LocalDate.of(2024, 3, 16),
+                isLinkedValue
+              )
+              the[RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Value not defined"
+          }
+        }
       }
     }
   }
