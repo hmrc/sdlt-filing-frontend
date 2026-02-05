@@ -280,6 +280,10 @@ object FullReturnConstants {
     reference = Some("SP/2024/001"),
     isAuthorised = Some("true")
   )
+  
+  val completeReturnAgentVendor: ReturnAgent = completeReturnAgent.copy(
+    agentType = Some("VENDOR")
+  )
 
   val completeAgent: Agent = Agent(
     agentId = Some("AGT001"),

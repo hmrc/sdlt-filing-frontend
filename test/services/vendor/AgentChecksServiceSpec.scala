@@ -185,5 +185,49 @@ class AgentChecksServiceSpec extends SpecBase {
         }
       }
     }
+
+    "vendorAgentExistsCheck" - {
+
+      "must redirect to Vendor Overview when vendor agent exists" in {
+        val fullReturn = completeFullReturn.copy(
+          returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR"))))
+        )
+
+        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute)
+          redirectLocation(Future.successful(result)) mustBe Some(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url)
+        }
+      }
+
+      "must continue when no vendor agent exists" in {
+        val fullReturn = completeFullReturn.copy(
+          returnAgent = Some(Seq(ReturnAgent(agentType = Some("PURCHASER"))))
+        )
+
+        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute)
+          result mustBe continueRoute
+        }
+      }
+
+      "must redirect to Return Task List when no full return exists" in {
+        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = None)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute)
+          redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.ReturnTaskListController.onPageLoad().url)
+        }
+      }
+    }
   }
 }

@@ -37,17 +37,17 @@
         mode: Mode
 )(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("purchaserAgent.overview.title"))) {
+@layout(pageTitle = title(form, messages("vendorAgent.overview.title"), section = Some(messages("site.vendorAgent.caption")))) {
 
-    @request.flash.get("purchaserAgentDeleted").map { purchaserAgentName =>
+    @request.flash.get("vendorAgentDeleted").map { vendorAgentName =>
         @govukNotificationBanner(
             NotificationBanner(
                 title = messages("site.success"),
                 content = HtmlContent(
                     s"""<h3 class="govuk-notification-banner__heading">${
                         messages(
-                            "purchaserAgent.overview.purchaserAgentRemoved",
-                            if(!purchaserAgentName.isBlank) purchaserAgentName else messages("purchaserAgent.overview.aPurchaserAgent")
+                            "vendorAgent.overview.vendorAgentRemoved",
+                            if(!vendorAgentName.isBlank) vendorAgentName else messages("vendorAgent.overview.aVendorAgent")
                         )
                     }</h3>"""
                 ),
@@ -57,13 +57,49 @@
         )
     }
 
-    @formHelper(action = controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onSubmit(), Symbol("autoComplete") -> "off") {
+    @request.flash.get("vendorAgentCreated").map { vendorAgentName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "vendorAgent.overview.vendorAgentCreated",
+                            if(!vendorAgentName.isBlank) vendorAgentName else messages("vendorAgent.overview.aVendorAgent")
+                        )
+                    }</h3>"""
+                ),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("vendorAgentUpdated").map { vendorAgentName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "vendorAgent.overview.vendorAgentUpdated",
+                            if(!vendorAgentName.isBlank) vendorAgentName else messages("vendorAgent.overview.aVendorAgent")
+                        )
+                    }</h3>"""
+                ),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @formHelper(action = controllers.vendorAgent.routes.VendorAgentOverviewController.onSubmit(), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @caption(messages("site.purchaserAgent.caption"), size = ExtraLarge)
-        @h1(messages("purchaserAgent.overview.heading"))
+        @caption(messages("site.vendorAgent.caption"), size = ExtraLarge)
+        @h1(messages("vendorAgent.overview.heading"))
 
         @maybeSummaryList match {
             case Some(summary) => {
@@ -75,12 +111,12 @@
             }
 
             case None => {
-                @p(messages("purchaserAgent.overview.noPurchaser.p1"))
+                @p(messages("vendorAgent.overview.noVendor.p1"))
 
                 @govukRadios(
                     RadiosViewModel.yesNo(
                         field = form("value"),
-                        legend = LegendViewModel(messages("purchaserAgent.overview.noPurchaser.subHeadingNoPurchasers")).asPageSubHeading()
+                        legend = LegendViewModel(messages("vendorAgent.overview.noVendor.subHeadingNoVendors")).asPageSubHeading()
                     )
                 )
 
