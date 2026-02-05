@@ -522,11 +522,11 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
   }
 
   def freeholdRightToBuyBeforeMarch2016(request: Request): Result = {
-    val sliceResult = baseCalculationService.calculateTaxDueSlice(
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
-      freeholdMixedNonResidentialRightToBuyBeforeMarch2016Rates.slices
+      SlabRatesTables.freeholdMixedNonResidentialRightToBuyBeforeMarch2016Rates.slabs
     )
-    FreeholdResultFactory.freeholdRightToBuyBeforeMarch2016(sliceResult)
+    FreeholdResultFactory.freeholdRightToBuyBeforeMarch2016(premiumResult)
   }
 
 

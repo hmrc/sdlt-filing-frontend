@@ -27,6 +27,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
   val july2020EffectiveDate: LocalDate = LocalDate.of(2020, 7, 8)
   val dec2014EffectiveDate: LocalDate = LocalDate.of(2014, 12, 30)
   val march2012EffectiveDate: LocalDate = LocalDate.of(2012, 4, 1)
+  val march2016EffectiveDate: LocalDate = LocalDate.of(2016, 3, 16)
   val april2016EffectiveDate: LocalDate = LocalDate.of(2016, 4, 1)
   val jan2018EffectiveDate: LocalDate = LocalDate.of(2018, 1, 1)
   val sep2022EffectiveDate: LocalDate = LocalDate.of(2022, 9, 23)
@@ -1462,6 +1463,44 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
 
     "return 20000 for purchase price of 75000000" in {
       val res = testFreeholdCalcService.freeholdNonResidentialMar12toMar16(baseRequestIndividual(75000000, march2012EffectiveDate))
+      res shouldBe baseResult(3000000, baseSlabCalculationDetails(3000000, 4))
+    }
+  }
+
+  "calculating freeholdRightToBuyBeforeMarch2016" must {
+
+    "return 0 for purchase price of 150000" in {
+      val res = testFreeholdCalcService.freeholdRightToBuyBeforeMarch2016(baseRequestIndividual(150000, march2016EffectiveDate))
+      res shouldBe baseResult(0, baseSlabCalculationDetails(0, 0))
+    }
+
+    "return 1500 for purchase price of 150001" in {
+      val res = testFreeholdCalcService.freeholdRightToBuyBeforeMarch2016(baseRequestIndividual(150001, march2016EffectiveDate))
+      res shouldBe baseResult(1500, baseSlabCalculationDetails(1500, 1))
+    }
+
+    "return 2500 for purchase price of 250000" in {
+      val res = testFreeholdCalcService.freeholdRightToBuyBeforeMarch2016(baseRequestIndividual(250000, march2016EffectiveDate))
+      res shouldBe baseResult(2500, baseSlabCalculationDetails(2500, 1))
+    }
+
+    "return 7500 for purchase price of 250001" in {
+      val res = testFreeholdCalcService.freeholdRightToBuyBeforeMarch2016(baseRequestIndividual(250001, march2016EffectiveDate))
+      res shouldBe baseResult(7500, baseSlabCalculationDetails(7500, 3))
+    }
+
+    "return 15000 for purchase price of 500000" in {
+      val res = testFreeholdCalcService.freeholdRightToBuyBeforeMarch2016(baseRequestIndividual(500000, march2016EffectiveDate))
+      res shouldBe baseResult(15000, baseSlabCalculationDetails(15000, 3))
+    }
+
+    "return 20000 for purchase price of 500001" in {
+      val res = testFreeholdCalcService.freeholdRightToBuyBeforeMarch2016(baseRequestIndividual(500001, march2016EffectiveDate))
+      res shouldBe baseResult(20000, baseSlabCalculationDetails(20000, 4))
+    }
+
+    "return 3000000 for purchase price of 75000000" in {
+      val res = testFreeholdCalcService.freeholdRightToBuyBeforeMarch2016(baseRequestIndividual(75000000, march2016EffectiveDate))
       res shouldBe baseResult(3000000, baseSlabCalculationDetails(3000000, 4))
     }
   }
