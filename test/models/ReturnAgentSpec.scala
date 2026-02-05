@@ -33,7 +33,8 @@ package models
  */
 
 import models.address.{Address, Country}
-import models.purchaserAgent.{PurchaserAgentAuthorised, PurchaserAgentsContactDetails}
+import models.purchaserAgent.*
+import models.vendorAgent.VendorAgentsContactDetails
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
@@ -41,6 +42,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.{EitherValues, OptionValues}
 import pages.purchaserAgent.*
+import pages.vendorAgent.*
 import play.api.libs.json.*
 import play.api.test.Helpers.*
 
@@ -500,97 +502,191 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
     }
 
     ".from" - {
-      "must convert to CreateReturnAgentRequest when required data is present" in {
-        val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
-          .set(PurchaserAgentNamePage, "Agent name").success.value
-          .set(PurchaserAgentAddressPage, Address(
-            line1 = "123 Test Street",
-            line2 = Some("Test Area"),
-            line3 = Some("Test Town"),
-            line4 = Some("Test County"),
-            line5 = None,
-            postcode = Some("AA1 1AA"),
-            country = Some(Country(Some("GB"), Some("United Kingdom")))
-          )).success.value
-          .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+      "when agent type is Purchaser" - {
+        "must convert to CreateReturnAgentRequest when required data is present" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+            .set(PurchaserAgentNamePage, "Agent name").success.value
+            .set(PurchaserAgentAddressPage, Address(
+              line1 = "123 Test Street",
+              line2 = Some("Test Area"),
+              line3 = Some("Test Town"),
+              line4 = Some("Test County"),
+              line5 = None,
+              postcode = Some("AA1 1AA"),
+              country = Some(Country(Some("GB"), Some("United Kingdom")))
+            )).success.value
+            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
 
-        val createReturnAgentRequest = CreateReturnAgentRequest(
-          stornId = "TESTSTORN",
-          returnResourceRef = "TESTREF",
-          agentType = "PURCHASER",
-          name = "Agent name",
-          houseNumber = None,
-          addressLine1 = "123 Test Street",
-          addressLine2 = Some("Test Area"),
-          addressLine3 = Some("Test Town"),
-          addressLine4 = Some("Test County"),
-          postcode = "AA1 1AA",
-          phoneNumber = None,
-          email = None,
-          agentReference = None,
-          isAuthorised = Some("YES")
-        )
+          val createReturnAgentRequest = CreateReturnAgentRequest(
+            stornId = "TESTSTORN",
+            returnResourceRef = "TESTREF",
+            agentType = "PURCHASER",
+            name = "Agent name",
+            houseNumber = None,
+            addressLine1 = "123 Test Street",
+            addressLine2 = Some("Test Area"),
+            addressLine3 = Some("Test Town"),
+            addressLine4 = Some("Test County"),
+            postcode = "AA1 1AA",
+            phoneNumber = None,
+            email = None,
+            agentReference = None,
+            isAuthorised = Some("YES")
+          )
 
-        val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
-        result mustBe createReturnAgentRequest
+          val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
+          result mustBe createReturnAgentRequest
+        }
+
+        "must convert to CreateReturnAgentRequest when all optional data is present" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+            .set(PurchaserAgentNamePage, "Agent name").success.value
+            .set(PurchaserAgentAddressPage, Address(
+              line1 = "123 Test Street",
+              line2 = Some("Test Area"),
+              line3 = Some("Test Town"),
+              line4 = Some("Test County"),
+              line5 = None,
+              postcode = Some("AA1 1AA"),
+              country = Some(Country(Some("GB"), Some("United Kingdom")))
+            )).success.value
+            .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
+            .set(PurchaserAgentReferencePage, "AGT-REF-001").success.value
+            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+
+          val createReturnAgentRequest = CreateReturnAgentRequest(
+            stornId = "TESTSTORN",
+            returnResourceRef = "TESTREF",
+            agentType = "PURCHASER",
+            name = "Agent name",
+            houseNumber = None,
+            addressLine1 = "123 Test Street",
+            addressLine2 = Some("Test Area"),
+            addressLine3 = Some("Test Town"),
+            addressLine4 = Some("Test County"),
+            postcode = "AA1 1AA",
+            phoneNumber = Some("12345678"),
+            email = Some("test@example.com"),
+            agentReference = Some("AGT-REF-001"),
+            isAuthorised = Some("YES")
+          )
+
+          val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
+          result mustBe createReturnAgentRequest
+        }
+
+        "must fail to convert to CreateReturnAgentRequest when full return is not found" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = None)
+
+          val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser)
+
+          result.map { value =>
+            value shouldBe a[NoSuchElementException]
+          }
+        }
+
+        "must fail to convert to CreateReturnAgentRequest when required data is missing" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+
+          val exception = intercept[JsResultException] {
+            await(CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser))
+          }
+
+          exception.errors must not be empty
+        }
       }
-    }
 
-    "must convert to CreateReturnAgentRequest when all optional data is present" in {
-      val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
-        .set(PurchaserAgentNamePage, "Agent name").success.value
-        .set(PurchaserAgentAddressPage, Address(
-          line1 = "123 Test Street",
-          line2 = Some("Test Area"),
-          line3 = Some("Test Town"),
-          line4 = Some("Test County"),
-          line5 = None,
-          postcode = Some("AA1 1AA"),
-          country = Some(Country(Some("GB"), Some("United Kingdom")))
-        )).success.value
-        .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
-        .set(PurchaserAgentReferencePage, "AGT-REF-001").success.value
-        .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+      "when agent type is Vendor" - {
+        "must convert to CreateReturnAgentRequest when required data is present" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+            .set(AgentNamePage, "Agent name").success.value
+            .set(VendorAgentAddressPage, Address(
+              line1 = "123 Test Street",
+              line2 = Some("Test Area"),
+              line3 = Some("Test Town"),
+              line4 = Some("Test County"),
+              line5 = None,
+              postcode = Some("AA1 1AA"),
+              country = Some(Country(Some("GB"), Some("United Kingdom")))
+            )).success.value
 
-      val createReturnAgentRequest = CreateReturnAgentRequest(
-        stornId = "TESTSTORN",
-        returnResourceRef = "TESTREF",
-        agentType = "PURCHASER",
-        name = "Agent name",
-        houseNumber = None,
-        addressLine1 = "123 Test Street",
-        addressLine2 = Some("Test Area"),
-        addressLine3 = Some("Test Town"),
-        addressLine4 = Some("Test County"),
-        postcode = "AA1 1AA",
-        phoneNumber = Some("12345678"),
-        email = Some("test@example.com"),
-        agentReference = Some("AGT-REF-001"),
-        isAuthorised = Some("YES")
-      )
+          val createReturnAgentRequest = CreateReturnAgentRequest(
+            stornId = "TESTSTORN",
+            returnResourceRef = "TESTREF",
+            agentType = "VENDOR",
+            name = "Agent name",
+            houseNumber = None,
+            addressLine1 = "123 Test Street",
+            addressLine2 = Some("Test Area"),
+            addressLine3 = Some("Test Town"),
+            addressLine4 = Some("Test County"),
+            postcode = "AA1 1AA",
+            phoneNumber = None,
+            email = None,
+            agentReference = None,
+            isAuthorised = None
+          )
 
-      val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
-      result mustBe createReturnAgentRequest
-    }
+          val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Vendor).futureValue
+          result mustBe createReturnAgentRequest
+        }
 
-    "must fail to convert to CreateReturnAgentRequest when full return is not found" in {
-      val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = None)
+        "must convert to CreateReturnAgentRequest when all optional data is present" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+            .set(AgentNamePage, "Agent name").success.value
+            .set(VendorAgentAddressPage, Address(
+              line1 = "123 Test Street",
+              line2 = Some("Test Area"),
+              line3 = Some("Test Town"),
+              line4 = Some("Test County"),
+              line5 = None,
+              postcode = Some("AA1 1AA"),
+              country = Some(Country(Some("GB"), Some("United Kingdom")))
+            )).success.value
+            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
+            .set(VendorAgentsReferencePage, "AGT-REF-001").success.value
 
-      val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser)
+          val createReturnAgentRequest = CreateReturnAgentRequest(
+            stornId = "TESTSTORN",
+            returnResourceRef = "TESTREF",
+            agentType = "VENDOR",
+            name = "Agent name",
+            houseNumber = None,
+            addressLine1 = "123 Test Street",
+            addressLine2 = Some("Test Area"),
+            addressLine3 = Some("Test Town"),
+            addressLine4 = Some("Test County"),
+            postcode = "AA1 1AA",
+            phoneNumber = Some("12345678"),
+            email = Some("test@example.com"),
+            agentReference = Some("AGT-REF-001"),
+            isAuthorised = None
+          )
 
-      result.map { value =>
-        value shouldBe a[NoSuchElementException]
+          val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Vendor).futureValue
+          result mustBe createReturnAgentRequest
+        }
+
+        "must fail to convert to CreateReturnAgentRequest when full return is not found" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = None)
+
+          val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Vendor)
+
+          result.map { value =>
+            value shouldBe a[NoSuchElementException]
+          }
+        }
+
+        "must fail to convert to CreateReturnAgentRequest when required data is missing" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+
+          val exception = intercept[JsResultException] {
+            await(CreateReturnAgentRequest.from(userAnswers, AgentType.Vendor))
+          }
+
+          exception.errors must not be empty
+        }
       }
-    }
-
-    "must fail to convert to CreateReturnAgentRequest when required data is missing" in {
-      val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
-
-      val exception = intercept[JsResultException] {
-        await(CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser))
-      }
-
-      exception.errors must not be empty
     }
   }
 
@@ -1123,97 +1219,191 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
     }
 
     ".from" - {
-      "must convert to UpdateReturnAgentRequest when required data is present" in {
-        val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
-          .set(PurchaserAgentNamePage, "Agent name").success.value
-          .set(PurchaserAgentAddressPage, Address(
-            line1 = "123 Test Street",
-            line2 = Some("Test Area"),
-            line3 = Some("Test Town"),
-            line4 = Some("Test County"),
-            line5 = None,
-            postcode = Some("AA1 1AA"),
-            country = Some(Country(Some("GB"), Some("United Kingdom")))
-          )).success.value
-          .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+      "when agent type is Purchaser" - {
+        "must convert to UpdateReturnAgentRequest when required data is present" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+            .set(PurchaserAgentNamePage, "Agent name").success.value
+            .set(PurchaserAgentAddressPage, Address(
+              line1 = "123 Test Street",
+              line2 = Some("Test Area"),
+              line3 = Some("Test Town"),
+              line4 = Some("Test County"),
+              line5 = None,
+              postcode = Some("AA1 1AA"),
+              country = Some(Country(Some("GB"), Some("United Kingdom")))
+            )).success.value
+            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
 
-        val updateReturnAgentRequest = UpdateReturnAgentRequest(
-          stornId = "TESTSTORN",
-          returnResourceRef = "TESTREF",
-          agentType = "PURCHASER",
-          name = "Agent name",
-          houseNumber = None,
-          addressLine1 = "123 Test Street",
-          addressLine2 = Some("Test Area"),
-          addressLine3 = Some("Test Town"),
-          addressLine4 = Some("Test County"),
-          postcode = "AA1 1AA",
-          phoneNumber = None,
-          email = None,
-          agentReference = None,
-          isAuthorised = Some("YES")
-        )
+          val updateReturnAgentRequest = UpdateReturnAgentRequest(
+            stornId = "TESTSTORN",
+            returnResourceRef = "TESTREF",
+            agentType = "PURCHASER",
+            name = "Agent name",
+            houseNumber = None,
+            addressLine1 = "123 Test Street",
+            addressLine2 = Some("Test Area"),
+            addressLine3 = Some("Test Town"),
+            addressLine4 = Some("Test County"),
+            postcode = "AA1 1AA",
+            phoneNumber = None,
+            email = None,
+            agentReference = None,
+            isAuthorised = Some("YES")
+          )
 
-        val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
-        result mustBe updateReturnAgentRequest
+          val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
+          result mustBe updateReturnAgentRequest
+        }
+
+        "must convert to UpdateReturnAgentRequest when all optional data is present" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+            .set(PurchaserAgentNamePage, "Agent name").success.value
+            .set(PurchaserAgentAddressPage, Address(
+              line1 = "123 Test Street",
+              line2 = Some("Test Area"),
+              line3 = Some("Test Town"),
+              line4 = Some("Test County"),
+              line5 = None,
+              postcode = Some("AA1 1AA"),
+              country = Some(Country(Some("GB"), Some("United Kingdom")))
+            )).success.value
+            .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
+            .set(PurchaserAgentReferencePage, "AGT-REF-001").success.value
+            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+
+          val updateReturnAgentRequest = UpdateReturnAgentRequest(
+            stornId = "TESTSTORN",
+            returnResourceRef = "TESTREF",
+            agentType = "PURCHASER",
+            name = "Agent name",
+            houseNumber = None,
+            addressLine1 = "123 Test Street",
+            addressLine2 = Some("Test Area"),
+            addressLine3 = Some("Test Town"),
+            addressLine4 = Some("Test County"),
+            postcode = "AA1 1AA",
+            phoneNumber = Some("12345678"),
+            email = Some("test@example.com"),
+            agentReference = Some("AGT-REF-001"),
+            isAuthorised = Some("YES")
+          )
+
+          val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
+          result mustBe updateReturnAgentRequest
+        }
+
+        "must fail to convert to UpdateReturnAgentRequest when full return is not found" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = None)
+
+          val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser)
+
+          result.map { value =>
+            value shouldBe a[NoSuchElementException]
+          }
+        }
+
+        "must fail to convert to UpdateReturnAgentRequest when required data is missing" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+
+          val exception = intercept[JsResultException] {
+            await(UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser))
+          }
+
+          exception.errors must not be empty
+        }
       }
-    }
 
-    "must convert to UpdateReturnAgentRequest when all optional data is present" in {
-      val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
-        .set(PurchaserAgentNamePage, "Agent name").success.value
-        .set(PurchaserAgentAddressPage, Address(
-          line1 = "123 Test Street",
-          line2 = Some("Test Area"),
-          line3 = Some("Test Town"),
-          line4 = Some("Test County"),
-          line5 = None,
-          postcode = Some("AA1 1AA"),
-          country = Some(Country(Some("GB"), Some("United Kingdom")))
-        )).success.value
-        .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
-        .set(PurchaserAgentReferencePage, "AGT-REF-001").success.value
-        .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+      "when agent type is vendor" - {
+        "must convert to UpdateReturnAgentRequest when required data is present" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+            .set(AgentNamePage, "Agent name").success.value
+            .set(VendorAgentAddressPage, Address(
+              line1 = "123 Test Street",
+              line2 = Some("Test Area"),
+              line3 = Some("Test Town"),
+              line4 = Some("Test County"),
+              line5 = None,
+              postcode = Some("AA1 1AA"),
+              country = Some(Country(Some("GB"), Some("United Kingdom")))
+            )).success.value
 
-      val updateReturnAgentRequest = UpdateReturnAgentRequest(
-        stornId = "TESTSTORN",
-        returnResourceRef = "TESTREF",
-        agentType = "PURCHASER",
-        name = "Agent name",
-        houseNumber = None,
-        addressLine1 = "123 Test Street",
-        addressLine2 = Some("Test Area"),
-        addressLine3 = Some("Test Town"),
-        addressLine4 = Some("Test County"),
-        postcode = "AA1 1AA",
-        phoneNumber = Some("12345678"),
-        email = Some("test@example.com"),
-        agentReference = Some("AGT-REF-001"),
-        isAuthorised = Some("YES")
-      )
+          val updateReturnAgentRequest = UpdateReturnAgentRequest(
+            stornId = "TESTSTORN",
+            returnResourceRef = "TESTREF",
+            agentType = "VENDOR",
+            name = "Agent name",
+            houseNumber = None,
+            addressLine1 = "123 Test Street",
+            addressLine2 = Some("Test Area"),
+            addressLine3 = Some("Test Town"),
+            addressLine4 = Some("Test County"),
+            postcode = "AA1 1AA",
+            phoneNumber = None,
+            email = None,
+            agentReference = None,
+            isAuthorised = None
+          )
 
-      val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
-      result mustBe updateReturnAgentRequest
-    }
+          val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Vendor).futureValue
+          result mustBe updateReturnAgentRequest
+        }
 
-    "must fail to convert to UpdateReturnAgentRequest when full return is not found" in {
-      val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = None)
+        "must convert to UpdateReturnAgentRequest when all optional data is present" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+            .set(AgentNamePage, "Agent name").success.value
+            .set(VendorAgentAddressPage, Address(
+              line1 = "123 Test Street",
+              line2 = Some("Test Area"),
+              line3 = Some("Test Town"),
+              line4 = Some("Test County"),
+              line5 = None,
+              postcode = Some("AA1 1AA"),
+              country = Some(Country(Some("GB"), Some("United Kingdom")))
+            )).success.value
+            .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
+            .set(VendorAgentsReferencePage, "AGT-REF-001").success.value
 
-      val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser)
+          val updateReturnAgentRequest = UpdateReturnAgentRequest(
+            stornId = "TESTSTORN",
+            returnResourceRef = "TESTREF",
+            agentType = "VENDOR",
+            name = "Agent name",
+            houseNumber = None,
+            addressLine1 = "123 Test Street",
+            addressLine2 = Some("Test Area"),
+            addressLine3 = Some("Test Town"),
+            addressLine4 = Some("Test County"),
+            postcode = "AA1 1AA",
+            phoneNumber = Some("12345678"),
+            email = Some("test@example.com"),
+            agentReference = Some("AGT-REF-001"),
+            isAuthorised = None
+          )
 
-      result.map { value =>
-        value shouldBe a[NoSuchElementException]
+          val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Vendor).futureValue
+          result mustBe updateReturnAgentRequest
+        }
+
+        "must fail to convert to UpdateReturnAgentRequest when full return is not found" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = None)
+
+          val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Vendor)
+
+          result.map { value =>
+            value shouldBe a[NoSuchElementException]
+          }
+        }
+
+        "must fail to convert to UpdateReturnAgentRequest when required data is missing" in {
+          val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
+
+          val exception = intercept[JsResultException] {
+            await(UpdateReturnAgentRequest.from(userAnswers, AgentType.Vendor))
+          }
+
+          exception.errors must not be empty
+        }
       }
-    }
-
-    "must fail to convert to UpdateReturnAgentRequest when required data is missing" in {
-      val userAnswers = UserAnswers(id = "123", storn = "TESTSTORN", fullReturn = Some(FullReturn(stornId = "TESTSTORN", returnResourceRef = "TESTREF")))
-
-      val exception = intercept[JsResultException] {
-        await(UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser))
-      }
-
-      exception.errors must not be empty
     }
   }
 

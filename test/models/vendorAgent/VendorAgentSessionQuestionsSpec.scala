@@ -41,7 +41,7 @@ class VendorAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eit
         ),
         "addressValidated" -> false
       ),
-      "vendorAgentsContactDetails" -> Json.obj(
+      "vendorAgentContactDetails" -> Json.obj(
         "phoneNumber" -> "1234567890",
         "emailAddress" -> "test@example.com"
       ),
@@ -94,7 +94,7 @@ class VendorAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eit
               )),
               addressValidated = false
             ),
-            vendorAgentsContactDetails = Some(VendorAgentsContactDetails(
+            vendorAgentContactDetails = Some(VendorAgentsContactDetails(
               phoneNumber = Some("1234567890"),
               emailAddress = Some("test@example.com")
             )),

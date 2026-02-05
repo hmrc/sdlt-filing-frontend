@@ -41,7 +41,7 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
         ),
         "addressValidated" -> false
       ),
-      "purchaserAgentsContactDetails" -> Json.obj(
+      "purchaserAgentContactDetails" -> Json.obj(
         "phoneNumber" -> "1234567890",
         "emailAddress" -> "test@example.com"
       ),
@@ -95,7 +95,7 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
               )),
               addressValidated = false
             ),
-            purchaserAgentsContactDetails = Some(PurchaserAgentsContactDetails(
+            purchaserAgentContactDetails = Some(PurchaserAgentsContactDetails(
               phoneNumber = Some("1234567890"),
               emailAddress = Some("test@example.com")
             )),
