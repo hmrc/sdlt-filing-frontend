@@ -32,6 +32,7 @@ site.error.noSdltEnrolmentErrorPage.link.message = add this tax to your account
 
 # Section Captions
 site.beforeYouStart.heading                                                         = Before you start
+site.prelim.caption                                                                 = About the vendor
 site.vendor.caption                                                                 = About the vendor
 site.purchaser.caption                                                              = About the purchaser
 site.agent.caption                                                                  = About the agent
