@@ -1463,7 +1463,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
 
         "by property type:" when {
 
-          "Mixed" in {
+          "Mixed: premium 200000" in {
             def request: WSResponse = ws.url(
                 calculateUrl)
               .post(
@@ -1475,7 +1475,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                     |  "effectiveDateDay": 16,
                     |  "effectiveDateMonth": 3,
                     |  "effectiveDateYear": 2016,
-                    |  "premium": 300000,
+                    |  "premium": 200000,
                     |  "highestRent": 0,
                     |  "isLinked": false,
                     |  "taxReliefDetails": {
@@ -1488,40 +1488,15 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                 |{
                 | "result":[
                 |  {
-                |  "totalTax":2500,
+                |  "totalTax":2000,
                 |  "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
                 |  "taxCalcs":[
                 |   {
-                |    "taxType":"premium",
-                |    "calcType":"slice",
-                |    "taxDue":2500,
-                |    "slices": [
-                |       {
-                |        "from": 0,
-                |        "to": 150000,
-                |        "rate": 0,
-                |        "taxDue": 0
-                |       },
-                |       {
-                |        "from": 150000,
-                |        "to": 250000,
-                |        "rate": 1,
-                |        "taxDue": 1000
-                |       },
-                |       {
-                |        "from": 250000,
-                |        "to": 500000,
-                |        "rate": 3,
-                |        "taxDue": 1500
-                |       },
-                |       {
-                |        "from": 500000,
-                |        "to": -1,
-                |        "rate": 4,
-                |        "taxDue": 0
-                |       }
-                |     ]
-                |    }
+                |       "taxType": "premium",
+                |       "calcType": "slab",
+                |       "taxDue": 2000,
+                |       "rate": 1
+                |   }
                 |   ]
                 |  }
                 | ]
@@ -1531,7 +1506,50 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
             request.json shouldBe responseJson
           }
 
-          "Non-residential" in {
+          "Mixed: premium 149999" in {
+            def request: WSResponse = ws.url(
+                calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    |  "holdingType": "Freehold",
+                    |  "propertyType": "Mixed",
+                    |  "effectiveDateDay": 16,
+                    |  "effectiveDateMonth": 3,
+                    |  "effectiveDateYear": 2016,
+                    |  "premium": 149999,
+                    |  "highestRent": 0,
+                    |  "isLinked": false,
+                    |  "taxReliefDetails": {
+                    |    "taxReliefCode": 22
+                    |  }
+                    |}""".stripMargin))
+
+            val responseJson = Json.parse(
+              """
+                |{
+                | "result":[
+                |  {
+                |  "totalTax":0,
+                |  "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                |  "taxCalcs":[
+                |   {
+                |       "taxType": "premium",
+                |       "calcType": "slab",
+                |       "taxDue": 0,
+                |       "rate": 0
+                |   }
+                |   ]
+                |  }
+                | ]
+                |}""".stripMargin)
+
+            request.status shouldBe OK
+            request.json shouldBe responseJson
+          }
+
+          "Non-residential: premium 750000" in {
             def request: WSResponse = ws.url(
                 calculateUrl)
               .post(
@@ -1556,40 +1574,58 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                 |{
                 | "result":[
                 |  {
-                |  "totalTax":18500,
+                |  "totalTax":30000,
                 |  "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
                 |  "taxCalcs":[
                 |   {
-                |    "taxType":"premium",
-                |    "calcType":"slice",
-                |    "taxDue":18500,
-                |    "slices": [
-                |       {
-                |        "from": 0,
-                |        "to": 150000,
-                |        "rate": 0,
-                |        "taxDue": 0
-                |       },
-                |       {
-                |        "from": 150000,
-                |        "to": 250000,
-                |        "rate": 1,
-                |        "taxDue": 1000
-                |       },
-                |       {
-                |        "from": 250000,
-                |        "to": 500000,
-                |        "rate": 3,
-                |        "taxDue": 7500
-                |       },
-                |       {
-                |        "from": 500000,
-                |        "to": -1,
-                |        "rate": 4,
-                |        "taxDue": 10000
-                |       }
-                |     ]
-                |    }
+                |       "taxType": "premium",
+                |       "calcType": "slab",
+                |       "taxDue": 30000,
+                |       "rate": 4
+                |   }
+                |   ]
+                |  }
+                | ]
+                |}""".stripMargin)
+
+            request.status shouldBe OK
+            request.json shouldBe responseJson
+          }
+
+          "Non-residential: premium 250,001" in {
+            def request: WSResponse = ws.url(
+                calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    |  "holdingType": "Freehold",
+                    |  "propertyType": "Non-residential",
+                    |  "effectiveDateDay": 16,
+                    |  "effectiveDateMonth": 3,
+                    |  "effectiveDateYear": 2015,
+                    |  "premium": 250001,
+                    |  "highestRent": 0,
+                    |  "isLinked": false,
+                    |  "taxReliefDetails": {
+                    |     "taxReliefCode": 22
+                    |  }
+                    |}""".stripMargin))
+
+            val responseJson = Json.parse(
+              """
+                |{
+                | "result":[
+                |  {
+                |  "totalTax":7500,
+                |  "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
+                |  "taxCalcs":[
+                |   {
+                |       "taxType": "premium",
+                |       "calcType": "slab",
+                |       "taxDue": 7500,
+                |       "rate": 3
+                |   }
                 |   ]
                 |  }
                 | ]

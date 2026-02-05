@@ -472,17 +472,17 @@ object FreeholdResultFactory {
     )
   }
 
-  def freeholdRightToBuyBeforeMarch2016(sliceResult: SliceResult): Result = {
+  def freeholdRightToBuyBeforeMarch2016(slabResult: SlabResult): Result = {
     Result(
-      totalTax = sliceResult.taxDue.toInt,
+      totalTax = slabResult.taxDue.toInt,
       resultHeading = Some(RESULT_HEADING_GENERIC),
       npv = None,
       taxCalcs = Seq(
         CalculationDetails(
           taxType = TaxTypes.premium,
-          calcType = CalcTypes.slice,
-          taxDue = sliceResult.taxDue.toInt,
-          slices = Some(sliceResult.slices)
+          calcType = CalcTypes.slab,
+          taxDue = slabResult.taxDue.toInt,
+          rate = Some(slabResult.rate.toInt),
         )
       )
     )
