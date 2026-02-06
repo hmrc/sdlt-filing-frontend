@@ -18,14 +18,25 @@ package forms.land
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import org.scalacheck.Gen
 
 class LandTitleNumberFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "land.titleNumber.error.required"
   val lengthKey = "land.titleNumber.error.length"
+  val invalidKey = "land.titleNumber.error.invalid"
+
   val maxLength = 14
 
   val form = new LandTitleNumberFormProvider()()
+
+  private val allowedChars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ~!@%&'()*+,-./:=?[]^_{};\\"
+
+  private val validStrings: Gen[String] =
+    Gen.choose(1, maxLength).flatMap { size =>
+      Gen.listOfN(size, Gen.oneOf(allowedChars)).map(_.mkString)
+    }
 
   ".value" - {
 
@@ -34,15 +45,17 @@ class LandTitleNumberFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validStrings
     )
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
+    "not bind strings longer than maxLength" in {
+      val longValue = List.fill(maxLength + 1)('A').mkString
+
+      val result = form.bind(Map(fieldName -> longValue))
+      result.errors must contain(
+        FormError(fieldName, lengthKey, Seq(maxLength))
+      )
+    }
 
     behave like mandatoryField(
       form,

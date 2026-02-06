@@ -21,6 +21,7 @@ import forms.land.LandTitleNumberFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.land.LandTitleNumberPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -42,7 +43,7 @@ class LandTitleNumberController @Inject()(
                                            view: LandTitleNumberView
                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>

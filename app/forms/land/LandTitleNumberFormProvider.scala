@@ -23,9 +23,13 @@ import javax.inject.Inject
 
 class LandTitleNumberFormProvider @Inject() extends Mappings {
 
+  private val characterRegex =
+    """^[A-Za-z0-9 ~!@%&'()*+,\-./:=?\[\]^_{};\\]*$"""
+
   def apply(): Form[String] =
     Form(
       "value" -> text("land.titleNumber.error.required")
+        .verifying(regexp(characterRegex, "land.titleNumber.error.invalid"))
         .verifying(maxLength(14, "land.titleNumber.error.length"))
     )
 }
