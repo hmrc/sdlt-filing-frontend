@@ -974,7 +974,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           agentReference = Some("AGT-001"),
           isAuthorised = Some("YES")
         )
-        val expectedResult = CreateReturnAgentReturn(returnAgentId = "AGID-001")
+        val expectedResult = CreateReturnAgentReturn(returnAgentID = "AGID-001")
 
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
@@ -988,7 +988,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val result = connector.createReturnAgent(testRequest).futureValue
 
         result mustBe expectedResult
-        result.returnAgentId mustBe "AGID-001"
+        result.returnAgentID mustBe "AGID-001"
       }
 
       "must handle Left response with UpstreamErrorResponse" in {
@@ -1032,7 +1032,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           addressLine1 = "Main Street",
           postcode = "TE23 5TT"
         )
-        val expectedResult = CreateReturnAgentReturn(returnAgentId = "AGID-001")
+        val expectedResult = CreateReturnAgentReturn(returnAgentID = "AGID-001")
 
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)

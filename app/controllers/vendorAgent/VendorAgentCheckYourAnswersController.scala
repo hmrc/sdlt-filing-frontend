@@ -116,7 +116,7 @@ class VendorAgentCheckYourAnswersController @Inject()(
       createReturnAgentRequest <- CreateReturnAgentRequest.from(userAnswers, Vendor)
       createReturnAgentReturn <- backendConnector.createReturnAgent(createReturnAgentRequest)
     } yield {
-      if (createReturnAgentReturn.returnAgentId.nonEmpty) {
+      if (createReturnAgentReturn.returnAgentID.nonEmpty) {
         Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
           .flashing("vendorAgentCreated" -> createReturnAgentRequest.name)
       } else {

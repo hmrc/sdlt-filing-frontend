@@ -90,7 +90,7 @@ object CreateReturnAgentRequest {
 }
 
 case class CreateReturnAgentReturn(
-                                    returnAgentId: String
+                                    returnAgentID: String
                                   )
 
 object CreateReturnAgentReturn {
