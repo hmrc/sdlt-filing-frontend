@@ -2179,6 +2179,23 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
 
       }
+
+      "property type is residential, date is onOrAfter 22/03/2012 and is on or before 14/12/2013 and isLinked = true" in {
+        val testRequest = createRequest(
+          freehold,
+          residential,
+          LocalDate.of(2013, 3, 17),
+        ).copy(isLinked = Some(true))
+
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) mustEqual CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
     }
 
     "select the leaseholdSelfAssessedRes function" when {
@@ -2406,7 +2423,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
 
         "effective date is before 6/4/2013" in {
-          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 5), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(true))
+          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2013, 4, 5), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(false))
           val result = createResult("freeholdResidentialMar12toDec14")
           val captor = ArgumentCaptor.forClass(classOf[Request])
 

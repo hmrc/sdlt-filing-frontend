@@ -14,7 +14,7 @@ import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, InvalidTaxReliefCombinationException, RequiredValueNotDefinedException}
 import models.sdltRebuild.TaxReliefDetails
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope}
 import utils.DateUtil
 import utils.LoggerUtil._
 
@@ -505,6 +505,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
       case (`freehold`, `mixed`, _) =>
         throw new InvalidDateException(
           s"Effective date: ${request.effectiveDate} currently does not apply to ${request.holdingType}, ${request.propertyType} properties with isLinked = ${request.isLinked}")
+      case (`freehold`, `residential`, Some(true))
+        if isAfterMar2012AndBeforeDec2014(request.effectiveDate) =>
+        CalculationResponse(Seq(
+          freeCalculationService.freeholdSelfAssessedRes
+        ))
 
       /* ------------- LeaseHoldCases--------------------------- */
       case (`leasehold`, _, Some(true))
