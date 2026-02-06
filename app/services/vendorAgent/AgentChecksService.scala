@@ -16,17 +16,17 @@
 
 package services.vendorAgent
 
-import models.{AgentType, UserAnswers}
+import models.{AgentType, Mode, NormalMode, UserAnswers}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 
 class AgentChecksService {
 
-  def vendorAgentExistsCheck(userAnswers: UserAnswers, continueRoute: Result): Result = {
+  def vendorAgentExistsCheck(userAnswers: UserAnswers, continueRoute: Result, mode: Mode): Result = {
 
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
-        if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))) {
+        if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString))) && mode == NormalMode) {
           Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
         } else {
           continueRoute

@@ -64,7 +64,7 @@ class VendorAgentsContactDetailsController @Inject()(
             case Some(value) => form.fill(value)
           }
           val continueRoute = Ok(view(preparedForm, mode, agentName))
-          agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute)
+          agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute, mode)
       }
   }
 

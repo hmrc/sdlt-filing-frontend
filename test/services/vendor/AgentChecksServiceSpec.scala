@@ -18,7 +18,7 @@ package services.vendor
 
 import base.SpecBase
 import constants.FullReturnConstants.*
-import models.{FullReturn, ReturnAgent, ReturnInfo, UserAnswers, Vendor}
+import models.{FullReturn, NormalMode, CheckMode, ReturnAgent, ReturnInfo, UserAnswers, Vendor}
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
@@ -198,8 +198,23 @@ class AgentChecksServiceSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
-          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute)
+          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute, NormalMode)
           redirectLocation(Future.successful(result)) mustBe Some(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url)
+        }
+      }
+
+      "must continue when in check mode" in {
+        val fullReturn = completeFullReturn.copy(
+          returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR"))))
+        )
+
+        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute, CheckMode)
+          result mustBe continueRoute
         }
       }
 
@@ -213,7 +228,7 @@ class AgentChecksServiceSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
-          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute)
+          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute, NormalMode)
           result mustBe continueRoute
         }
       }
@@ -224,7 +239,7 @@ class AgentChecksServiceSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
-          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute)
+          val result = service.vendorAgentExistsCheck(userAnswers, continueRoute, NormalMode)
           redirectLocation(Future.successful(result)) mustBe Some(controllers.routes.ReturnTaskListController.onPageLoad().url)
         }
       }

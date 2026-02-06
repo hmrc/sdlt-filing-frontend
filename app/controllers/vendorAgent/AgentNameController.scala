@@ -53,7 +53,7 @@ class AgentNameController @Inject()(
         case Some(value) => form.fill(value)
       }
       val continueRoute = Ok(view(preparedForm, mode))
-      agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute)
+      agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute, mode)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
