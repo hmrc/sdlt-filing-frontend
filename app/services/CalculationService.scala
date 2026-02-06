@@ -482,6 +482,25 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     }
   }
 
+  def calculateTaxNoRelief(request: Request): CalculationResponse = {
+
+    (request.holdingType, request.propertyType, request.isLinked) match {
+      /* ------------- FreeHoldCases--------------------------- */
+      case(HoldingTypes.freehold, `mixed` | `nonResidential`, Some(true))
+      if request.effectiveDate.onOrAfter(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+        CalculationResponse(Seq(freeCalculationService.freeholdSelfAssessedRes))
+
+      /* ------------- LeaseHoldCases--------------------------- */
+      case (`leasehold`, _, Some(true))
+        if request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdSelfAssessedRes
+        ))
+      case _ =>
+        calculateTax(request.copy(isLinked = None, taxReliefDetails = None))
+    }
+  }
+
   def calculateLeaseholdMixedPropertyTax(request: Request): CalculationResponse = {
     if (isAfterMar2008AndBeforeMar2016(request.effectiveDate)) {
       CalculationResponse(Seq(
@@ -489,19 +508,6 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
       ))
     } else {
       throw new InvalidDateException(s"Date of ${request.effectiveDate} is outside of range ${Dates.MIN_MIXED_PROPERTY_DATE} - ${Dates.MARCH2016_NON_RESIDENTIAL_DATE}")
-    }
-  }
-
-  def calculateTaxNoRelief(request: Request): CalculationResponse = {
-
-    (request.holdingType, request.propertyType, request.isLinked) match {
-      case (`leasehold`, _, Some(true))
-        if request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) =>
-          CalculationResponse(Seq(
-            leaseCalculationService.leaseholdSelfAssessedRes
-          ))
-      case _ =>
-        calculateTax(request.copy(isLinked = None, taxReliefDetails = None))
     }
   }
 }

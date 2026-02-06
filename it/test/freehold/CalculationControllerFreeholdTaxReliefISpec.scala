@@ -1637,6 +1637,61 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
 
+
+      //SDLT - Tax Calc Case -21a -Self Assessed
+      "taxReliefDetails is not provided and isLinked = true" when {
+        "date is on or after 17th of March 2016" when {
+          "Property type is Mixed" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    | "holdingType": "Freehold",
+                    | "propertyType": "Mixed",
+                    | "effectiveDateDay": 17,
+                    | "effectiveDateMonth": 3,
+                    | "effectiveDateYear": 2016,
+                    | "premium": 1000000,
+                    | "highestRent": 0,
+                    | "isLinked": true
+                    |}
+                    |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+          }
+
+          "Property type is Non-Residential" in {
+
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    | "holdingType": "Freehold",
+                    | "propertyType": "Non-residential",
+                    | "effectiveDateDay": 20,
+                    | "effectiveDateMonth": 3,
+                    | "effectiveDateYear": 2019,
+                    | "premium": 1000000,
+                    | "highestRent": 0,
+                    | "isLinked": true
+                    |}
+                    |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+
+          }
+        }
+      }
     }
   }
 }
