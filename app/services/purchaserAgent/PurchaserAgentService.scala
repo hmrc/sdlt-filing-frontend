@@ -140,19 +140,31 @@ class PurchaserAgentService @Inject(
           case _ => PurchaserAgentAuthorised.No
         }
 
-        for {
+        val baseAnswers = for {
           withId <- userAnswers.set(PurchaserAgentOverviewPage, agentId)
           withName <- withId.set(PurchaserAgentNamePage, returnAgent.name.get)
           withAddress <- withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
           addContact <- withAddress.set(AddContactDetailsForPurchaserAgentPage, returnAgent.phone.isDefined || returnAgent.email.isDefined)
           withContact <- addContact.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
-          addReference <- withContact.set(AddPurchaserAgentReferenceNumberPage, returnAgent.reference.isDefined)
-          withReference <- addReference.set(PurchaserAgentReferencePage, returnAgent.reference.get)
-          finalAnswers <- withReference.set(PurchaserAgentAuthorisedPage, authorised)
-        } yield finalAnswers
+        } yield withContact
+
+        val answersWithReference = baseAnswers.flatMap { answers =>
+          returnAgent.reference match {
+            case Some(ref) =>
+              for {
+                addReference <- answers.set(AddPurchaserAgentReferenceNumberPage, true)
+                withReference <- addReference.set(PurchaserAgentReferencePage, ref)
+              } yield withReference
+            case None =>
+              answers.set(AddPurchaserAgentReferenceNumberPage, false)
+          }
+        }
+
+        answersWithReference.flatMap(_.set(PurchaserAgentAuthorisedPage, authorised))
 
       case _ =>
-        Try(throw new IllegalStateException(s"Purchaser ${returnAgent.returnAgentID} is missing"))
+        Try(throw new IllegalStateException(s"ReturnAgent ${returnAgent.returnAgentID} is missing returnAgentID"))
     }
   }
+
 }
