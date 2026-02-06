@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.land
 
 import models.{CheckMode, UserAnswers}
-import pages.land.LandInterestTransferredOrCreatedPage
+import pages.land.LandTitleNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -25,38 +25,32 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object LandInterestTransferredOrCreatedSummary {
+object LandTitleNumberSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val changeRoute = controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(CheckMode).url
-    val label = messages("land.landInterestTransferredOrCreated.checkYourAnswersLabel")
+    val changeRoute = controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
+    val label = messages("land.titleNumber.checkYourAnswersLabel")
 
-    answers.get(LandInterestTransferredOrCreatedPage).map {
+    answers.get(LandTitleNumberPage).map {
       answer =>
-
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"land.landInterestTransferredOrCreated.$answer"))
-          )
-        )
 
         SummaryListRowViewModel(
           key = label,
-          value = value,
+          value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("land.landInterestTransferredOrCreated.change.hidden"))
+              .withVisuallyHiddenText(messages("land.titleNumber.change.hidden"))
           )
         )
     }.getOrElse {
       val value = ValueViewModel(
-        HtmlContent(s"""<a href="$changeRoute" class="govuk-link">${messages("land.landInterestTransferredOrCreated.missing")}</a>""")
+        HtmlContent(s"""<a href="$changeRoute" class="govuk-link">${messages("land.titleNumber.missing")}</a>""")
       )
+
       SummaryListRowViewModel(
         key = label,
         value = value
       )
-
     }
   }
 }
