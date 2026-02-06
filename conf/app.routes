@@ -314,3 +314,8 @@ GET        /about-the-land/add-NLPG-UPRN                                        
 POST       /about-the-land/add-NLPG-UPRN                                                  controllers.land.LandAddNlpgUprnController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-land/add-NLPG-UPRN/change                                           controllers.land.LandAddNlpgUprnController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-land/add-NLPG-UPRN/change                                           controllers.land.LandAddNlpgUprnController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-land/title-number                                                             controllers.land.LandTitleNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-land/title-number                                                             controllers.land.LandTitleNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-land/title-number/change                                                      controllers.land.LandTitleNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-land/title-number/change                                                      controllers.land.LandTitleNumberController.onSubmit(mode: Mode = CheckMode)

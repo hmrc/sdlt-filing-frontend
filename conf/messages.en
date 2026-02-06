@@ -896,3 +896,14 @@ land.addNlpgUprn.error.required                                               = 
 land.addNlpgUprn.change.hidden                                                = If you have an NLPG UPRN
 land.addNlpgUprn.hint                                                         = A National Land and Property Gazetteer Unique Property Reference Number (NLPG UPRN) is a unique identifier for every addressable location in England, Scotland, Wales and Northern Ireland
 land.addNlpgUprn.missing                                                      = Select if you have an NLPG UPRN
+
+land.titleNumber.title                                                        = Title number for the land or property - About the land
+land.titleNumber.heading                                                      = Title number for the land or property
+land.titleNumber.p1                                                           = A title number is a unique identifier assigned by HM Land Registry to a registered land or property in England and Wales. This is a combination of letters and numbers, like TGL312172. You can find it on property deeds or through the HM Land Registry service
+land.titleNumber.p2                                                           = For Northern Ireland enter the folio number. This can be a series of numbers or a combination of letters and numbers. You can find it through the ‘Find property information’ (FPI) online service or visit the Land & Property Services (LPS).
+land.titleNumber.subheading                                                   = What is the title or folio number?
+land.titleNumber.checkYourAnswersLabel                                        = Title or folio number
+land.titleNumber.error.required                                               = Enter title or folio number
+land.titleNumber.error.length                                                 = Title or folio number must be 14 characters or less
+land.titleNumber.change.hidden                                                = Title or folio number
+land.titleNumber.missing                                                      = Select title or folio number
