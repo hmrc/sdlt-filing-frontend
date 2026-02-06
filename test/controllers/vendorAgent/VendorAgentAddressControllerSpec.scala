@@ -60,7 +60,7 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
     fullReturn = None,
     data = Json.obj(
       "vendorAgentCurrent" -> Json.obj(
-        "agentName" -> "test"
+        "vendorAgentName" -> "test"
       )
     ),
     lastUpdated = Instant.now

@@ -25,8 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaserAgent.PurchaserAgentOverviewPage
-import pages.vendorAgent.{AgentNamePage, VendorAgentAddressPage}
+import pages.vendorAgent.*
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -140,8 +139,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
     "onSubmit" - {
 
       "must update return agent if data is valid and returnAgentId is set" in {
-        //todo update to vendorAgentOverview
-        val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId.set(PurchaserAgentOverviewPage, "AGENT123").success.value
+        val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId.set(VendorAgentOverviewPage, "AGENT123").success.value
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
@@ -161,10 +159,9 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
-
-          //todo verify interactions once linked up to vendorAgentOverview page
-          //          verify(mockBackendConnector, times(1)).updateReturnAgent(any[UpdateReturnAgentRequest])(any(), any())
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
+          verify(mockBackendConnector, times(1)).updateReturnAgent(any[UpdateReturnAgentRequest])(any(), any())
+          flash(result).get("vendorAgentUpdated") mustBe Some("Agent name")
         }
       }
 
@@ -187,15 +184,15 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
           status(result) mustEqual SEE_OTHER
 
-          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
-          //todo verify interactions once linked up to vendorAgentOverview page
-          //          verify(mockBackendConnector, atLeastOnce()).createReturnAgent(any[CreateReturnAgentRequest])(any(), any())
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
+          verify(mockBackendConnector, atLeastOnce()).createReturnAgent(any[CreateReturnAgentRequest])(any(), any())
+          flash(result).get("vendorAgentCreated") mustBe Some("Agent name")
         }
       }
 
       "must redirect to same page when update call returns false" in {
         val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId
-          .set(PurchaserAgentOverviewPage, "TestAgent").success.value
+          .set(VendorAgentOverviewPage, "TestAgent").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockBackendConnector.updateReturnVersion(any())(any(), any())).thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(1))))
@@ -210,8 +207,6 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           val request = FakeRequest(POST, controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url)
 
           val result = route(application, request).value
-
-          //todo update to vendorAgentOverview
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url

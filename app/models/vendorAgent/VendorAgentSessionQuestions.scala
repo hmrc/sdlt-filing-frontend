@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, Reads}
 case class VendorAgentSessionQuestions(
                                         vendorAgentName: String,
                                         vendorAgentAddress: VendorAgentSessionAddress,
-                                        vendorAgentsContactDetails: Option[VendorAgentsContactDetails] = None,
+                                        vendorAgentContactDetails: Option[VendorAgentsContactDetails] = None,
                                         vendorAgentReference: Option[String] = None,
                                       )
 

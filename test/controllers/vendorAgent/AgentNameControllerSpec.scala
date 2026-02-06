@@ -84,7 +84,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to VendorCYA when agent is type VENDOR and main vendor is represented by agent" in {
+    "must redirect to overview when agent is type VENDOR and main vendor is represented by agent" in {
       val fullReturn = completeFullReturn.copy(
         returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
         returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR")))),
@@ -101,7 +101,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
       }
     }
 

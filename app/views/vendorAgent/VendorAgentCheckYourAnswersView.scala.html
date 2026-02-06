@@ -28,7 +28,7 @@
 @(list: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("site.checkYourAnswers.heading"), Some(messages("site.vendorAgent.caption")))) {
-    @formHelper(action = controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onSubmit()) {
+    @formHelper(action = controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onSubmit()) {
 
         @caption(messages("site.vendorAgent.caption"))
         @h1(messages("site.checkYourAnswers.heading"))

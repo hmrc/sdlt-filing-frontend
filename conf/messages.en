@@ -690,7 +690,6 @@ purchaser.purchaserOverview.noPurchaser.p1                                      
 purchaserAgent.overview.title                                                   = Purchaser’s agent overview - About the purchaser’s agent
 purchaserAgent.overview.heading                                                 = Purchaser’s agent overview
 purchaserAgent.overview.noPurchaser.subHeadingNoPurchasers                      = Do you want to add an agent for the purchaser?
-purchaserAgent.overview.limitReached                                            = To add a new purchaser agent, you must remove an agent
 purchaserAgent.overview.purchaserAgentRemoved                                   = You have removed {0}
 purchaserAgent.overview.aPurchaserAgent                                         = a purchaser’s agent
 purchaserAgent.overview.error.required                                          = Please select an option
@@ -825,6 +824,16 @@ vendorAgent.BeforeYouStart.subheading                                         = 
 vendorAgent.BeforeYouStart.checkYourAnswersLabel                              = Add an agent for the vendor
 vendorAgent.BeforeYouStart.error.required                                     = Select Yes or No
 vendorAgent.BeforeYouStart.change.hidden                                      = if you want to add an agent for the vendor
+
+vendorAgent.overview.title                                                    = Vendor’s agent overview
+vendorAgent.overview.heading                                                  = Vendor’s agent overview
+vendorAgent.overview.noVendor.subHeadingNoVendors                             = Do you want to add an agent for the vendor?
+vendorAgent.overview.vendorAgentRemoved                                       = You have removed {0}
+vendorAgent.overview.vendorAgentCreated                                       = You have added {0}
+vendorAgent.overview.vendorAgentUpdated                                       = You have updated {0}
+vendorAgent.overview.aVendorAgent                                             = a vendor’s agent
+vendorAgent.overview.error.required                                           = Please select an option
+vendorAgent.overview.noVendor.p1                                              = You have no agents listed for the vendor.
 
 land.BeforeYouStart.p1                                                        = In this section, you need to tell us about the land or property being purchased.
 land.BeforeYouStart.p2                                                        = We will ask for:

@@ -50,7 +50,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
   val userAnswersWithName: UserAnswers = emptyUserAnswers.copy(
     data = Json.obj(
       "vendorAgentCurrent" -> Json.obj(
-        "agentName" -> "test",
+        "vendorAgentName" -> "test",
       )
     ),
     fullReturn = Some(fullReturnWithNonVendorAgent)
@@ -93,7 +93,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNonVendorAgent),
           data = Json.obj(
             "vendorAgentCurrent" -> Json.obj(
-              "agentName" -> "test",
+              "vendorAgentName" -> "test",
               "vendorAgentsAddReference" -> "yes"
             )
           )
@@ -113,7 +113,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
 
         }
       }
-      // TODO DTR-2060: change this to the vendor agent overview page
+      
       "must redirect to Vendor Agent Overview for a GET when Vendor agent exists" in {
 
         val application = applicationBuilder(userAnswers = Some(userAnswersWithExistingVendorAgent)).build()
@@ -124,7 +124,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
         }
       }
 

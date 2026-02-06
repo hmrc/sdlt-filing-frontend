@@ -60,8 +60,8 @@ object CreateReturnAgentRequest {
               addressLine3 = paSessionQuestions.purchaserAgentAddress.line3,
               addressLine4 = paSessionQuestions.purchaserAgentAddress.line4,
               postcode = paSessionQuestions.purchaserAgentAddress.postcode,
-              phoneNumber = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.phoneNumber),
-              email = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.emailAddress),
+              phoneNumber = paSessionQuestions.purchaserAgentContactDetails.flatMap(_.phoneNumber),
+              email = paSessionQuestions.purchaserAgentContactDetails.flatMap(_.emailAddress),
               agentReference = paSessionQuestions.purchaserAgentReference,
               isAuthorised = Some(paSessionQuestions.purchaserAgentAuthorised.toUpperCase)
             ))
@@ -78,8 +78,8 @@ object CreateReturnAgentRequest {
               addressLine3 = vaSessionQuestions.vendorAgentAddress.line3,
               addressLine4 = vaSessionQuestions.vendorAgentAddress.line4,
               postcode = vaSessionQuestions.vendorAgentAddress.postcode,
-              phoneNumber = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.phoneNumber),
-              email = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.emailAddress),
+              phoneNumber = vaSessionQuestions.vendorAgentContactDetails.flatMap(_.phoneNumber),
+              email = vaSessionQuestions.vendorAgentContactDetails.flatMap(_.emailAddress),
               agentReference = vaSessionQuestions.vendorAgentReference
             ))
         }
@@ -135,8 +135,8 @@ object UpdateReturnAgentRequest {
               addressLine3 = paSessionQuestions.purchaserAgentAddress.line3,
               addressLine4 = paSessionQuestions.purchaserAgentAddress.line4,
               postcode = paSessionQuestions.purchaserAgentAddress.postcode,
-              phoneNumber = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.phoneNumber),
-              email = paSessionQuestions.purchaserAgentsContactDetails.flatMap(_.emailAddress),
+              phoneNumber = paSessionQuestions.purchaserAgentContactDetails.flatMap(_.phoneNumber),
+              email = paSessionQuestions.purchaserAgentContactDetails.flatMap(_.emailAddress),
               agentReference = paSessionQuestions.purchaserAgentReference,
               isAuthorised = Some(paSessionQuestions.purchaserAgentAuthorised.toUpperCase)
             ))
@@ -153,8 +153,8 @@ object UpdateReturnAgentRequest {
               addressLine3 = vaSessionQuestions.vendorAgentAddress.line3,
               addressLine4 = vaSessionQuestions.vendorAgentAddress.line4,
               postcode = vaSessionQuestions.vendorAgentAddress.postcode,
-              phoneNumber = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.phoneNumber),
-              email = vaSessionQuestions.vendorAgentsContactDetails.flatMap(_.emailAddress),
+              phoneNumber = vaSessionQuestions.vendorAgentContactDetails.flatMap(_.phoneNumber),
+              email = vaSessionQuestions.vendorAgentContactDetails.flatMap(_.emailAddress),
               agentReference = vaSessionQuestions.vendorAgentReference
             ))
         }

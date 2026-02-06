@@ -27,7 +27,8 @@ class LandTaskListSpec extends SpecBase {
   private val fullReturnComplete = completeFullReturn
   private val fullReturnCompleteWithOneMainLand = fullReturnComplete.copy(
     land = Some(Seq(completeLand)))
-  private val fullReturnCompleteWithMultipleLands = completeFullReturn
+  private val fullReturnCompleteWithMultipleLands = completeFullReturn.copy(
+    land = Some(Seq(completeLand, completeLand.copy(landID = Some("LAND-ID-2")), completeLand.copy(landID = Some("LAND-ID-3")))))
   private val fullReturnIncompleteLand = fullReturnComplete.copy(
     land = Some(Seq(completeLand.copy(landArea = None))))
   private val fullReturnMissingLand = fullReturnComplete.copy(land = None)

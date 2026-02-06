@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.FullReturn
+import models.{AgentType, FullReturn}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -37,11 +37,10 @@ object VendorAgentTaskList {
 
   def buildVendorAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
 
-    val vendorAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))
+    val vendorAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))
 
-    val url = if (vendorAgentCheck) {
-      //TODO: Change to the Vendor agent Overview page - DTR-2060
-      controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+    val url = if(vendorAgentCheck) {
+        controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
     } else {
       controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
     }
@@ -53,10 +52,8 @@ object VendorAgentTaskList {
         case _ => true
       },
       messageKey = _ => "tasklist.vendorAgentQuestion.details",
-      url = _ => _ => {
-        url
-      },
-      tagId = "vendorQuestionDetailRow",
+      url = _ => _ => {url},
+      tagId = "vendorAgentQuestionDetailRow",
       checks = scheme => Seq(vendorAgentCheck),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
     ).build(fullReturn)

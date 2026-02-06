@@ -16,19 +16,18 @@
 
 package services.vendorAgent
 
-import models.UserAnswers
+import models.{AgentType, Mode, NormalMode, UserAnswers}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 
 class AgentChecksService {
 
-  def vendorAgentExistsCheck(userAnswers: UserAnswers, continueRoute: Result): Result = {
+  def vendorAgentExistsCheck(userAnswers: UserAnswers, continueRoute: Result, mode: Mode): Result = {
 
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
-        if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))) {
-          //TODO DTR-2060: change this to the vendor agent overview page
-          Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+        if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString))) && mode == NormalMode) {
+          Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
         } else {
           continueRoute
         }
@@ -39,7 +38,7 @@ class AgentChecksService {
   def checkMainVendorAgentRepresentedByAgent(userAnswers: UserAnswers, continueRoute: Result): Result = {
     userAnswers.fullReturn.map { fullReturn =>
       val returnAgentExists = fullReturn.returnAgent.isDefined
-      val isAgentTypeVendor = fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))
+      val isAgentTypeVendor = fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))
       val mainVendorId: Option[String] = fullReturn.returnInfo.flatMap(_.mainVendorID)
       val mainVendor = fullReturn.vendor.flatMap(_.find(_.vendorID == mainVendorId))
       val mainVendorExists = mainVendor.isDefined

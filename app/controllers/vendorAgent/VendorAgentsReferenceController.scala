@@ -64,9 +64,9 @@ class VendorAgentsReferenceController @Inject()(
                 case Some(value) => form.fill(value)
               }
               val continueRoute = Ok(view(preparedForm, agentName, mode))
-              agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute)
+              agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute, mode)
             case _ =>
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) //TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
+              Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
           }
       }
   }

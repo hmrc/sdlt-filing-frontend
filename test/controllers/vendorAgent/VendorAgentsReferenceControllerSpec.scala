@@ -47,15 +47,13 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val vendorAgentsReferenceRoute: String = controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(NormalMode).url
 
-  // val fullReturnWithNonVendorAgent: FullReturn = FullReturnConstants.completeFullReturn.copy(returnAgent = None)
-
   val userAnswersWithAgentReferenceKnown: UserAnswers =
     UserAnswers(
       userAnswersId,
       storn = "TESTSTORN",
       data = Json.obj(
         "vendorAgentCurrent" -> Json.obj(
-          "agentName" -> "test",
+          "vendorAgentName" -> "test",
           "vendorAgentsAddReference" -> "yes"
         )
         ),
@@ -67,7 +65,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       userAnswersId, storn = "TESTSTORN",
       data = Json.obj(
         "vendorAgentCurrent" -> Json.obj(
-          "agentName" -> "test",
+          "vendorAgentName" -> "test",
           "vendorAgentsAddReference" -> "no"
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
@@ -79,7 +77,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       storn = "TESTSTORN",
       data = Json.obj(
         "vendorAgentCurrent" -> Json.obj(
-          "agentName" -> "test",
+          "vendorAgentName" -> "test",
         ),
       ),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
@@ -120,7 +118,6 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           val form = formProvider(agentsName)
 
           status(result) mustEqual OK
-          println("-------"+contentAsString((result)))
           contentAsString(result) mustEqual view(form, agentsName, NormalMode)(request, customMessages(application, request)).toString
         }
       }
@@ -186,7 +183,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
         }
       }
 
@@ -200,7 +197,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
         }
       }
 
