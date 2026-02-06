@@ -441,6 +441,12 @@ vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.change.hidden           
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress.change.hidden                    = Agent email address
 vendorAgent.vendorAgentsContactDetails.error.oneRequired                                  = At least one option is required
 
+vendorAgent.removeVendorAgent.title                                                = Are you sure you want to remove the vendor’s agent? - About the vendor’s agent
+vendorAgent.removeVendorAgent.heading                                              = Are you sure you want to remove {0}?
+vendorAgent.removeVendorAgent.checkYourAnswersLabel                                = removeVendorAgent
+vendorAgent.removeVendorAgent.error.required                                       = Please select an option
+vendorAgent.removeVendorAgent.change.hidden                                        = RemoveVendorAgent
+
 
 # Purchaser Messages
 
