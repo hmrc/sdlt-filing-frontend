@@ -9,7 +9,7 @@ import data.Dates.DECEMBER2014_RESIDENTIAL_DATE
 import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import models.sdltRebuild.TaxReliefDetails
-import models.{PropertyDetails, Request}
+import models.{LeaseDetails, LeaseTerm, PropertyDetails, Request}
 import org.scalacheck.Gen
 
 import java.time.LocalDate
@@ -113,6 +113,35 @@ trait RequestGenerators {
   }.toOption.flatten
 
 
+  private val onOrAfterDateGenerator: LocalDate => Gen[Option[LocalDate]] = (onOrAfterDate: LocalDate) => for {
+    year <- Gen.oneOf(onOrAfterDate.getYear to LocalDate.now.getYear)
+    month <- Gen.oneOf(1 to 12)
+    day <- Gen.oneOf(1 to 31)
+  } yield Try {
+    if (onOrAfterDate.toEpochDay < LocalDate.of(year, month, day).toEpochDay)
+      Some(LocalDate.of(year, month, day))
+    else
+      None
+  }.toOption.flatten
+
+  private def generateLeaseDetails(date: LocalDate): LeaseDetails = {
+    LeaseDetails(
+      startDate = date,
+      endDate = date.plusYears(1),
+      leaseTerm = LeaseTerm(
+        years = 1,
+        days = 1,
+        daysInPartialYear = 365
+      ),
+      year1Rent = 999,
+      year2Rent = None,
+      year3Rent = None,
+      year4Rent = None,
+      year5Rent = None
+    )
+  }
+
+
   private def taxReliefRequestGenerator(holdType: HoldingTypes.Value, propertyTypes: Seq[PropertyTypes.Value]): Gen[Request] =
     for {
       taxRelief <- if (holdType == HoldingTypes.freehold) zeroRateTaxReliefGen else zeroRateLeaseHoldsTaxReliefGen
@@ -208,5 +237,37 @@ trait RequestGenerators {
           TaxReliefDetails(taxReliefCode = RightToBuy,
           isPartialRelief = Some(false))),
       )
+
+  def leaseholdNoTaxReliefGenerator(date: LocalDate, onOrAfter: Boolean): Gen[Request] = {
+    for {
+      propertyType <- Gen.oneOf(PropertyTypes.residential, PropertyTypes.nonResidential, PropertyTypes.mixed)
+      nonZeroAmount <- amountGen
+      maybeDate <- if(onOrAfter) onOrAfterDateGenerator(date) else beforeDateGenerator(date)
+
+      effectiveDate = maybeDate.getOrElse(if(onOrAfter) date else date.minusDays(1))
+    } yield
+      Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = propertyType,
+        effectiveDate = effectiveDate,
+        nonUKResident = None,
+        premium = nonZeroAmount,
+        highestRent = BigDecimal(0),
+        propertyDetails = Some(
+          PropertyDetails(
+            individual = true,
+            twoOrMoreProperties = None,
+            replaceMainResidence = None,
+            sharedOwnership = None,
+            currentValue = None
+          )
+        ),
+        leaseDetails = Some(generateLeaseDetails(effectiveDate)),
+        relevantRentDetails = None,
+        firstTimeBuyer = None,
+        isLinked = Some(true),
+        taxReliefDetails = None,
+      )
+  }
 
 }
