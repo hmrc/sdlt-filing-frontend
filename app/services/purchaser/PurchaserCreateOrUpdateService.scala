@@ -103,7 +103,8 @@ class PurchaserCreateOrUpdateService {
             val updatingPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
             val toUpdateOrCreateEligible = mainPurchaserId == updatingPurchaserId
             val companyDetailsExist = userAnswers.fullReturn.flatMap(_.companyDetails).isDefined
-            val isCompany = purchaser.isCompany.contains("YES")
+            val isCompany = purchaser.isCompany.exists(_.equalsIgnoreCase("YES"))
+
 
             (toUpdateOrCreateEligible, isCompany, companyDetailsExist) match {
               case (true, true, false) => backendConnector.createCompanyDetails(
@@ -160,8 +161,9 @@ class PurchaserCreateOrUpdateService {
       )
 
       doesMainPurchaserExist = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID)).isDefined
+      isCompanyNormalized = purchaser.isCompany.map(_.toUpperCase)
 
-      _ <- (purchaser.isCompany, doesMainPurchaserExist) match {
+      _ <- (isCompanyNormalized, doesMainPurchaserExist) match {
         case (Some("YES"), false) =>
           backendConnector.createCompanyDetails(
             purchaserRequestService.convertToCreateCompanyDetailsRequest(
