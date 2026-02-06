@@ -132,7 +132,7 @@ class VendorAgentOverviewController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentOverviewPage, returnAgentId))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO change to Remove
+          } yield Redirect(controllers.vendorAgent.routes.RemoveVendorAgentController.onPageLoad())
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
