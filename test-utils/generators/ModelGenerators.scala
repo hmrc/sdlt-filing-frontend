@@ -26,7 +26,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
-
+  
   implicit lazy val arbitraryLandTypeOfProperty: Arbitrary[LandTypeOfProperty] =
     Arbitrary {
       Gen.oneOf(LandTypeOfProperty.values.toSeq)

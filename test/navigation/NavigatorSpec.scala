@@ -192,6 +192,11 @@ class NavigatorSpec extends SpecBase {
         "go from LandInterestTransferredOrCreatedPage to ConfirmAddressOfLandOrProperty page" in {
           navigator.nextPage(LandInterestTransferredOrCreatedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
+
+        // TODO DTR-2447: Redirect to Lr-5a Title number for the land or property
+        "go from LandRegisteredHmRegistryPage to Title number for the land or property page" in {
+          navigator.nextPage(LandRegisteredHmRegistryPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
+        }
       }
     }
 
