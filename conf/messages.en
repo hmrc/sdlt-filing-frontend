@@ -303,7 +303,7 @@ addressLookup.vendorQuestionsAddress.countryPicker.title                        
 addressLookup.vendorQuestionsAddress.countryPicker.heading                          = Find {0}’s address
 
 # Land Address Lookup
-addressLookup.landQuestionsAddress.lookupPage.title                          = Find {0}’s address - About the Land Address
+addressLookup.landQuestionsAddress.lookupPage.title                          = Review and confirm the address of the land or property
 addressLookup.landQuestionsAddress.lookupPage.heading                        = Find the address of the land or property
 addressLookup.landQuestionsAddress.lookupPage.filterLabel                    = Property name or number (optional)
 addressLookup.landQuestionsAddress.lookupPage.submitLabel                    = Continue

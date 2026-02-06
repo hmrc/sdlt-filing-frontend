@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.*
 import pages.*
+import pages.land.LandAddressPage
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
@@ -176,6 +177,15 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserAgentAuthorisedPage to PurchaserAgentCheckYourAnswers page" in {
           navigator.nextPage(PurchaserAgentAuthorisedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
          }
+
+      }
+
+      "land routes" - {
+
+        // TODO: Redirect to DTR-2444 when created
+        "go from Land Address page to Return Task List" in {
+          navigator.nextPage(LandAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        }
 
       }
     }

@@ -24,6 +24,7 @@ import pages.purchaser.*
 import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
+import pages.land.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -57,6 +58,8 @@ class Navigator @Inject()() {
       _ => controllers.routes.ReturnTaskListController.onPageLoad() // TODO: This will need to redirect to Vendor Agent CYA page - DTR-2057
     case VendorAgentBeforeYouStartPage =>
       _ => controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)
+    case LandAddressPage =>
+      _ => controllers.routes.ReturnTaskListController.onPageLoad()
 
     case page if isPurchaserSection(page) => purchaserRoutes(page)
     case _ => _ => routes.IndexController.onPageLoad()
