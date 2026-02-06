@@ -56,6 +56,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, FullReturn]]
       .flatMap {
         case Right(resp) =>
+          //TODO - Delete after full e2e testing
+          logger.info(s"[getFullReturn] \n $resp")
           Future.successful(
             resp)
         case Left(error) =>
