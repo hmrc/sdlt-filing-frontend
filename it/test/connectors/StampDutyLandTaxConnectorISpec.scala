@@ -1049,7 +1049,7 @@ class StampDutyLandTaxConnectorISpec
       )
 
       val createReturnAgentReturnJson = Json.obj(
-        "returnAgentId" -> "RAID-001"
+        "returnAgentID" -> "RAID-001"
       )
 
       "must return CreateReturnAgentReturn when the stub returns 200 OK" in {
@@ -1066,7 +1066,7 @@ class StampDutyLandTaxConnectorISpec
         val request = createReturnAgentRequestJson.as[CreateReturnAgentRequest]
         val result = connector.createReturnAgent(request).futureValue
 
-        result.returnAgentId mustBe "RAID-001"
+        result.returnAgentID mustBe "RAID-001"
 
         server.verify(
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/return-agent"))

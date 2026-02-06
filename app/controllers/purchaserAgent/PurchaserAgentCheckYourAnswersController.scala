@@ -115,7 +115,7 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
       createReturnAgentRequest <- CreateReturnAgentRequest.from(userAnswers, Purchaser)
       createReturnAgentReturn <- backendConnector.createReturnAgent(createReturnAgentRequest)
     } yield {
-      if (createReturnAgentReturn.returnAgentId.nonEmpty) {
+      if (createReturnAgentReturn.returnAgentID.nonEmpty) {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
       } else {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())

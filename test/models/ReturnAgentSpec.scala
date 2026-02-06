@@ -191,11 +191,11 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
   )
 
   private val validCreateReturnAgentReturnJson = Json.obj(
-    "returnAgentId" -> "AGID-001"
+    "returnAgentID" -> "AGID-001"
   )
 
   private val createReturnAgentReturn = CreateReturnAgentReturn(
-    returnAgentId = "AGID-001"
+    returnAgentID = "AGID-001"
   )
 
   "CreateReturnAgentRequest" - {
@@ -701,7 +701,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
       "must deserialize valid JSON with all fields" in {
         val result = Json.fromJson[CreateReturnAgentReturn](validCreateReturnAgentReturnJson).asEither.value
 
-        result.returnAgentId mustBe "AGID-001"
+        result.returnAgentID mustBe "AGID-001"
       }
 
       "must fail to deserialize when returnAgentId is missing" in {
@@ -713,7 +713,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
       }
 
       "must fail to deserialize when returnAgentId has invalid type" in {
-        val json = Json.obj("returnAgentId" -> 123)
+        val json = Json.obj("returnAgentID" -> 123)
 
         val result = Json.fromJson[CreateReturnAgentReturn](json).asEither
 
@@ -738,14 +738,14 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
       "must serialize CreateReturnAgentReturn with all fields" in {
         val json = Json.toJson(createReturnAgentReturn)
 
-        (json \ "returnAgentId").as[String] mustBe "AGID-001"
+        (json \ "returnAgentID").as[String] mustBe "AGID-001"
       }
 
       "must produce valid JSON structure" in {
         val json = Json.toJson(createReturnAgentReturn)
 
         json mustBe a[JsObject]
-        json.as[JsObject].keys must contain("returnAgentId")
+        json.as[JsObject].keys must contain("returnAgentID")
       }
     }
 
@@ -766,7 +766,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
     "case class" - {
 
       "must create instance with all fields" in {
-        createReturnAgentReturn.returnAgentId mustBe "AGID-001"
+        createReturnAgentReturn.returnAgentID mustBe "AGID-001"
       }
 
       "must support equality" in {
@@ -777,14 +777,14 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
       }
 
       "must support copy with modifications" in {
-        val modified = createReturnAgentReturn.copy(returnAgentId = "AGID-002")
+        val modified = createReturnAgentReturn.copy(returnAgentID = "AGID-002")
 
-        modified.returnAgentId mustBe "AGID-002"
+        modified.returnAgentID mustBe "AGID-002"
       }
 
       "must not be equal when fields differ" in {
         val agentReturn1 = createReturnAgentReturn
-        val agentReturn2 = createReturnAgentReturn.copy(returnAgentId = "AGID-002")
+        val agentReturn2 = createReturnAgentReturn.copy(returnAgentID = "AGID-002")
 
         agentReturn1 must not equal agentReturn2
       }
