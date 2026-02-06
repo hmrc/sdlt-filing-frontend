@@ -904,6 +904,7 @@ land.titleNumber.p2                                                           = 
 land.titleNumber.subheading                                                   = What is the title or folio number?
 land.titleNumber.checkYourAnswersLabel                                        = Title or folio number
 land.titleNumber.error.required                                               = Enter title or folio number
+land.titleNumber.error.invalid                                                = The title or folio number must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 land.titleNumber.error.length                                                 = Title or folio number must be 14 characters or less
 land.titleNumber.change.hidden                                                = Title or folio number
 land.titleNumber.missing                                                      = Select title or folio number
