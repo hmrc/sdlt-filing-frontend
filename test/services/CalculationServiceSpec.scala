@@ -21,6 +21,7 @@ import models._
 import models.sdltRebuild.TaxReliefDetails
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers, MockitoSugar}
+import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
@@ -67,6 +68,8 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       slices = None
     )
 
+    val generateIsLinkedAllPossibleValues : Gen[Option[Boolean]] = Gen.oneOf(None, Some(false), Some(true))
+
     def createResult(msg: String) = Result(
       totalTax = 0,
       resultHeading = Some(msg),
@@ -87,7 +90,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       createResult(msg)
     )
 
-    def createRequest(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate) =  Request(
+    def createRequest(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, isLinked: Option[Boolean] = None) =  Request(
       holdingType = hType,
       propertyType = pType,
       effectiveDate = eDate,
@@ -97,7 +100,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       propertyDetails = None,
       leaseDetails = None,
       relevantRentDetails = None,
-      isLinked = None,
+      isLinked = isLinked,
       taxReliefDetails = None,
       firstTimeBuyer = None
     )
@@ -2079,6 +2082,22 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockLeaseholdCalculationService, never).leaseholdZeroRateTaxReliefRes(any())
         verifyNoMoreInteractions(mockFreeholdCalculationService)
       }
+
+      "given no taxReliefDetails" when {
+        "transaction type is Leasehold, date is on or after 22/11/2017, and isLinked is true" in {
+
+          val result = createSelfAssessedResult("Self-assessed")
+
+          forAll(leaseholdNoTaxReliefGenerator(LocalDate.of(2017, 11, 22), onOrAfter = true)) {
+            leaseholdNoTaxReliefRequest =>
+              reset(mockLeaseholdCalculationService)
+
+              when(mockLeaseholdCalculationService.leaseholdSelfAssessedRes).thenReturn(result)
+              testCalculationService.calculateTax(leaseholdNoTaxReliefRequest) shouldBe CalculationResponse(Seq(result))
+              verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
+          }
+        }
+      }
     }
 
     "should fall back to normal calculation" when {
@@ -2264,6 +2283,58 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
         }
       }
+
+      "transaction type is Leasehold, date is before 22/11/2017, and isLinked is true, false, or None" when {
+        "property type is Residential" in {
+
+          val result = createResult("Self-assessed")
+          val captor = ArgumentCaptor.forClass(classOf[Request])
+
+          forAll(generateIsLinkedAllPossibleValues) {
+            isLinkedValue =>
+            val testRequest = createRequest(
+              HoldingTypes.leasehold,
+              PropertyTypes.residential,
+              LocalDate.of(2017, 11, 21),
+              isLinked = isLinkedValue
+            )
+
+            reset(mockLeaseholdCalculationService)
+
+            when(mockLeaseholdCalculationService.leaseholdResidentialDec14Onwards(any[Request], meq(false), meq(None), meq(false))).thenReturn(result)
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialDec14Onwards(captor.capture(), meq(false), meq(None), meq(false))
+            captor.getValue.isLinked mustBe None
+            verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+          }
+        }
+
+        "property type is Non-residential" in {
+
+          val result = createResultInSeq("Self-assessed")
+          val captor = ArgumentCaptor.forClass(classOf[Request])
+
+          forAll(generateIsLinkedAllPossibleValues) {
+            isLinkedValue =>
+              val testRequest = createRequest(
+                HoldingTypes.leasehold,
+                PropertyTypes.nonResidential,
+                LocalDate.of(2017, 11, 21),
+                isLinked = isLinkedValue
+              )
+
+              reset(mockLeaseholdCalculationService)
+
+              when(mockLeaseholdCalculationService.leaseholdNonResidentialMar16Onwards(any[Request])).thenReturn(result)
+              testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(result)
+
+              verify(mockLeaseholdCalculationService, times(1)).leaseholdNonResidentialMar16Onwards(captor.capture())
+              captor.getValue.isLinked mustBe None
+              verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+          }
+        }
+      }
     }
 
     "return self assessed AcquisitionRelief(14)" when {
@@ -2370,6 +2441,23 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         )
 
         the [InvalidTaxReliefCombinationException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"taxReliefCode: ${testRequest.taxReliefDetails.map(_.taxReliefCode).get} does not apply to Mixed properties"
+      }
+
+      "given no taxReliefDetails, date is before 22/11/2017, and isLinked is true, false, or None" in {
+
+          forAll(generateIsLinkedAllPossibleValues) {
+            isLinkedValue =>
+              val testRequest = createRequest(
+                HoldingTypes.leasehold,
+                PropertyTypes.mixed,
+                LocalDate.of(2017, 11, 21),
+                isLinked = isLinkedValue
+              )
+
+              reset(mockLeaseholdCalculationService)
+
+              the [InvalidDateException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Date of ${testRequest.effectiveDate} is outside of range 2008-03-12 - 2016-03-17"
+          }
       }
     }
   }

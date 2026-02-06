@@ -26,13 +26,14 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
                                    val additionalPropertyService: AdditionalPropertyService) extends DateUtil {
 
   def calculateTax(request: Request): CalculationResponse = {
-    request.taxReliefDetails match {
-      case Some(taxReliefDetails) => calculateTaxRelief(request, taxReliefDetails)
+    (request.holdingType, request.propertyType, request.taxReliefDetails, request.isLinked) match {
+      case (_, _, Some(taxReliefDetails), _) => calculateTaxRelief(request, taxReliefDetails)
+      case (_, _, None, Some(_)) => calculateTaxNoRelief(request)
+      case (`leasehold`, `mixed`, _, _) => calculateLeaseholdMixedPropertyTax(request)
       case _ =>
         (request.holdingType, request.propertyType) match {
           case (HoldingTypes.leasehold, PropertyTypes.residential) => calculateLeaseholdResidentialTax(request)
           case (HoldingTypes.leasehold, PropertyTypes.nonResidential) => calculateLeaseholdNonResidentialTax(request)
-          case (HoldingTypes.leasehold, PropertyTypes.mixed) => calculateLeaseholdMixedPropertyTax(request)
           case (HoldingTypes.freehold, PropertyTypes.residential) => calculateFreeholdResidentialTax(request)
           case (HoldingTypes.freehold, PropertyTypes.nonResidential) => calculateFreeholdNonResidentialTax(request)
           case _ => throw new RequiredValueNotDefinedException("Value not defined")
@@ -369,7 +370,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
     (request.holdingType, request.propertyType, isAdditionalProperty, taxReliefDetails.taxReliefCode, request.isLinked) match {
       /* ------------- FreeHoldCases--------------------------- */
-      case (`freehold`, _, _, CollectiveEnfranchisementByLeaseholders, None)
+      case (`freehold`, _, _, CollectiveEnfranchisementByLeaseholders, _)
         if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>
         CalculationResponse(Seq(
           freeCalculationService.freeholdSelfAssessedRes
@@ -433,7 +434,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         ))
 
       /* ------------- LeaseHoldCases--------------------------- */
-      case (`leasehold`, _, _, CollectiveEnfranchisementByLeaseholders, None)
+      case (`leasehold`, _, _, CollectiveEnfranchisementByLeaseholders, _)
         if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdSelfAssessedRes
@@ -447,7 +448,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
         ))
-      case (`leasehold`, `residential`, false, FirstTimeBuyersRelief, None)
+      case (`leasehold`, `residential`, false, FirstTimeBuyersRelief, _)
         if isAfterMar2010AndBeforeMar2012(request.effectiveDate) =>
           CalculationResponse(Seq(
             leaseCalculationService.leaseholdSelfAssessedRes
@@ -482,12 +483,25 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
   }
 
   def calculateLeaseholdMixedPropertyTax(request: Request): CalculationResponse = {
-    if(isAfterMar2008AndBeforeMar2016(request.effectiveDate)) {
+    if (isAfterMar2008AndBeforeMar2016(request.effectiveDate)) {
       CalculationResponse(Seq(
         leaseCalculationService.leaseholdSelfAssessedRes
       ))
     } else {
       throw new InvalidDateException(s"Date of ${request.effectiveDate} is outside of range ${Dates.MIN_MIXED_PROPERTY_DATE} - ${Dates.MARCH2016_NON_RESIDENTIAL_DATE}")
+    }
+  }
+
+  def calculateTaxNoRelief(request: Request): CalculationResponse = {
+
+    (request.holdingType, request.propertyType, request.isLinked) match {
+      case (`leasehold`, _, Some(true))
+        if request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) =>
+          CalculationResponse(Seq(
+            leaseCalculationService.leaseholdSelfAssessedRes
+          ))
+      case _ =>
+        calculateTax(request.copy(isLinked = None, taxReliefDetails = None))
     }
   }
 }
