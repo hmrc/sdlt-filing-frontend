@@ -57,6 +57,14 @@ class LandTitleNumberFormProviderSpec extends StringFieldBehaviours {
       )
     }
 
+    "not bind strings with invalid characters" in {
+      val invalidValue = "ABC123💥"
+
+      val result = form.bind(Map(fieldName -> invalidValue))
+
+      result.errors.map(_.message) must contain(invalidKey)
+    }
+
     behave like mandatoryField(
       form,
       fieldName,
