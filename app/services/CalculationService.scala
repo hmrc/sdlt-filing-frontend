@@ -486,9 +486,19 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
     (request.holdingType, request.propertyType, request.isLinked) match {
       /* ------------- FreeHoldCases--------------------------- */
-      case(HoldingTypes.freehold, `mixed` | `nonResidential`, Some(true))
+      case (`freehold`, `mixed` | `nonResidential`, Some(true))
       if request.effectiveDate.onOrAfter(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
-        CalculationResponse(Seq(freeCalculationService.freeholdSelfAssessedRes))
+        CalculationResponse(Seq(
+          freeCalculationService.freeholdSelfAssessedRes
+        ))
+      case (`freehold`, `mixed` | `nonResidential`, Some(true))
+        if request.effectiveDate.isBefore(Dates.MAR2017_EFFECTIVE_DATE) =>
+        CalculationResponse(Seq(
+          freeCalculationService.freeholdSelfAssessedRes
+        ))
+      case (`freehold`, `mixed`, _) =>
+        throw new InvalidDateException(
+          s"Effective date: ${request.effectiveDate} currently does not apply to ${request.holdingType}, ${request.propertyType} properties with isLinked = ${request.isLinked}")
 
       /* ------------- LeaseHoldCases--------------------------- */
       case (`leasehold`, _, Some(true))
