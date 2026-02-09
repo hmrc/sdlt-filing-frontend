@@ -888,3 +888,11 @@ land.landRegisteredHmRegistry.checkYourAnswersLabel                           = 
 land.landRegisteredHmRegistry.error.required                                  = Please select an option
 land.landRegisteredHmRegistry.change.hidden                                   = Is the land or property registered with HM Land Registry?
 land.landRegisteredHmRegistry.missing                                         = Select if the land or property is registered with HM Land Registry
+
+land.addNlpgUprn.title                                                        = Do you have an NLPG UPRN for the land or property?
+land.addNlpgUprn.heading                                                      = Do you have an NLPG UPRN for the land or property?
+land.addNlpgUprn.checkYourAnswersLabel                                        = landAddNlpgUprn
+land.addNlpgUprn.error.required                                               = Select yes if you have an NLPG UPRN for the land or property
+land.addNlpgUprn.change.hidden                                                = LandAddNlpgUprn
+land.addNlpgUprn.hint                                                         = A National Land and Property Gazetteer Unique Property Reference Number (NLPG UPRN) is a unique identifier for every addressable location in England, Scotland, Wales and Northern Ireland
+land.addNlpgUprn.missing                                                      = Select if you have an NLPG UPRN for the land or property

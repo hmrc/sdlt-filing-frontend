@@ -309,3 +309,8 @@ GET        /about-the-land/HM-land-registration                                 
 POST       /about-the-land/HM-land-registration                                           controllers.land.LandRegisteredHmRegistryController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-land/HM-land-registration/change                                    controllers.land.LandRegisteredHmRegistryController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-land/HM-land-registration/change                                    controllers.land.LandRegisteredHmRegistryController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-land/add-NLPG-UPRN                                                  controllers.land.LandAddNlpgUprnController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/add-NLPG-UPRN                                                  controllers.land.LandAddNlpgUprnController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/add-NLPG-UPRN/change                                           controllers.land.LandAddNlpgUprnController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/add-NLPG-UPRN/change                                           controllers.land.LandAddNlpgUprnController.onSubmit(mode: Mode = CheckMode)

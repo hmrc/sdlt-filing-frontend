@@ -18,7 +18,7 @@ package controllers.land
 
 import controllers.actions.*
 import forms.land.LandRegisteredHmRegistryFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
 import navigation.Navigator
 import pages.land.LandRegisteredHmRegistryPage
 import play.api.data.Form
@@ -71,8 +71,8 @@ class LandRegisteredHmRegistryController @Inject()(
               (value) match {
                 case true =>
                   Redirect(navigator.nextPage(LandRegisteredHmRegistryPage, mode, updatedAnswers))
-                case _ =>//TODO update to Lr6 DTR-2456
-                  Redirect(controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode))
+                case _ =>
+                  Redirect(controllers.land.routes.LandAddNlpgUprnController.onPageLoad(mode))
               }
             }
       )
