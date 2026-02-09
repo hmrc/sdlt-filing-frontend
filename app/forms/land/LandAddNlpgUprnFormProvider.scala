@@ -25,6 +25,6 @@ class LandAddNlpgUprnFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("landAddNlpgUprn.error.required")
+      "value" -> boolean("land.addNlpgUprn.error.required")
     )
 }

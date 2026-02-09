@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class LandAddNlpgUprnFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "landAddNlpgUprn.error.required"
+  val requiredKey = "land.addNlpgUprn.error.required"
   val invalidKey = "error.boolean"
 
   val form = new LandAddNlpgUprnFormProvider()()
