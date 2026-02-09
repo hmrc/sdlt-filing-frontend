@@ -142,13 +142,13 @@ class Navigator @Inject()() {
       _ => controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(NormalMode)
     case LandInterestTransferredOrCreatedPage =>
       _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO DTR-2430: Redirect to SDLT - Confirm the address of the land or property
+    case LandRegisteredHmRegistryPage => //TODO update to Lr-5a DTR-2447
+      _ => controllers.land.routes.LandTitleNumberController.onPageLoad(NormalMode)
     case LandTitleNumberPage =>
       _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO DTR-2456: Redirect to SDLT - Do you have an NLPG UPRN for the land or property? - lr-6
-
-    case LandRegisteredHmRegistryPage => //TODO update to Lr-5a DTR-2447
-      _ => controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
     case LandAddNlpgUprnPage =>
       _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO DTR-2459: Redirect to What is the NLPG UPRN for the land or property page
+
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
