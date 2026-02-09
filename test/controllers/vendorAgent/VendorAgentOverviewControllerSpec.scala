@@ -253,7 +253,7 @@ class VendorAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            controllers.routes.ReturnTaskListController.onPageLoad().url
+            controllers.vendorAgent.routes.RemoveVendorAgentController.onPageLoad().url
         }
       }
 
