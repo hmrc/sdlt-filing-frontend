@@ -135,8 +135,8 @@ object UpdatePurchaserRequest {
   def from(userAnswers: UserAnswers, purchaser: Purchaser): Future[UpdatePurchaserRequest] = {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
-        (purchaser.purchaserResourceRef, purchaser.isCompany, purchaser.isTrustee, purchaser.isConnectedToVendor, purchaser.isRepresentedByAgent, purchaser.address1) match {
-          case (Some(ref), Some(isCompany), Some(isTrustee), Some(isConnectedToVendor), Some(isRepresentedByAgent), Some(address1)) =>
+        (purchaser.purchaserResourceRef, purchaser.isCompany, purchaser.isTrustee, purchaser.isConnectedToVendor, purchaser.address1) match {
+          case (Some(ref), Some(isCompany), Some(isTrustee), Some(isConnectedToVendor), Some(address1)) =>
             Future.successful(UpdatePurchaserRequest(
               stornId = fullReturn.stornId,
               purchaserResourceRef = ref,
@@ -144,7 +144,7 @@ object UpdatePurchaserRequest {
               isCompany = isCompany,
               isTrustee = isTrustee,
               isConnectedToVendor = isConnectedToVendor,
-              isRepresentedByAgent = isRepresentedByAgent,
+              isRepresentedByAgent = purchaser.isRepresentedByAgent.getOrElse("NO"),
               title = purchaser.title,
               surname = purchaser.surname,
               forename1 = purchaser.forename1,
