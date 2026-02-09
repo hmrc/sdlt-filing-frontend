@@ -304,3 +304,8 @@ GET        /about-the-land/interest-transferred-or-created                      
 POST       /about-the-land/interest-transferred-or-created                                controllers.land.LandInterestTransferredOrCreatedController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-land/interest-transferred-or-created/change                         controllers.land.LandInterestTransferredOrCreatedController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-land/interest-transferred-or-created/change                         controllers.land.LandInterestTransferredOrCreatedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-land/HM-land-registration                                           controllers.land.LandRegisteredHmRegistryController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/HM-land-registration                                           controllers.land.LandRegisteredHmRegistryController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/HM-land-registration/change                                    controllers.land.LandRegisteredHmRegistryController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/HM-land-registration/change                                    controllers.land.LandRegisteredHmRegistryController.onSubmit(mode: Mode = CheckMode)
