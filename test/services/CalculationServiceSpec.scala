@@ -102,6 +102,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       propertyDetails = None,
       leaseDetails = None,
       relevantRentDetails = None,
+      interestTransferred = None,
       isLinked = isLinked,
       taxReliefDetails = None,
       firstTimeBuyer = None
@@ -126,6 +127,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       leaseDetails = None,
       relevantRentDetails = None,
       isLinked = None,
+      interestTransferred = None,
       taxReliefDetails = None,
       firstTimeBuyer = Some(true)
     )
@@ -159,6 +161,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         leaseDetails = None,
         relevantRentDetails = None,
         firstTimeBuyer = Some(true),
+        interestTransferred = None,
         isLinked = isLinked,
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = taxReliefCode, isPartialRelief = isPartialRelief)),
       )
@@ -1862,6 +1865,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           relevantRentDetails = None,
           firstTimeBuyer = None,
           isLinked = Some(false),
+          interestTransferred = None,
           taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
         )
 
@@ -1890,6 +1894,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
             relevantRentDetails = None,
             firstTimeBuyer = None,
             isLinked = None,
+            interestTransferred = None,
             taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
           )
 
@@ -1915,6 +1920,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           relevantRentDetails = None,
           firstTimeBuyer = None,
           isLinked = None,
+          interestTransferred = None,
           taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
         )
         val result = createResult(RESULT_HEADING_TAX_RELIEF)
@@ -1959,6 +1965,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           relevantRentDetails = None,
           firstTimeBuyer = None,
           isLinked = None,
+          interestTransferred = None,
           taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = CollectiveEnfranchisementByLeaseholders, isPartialRelief = None))
         )
 
@@ -2669,6 +2676,28 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           the[RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Value not defined"
         }
       }
+    }
+
+    "return self-assessed for FREEHOLD when interestTransferred contains OT" in {
+      val testRequest = createRequest(freehold, residential, LocalDate.of(2017, 11, 22)).copy(interestTransferred = Some("OT"))
+      val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+      when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+      testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+      verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+    }
+
+    "return self-assessed for LEASEHOLD when interestTransferred contains OT" in {
+      val testRequest = createRequest(leasehold, residential, LocalDate.of(2017, 11, 22)).copy(interestTransferred = Some("OT"))
+      val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+      when(mockLeaseholdCalculationService.leaseholdSelfAssessedRes).thenReturn(result)
+
+      testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+      verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
     }
   }
 

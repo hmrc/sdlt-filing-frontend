@@ -61,6 +61,7 @@ object Request {
     (__ \ "relevantRentDetails").readNullable[RelevantRentDetails] and
     (__ \ "firstTimeBuyer").readNullable[Boolean](yesNoToBooleanReads) and
     (__ \ "isLinked").readNullable[Boolean] and
+    (__ \ "interestTransferred").readNullable[String] and
     (__ \ "taxReliefDetails").readNullable[TaxReliefDetails]
   )(Request.apply _)
 }
@@ -77,6 +78,7 @@ case class Request(
                   relevantRentDetails: Option[RelevantRentDetails],
                   firstTimeBuyer: Option[Boolean],
                   isLinked: Option[Boolean],
+                  interestTransferred: Option[String],
                   taxReliefDetails: Option[TaxReliefDetails]
                   )
 

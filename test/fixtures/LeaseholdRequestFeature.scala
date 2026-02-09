@@ -33,6 +33,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -56,6 +57,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -79,6 +81,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -102,6 +105,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -125,6 +129,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -150,6 +155,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -173,6 +179,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -196,6 +203,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -219,6 +227,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(true)
   )
@@ -250,6 +259,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -275,6 +285,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -300,6 +311,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -323,6 +335,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -348,6 +361,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = Some(false)
   )
@@ -377,6 +391,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
       )
     ),
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -400,6 +415,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -423,6 +439,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -446,6 +463,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -469,6 +487,7 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )

@@ -64,6 +64,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
     relevantRentDetails = None,
     taxReliefDetails = taxReliefDetails,
     firstTimeBuyer = None,
+    interestTransferred = None,
     isLinked = linked
   )
 
@@ -86,6 +87,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
     ),
     relevantRentDetails = None,
     isLinked = None,
+    interestTransferred = None,
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
@@ -111,6 +113,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
     relevantRentDetails = None,
     taxReliefDetails = taxReliefDetails,
     firstTimeBuyer = None,
+    interestTransferred = None,
     isLinked = linked
   )
 
@@ -134,6 +137,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
     relevantRentDetails = None,
     isLinked = None,
     taxReliefDetails = None,
+    interestTransferred = None,
     firstTimeBuyer = Some(true)
   )
 
@@ -1872,6 +1876,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
           relevantRentDetails = None,
           taxReliefDetails = None,
           isLinked = None,
+          interestTransferred = None,
           firstTimeBuyer = None
         )
 
@@ -1919,6 +1924,7 @@ class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChe
         relevantRentDetails = None,
         firstTimeBuyer = None,
         isLinked = None,
+        interestTransferred = None,
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = AcquisitionRelief, isPartialRelief = None))
       )
 

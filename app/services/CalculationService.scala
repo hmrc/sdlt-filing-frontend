@@ -27,9 +27,10 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
   def calculateTax(request: Request): CalculationResponse = {
     (request.holdingType, request.propertyType, request.taxReliefDetails, request.isLinked) match {
-      case (_, _, Some(taxReliefDetails), _) => calculateTaxRelief(request, taxReliefDetails)
-      case (_, _, None, Some(_)) => calculateTaxNoRelief(request)
-      case (`leasehold`, `mixed`, _, _) => calculateLeaseholdMixedPropertyTax(request)
+      case _ if request.interestTransferred.contains("OT")         => calculateTaxForOtherInterestTransferred(request)
+      case (          _,       _, Some(taxReliefDetails),       _) => calculateTaxRelief(request, taxReliefDetails)
+      case (          _,       _,                   None, Some(_)) => calculateTaxNoRelief(request)
+      case (`leasehold`, `mixed`,                   None,       _) => calculateLeaseholdMixedPropertyTax(request)
       case _ =>
         (request.holdingType, request.propertyType) match {
           case (HoldingTypes.leasehold, PropertyTypes.residential) => calculateLeaseholdResidentialTax(request)
@@ -384,12 +385,10 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           freeCalculationService.freeholdZeroRateTaxReliefRes
         ))
-
       case (`freehold`, `mixed` | `nonResidential`, _ , RightToBuy, Some(false)) if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(
           freeCalculationService.freeholdRightToBuyBeforeMarch2016(request)
         ))
-
       case (`freehold`, _, _, taxReliefCode, Some(false))
         if standardZeroRateFreeholdReliefCodes.contains(taxReliefCode) =>
         CalculationResponse(Seq(
@@ -480,6 +479,13 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           s"isAdditionalProperty: $isAdditionalProperty, isLinked: $isLinked")
         calculateTax(request.copy(taxReliefDetails = None))
     }
+  }
+
+  def calculateTaxForOtherInterestTransferred(request: Request): CalculationResponse = {
+    if (request.holdingType == freehold)
+      CalculationResponse(Seq(freeCalculationService.freeholdSelfAssessedRes))
+    else
+      CalculationResponse(Seq(leaseCalculationService.leaseholdSelfAssessedRes))
   }
 
   def calculateTaxNoRelief(request: Request): CalculationResponse = {

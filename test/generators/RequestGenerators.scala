@@ -170,6 +170,7 @@ trait RequestGenerators {
         relevantRentDetails = None,
         firstTimeBuyer = Some(true),
         isLinked = Some(false),
+        interestTransferred = None,
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = taxRelief, isPartialRelief = Some(false))),
       )
 
@@ -203,6 +204,7 @@ trait RequestGenerators {
         relevantRentDetails = None,
         firstTimeBuyer = Some(true),
         isLinked = Some(true),
+        interestTransferred = None,
         taxReliefDetails = Some(TaxReliefDetails(taxReliefCode = taxRelief, isPartialRelief = Some(false))),
       )
   }
@@ -233,6 +235,7 @@ trait RequestGenerators {
         relevantRentDetails = None,
         firstTimeBuyer = Some(true),
         isLinked = Some(false),
+        interestTransferred = None,
         taxReliefDetails = Some(
           TaxReliefDetails(taxReliefCode = RightToBuy,
           isPartialRelief = Some(false))),
@@ -267,6 +270,7 @@ trait RequestGenerators {
         firstTimeBuyer = None,
         isLinked = Some(true),
         taxReliefDetails = None,
+        interestTransferred = None
       )
   }
 

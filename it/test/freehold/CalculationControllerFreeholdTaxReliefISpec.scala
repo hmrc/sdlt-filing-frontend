@@ -1692,6 +1692,32 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           }
         }
       }
+      // SDLT - Tax Calc Case - 19 - Self Assessed
+      "interest transferred has value other: OT" must {
+        "return the self assessed response" in {
+          val request: WSResponse = ws
+            .url(calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  | "holdingType": "Freehold",
+                  | "propertyType": "Non-residential",
+                  | "effectiveDateDay": 23,
+                  | "effectiveDateMonth": 4,
+                  | "effectiveDateYear": 2012,
+                  | "premium": 1000000,
+                  | "interestTransferred": "OT",
+                  | "highestRent": 0
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          request.status shouldBe OK
+          request.json shouldBe selfAssessedResponse
+        }
+      }
     }
   }
 }

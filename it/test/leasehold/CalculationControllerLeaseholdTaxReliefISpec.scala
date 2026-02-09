@@ -1539,6 +1539,48 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
           }
         }
       }
+
+      // SDLT - Tax Calc Case - 19 - Self Assessed
+      "interest transferred has value other: OT" must {
+        "return the self assessed response" in {
+          val request: WSResponse = ws
+            .url(calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 23,
+                  |  "effectiveDateMonth": 3,
+                  |  "effectiveDateYear": 2012,
+                  |  "premium": 1000000,
+                  |  "highestRent": 0,
+                  |  "leaseDetails": {
+                  |    "startDateDay": 23,
+                  |    "startDateMonth": 3,
+                  |    "startDateYear": 2012,
+                  |    "endDateDay": 23,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2013,
+                  |    "leaseTerm": {
+                  |      "years": 1,
+                  |      "days": 1,
+                  |      "daysInPartialYear": 365
+                  |    },
+                  |    "year1Rent": 999,
+                  |    "year2Rent": 999
+                  |  },
+                  |  "interestTransferred": "OT"
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          request.status shouldBe OK
+          request.json shouldBe selfAssessedResponse
+        }
+      }
     }
   }
 }
