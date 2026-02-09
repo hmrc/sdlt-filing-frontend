@@ -93,13 +93,24 @@ object Purchaser {
 
   def from(userAnswers: Option[UserAnswers]): Future[Purchaser] = {
     val purchaserSessionQuestions: PurchaserSessionQuestions = userAnswers.get.data.as[PurchaserSessionQuestions]
-      Future.successful(
+
+    val maybePurchaserResourceRef = for {
+      answers <- userAnswers
+      fullReturn <- answers.fullReturn
+      purchasers <- fullReturn.purchaser
+      purchaserId <- purchaserSessionQuestions.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
+      existingPurchaser <- purchasers.find(_.purchaserID.contains(purchaserId))
+      resourceRef <- existingPurchaser.purchaserResourceRef
+    } yield resourceRef
+
+    Future.successful(
         Purchaser(
           purchaserID = purchaserSessionQuestions.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID),
           returnID = userAnswers.flatMap(_.returnId),
           isCompany = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Company") Some("YES") else Some("NO"),
           isTrustee =  purchaserSessionQuestions.purchaserCurrent.isPurchaserActingAsTrustee.map(_.toUpperCase),
           isConnectedToVendor = purchaserSessionQuestions.purchaserCurrent.purchaserAndVendorConnected.map(_.toUpperCase),
+          isRepresentedByAgent = Some("NO"),
           title = None,
           surname = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
             Some(purchaserSessionQuestions.purchaserCurrent.nameOfPurchaser.name)
@@ -121,11 +132,11 @@ object Purchaser {
           postcode  = purchaserSessionQuestions.purchaserCurrent.purchaserAddress.postcode,
           phone  = purchaserSessionQuestions.purchaserCurrent.enterPurchaserPhoneNumber,
           nino = purchaserSessionQuestions.purchaserCurrent.nationalInsuranceNumber,
-          purchaserResourceRef  = None,
+          purchaserResourceRef  = maybePurchaserResourceRef,
           nextPurchaserID = None,
-          lMigrated  = None, // Used in backend
-          createDate  = None, // Used in backend
-          lastUpdateDate = None, // Used in backend
+          lMigrated  = None,
+          createDate  = None,
+          lastUpdateDate = None,
           isUkCompany = None,
           hasNino  = purchaserSessionQuestions.purchaserCurrent.doesPurchaserHaveNI.map(_.toString.toLowerCase),
           dateOfBirth  = purchaserSessionQuestions.purchaserCurrent.purchaserDateOfBirth.map(_.toString),
@@ -268,7 +279,7 @@ object Land {
 
 case class Transaction(
                         transactionID: Option[String] = None,
-                        returnID: Option[String] = None, // Used in backend
+                        returnID: Option[String] = None,
                         claimingRelief: Option[String] = None,
                         reliefAmount: Option[BigDecimal] = None,
                         reliefReason: Option[String] = None,

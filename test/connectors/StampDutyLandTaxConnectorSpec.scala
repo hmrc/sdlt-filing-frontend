@@ -1725,13 +1725,13 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = "NO",
+          isTrustee = "NO",
+          isConnectedToVendor = "NO",
+          isRepresentedByAgent = "YES",
           title = Some("Mr"),
           surname = Some("Jones Updated"),
-          address1 = Some("Park Avenue"),
+          address1 = "Park Avenue",
           nextPurchaserId = Some("PID-002")
         )
         val expectedResult = models.purchaser.UpdatePurchaserReturn(updated = true)
@@ -1759,11 +1759,11 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
-          address1 = Some("Park Avenue")
+          isCompany = "NO",
+          isTrustee = "NO",
+          isConnectedToVendor = "NO",
+          isRepresentedByAgent = "YES",
+          address1 = "Park Avenue"
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Not Found", 404)
 
@@ -1790,11 +1790,11 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
-          address1 = Some("Park Avenue")
+          isCompany = "NO",
+          isTrustee = "NO",
+          isConnectedToVendor = "NO",
+          isRepresentedByAgent = "YES",
+          address1 = "Park Avenue"
         )
         val runtimeException = new RuntimeException("Connection failed")
 
@@ -1822,11 +1822,11 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
-          address1 = Some("Park Avenue")
+          isCompany = "NO",
+          isTrustee = "NO",
+          isConnectedToVendor = "NO",
+          isRepresentedByAgent = "YES",
+          address1 = "Park Avenue"
         )
         val expectedResult = models.purchaser.UpdatePurchaserReturn(updated = true)
 

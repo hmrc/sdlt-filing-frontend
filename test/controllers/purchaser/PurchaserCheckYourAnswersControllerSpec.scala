@@ -18,27 +18,26 @@ package controllers.purchaser
 
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
-import models.purchaser.{ConfirmNameOfThePurchaser, CreatePurchaserRequest, CreatePurchaserReturn}
-import models.{ FullReturn, Purchaser, ReturnInfo, UserAnswers}
-import org.scalatest.prop.TableDrivenPropertyChecks
-import pages.purchaser.ConfirmNameOfThePurchaserPage
-import play.api.libs.json.{JsNull, Json}
-import play.api.mvc.Results.Redirect
-import services.purchaser.{PurchaserCreateOrUpdateService, PurchaserRequestService}
-
-import java.time.Instant
+import models.purchaser.{ConfirmNameOfThePurchaser, CreatePurchaserReturn}
+import models.{FullReturn, Purchaser, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.prop.TableDrivenPropertyChecks.*
 import org.scalatestplus.mockito.MockitoSugar
+import pages.purchaser.ConfirmNameOfThePurchaserPage
 import play.api.inject.bind
+import play.api.libs.json.{JsNull, Json}
+import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.purchaser.{PurchaserCreateOrUpdateService, PurchaserRequestService}
 import uk.gov.hmrc.http.HeaderCarrier
-import org.scalatest.prop.TableDrivenPropertyChecks._
 import viewmodels.govuk.SummaryListFluency
 
+import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
@@ -549,17 +548,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
 
       "must redirect to PurchaserOverview when all required data is present and valid" in {
 
-        val createPurchaserRequest = CreatePurchaserRequest(
-          stornId = "12345",
-          returnResourceRef = "RRF-2024-001",
-          isCompany = "YES",
-          isTrustee = "Yes",
-          isConnectedToVendor ="Yes",
-          isRepresentedByAgent ="Yes",
-          surname = Some("Samsung"),
-          address1 = "Street 1",
-        )
-
         val userAnswers = UserAnswers(
           id = "test-session-id",
           storn = "test-storn",
@@ -629,8 +617,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         when(mockBackendConnector.createPurchaser(any())(any(), any())).thenReturn(Future.successful(CreatePurchaserReturn("PUR-REF-001", "PUR001")))
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-
-        when(mockPurchaserRequestService.convertToCreatePurchaserRequest(any(), any(), any())).thenReturn(createPurchaserRequest)
 
         when(mockPurchaserCreateOrUpdateService.result(any(), any(), any(),
           any())(any(), any(), any())).thenReturn(Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())))

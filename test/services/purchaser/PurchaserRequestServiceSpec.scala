@@ -17,8 +17,8 @@
 package services.purchaser
 
 import base.SpecBase
-import models.{CompanyDetails, Purchaser}
-import models.purchaser.{CreateCompanyDetailsRequest, CreatePurchaserRequest, UpdateCompanyDetailsRequest, UpdatePurchaserRequest}
+import models.CompanyDetails
+import models.purchaser.{CreateCompanyDetailsRequest, UpdateCompanyDetailsRequest}
 import org.scalatest.matchers.should.Matchers.shouldBe
 
 class PurchaserRequestServiceSpec extends SpecBase{
@@ -26,37 +26,6 @@ class PurchaserRequestServiceSpec extends SpecBase{
   private val testStornId = "STORN123456"
   private val returnResourceRef = "RRF-2024-001"
   private val purchaserResourceRef = "PUR-REF-001"
-  private val validPurchaserCompanyObject = Purchaser(
-    purchaserID = Some("PUR123"),
-    returnID = Some("12345"),
-    isCompany = Some("YES"),
-    isTrustee = Some("yes"),
-    isConnectedToVendor = Some("yes"),
-    isRepresentedByAgent = Some("yes"),
-    title = None,
-    surname = Some("Company"),
-    forename1 = None,
-    forename2 = None,
-    companyName = Some("Company"),
-    houseNumber = None,
-    address1 = Some("Street 1"),
-    address2 = Some("Street 2"),
-    address3 = Some("Street 3"),
-    address4 = Some("Street 4"),
-    postcode = Some("CR7 8LU"),
-    phone = Some("+447874363636"),
-    nino = None,
-    purchaserResourceRef = None,
-    nextPurchaserID = None,
-    lMigrated = None,
-    createDate = None,
-    lastUpdateDate = None,
-    isUkCompany = None,
-    hasNino = None,
-    dateOfBirth = None,
-    registrationNumber = Some("VAT123"),
-    placeOfRegistration = None
-  )
   private val validCompanyDetails = CompanyDetails(
     companyDetailsID = Some("COMPDET001"),
     returnID = Some("12345"),
@@ -83,78 +52,6 @@ class PurchaserRequestServiceSpec extends SpecBase{
   val service = new PurchaserRequestService()
 
   "PurchaserRequestService" - {
-    ".convertToCreatePurchaserRequest" in {
-      val expectedCreatePurchaserRequest = CreatePurchaserRequest(
-        testStornId,
-        returnResourceRef,
-        isCompany = "YES",
-        isTrustee = "yes",
-        isConnectedToVendor = "yes",
-        isRepresentedByAgent = "yes",
-        title = None,
-        surname = Some("Company"),
-        forename1 = None,
-        forename2 = None,
-        companyName = Some("Company"),
-        houseNumber = None,
-        address1 = "Street 1",
-        address2 = Some("Street 2"),
-        address3 = Some("Street 3"),
-        address4 = Some("Street 4"),
-        postcode = Some("CR7 8LU"),
-        phone = Some("+447874363636"),
-        nino = None,
-        isUkCompany = None,
-        hasNino = None,
-        dateOfBirth = None,
-        registrationNumber = Some("VAT123"),
-        placeOfRegistration = None
-      )
-      val result = service.convertToCreatePurchaserRequest(validPurchaserCompanyObject, testStornId, returnResourceRef)
-
-      result shouldBe expectedCreatePurchaserRequest
-    }
-
-    ".convertToUpdatePurchaserRequest" in {
-      val expectedUpdatePurchaserRequest = UpdatePurchaserRequest(
-        testStornId,
-        returnResourceRef,
-        purchaserResourceRef = "PUR-REF-001",
-        isCompany = Some("YES"),
-        isTrustee =  Some("yes"),
-        isConnectedToVendor =  Some("yes"),
-        isRepresentedByAgent =  Some("yes"),
-        title = None,
-        surname = Some("Company"),
-        forename1 = None,
-        forename2 = None,
-        companyName = Some("Company"),
-        houseNumber = None,
-        address1 =  Some("Street 1"),
-        address2 = Some("Street 2"),
-        address3 = Some("Street 3"),
-        address4 = Some("Street 4"),
-        postcode = Some("CR7 8LU"),
-        phone = Some("+447874363636"),
-        nino = None,
-        isUkCompany = None,
-        hasNino = None,
-        dateOfBirth = None,
-        registrationNumber = Some("VAT123"),
-        placeOfRegistration = None
-      )
-
-      val result = service.convertToUpdatePurchaserRequest(
-        validPurchaserCompanyObject,
-        testStornId,
-        returnResourceRef,
-        purchaserResourceRef,
-        None
-      )
-
-      result shouldBe expectedUpdatePurchaserRequest
-    }
-
     ".convertToCreateCompanyDetailsRequest" in {
       val expectedCreateCompanyDetailsRequest = CreateCompanyDetailsRequest(
         testStornId,

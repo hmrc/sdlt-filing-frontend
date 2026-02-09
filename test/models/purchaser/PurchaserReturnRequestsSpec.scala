@@ -157,17 +157,17 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
     purchaserResourceRef = "PRF-001",
-    isCompany = Some("NO"),
-    isTrustee = Some("NO"),
-    isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("YES"),
+    isCompany ="NO",
+    isTrustee = "NO",
+    isConnectedToVendor = "NO",
+    isRepresentedByAgent ="YES",
     title = Some("Mr"),
     surname = Some("Jones Updated"),
     forename1 = Some("David"),
     forename2 = Some("Michael"),
     companyName = None,
     houseNumber = Some("25"),
-    address1 = Some("Park Avenue"),
+    address1 = "Park Avenue",
     address2 = Some("Flat 3"),
     address3 = Some("Central District"),
     address4 = Some("London"),
@@ -186,11 +186,11 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
     purchaserResourceRef = "PRF-001",
-    isCompany = Some("NO"),
-    isTrustee = Some("NO"),
-    isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("YES"),
-    address1 = Some("Park Avenue")
+    isCompany = "NO",
+    isTrustee = "NO",
+    isConnectedToVendor = "NO",
+    isRepresentedByAgent = "YES",
+    address1 = "Park Avenue"
   )
 
   private val validUpdatePurchaserReturnJsonTrue = Json.obj("updated" -> true)
@@ -671,10 +671,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
         result.purchaserResourceRef mustBe "PRF-001"
-        result.isCompany mustBe Some("NO")
-        result.isTrustee mustBe Some("NO")
-        result.isConnectedToVendor mustBe Some("NO")
-        result.isRepresentedByAgent mustBe Some("YES")
+        result.isCompany mustBe "NO"
+        result.isTrustee mustBe "NO"
+        result.isConnectedToVendor mustBe "NO"
+        result.isRepresentedByAgent mustBe "YES"
         result.surname mustBe Some("Jones Updated")
         result.nextPurchaserId mustBe Some("PID-002")
       }
