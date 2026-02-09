@@ -197,9 +197,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandRegisteredHmRegistryPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandTitleNumberController.onPageLoad(NormalMode)
         }
 
-        // TODO DTR-2456: Redirect to Lr-6 Do you have an NLPG UPRN for the land or property?
         "go from LandTitleNumberPage to Do you have an NLPG UPRN for the land or property page" in {
-          navigator.nextPage(LandTitleNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
+          navigator.nextPage(LandTitleNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode)
         }
 
         // TODO DTR-2459: Redirect to What is the NLPG UPRN of the land or property
