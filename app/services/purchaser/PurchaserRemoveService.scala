@@ -103,7 +103,7 @@ class PurchaserRemoveService @Inject()(
       )
 
       Right(view(preparedForm, mode, viewData))
-    }.getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    }.getOrElse(Left(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())))
   }
 
   private object PurchaserOps {

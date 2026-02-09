@@ -17,7 +17,7 @@
 package services.purchaser
 
 import connectors.StampDutyLandTaxConnector
-import models.purchaser.{PurchaserSessionQuestions}
+import models.purchaser.{CreatePurchaserRequest, PurchaserSessionQuestions, UpdatePurchaserRequest}
 import models.{CompanyDetails, Purchaser, ReturnVersionUpdateRequest, UserAnswers}
 
 import scala.language.postfixOps
@@ -90,13 +90,8 @@ class PurchaserCreateOrUpdateService {
       _ <- if (returnVersion.newVersion.isDefined) {
 
         for {
-          _ <- backendConnector.updatePurchaser(purchaserRequestService.convertToUpdatePurchaserRequest(
-            purchaser,
-            userAnswers.storn,
-            returnId,
-            purchaserOptDetails(userAnswers, sessionData).map(_._1).getOrElse("purchaser not found in full return"),
-            purchaserOptDetails(userAnswers, sessionData).map(_._2).getOrElse(throw new IllegalStateException("purchaser not found in full return")
-            )))
+          updateRequest <- UpdatePurchaserRequest.from(userAnswers, purchaser)
+          _ <- backendConnector.updatePurchaser(updateRequest)
 
           _ <- {
             val mainPurchaserId = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
@@ -151,13 +146,8 @@ class PurchaserCreateOrUpdateService {
         throw new NotFoundException("Return ID is required")
       )
 
-      createPurchaserReturn <- backendConnector.createPurchaser(
-        purchaserRequestService.convertToCreatePurchaserRequest(
-          purchaser,
-          userAnswers.storn,
-          returnId
-        )
-      )
+      createRequest <- CreatePurchaserRequest.from(userAnswers, purchaser)
+      createPurchaserReturn <- backendConnector.createPurchaser(createRequest)
 
       doesMainPurchaserExist = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID)).isDefined
 

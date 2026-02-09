@@ -16,75 +16,10 @@
 
 package services.purchaser
 
-import models.{CompanyDetails, Purchaser}
-import models.purchaser.{CreateCompanyDetailsRequest, CreatePurchaserRequest, UpdateCompanyDetailsRequest, UpdatePurchaserRequest}
+import models.CompanyDetails
+import models.purchaser.{CreateCompanyDetailsRequest, UpdateCompanyDetailsRequest}
 
 class PurchaserRequestService {
-
-  def convertToCreatePurchaserRequest(purchaser: Purchaser,
-                                      stornId: String,
-                                      returnResourceRef: String): CreatePurchaserRequest = {
-    CreatePurchaserRequest(
-      stornId = stornId,
-      returnResourceRef = returnResourceRef,
-      isCompany = purchaser.isCompany.getOrElse(""),
-      isTrustee = purchaser.isTrustee.getOrElse(""),
-      isConnectedToVendor = purchaser.isConnectedToVendor.getOrElse(""),
-      isRepresentedByAgent = purchaser.isRepresentedByAgent.getOrElse(""),
-      title = purchaser.title,
-      surname = purchaser.surname,
-      forename1 = purchaser.forename1,
-      forename2 = purchaser.forename2,
-      companyName = purchaser.companyName,
-      houseNumber = purchaser.houseNumber,
-      address1 = purchaser.address1.getOrElse(""),
-      address2 = purchaser.address2,
-      address3 = purchaser.address3,
-      address4 = purchaser.address4,
-      postcode = purchaser.postcode,
-      phone = purchaser.phone,
-      nino = purchaser.nino,
-      isUkCompany = purchaser.isUkCompany,
-      hasNino = purchaser.hasNino,
-      dateOfBirth = purchaser.dateOfBirth,
-      registrationNumber = purchaser.registrationNumber,
-      placeOfRegistration = purchaser.placeOfRegistration
-    )
-  }
-
-  def convertToUpdatePurchaserRequest(purchaser: Purchaser,
-                                      stornId: String,
-                                      returnResourceRef: String,
-                                      purchaserResourceRef: String,
-                                      nextPurchaserId: Option[String]): UpdatePurchaserRequest = {
-    UpdatePurchaserRequest(
-      stornId = stornId,
-      returnResourceRef = returnResourceRef,
-      purchaserResourceRef = purchaserResourceRef,
-      isCompany = purchaser.isCompany,
-      isTrustee = purchaser.isTrustee,
-      isConnectedToVendor = purchaser.isConnectedToVendor,
-      isRepresentedByAgent = purchaser.isRepresentedByAgent,
-      title = purchaser.title,
-      surname = purchaser.surname,
-      forename1 = purchaser.forename1,
-      forename2 = purchaser.forename2,
-      companyName = purchaser.companyName,
-      houseNumber = purchaser.houseNumber,
-      address1 = purchaser.address1,
-      address2 = purchaser.address2,
-      address3 = purchaser.address3,
-      address4 = purchaser.address4,
-      postcode = purchaser.postcode,
-      phone = purchaser.phone,
-      nino = purchaser.nino,
-      nextPurchaserId = purchaser.nextPurchaserID,
-      isUkCompany = purchaser.isUkCompany,
-      hasNino = purchaser.hasNino,
-      dateOfBirth = purchaser.dateOfBirth,
-      registrationNumber = purchaser.registrationNumber,
-      placeOfRegistration = purchaser.placeOfRegistration)
-  }
 
   def convertToCreateCompanyDetailsRequest(companyDetails: CompanyDetails,
                                            stornId: String,
