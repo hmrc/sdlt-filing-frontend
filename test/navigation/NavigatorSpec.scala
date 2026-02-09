@@ -193,9 +193,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandInterestTransferredOrCreatedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
 
-        // TODO DTR-2447: Redirect to Lr-5a Title number for the land or property
         "go from LandRegisteredHmRegistryPage to Title number for the land or property page" in {
-          navigator.nextPage(LandRegisteredHmRegistryPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
+          navigator.nextPage(LandRegisteredHmRegistryPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandTitleNumberController.onPageLoad(NormalMode)
+        }
+
+        "go from LandTitleNumberPage to Do you have an NLPG UPRN for the land or property page" in {
+          navigator.nextPage(LandTitleNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode)
         }
 
         // TODO DTR-2459: Redirect to What is the NLPG UPRN of the land or property
@@ -253,6 +256,11 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(AddPurchaserAgentReferenceNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
         navigator.nextPage(PurchaserAgentReferencePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
         navigator.nextPage(PurchaserAgentAuthorisedPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+      }
+
+      //todo - mopup - implement all check routes
+      "must go from any land page to LandCheckYourAnswers" in {
+        navigator.nextPage(LandTitleNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
       }
 
       "must go from any preliminary page to CheckYourAnswers" in {
