@@ -882,3 +882,9 @@ land.landInterestTransferredOrCreated.checkYourAnswersLabel                   = 
 land.landInterestTransferredOrCreated.error.required                          = Select an option
 land.landInterestTransferredOrCreated.change.hidden                           = Interest transferred or created
 land.landInterestTransferredOrCreated.missing                                 = Select interest transferred or created
+
+land.landRegisteredHmRegistry.heading                                         = Is the land or property registered with HM Land Registry?
+land.landRegisteredHmRegistry.checkYourAnswersLabel                           = Is the land or property registered with HM Land Registry?
+land.landRegisteredHmRegistry.error.required                                  = Please select an option
+land.landRegisteredHmRegistry.change.hidden                                   = Is the land or property registered with HM Land Registry?
+land.landRegisteredHmRegistry.missing                                         = Select if the land or property is registered with HM Land Registry
