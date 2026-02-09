@@ -197,6 +197,11 @@ class NavigatorSpec extends SpecBase {
         "go from LandRegisteredHmRegistryPage to Title number for the land or property page" in {
           navigator.nextPage(LandRegisteredHmRegistryPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
         }
+
+        // TODO DTR-2459: Redirect to What is the NLPG UPRN of the land or property
+        "go from LandAddNlpgUprnPage to LandNlpgUprn page" in {
+          navigator.nextPage(LandAddNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
+        }
       }
     }
 

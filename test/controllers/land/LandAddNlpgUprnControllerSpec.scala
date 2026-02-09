@@ -18,50 +18,44 @@ package controllers.land
 
 import base.SpecBase
 import controllers.routes
-import forms.land.LandRegisteredHmRegistryFormProvider
-import models.{NormalMode, UserAnswers}
+import forms.land.LandAddNlpgUprnFormProvider
+import models.{CheckMode, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.LandRegisteredHmRegistryPage
-import play.api.data.Form
+import pages.land.LandAddNlpgUprnPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.land.LandRegisteredHmRegistryView
+import views.html.land.LandAddNlpgUprnView
 
 import scala.concurrent.Future
 
-class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar {
+class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val landRegisteredHmRegistryRoute: String = controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode).url
+  val formProvider = new LandAddNlpgUprnFormProvider()
+  val form = formProvider()
 
-  val formProvider = new LandRegisteredHmRegistryFormProvider()
-  val form: Form[Boolean] = formProvider()
+  lazy val landAddNlpgUprnRoute = controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode).url
+  lazy val landAddNlpgUprnRouteCheckMode = controllers.land.routes.LandAddNlpgUprnController.onPageLoad(CheckMode).url
 
-  val testStorn = "TESTSTORN"
-
-  val userAnswersYes: UserAnswers =
-    UserAnswers(userAnswersId, storn = testStorn)
-      .set(LandRegisteredHmRegistryPage, true).success.value
-
-  "LandRegisteredHmRegistry Controller" - {
+  "LandAddNlpgUprn Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, landRegisteredHmRegistryRoute)
+        val request = FakeRequest(GET, landAddNlpgUprnRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[LandRegisteredHmRegistryView]
+        val view = application.injector.instanceOf[LandAddNlpgUprnView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -70,12 +64,14 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersYes)).build()
+      val userAnswers = emptyUserAnswers.set(LandAddNlpgUprnPage, true).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, landRegisteredHmRegistryRoute)
+        val request = FakeRequest(GET, landAddNlpgUprnRoute)
 
-        val view = application.injector.instanceOf[LandRegisteredHmRegistryView]
+        val view = application.injector.instanceOf[LandAddNlpgUprnView]
 
         val result = route(application, request).value
 
@@ -84,7 +80,7 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    "must redirect to the next page when valid data 'yes' is submitted" in {
+    "must redirect to the next page when Yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -100,7 +96,7 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
 
       running(application) {
         val request =
-          FakeRequest(POST, landRegisteredHmRegistryRoute)
+          FakeRequest(POST, landAddNlpgUprnRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -110,11 +106,12 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    "must redirect to the next page when valid data 'no' is submitted" in {
+    // TODO update when DTR-2459 completed
+    "must redirect to the Enter NlpgUprn page when No is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -126,13 +123,40 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
 
       running(application) {
         val request =
-          FakeRequest(POST, landRegisteredHmRegistryRoute)
+          FakeRequest(POST, landAddNlpgUprnRoute)
             .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    // TODO update when DTR-2459 completed
+    "must redirect to the Land CYA page when No is submitted in check mode" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, landAddNlpgUprnRouteCheckMode)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
@@ -142,12 +166,12 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
 
       running(application) {
         val request =
-          FakeRequest(POST, landRegisteredHmRegistryRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+          FakeRequest(POST, landAddNlpgUprnRoute)
+            .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[LandRegisteredHmRegistryView]
+        val view = application.injector.instanceOf[LandAddNlpgUprnView]
 
         val result = route(application, request).value
 
@@ -161,7 +185,7 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, landRegisteredHmRegistryRoute)
+        val request = FakeRequest(GET, landAddNlpgUprnRoute)
 
         val result = route(application, request).value
 
@@ -170,19 +194,18 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    "redirect to Journey Recovery for a POST if no existing data is found" in {
+    "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, landRegisteredHmRegistryRoute)
+          FakeRequest(POST, landAddNlpgUprnRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }

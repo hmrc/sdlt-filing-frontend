@@ -131,7 +131,8 @@ class Navigator @Inject()() {
 
   private def isLandSection(page: Page): Boolean = page match {
 
-    case LandTypeOfPropertyPage | LandInterestTransferredOrCreatedPage | LandRegisteredHmRegistryPage => true
+    case LandTypeOfPropertyPage | LandInterestTransferredOrCreatedPage | LandRegisteredHmRegistryPage
+         | LandAddNlpgUprnPage => true
 
     case _ => false
   }
@@ -141,9 +142,10 @@ class Navigator @Inject()() {
       _ => controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(NormalMode)
     case LandInterestTransferredOrCreatedPage =>
       _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO DTR-2430: Redirect to SDLT - Confirm the address of the land or property
-
     case LandRegisteredHmRegistryPage => //TODO update to Lr-5a DTR-2447
       _ => controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
+    case LandAddNlpgUprnPage =>
+      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO DTR-2459: Redirect to What is the NLPG UPRN for the land or property page
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
