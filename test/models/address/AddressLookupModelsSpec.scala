@@ -169,6 +169,7 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
       deskProServiceName = Some("SDLT"),
       showPhaseBanner = Some(true),
       showBackButtons = Some(true),
+      disableTranslations = Some(true),
       includeHMRCBranding = Some(true),
       ukMode = Some(true),
       selectPageConfig = selectConfig,
@@ -201,6 +202,7 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
         (json \ "deskProServiceName").asOpt[String] mustBe Some("SDLT")
         (json \ "showPhaseBanner").asOpt[Boolean] mustBe Some(true)
         (json \ "showBackButtons").asOpt[Boolean] mustBe Some(true)
+        (json \ "disableTranslations").asOpt[Boolean] mustBe Some(true)
         (json \ "includeHMRCBranding").asOpt[Boolean] mustBe Some(true)
         (json \ "ukMode").asOpt[Boolean] mustBe Some(true)
       }
