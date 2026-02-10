@@ -130,7 +130,7 @@ object UpdatePurchaserRequest {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
         (purchaser.purchaserResourceRef) match {
-          case (Some(ref)) =>
+          case Some(ref) =>
             Future.successful(UpdatePurchaserRequest(
               stornId = fullReturn.stornId,
               purchaserResourceRef = ref,
@@ -159,7 +159,7 @@ object UpdatePurchaserRequest {
               registrationNumber = purchaser.registrationNumber,
               placeOfRegistration = purchaser.placeOfRegistration
             ))
-          case _ => Future.failed(new NoSuchElementException(" Purchaser mandatory Resources not found"))
+          case _ => Future.failed(new NoSuchElementException("Purchaser mandatory Resources not found"))
         }
       case None =>
         Future.failed(new NoSuchElementException("Full return not found"))

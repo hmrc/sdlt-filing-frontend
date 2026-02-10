@@ -18,6 +18,7 @@ package models
 
 import models.vendor.VendorSessionQuestions
 import models.purchaser.PurchaserSessionQuestions
+import org.slf4j.Logger
 import play.api.libs.json.{Json, OFormat}
 
 import scala.concurrent.Future
@@ -91,7 +92,7 @@ case class Purchaser(
 object Purchaser {
   implicit val format: OFormat[Purchaser] = Json.format[Purchaser]
 
-  def from(userAnswers: Option[UserAnswers]): Future[Purchaser] = {
+  def from(userAnswers: Option[UserAnswers], logger: Logger): Future[Purchaser] = {
     val purchaserSessionQuestions: PurchaserSessionQuestions = userAnswers.get.data.as[PurchaserSessionQuestions]
 
     val maybePurchaserResourceRef = for {
@@ -102,6 +103,9 @@ object Purchaser {
       existingPurchaser <- purchasers.find(_.purchaserID.contains(purchaserId))
       resourceRef <- existingPurchaser.purchaserResourceRef
     } yield resourceRef
+
+    logger.info(s"[Purchaser][from] \n $maybePurchaserResourceRef")
+
 
     Future.successful(
         Purchaser(
