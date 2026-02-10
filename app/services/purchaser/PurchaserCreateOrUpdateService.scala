@@ -28,8 +28,11 @@ import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 
 import scala.concurrent.{ExecutionContext, Future}
+import org.slf4j.{Logger, LoggerFactory}
 
 class PurchaserCreateOrUpdateService {
+
+  val logger: Logger = LoggerFactory.getLogger(getClass)
 
   private def purchaserOptDetails(userAnswers: UserAnswers,
                                sessionData: PurchaserSessionQuestions): Option[(String, Option[String])] = {
@@ -82,7 +85,7 @@ class PurchaserCreateOrUpdateService {
 
       companyDetails <- CompanyDetails.from(userAnswers)
 
-      purchaser <- Purchaser.from(Some(userAnswers))
+      purchaser <- Purchaser.from(Some(userAnswers), logger)
 
       returnId = userAnswers.returnId.getOrElse(
         throw new NotFoundException("Return ID is required")
@@ -91,8 +94,12 @@ class PurchaserCreateOrUpdateService {
 
         for {
           updateRequest <- UpdatePurchaserRequest.from(userAnswers, purchaser)
-          _ <- backendConnector.updatePurchaser(updateRequest)
-
+          updateResponse <- backendConnector.updatePurchaser(updateRequest)
+          _ <- if (updateResponse.updated) {
+            Future.successful(())
+          } else {
+            Future.failed(new IllegalStateException("Purchaser update failed - backend returned updated = false"))
+          }
           _ <- {
             val mainPurchaserId = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
             val updatingPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
@@ -140,7 +147,7 @@ class PurchaserCreateOrUpdateService {
     for  {
       companyDetails <- CompanyDetails.from(userAnswers)
 
-      purchaser <- Purchaser.from(Some(userAnswers))
+      purchaser <- Purchaser.from(Some(userAnswers), logger)
 
       returnId = userAnswers.returnId.getOrElse(
         throw new NotFoundException("Return ID is required")

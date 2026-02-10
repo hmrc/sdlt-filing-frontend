@@ -22,10 +22,13 @@ import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
+import org.slf4j.{Logger, LoggerFactory}
 
 import java.time.Instant
 
 class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues  {
+
+  val logger: Logger = LoggerFactory.getLogger(getClass)
 
   private val validSdltOrganisationJson = Json.obj(
     "isReturnUser" -> "true",
@@ -546,7 +549,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
     ".from" - {
       "when purchaser type in session is Company" - {
         "must create a purchaser of type Company" in {
-          val outcome = Purchaser.from(Some(userAnswersPurchaserCompanyWithMultipleTypes)).futureValue
+          val outcome = Purchaser.from(Some(userAnswersPurchaserCompanyWithMultipleTypes), logger).futureValue
           val expected = validPurchaserCompanyObject
           outcome shouldBe expected
         }
@@ -554,7 +557,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "when purchaser type in session is Individual" - {
         "must create a purchaser of type Individual" in {
-          val outcome = Purchaser.from(Some(userAnswersPurchaserIndividual)).futureValue
+          val outcome = Purchaser.from(Some(userAnswersPurchaserIndividual), logger = logger).futureValue
           val expected = validPurchaserIndividualObject
           outcome shouldBe expected
         }
