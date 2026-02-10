@@ -24,17 +24,17 @@ import scala.concurrent.Future
 case class CreatePurchaserRequest(
                                    stornId: String,
                                    returnResourceRef: String,
-                                   isCompany: String,
-                                   isTrustee: String,
-                                   isConnectedToVendor: String,
-                                   isRepresentedByAgent: String,
+                                   isCompany: Option[String] = None,
+                                   isTrustee: Option[String] = None,
+                                   isConnectedToVendor: Option[String] = None,
+                                   isRepresentedByAgent: Option[String] = None,
                                    title: Option[String] = None,
                                    surname: Option[String] = None,
                                    forename1: Option[String] = None,
                                    forename2: Option[String] = None,
                                    companyName: Option[String] = None,
                                    houseNumber: Option[String] = None,
-                                   address1: String,
+                                   address1: Option[String] = None,
                                    address2: Option[String] = None,
                                    address3: Option[String] = None,
                                    address4: Option[String] = None,
@@ -54,22 +54,20 @@ object CreatePurchaserRequest {
   def from(userAnswers: UserAnswers, purchaser: Purchaser): Future[CreatePurchaserRequest] = {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
-        (purchaser.isCompany, purchaser.isTrustee, purchaser.isConnectedToVendor, purchaser.isRepresentedByAgent, purchaser.address1) match {
-          case (Some(isCompany), Some(isTrustee), Some(isConnectedToVendor), Some(isRepresentedByAgent), Some(address1)) =>
             Future.successful(CreatePurchaserRequest(
               stornId = fullReturn.stornId,
               returnResourceRef = fullReturn.returnResourceRef,
-              isCompany = isCompany,
-              isTrustee = isTrustee,
-              isConnectedToVendor = isConnectedToVendor,
-              isRepresentedByAgent = isRepresentedByAgent,
+              isCompany = purchaser.isCompany,
+              isTrustee = purchaser.isTrustee,
+              isConnectedToVendor = purchaser.isConnectedToVendor,
+              isRepresentedByAgent = purchaser.isRepresentedByAgent,
               title = purchaser.title,
               surname = purchaser.surname,
               forename1 = purchaser.forename1,
               forename2 = purchaser.forename2,
               companyName = purchaser.companyName,
               houseNumber = purchaser.houseNumber,
-              address1 = address1,
+              address1 = purchaser.address1,
               address2 = purchaser.address2,
               address3 = purchaser.address3,
               address4 = purchaser.address4,
@@ -82,13 +80,9 @@ object CreatePurchaserRequest {
               registrationNumber = purchaser.registrationNumber,
               placeOfRegistration = purchaser.placeOfRegistration
             ))
-          case _ => Future.failed(new NoSuchElementException(" Purchaser mandatory Resources not found"))
-        }
-      case None =>
-        Future.failed(new NoSuchElementException("Full return not found"))
-    }
-  }
-  
+      case _ => Future.failed(new NoSuchElementException("No Full Return"))
+      }
+   }
 }
 
 case class CreatePurchaserReturn(
@@ -104,17 +98,17 @@ case class UpdatePurchaserRequest(
                                    stornId: String,
                                    returnResourceRef: String,
                                    purchaserResourceRef: String,
-                                   isCompany: String,
-                                   isTrustee: String,
-                                   isConnectedToVendor: String,
-                                   isRepresentedByAgent: String,
+                                   isCompany: Option[String] = None,
+                                   isTrustee: Option[String] = None,
+                                   isConnectedToVendor: Option[String] = None,
+                                   isRepresentedByAgent: Option[String] = None,
                                    title: Option[String] = None,
                                    surname: Option[String] = None,
                                    forename1: Option[String] = None,
                                    forename2: Option[String] = None,
                                    companyName: Option[String] = None,
                                    houseNumber: Option[String] = None,
-                                   address1: String,
+                                   address1: Option[String] = None,
                                    address2: Option[String] = None,
                                    address3: Option[String] = None,
                                    address4: Option[String] = None,
@@ -135,23 +129,23 @@ object UpdatePurchaserRequest {
   def from(userAnswers: UserAnswers, purchaser: Purchaser): Future[UpdatePurchaserRequest] = {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
-        (purchaser.purchaserResourceRef, purchaser.isCompany, purchaser.isTrustee, purchaser.isConnectedToVendor, purchaser.address1) match {
-          case (Some(ref), Some(isCompany), Some(isTrustee), Some(isConnectedToVendor), Some(address1)) =>
+        (purchaser.purchaserResourceRef) match {
+          case (Some(ref)) =>
             Future.successful(UpdatePurchaserRequest(
               stornId = fullReturn.stornId,
               purchaserResourceRef = ref,
               returnResourceRef = fullReturn.returnResourceRef,
-              isCompany = isCompany,
-              isTrustee = isTrustee,
-              isConnectedToVendor = isConnectedToVendor,
-              isRepresentedByAgent = purchaser.isRepresentedByAgent.getOrElse("NO"),
+              isCompany = purchaser.isCompany,
+              isTrustee = purchaser.isTrustee,
+              isConnectedToVendor = purchaser.isConnectedToVendor,
+              isRepresentedByAgent = purchaser.isRepresentedByAgent,
               title = purchaser.title,
               surname = purchaser.surname,
               forename1 = purchaser.forename1,
               forename2 = purchaser.forename2,
               companyName = purchaser.companyName,
               houseNumber = purchaser.houseNumber,
-              address1 = address1,
+              address1 = purchaser.address1,
               address2 = purchaser.address2,
               address3 = purchaser.address3,
               address4 = purchaser.address4,
