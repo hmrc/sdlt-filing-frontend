@@ -73,17 +73,17 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
   private val completeCreatePurchaserRequest = CreatePurchaserRequest(
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
-    isCompany = "NO",
-    isTrustee = "NO",
-    isConnectedToVendor = "NO",
-    isRepresentedByAgent = "YES",
+    isCompany = Some("NO"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("YES"),
     title = Some("Mr"),
     surname = Some("Jones"),
     forename1 = Some("David"),
     forename2 = Some("Michael"),
     companyName = None,
     houseNumber = Some("25"),
-    address1 = "Park Avenue",
+    address1 = Some("Park Avenue"),
     address2 = Some("Flat 3"),
     address3 = Some("Central District"),
     address4 = Some("London"),
@@ -100,11 +100,11 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
   private val minimalCreatePurchaserRequest = CreatePurchaserRequest(
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
-    isCompany = "NO",
-    isTrustee = "NO",
-    isConnectedToVendor = "NO",
-    isRepresentedByAgent = "YES",
-    address1 = "Park Avenue"
+    isCompany = Some("NO"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("YES"),
+    address1 = Some("Park Avenue")
   )
 
   private val validCreatePurchaserReturnJson = Json.obj(
@@ -157,17 +157,17 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
     purchaserResourceRef = "PRF-001",
-    isCompany ="NO",
-    isTrustee = "NO",
-    isConnectedToVendor = "NO",
-    isRepresentedByAgent ="YES",
+    isCompany = Some("NO"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("YES"),
     title = Some("Mr"),
     surname = Some("Jones Updated"),
     forename1 = Some("David"),
     forename2 = Some("Michael"),
     companyName = None,
     houseNumber = Some("25"),
-    address1 = "Park Avenue",
+    address1 = Some("Park Avenue"),
     address2 = Some("Flat 3"),
     address3 = Some("Central District"),
     address4 = Some("London"),
@@ -186,11 +186,11 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
     purchaserResourceRef = "PRF-001",
-    isCompany = "NO",
-    isTrustee = "NO",
-    isConnectedToVendor = "NO",
-    isRepresentedByAgent = "YES",
-    address1 = "Park Avenue"
+    isCompany = Some("NO"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("YES"),
+    address1 = Some("Park Avenue")
   )
 
   private val validUpdatePurchaserReturnJsonTrue = Json.obj("updated" -> true)
@@ -367,16 +367,16 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
-        result.isCompany mustBe "NO"
-        result.isTrustee mustBe "NO"
-        result.isConnectedToVendor mustBe "NO"
-        result.isRepresentedByAgent mustBe "YES"
+        result.isCompany mustBe Some("NO")
+        result.isTrustee mustBe Some("NO")
+        result.isConnectedToVendor mustBe Some("NO")
+        result.isRepresentedByAgent mustBe Some("YES")
         result.title mustBe Some("Mr")
         result.surname mustBe Some("Jones")
         result.forename1 mustBe Some("David")
         result.forename2 mustBe Some("Michael")
         result.houseNumber mustBe Some("25")
-        result.address1 mustBe "Park Avenue"
+        result.address1 mustBe Some("Park Avenue")
         result.address2 mustBe Some("Flat 3")
         result.address3 mustBe Some("Central District")
         result.address4 mustBe Some("London")
@@ -392,11 +392,11 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
-        result.isCompany mustBe "NO"
-        result.isTrustee mustBe "NO"
-        result.isConnectedToVendor mustBe "NO"
-        result.isRepresentedByAgent mustBe "YES"
-        result.address1 mustBe "Park Avenue"
+        result.isCompany mustBe Some("NO")
+        result.isTrustee mustBe Some("NO")
+        result.isConnectedToVendor mustBe Some("NO")
+        result.isRepresentedByAgent mustBe Some("YES")
+        result.address1 mustBe Some("Park Avenue")
         result.title must not be defined
         result.surname must not be defined
         result.forename1 must not be defined
@@ -439,36 +439,6 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         result.isLeft mustBe true
       }
 
-      "must fail to deserialize when isCompany is missing" in {
-        val json = validCreatePurchaserRequestJsonComplete - "isCompany"
-        val result = Json.fromJson[CreatePurchaserRequest](json).asEither
-        result.isLeft mustBe true
-      }
-
-      "must fail to deserialize when isTrustee is missing" in {
-        val json = validCreatePurchaserRequestJsonComplete - "isTrustee"
-        val result = Json.fromJson[CreatePurchaserRequest](json).asEither
-        result.isLeft mustBe true
-      }
-
-      "must fail to deserialize when isConnectedToVendor is missing" in {
-        val json = validCreatePurchaserRequestJsonComplete - "isConnectedToVendor"
-        val result = Json.fromJson[CreatePurchaserRequest](json).asEither
-        result.isLeft mustBe true
-      }
-
-      "must fail to deserialize when isRepresentedByAgent is missing" in {
-        val json = validCreatePurchaserRequestJsonComplete - "isRepresentedByAgent"
-        val result = Json.fromJson[CreatePurchaserRequest](json).asEither
-        result.isLeft mustBe true
-      }
-
-      "must fail to deserialize when address1 is missing" in {
-        val json = validCreatePurchaserRequestJsonComplete - "address1"
-        val result = Json.fromJson[CreatePurchaserRequest](json).asEither
-        result.isLeft mustBe true
-      }
-
       "must fail to deserialize when required field has invalid type" in {
         val json = validCreatePurchaserRequestJsonComplete ++ Json.obj("stornId" -> 123)
         val result = Json.fromJson[CreatePurchaserRequest](json).asEither
@@ -486,9 +456,9 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
-        result.isCompany mustBe "YES"
+        result.isCompany mustBe Some("YES")
         result.companyName mustBe Some("XYZ Properties Ltd")
-        result.address1 mustBe "Park Avenue"
+        result.address1 mustBe Some("Park Avenue")
         result.isUkCompany mustBe Some("YES")
         result.registrationNumber mustBe Some("12345678")
         result.placeOfRegistration mustBe Some("England and Wales")
@@ -671,10 +641,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
         result.purchaserResourceRef mustBe "PRF-001"
-        result.isCompany mustBe "NO"
-        result.isTrustee mustBe "NO"
-        result.isConnectedToVendor mustBe "NO"
-        result.isRepresentedByAgent mustBe "YES"
+        result.isCompany mustBe Some("NO")
+        result.isTrustee mustBe Some("NO")
+        result.isConnectedToVendor mustBe Some("NO")
+        result.isRepresentedByAgent mustBe Some("YES")
         result.surname mustBe Some("Jones Updated")
         result.nextPurchaserId mustBe Some("PID-002")
       }
