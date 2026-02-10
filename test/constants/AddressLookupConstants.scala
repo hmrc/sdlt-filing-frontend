@@ -101,6 +101,7 @@ object AddressLookupConstants {
       deskProServiceName = Some(testDeskproServiceName),
       showPhaseBanner = Some(true),
       showBackButtons = Some(true),
+      disableTranslations = Some(true),
       includeHMRCBranding = Some(true),
       ukMode = Some(true),
       selectPageConfig = AddressLookupSelectConfigModel(
