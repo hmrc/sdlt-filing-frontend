@@ -19,8 +19,9 @@ package services.purchaserAgent
 import models.{Mode, NormalMode, ReturnAgent, UserAnswers}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import models.purchaserAgent.*
+import models.Agent
 import models.address.*
+import models.purchaserAgent.{PurchaserAgentAuthorised, PurchaserAgentsContactDetails, SelectPurchaserAgent}
 import navigation.Navigator
 import pages.purchaserAgent.*
 import repositories.SessionRepository
@@ -48,11 +49,11 @@ class PurchaserAgentService @Inject(
 
   def populatePurchaserAgentInSession(agent: Agent, userAnswers: UserAnswers): Try[UserAnswers] = {
 
-    agent.agentId match {
-      case Some(agentId) =>
+    (agent.agentId, agent.address1, agent.name) match {
+      case (Some(agentId), Some(address1), Some(name)) =>
 
         val purchaserAgentAddress = Address(
-          line1 = agent.address1,
+          line1 = address1,
           line2 = agent.address2,
           line3 = agent.address3,
           line4 = agent.address4,
@@ -66,7 +67,7 @@ class PurchaserAgentService @Inject(
         val addPaContactDetails = agent.phone.isDefined || agent.email.isDefined
 
         for {
-          withName <- userAnswers.set(PurchaserAgentNamePage, agent.name)
+          withName <- userAnswers.set(PurchaserAgentNamePage, name)
           withAddAddress <- withName.set(AddContactDetailsForPurchaserAgentPage, addPaContactDetails)
           withAddress <- withAddAddress.set(PurchaserAgentAddressPage, purchaserAgentAddress)
           finalAnswers <- withAddress.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
@@ -85,8 +86,8 @@ class PurchaserAgentService @Inject(
     } yield clearedAnswers
   }
 
-  def agentSummaryList(agents: Seq[Agent]): Seq[(String, String, Option[String])] = {
-    agents.map(agent => (agent.name, agent.address3.getOrElse(""), agent.agentId))
+  def agentSummaryList(agents: Seq[Agent]): Seq[(Option[String], Option[String], Option[String])] = {
+    agents.map(agent => (agent.name, agent.address3, agent.agentId))
   }
 
   def handleAgentSelection(

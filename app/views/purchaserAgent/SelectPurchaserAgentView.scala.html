@@ -30,7 +30,7 @@
     caption: Caption
 )
 
-@(form: Form[_], mode: Mode, purchaserName: String, agentList: Option[Seq[(String, String, Option[String])]])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, purchaserName: String, agentList: Option[Seq[(Option[String], Option[String], Option[String])]])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("purchaserAgent.selectPurchaserAgent.title"))) {
 
@@ -46,7 +46,7 @@
             RadiosViewModel(
                 field  = form("value"),
                 legend = LegendViewModel(messages("purchaserAgent.selectPurchaserAgent.heading", purchaserName)).asPageHeading(),
-                items  = agentList.getOrElse(Seq.empty).map { case (name, city, id) =>
+                items  = agentList.getOrElse(Seq.empty).map { case (Some(name), Some(city), id) =>
                   RadioItem(content = Text(s"$name, $city"), value = id)
                 } ++ Seq(
                     RadioItem(divider = Some("or")),

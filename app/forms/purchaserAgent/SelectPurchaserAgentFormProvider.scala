@@ -17,7 +17,8 @@
 package forms.purchaserAgent
 
 import forms.mappings.Mappings
-import models.purchaserAgent.*
+import models.Agent
+import models.purchaserAgent.SelectPurchaserAgent
 import play.api.data.Form
 
 import javax.inject.Inject

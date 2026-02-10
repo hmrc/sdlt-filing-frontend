@@ -16,35 +16,33 @@
 
 package controllers.purchaserAgent
 
-import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.purchaserAgent.SelectPurchaserAgentFormProvider
-import models.{Mode, NormalMode}
+import models.{Agent, Mode, NormalMode}
 import pages.purchaserAgent.{PurchaserAgentBeforeYouStartPage, SelectPurchaserAgentPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.purchaserAgent.SelectPurchaserAgentView
 import play.api.Logging
 import play.api.data.Form
-import services.purchaserAgent.PurchaserAgentService
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.purchaser.PurchaserService
+import services.purchaserAgent.PurchaserAgentService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.purchaserAgent.SelectPurchaserAgentView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SelectPurchaserAgentController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       connector: StampDutyLandTaxConnector,
                                        formProvider: SelectPurchaserAgentFormProvider,
                                        purchaserService: PurchaserService,
                                        purchaserAgentService: PurchaserAgentService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: SelectPurchaserAgentView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                     ) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -52,32 +50,29 @@ class SelectPurchaserAgentController @Inject()(
       val maybeMainPurchaserName = purchaserService.mainPurchaserName(request.userAnswers).map(_.fullName)
       val beforeYouStartYes = request.userAnswers.get(PurchaserAgentBeforeYouStartPage).contains(true)
       val maybeStorn: Option[String] = request.userAnswers.fullReturn.map(_.stornId)
-      
+      val maybeAgents: Option[Seq[Agent]] = request.userAnswers.fullReturn.flatMap(_.agent)
+
       (maybeMainPurchaserName, beforeYouStartYes, maybeStorn) match {
         case (None, true, _) =>
           Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
 
         case (Some(purchaser), true, Some(storn)) =>
-          connector.getSdltOrganisation(storn).flatMap { organisation =>
-            organisation.agents match {
+          maybeAgents match {
+              case None => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
 
-              case Nil => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
+              case Some(agents) =>
+                agents match {
+                  case Nil => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
+                  case agents =>
+                    val form: Form[String] = formProvider(agents)
 
-              case agents =>
-                val form: Form[String] = formProvider(agents)
-
-                val preparedForm = request.userAnswers.get(SelectPurchaserAgentPage) match {
-                  case None => form
-                  case Some(value) => form.fill(value)
+                    val preparedForm = request.userAnswers.get(SelectPurchaserAgentPage) match {
+                      case None => form
+                      case Some(value) => form.fill(value)
+                    }
+                    Future.successful(Ok(view(preparedForm, mode, purchaser, Some(purchaserAgentService.agentSummaryList(agents)))))
                 }
-                Future.successful(Ok(view(preparedForm, mode, purchaser, Some(purchaserAgentService.agentSummaryList(agents)))))
-            }
-          }.recover {
-            case ex =>
-              logger.error("[PurchaserAgentController][onPageLoad] Error fetching SDLT organisation", ex)
-              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
           }
-
         case _ =>
           Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
@@ -88,32 +83,28 @@ class SelectPurchaserAgentController @Inject()(
 
       val maybeMainPurchaserName = purchaserService.mainPurchaserName(request.userAnswers).map(_.fullName)
       val maybeStorn: Option[String] = request.userAnswers.fullReturn.map(_.stornId)
-      
+      val maybeAgents: Option[Seq[Agent]] = request.userAnswers.fullReturn.flatMap(_.agent)
+
       (maybeMainPurchaserName, maybeStorn) match {
         case (None, _) =>
           Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode)))
 
         case (Some(purchaser), Some(storn)) =>
-          connector.getSdltOrganisation(storn).flatMap { organisation =>
-            val agentList = organisation.agents
-            val form: Form[String] = formProvider(agentList)
-            
-            form.bindFromRequest().fold(
-              formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, mode, purchaser, Some(purchaserAgentService.agentSummaryList(agentList))))),
-
-              value =>
-                purchaserAgentService.handleAgentSelection(
-                  value = value,
-                  agentList = agentList,
-                  userAnswers = request.userAnswers,
-                  mode = mode
-                )
-            )
-          }.recover {
-            case ex =>
-              logger.error("[PurchaserAgentController][onSubmit] Error fetching SDLT organisation", ex)
-              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          maybeAgents match {
+            case Some(agentsList) =>
+              val form: Form[String] = formProvider(agentsList)
+              form.bindFromRequest().fold(
+                formWithErrors =>
+                  Future.successful(BadRequest(view(formWithErrors, mode, purchaser, Some(purchaserAgentService.agentSummaryList(agentsList))))),
+                value =>
+                  purchaserAgentService.handleAgentSelection(
+                    value = value,
+                    agentList = agentsList,
+                    userAnswers = request.userAnswers,
+                    mode = mode
+                  )
+              )
+            case None => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
           }
         case _ => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }

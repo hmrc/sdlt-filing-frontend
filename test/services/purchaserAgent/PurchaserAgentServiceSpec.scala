@@ -18,8 +18,8 @@ package services.purchaserAgent
 
 import base.SpecBase
 import models.address.Address
-import models.purchaserAgent.{Agent, PurchaserAgentsContactDetails, SelectPurchaserAgent}
-import models.{FullReturn, NormalMode, ReturnAgent, UserAnswers}
+import models.purchaserAgent.{PurchaserAgentsContactDetails, SelectPurchaserAgent}
+import models.{FullReturn, NormalMode, ReturnAgent, UserAnswers, Agent}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
@@ -53,11 +53,11 @@ class PurchaserAgentServiceSpec extends SpecBase {
   )
 
   val testAgents: Seq[Agent] = Seq(Agent(
-    storn = "STN001",
+    storn = Some("STN001"),
     agentId = Some("AGT001"),
-    name = "Joe Smith",
+    name = Some("Joe Smith"),
     houseNumber = None,
-    address1 = "123 Street",
+    address1 = Some("123 Street"),
     address2 = Some("Town"),
     address3 = Some("City"),
     address4 = Some("County"),
@@ -65,14 +65,14 @@ class PurchaserAgentServiceSpec extends SpecBase {
     phone = Some("0123456789"),
     email = Some("test@example.com"),
     dxAddress = Some("yes"),
-    agentResourceReference = "REF001"
+    agentResourceReference = Some("REF001")
   ),
     Agent(
-      storn = "STN001",
+      storn = Some("STN001"),
       agentId = Some("AGT002"),
-      name = "Sarah Jones",
+      name = Some("Sarah Jones"),
       houseNumber = None,
-      address1 = "456 Street",
+      address1 = Some("456 Street"),
       address2 = Some("Town"),
       address3 = None,
       address4 = Some("County"),
@@ -80,7 +80,7 @@ class PurchaserAgentServiceSpec extends SpecBase {
       phone = Some("0987654321"),
       email = Some("sarah@example.com"),
       dxAddress = Some("yes"),
-      agentResourceReference = "REF001"
+      agentResourceReference = Some("REF001")
     )
   )
 
@@ -267,11 +267,11 @@ class PurchaserAgentServiceSpec extends SpecBase {
         val fullReturn = emptyFullReturn.copy(stornId = "STN001")
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
         val testAgent: Agent = Agent(
-          storn = "STN001",
+          storn = Some("STN001"),
           agentId = Some("AGT001"),
-          name = "Joe Smith",
+          name = Some("Joe Smith"),
           houseNumber = None,
-          address1 = "123 Street",
+          address1 = Some("123 Street"),
           address2 = Some("Town"),
           address3 = Some("City"),
           address4 = Some("County"),
@@ -279,10 +279,10 @@ class PurchaserAgentServiceSpec extends SpecBase {
           phone = Some("0123456789"),
           email = Some("test@example.com"),
           dxAddress = Some("yes"),
-          agentResourceReference = "REF001")
+          agentResourceReference = Some("REF001"))
 
         val expectedAgentAddress = Address(
-          line1 = testAgent.address1,
+          line1 = testAgent.address1.getOrElse(""),
           line2 = testAgent.address2,
           line3 = testAgent.address3,
           line4 = testAgent.address4,
@@ -294,7 +294,7 @@ class PurchaserAgentServiceSpec extends SpecBase {
         )
 
         val expectedUserAnswers = for {
-          withName <- userAnswers.set(PurchaserAgentNamePage, testAgent.name)
+          withName <- userAnswers.set(PurchaserAgentNamePage, testAgent.name.getOrElse(""))
           withAddAddress <- withName.set(AddContactDetailsForPurchaserAgentPage, true)
           withAddress <- withAddAddress.set(PurchaserAgentAddressPage, expectedAgentAddress)
           finalAnswers <- withAddress.set(PurchaserAgentsContactDetailsPage, expectedContactDetails)
@@ -310,11 +310,11 @@ class PurchaserAgentServiceSpec extends SpecBase {
         val fullReturn = emptyFullReturn.copy(stornId = "STN001")
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
         val testAgent: Agent = Agent(
-          storn = "STN001",
+          storn = Some("STN001"),
           agentId = None,
-          name = "Joe Smith",
+          name = Some("Joe Smith"),
           houseNumber = None,
-          address1 = "123 Street",
+          address1 = Some("123 Street"),
           address2 = Some("Town"),
           address3 = Some("City"),
           address4 = Some("County"),
@@ -322,7 +322,7 @@ class PurchaserAgentServiceSpec extends SpecBase {
           phone = Some("0123456789"),
           email = Some("test@example.com"),
           dxAddress = Some("yes"),
-          agentResourceReference = "REF001")
+          agentResourceReference = Some("REF001"))
 
         val result = service.populatePurchaserAgentInSession(testAgent, userAnswers)
         result.isFailure mustBe true
@@ -366,9 +366,9 @@ class PurchaserAgentServiceSpec extends SpecBase {
 
       "must create summary list of agents" in {
         val result = service.agentSummaryList(testAgents)
-        val expectedResult: Seq[(String, String, Option[String])] = Seq(
-          ("Joe Smith", "City", Some("AGT001")),
-          ("Sarah Jones", "", Some("AGT002"))
+        val expectedResult: Seq[(Option[String], Option[String], Option[String])] = Seq(
+          (Some("Joe Smith"), Some("City"), Some("AGT001")),
+          (Some("Sarah Jones"), None, Some("AGT002"))
         )
         result mustBe expectedResult
       }
