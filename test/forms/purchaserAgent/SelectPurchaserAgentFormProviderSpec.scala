@@ -17,7 +17,8 @@
 package forms.purchaserAgent
 
 import forms.behaviours.OptionFieldBehaviours
-import models.purchaserAgent.{Agent, SelectPurchaserAgent}
+import models.purchaserAgent.SelectPurchaserAgent
+import models.Agent
 import play.api.data.{Form, FormError}
 
 class SelectPurchaserAgentFormProviderSpec extends OptionFieldBehaviours {
@@ -39,11 +40,11 @@ class SelectPurchaserAgentFormProviderSpec extends OptionFieldBehaviours {
                            agentResourceReference: String = "REF001"
                          ): Agent =
     Agent(
-      storn = testStorn,
+      storn = Some(testStorn),
       agentId = Some(agentId),
-      name = name,
+      name = Some(name),
       houseNumber = houseNumber,
-      address1 = address1,
+      address1 = Some(address1),
       address2 = address2,
       address3 = address3,
       address4 = address4,
@@ -51,7 +52,7 @@ class SelectPurchaserAgentFormProviderSpec extends OptionFieldBehaviours {
       phone = phone,
       email = email,
       dxAddress = dxAddress,
-      agentResourceReference = agentResourceReference
+      agentResourceReference = Some(agentResourceReference)
     )
 
   val agentList: Seq[Agent] = Seq(

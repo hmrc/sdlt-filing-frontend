@@ -17,19 +17,18 @@
 package controllers.purchaserAgent
 
 import base.SpecBase
-import connectors.StampDutyLandTaxConnector
 import forms.purchaserAgent.SelectPurchaserAgentFormProvider
 import models.purchaser.NameOfPurchaser
 import models.purchaserAgent.*
-import models.{FullReturn, NormalMode, Purchaser}
-import org.mockito.ArgumentMatchers.{any, anyString}
+import models.{Agent, FullReturn, NormalMode, Purchaser}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaserAgent.{PurchaserAgentBeforeYouStartPage, SelectPurchaserAgentPage}
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
@@ -50,10 +49,10 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
   val testStorn = "STN005"
 
   private def createAgent(
-      agentId: String,
-      name: String,
+      agentId: Option[String] = None,
+      name: Option[String] = None,
       houseNumber: Option[String] = None,
-      address1: String = "123 Street" ,
+      address1: Option[String] = Some("123 Street"),
       address2: Option[String] = Some("Town"),
       address3: Option[String] = Some("City"),
       address4: Option[String] = Some("County"),
@@ -61,11 +60,11 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
       phone: Option[String] = Some("0123456789"),
       email: Option[String] = Some("test@example.com"),
       dxAddress: Option[String] = Some("yes"),
-      agentResourceReference: String = "REF001"
+      agentResourceReference: Option[String] = Some("REF001")
     ) : Agent =
     Agent(
-      storn = testStorn,
-      agentId = Some(agentId),
+      storn = Some(testStorn),
+      agentId = agentId,
       name = name,
       houseNumber = houseNumber,
       address1 = address1,
@@ -78,6 +77,11 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
       dxAddress = dxAddress,
       agentResourceReference = agentResourceReference
     )
+
+  val agentList: Seq[Agent] = Seq(
+    createAgent(agentId = Some("AGT001"), name = Some("John Smith")),
+    createAgent(agentId = Some("AGT002"), name = Some("Jane Jones"))
+  )
 
   private val testFullReturn = FullReturn(
     stornId = testStorn,
@@ -92,18 +96,47 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         companyName = None
       )
     )),
+    agent = Some(agentList)
   )
 
-  val agentList: Seq[Agent] = Seq(
-    createAgent(agentId = "AGT001", name = "John Smith"),
-    createAgent(agentId = "AGT002", name = "Jane Jones")
+  private val testFullReturnWithNoAgents = FullReturn(
+    stornId = testStorn,
+    returnResourceRef = "REF001",
+    returnInfo = Some(models.ReturnInfo(mainPurchaserID = Some("P001"))),
+    purchaser = Some(Seq(
+      Purchaser(
+        purchaserID = Some("P001"),
+        surname = Some("Jones"),
+        forename1 = Some("Sarah"),
+        forename2 = None,
+        companyName = None
+      )
+    )),
+    agent = None
   )
 
-  val agentSummaryList =
+  private val testFullReturnWithEmptyListOfAgents = FullReturn(
+    stornId = testStorn,
+    returnResourceRef = "REF001",
+    returnInfo = Some(models.ReturnInfo(mainPurchaserID = Some("P001"))),
+    purchaser = Some(Seq(
+      Purchaser(
+        purchaserID = Some("P001"),
+        surname = Some("Jones"),
+        forename1 = Some("Sarah"),
+        forename2 = None,
+        companyName = None
+      )
+    )),
+    agent = Some(List.empty)
+  )
+
+
+  val agentSummaryList: Seq[(Option[String], Option[String], Option[String])] =
     agentList.map { agent =>
       (
         agent.name,
-        agent.address3.getOrElse(""),
+        agent.address3,
         agent.agentId
       )
     }
@@ -113,9 +146,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
   val mockPurchaserService: PurchaserService = mock[PurchaserService]
   val mockPurchaserAgentService: PurchaserAgentService = mock[PurchaserAgentService]
-  val mockConnector: StampDutyLandTaxConnector = mock[StampDutyLandTaxConnector]
-  val mockSessionRepository = mock[SessionRepository]
-
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -128,10 +159,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
 
-        when(
-          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
-        ).thenReturn(Future.successful(SdltOrganisationResponse(storn = "STN005", agents = agentList, version = None)))
-
         val userAnswers = emptyUserAnswers
           .copy(fullReturn = Some(testFullReturn))
           .set(PurchaserAgentBeforeYouStartPage, true).success.value
@@ -140,7 +167,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[PurchaserService].toInstance(mockPurchaserService),
             bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
           )
           .build()
 
@@ -153,22 +179,42 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to Purchaser Agent Name Page for a GET when agent list is empty" in {
+      "must redirect to Purchaser Agent Name Page for a GET when agent is None" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(Seq.empty)
-        when(
-          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
-        ).thenReturn(Future.successful(SdltOrganisationResponse(storn = "STN001", agents = Nil, version = None)))
 
         val userAnswers = emptyUserAnswers
-          .copy(fullReturn = Some(testFullReturn))
+          .copy(fullReturn = Some(testFullReturnWithNoAgents))
           .set(PurchaserAgentBeforeYouStartPage, true).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[PurchaserService].toInstance(mockPurchaserService),
-            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, selectPurchaserAgentRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
+        }
+      }
+      
+      "must redirect to Purchaser Agent Name Page for a GET when agent list is empty" in {
+        when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
+        when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(Seq.empty)
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(testFullReturnWithEmptyListOfAgents))
+          .set(PurchaserAgentBeforeYouStartPage, true).success.value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[PurchaserService].toInstance(mockPurchaserService),
+            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
           )
           .build()
 
@@ -186,18 +232,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
 
-        when(
-          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
-        ).thenReturn(
-          Future.successful(
-            SdltOrganisationResponse(
-              storn = testStorn,
-              agents = agentList,
-              version = None
-            )
-          )
-        )
-
         val userAnswers = emptyUserAnswers
           .copy(fullReturn = Some(testFullReturn))
           .set(PurchaserAgentBeforeYouStartPage, true).success.value
@@ -206,8 +240,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[PurchaserService].toInstance(mockPurchaserService),
-            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
           )
           .build()
 
@@ -287,34 +320,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to Journey Recovery page if connector fails for a GET" in {
-        when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
-        when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(Seq.empty)
-        when(
-          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
-        ).thenReturn(Future.failed(new RuntimeException("Error")))
-
-        val userAnswers = emptyUserAnswers
-          .copy(fullReturn = Some(testFullReturn))
-          .set(PurchaserAgentBeforeYouStartPage, true).success.value
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[PurchaserService].toInstance(mockPurchaserService),
-            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, selectPurchaserAgentRoute)
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
-
       "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -356,6 +361,30 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "must redirect to Purchaser Agent Name Page for a POST when agent is None" in {
+        when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
+        when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(Seq.empty)
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(testFullReturnWithNoAgents))
+          .set(PurchaserAgentBeforeYouStartPage, true).success.value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[PurchaserService].toInstance(mockPurchaserService),
+            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, selectPurchaserAgentRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
+        }
+      }
+      
       "must redirect to Return Task List when main purchaser name exists but no storn for a POST" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
 
@@ -379,42 +408,9 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to Journey Recovery page if connector fails for a POST" in {
-        when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
-        when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(Seq.empty)
-        when(
-          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
-        ).thenReturn(Future.failed(new RuntimeException("Error")))
-
-        val userAnswers = emptyUserAnswers
-          .copy(fullReturn = Some(testFullReturn))
-          .set(PurchaserAgentBeforeYouStartPage, true).success.value
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[PurchaserService].toInstance(mockPurchaserService),
-            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(POST, selectPurchaserAgentRoute)
-            .withFormUrlEncodedBody(("value", "value"))
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
-
       "must return a Bad Request and errors when invalid data is submitted" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
-        when(
-          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
-        ).thenReturn(Future.successful(SdltOrganisationResponse(storn = "STN005", agents = agentList, version = None)))
-
         val userAnswers = emptyUserAnswers
           .copy(fullReturn = Some(testFullReturn))
           .set(PurchaserAgentBeforeYouStartPage, true).success.value
@@ -422,8 +418,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[PurchaserService].toInstance(mockPurchaserService),
-            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
           )
           .build()
 
@@ -447,18 +442,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         when(mockPurchaserAgentService.agentSummaryList(any()))
           .thenReturn(agentSummaryList)
 
-        when(
-          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
-        ).thenReturn(
-          Future.successful(
-            SdltOrganisationResponse(
-              storn = testStorn,
-              agents = agentList,
-              version = None
-            )
-          )
-        )
-
         when(mockPurchaserAgentService.handleAgentSelection(any(), any[Seq[Agent]], any(), any()))
           .thenReturn(
             Future.successful(
@@ -472,8 +455,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
 
           )
           .build()
@@ -492,9 +474,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
       "must return a Bad Request and errors when no data is submitted" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
-        when(
-          mockConnector.getSdltOrganisation(anyString())(any[HeaderCarrier], any[Request[_]])
-        ).thenReturn(Future.successful(SdltOrganisationResponse(storn = "STN005", agents = agentList, version = None)))
 
         val userAnswers = emptyUserAnswers
           .copy(fullReturn = Some(testFullReturn))
@@ -503,8 +482,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[PurchaserService].toInstance(mockPurchaserService),
-            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService),
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+            bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
           )
           .build()
 

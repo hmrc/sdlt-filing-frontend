@@ -18,11 +18,10 @@ package connectors
 
 import config.FrontendAppConfig
 import models.*
-import models.land._
+import models.land.*
 import models.prelimQuestions.PrelimReturn
-import models.vendor.*
 import models.purchaser.*
-import models.purchaserAgent.*
+import models.vendor.*
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -305,24 +304,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteCompanyDetails]")
       }
   }
-
-  def getSdltOrganisation(storn: String)
-                         (implicit hc: HeaderCarrier,
-                          request: Request[_]): Future[SdltOrganisationResponse] =
-    http
-      .post(url"$activeBase/manage-agents/get-sdlt-organisation")
-      .withBody(Json.obj("storn" -> storn))
-      .execute[Either[UpstreamErrorResponse, SdltOrganisationResponse]]
-      .flatMap {
-        case Right(resp) =>
-          Future.successful(resp)
-        case Left(error) =>
-          Future.failed(error)
-      }
-      .recover {
-        case e => throw logResponse(e, "[StampDutyLandTaxConnector][getSdltOrganisation]")
-      }
-
+  
   def updateReturnInfo(returnInfoRequest: ReturnInfoRequest)(implicit hc: HeaderCarrier,
                                                                                      request: Request[_]): Future[ReturnInfoReturn] = {
     http.post(url"$activeBase/filing/update/return-info")

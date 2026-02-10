@@ -285,7 +285,7 @@ object FullReturnConstants {
     agentType = Some("VENDOR")
   )
 
-  val completeAgent: Agent = Agent(
+  val completeAgent: Seq[Agent] = Seq(Agent(
     agentId = Some("AGT001"),
     storn = Some("STORN123456"),
     name = Some("Smith & Partners LLP"),
@@ -299,7 +299,7 @@ object FullReturnConstants {
     email = Some("info@smithpartners.co.uk"),
     dxAddress = Some("DX 123 London"),
     agentResourceReference = Some("AGT-REF-001")
-  )
+  ))
 
   val completeLease: Lease = Lease(
     leaseID = Some("LSE001"),
