@@ -26,7 +26,6 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendor.*
 import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorAgentsContactDetailsPage}
 import play.api.data.Form
 import play.api.inject.bind
@@ -49,13 +48,11 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
   val userAnswersWithAgentDetails: UserAnswers = emptyUserAnswers
     .set(AgentNamePage, "Jones & Co, Leeds").success.value
-    .set(VendorRepresentedByAgentPage, true).success.value
     .set(AddVendorAgentContactDetailsPage, true).success.value
 
   val agentName = "Jones & Co, Leeds"
 
   val userAnswersMissingAgentName: UserAnswers = emptyUserAnswers
-    .set(VendorRepresentedByAgentPage, true).success.value
     .set(AddVendorAgentContactDetailsPage, true).success.value
 
   val fullReturnWithNonVendorAgent: FullReturn = FullReturnConstants.completeFullReturn.copy(
@@ -165,7 +162,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
     "must redirect to agent name page if agent name is not found for a GET" in {
 
       val userAnswers = emptyUserAnswers
-        .set(VendorRepresentedByAgentPage, true).success.value
         .set(AddVendorAgentContactDetailsPage, true).success.value
         .copy(fullReturn = Some(fullReturnWithNonVendorAgent))
 

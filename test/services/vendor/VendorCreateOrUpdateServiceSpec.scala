@@ -123,8 +123,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           name = Some("UK")
         )),
         addressValidated = Some(true)
-      ),
-      representedByAnAgent = Some("Yes")
+      )
     ))
   }
 

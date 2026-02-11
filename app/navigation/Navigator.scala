@@ -45,7 +45,7 @@ class Navigator @Inject()() {
     case VendorOrCompanyNamePage =>
       _ => controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(NormalMode)
     case ConfirmVendorAddressPage =>
-      _ => controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode)
+      _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case AgentNamePage =>
       _ => controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
     case AddVendorAgentContactDetailsPage =>
@@ -172,7 +172,6 @@ class Navigator @Inject()() {
 
     case VendorOrCompanyNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case WhoIsTheVendorPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
-    case VendorRepresentedByAgentPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
 
     case AgentNamePage => _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()
     case VendorAgentAddressPage => _ => controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad()

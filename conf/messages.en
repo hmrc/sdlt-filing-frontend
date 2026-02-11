@@ -347,8 +347,6 @@ vendor.checkYourAnswers.vendorName.hidden                                       
 vendor.checkYourAnswers.vendorAddress.label                                         = Vendor address
 vendor.checkYourAnswers.vendorAddress.addressMissing                                = Enter vendor address
 vendor.checkYourAnswers.vendorAddress.hidden                                        = Vendor address
-vendor.checkYourAnswers.representedByAgent.label                                    = Represented by an agent
-vendor.checkYourAnswers.representedByAgent.agentMissing                             = Represented by an agent
 
 vendor.company.title                                                                = What is the company’s name? - About the vendor
 vendor.company.heading                                                              = What is the company’s name?
@@ -377,12 +375,6 @@ vendor.name.error.length                                                        
 vendor.remove.title                                                                 = Are you sure you want to remove the vendor?
 vendor.remove.heading                                                               = Are you sure you want to remove {0}?
 vendor.remove.error.required                                                        = Select Yes if you want to remove the vendor
-
-vendor.vendorRepresentedByAgent.title                                               = Is the vendor represented by an agent? - About the vendor
-vendor.vendorRepresentedByAgent.heading                                             = Is {0} represented by an agent?
-vendor.vendorRepresentedByAgent.checkYourAnswersLabel                               = Represented by an agent
-vendor.vendorRepresentedByAgent.change.hidden                                       = Represented by an agent
-vendor.vendorRepresentedByAgent.error.required                                      = Please select an option
 
 vendor.vendorOverview.title                                                         = Vendor Overview - About the vendor
 vendor.vendorOverview.heading                                                       = Vendor Overview

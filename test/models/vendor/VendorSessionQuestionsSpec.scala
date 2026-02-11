@@ -106,8 +106,7 @@ class VendorSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
                 name = Some("UK")
               )),
               addressValidated = Some(true)
-            ),
-            representedByAnAgent = Some("Yes")
+            )
           ))
 
         result shouldBe expectedResult
@@ -131,8 +130,7 @@ class VendorSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
               postcode = None,
               country = None,
               addressValidated = None
-            ),
-            representedByAnAgent = None
+            )
           ))
 
         result shouldBe expectedResult

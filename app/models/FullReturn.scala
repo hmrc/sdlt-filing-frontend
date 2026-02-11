@@ -247,7 +247,7 @@ object Vendor {
       address3 = vendorSessionQuestions.vendorCurrent.vendorAddress.line3,
       address4 = vendorSessionQuestions.vendorCurrent.vendorAddress.line4,
       postcode = vendorSessionQuestions.vendorCurrent.vendorAddress.postcode,
-      isRepresentedByAgent = vendorSessionQuestions.vendorCurrent.representedByAnAgent
+      isRepresentedByAgent = Some("NO")
     )
     )
   }

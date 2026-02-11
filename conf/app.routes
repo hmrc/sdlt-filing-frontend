@@ -67,11 +67,6 @@ POST        /about-the-vendor/vendor-name                                       
 GET         /about-the-vendor/vendor-name/change                                                     controllers.vendor.VendorOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendor/vendor-name/change                                                     controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-the-vendor/vendor-agent                                                           controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-vendor/vendor-agent                                                           controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-vendor/vendor-agent/change                                                    controllers.vendor.VendorRepresentedByAgentController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-vendor/vendor-agent/change                                                    controllers.vendor.VendorRepresentedByAgentController.onSubmit(mode: Mode = CheckMode)
-
 GET         /generic-error                                                                           controllers.GenericErrorController.onPageLoad()
 
 GET         /about-the-vendor/vendor-overview                                                        controllers.vendor.VendorOverviewController.onPageLoad(mode: Mode = NormalMode, paginationIndex: Int ?= 1)
