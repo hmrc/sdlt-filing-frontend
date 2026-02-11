@@ -95,16 +95,16 @@ object Purchaser {
   def from(userAnswers: Option[UserAnswers], logger: Logger): Future[Purchaser] = {
     val purchaserSessionQuestions: PurchaserSessionQuestions = userAnswers.get.data.as[PurchaserSessionQuestions]
 
-    val maybePurchaserResourceRef = for {
+    val existingPurchaser = for {
       answers <- userAnswers
       fullReturn <- answers.fullReturn
       purchasers <- fullReturn.purchaser
       purchaserId <- purchaserSessionQuestions.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
-      existingPurchaser <- purchasers.find(_.purchaserID.contains(purchaserId))
-      resourceRef <- existingPurchaser.purchaserResourceRef
-    } yield resourceRef
+      existing <- purchasers.find(_.purchaserID.contains(purchaserId))
+    } yield existing
 
-    logger.info(s"[Purchaser][from] \n $maybePurchaserResourceRef")
+
+    logger.info(s"[Purchaser][from] existing purchaser found: \n $existingPurchaser")
 
 
     Future.successful(
@@ -136,12 +136,12 @@ object Purchaser {
           postcode  = purchaserSessionQuestions.purchaserCurrent.purchaserAddress.postcode,
           phone  = purchaserSessionQuestions.purchaserCurrent.enterPurchaserPhoneNumber,
           nino = purchaserSessionQuestions.purchaserCurrent.nationalInsuranceNumber,
-          purchaserResourceRef  = maybePurchaserResourceRef,
-          nextPurchaserID = None,
-          lMigrated  = None,
-          createDate  = None,
-          lastUpdateDate = None,
-          isUkCompany = None,
+          purchaserResourceRef  = existingPurchaser.flatMap(_.purchaserResourceRef),
+          nextPurchaserID = existingPurchaser.flatMap(_.nextPurchaserID),
+          lMigrated  = existingPurchaser.flatMap(_.lMigrated),
+          createDate  = existingPurchaser.flatMap(_.createDate),
+          lastUpdateDate = existingPurchaser.flatMap(_.lastUpdateDate),
+          isUkCompany = existingPurchaser.flatMap(_.isUkCompany),
           hasNino  = purchaserSessionQuestions.purchaserCurrent.doesPurchaserHaveNI.map(_.toString.toLowerCase),
           dateOfBirth  = purchaserSessionQuestions.purchaserCurrent.purchaserDateOfBirth.map(_.toString),
           registrationNumber = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
