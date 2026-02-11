@@ -303,6 +303,30 @@ addressLookup.vendorQuestionsAddress.confirmPage.submitLabel                    
 addressLookup.vendorQuestionsAddress.countryPicker.title                            = Find {0}’s address - About the vendor
 addressLookup.vendorQuestionsAddress.countryPicker.heading                          = Find {0}’s address
 
+# Land Address Lookup
+addressLookup.landQuestionsAddress.lookupPage.title                                 = Find the address of the land or property - About the land
+addressLookup.landQuestionsAddress.lookupPage.heading                               = Find the address of the land or property
+addressLookup.landQuestionsAddress.lookupPage.filterLabel                           = Property name or number (optional)
+addressLookup.landQuestionsAddress.lookupPage.submitLabel                           = Continue
+addressLookup.landQuestionsAddress.lookupPage.manualAddressLinkText                 = Enter the address manually
+addressLookup.landQuestionsAddress.selectPage.title                                 = Choose the address of the land or property - About the land
+addressLookup.landQuestionsAddress.selectPage.heading                               = Choose the address of the land or property
+addressLookup.landQuestionsAddress.selectPage.editAddressLinkText                   = Enter address manually
+addressLookup.landQuestionsAddress.selectPage.submitLabel                           = Continue
+addressLookup.landQuestionsAddress.editPage.title                                   = Enter the address of the land or property - About the land
+addressLookup.landQuestionsAddress.editPage.heading                                 = Enter the address of the land or property
+addressLookup.landQuestionsAddress.editPage.line1Label                              = Address line 1
+addressLookup.landQuestionsAddress.editPage.line2Label                              = Address line 2
+addressLookup.landQuestionsAddress.editPage.line3Label                              = Address line 3
+addressLookup.landQuestionsAddress.editPage.postcodeLabel                           = Postcode
+addressLookup.landQuestionsAddress.editPage.countryLabel                            = County
+addressLookup.landQuestionsAddress.editPage.submitLabel                             = Continue
+addressLookup.landQuestionsAddress.confirmPage.title                                = Review and confirm the address of the land or property - About the land
+addressLookup.landQuestionsAddress.confirmPage.heading                              = Review and confirm the address of the land or property
+addressLookup.landQuestionsAddress.confirmPage.changeLinkText                       = Edit this address
+addressLookup.landQuestionsAddress.confirmPage.submitLabel                          = Confirm address
+addressLookup.landQuestionsAddress.countryPicker.title                              = Find the address of the land or property - About the land
+addressLookup.landQuestionsAddress.countryPicker.heading                            = Find the address of the land or property
 
 # Vendor Messages
 vendor.beforeStart.title                                                            = Before you start - About the vendor
