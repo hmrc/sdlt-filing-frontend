@@ -96,6 +96,9 @@ class PurchaserCreateOrUpdateService {
           updateRequest <- UpdatePurchaserRequest.from(userAnswers, purchaser)
           updateResponse <- backendConnector.updatePurchaser(updateRequest)
           _ <- if (updateResponse.updated) {
+            //TODO delete after purchaser working
+            logger.info("[callUpdatePurchaser] purchaser being updated" + purchaser)
+            logger.info("[callUpdatePurchaser] purchaser session data" + sessionData)
             Future.successful(())
           } else {
             Future.failed(new IllegalStateException("Purchaser update failed - backend returned updated = false"))
