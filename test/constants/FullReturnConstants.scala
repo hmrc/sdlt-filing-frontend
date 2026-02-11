@@ -442,7 +442,6 @@ object FullReturnConstants {
     residency = Some(completeResidency)
   )
 
-  // Minimal/Incomplete version for testing
   val incompleteFullReturn: FullReturn = FullReturn(
     stornId = "STORN123456",
     returnResourceRef = "RRF-2024-001",
@@ -468,8 +467,7 @@ object FullReturnConstants {
     returnResourceRef = "RRF-2024-001"
   )
 
-  // Version with just basic info
-  val minimalFullReturn: FullReturn = FullReturn(
+   val minimalFullReturn: FullReturn = FullReturn(
     stornId = "STORN123456",
     returnResourceRef = "RRF-2024-001",
     sdltOrganisation = Some(completeSdltOrganisation),

@@ -141,13 +141,13 @@ class Navigator @Inject()() {
     case LandTypeOfPropertyPage =>
       _ => controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(NormalMode)
     case LandInterestTransferredOrCreatedPage =>
-      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO DTR-2430: Redirect to SDLT - Confirm the address of the land or property
+      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2430 - SPRINT-8 - Redirect to SDLT - Confirm the address of the land or property
     case LandRegisteredHmRegistryPage =>
       _ => controllers.land.routes.LandTitleNumberController.onPageLoad(NormalMode)
     case LandTitleNumberPage =>
       _ => controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode)
     case LandAddNlpgUprnPage =>
-      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO DTR-2459: Redirect to What is the NLPG UPRN for the land or property page
+      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2459 - SPRINT-9 Redirect to What is the NLPG UPRN for the land or property page
 
     case _ => _ => routes.IndexController.onPageLoad()
   }
@@ -193,10 +193,9 @@ class Navigator @Inject()() {
     case PurchaserAgentReferencePage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case PurchaserAgentAuthorisedPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
 
-    //TODO - LAND - Add land check route here to be uncommented in CYA task
+    //TODO - DTR-2495 - SPRINT-19 - Add land check route here to be uncommented in CYA task
     //    case LandTypeOfPropertyPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     //    case LandInterestTransferredOrCreatedPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-
     //    case LandTitleNumberPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()

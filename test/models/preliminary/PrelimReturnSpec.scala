@@ -233,8 +233,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
       "must serialize None optional fields correctly" in {
         val json = Json.toJson(minimalPrelimReturn)
-
-        // When deserialized back, None values should work correctly
+        
         val deserialized = Json.fromJson[PrelimReturn](json).asEither.value
         deserialized.houseNumber must not be defined
         deserialized.addressLine2 must not be defined

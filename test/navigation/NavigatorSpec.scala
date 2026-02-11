@@ -184,11 +184,11 @@ class NavigatorSpec extends SpecBase {
 
       "land routes" - {
 
-        "go from LandTypeOfPropertyPage to InterestTransferredOrCreated page" in { //TODO update to lr-2 DTR-2426
+        "go from LandTypeOfPropertyPage to InterestTransferredOrCreated page" in {
           navigator.nextPage(LandTypeOfPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(NormalMode)
         }
 
-        // TODO DTR-2430: Redirect to SDLT - Confirm the address of the land or property
+        // TODO - DTR-2430 - SPRINT-8 Redirect to SDLT - Confirm the address of the land or property
         "go from LandInterestTransferredOrCreatedPage to ConfirmAddressOfLandOrProperty page" in {
           navigator.nextPage(LandInterestTransferredOrCreatedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
@@ -201,7 +201,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandTitleNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode)
         }
 
-        // TODO DTR-2459: Redirect to What is the NLPG UPRN of the land or property
+        // TODO - DTR-2459 - SPRINT-9 - Redirect to What is the NLPG UPRN of the land or property
         "go from LandAddNlpgUprnPage to LandNlpgUprn page" in {
           navigator.nextPage(LandAddNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
@@ -257,7 +257,7 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(PurchaserAgentAuthorisedPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
       }
 
-      //todo - mopup - implement all check routes
+      //TODO - DTR-2495 - SPRINT-10 - mopup implement all check routes for Land CYA
       "must go from any land page to LandCheckYourAnswers" in {
         navigator.nextPage(LandTitleNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
       }

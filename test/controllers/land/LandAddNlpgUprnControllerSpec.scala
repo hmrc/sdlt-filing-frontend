@@ -106,7 +106,7 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    // TODO update when DTR-2459 completed
+    // TODO - DTR-2459 - SPRINT-9 - update redirect
     "must redirect to the Enter NlpgUprn page when No is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -133,7 +133,7 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    // TODO update when DTR-2459 completed
+    // TODO - DTR-2459 - SPRINT-9 - update redirect
     "must redirect to the Land CYA page when No is submitted in check mode" in {
 
       val mockSessionRepository = mock[SessionRepository]

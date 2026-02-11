@@ -70,9 +70,9 @@ class LandAddNlpgUprnController @Inject()(
             case true =>
               Redirect(navigator.nextPage(LandAddNlpgUprnPage, mode, updatedAnswers))
             case false if mode == CheckMode =>
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO change to land CYA DTR-2495
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2495 - SPRINT-10 - change to land CYA
             case _ =>
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO change to land NLPG UPRN DTR-2459
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2459 - SPRINT-9 - change to land NLPG UPRN
           }
       )
   }

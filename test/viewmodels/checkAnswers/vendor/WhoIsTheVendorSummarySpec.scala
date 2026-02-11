@@ -24,13 +24,13 @@ import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
-class VendorTypeSummarySpec extends SpecBase {
+class WhoIsTheVendorSummarySpec extends SpecBase {
 
-  "VendorTypeSummary" - {
+  "WhoIsTheVendorSummary" - {
 
-    "when Vendor type is present" - {
+    "when WhoIsTheVendor is present" - {
 
-      "must return a summary list row with Vendor type value and change link" in {
+      "must return a summary list row with WhoIsTheVendor type value and change link" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -40,18 +40,18 @@ class VendorTypeSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(WhoIsTheVendorPage, whoIsTheVendor.Company).success.value
 
-          val result = VendorTypeSummary.row(Some(userAnswers))
+          val result = WhoIsTheVendorSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorType.label")
+          result.key.content.asHtml.toString() mustEqual msgs("vendor.whoIsTheVendor.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
 
-          htmlContent mustEqual msgs("vendor.checkYourAnswers.Company")
+          htmlContent mustEqual msgs("vendor.whoIsTheVendor.Company")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.checkYourAnswers.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.whoIsTheVendor.change.hidden")
         }
       }
 
@@ -71,55 +71,11 @@ class VendorTypeSummarySpec extends SpecBase {
             val userAnswers = emptyUserAnswers
               .set(WhoIsTheVendorPage, individualOrCompany).success.value
 
-            val result = VendorTypeSummary.row(Some(userAnswers))
+            val result = WhoIsTheVendorSummary.row(userAnswers)getOrElse(fail("Failed to get summary list row"))
 
             val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-            htmlContent mustEqual msgs(s"vendor.checkYourAnswers.$individualOrCompany")
+            htmlContent mustEqual msgs(s"vendor.whoIsTheVendor.$individualOrCompany")
           }
-        }
-      }
-
-    }
-
-    "when Vendor type is not present" - {
-
-      "must return a summary list row with a link to enter Vendor type" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val result = VendorTypeSummary.row(Some(emptyUserAnswers))
-
-          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorType.label")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("vendor.checkYourAnswers.vendorTypeMissing"))
-
-          result.actions mustBe None
-        }
-      }
-
-      "must return a summary list row with a link when UserAnswers is None" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val result = VendorTypeSummary.row(None)
-
-          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorType.label")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("vendor.checkYourAnswers.vendorTypeMissing"))
-
-          result.actions mustBe None
         }
       }
     }
@@ -134,7 +90,7 @@ class VendorTypeSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsTheVendorPage, whoIsTheVendor.Company).success.value
 
-        val result = VendorTypeSummary.row(Some(userAnswers))
+        val result = WhoIsTheVendorSummary.row(userAnswers)getOrElse(fail("Failed to get summary list row"))
 
         result.actions.get.items.head.href mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url
       }

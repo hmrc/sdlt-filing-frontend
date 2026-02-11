@@ -408,7 +408,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          // errorCalc should be true (60 + 50 = 110 > 99)
         }
       }
     }

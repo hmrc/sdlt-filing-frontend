@@ -264,7 +264,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must save UserAnswers with correct userId from request" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        val testUserId = "id" // Must match the id in emptyUserAnswers
+        val testUserId = "id"
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(completeFullReturn))

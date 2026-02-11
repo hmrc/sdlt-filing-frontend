@@ -178,7 +178,6 @@ class LoggingUtilSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite
 
       given play.api.mvc.Request[?] = request
 
-      // This will log: "Test message (trueClientIp: 192.168.1.1 sessionId: session-123 )"
       noException should be thrownBy testLogger.infoLog("Test message")
     }
   }

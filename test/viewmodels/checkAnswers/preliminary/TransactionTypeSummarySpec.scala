@@ -45,7 +45,6 @@ class TransactionTypeSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          // Check for the actual resolved message, not the key
           htmlContent mustEqual msgs(s"prelim.transactionType.${TransactionType.ConveyanceTransfer}")
 
           result.actions.get.items.size mustEqual 1
@@ -76,7 +75,6 @@ class TransactionTypeSummarySpec extends SpecBase {
             val result = TransactionTypeSummary.row(Some(userAnswers))
 
             val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-            // Verify it equals the resolved message for this transaction type
             htmlContent mustEqual msgs(s"prelim.transactionType.$transactionType")
           }
         }
@@ -95,7 +93,6 @@ class TransactionTypeSummarySpec extends SpecBase {
           val result = TransactionTypeSummary.row(Some(userAnswers))
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          // The message value should be HTML escaped and non-empty
           htmlContent.nonEmpty mustBe true
           result.value.content mustBe a[HtmlContent]
         }

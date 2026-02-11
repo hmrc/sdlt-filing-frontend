@@ -43,7 +43,7 @@ class AuthActionSpec extends SpecBase {
 
       val internalId: Option[String] = Some("internalId-123")
       val enrolments: Enrolments = Enrolments(Set(
-        Enrolment("IR-OTHER", Seq(), "activated") // No SDLT enrolment
+        Enrolment("IR-OTHER", Seq(), "activated")
       ))
 
       Future.successful(new~(internalId, enrolments).asInstanceOf[A])
