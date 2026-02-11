@@ -351,33 +351,33 @@ class LandAddressControllerSpec extends SpecBase with MockitoSugar {
 
     "addressLookupCallbackChangeLand" - {
 
-    "must redirect to ReturnTaskList when address is successfully saved" in { // TODO Change this when have the check your answers page and change title of test
-      val mockAddressLookupService = mock[AddressLookupService]
+      "must redirect to ReturnTaskList when address is successfully saved" in { // TODO Change this when have the check your answers page and change title of test
+        val mockAddressLookupService = mock[AddressLookupService]
 
-      when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
-        .thenReturn(Future.successful(testAddress))
-      when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
-        .thenReturn(Future.successful(true))
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.successful(testAddress))
+        when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+          .thenReturn(Future.successful(true))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AddressLookupService].toInstance(mockAddressLookupService)
-        )
-        .build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
 
-      running(application) {
-        val request = FakeRequest(GET, addressLookupCallbackChangeRoute)
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackChangeRoute)
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
-        verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
-        verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
+          verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
+          verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
+        }
       }
-    }
-  }
+
 
       "must redirect to Journey Recovery when address save fails" in {
         val mockAddressLookupService = mock[AddressLookupService]
@@ -503,6 +503,7 @@ class LandAddressControllerSpec extends SpecBase with MockitoSugar {
           }
         }
       }
+    }
     }
   }
 
