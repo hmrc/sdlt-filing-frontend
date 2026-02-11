@@ -20,7 +20,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.vendorQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
-import models.{Mode, NormalMode}
+import models.Mode
 import pages.vendor.{VendorAddressPage, VendorOrCompanyNamePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -87,8 +87,8 @@ class VendorAddressController @Inject()(
         for {
           address <- addressLookupService.getAddressById(id)
           updated <- addressLookupService.saveAddressDetails(address, VendorAddressPage)
-        } yield if(updated) {
-          Redirect(controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(NormalMode))
+        } yield if (updated) {
+          Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
         } else {
           Redirect(routes.JourneyRecoveryController.onPageLoad())
         }

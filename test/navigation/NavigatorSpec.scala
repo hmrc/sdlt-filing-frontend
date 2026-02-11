@@ -66,8 +66,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(VendorOrCompanyNamePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.ConfirmVendorAddressController.onPageLoad(mode = NormalMode)
         }
 
-        "go from ConfirmVendorAddressPage to VendorRepresentedByAgent page" in {
-          navigator.nextPage(ConfirmVendorAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorRepresentedByAgentController.onPageLoad(mode = NormalMode)
+        "go from ConfirmVendorAddressPage to VendorCheckYourAnswers page" in {
+          navigator.nextPage(ConfirmVendorAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
         }
 
         "go from Vendor Agent Before You Start page to agent name page" in {
@@ -235,7 +235,6 @@ class NavigatorSpec extends SpecBase {
       "must go from any vendor page to VendorCheckYourAnswers" in {
         navigator.nextPage(WhoIsTheVendorPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
         navigator.nextPage(VendorOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(VendorRepresentedByAgentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
       }
 
       "must go from any vendorAgent page to VendorAgentCheckYourAnswers" in {

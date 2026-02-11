@@ -30,8 +30,7 @@ case class VendorCurrent(
                           vendorID: Option[String] = None,
                           whoIsTheVendor: String,
                           vendorOrCompanyName: VendorName,
-                          vendorAddress: VendorSessionAddress,
-                          representedByAnAgent: Option[String] = None
+                          vendorAddress: VendorSessionAddress
                         )
 
 object VendorCurrent {

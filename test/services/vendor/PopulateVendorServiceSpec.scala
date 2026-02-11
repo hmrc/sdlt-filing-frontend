@@ -20,7 +20,7 @@ import base.SpecBase
 import models.address.Address
 import models.vendor.VendorName
 import models.{UserAnswers, Vendor}
-import pages.vendor.{VendorAddressPage, VendorOrCompanyNamePage, VendorOverviewVendorIdPage, VendorRepresentedByAgentPage}
+import pages.vendor.*
 
 import scala.util.{Failure, Success}
 
@@ -209,7 +209,6 @@ class PopulateVendorServiceSpec extends SpecBase {
 
       "must preserve existing user answers when populating vendor data" in {
         val existingAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-          .set(VendorRepresentedByAgentPage, false).success.value
 
         val vendor = Vendor(
           vendorID = Some("VEN009"),

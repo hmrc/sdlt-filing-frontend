@@ -23,6 +23,7 @@ import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.slf4j.{Logger, LoggerFactory}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import java.time.Instant
 
@@ -86,6 +87,98 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
     dateOfBirth = None,
     registrationNumber = None,
     placeOfRegistration = None
+  )
+
+  private val userAnswersVendorIndividual = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = None,
+    data = Json.obj(
+      "vendorCurrent" -> Json.obj(
+        "vendorID" -> "VEN001",
+        "vendorOrCompanyName" -> Json.obj(
+          "forename1" -> "John",
+          "forename2" -> "James",
+          "name" -> "Smith"
+        ),
+        "whoIsTheVendor" -> "Individual",
+        "vendorAddress" -> Json.obj(
+          "houseNumber" -> JsNull,
+          "line1" -> "Street 1",
+          "line2" -> "Street 2",
+          "line3" -> "Street 3",
+          "line4" -> "Street 4",
+          "line5" -> "Street 5",
+          "postcode" -> "CR7 8LU",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        )
+      )
+    ),
+    lastUpdated = Instant.now
+  )
+
+  private val userAnswersVendorCompany = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = None,
+    data = Json.obj(
+      "vendorCurrent" -> Json.obj(
+        "vendorID" -> "VEN001",
+        "vendorOrCompanyName" -> Json.obj(
+          "name" -> "Company ltd"
+        ),
+        "whoIsTheVendor" -> "Company",
+        "vendorAddress" -> Json.obj(
+          "houseNumber" -> JsNull,
+          "line1" -> "Street 1",
+          "line2" -> "Street 2",
+          "line3" -> "Street 3",
+          "line4" -> "Street 4",
+          "line5" -> "Street 5",
+          "postcode" -> "CR7 8LU",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        )
+      )
+    ),
+    lastUpdated = Instant.now
+  )
+
+  private val userAnswersVendorDataMissing = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = None,
+    data = Json.obj(
+      "vendorCurrent" -> Json.obj(
+        "vendorID" -> "VEN001",
+        "whoIsTheVendor" -> "Company",
+        "vendorAddress" -> Json.obj(
+          "houseNumber" -> JsNull,
+          "line1" -> "Street 1",
+          "line2" -> "Street 2",
+          "line3" -> "Street 3",
+          "line4" -> "Street 4",
+          "line5" -> "Street 5",
+          "postcode" -> "CR7 8LU",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        )
+      )
+    ),
+    lastUpdated = Instant.now
   )
 
   private val userAnswersPurchaserCompany = UserAnswers(
@@ -653,6 +746,55 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         val result = Json.fromJson[Vendor](json).asEither.value
 
         result mustEqual validVendor
+      }
+    }
+
+    ".from" - {
+
+      "must create Vendor of type Individual from UserAnswers" in {
+        val userAnswers = userAnswersVendorIndividual
+        val result = Vendor.from(Some(userAnswers)).futureValue
+        val expected = Vendor(
+          vendorID = Some("VEN001"),
+          forename1 = Some("John"),
+          forename2 = Some("James"),
+          name = Some("Smith"),
+          houseNumber = None,
+          address1 = Some("Street 1"),
+          address2 = Some("Street 2"),
+          address3 = Some("Street 3"),
+          address4 = Some("Street 4"),
+          postcode = Some("CR7 8LU"),
+          isRepresentedByAgent = Some("NO")
+        )
+        result shouldBe expected
+      }
+
+      "must create Vendor of type Company from UserAnswers" in {
+        val userAnswers = userAnswersVendorCompany
+        val result = Vendor.from(Some(userAnswers)).futureValue
+        val expected = Vendor(
+          vendorID = Some("VEN001"),
+          forename1 = None,
+          forename2 = None,
+          name = Some("Company ltd"),
+          houseNumber = None,
+          address1 = Some("Street 1"),
+          address2 = Some("Street 2"),
+          address3 = Some("Street 3"),
+          address4 = Some("Street 4"),
+          postcode = Some("CR7 8LU"),
+          isRepresentedByAgent = Some("NO")
+        )
+        result shouldBe expected
+      }
+
+      "must fail to create Vendor when mandatory data is missing from UserAnswers" in {
+        val userAnswers = userAnswersVendorDataMissing
+        val result = intercept[JsResultException] {
+          await(Vendor.from(Some(userAnswers)))
+        }
+        result.errors must not be empty
       }
     }
   }

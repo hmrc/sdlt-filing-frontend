@@ -34,27 +34,4 @@ class AgentChecksService {
       case _ => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
     }
   }
-
-  def checkMainVendorAgentRepresentedByAgent(userAnswers: UserAnswers, continueRoute: Result): Result = {
-    userAnswers.fullReturn.map { fullReturn =>
-      val returnAgentExists = fullReturn.returnAgent.isDefined
-      val isAgentTypeVendor = fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))
-      val mainVendorId: Option[String] = fullReturn.returnInfo.flatMap(_.mainVendorID)
-      val mainVendor = fullReturn.vendor.flatMap(_.find(_.vendorID == mainVendorId))
-      val mainVendorExists = mainVendor.isDefined
-      val mainVendorIsRepresentedByAgent = mainVendor.flatMap(_.isRepresentedByAgent).exists(_.equals("true"))
-
-      (returnAgentExists, isAgentTypeVendor, mainVendorExists, mainVendorIsRepresentedByAgent) match {
-        case (false, _, false, _) => continueRoute
-        case (true, false, false, _) => continueRoute
-        case (true, true, true, true) => Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
-        case (true, false, true, false) => Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
-        case (false, _, true, false) => Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
-        case (true, true, true, false) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
-        case (false, _, true, true) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
-        case (true, false, true, true) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
-        case (true, true, false, _) => Redirect(controllers.routes.GenericErrorController.onPageLoad())
-      }
-    }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-  }
 }
