@@ -20,6 +20,8 @@ import models.vendor.VendorSessionQuestions
 import models.purchaser.PurchaserSessionQuestions
 import org.slf4j.Logger
 import play.api.libs.json.{Json, OFormat}
+import java.time.format.DateTimeFormatter
+
 
 import scala.concurrent.Future
 
@@ -143,7 +145,7 @@ object Purchaser {
           lastUpdateDate = existingPurchaser.flatMap(_.lastUpdateDate),
           isUkCompany = existingPurchaser.flatMap(_.isUkCompany),
           hasNino  = purchaserSessionQuestions.purchaserCurrent.doesPurchaserHaveNI.map(_.toString.toLowerCase),
-          dateOfBirth  = purchaserSessionQuestions.purchaserCurrent.purchaserDateOfBirth.map(_.toString),
+          dateOfBirth  = purchaserSessionQuestions.purchaserCurrent.purchaserDateOfBirth.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
           registrationNumber = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
             purchaserSessionQuestions.purchaserCurrent.purchaserFormOfIdIndividual.map(_.idNumberOrReference)
           } else {

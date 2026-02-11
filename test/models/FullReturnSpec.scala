@@ -243,7 +243,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
     lastUpdateDate = None,
     isUkCompany = None,
     hasNino = Some("yes"),
-    dateOfBirth = Some("2000-02-02"),
+    dateOfBirth = Some("02/02/2000"),
     registrationNumber = None,
     placeOfRegistration = None
   )
