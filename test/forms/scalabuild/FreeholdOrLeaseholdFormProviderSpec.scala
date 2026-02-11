@@ -6,26 +6,26 @@
 package forms.scalabuild
 
 import base.ScalaSpecBase
-import models.scalabuild.HoldingTypes.{freehold, leasehold}
+import models.scalabuild.HoldingTypes.{Freehold, Leasehold}
 import org.scalatest.freespec.AnyFreeSpec
-import play.api.data.FormError
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.data.FormError
 
 class FreeholdOrLeaseholdFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
 
   val form = new FreeholdOrLeaseholdFormProvider().apply()
 
   "bind Freehold" in {
-    val data = Map(("value", "freehold"))
+    val data = Map(("value", "Freehold"))
     val result = form.bind(data)
-    result.value.value mustBe freehold
+    result.value.value mustBe Freehold
     result.errors mustBe empty
   }
 
   "bind Leasehold" in {
-    val data = Map(("value", "leasehold"))
+    val data = Map(("value", "Leasehold"))
     val result = form.bind(data)
-    result.value.value mustBe leasehold
+    result.value.value mustBe Leasehold
     result.errors mustBe empty
   }
 

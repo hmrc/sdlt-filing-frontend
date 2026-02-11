@@ -8,7 +8,7 @@ package models
 import java.time.LocalDate
 import enums.{HoldingTypes, PropertyTypes}
 import validators.api.RequestValidators
-import play.api.libs.json.{Json, Reads, __}
+import play.api.libs.json.{Format, Json, Reads, __}
 import play.api.libs.functional.syntax._
 import RequestValidators.{multiFieldDateReads, yesNoToBooleanReads}
 import models.sdltRebuild.TaxReliefDetails
@@ -16,13 +16,14 @@ import models.sdltRebuild.TaxReliefDetails
 object RelevantRentDetails {
   implicit val reads: Reads[RelevantRentDetails] = (
     (__ \ "contractPre201603").readNullable[Boolean](yesNoToBooleanReads) and
-    (__ \ "contractVariedPost201603").readNullable[Boolean](yesNoToBooleanReads) and
-    (__ \ "relevantRent").readNullable[BigDecimal]
-  )(RelevantRentDetails.apply _)
+      (__ \ "contractVariedPost201603").readNullable[Boolean](yesNoToBooleanReads) and
+      (__ \ "relevantRent").readNullable[BigDecimal]
+    )(RelevantRentDetails.apply _)
+  val mongoFormats: Format[RelevantRentDetails] = Json.format
 }
 
 object LeaseTerm {
-  implicit val reads: Reads[LeaseTerm] = Json.reads[LeaseTerm]
+  implicit val format: Format[LeaseTerm] = Json.format
 }
 
 object LeaseDetails {
@@ -36,6 +37,7 @@ object LeaseDetails {
     (__ \ "year4Rent").readNullable[BigDecimal] and
     (__ \ "year5Rent").readNullable[BigDecimal]
   )(LeaseDetails.apply _)
+  val mongoFormats: Format[LeaseDetails] = Json.format
 }
 
 object PropertyDetails {
@@ -46,6 +48,7 @@ object PropertyDetails {
     (__ \ "sharedOwnership").readNullable[Boolean](yesNoToBooleanReads) and
     (__ \ "currentValue").readNullable[Boolean](yesNoToBooleanReads)
   )(PropertyDetails.apply _)
+  val mongoFormats: Format[PropertyDetails] = Json.format
 }
 
 object Request {

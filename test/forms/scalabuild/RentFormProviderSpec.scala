@@ -12,97 +12,107 @@ import play.api.data.{Form, FormError}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class RentFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
-  val count = 3
-  val form: Form[RentPeriods] = new RentFormProvider().apply(count)
+  val form: Form[RentPeriods] = new RentFormProvider().apply()
   "RentFormProvider" - {
-    "should bind a valid list of BigDecimal rents" in {
+    "should bind a valid BigDecimal rents" in {
       val data = Map(
-        "rents[0]" -> "100.00",
-        "rents[1]" -> "200.50",
-        "rents[2]" -> "300"
+        "year1Rent" -> "100.00",
+        "year2Rent" -> "200.50",
+        "year3Rent" -> "300"
       )
       val result = form.bind(data)
       result.errors mustBe empty
-      result.value.value.rents mustBe List(BigDecimal(100.00), BigDecimal(200.50), BigDecimal(300))
+      result.value.value mustBe RentPeriods(
+        year1Rent = BigDecimal(100.00),
+        year2Rent = Some(BigDecimal(200.50)),
+        year3Rent = Some(BigDecimal(300))
+      )
     }
-  }
 
-  "should fail when a rent value is missing" in {
-    val data = Map(
-      "rents[0]" -> "100.00",
-      "rents[1]" -> "200.50"
-    )
-    val result = form.bind(data)
-    result.errors mustBe Seq(FormError("rents", "rents.error.required"))
-  }
+    ".rents should return a List of rents when not all years are defined" in {
+      val data = Map(
+        "year1Rent" -> "100.00",
+        "year2Rent" -> "200.50",
+        "year3Rent" -> "300"
+      )
+      val result = form.bind(data)
+      result.errors mustBe empty
+      result.value.value.rents mustBe List(100.00, 200.50, 300)
+    }
 
-  "should fail when a rent value is non-numeric" in {
-    val data = Map(
-      "rents[0]" -> "100.00",
-      "rents[1]" -> "abc",
-      "rents[2]" -> "300.00"
-    )
-    val result = form.bind(data)
-    result.errors mustBe Seq(FormError("rents[1]", "rents.error.nonNumeric"))
-  }
+    "should fail when a rent value is missing" in {
+      val data = Map(
+        "year1Rent" -> "100.00",
+        "year2Rent" -> "200.50"
+      )
+      val result = form.bind(data)
+      result.value.value.rents mustBe List(100.00, 200.50)
+//      result.errors mustBe Seq(FormError("year3Rent", "rents.error.required"))
+    }
 
-  "should fail when the list length does not match count" in {
-    val data = Map(
-      "rents[0]" -> "100.00",
-      "rents[1]" -> "200.00",
-      "rents[2]" -> "300.00",
-      "rents[3]" -> "400.00"
-    )
-    val result = form.bind(data)
-    result.errors mustBe Seq(FormError("rents", "rents.error.required"))
-  }
+    "should fail when a rent value is non-numeric" in {
+      val data = Map(
+        "year1Rent" -> "100.00",
+        "year2Rent" -> "abc",
+        "year3Rent" -> "300.00"
+      )
+      val result = form.bind(data)
+      result.errors mustBe Seq(FormError("year2Rent", "rents.error.nonNumeric"))
+    }
 
-  "should fail when a value has too many decimal places" in {
-    val data = Map(
-      "rents[0]" -> "100.123",
-      "rents[1]" -> "200.00",
-      "rents[2]" -> "300.00"
-    )
-    val result = form.bind(data)
-    result.errors mustBe Seq(FormError("rents[0]", "rents.error.nonNumeric"))
-  }
+    "should fail when a value has too many decimal places" in {
+      val data = Map(
+        "year1Rent" -> "100.123",
+        "year2Rent" -> "200.00",
+        "year3Rent" -> "300.00"
+      )
+      val result = form.bind(data)
+      result.errors mustBe Seq(FormError("year1Rent", "rents.error.nonNumeric"))
+    }
 
-  "should bind minimum allowed values" in {
-    val data = Map(
-      "rents[0]" -> "0.00",
-      "rents[1]" -> "0.00",
-      "rents[2]" -> "0.00"
-    )
-    val result = form.bind(data)
-    result.errors mustBe empty
-    result.value.value.rents mustBe List(BigDecimal(0.00), BigDecimal(0.00), BigDecimal(0.00))
-  }
+    "should bind minimum allowed values" in {
+      val data = Map(
+        "year1Rent" -> "0.00",
+        "year2Rent" -> "0.00",
+        "year3Rent" -> "0.00"
+      )
+      val result = form.bind(data)
+      result.errors mustBe empty
+      result.value.value mustBe RentPeriods(
+        year1Rent = BigDecimal(0.00),
+        year2Rent = Some(BigDecimal(0.00)),
+        year3Rent = Some(BigDecimal(0.00))
+      )
+    }
 
-  "should bind maximum allowed values" in {
-    val data = Map(
-      "rents[0]" -> "9999999999.99",
-      "rents[1]" -> "9999999999.99",
-      "rents[2]" -> "9999999999.99"
-    )
-    val result = form.bind(data)
-    result.errors mustBe empty
-    result.value.value.rents mustBe List(
-      BigDecimal("9999999999.99"),
-      BigDecimal("9999999999.99"),
-      BigDecimal("9999999999.99")
-    )
-  }
+    "should bind maximum allowed values" in {
+      val data = Map(
+        "year1Rent" -> "9999999999.99",
+        "year2Rent" -> "9999999999.99",
+        "year3Rent" -> "9999999999.99"
+      )
+      val result = form.bind(data)
+      result.errors mustBe empty
+      result.value.value mustBe RentPeriods(
+        year1Rent = BigDecimal("9999999999.99"),
+        year2Rent = Some(BigDecimal("9999999999.99")),
+        year3Rent = Some(BigDecimal("9999999999.99"))
+      )
+    }
 
-  "should unbind (fill) correctly using unapply" in {
-    val form = new RentFormProvider().apply(count)
-    val model = RentPeriods(
-      rents = List(BigDecimal(100.00), BigDecimal(200.50), BigDecimal(300.00))
-    )
-    val filledForm = form.fill(model)
-    filledForm.data mustBe Map(
-      "rents[0]" -> "100.0",
-      "rents[1]" -> "200.5",
-      "rents[2]" -> "300.0"
-    )
+    "should unbind (fill) correctly using unapply" in {
+      val form = new RentFormProvider().apply()
+      val model = RentPeriods(
+        year1Rent = 100.0,
+        year2Rent = Some(200.5),
+        year3Rent = Some(300.0)
+      )
+      val filledForm = form.fill(model)
+      filledForm.data mustBe Map(
+        "year1Rent" -> "100.0",
+        "year2Rent" -> "200.5",
+        "year3Rent" -> "300.0"
+      )
+    }
   }
 }

@@ -11,12 +11,12 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
 sealed trait HoldingTypes
 object HoldingTypes extends Enumerable.Implicits {
-  case object freehold extends HoldingTypes
-  case object leasehold extends HoldingTypes
+  case object Freehold extends HoldingTypes
+  case object Leasehold extends HoldingTypes
 
   val values: Seq[HoldingTypes] = Seq(
-    freehold,
-    leasehold
+    Freehold,
+    Leasehold
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] =

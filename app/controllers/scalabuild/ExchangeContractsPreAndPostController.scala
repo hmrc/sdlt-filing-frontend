@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.{ContractPost201603FormProvider, ExchangeContractsFormProvider}
+import navigation.scalabuild.Navigator
 import pages.scalabuild.{ContractPost201603Page, ExchangeContractsPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -23,6 +24,7 @@ class ExchangeContractsPreAndPostController @Inject()(
                                                        exchangeContractsFormProvider: ExchangeContractsFormProvider,
                                                        contractPost201603FormProvider: ContractPost201603FormProvider,
                                                        sessionRepository: SessionRepository,
+                                                       navigator: Navigator,
                                                        getData: DataRetrievalAction,
                                                        requireData: DataRequiredAction,
                                                        identify: IdentifierAction
@@ -59,14 +61,14 @@ class ExchangeContractsPreAndPostController @Inject()(
                     .setTwo(ExchangeContractsPage, true, ContractPost201603Page, contractPostValue)
                 )
                 _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(controllers.scalabuild.routes.ExchangeContractsPreAndPostController.onPageLoad().url))
+              } yield Redirect(navigator.nextPage(ExchangeContractsPage, updatedAnswers)))
         case false =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ExchangeContractsPage, false))
             _ <- sessionRepository.set(updatedAnswers)
           }
           yield
-            Redirect(controllers.scalabuild.routes.ExchangeContractsPreAndPostController.onPageLoad().url)
+            Redirect(navigator.nextPage(ExchangeContractsPage, updatedAnswers))
         }
       )
   }

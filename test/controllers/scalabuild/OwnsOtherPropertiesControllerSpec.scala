@@ -7,8 +7,9 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.OwnsOtherPropertiesFormProvider
+import models.scalabuild.HoldingTypes
 import org.scalatest.freespec.AnyFreeSpec
-import pages.scalabuild.OwnsOtherPropertiesPage
+import pages.scalabuild.{HoldingPage, OwnsOtherPropertiesPage}
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
@@ -17,7 +18,7 @@ import views.html.scalabuild.OwnsOtherPropertiesView
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class OwnsOtherPropertiesControllerSpec extends AnyFreeSpec with ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/owned-other-properties")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/purchase-price")
   val formProvider = new OwnsOtherPropertiesFormProvider()
   val form = formProvider()
   lazy val ownsOtherPropertiesRoute = controllers.scalabuild.routes.OwnsOtherPropertiesController.onPageLoad().url
@@ -52,7 +53,7 @@ class OwnsOtherPropertiesControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val application = applicationBuilder().build()
+      val application = applicationBuilder(emptyUserAnswers.set(HoldingPage, HoldingTypes.Freehold).toOption).build()
 
       running(application) {
         val request =

@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.MainResidenceFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.MainResidencePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -24,6 +25,7 @@ class MainResidenceController @Inject()(
                                          view: MainResidenceView,
                                          formProvider: MainResidenceFormProvider,
                                          sessionRepository: SessionRepository,
+                                         navigator: Navigator,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          identify: IdentifierAction
@@ -43,7 +45,7 @@ class MainResidenceController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(MainResidencePage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.scalabuild.routes.MainResidenceController.onPageLoad().url)
+          } yield Redirect(navigator.nextPage(MainResidencePage, updatedAnswers))
       )
   }
 }

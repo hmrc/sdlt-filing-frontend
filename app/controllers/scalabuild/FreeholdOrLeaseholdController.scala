@@ -8,6 +8,7 @@ package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.FreeholdOrLeaseholdFormProvider
 import models.scalabuild.HoldingTypes
+import navigation.scalabuild.Navigator
 import pages.scalabuild.HoldingPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -25,6 +26,7 @@ class FreeholdOrLeaseholdController @Inject() (
     view: FreeholdOrLeaseholdView,
     sessionRepository: SessionRepository,
     formProvider: FreeholdOrLeaseholdFormProvider,
+    navigator: Navigator,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     identify: IdentifierAction
@@ -55,9 +57,7 @@ class FreeholdOrLeaseholdController @Inject() (
                 .fromTry(request.userAnswers.set(HoldingPage, value))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(
-              (controllers.scalabuild.routes.ResidentialOrNonResidentialController
-                .onPageLoad()
-                .url)
+              navigator.nextPage(HoldingPage, updatedAnswers)
             )
         )
     }

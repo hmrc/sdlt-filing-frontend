@@ -17,7 +17,7 @@
 
 @(form: Form[_])(implicit request: RequestHeader, messages: Messages)
 
-@layout(pageTitle = Some(messages("tenancy.title"))) {
+@layout(pageTitle = Some(messages("holding.title"))) {
 
     @formHelper(action = controllers.scalabuild.routes.FreeholdOrLeaseholdController.onSubmit(), Symbol("autoComplete") -> "off") {
 
@@ -28,11 +28,11 @@
         @govukRadios(
             RadiosViewModel(
             field  = form("value"),
-            legend = LegendViewModel(messages("tenancy.heading")).asPageHeading(),
+            legend = LegendViewModel(messages("holding.heading")).asPageHeading(),
             items  = HoldingTypes.options
             )
             .inline()
-            .withHint(Hint(content = HtmlContent(messages("tenancy.hint"))))
+            .withHint(Hint(content = HtmlContent(messages("holding.hint"))))
         )
 
         @govukButton(ButtonViewModel("continue-button", messages("site.continue")))

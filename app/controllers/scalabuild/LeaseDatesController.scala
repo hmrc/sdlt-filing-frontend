@@ -8,6 +8,7 @@ package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.LeaseDatesFormProvider
 import models.scalabuild.LeaseDates
+import navigation.scalabuild.Navigator
 import pages.scalabuild.{EffectiveDatePage, LeaseDatesPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -24,6 +25,7 @@ class LeaseDatesController @Inject()(
                                       view: LeaseDatesView,
                                       formProvider: LeaseDatesFormProvider,
                                       sessionRepository: SessionRepository,
+                                      navigator: Navigator,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       identify: IdentifierAction
@@ -61,7 +63,8 @@ class LeaseDatesController @Inject()(
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseDatesPage, value))
                   _ <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(controllers.scalabuild.routes.LeaseDatesController.onPageLoad().url)
+                } yield {
+                  Redirect(navigator.nextPage(LeaseDatesPage, updatedAnswers)) }
             )
         }
       )

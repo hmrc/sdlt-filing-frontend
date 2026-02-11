@@ -13,6 +13,6 @@ class FreeholdOrLeaseholdFormProvider extends Mappings {
 
   def apply(): Form[HoldingTypes] =
     Form(
-      "value" -> enumerable[HoldingTypes]("tenancy.error.required")
+      "value" -> enumerable[HoldingTypes]("holding.error.required")
     )
 }

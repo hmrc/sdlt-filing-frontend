@@ -1,0 +1,42 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import controllers.{routes => mainRoutes}
+@import controllers.scalabuild.routes
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import components.{Paragraph,PageHeading}
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton,
+    govukSummaryList: GovukSummaryList,
+    pageHeading: PageHeading
+)
+
+@(printDisplayTable: PrintDisplayTable)(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+    @pageHeading("Summary")
+    @govukSummaryList(printDisplayTable.summaryList)
+
+@printDisplayTable.resultsTables.zipWithIndex.map { case (result, index) =>
+<div>
+    @pageHeading(result.resultHeading.getOrElse(""))
+
+    <h2>Result of SDLT calculation</h2>
+
+    @govukSummaryList(result.summaryTable)
+
+</div>
+}
+
+<div class="form-group govuk-body govuk-!-margin-top-3 govuk-!-display-none-print">
+<a href="#" class="govuk-button govuk-link--no-visited-state" media="print" data-module="hmrc-print-link" id="print-link">Print</a>
+</div>
+}

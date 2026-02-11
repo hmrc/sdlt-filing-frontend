@@ -11,6 +11,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import models.scalabuild.MarketValue
+import navigation.scalabuild.Navigator
 import pages.scalabuild.{EffectiveDatePage, MarketValuePage, PremiumPage}
 import play.api.i18n.I18nSupport
 import repositories.SessionRepository
@@ -26,6 +27,7 @@ class MarketValueController @Inject()(
                                        formProvider: MarketValueFormProvider,
                                        service: FtbLimitService,
                                        sessionRepository: SessionRepository,
+                                       navigator: Navigator,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        identify: IdentifierAction
@@ -65,7 +67,7 @@ class MarketValueController @Inject()(
                   updatedAnswersWithPremium <- Future.fromTry(updatedAnswers.set(PremiumPage, marketValue.premium))
                   _ <- sessionRepository.set(updatedAnswersWithPremium)
                 }
-                yield Redirect(controllers.scalabuild.routes.MarketValueController.onPageLoad().url)
+                yield Redirect(navigator.nextPage(MarketValuePage, updatedAnswers))
             )
         }
       )

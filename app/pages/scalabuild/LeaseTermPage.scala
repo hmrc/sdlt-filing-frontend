@@ -5,7 +5,7 @@
 
 package pages.scalabuild
 
-import models.scalabuild.LeaseTerm
+import models.LeaseTerm
 import models.scalabuild.PageConstants.leaseDetails
 import play.api.libs.json.JsPath
 
@@ -13,5 +13,5 @@ case object LeaseTermPage extends QuestionPage[LeaseTerm] {
 
   override def path: JsPath = JsPath \ leaseDetails \ toString
 
-  override def toString: String = "term"
+  override def toString: String = "leaseTerm"
 }

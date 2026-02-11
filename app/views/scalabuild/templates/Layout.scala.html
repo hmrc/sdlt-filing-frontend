@@ -3,7 +3,7 @@
  *
  *@
 
-@import config.FrontendAppConfig
+@import config.scalabuild.FrontendAppConfig
 @import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.En
@@ -17,10 +17,8 @@
         accessibilityStatementConfig: AccessibilityStatementConfig,
         govukBackLink : GovukBackLink
 )
-
 @(pageTitle: Option[String] = None,
 beforeContentBlock: Option[Html] = None, showBackLink: Boolean = true)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
-
 
 @content = {
     @contentBlock
@@ -29,5 +27,21 @@ beforeContentBlock: Option[Html] = None, showBackLink: Boolean = true)(contentBl
     @problemLinkHelper()
 </div>
 }
-@hmrcStandardPage(HmrcStandardPageParams(pageTitle = pageTitle, backLink = if(showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None))(content)
+@scripts = {
+<script src='@{routes.Assets.versioned("javascript/scalabuild-print.js")}' type="text/javascript"></script>
+}
+@head = {
+<link href='@controllers.routes.Assets.versioned("stylesheets/print.css")' rel="stylesheet" type="text/css" />
+}
+@hmrcStandardPage(
+    HmrcStandardPageParams(
+        templateOverrides = TemplateOverrides(
+            additionalHeadBlock = Some(head),
+            beforeContentBlock =  beforeContentBlock,
+            additionalScriptsBlock = Some(scripts)
+        ),
+        pageTitle = pageTitle,
+        backLink = if(showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript
+    ) else None)
+)(content)
 

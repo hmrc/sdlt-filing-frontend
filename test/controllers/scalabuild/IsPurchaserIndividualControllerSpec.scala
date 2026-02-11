@@ -6,6 +6,7 @@
 package controllers.scalabuild
 
 import base.ScalaSpecBase
+import fixtures.scalabuild.TestObjects
 import forms.scalabuild.IsPurchaserIndividualFormProvider
 import pages.scalabuild.IsPurchaserIndividualPage
 import org.scalatest.freespec.AnyFreeSpec
@@ -17,7 +18,7 @@ import play.api.test.Helpers._
 import play.api.mvc.Call
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-class IsPurchaserIndividualControllerSpec extends AnyFreeSpec with ScalaSpecBase {
+class IsPurchaserIndividualControllerSpec extends AnyFreeSpec with ScalaSpecBase with TestObjects {
   def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/additional-property-double")
   val formProvider = new IsPurchaserIndividualFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -38,7 +39,7 @@ class IsPurchaserIndividualControllerSpec extends AnyFreeSpec with ScalaSpecBase
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = emptyUserAnswers
+      val userAnswers = emptyUserAnswers2
         .set(IsPurchaserIndividualPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
@@ -53,7 +54,7 @@ class IsPurchaserIndividualControllerSpec extends AnyFreeSpec with ScalaSpecBase
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val application = applicationBuilder().build()
+      val application = applicationBuilder(Some(uaFreeRes)).build()
 
       running(application) {
         val request =

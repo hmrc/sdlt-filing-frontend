@@ -7,17 +7,18 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.RentFormProvider
-import models.scalabuild.{LeaseContext, LeaseContextBuilder, LeaseDates, LeaseTerm, RentPeriods}
+import models.LeaseTerm
+import models.scalabuild.{LeaseContext, LeaseContextBuilder, LeaseDates, RentPeriods}
+import org.mockito.ArgumentMatchers._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import pages.scalabuild.{EffectiveDatePage, LeaseDatesPage, RentPage}
+import play.api.data.FormBinding
+import play.api.inject.bind
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.RentView
-import play.api.data.FormBinding
-import org.mockito.ArgumentMatchers._
-import pages.scalabuild.{EffectiveDatePage, LeaseDatesPage, RentPage}
-import play.api.inject.bind
 
 import java.time.LocalDate
 
@@ -31,7 +32,13 @@ class RentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
     val thisYear = LocalDate.now().getYear
     val validEffectiveDate = LocalDate.of(thisYear, 1, 1)
     val leaseDates = LeaseDates(LocalDate.of(thisYear, 1, 2), LocalDate.of(thisYear + 4, 1, 1))
-    val rentPeriods = RentPeriods(List(BigDecimal(12), BigDecimal(34), BigDecimal(56), BigDecimal(78)))
+    val rentPeriods = RentPeriods(
+      year1Rent = 2000,
+      year2Rent = Some(2000),
+      year3Rent = Some(2000),
+      year4Rent = Some(2000),
+      year5Rent = None
+    )
     when(mockLeaseContextBuilder.build(any(), any(), any()))
       .thenReturn(LeaseContext(periodCount = expectedPeriodCount, term = expectedTerm))
 
@@ -50,7 +57,7 @@ class RentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
         val result = route(application, request).value
         val view = application.injector.instanceOf[RentView]
         val formProvider = application.injector.instanceOf[RentFormProvider]
-        val form = formProvider(expectedPeriodCount)
+        val form = formProvider()
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -69,14 +76,14 @@ class RentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
         val result = route(application, request).value
         val view = application.injector.instanceOf[RentView]
         val formProvider = application.injector.instanceOf[RentFormProvider]
-        val form = formProvider(expectedPeriodCount)
+        val form = formProvider()
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(rentPeriods), expectedPeriodCount)(request, messages(application)).toString
       }
     }
 
-    "must redirect to GET when valid rents are submitted" in {
+    "must redirect to correct Page when valid rents are submitted" in {
       val userAnswers = emptyUserAnswers
         .set(EffectiveDatePage, validEffectiveDate).success.value
         .set(LeaseDatesPage, leaseDates).success.value
@@ -89,17 +96,17 @@ class RentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
         val request =
           FakeRequest(POST, rentRoute)
             .withFormUrlEncodedBody(
-              "rents[0]" -> "100",
-              "rents[1]" -> "200",
-              "rents[2]" -> "300",
-              "rents[3]" -> "400"
+              "year1Rent" -> "100",
+              "year2Rent" -> "200",
+              "year3Rent" -> "300",
+              "year4Rent" -> "400"
             )
             .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe rentRoute
+        redirectLocation(result).value mustBe routes.CheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -127,7 +134,7 @@ class RentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
         val view = application.injector.instanceOf[RentView]
         val formProvider = application.injector.instanceOf[RentFormProvider]
-        val form = formProvider(expectedPeriodCount)
+        val form = formProvider()
         val boundForm = form.bindFromRequest()(request, FormBinding.Implicits.formBinding)
 
         status(result) mustBe BAD_REQUEST

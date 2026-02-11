@@ -18,9 +18,9 @@ class FreeholdOrLeaseholdViewSpec extends ViewTestFixture {
 
   "FreeholdOrLeaseholdView" must {
     "render the correct content" in {
-      pagetitle must include(messages("tenancy.title"))
-      heading mustBe messages("tenancy.heading")
-      hintText must include(messages("tenancy.hint"))
+      pagetitle must include(messages("holding.title"))
+      heading mustBe messages("holding.heading")
+      hintText must include(messages("holding.hint"))
     }
     "render the correct values for the radio button choices" in {
       HoldingTypes.values.map(value => radios must include(messages(s"$value")))

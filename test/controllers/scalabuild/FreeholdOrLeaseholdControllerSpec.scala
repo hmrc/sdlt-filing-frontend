@@ -8,10 +8,10 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.FreeholdOrLeaseholdFormProvider
 import models.scalabuild.HoldingTypes
-import models.scalabuild.HoldingTypes.freehold
-import pages.scalabuild.HoldingPage
+import models.scalabuild.HoldingTypes.Freehold
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import pages.scalabuild.HoldingPage
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
@@ -52,7 +52,7 @@ class FreeholdOrLeaseholdControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers = emptyUserAnswers
-        .set(HoldingPage, freehold).success.value
+        .set(HoldingPage, Freehold).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
         val request = FakeRequest(GET, freeholdOrLeaseholdRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
@@ -60,7 +60,7 @@ class FreeholdOrLeaseholdControllerSpec extends AnyFreeSpec with ScalaSpecBase {
         val view = application.injector.instanceOf[FreeholdOrLeaseholdView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(freehold))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(Freehold))(request, messages(application)).toString
       }
     }
 
@@ -71,7 +71,7 @@ class FreeholdOrLeaseholdControllerSpec extends AnyFreeSpec with ScalaSpecBase {
       running(application) {
         val request =
           FakeRequest(POST, freeholdOrLeaseholdRoute)
-            .withFormUrlEncodedBody(("value", "freehold"))
+            .withFormUrlEncodedBody(("value", "Freehold"))
             .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value

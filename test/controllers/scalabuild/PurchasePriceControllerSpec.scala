@@ -17,7 +17,7 @@ import views.html.scalabuild.PurchasePriceView
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class PurchasePriceControllerSpec extends AnyFreeSpec with ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/purchase-price")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/summary")
   val formProvider = new PurchasePriceFormProvider()
   val form          = formProvider()
   lazy val purchasePriceRoute = controllers.scalabuild.routes.PurchasePriceController.onPageLoad().url

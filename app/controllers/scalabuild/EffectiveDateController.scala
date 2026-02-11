@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.EffectiveDateFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.EffectiveDatePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -20,22 +21,23 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EffectiveDateController @Inject()(
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: EffectiveDateView,
-                                         formProvider: EffectiveDateFormProvider,
-                                         sessionRepository: SessionRepository,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         identify: IdentifierAction
-                                       )(implicit ec: ExecutionContext)
-  extends FrontendBaseController
+class EffectiveDateController @Inject() (
+    val controllerComponents: MessagesControllerComponents,
+    view: EffectiveDateView,
+    formProvider: EffectiveDateFormProvider,
+    sessionRepository: SessionRepository,
+    navigator: Navigator,
+    getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
+    identify: IdentifierAction
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport {
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val form = formProvider()
     val dateFromForm = request.userAnswers.get(EffectiveDatePage)
     val preparedForm = dateFromForm match {
-      case None => form
+      case None        => form
       case Some(value) => form.fillAndValidate(value)
     }
     Ok(view(preparedForm))
@@ -52,11 +54,7 @@ class EffectiveDateController @Inject()(
             updatedAnswers <- Future
               .fromTry(request.userAnswers.set(EffectiveDatePage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(
-            (controllers.scalabuild.routes.NonUkResidentController
-              .onPageLoad()
-              .url)
-          )
+          } yield Redirect(navigator.nextPage(EffectiveDatePage, updatedAnswers))
       )
   }
 }

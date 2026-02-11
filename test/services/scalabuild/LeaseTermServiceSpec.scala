@@ -6,7 +6,7 @@
 package services.scalabuild
 
 import base.ScalaSpecBase
-import models.scalabuild.LeaseTerm
+import models.LeaseTerm
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import java.time.LocalDate

@@ -17,7 +17,7 @@ import play.api.test.Helpers._
 import play.api.mvc.Call
 
 class IsAdditionalPropertyControllerSpec extends AnyFreeSpec with ScalaSpecBase {
-  def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/replace-main-residence")
+  def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/summary")
   val formProvider = new IsAdditionalPropertyFormProvider()
   val form: Form[Boolean] = formProvider()
   lazy val isAdditionalPropertyRoute: String = controllers.scalabuild.routes.IsAdditionalPropertyController.onPageLoad().url

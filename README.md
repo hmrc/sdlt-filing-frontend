@@ -101,6 +101,10 @@ sbt run -Dapplication.router=scalabuild.Routes
 
 or 
 
+sbt run play.http.router=scalabuild.Routes
+
+or
+
  sbt run -Dconfig.resource=application.scalabuild.conf   
 ```
 You will be able to access the first page at http://localhost:9953/calculate-stamp-duty-land-tax/intro

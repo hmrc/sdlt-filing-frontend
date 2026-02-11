@@ -8,6 +8,7 @@ package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.RentFormProvider
 import models.scalabuild.{LeaseContext, LeaseContextBuilder, RentPeriods, UserAnswers}
+import navigation.scalabuild.Navigator
 import pages.scalabuild.{EffectiveDatePage, LeaseDatesPage, LeaseTermPage, RentPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -25,6 +26,7 @@ class RentController @Inject()(
                                 view: RentView,
                                 formProvider: RentFormProvider,
                                 sessionRepository: SessionRepository,
+                                navigator: Navigator,
                                 getData: DataRetrievalAction,
                                 requireData: DataRequiredAction,
                                 identify: IdentifierAction
@@ -34,7 +36,7 @@ class RentController @Inject()(
     leaseContext(request.userAnswers) match {
       case Left(journeyRecovery) => journeyRecovery
       case Right(leaseCtx) =>
-        val form: Form[RentPeriods] = formProvider(leaseCtx.periodCount)
+        val form: Form[RentPeriods] = formProvider()
         val preparedForm = request.userAnswers.get(RentPage) match {
           case None => form
           case Some(value) => form.fill(value)
@@ -47,7 +49,7 @@ class RentController @Inject()(
     leaseContext(request.userAnswers) match {
       case Left(journeyRecovery) => Future.successful(journeyRecovery)
       case Right(leaseCtx) =>
-        val form: Form[RentPeriods] = formProvider(leaseCtx.periodCount)
+        val form: Form[RentPeriods] = formProvider()
         form
           .bindFromRequest()
           .fold(
@@ -57,7 +59,8 @@ class RentController @Inject()(
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RentPage, value))
                 userAnswersWithLeaseTerm <- Future.fromTry(updatedAnswers.set(LeaseTermPage, leaseCtx.term))
                 _ <- sessionRepository.set(userAnswersWithLeaseTerm)
-              } yield Redirect(controllers.scalabuild.routes.RentController.onPageLoad().url)
+              } yield {
+                Redirect(navigator.nextPage(RentPage, userAnswersWithLeaseTerm)) }
           )
     }
   }

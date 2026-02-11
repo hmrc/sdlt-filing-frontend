@@ -6,6 +6,7 @@
 package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.IsAdditionalPropertyFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.IsAdditionalPropertyPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -23,6 +24,7 @@ class IsAdditionalPropertyController @Inject() (
     view: IsAdditionalPropertyView,
     formProvider: IsAdditionalPropertyFormProvider,
     sessionRepository: SessionRepository,
+    navigator: Navigator,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     identify: IdentifierAction
@@ -50,7 +52,7 @@ class IsAdditionalPropertyController @Inject() (
               request.userAnswers.set(IsAdditionalPropertyPage, value)
             )
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.scalabuild.routes.ReplaceMainResidenceController.onPageLoad().url)
+          } yield Redirect(navigator.nextPage(IsAdditionalPropertyPage, request.userAnswers))
       )
   }
 }

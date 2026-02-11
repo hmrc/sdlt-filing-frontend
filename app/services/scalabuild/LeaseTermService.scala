@@ -5,7 +5,7 @@
 
 package services.scalabuild
 
-import models.scalabuild.LeaseTerm
+import models.LeaseTerm
 
 import java.time.LocalDate
 

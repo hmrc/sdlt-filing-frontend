@@ -21,7 +21,7 @@ import java.time.LocalDate
 
 class LeaseDatesControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/lease-dates")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/premium")
 
   val formProvider = new LeaseDatesFormProvider()
   val thisYear = LocalDate.now().getYear

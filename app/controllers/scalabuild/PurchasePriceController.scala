@@ -7,13 +7,14 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.PurchasePriceFormProvider
-import pages.scalabuild.PremiumPage
+import pages.scalabuild.{PremiumPage, PurchasePricePage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.scalabuild.PurchasePriceView
+import navigation.scalabuild.Navigator
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,6 +22,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PurchasePriceController @Inject() (
     val controllerComponents: MessagesControllerComponents,
+    navigator: Navigator,
     view: PurchasePriceView,
     formProvider: PurchasePriceFormProvider,
     sessionRepository: SessionRepository,
@@ -48,10 +50,10 @@ class PurchasePriceController @Inject() (
         value =>
           for {
             updatedAnswers <- Future.fromTry(
-              request.userAnswers.set(PremiumPage, value)
+              request.userAnswers.set(PurchasePricePage, value)
             )
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.scalabuild.routes.PurchasePriceController.onPageLoad().url)
+          } yield Redirect(navigator.nextPage(PurchasePricePage, updatedAnswers))
       )
   }
 }
