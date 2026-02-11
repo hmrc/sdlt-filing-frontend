@@ -156,7 +156,7 @@ class PopulatePurchaserService {
       case (Some(nino), Some(dob), _, _) if purchaser.nino.isDefined && purchaser.dateOfBirth.isDefined => for {
         withHasNationalInsurance <- previousPages.set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.Yes)
         withNationalInsurance <- withHasNationalInsurance.set(PurchaserNationalInsurancePage, nino)
-        finalAnswers <- withNationalInsurance.set(PurchaserDateOfBirthPage, LocalDate.parse(dob, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        finalAnswers <- withNationalInsurance.set(PurchaserDateOfBirthPage, LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/yyyy")))
       } yield finalAnswers
       case (_, _, Some(reg), Some(placeOfReg)) => for {
         withHasNationalInsurance <- previousPages.set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No)

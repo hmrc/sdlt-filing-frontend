@@ -67,7 +67,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
     isCompany = Some("NO"),
     phone = Some("07123456789"),
     nino = Some("AB123456C"),
-    dateOfBirth = Some("1992-03-10")
+    dateOfBirth = Some("10/03/1992")
   )
 
   private val companyPurchaser = Purchaser(
@@ -298,7 +298,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             isCompany = Some("NO"),
             phone = None,
             nino = Some("AB123456C"),
-            dateOfBirth = Some("1992-03-10")
+            dateOfBirth = Some("10/03/1992")
           )
 
           val fullReturnWithIndividualMainPurchaserNoPhone: FullReturn =
