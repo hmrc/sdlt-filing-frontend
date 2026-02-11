@@ -67,7 +67,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
     isCompany = Some("NO"),
     phone = Some("07123456789"),
     nino = Some("AB123456C"),
-    dateOfBirth = Some("15/03/1985")
+    dateOfBirth = Some("1992-03-10")
   )
 
   private val companyPurchaser = Purchaser(
@@ -247,7 +247,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(EnterPurchaserPhoneNumberPage) mustBe Some("07123456789")
           updatedAnswers.get(DoesPurchaserHaveNIPage) mustBe Some(DoesPurchaserHaveNI.Yes)
           updatedAnswers.get(PurchaserNationalInsurancePage) mustBe Some("AB123456C")
-          updatedAnswers.get(PurchaserDateOfBirthPage) mustBe Some(LocalDate.of(1985, 3, 15))
+          updatedAnswers.get(PurchaserDateOfBirthPage) mustBe Some(LocalDate.of(1992, 03, 10))
         }
 
         "must successfully populate session for main purchaser company with phone number" in {
@@ -298,7 +298,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             isCompany = Some("NO"),
             phone = None,
             nino = Some("AB123456C"),
-            dateOfBirth = Some("15/03/1985")
+            dateOfBirth = Some("1992-03-10")
           )
 
           val fullReturnWithIndividualMainPurchaserNoPhone: FullReturn =
@@ -328,7 +328,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(EnterPurchaserPhoneNumberPage) mustBe None
           updatedAnswers.get(DoesPurchaserHaveNIPage) mustBe Some(DoesPurchaserHaveNI.Yes)
           updatedAnswers.get(PurchaserNationalInsurancePage) mustBe Some("AB123456C")
-          updatedAnswers.get(PurchaserDateOfBirthPage) mustBe Some(LocalDate.of(1985, 3, 15))
+          updatedAnswers.get(PurchaserDateOfBirthPage) mustBe Some(LocalDate.of(1992, 03, 10 ))
         }
 
         "must successfully populate session for non-main purchaser company" in {

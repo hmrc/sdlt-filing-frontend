@@ -98,6 +98,7 @@ class PurchaserCreateOrUpdateService {
           _ <- if (updateResponse.updated) {
             //TODO delete after purchaser working
             logger.info("[callUpdatePurchaser] purchaser being updated" + purchaser)
+            logger.info("[callUpdatePurchaser] purchaser update request" + updateRequest)
             logger.info("[callUpdatePurchaser] purchaser session data" + sessionData)
             Future.successful(())
           } else {
