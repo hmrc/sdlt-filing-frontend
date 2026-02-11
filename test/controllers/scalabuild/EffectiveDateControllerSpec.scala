@@ -6,21 +6,22 @@
 package controllers.scalabuild
 
 import base.ScalaSpecBase
+import fixtures.scalabuild.TestObjects
 import forms.scalabuild.EffectiveDateFormProvider
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import pages.scalabuild.EffectiveDatePage
 import play.api.data.Form
+import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.mvc.Call
 import views.html.scalabuild.EffectiveDateView
 
 import java.time.LocalDate
 
-class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with MockitoSugar {
+class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with MockitoSugar with TestObjects {
 
   def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/non-uk-resident")
 
@@ -52,7 +53,7 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = emptyUserAnswers
+      val userAnswers = emptyUserAnswers2
         .set(EffectiveDatePage, validEffectiveDate).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
@@ -67,7 +68,7 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val application = applicationBuilder().build()
+      val application = applicationBuilder(Some(uaFreeRes)).build()
 
       running(application) {
         val request =

@@ -18,7 +18,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class PremiumControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/premium")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/rent")
   val formProvider = new PremiumFormProvider()
   val form          = formProvider()
   lazy val premiumRoute = routes.PremiumController.onPageLoad().url

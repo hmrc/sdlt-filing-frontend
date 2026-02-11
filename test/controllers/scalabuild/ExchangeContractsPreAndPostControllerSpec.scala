@@ -17,7 +17,6 @@ import play.api.test.FakeRequest
 import views.html.scalabuild.ExchangeContractsPreAndPostView
 
 class ExchangeContractsPreAndPostControllerSpec extends AnyFreeSpec with ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/exchange-contracts-double")
 
   val exchangeFormProvider = new ExchangeContractsFormProvider()
   val contractPostFormProvider = new ContractPost201603FormProvider()
@@ -77,7 +76,7 @@ class ExchangeContractsPreAndPostControllerSpec extends AnyFreeSpec with ScalaSp
           .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual exchangeContractsPreAndPostRoute
+        redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -113,7 +112,7 @@ class ExchangeContractsPreAndPostControllerSpec extends AnyFreeSpec with ScalaSp
           .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual exchangeContractsPreAndPostRoute
+        redirectLocation(result).value mustEqual routes.RelevantRentController.onPageLoad().url
       }
     }
   }

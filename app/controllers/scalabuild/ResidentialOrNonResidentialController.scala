@@ -5,13 +5,10 @@
 
 package controllers.scalabuild
 
-import controllers.scalabuild.actions.{
-  DataRequiredAction,
-  DataRetrievalAction,
-  IdentifierAction
-}
+import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.ResidentialOrNonResidentialFormProvider
 import models.scalabuild.PropertyType
+import navigation.scalabuild.Navigator
 import pages.scalabuild.ResidentialOrNonResidentialPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -29,6 +26,7 @@ class ResidentialOrNonResidentialController @Inject()(
                                                view: ResidentialOrNonResidentialView,
                                                sessionRepository: SessionRepository,
                                                formProvider: ResidentialOrNonResidentialFormProvider,
+                                               navigator: Navigator,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                identify: IdentifierAction
@@ -54,7 +52,7 @@ class ResidentialOrNonResidentialController @Inject()(
             updatedAnswers <- Future
               .fromTry(request.userAnswers.set(ResidentialOrNonResidentialPage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.scalabuild.routes.EffectiveDateController.onPageLoad().url)
+          } yield Redirect(navigator.nextPage(ResidentialOrNonResidentialPage, updatedAnswers))
       )
 
   }

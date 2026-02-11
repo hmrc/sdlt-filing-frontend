@@ -1,0 +1,58 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ *@
+
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import models.scalabuild.DetailTableRow
+
+@this(
+layout: templates.Layout,
+formHelper: FormWithCSRF,
+govukButton: GovukButton,
+govukTable: GovukTable
+)
+
+@(caption: String, detailFooter: String, taxDue: Int, rows: Seq[DetailTableRow])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+    <h1 class="govuk-heading-l">Detailed calculation</h1>
+
+    @govukTable(Table(
+        caption = Some(caption),
+        head = Some(Seq(
+            HeadCell(
+                content = Text(messages("detail.table.header.bands")),
+            ),
+            HeadCell(
+                content = Text(messages("detail.table.header.percentage")),
+                classes = "govuk-table__header--numeric"
+            ),
+            HeadCell(
+                content = Text(messages("detail.table.header.due")),
+                classes = "govuk-table__header--numeric"
+            ),
+        )),
+        rows = rows.map { row =>
+            Seq(
+                TableRow(content = Text(row.rowHeading)),
+                TableRow(content = Text(row.rate.toString), classes = "govuk-!-text-align-right"),
+                TableRow(content = Text(row.taxDue.toString), classes = "govuk-!-text-align-right")
+            )
+        } :+ Seq(
+                TableRow(content = Text("")),
+                TableRow(content = Text(detailFooter), classes = "govuk-!-text-align-right", attributes = Map("id" -> "detailFooter")),
+                TableRow(content = Text(taxDue.toString), classes = "govuk-!-text-align-right", attributes = Map("id" -> "totalSDLT"))
+                )
+
+    ))
+    <div class = "govuk-body govuk-!-margin-top-3">
+        <p class="govuk-body">You can <a href="@controllers.scalabuild.routes.PrintController.onPageLoad()" class="govuk-link">@messages("site.print")</a></p>
+    </div>
+
+    <div class = "govuk-body">
+        <p class="govuk-body">Go to the <a href="@messages("sdltHomePage.link.href")" class="govuk-link" >@messages("govUk.link.text") </a>homepage for SDLT.</p>
+    </div>
+}

@@ -67,3 +67,13 @@ POST      /relevant-rent                        controllers.scalabuild.RelevantR
 
 GET       /rent                        controllers.scalabuild.RentController.onPageLoad()
 POST      /rent                        controllers.scalabuild.RentController.onSubmit()
+
+GET       /summary                           controllers.scalabuild.CheckYourAnswersController.onPageLoad()
+POST      /summary                           controllers.scalabuild.CheckYourAnswersController.onSubmit()
+
+GET       /result                            controllers.scalabuild.ResultController.onPageLoad()
+
+GET       /detail/:index                     controllers.scalabuild.DetailController.onPageLoad(index: Int)
+
+GET       /print                            controllers.scalabuild.PrintController.onPageLoad()
+

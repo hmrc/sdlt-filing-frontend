@@ -8,6 +8,7 @@ package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.CurrentValueFormProvider
 import models.scalabuild.CurrentValue
+import navigation.scalabuild.Navigator
 import pages.scalabuild.{CurrentValuePage, EffectiveDatePage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -26,6 +27,7 @@ class CurrentValueController @Inject()(
                                         formProvider: CurrentValueFormProvider,
                                         service: FtbLimitService,
                                         sessionRepository: SessionRepository,
+                                        navigator: Navigator,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         identify: IdentifierAction
@@ -65,7 +67,7 @@ class CurrentValueController @Inject()(
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(CurrentValuePage, value.asBoolean))
                   _ <- sessionRepository.set(updatedAnswers)
                 }
-                yield Redirect(controllers.scalabuild.routes.CurrentValueController.onPageLoad().url)
+                yield Redirect(navigator.nextPage(CurrentValuePage, updatedAnswers))
             )
         }
       )

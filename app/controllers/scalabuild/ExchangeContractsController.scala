@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.ExchangeContractsFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.ExchangeContractsPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -22,6 +23,7 @@ class ExchangeContractsController @Inject()(
                                              view: ExchangeContractsView,
                                              formProvider: ExchangeContractsFormProvider,
                                              sessionRepository: SessionRepository,
+                                             navigator: Navigator,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
                                              identify: IdentifierAction
@@ -46,7 +48,7 @@ class ExchangeContractsController @Inject()(
             _ <- sessionRepository.set(updatedAnswers)
           }
           yield
-            Redirect(controllers.scalabuild.routes.ExchangeContractsController.onPageLoad().url)
+            Redirect(navigator.nextPage(ExchangeContractsPage, updatedAnswers))
       )
   }
 }

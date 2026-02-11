@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.RelevantRentFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.RelevantRentPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -22,6 +23,7 @@ class RelevantRentController @Inject()(
                                         view: RelevantRentView,
                                         formProvider: RelevantRentFormProvider,
                                         sessionRepository: SessionRepository,
+                                        navigator: Navigator,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         identify: IdentifierAction
@@ -43,7 +45,7 @@ class RelevantRentController @Inject()(
           updatedAnswers <- Future
             .fromTry(request.userAnswers.set(RelevantRentPage, value))
           _ <- sessionRepository.set(updatedAnswers)
-        } yield Redirect(controllers.scalabuild.routes.RelevantRentController.onPageLoad().url)
+        } yield Redirect(navigator.nextPage(RelevantRentPage, updatedAnswers))
       )
   }
 }

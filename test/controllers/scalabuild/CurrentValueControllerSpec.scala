@@ -6,6 +6,7 @@
 package controllers.scalabuild
 
 import base.ScalaSpecBase
+import fixtures.scalabuild.TestObjects
 import play.api.mvc.Call
 import forms.scalabuild.CurrentValueFormProvider
 import models.scalabuild.CurrentValue.{AboveThreshold, AtOrBelowThreshold}
@@ -19,9 +20,9 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 import java.time.LocalDate
 
-class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
+class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase with TestObjects {
 
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/current-value")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/purchase-price")
 
   val formProvider = new CurrentValueFormProvider()
   val form = formProvider()
@@ -33,7 +34,7 @@ class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
   "Current value Controller" - {
     "must return OK and the correct view for a GET" in {
-      val userAnswers = emptyUserAnswers
+      val userAnswers = emptyUserAnswers2
         .set(EffectiveDatePage, validEffectiveDate).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
@@ -47,7 +48,7 @@ class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = emptyUserAnswers.set(CurrentValuePage, true).success.value
+      val userAnswers = emptyUserAnswers2.set(CurrentValuePage, true).success.value
                           .set(EffectiveDatePage, validEffectiveDate).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
@@ -61,7 +62,7 @@ class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val userAnswers = emptyUserAnswers
+      val userAnswers = uaFreeRes
         .set(EffectiveDatePage, validEffectiveDate).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
@@ -76,7 +77,7 @@ class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers = emptyUserAnswers
+      val userAnswers = emptyUserAnswers2
         .set(EffectiveDatePage, validEffectiveDate).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
@@ -94,7 +95,7 @@ class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
     "must show the lower FTB limit before the threshold date" in {
       val lowerFTBDate = LocalDate.of(2022, 9, 22)
-      val userAnswers = emptyUserAnswers
+      val userAnswers = emptyUserAnswers2
         .set(EffectiveDatePage, lowerFTBDate).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
@@ -111,7 +112,7 @@ class CurrentValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
     "must show the higher FTB limit in between the threshold dates" in {
       val higherFTBDate = LocalDate.of(2022, 9, 23)
-      val userAnswers = emptyUserAnswers
+      val userAnswers = emptyUserAnswers2
         .set(EffectiveDatePage, higherFTBDate).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {

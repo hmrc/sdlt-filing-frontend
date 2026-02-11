@@ -17,7 +17,7 @@ import views.html.scalabuild.RelevantRentView
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class RelevantRentControllerSpec extends AnyFreeSpec with ScalaSpecBase {
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/relevant-rent")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/summary")
   val formProvider = new RelevantRentFormProvider()
   val form          = formProvider()
   lazy val relevantRentRoute = controllers.scalabuild.routes.RelevantRentController.onPageLoad().url

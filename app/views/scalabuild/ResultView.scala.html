@@ -1,0 +1,49 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ *@
+
+@import controllers.scalabuild.routes
+@import models.scalabuild._
+@import viewmodels.scalabuild.govuk._
+@import viewmodels.scalabuild._
+@import components.{Paragraph,PageHeading}
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton,
+    govukSummaryList: GovukSummaryList,
+    pageHeading: PageHeading
+)
+
+@(list: Seq[ResultDisplayTable])(implicit rh: RequestHeader, messages: Messages)
+
+@layout() {
+
+        @list.zipWithIndex.map { case (result, index) =>
+            <div>
+                <h1 class="govuk-heading-l" id="resultHeading@index">@result.resultHeading</h1>
+
+                <p class = "govuk-body govuk-!-margin-top-3" id="resultHint@index">@Html(result.resultHint)</p>
+
+                <h2>Result of SDLT calculation</h2>
+                @govukSummaryList(result.summaryTable)
+
+            </div>
+            <div class = "govuk-body govuk-!-margin-top-3">
+                <a href="@controllers.scalabuild.routes.DetailController.onPageLoad(index)" class="govuk-link">@messages("site.viewCalculation")</a>
+            </div>
+        }
+        <div class = "govuk-body govuk-!-margin-top-3">
+            <p class="govuk-body">You can <a href="@controllers.scalabuild.routes.PrintController.onPageLoad()" class="govuk-link" >@messages("site.print")</a></p>
+        </div>
+
+        <div class = "govuk-body govuk-!-margin-top-3">
+            <p class="govuk-body">Or you can <a href="@controllers.scalabuild.routes.StartGuidanceController.onPageLoad()" class="govuk-link" >@messages("site.startAgain").toLowerCase()</a>.</p>
+        </div>
+
+        <div class = "govuk-body govuk-!-margin-top-3">
+            <p class="govuk-body">Go to the <a href="@messages("sdltHomePage.link.href")" class="govuk-link" >@messages("govUk.link.text") </a>homepage for SDLT.</p>
+        </div>
+}

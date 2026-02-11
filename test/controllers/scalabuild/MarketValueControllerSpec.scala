@@ -23,7 +23,7 @@ import java.time.LocalDate
 
 class MarketValueControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/market-value")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/lease-dates")
 
   val formProvider = new MarketValueFormProvider()
   val form = formProvider(500000)

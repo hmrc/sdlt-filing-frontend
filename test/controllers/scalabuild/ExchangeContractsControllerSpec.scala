@@ -18,7 +18,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class ExchangeContractsControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/exchange-contracts")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/summary")
 
   val formProvider = new ExchangeContractsFormProvider()
   val form = formProvider()

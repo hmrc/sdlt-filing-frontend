@@ -6,6 +6,7 @@
 package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.{IsAdditionalPropertyFormProvider, ReplaceMainResidenceFormProvider}
+import navigation.scalabuild.Navigator
 import pages.scalabuild.{IsAdditionalPropertyPage, ReplaceMainResidencePage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -26,6 +27,7 @@ class AdditionalPropAndReplaceController @Inject() (
     sessionRepository: SessionRepository,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
+    navigator: Navigator,
     identify: IdentifierAction
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -33,9 +35,17 @@ class AdditionalPropAndReplaceController @Inject() (
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData) { implicit request =>
-      val addPropForm: Form[_] = addPropFormProvider()
-      val replaceMainForm: Form[_] = replaceMainFormProvider()
-      Ok(view(addPropForm, replaceMainForm))
+      val addPropForm: Form[Boolean] = addPropFormProvider()
+      val replaceMainForm: Form[Boolean] = replaceMainFormProvider()
+      val preparedAddPropForm = request.userAnswers.get(IsAdditionalPropertyPage) match {
+        case None        => addPropForm
+        case Some(value) => addPropForm.fill(value)
+      }
+      val preparedReplaceMainForm = request.userAnswers.get(IsAdditionalPropertyPage) match {
+        case None        => replaceMainForm
+        case Some(value) => replaceMainForm.fill(value)
+      }
+      Ok(view(preparedAddPropForm, preparedReplaceMainForm))
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -62,7 +72,9 @@ class AdditionalPropAndReplaceController @Inject() (
                           .setTwo(IsAdditionalPropertyPage, addProperty, ReplaceMainResidencePage, replaceMainProperty)
                       )
                       _ <- sessionRepository.set(updatedAnswers)
-                    } yield ()
+                    } yield {
+                      Redirect(navigator.nextPage(ReplaceMainResidencePage, updatedAnswers))
+                    }
                 )
             case addProperty @ false =>
               for {
@@ -70,9 +82,8 @@ class AdditionalPropAndReplaceController @Inject() (
                   request.userAnswers.set(IsAdditionalPropertyPage, addProperty)
                 )
                 _ <- sessionRepository.set(uaAdditionalProp)
-              } yield ()
+              } yield Redirect(navigator.nextPage(IsAdditionalPropertyPage, uaAdditionalProp))
           }
         )
-      Future(Redirect(controllers.scalabuild.routes.PurchasePriceController.onPageLoad().url))
     }
 }

@@ -38,7 +38,7 @@ object PropertyTypes extends Enumeration {
   private val propertyReads: Reads[PropertyTypes.Value] = new Reads[PropertyTypes.Value] {
     override def reads(json: JsValue): JsResult[PropertyTypes.Value] = json match {
       case JsString("Residential")     => JsSuccess(PropertyTypes.residential)
-      case JsString("Non-residential") => JsSuccess(PropertyTypes.nonResidential)
+      case JsString("Non-residential" | "NonResidential") => JsSuccess(PropertyTypes.nonResidential)
       case JsString("Mixed") => JsSuccess(PropertyTypes.mixed)
       case JsString(err) => JsError(Seq(JsPath() -> Seq(JsonValidationError("invalid property type"))))
       case _ => JsError(Seq(JsPath() -> Seq(JsonValidationError("no property type string provided"))))

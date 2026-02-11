@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.OwnsOtherPropertiesFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.OwnsOtherPropertiesPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -24,6 +25,7 @@ class OwnsOtherPropertiesController @Inject() (
     view: OwnsOtherPropertiesView,
     formProvider: OwnsOtherPropertiesFormProvider,
     sessionRepository: SessionRepository,
+    navigator: Navigator,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     identify: IdentifierAction
@@ -51,7 +53,7 @@ class OwnsOtherPropertiesController @Inject() (
               request.userAnswers.set(OwnsOtherPropertiesPage, value)
             )
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.scalabuild.routes.OwnsOtherPropertiesController.onPageLoad().url)
+          } yield Redirect(navigator.nextPage(OwnsOtherPropertiesPage, updatedAnswers))
       )
   }
 }

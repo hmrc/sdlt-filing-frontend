@@ -6,6 +6,7 @@
 package controllers.scalabuild
 
 import base.ScalaSpecBase
+import fixtures.scalabuild.TestObjects
 import forms.scalabuild.MainResidenceFormProvider
 import org.scalatest.freespec.AnyFreeSpec
 import pages.scalabuild.MainResidencePage
@@ -17,8 +18,8 @@ import play.api.test.Helpers._
 import play.api.mvc.Call
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
-  class MainResidenceControllerSpec extends AnyFreeSpec with ScalaSpecBase {
-    def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/main-residence")
+  class MainResidenceControllerSpec extends AnyFreeSpec with ScalaSpecBase with TestObjects {
+    def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/current-value")
     val formProvider = new MainResidenceFormProvider()
     val form: Form[Boolean] = formProvider()
     lazy val mainResidenceRoute: String = controllers.scalabuild.routes.MainResidenceController.onPageLoad().url
@@ -38,7 +39,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
       }
 
       "must populate the view correctly on a GET when the question has previously been answered" in {
-        val userAnswers = emptyUserAnswers.set(MainResidencePage, true).success.value
+        val userAnswers = emptyUserAnswers2.set(MainResidencePage, true).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
         running(application) {
           val request = FakeRequest(GET, mainResidenceRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
@@ -52,7 +53,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
       "must redirect to the next page when valid data is submitted" in {
 
-        val application = applicationBuilder().build()
+        val application = applicationBuilder(Some(uaFreeRes)).build()
 
         running(application) {
           val request =

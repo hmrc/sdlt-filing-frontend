@@ -55,13 +55,6 @@ trait ScalaSpecBase extends TryValues with OptionValues with ScalaFutures with M
       )
   }
 
-  protected def applicationBuilderWithDate(date: LocalDate): GuiceApplicationBuilder = {
-    val fixedClock = Clock.fixed(date.atStartOfDay(ZoneId.of("Europe/London")).toInstant, ZoneId.of("Europe/London"))
-    applicationBuilder().overrides(
-      bind[Clock].toInstance(fixedClock)
-    )
-  }
-
   def application(): Application =
     applicationBuilder().build()
 

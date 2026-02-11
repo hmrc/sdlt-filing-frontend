@@ -48,10 +48,17 @@ abstract class ViewTestFixture extends PlaySpec
 
   lazy val pagetitle = document.select("title").text()
   lazy val heading = document.select("h1").text()
+  lazy val tableCaption = document.select("caption").text()
   lazy val caption = document.select(".govuk-caption-xl").text()
+
   lazy val bodyText = document.select("p").text()
   lazy val hintText = document.select(".govuk-hint").text()
+
   lazy val summaryText = document.select(".govuk-details__summary-text").text()
+  lazy val summaryRow = document.select(".govuk-summary-list__key").text()
+
+  lazy val tableRowHeader = document.select(".govuk-table__header").text()
+  lazy val tableRow = document.select(".govuk-table__cell").text()
 
   lazy val buttonText = document.select(".govuk-button").text()
 
@@ -59,7 +66,7 @@ abstract class ViewTestFixture extends PlaySpec
 
   lazy val inputField = document.select("input.govuk-input")
 
-  lazy val linkText = document.getElementsByClass("govuk-link").text
+  lazy val linkText = document.select("a.govuk-link").text
 
   lazy val inputFieldLabel = document.select("label.govuk-label").eachText()
 
@@ -72,5 +79,8 @@ abstract class ViewTestFixture extends PlaySpec
   lazy val bullets = document.select("ul.govuk-list--bullet li").eachText()
 
   lazy val bullet = document.select("li").text
+
+  lazy val detailFooter = document.select("#detailFooter").text()
+  lazy val totalSDLT = document.select("#totalSDLT").text()
 
 }

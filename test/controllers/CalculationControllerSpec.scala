@@ -192,7 +192,6 @@ class CalculationControllerSpec extends BaseSpec with ScalaSpecBase {
         val fakeRequest = FakeRequest().withJsonBody(completeJsonRequest)
         val result = testCalculationController.calculateSDLTC(fakeRequest)
         status(result) mustBe OK
-        println(jsonBodyOf(await(result))(materializer))
         jsonBodyOf(await(result))(materializer) mustBe Json.toJson(response)
         verify(mockCalculationService, times(1)).calculateTax(any())
       }

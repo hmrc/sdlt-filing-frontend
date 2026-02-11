@@ -6,6 +6,7 @@
 package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.IsPurchaserIndividualFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.IsPurchaserIndividualPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -23,6 +24,7 @@ class IsPurchaserIndividualController @Inject() (
     view: IsPurchaserIndividualView,
     formProvider: IsPurchaserIndividualFormProvider,
     sessionRepository: SessionRepository,
+    navigator: Navigator,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     identify: IdentifierAction
@@ -50,7 +52,7 @@ class IsPurchaserIndividualController @Inject() (
               request.userAnswers.set(IsPurchaserIndividualPage, value)
             )
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.scalabuild.routes.AdditionalPropAndReplaceController.onPageLoad().url)
+          } yield Redirect(navigator.nextPage(IsPurchaserIndividualPage, updatedAnswers))
       )
   }
 }

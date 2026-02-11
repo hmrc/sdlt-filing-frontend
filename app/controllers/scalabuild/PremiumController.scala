@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.PremiumFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.PremiumPage
 import play.api.i18n.I18nSupport
 
@@ -22,6 +23,7 @@ class PremiumController @Inject()(
                                    view: PremiumView,
                                    formProvider: PremiumFormProvider,
                                    sessionRepository: SessionRepository,
+                                   navigator: Navigator,
                                    getData: DataRetrievalAction,
                                    requireData: DataRequiredAction,
                                    identify: IdentifierAction
@@ -43,7 +45,7 @@ class PremiumController @Inject()(
           updatedAnswers <- Future
             .fromTry(request.userAnswers.set(PremiumPage, value))
           _ <- sessionRepository.set(updatedAnswers)
-        } yield Redirect(controllers.scalabuild.routes.PremiumController.onPageLoad().url)
+        } yield Redirect(navigator.nextPage(PremiumPage, updatedAnswers))
       )
   }
 }

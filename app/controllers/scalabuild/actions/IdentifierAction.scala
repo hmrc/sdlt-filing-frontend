@@ -17,7 +17,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction
     extends ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
 
 class SessionIdentifierAction @Inject() (
   val parser: BodyParsers.Default
@@ -33,7 +32,7 @@ class SessionIdentifierAction @Inject() (
         block(IdentifierRequest(request, session.value))
       case None          =>
         logger.error("[IdentifierAction][SessionIdentifierAction] No sessionId found")
-        Future.successful(Redirect(controllers.scalabuild.routes.StartGuidanceController.onPageLoad()))
+        Future.successful(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 }

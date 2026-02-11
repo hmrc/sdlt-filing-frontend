@@ -14,6 +14,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import views.html.scalabuild.NonUkResidentView
 import forms.scalabuild.NonUkResidentFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.NonUkResidentPage
 import play.api.i18n.I18nSupport
 import repositories.SessionRepository
@@ -25,6 +26,7 @@ class NonUkResidentController @Inject()(
                                          view: NonUkResidentView,
                                          formProvider: NonUkResidentFormProvider,
                                          sessionRepository: SessionRepository,
+                                         navigator: Navigator,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          identify: IdentifierAction
@@ -51,7 +53,7 @@ class NonUkResidentController @Inject()(
               request.userAnswers.set(NonUkResidentPage, value)
             )
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.scalabuild.routes.IsPurchaserIndividualController.onPageLoad().url)
+          } yield Redirect(navigator.nextPage(NonUkResidentPage, request.userAnswers))
       )
   }
 }
