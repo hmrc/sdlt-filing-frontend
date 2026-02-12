@@ -21,7 +21,7 @@ import constants.FullReturnConstants
 import models.*
 import models.purchaser.*
 import org.scalatest.prop.TableDrivenPropertyChecks.*
-import pages.purchaser.{AddPurchaserPhoneNumberPage, ConfirmNameOfThePurchaserPage, DoesPurchaserHaveNIPage, EnterPurchaserPhoneNumberPage, NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserDateOfBirthPage, PurchaserNationalInsurancePage, PurchaserTypeOfCompanyPage, PurchaserUTRPage, WhoIsMakingThePurchasePage}
+import pages.purchaser._
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.*
@@ -1203,13 +1203,16 @@ class PurchaserServiceSpec extends SpecBase {
             unincorporatedBuilder = "NO",
             unincorporatedSoleTrader = "NO")).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber).success.value
+          .set(AddPurchaserPhoneNumberPage, true).success.value
+          .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.registrationNumber.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
-
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.enterPhoneNumber.checkYourAnswersLabel")
       }
 
       "must return summary rows when PurchaserConfirmIdentity is CorporationTaxUTR" in {
@@ -1233,12 +1236,15 @@ class PurchaserServiceSpec extends SpecBase {
             unincorporatedBuilder = "NO",
             unincorporatedSoleTrader = "NO")).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.CorporationTaxUTR).success.value
+          .set(AddPurchaserPhoneNumberPage, false).success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.corporationTaxUTR.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.enterPhoneNumber.checkYourAnswersLabel")
 
       }
 
@@ -1341,12 +1347,16 @@ class PurchaserServiceSpec extends SpecBase {
           .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.Yes).success.value
           .set(PurchaserNationalInsurancePage, "FFFFFFF").success.value
           .set(PurchaserDateOfBirthPage, java.time.LocalDate.now()).success.value
+          .set(AddPurchaserPhoneNumberPage, true).success.value
+          .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
 
         val rows: Seq[SummaryListRow] = service.individualConditionalSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.nationalInsurance.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.dateOfBirth.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.enterPhoneNumber.checkYourAnswersLabel")
 
       }
 
@@ -1357,11 +1367,14 @@ class PurchaserServiceSpec extends SpecBase {
           .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
           .set(PurchaserNationalInsurancePage, "FFFFFFF").success.value
           .set(PurchaserDateOfBirthPage, java.time.LocalDate.now()).success.value
+          .set(AddPurchaserPhoneNumberPage, false).success.value
 
         val rows: Seq[SummaryListRow] = service.individualConditionalSummaryRows(userAnswers)
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.nationalInsurance.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.dateOfBirth.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.enterPhoneNumber.checkYourAnswersLabel")
 
       }
     }
@@ -1372,15 +1385,10 @@ class PurchaserServiceSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test"), name = "Test")).success.value
-          .set(AddPurchaserPhoneNumberPage, true).success.value
-          .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
 
         val rows: Seq[SummaryListRow] = service.initialSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
-        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
-        rows.map(_.key.content.asHtml.toString) must contain("purchaser.enterPhoneNumber.checkYourAnswersLabel")
-
       }
 
       "must return summary rows with with add contact no as NO" in {
@@ -1388,15 +1396,10 @@ class PurchaserServiceSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test"), name = "Test")).success.value
-          .set(AddPurchaserPhoneNumberPage, false).success.value
-          .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
 
         val rows: Seq[SummaryListRow] = service.initialSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
-        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
-        rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.enterPhoneNumber.checkYourAnswersLabel")
-
       }
     }
 
@@ -1425,7 +1428,7 @@ class PurchaserServiceSpec extends SpecBase {
                   name = Some("UK")
                 )),
                 addressValidated = Some(true)),
-              addPurchaserPhoneNumber = true,
+              addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636"),
               doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
               nationalInsuranceNumber = Some("AA123456A"),
@@ -1461,28 +1464,28 @@ class PurchaserServiceSpec extends SpecBase {
             val dataWithPhoneNumberYesAndPresent = purchaserSessionQuestions.copy(
               purchaserCurrent =
                 purchaserSessionQuestions.purchaserCurrent.copy(
-                  addPurchaserPhoneNumber = true,
+                  addPurchaserPhoneNumber = Some(true),
                   enterPurchaserPhoneNumber = Some("+447874363636")
                 )
             )
             val dataWithPhoneNumberYesAndNotPresent = purchaserSessionQuestions.copy(
               purchaserCurrent =
                 purchaserSessionQuestions.purchaserCurrent.copy(
-                  addPurchaserPhoneNumber = true,
+                  addPurchaserPhoneNumber = Some(true),
                   enterPurchaserPhoneNumber = None
                 )
             )
             val dataWithPhoneNumberNoAndPresent = purchaserSessionQuestions.copy(
               purchaserCurrent =
                 purchaserSessionQuestions.purchaserCurrent.copy(
-                  addPurchaserPhoneNumber = false,
+                  addPurchaserPhoneNumber = Some(false),
                   enterPurchaserPhoneNumber = Some("+447874363636")
                 )
             )
             val dataWithPhoneNumberNoAndNotPresent = purchaserSessionQuestions.copy(
               purchaserCurrent =
                 purchaserSessionQuestions.purchaserCurrent.copy(
-                  addPurchaserPhoneNumber = false,
+                  addPurchaserPhoneNumber = Some(false),
                   enterPurchaserPhoneNumber = None
                 )
             )
@@ -1665,7 +1668,7 @@ class PurchaserServiceSpec extends SpecBase {
                   name = Some("UK")
                 )),
                 addressValidated = Some(true)),
-              addPurchaserPhoneNumber = true,
+              addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636"),
               doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
               nationalInsuranceNumber = Some("AA123456A"),
@@ -1701,28 +1704,28 @@ class PurchaserServiceSpec extends SpecBase {
             val dataWithPhoneNumberYesAndPresent = purchaserSessionQuestions.copy(
               purchaserCurrent =
                 purchaserSessionQuestions.purchaserCurrent.copy(
-                  addPurchaserPhoneNumber = true,
+                  addPurchaserPhoneNumber = Some(true),
                   enterPurchaserPhoneNumber = Some("+447874363636")
                 )
             )
             val dataWithPhoneNumberYesAndNotPresent = purchaserSessionQuestions.copy(
               purchaserCurrent =
                 purchaserSessionQuestions.purchaserCurrent.copy(
-                  addPurchaserPhoneNumber = true,
+                  addPurchaserPhoneNumber = Some(true),
                   enterPurchaserPhoneNumber = None
                 )
             )
             val dataWithPhoneNumberNoAndPresent = purchaserSessionQuestions.copy(
               purchaserCurrent =
                 purchaserSessionQuestions.purchaserCurrent.copy(
-                  addPurchaserPhoneNumber = false,
+                  addPurchaserPhoneNumber = Some(false),
                   enterPurchaserPhoneNumber = Some("+447874363636")
                 )
             )
             val dataWithPhoneNumberNoAndNotPresent = purchaserSessionQuestions.copy(
               purchaserCurrent =
                 purchaserSessionQuestions.purchaserCurrent.copy(
-                  addPurchaserPhoneNumber = false,
+                  addPurchaserPhoneNumber = Some(false),
                   enterPurchaserPhoneNumber = None
                 )
             )
@@ -1916,77 +1919,6 @@ class PurchaserServiceSpec extends SpecBase {
         }
       }
 
-      "when purchaser is not main" - {
-
-        "when phone number" - {
-
-          val dataWithPhoneNumberYesAndPresent: PurchaserSessionQuestions =
-            PurchaserSessionQuestions(purchaserCurrent =
-              PurchaserCurrent(
-                purchaserAndCompanyId = Some(PurchaserAndCompanyId(purchaserID = "PUR002", companyDetailsID = Some("COMPDET001"))),
-                ConfirmNameOfThePurchaser = None,
-                whoIsMakingThePurchase = "Company",
-                nameOfPurchaser = NameOfPurchaser(forename1 = Some("Name1"), forename2 = Some("Name2"), name = "Samsung"),
-                purchaserAddress = PurchaserSessionAddress(
-                  houseNumber = Some("1"),
-                  line1 = Some("Street 1"),
-                  line2 = Some("Street 2"),
-                  line3 = Some("Street 3"),
-                  line4 = Some("Street 4"),
-                  line5 = Some("Street 5"),
-                  postcode = Some("CR7 8LU"),
-                  country = Some(PurchaserSessionCountry(
-                    code = Some("GB"),
-                    name = Some("UK")
-                  )),
-                  addressValidated = Some(true)),
-                addPurchaserPhoneNumber = true,
-                enterPurchaserPhoneNumber = Some("+447874363636")
-              ))
-          val dataWithPhoneNumberYesAndNotPresent = dataWithPhoneNumberYesAndPresent.copy(
-            purchaserCurrent =
-              dataWithPhoneNumberYesAndPresent.purchaserCurrent.copy(
-                addPurchaserPhoneNumber = true,
-                enterPurchaserPhoneNumber = None
-              )
-          )
-          val dataWithPhoneNumberNoAndPresent = dataWithPhoneNumberYesAndPresent.copy(
-            purchaserCurrent =
-              dataWithPhoneNumberYesAndPresent.purchaserCurrent.copy(
-                addPurchaserPhoneNumber = false,
-                enterPurchaserPhoneNumber = Some("+447874363636")
-              )
-          )
-          val dataWithPhoneNumberNoAndNotPresent = dataWithPhoneNumberYesAndPresent.copy(
-            purchaserCurrent =
-              dataWithPhoneNumberYesAndPresent.purchaserCurrent.copy(
-                addPurchaserPhoneNumber = false,
-                enterPurchaserPhoneNumber = None
-              )
-          )
-
-          val cases = Table(
-            ("phoneNumberAnswer", "phoneNumberPresent", "sessionData", "result"),
-            ("yes", "present", dataWithPhoneNumberYesAndPresent, true),
-            ("yes", "not present", dataWithPhoneNumberYesAndNotPresent, false),
-            ("no", "present", dataWithPhoneNumberNoAndPresent, true),
-            ("no", "not present", dataWithPhoneNumberNoAndNotPresent, true)
-          )
-
-          forAll(cases) { (phoneNumberAnswer, phoneNumberPresent, sessionData, result) =>
-
-            s"when user answered $phoneNumberAnswer and phone number is $phoneNumberPresent" - {
-              s"must return $result" in {
-                service.purchaserSessionOptionalQuestionsValidation(
-                  sessionData = sessionData,
-                  userAnswers = userAnswers
-                ) mustBe result
-              }
-            }
-          }
-        }
-      }
-
       "when user answers Confirm Name of the Purchaser Page" - {
         val purchaserSessionQuestions = PurchaserSessionQuestions(
           PurchaserCurrent(
@@ -2007,7 +1939,7 @@ class PurchaserServiceSpec extends SpecBase {
                 name = Some("UK")
               )),
               addressValidated = Some(true)),
-            addPurchaserPhoneNumber = true,
+            addPurchaserPhoneNumber = Some(true),
             enterPurchaserPhoneNumber = Some("+447874363636"),
             doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
             nationalInsuranceNumber = Some("AA123456A"),
@@ -2042,7 +1974,7 @@ class PurchaserServiceSpec extends SpecBase {
           purchaserCurrent =
             purchaserSessionQuestions.purchaserCurrent.copy(
               ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
-              addPurchaserPhoneNumber = true,
+              addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636")
             )
         )
@@ -2050,7 +1982,7 @@ class PurchaserServiceSpec extends SpecBase {
           purchaserCurrent =
             purchaserSessionQuestions.purchaserCurrent.copy(
               ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
-              addPurchaserPhoneNumber = true,
+              addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = None
             )
         )
@@ -2058,7 +1990,7 @@ class PurchaserServiceSpec extends SpecBase {
           purchaserCurrent =
             purchaserSessionQuestions.purchaserCurrent.copy(
               ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.No),
-              addPurchaserPhoneNumber = true,
+              addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636")
             )
         )
@@ -2066,7 +1998,7 @@ class PurchaserServiceSpec extends SpecBase {
           purchaserCurrent =
             purchaserSessionQuestions.purchaserCurrent.copy(
               ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.No),
-              addPurchaserPhoneNumber = true,
+              addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = None
             )
         )

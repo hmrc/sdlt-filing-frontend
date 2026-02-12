@@ -125,11 +125,11 @@ class PurchaserRemoveControllerSpec extends SpecBase with MockitoSugar {
 
       val mockPurchaserRemoveService = mock[PurchaserRemoveService]
 
-      val oldMainPurchaserID = "PUR-001"
-      val newMainPurchaserID = "PUR-002"
+      val oldmainPurchaserID = "PUR-001"
+      val newmainPurchaserID = "PUR-002"
 
       val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(oldMainPurchaserID, None)).success.value
+        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(oldmainPurchaserID, None)).success.value
 
       when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
@@ -140,7 +140,7 @@ class PurchaserRemoveControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", s"PROMOTE-$newMainPurchaserID"))
+          .withFormUrlEncodedBody(("value", s"PROMOTE-$newmainPurchaserID"))
 
         val result = route(application, request).value
 

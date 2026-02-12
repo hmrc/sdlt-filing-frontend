@@ -37,10 +37,10 @@ object PurchaserTaskList {
 
   def buildPurchaserRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
 
-    val mainPurchaserId = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
+    val mainPurchaserID = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
 
     val url = fullReturn.purchaser match {
-      case Some(list) if list.exists( x => x.purchaserID == mainPurchaserId && x.address1.isEmpty)
+      case Some(list) if list.exists( x => x.purchaserID == mainPurchaserID && x.address1.isEmpty)
       => controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
       case Some(list) if list.nonEmpty => controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
       case _ => controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url

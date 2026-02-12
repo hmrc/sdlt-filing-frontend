@@ -31,7 +31,7 @@ case class PurchaserCurrent(purchaserAndCompanyId: Option[PurchaserAndCompanyId]
                             whoIsMakingThePurchase: String,
                             nameOfPurchaser: NameOfPurchaser,
                             purchaserAddress: PurchaserSessionAddress,
-                            addPurchaserPhoneNumber: Boolean,
+                            addPurchaserPhoneNumber: Option[Boolean] = None,
                             enterPurchaserPhoneNumber: Option[String] = None,
                             doesPurchaserHaveNI: Option[DoesPurchaserHaveNI] = None,
                             nationalInsuranceNumber: Option[String] = None,
