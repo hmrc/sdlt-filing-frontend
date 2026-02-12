@@ -183,7 +183,6 @@ trait Constraints {
     def vatF16Check(errorKey: String): Constraint[String] = {
 
       def validateVAT(raw: String): Boolean = Try {
-        // ---- Normalization requested: drop "GB" and spaces ----
         val normalized = {
           val up = Option(raw).getOrElse("").trim.toUpperCase
           val noGb = if (up.startsWith("GB")) up.drop(2) else up
@@ -211,7 +210,6 @@ trait Constraints {
       }
 
       Constraint[String] { str =>
-        // Only returns Valid/Invalid; no extra format/length checks here
         if (validateVAT(str)) Valid else Invalid(errorKey)
       }
     }

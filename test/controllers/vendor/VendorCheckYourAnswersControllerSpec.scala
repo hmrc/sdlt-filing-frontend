@@ -243,7 +243,6 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
 
         val incompleteData = Json.obj(
           "whoIsTheVendor" -> "Individual"
-          // Missing other required fields
         )
 
         val userAnswers = UserAnswers(
@@ -275,7 +274,6 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
 
         val incompleteData = Json.obj(
           "whoIsTheVendor" -> "Individual"
-          // Missing other required fields
         )
 
         val userAnswers = UserAnswers(

@@ -21,10 +21,8 @@ import models.purchaser.{CreatePurchaserRequest, PurchaserSessionQuestions, Upda
 import models.{CompanyDetails, Purchaser, ReturnVersionUpdateRequest, UserAnswers}
 
 import scala.language.postfixOps
-// import play.api.libs.json.Json
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
-// import play.api.mvc.Results.{Created, Ok, Redirect}
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 
 import scala.concurrent.{ExecutionContext, Future}

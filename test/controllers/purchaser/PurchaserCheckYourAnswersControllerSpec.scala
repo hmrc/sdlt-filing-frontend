@@ -182,11 +182,9 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
       "must return OK and the correct view when UserAnswers without mainPurchaserid for Individual" in {
 
         val testReturnId = "123456"
-        //    val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
         val returnInfo = ReturnInfo(
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
-          // mainPurchaserID = Some("PUR001"),
         )
         val fullRetur = FullReturn(
           stornId = "STORN123456",
@@ -231,7 +229,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
       "must return OK and the correct view when UserAnswers with mainPurchaserid and ConfirmNameOfThePurchaser for Individual" in {
 
         val testReturnId = "123456"
-        ///   val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
         val returnInfo = ReturnInfo(
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
@@ -284,7 +281,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
       "must return OK and the correct view when UserAnswers has the mainPurchaserid for Company" in {
 
         val testReturnId = "123456"
-        //    val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
         val returnInfo = ReturnInfo(
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
@@ -333,11 +329,9 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
       "must return OK and the correct view when UserAnswers without mainPurchaserid for Company" in {
 
         val testReturnId = "123456"
-        //    val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
         val returnInfo = ReturnInfo(
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
-          // mainPurchaserID = Some("PUR001"),
         )
         val fullRetur = FullReturn(
           stornId = "STORN123456",
@@ -382,7 +376,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
       "must return OK and the correct view when UserAnswers with mainPurchaserid and ConfirmNameOfThePurchaser for Company" in {
 
         val testReturnId = "123456"
-        ///   val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
         val returnInfo = ReturnInfo(
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
@@ -429,7 +422,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           val result = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must not include ("Select ActingAsTrustee")
-          //  redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
         }
       }
@@ -437,7 +429,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
       "must return OK and the correct view when UserAnswers with mainPurchaserid and ConfirmNameOfThePurchaser for Company and ConfirmationName as Yes" in {
 
         val testReturnId = "123456"
-        ///   val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
         val returnInfo = ReturnInfo(
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
@@ -492,7 +483,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
       "must return OK and the correct view when UserAnswers with mainPurchaserid and ConfirmNameOfThePurchaser for Company and ConfirmationName as NO" in {
 
         val testReturnId = "123456"
-        ///   val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
         val returnInfo = ReturnInfo(
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
@@ -642,7 +632,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
 
         val incompleteData = Json.obj(
           "whoIsThePurchaser" -> "Individual"
-          // Missing other required fields
         )
 
         val userAnswers = UserAnswers(
@@ -671,7 +660,6 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
 
         val incompleteData = Json.obj(
           "whoIsThePurchaser" -> "Individual"
-          // Missing other required fields
         )
 
         val userAnswers = UserAnswers(

@@ -195,7 +195,7 @@ class LandAddressControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "addressLookupCallbackLand" - {
-      //TODO update when DTR-2444 is built
+      //TODO - DTR-2444 - SPRINT-8 - update redirect
       "must redirect when address is successfully saved" in {
         val mockAddressLookupService = mock[AddressLookupService]
 
@@ -271,7 +271,7 @@ class LandAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            // TODO: DTR-2444 - Update redirect to next page when created
+            // TODO - DTR-2444 - SPRINT-8 - Update redirect to next page when created
             redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
@@ -496,7 +496,7 @@ class LandAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            // TODO: change this when have the check your answers page
+            // TODO - DTR-2444 - SPRINT-8 change this when have the check your answers page
             redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())

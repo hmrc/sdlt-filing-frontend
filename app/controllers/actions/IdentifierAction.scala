@@ -58,7 +58,7 @@ class AuthenticatedIdentifierAction @Inject()(
               case Some(stornId) =>
                 block(IdentifierRequest(request, internalId, storn = stornId))
               case None =>
-                //to do get error page for this 
+                //TODO get error page for this 
                 Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
             }
 

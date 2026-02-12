@@ -42,7 +42,7 @@ object LandTaskList {
       case Some(list) if list.exists(x => x.landID == mainLandId && x.landArea.isEmpty)
       => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
       case Some(list) if list.nonEmpty
-      => controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url // TODO: Update to LandOverview when created DTR-2498
+      => controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url // TODO - DTR-2498 - SPRINT-10 - Update to LandOverview when created
       case _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
     }
 

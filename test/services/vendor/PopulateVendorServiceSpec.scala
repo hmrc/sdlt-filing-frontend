@@ -222,7 +222,6 @@ class PopulateVendorServiceSpec extends SpecBase {
 
         val updatedAnswers = result.get
 
-        // Should override the existing value
         updatedAnswers.get(VendorOrCompanyNamePage) mustBe Some(VendorName(
           forename1 = None,
           forename2 = None,

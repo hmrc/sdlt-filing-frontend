@@ -99,6 +99,26 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
         }
       }
 
+      "must return a link row when PurchaserSurnameOrCompanyNamePage is missing" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
+
+          val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+
+          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaser.name.checkYourAnswersLabel.purchaser")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include(controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("prelim.purchaser.name.link.message"))
+        }
+      }
+
       "must properly escape special characters in name" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

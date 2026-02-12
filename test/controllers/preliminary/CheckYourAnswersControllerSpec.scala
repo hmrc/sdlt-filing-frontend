@@ -174,7 +174,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         val incompleteData = Json.obj(
           "purchaserIsIndividual" -> "Individual"
-          // Missing other required fields
         )
 
         val userAnswers = UserAnswers(

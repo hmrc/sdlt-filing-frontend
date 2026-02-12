@@ -18,6 +18,7 @@ package viewmodels.checkAnswers.vendor
 
 import models.{CheckMode, UserAnswers}
 import pages.vendor.VendorOrCompanyNamePage
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -32,7 +33,7 @@ object VendorOrCompanyNameSummary  {
 
         SummaryListRowViewModel(
           key     = "vendorOrCompanyName.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlFormat.escape(answer.name).toString),
+          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer.name).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("vendorOrCompanyName.change.hidden"))

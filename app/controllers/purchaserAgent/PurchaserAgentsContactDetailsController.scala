@@ -52,7 +52,6 @@ class PurchaserAgentsContactDetailsController @Inject()(
           Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode))
 
         case Some(agentName) =>
-          //TODO - implement data guard check on previous page (do you want to add contact details)
 
           val preparedForm = request.userAnswers.get(PurchaserAgentsContactDetailsPage) match {
             case None => form
@@ -73,8 +72,6 @@ class PurchaserAgentsContactDetailsController @Inject()(
           )
 
         case Some(agentName) =>
-
-          //TODO - implement data guard check on previous page (do you want to add contact details)
 
           form.bindFromRequest().fold(
             formWithErrors =>

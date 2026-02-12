@@ -89,4 +89,25 @@ class AgentNameSummarySpec extends SpecBase {
       }
     }
   }
+
+  "when agent name is not present" - {
+
+    "must return a summary list row with link to enter name" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+        val result = AgentNameSummary.row(userAnswers)
+
+        result.key.content.asHtml.toString() mustEqual msgs("agent.checkYourAnswers.agentName.label")
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent must include("govuk-link")
+        htmlContent must include(controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url)
+        htmlContent must include(msgs("agent.checkYourAnswers.agentName.agentMissing"))
+      }
+    }
+  }
 }

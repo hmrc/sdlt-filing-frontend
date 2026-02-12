@@ -68,23 +68,6 @@ class VendorCheckYourAnswersController @Inject()(
                 IndividualOrCompanyNameSummary.row(Some(userAnswers)),
                 VendorAddressSummary.row(Some(userAnswers))
               )
-              //TODO Logic should be moved to agent CYA page
-              //            val showAgentCYA: Option[Boolean] = userAnswers
-              //              .get(VendorRepresentedByAgentPage)
-              //              .map(_.self)
-              //
-              //            val showAgentCYACheck = showAgentCYA match {
-              //              case Some(true) => true
-              //              case _ => false
-              //            }
-              //            val agentRows = if (showAgentCYACheck) {
-              //              Seq(
-              //                AgentNameSummary.row(Some(userAnswers)),
-              //                AgentAddressSummary.row(Some(userAnswers))
-              //              )
-              //            } else {
-              //              Seq.empty
-              //            }
 
               val summaryList = SummaryListViewModel(rows = baseRows)
               Ok(view(summaryList))
