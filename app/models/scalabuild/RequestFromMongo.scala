@@ -47,6 +47,7 @@ case class RequestFromMongo(
       relevantRentDetails = relevantRentDetails,
       firstTimeBuyer = Some(true),
       isLinked = None,
+      interestTransferred = None,
       taxReliefDetails = None
     )
     request
