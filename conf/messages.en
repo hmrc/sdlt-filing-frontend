@@ -914,3 +914,10 @@ land.titleNumber.error.invalid                                                = 
 land.titleNumber.error.length                                                 = Title or folio number must be 14 characters or less
 land.titleNumber.change.hidden                                                = Title or folio number
 land.titleNumber.missing                                                      = Select title or folio number
+
+land.confirmLandOrPropertyAddress.title = Confirm the address of the land or property – About the land
+land.confirmLandOrPropertyAddress.heading = Confirm the address of the land or property
+land.confirmLandOrPropertyAddress.confirmAddress = Confirm address
+land.confirmLandOrPropertyAddress.checkYourAnswersLabel = Confirm the address of the land or property – About the land
+land.confirmLandOrPropertyAddress.error.required = Select confirmLandOrPropertyAddress
+land.confirmLandOrPropertyAddress.change.hidden = ConfirmLandOrPropertyAddress
