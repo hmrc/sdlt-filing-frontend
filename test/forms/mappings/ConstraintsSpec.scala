@@ -356,5 +356,24 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       val result = maxCheckboxes(2, "error.max").apply(Set(1, 2, 3))
         result mustBe Invalid("error.max")
     }
+
+   }
+
+  "check localAuthorityCodeConstraints" - {
+
+    "must return valid response for valid code" - {
+      val result = localAuthorityCodeConstraints(Some(LocalDate.parse("2019-12-31")), Some(LocalDate.parse("2019-12-31")), "RG1 7NQ", "land.localAuthorityCode.constraint.invalid").apply("0360")
+      result mustBe Valid
+    }
+
+    "must return invalid response for invalid code" - {
+      val result = localAuthorityCodeConstraints(Some(LocalDate.parse("2019-12-31")), Some(LocalDate.parse("2019-12-31")),"RG1 7NQ","land.localAuthorityCode.constraint.invalid").apply("1234")
+      result mustBe Invalid("land.localAuthorityCode.constraint.invalid")
+    }
+
+    "must return Invalid response for AB1 postcode " - {
+      val result = localAuthorityCodeConstraints(Some(LocalDate.parse("2019-12-31")), Some(LocalDate.parse("2019-12-31")), "AB1 7NQ", "land.localAuthorityCode.constraint.invalid").apply("0360")
+      result mustBe Invalid("land.localAuthorityCode.constraint.invalid")
+    }
   }
 }
