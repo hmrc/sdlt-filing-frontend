@@ -451,7 +451,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             line4 = Some("Greater Manchester"),
             postcode = Some("M1 1AA")
           ))
-          updatedAnswers.get(AddPurchaserPhoneNumberPage) mustBe Some(false)
+          updatedAnswers.get(AddPurchaserPhoneNumberPage) mustBe None
           updatedAnswers.get(EnterPurchaserPhoneNumberPage) mustBe None
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR003", None))
         }

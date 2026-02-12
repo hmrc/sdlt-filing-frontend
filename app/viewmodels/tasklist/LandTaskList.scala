@@ -36,10 +36,10 @@ object LandTaskList {
     )
 
   def buildLandRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
-    val mainLandId = fullReturn.returnInfo.flatMap(_.mainLandID)
+    val mainLandID = fullReturn.returnInfo.flatMap(_.mainLandID)
 
     val url = fullReturn.land match {
-      case Some(list) if list.exists(x => x.landID == mainLandId && x.landArea.isEmpty)
+      case Some(list) if list.exists(x => x.landID == mainLandID && x.landArea.isEmpty)
       => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
       case Some(list) if list.nonEmpty
       => controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url // TODO - DTR-2498 - SPRINT-10 - Update to LandOverview when created

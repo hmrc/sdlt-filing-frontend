@@ -179,7 +179,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         }
       }
 
-      "must return OK and the correct view when UserAnswers without mainPurchaserid for Individual" in {
+      "must return OK and the correct view when UserAnswers without mainPurchaserID for Individual" in {
 
         val testReturnId = "123456"
         val returnInfo = ReturnInfo(
@@ -226,7 +226,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         }
       }
 
-      "must return OK and the correct view when UserAnswers with mainPurchaserid and ConfirmNameOfThePurchaser for Individual" in {
+      "must return OK and the correct view when UserAnswers with mainPurchaserID and ConfirmNameOfThePurchaser for Individual" in {
 
         val testReturnId = "123456"
         val returnInfo = ReturnInfo(
@@ -278,7 +278,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         }
       }
 
-      "must return OK and the correct view when UserAnswers has the mainPurchaserid for Company" in {
+      "must return OK and the correct view when UserAnswers has the mainPurchaserID for Company" in {
 
         val testReturnId = "123456"
         val returnInfo = ReturnInfo(
@@ -326,7 +326,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         }
       }
 
-      "must return OK and the correct view when UserAnswers without mainPurchaserid for Company" in {
+      "must return OK and the correct view when UserAnswers without mainPurchaserID for Company" in {
 
         val testReturnId = "123456"
         val returnInfo = ReturnInfo(
@@ -373,7 +373,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         }
       }
 
-      "must return OK and the correct view when UserAnswers with mainPurchaserid and ConfirmNameOfThePurchaser for Company" in {
+      "must return OK and the correct view when UserAnswers with mainPurchaserID and ConfirmNameOfThePurchaser for Company" in {
 
         val testReturnId = "123456"
         val returnInfo = ReturnInfo(
@@ -426,7 +426,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         }
       }
 
-      "must return OK and the correct view when UserAnswers with mainPurchaserid and ConfirmNameOfThePurchaser for Company and ConfirmationName as Yes" in {
+      "must return OK and the correct view when UserAnswers with mainPurchaserID and ConfirmNameOfThePurchaser for Company and ConfirmationName as Yes" in {
 
         val testReturnId = "123456"
         val returnInfo = ReturnInfo(
@@ -480,7 +480,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         }
       }
 
-      "must return OK and the correct view when UserAnswers with mainPurchaserid and ConfirmNameOfThePurchaser for Company and ConfirmationName as NO" in {
+      "must return OK and the correct view when UserAnswers with mainPurchaserID and ConfirmNameOfThePurchaser for Company and ConfirmationName as NO" in {
 
         val testReturnId = "123456"
         val returnInfo = ReturnInfo(

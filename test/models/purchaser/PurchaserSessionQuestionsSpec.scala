@@ -158,7 +158,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
                   name = Some("UK")
                 )),
                 addressValidated = Some(true)),
-              addPurchaserPhoneNumber = true,
+              addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636"),
               doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
               nationalInsuranceNumber = Some("AA123456A"),
@@ -213,7 +213,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
                 postcode = None,
                 country = None,
                 addressValidated = None),
-              addPurchaserPhoneNumber = false,
+              addPurchaserPhoneNumber = Some(false),
               enterPurchaserPhoneNumber = None,
               doesPurchaserHaveNI = None,
               nationalInsuranceNumber = None,

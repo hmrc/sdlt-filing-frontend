@@ -133,20 +133,6 @@ class PurchaserRemoveService @Inject()(
       }
     }
 
-    def withNewVersionReturningVersion[A](
-                                           userAnswers: UserAnswers
-                                         )(f: Long => Future[A])(implicit hc: HeaderCarrier,
-                                                                 ec: ExecutionContext,
-                                                                 request: DataRequest[AnyContent]): Future[A] =
-      for {
-        updateReq <- ReturnVersionUpdateRequest.from(userAnswers)
-        version <- backendConnector.updateReturnVersion(updateReq)
-        result <- version.newVersion match {
-          case Some(newVersion) => f(newVersion)
-          case None => Future.failed(new IllegalStateException("Return version was not updated (newVersion missing)"))
-        }
-      } yield result
-
     def withNewVersion[A](
                            userAnswers: UserAnswers,
                            version: Option[Long] = None
@@ -232,9 +218,9 @@ class PurchaserRemoveService @Inject()(
             userAnswers = userAnswers
           )
 
-        case PurchaserRemove.SelectNewMain(newMainPurchaserId) =>
+        case PurchaserRemove.SelectNewMain(newmainPurchaserID) =>
           handleMultiplePurchasersWithNewMain(
-            chosenPurchaserId = newMainPurchaserId,
+            chosenPurchaserId = newmainPurchaserID,
             purchaserIdSession = purchaserRefs.purchaserID,
             companyDetailsIdInSession = purchaserRefs.companyDetailsID,
             userAnswers = userAnswers
@@ -371,12 +357,12 @@ class PurchaserRemoveService @Inject()(
           case (Some(newMainP), Some(mainP), Some(nextIdP)) =>
             (newMainP.purchaserID, mainP.nextPurchaserID) match {
 
-              case (Some(newMainPurchaserID), Some(previousMainNextID)) if newMainPurchaserID == previousMainNextID =>
+              case (Some(newmainPurchaserID), Some(previousMainNextID)) if newmainPurchaserID == previousMainNextID =>
                 PurchaserOps
                   .withNewVersion(userAnswers, version) { newReturnVersion =>
                     for {
                       _ <- PurchaserOps.updateReturnInfo(userAnswers,
-                        returnInfo.copy(mainPurchaserID = Some(newMainPurchaserID),
+                        returnInfo.copy(mainPurchaserID = Some(newmainPurchaserID),
                           version = Some(newReturnVersion.toString)))
                     } yield PurchaserOps.purchaserOverviewRedirect(originalMainPurchaser)
                   }

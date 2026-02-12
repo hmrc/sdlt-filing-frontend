@@ -135,8 +135,7 @@ class PopulatePurchaserService {
       case (purchaser, false, true, false) => for {
         whoIsThePurchaserPage <- userAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company)
         withName <- whoIsThePurchaserPage.set(NameOfPurchaserPage, purchaserName)
-        withAddPhoneNumberAnswer <- withName.set(AddPurchaserPhoneNumberPage, false)
-        withAddress <- withAddPhoneNumberAnswer.set(PurchaserAddressPage, address)
+        withAddress <- withName.set(PurchaserAddressPage, address)
         finalAnswers <- withAddress.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, None))
       } yield finalAnswers
       case _ => for {

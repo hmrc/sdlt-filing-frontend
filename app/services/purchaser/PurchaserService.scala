@@ -218,7 +218,14 @@ class PurchaserService {
                 Seq.empty
             }
         }
-        purchaserConfirmIdentity ++ extraRows ++ typeOfCompany
+        val phoneNumberRows = if (userAnswers.get(AddPurchaserPhoneNumberPage).contains(true)) {
+          Seq(AddPurchaserPhoneNumberSummary.row(Some(userAnswers)),
+            EnterPurchaserPhoneNumberSummary.row(Some(userAnswers)))
+        } else {
+          Seq(AddPurchaserPhoneNumberSummary.row(Some(userAnswers)))
+        }
+
+        phoneNumberRows ++ purchaserConfirmIdentity ++ extraRows ++ typeOfCompany
 
       case _ =>
         Seq.empty
@@ -240,7 +247,13 @@ class PurchaserService {
           case None =>
             Seq.empty
         }
-        Seq(nIQuestion) ++ extraRows
+
+        val phoneNumberRows = if (userAnswers.get(AddPurchaserPhoneNumberPage).contains(true)) {
+            Seq(AddPurchaserPhoneNumberSummary.row(Some(userAnswers)),
+              EnterPurchaserPhoneNumberSummary.row(Some(userAnswers)))
+          } else { Seq(AddPurchaserPhoneNumberSummary.row(Some(userAnswers))) }
+
+        phoneNumberRows ++ Seq(nIQuestion) ++ extraRows
       case _ =>
         Seq.empty
     }
@@ -250,16 +263,8 @@ class PurchaserService {
   def initialSummaryRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = Seq(
     WhoIsMakingThePurchaseSummary.row(Some(userAnswers)),
     NameOfPurchaserSummary.row(Some(userAnswers)),
-    PurchaserAddressSummary.row(Some(userAnswers)),
-    AddPurchaserPhoneNumberSummary.row(Some(userAnswers)),
-  ) ++ {
-    if (userAnswers.get(AddPurchaserPhoneNumberPage).contains(true)) {
-      Seq(EnterPurchaserPhoneNumberSummary.row(Some(userAnswers)))
-    }
-    else {
-      Seq.empty
-    }
-  }
+    PurchaserAddressSummary.row(Some(userAnswers))
+  )
 
   def purchaserSessionOptionalQuestionsValidation(sessionData: PurchaserSessionQuestions, userAnswers: UserAnswers): Boolean = {
       val isPurchaserMain: Boolean =
@@ -272,14 +277,15 @@ class PurchaserService {
             individualMainPurchase(sessionData)
           case WhoIsMakingThePurchase.Company.toString =>
             companyMainPurchaser(sessionData)
+          case _ => true
         }
       } else {
-        nonMainPurchaser(sessionData)
+        true
       }
     }
 
   private def individualMainPurchase(sessionData: PurchaserSessionQuestions): Boolean = {
-    val isPhoneNumberYes = sessionData.purchaserCurrent.addPurchaserPhoneNumber
+    val isPhoneNumberYes = sessionData.purchaserCurrent.addPurchaserPhoneNumber.contains(true)
     val isPhoneNumberPresent = sessionData.purchaserCurrent.enterPurchaserPhoneNumber.isDefined
     val doesPurchaserHaveNI = sessionData.purchaserCurrent.doesPurchaserHaveNI.contains(DoesPurchaserHaveNI.Yes)
     val isNIPresent = sessionData.purchaserCurrent.nationalInsuranceNumber.isDefined
@@ -288,20 +294,20 @@ class PurchaserService {
     val isPurchaserActingAsTrusteePresent = sessionData.purchaserCurrent.isPurchaserActingAsTrustee.isDefined
     val isPurchaserAndVendorConnectedPresent = sessionData.purchaserCurrent.purchaserAndVendorConnected.isDefined
 
-    if (isPhoneNumberYes && !isPhoneNumberPresent) return false // User said yes to phone number and phone number is not present
+    if (isPhoneNumberYes && !isPhoneNumberPresent) return false
     if (doesPurchaserHaveNI) {
-      if (!isNIPresent) return false // User said yes to NiNo and NiNO is not present
-      if (!isDobPresent) return false // User has said yes to Nino and DoB is not present
+      if (!isNIPresent) return false
+      if (!isDobPresent) return false
     } else {
-      if (!isPurchaserFormOfIdIndividualPresent) return false // User said no to NiNO and form Of Id individual is not present
+      if (!isPurchaserFormOfIdIndividualPresent) return false
     }
-    if (!isPurchaserActingAsTrusteePresent || !isPurchaserAndVendorConnectedPresent) return false // Any of Acting as a Trustee/Purchaser and Vendor connected is not present
+    if (!isPurchaserActingAsTrusteePresent || !isPurchaserAndVendorConnectedPresent) return false
 
     true
   }
 
   private def companyMainPurchaser(sessionData: PurchaserSessionQuestions): Boolean = {
-    val isPhoneNumberYes = sessionData.purchaserCurrent.addPurchaserPhoneNumber
+    val isPhoneNumberYes = sessionData.purchaserCurrent.addPurchaserPhoneNumber.contains(true)
     val isPhoneNumberPresent = sessionData.purchaserCurrent.enterPurchaserPhoneNumber.isDefined
     val isUTRPresent = sessionData.purchaserCurrent.purchaserUTRPage.isDefined
     val isVATPresent = sessionData.purchaserCurrent.registrationNumber.isDefined
@@ -310,18 +316,9 @@ class PurchaserService {
     val isPurchaserActingAsTrusteePresent = sessionData.purchaserCurrent.isPurchaserActingAsTrustee.isDefined
     val isPurchaserAndVendorConnectedPresent = sessionData.purchaserCurrent.purchaserAndVendorConnected.isDefined
 
-    if (isPhoneNumberYes && !isPhoneNumberPresent) return false // User said yes to phone number and phone number is not present
-    if (!isUTRPresent && !isVATPresent && !isAnotherFormOfIdPresent) return false // Any Form of ID is not present
-    if (!isTypeOfCompanyPresent || !isPurchaserActingAsTrusteePresent || !isPurchaserAndVendorConnectedPresent) return false // Any of Company type/Acting as a Trustee/Purchaser and Vendor connected is not present
-
-    true
-  }
-
-  private def nonMainPurchaser(sessionData: PurchaserSessionQuestions): Boolean = {
-    val isPhoneNumberYes = sessionData.purchaserCurrent.addPurchaserPhoneNumber
-    val isPhoneNumberPresent = sessionData.purchaserCurrent.enterPurchaserPhoneNumber.isDefined
-
-    if (isPhoneNumberYes && !isPhoneNumberPresent) return false // User said yes to phone number and phone number is not present
+    if (isPhoneNumberYes && !isPhoneNumberPresent) return false
+    if (!isUTRPresent && !isVATPresent && !isAnotherFormOfIdPresent) return false
+    if (!isTypeOfCompanyPresent || !isPurchaserActingAsTrusteePresent || !isPurchaserAndVendorConnectedPresent) return false
 
     true
   }

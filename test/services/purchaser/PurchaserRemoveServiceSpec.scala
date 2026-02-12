@@ -337,25 +337,25 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must return view with non-main purchaser data" in {
-          val mainPurchaserId = "PURCH001"
-          val nonMainPurchaserId = "PURCH002"
+          val mainPurchaserID = "PURCH001"
+          val nonmainPurchaserID = "PURCH002"
           val purchaser1 = createPurchaser(
-            mainPurchaserId,
+            mainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith"),
-            nextPurchaserID = Some(nonMainPurchaserId)
+            nextPurchaserID = Some(nonmainPurchaserID)
           )
           val purchaser2 = createPurchaser(
-            nonMainPurchaserId,
+            nonmainPurchaserID,
             forename1 = Some("Jane"),
             surname = Some("Doe")
           )
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(mainPurchaserId))
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(mainPurchaserID))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser1, purchaser2)),
             returnInfo = Some(returnInfo)
           )
-          val purchaserRefs = PurchaserAndCompanyId(nonMainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(nonmainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -587,19 +587,19 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must handle Remove for non-main purchaser with multiple purchasers" in {
-          val mainPurchaserId = "PURCH001"
-          val nonMainPurchaserId = "PURCH002"
+          val mainPurchaserID = "PURCH001"
+          val nonmainPurchaserID = "PURCH002"
           val thirdPurchaserId = "PURCH003"
 
           val purchaser1 = createPurchaser(
-            mainPurchaserId,
+            mainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith"),
-            nextPurchaserID = Some(nonMainPurchaserId),
+            nextPurchaserID = Some(nonmainPurchaserID),
             purchaserRef = Some("1")
           )
           val purchaser2 = createPurchaser(
-            nonMainPurchaserId,
+            nonmainPurchaserID,
             forename1 = Some("Jane"),
             surname = Some("Doe"),
             nextPurchaserID = Some(thirdPurchaserId),
@@ -612,12 +612,12 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             purchaserRef = Some("3")
           )
 
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(mainPurchaserId), version = Some("0"))
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(mainPurchaserID), version = Some("0"))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser1, purchaser2, purchaser3)),
             returnInfo = Some(returnInfo)
           )
-          val purchaserRefs = PurchaserAndCompanyId(nonMainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(nonmainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -636,7 +636,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful((UpdatePurchaserReturn(updated = true))))
 
           val result = service.handleRemoval(
-            PurchaserRemove.Remove(nonMainPurchaserId),
+            PurchaserRemove.Remove(nonmainPurchaserID),
             userAnswers
           )
 
@@ -647,11 +647,11 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must handle Remove for main purchaser with exactly two purchasers" in {
-          val mainPurchaserId = "PURCH001"
+          val mainPurchaserID = "PURCH001"
           val remainingPurchaserId = "PURCH002"
 
           val purchaser1 = createPurchaser(
-            mainPurchaserId,
+            mainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith"),
             nextPurchaserID = Some(remainingPurchaserId)
@@ -662,12 +662,12 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             surname = Some("Doe")
           )
 
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(mainPurchaserId), version = Some("0"))
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(mainPurchaserID), version = Some("0"))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser1, purchaser2)),
             returnInfo = Some(returnInfo)
           )
-          val purchaserRefs = PurchaserAndCompanyId(mainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(mainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -688,7 +688,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful((ReturnInfoReturn(updated = true))))
 
           val result = service.handleRemoval(
-            PurchaserRemove.Remove(mainPurchaserId),
+            PurchaserRemove.Remove(mainPurchaserID),
             userAnswers
           )
 
@@ -741,18 +741,18 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must handle SelectNewMain with new main being next in chain" in {
-          val oldMainPurchaserId = "PURCH001"
-          val newMainPurchaserId = "PURCH002"
+          val oldmainPurchaserID = "PURCH001"
+          val newmainPurchaserID = "PURCH002"
           val thirdPurchaserId = "PURCH003"
 
           val purchaser1 = createPurchaser(
-            oldMainPurchaserId,
+            oldmainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith"),
-            nextPurchaserID = Some(newMainPurchaserId)
+            nextPurchaserID = Some(newmainPurchaserID)
           )
           val purchaser2 = createPurchaser(
-            newMainPurchaserId,
+            newmainPurchaserID,
             forename1 = Some("Jane"),
             surname = Some("Doe"),
             nextPurchaserID = Some(thirdPurchaserId)
@@ -763,12 +763,12 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             surname = Some("Wilson")
           )
 
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldMainPurchaserId), version = Some("0"))
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldmainPurchaserID), version = Some("0"))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser1, purchaser2, purchaser3)),
             returnInfo = Some(returnInfo)
           )
-          val purchaserRefs = PurchaserAndCompanyId(oldMainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(oldmainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -787,7 +787,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful((ReturnInfoReturn(updated = true))))
 
           val result = service.handleRemoval(
-            PurchaserRemove.SelectNewMain(newMainPurchaserId),
+            PurchaserRemove.SelectNewMain(newmainPurchaserID),
             userAnswers
           )
 
@@ -798,12 +798,12 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must handle SelectNewMain with new main not being next in chain" in {
-          val oldMainPurchaserId = "PURCH001"
+          val oldmainPurchaserID = "PURCH001"
           val secondPurchaserId = "PURCH002"
-          val newMainPurchaserId = "PURCH003"
+          val newmainPurchaserID = "PURCH003"
 
           val purchaser1 = createPurchaser(
-            oldMainPurchaserId,
+            oldmainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith"),
             nextPurchaserID = Some(secondPurchaserId)
@@ -812,20 +812,20 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             secondPurchaserId,
             forename1 = Some("Middle"),
             surname = Some("Person"),
-            nextPurchaserID = Some(newMainPurchaserId)
+            nextPurchaserID = Some(newmainPurchaserID)
           )
           val purchaser3 = createPurchaser(
-            newMainPurchaserId,
+            newmainPurchaserID,
             forename1 = Some("Jane"),
             surname = Some("Doe")
           )
 
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldMainPurchaserId), version = Some("0"))
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldmainPurchaserID), version = Some("0"))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser1, purchaser2, purchaser3)),
             returnInfo = Some(returnInfo)
           )
-          val purchaserRefs = PurchaserAndCompanyId(oldMainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(oldmainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -846,7 +846,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful((ReturnInfoReturn(updated = true))))
 
           val result = service.handleRemoval(
-            PurchaserRemove.SelectNewMain(newMainPurchaserId),
+            PurchaserRemove.SelectNewMain(newmainPurchaserID),
             userAnswers
           )
 
@@ -953,21 +953,21 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must redirect to JourneyRecovery when SelectNewMain cannot find new main purchaser" in {
-          val oldMainPurchaserId = "PURCH001"
-          val newMainPurchaserId = "PURCH999"
+          val oldmainPurchaserID = "PURCH001"
+          val newmainPurchaserID = "PURCH999"
 
           val purchaser1 = createPurchaser(
-            oldMainPurchaserId,
+            oldmainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith")
           )
 
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldMainPurchaserId))
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldmainPurchaserID))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser1)),
             returnInfo = Some(returnInfo)
           )
-          val purchaserRefs = PurchaserAndCompanyId(oldMainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(oldmainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -984,7 +984,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful(()))
 
           val result = service.handleRemoval(
-            PurchaserRemove.SelectNewMain(newMainPurchaserId),
+            PurchaserRemove.SelectNewMain(newmainPurchaserID),
             userAnswers
           )
 
@@ -993,17 +993,17 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must redirect to JourneyRecovery when SelectNewMain missing returnInfo" in {
-          val oldMainPurchaserId = "PURCH001"
-          val newMainPurchaserId = "PURCH002"
+          val oldmainPurchaserID = "PURCH001"
+          val newmainPurchaserID = "PURCH002"
 
           val purchaser1 = createPurchaser(
-            oldMainPurchaserId,
+            oldmainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith"),
-            nextPurchaserID = Some(newMainPurchaserId)
+            nextPurchaserID = Some(newmainPurchaserID)
           )
           val purchaser2 = createPurchaser(
-            newMainPurchaserId,
+            newmainPurchaserID,
             forename1 = Some("Jane"),
             surname = Some("Doe")
           )
@@ -1012,7 +1012,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             purchaser = Some(Seq(purchaser1, purchaser2)),
             returnInfo = None
           )
-          val purchaserRefs = PurchaserAndCompanyId(oldMainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(oldmainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -1029,7 +1029,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful(()))
 
           val result = service.handleRemoval(
-            PurchaserRemove.SelectNewMain(newMainPurchaserId),
+            PurchaserRemove.SelectNewMain(newmainPurchaserID),
             userAnswers
           )
 
@@ -1038,21 +1038,21 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must redirect to JourneyRecovery when SelectNewMain has missing original main purchaser" in {
-          val oldMainPurchaserId = "PURCH001"
-          val newMainPurchaserId = "PURCH002"
+          val oldmainPurchaserID = "PURCH001"
+          val newmainPurchaserID = "PURCH002"
 
           val purchaser2 = createPurchaser(
-            newMainPurchaserId,
+            newmainPurchaserID,
             forename1 = Some("Jane"),
             surname = Some("Doe")
           )
 
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldMainPurchaserId))
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldmainPurchaserID))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser2)),
             returnInfo = Some(returnInfo)
           )
-          val purchaserRefs = PurchaserAndCompanyId(oldMainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(oldmainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -1069,7 +1069,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful(()))
 
           val result = service.handleRemoval(
-            PurchaserRemove.SelectNewMain(newMainPurchaserId),
+            PurchaserRemove.SelectNewMain(newmainPurchaserID),
             userAnswers
           )
 
@@ -1078,27 +1078,27 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must redirect to JourneyRecovery when SelectNewMain has missing previous purchaser in list" in {
-          val oldMainPurchaserId = "PURCH001"
-          val newMainPurchaserId = "PURCH002"
+          val oldmainPurchaserID = "PURCH001"
+          val newmainPurchaserID = "PURCH002"
 
           val purchaser1 = createPurchaser(
-            oldMainPurchaserId,
+            oldmainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith"),
-            nextPurchaserID = Some(newMainPurchaserId)
+            nextPurchaserID = Some(newmainPurchaserID)
           )
           val purchaser2 = createPurchaser(
-            newMainPurchaserId,
+            newmainPurchaserID,
             forename1 = Some("Jane"),
             surname = Some("Doe")
           )
 
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldMainPurchaserId))
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(oldmainPurchaserID))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser1, purchaser2)),
             returnInfo = Some(returnInfo)
           )
-          val purchaserRefs = PurchaserAndCompanyId(oldMainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(oldmainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -1115,7 +1115,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful(()))
 
           val result = service.handleRemoval(
-            PurchaserRemove.SelectNewMain(newMainPurchaserId),
+            PurchaserRemove.SelectNewMain(newmainPurchaserID),
             userAnswers
           )
 
@@ -1124,11 +1124,11 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
         }
 
         "must handle Remove for double purchaser scenario when missing returnInfo" in {
-          val mainPurchaserId = "PURCH001"
+          val mainPurchaserID = "PURCH001"
           val remainingPurchaserId = "PURCH002"
 
           val purchaser1 = createPurchaser(
-            mainPurchaserId,
+            mainPurchaserID,
             forename1 = Some("John"),
             surname = Some("Smith"),
             nextPurchaserID = Some(remainingPurchaserId)
@@ -1143,7 +1143,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             purchaser = Some(Seq(purchaser1, purchaser2)),
             returnInfo = None
           )
-          val purchaserRefs = PurchaserAndCompanyId(mainPurchaserId, None)
+          val purchaserRefs = PurchaserAndCompanyId(mainPurchaserID, None)
           val userAnswers = emptyUserAnswers
             .copy(fullReturn = Some(fullReturn))
             .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
@@ -1160,7 +1160,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
             .thenReturn(Future.successful(()))
 
           val result = service.handleRemoval(
-            PurchaserRemove.Remove(mainPurchaserId),
+            PurchaserRemove.Remove(mainPurchaserID),
             userAnswers
           )
 

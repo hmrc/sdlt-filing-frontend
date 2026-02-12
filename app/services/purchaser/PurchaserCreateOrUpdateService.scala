@@ -103,9 +103,9 @@ class PurchaserCreateOrUpdateService {
             Future.failed(new IllegalStateException("Purchaser update failed - backend returned updated = false"))
           }
           _ <- {
-            val mainPurchaserId = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
+            val mainPurchaserID = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
             val updatingPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
-            val toUpdateOrCreateEligible = mainPurchaserId == updatingPurchaserId
+            val toUpdateOrCreateEligible = mainPurchaserID == updatingPurchaserId
             val companyDetailsExist = userAnswers.fullReturn.flatMap(_.companyDetails).isDefined
             val isCompany = purchaser.isCompany.contains("YES")
 

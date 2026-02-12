@@ -43,7 +43,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
   val testStorn = "test-storn"
   val testPurchaserId = "PUR002"
   val testIndividualId = "PUR123"
-  val testMainPurchaserId = "PUR001"
+  val testmainPurchaserID = "PUR001"
   val testPurchaserCompanyDetailsId = "COMPDET001"
   val testPurchaserResourceRef = "purchaser-ref-123"
   val testNextPurchaserId = "next-purchaser-456"
@@ -510,7 +510,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
             name = Some("UK")
           )),
           addressValidated = Some(true)),
-        addPurchaserPhoneNumber = true,
+        addPurchaserPhoneNumber = Some(true),
         enterPurchaserPhoneNumber = Some("+447874363636"),
         doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
         nationalInsuranceNumber = Some("AA123456A"),
@@ -540,7 +540,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       ))
   }
 
-  private def createFullReturnInfo(mainPurchaserId: Option[String]): ReturnInfo =
+  private def createFullReturnInfo(mainPurchaserID: Option[String]): ReturnInfo =
     ReturnInfo(
       returnID = Some("RET123456789"),
       storn = Some("STORN123456"),
@@ -549,7 +549,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       landCounter = Some("1"),
       purgeDate = Some("2026-12-31"),
       version = Some("1.0"),
-      mainPurchaserID = mainPurchaserId,
+      mainPurchaserID = mainPurchaserID,
       mainVendorID = Some("VEN001"),
       mainLandID = Some("LND001"),
       IRMarkGenerated = Some("true"),
@@ -583,7 +583,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
           val userAnswers = createMainPurchaserIndividualUserAnswers(
             fullReturn = Some(createFullReturn(
-              returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId)))
+              returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID)))
             ))
           )
           val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Individual")
@@ -670,7 +670,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
             val userAnswers = createPurchaserIndividualUserAnswers(
               fullReturn = Some(createFullReturn(
-                returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))),
+                returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
                 purchasers = Seq(
                   createPurchaser(
                     purchaserID = Some(testPurchaserId),
@@ -713,7 +713,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
             val userAnswers = createPurchaserCompanyUserAnswers(
               fullReturn = Some(createFullReturn(
-                returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))),
+                returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
                 purchasers = Seq(
                   createPurchaser(
                     purchaserID = Some(testPurchaserId),
@@ -758,10 +758,10 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
             val userAnswers = createMainPurchaserIndividualUserAnswers(
               fullReturn = Some(createFullReturn(
-                returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))),
+                returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
                 purchasers = Seq(
                   createPurchaser(
-                    purchaserID = Some(testMainPurchaserId),
+                    purchaserID = Some(testmainPurchaserID),
                     isCompany = Some("NO"),
                     purchaserResourceRef = Some(testPurchaserResourceRef),
                     nextPurchaserID = Some(testNextPurchaserId)
@@ -770,7 +770,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               ))
             )
 
-            val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testMainPurchaserId, companyDetailsID = None)), isCompany = "Individual")
+            val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testmainPurchaserID, companyDetailsID = None)), isCompany = "Individual")
 
             val returnVersionResponse = ReturnVersionUpdateReturn(
               newVersion = Some(2)
@@ -802,10 +802,10 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
               val userAnswers = createMainPurchaserCompanyUserAnswers(
                 fullReturn = Some(createFullReturn(
-                  returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))),
+                  returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
                   purchasers = Seq(
                     createPurchaser(
-                      purchaserID = Some(testMainPurchaserId),
+                      purchaserID = Some(testmainPurchaserID),
                       isCompany = Some("YES"),
                       purchaserResourceRef = Some(testPurchaserResourceRef),
                       nextPurchaserID = Some(testNextPurchaserId)
@@ -815,7 +815,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 ))
               )
 
-              val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testMainPurchaserId, companyDetailsID = None)), isCompany = "Company")
+              val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testmainPurchaserID, companyDetailsID = None)), isCompany = "Company")
 
               val returnVersionResponse = ReturnVersionUpdateReturn(
                 newVersion = Some(2)
@@ -848,20 +848,20 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
               val userAnswers = createMainPurchaserCompanyUserAnswers(
                 fullReturn = Some(createFullReturn(
-                  returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))),
+                  returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
                   purchasers = Seq(
                     createPurchaser(
-                      purchaserID = Some(testMainPurchaserId),
+                      purchaserID = Some(testmainPurchaserID),
                       isCompany = Some("YES"),
                       purchaserResourceRef = Some(testPurchaserResourceRef),
                       nextPurchaserID = Some(testNextPurchaserId)
                     )
                   ),
-                  companyDetails = Some(createCompanyDetails(testMainPurchaserId))
+                  companyDetails = Some(createCompanyDetails(testmainPurchaserID))
                 ))
               )
 
-              val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testMainPurchaserId, companyDetailsID = None)), isCompany = "Company")
+              val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testmainPurchaserID, companyDetailsID = None)), isCompany = "Company")
 
               val returnVersionResponse = ReturnVersionUpdateReturn(
                 newVersion = Some(2)
@@ -899,7 +899,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           purchaserResourceRef = Some(testPurchaserResourceRef),
           nextPurchaserID = Some(testNextPurchaserId)
         )
-        val fullReturn = createFullReturn(purchasers = Seq(purchaser), returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))))
+        val fullReturn = createFullReturn(purchasers = Seq(purchaser), returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
         val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
@@ -928,7 +928,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           purchaserResourceRef = Some(testPurchaserResourceRef),
           nextPurchaserID = Some(testNextPurchaserId)
         )
-        val fullReturn = createFullReturn(purchasers = Seq(purchaser), returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))))
+        val fullReturn = createFullReturn(purchasers = Seq(purchaser), returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
         val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
@@ -954,7 +954,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
         val fullReturn = createFullReturn(
           purchasers = Seq.empty,
-          returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))))
+          returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
         val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
@@ -983,7 +983,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               purchaserResourceRef = None,
               nextPurchaserID = Some(testNextPurchaserId),
               isCompany = Some("YES"))),
-          returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))))
+          returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
         val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
@@ -1012,7 +1012,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               purchaserResourceRef = Some(testPurchaserResourceRef),
               nextPurchaserID = Some(testNextPurchaserId),
               isCompany = Some("YES"))),
-          returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))))
+          returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
         val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
@@ -1037,7 +1037,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               purchaserResourceRef = Some(testPurchaserResourceRef),
               nextPurchaserID = Some(testNextPurchaserId),
               isCompany = Some("YES"))),
-          returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))))
+          returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
         val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
@@ -1065,7 +1065,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
         val userAnswers = createPurchaserCompanyUserAnswers(
           fullReturn = Some(createFullReturn(
-            returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))),
+            returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
             purchasers = Seq(
               createPurchaser(
                 purchaserID = Some(testPurchaserId),
@@ -1104,7 +1104,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
           val userAnswers = createPurchaserCompanyUserAnswers(
             fullReturn = Some(createFullReturn(
-              returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))),
+              returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
               purchasers = Seq(
                 createPurchaser(
                   purchaserID = Some(testPurchaserId),
@@ -1174,7 +1174,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           ))
 
           val fullReturn = createFullReturn(
-            returnInfo = Some(createFullReturnInfo(Some(testMainPurchaserId))),
+            returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
             purchasers = purchasers
           )
 
