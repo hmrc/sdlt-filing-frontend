@@ -95,7 +95,7 @@ class PopulatePurchaserService {
                                    id: String
                                   ) = {
 
-    val isCompany = purchaser.isCompany.contains("YES")
+    val isCompany = purchaser.isCompany.exists(_.equalsIgnoreCase("YES"))
     val companyDetailsID = userAnswers.fullReturn.flatMap(_.companyDetails.map(_.companyDetailsID)).flatten
     val phoneDefined: Boolean = purchaser.phone.isDefined
 
@@ -222,7 +222,10 @@ class PopulatePurchaserService {
                                  userAnswers: UserAnswers): Try[UserAnswers] = {
 
     val mainPurchaserCheck = isMainPurchaser(id, userAnswers)
-    (mainPurchaserCheck, purchaser.isCompany, purchaser.address1, purchaser.surname, purchaser.companyName) match {
+
+    val isCompanyNormalized = purchaser.isCompany.map(_.toUpperCase)
+
+    (mainPurchaserCheck, isCompanyNormalized, purchaser.address1, purchaser.surname, purchaser.companyName) match {
       case (true, Some("YES"), Some(line1), _, Some(name)) =>
         for {
           withPurchaserPages <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
