@@ -16,7 +16,7 @@
 
 package models.vendor
 
-import models.UserAnswers
+import models.{UserAnswers, Vendor}
 import play.api.libs.json.{Json, OFormat}
 
 import scala.concurrent.Future
@@ -39,6 +39,31 @@ case class CreateVendorRequest(
 
 object CreateVendorRequest {
   implicit val format: OFormat[CreateVendorRequest] = Json.format[CreateVendorRequest]
+
+  def from(userAnswers: UserAnswers, vendor: Vendor): Future[CreateVendorRequest] =
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        (vendor.name, vendor.address1, vendor.isRepresentedByAgent) match {
+          case (Some(name), Some(address1), Some(isRepresentedByAgent)) =>
+            Future.successful(CreateVendorRequest(
+              stornId = userAnswers.storn,
+              returnResourceRef = fullReturn.returnResourceRef,
+              forename1 = vendor.forename1,
+              forename2 = vendor.forename2,
+              name = name,
+              houseNumber = vendor.houseNumber,
+              addressLine1 = address1,
+              addressLine2 = vendor.address2,
+              addressLine3 = vendor.address3,
+              addressLine4 = vendor.address4,
+              postcode = vendor.postcode,
+              isRepresentedByAgent = isRepresentedByAgent,
+            ))
+          case _ => Future.failed(new NoSuchElementException("Vendor mandatory fields not found"))
+        }
+      case None => Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  
 }
 //mite not need this just have it so that it returns a 201 from the backend?
 
@@ -72,6 +97,33 @@ case class UpdateVendorRequest(
 
 object UpdateVendorRequest {
   implicit val format: OFormat[UpdateVendorRequest] = Json.format[UpdateVendorRequest]
+  
+  def from(userAnswers: UserAnswers, vendor: Vendor): Future[UpdateVendorRequest] =
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        (vendor.name, vendor.address1, vendor.vendorResourceRef, vendor.isRepresentedByAgent) match {
+          case (Some(name), Some(address1), Some(vendorResourceRef), Some(isRepresentedByAgent)) =>
+            Future.successful(UpdateVendorRequest(
+              stornId = userAnswers.storn,
+              returnResourceRef = fullReturn.returnResourceRef,
+              title = vendor.title,
+              forename1 = vendor.forename1,
+              forename2 = vendor.forename2,
+              name = name,
+              houseNumber = vendor.houseNumber,
+              addressLine1 = address1,
+              addressLine2 = vendor.address2,
+              addressLine3 = vendor.address3,
+              addressLine4 = vendor.address4,
+              postcode = vendor.postcode,
+              isRepresentedByAgent = isRepresentedByAgent,
+              vendorResourceRef = vendorResourceRef,
+              nextVendorId = vendor.nextVendorID
+            ))
+          case _ => Future.failed(new NoSuchElementException("Vendor mandatory fields not found"))
+        }
+      case None => Future.failed(new NoSuchElementException("Full return not found"))
+    }
 }
 
 case class UpdateVendorReturn(

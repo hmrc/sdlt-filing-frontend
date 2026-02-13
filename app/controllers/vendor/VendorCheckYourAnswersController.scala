@@ -17,15 +17,15 @@
 package controllers.vendor
 
 import com.google.inject.Inject
-import connectors.StampDutyLandTaxConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
 import models.vendor.VendorSessionQuestions
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.vendor.{VendorCreateOrUpdateService, VendorRequestService}
+import services.vendor.VendorCreateOrUpdateService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.vendor.{IndividualOrCompanyNameSummary, VendorAddressSummary, VendorTypeSummary}
@@ -40,8 +40,6 @@ class VendorCheckYourAnswersController @Inject()(
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   sessionRepository: SessionRepository,
-                                                  backendConnector: StampDutyLandTaxConnector,
-                                                  vendorRequestService: VendorRequestService,
                                                   vendorCreateOrUpdateService: VendorCreateOrUpdateService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: VendorCheckYourAnswersView
@@ -56,8 +54,8 @@ class VendorCheckYourAnswersController @Inject()(
 
         val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
         val isDataEmpty = result.exists(_.data.value.isEmpty)
-        
-        if(isReturnIdEmpty){
+
+        if (isReturnIdEmpty) {
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         } else {
           (isDataEmpty, result) match {
@@ -84,10 +82,14 @@ class VendorCheckYourAnswersController @Inject()(
         case Some(userAnswers) if userAnswers.returnId.isDefined =>
           userAnswers.data.validate[VendorSessionQuestions] match {
             case JsSuccess(sessionData, _) =>
-              vendorCreateOrUpdateService.result(userAnswers,
-                sessionData,
-                backendConnector,
-                vendorRequestService)
+              (sessionData.vendorCurrent.vendorID.isDefined, vendorCreateOrUpdateService.isVendorPurchaserCountBelowMaximum(userAnswers)) match {
+                case (true, _) =>
+                  vendorCreateOrUpdateService.updateVendor(userAnswers)
+                case (false, true) =>
+                  vendorCreateOrUpdateService.createVendor(userAnswers)
+                case (false, false) =>
+                  Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad()))
+              }
             case JsError(_) =>
               Future.successful(Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()))
           }

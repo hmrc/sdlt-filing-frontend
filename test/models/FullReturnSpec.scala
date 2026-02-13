@@ -16,6 +16,7 @@
 
 package models
 
+import constants.FullReturnConstants.{completeFullReturn, completeVendorWithNextId}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.should.Matchers.shouldBe
@@ -179,6 +180,10 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       )
     ),
     lastUpdated = Instant.now
+  )
+
+  private val userAnswersVendorCurrentAndExisting = userAnswersVendorCompany.copy(
+    fullReturn = Some(completeFullReturn.copy(vendor = Some(Seq(completeVendorWithNextId))))
   )
 
   private val userAnswersPurchaserCompany = UserAnswers(
@@ -753,9 +758,10 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must create Vendor of type Individual from UserAnswers" in {
         val userAnswers = userAnswersVendorIndividual
-        val result = Vendor.from(Some(userAnswers)).futureValue
+        val result = Vendor.from(userAnswers).futureValue
         val expected = Vendor(
           vendorID = Some("VEN001"),
+          returnID = Some("12345"),
           forename1 = Some("John"),
           forename2 = Some("James"),
           name = Some("Smith"),
@@ -772,9 +778,10 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must create Vendor of type Company from UserAnswers" in {
         val userAnswers = userAnswersVendorCompany
-        val result = Vendor.from(Some(userAnswers)).futureValue
+        val result = Vendor.from(userAnswers).futureValue
         val expected = Vendor(
           vendorID = Some("VEN001"),
+          returnID = Some("12345"),
           forename1 = None,
           forename2 = None,
           name = Some("Company ltd"),
@@ -789,10 +796,32 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         result shouldBe expected
       }
 
+      "must create Vendor and preserve existing vendor data at same ID" in {
+        val userAnswers = userAnswersVendorCurrentAndExisting
+        val result = Vendor.from(userAnswers).futureValue
+        val expected = Vendor(
+          vendorID = Some("VEN001"),
+          returnID = Some("12345"),
+          forename1 = None,
+          forename2 = None,
+          name = Some("Company ltd"),
+          houseNumber = None,
+          address1 = Some("Street 1"),
+          address2 = Some("Street 2"),
+          address3 = Some("Street 3"),
+          address4 = Some("Street 4"),
+          postcode = Some("CR7 8LU"),
+          isRepresentedByAgent = Some("YES"),
+          vendorResourceRef = Some("VEN-REF-001"),
+          nextVendorID = Some("VEN002")
+        )
+        result shouldBe expected
+      }
+
       "must fail to create Vendor when mandatory data is missing from UserAnswers" in {
         val userAnswers = userAnswersVendorDataMissing
         val result = intercept[JsResultException] {
-          await(Vendor.from(Some(userAnswers)))
+          await(Vendor.from(userAnswers))
         }
         result.errors must not be empty
       }

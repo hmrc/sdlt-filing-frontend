@@ -104,6 +104,7 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
     } yield {
       if (updateReturnAgentReturn.updated) {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+          .flashing("purchaserAgentUpdated" -> updateReturnAgentRequest.name)
       } else {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
       }
@@ -117,6 +118,7 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
     } yield {
       if (createReturnAgentReturn.returnAgentID.nonEmpty) {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+          .flashing("purchaserAgentCreated" -> createReturnAgentRequest.name)
       } else {
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
       }

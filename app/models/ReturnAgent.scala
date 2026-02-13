@@ -50,7 +50,7 @@ object CreateReturnAgentRequest {
           case Purchaser =>
             val paSessionQuestions: PurchaserAgentSessionQuestions = (userAnswers.data \ "purchaserAgentCurrent").as[PurchaserAgentSessionQuestions]
             Future.successful(CreateReturnAgentRequest(
-              stornId = fullReturn.stornId,
+              stornId = userAnswers.storn,
               returnResourceRef = fullReturn.returnResourceRef,
               agentType = agentType.toString,
               name = paSessionQuestions.purchaserAgentName,
@@ -68,7 +68,7 @@ object CreateReturnAgentRequest {
           case Vendor =>
             val vaSessionQuestions: VendorAgentSessionQuestions = (userAnswers.data \ "vendorAgentCurrent").as[VendorAgentSessionQuestions]
             Future.successful(CreateReturnAgentRequest(
-              stornId = fullReturn.stornId,
+              stornId = userAnswers.storn,
               returnResourceRef = fullReturn.returnResourceRef,
               agentType = agentType.toString,
               name = vaSessionQuestions.vendorAgentName,
@@ -125,7 +125,7 @@ object UpdateReturnAgentRequest {
           case Purchaser =>
             val paSessionQuestions: PurchaserAgentSessionQuestions = (userAnswers.data \ "purchaserAgentCurrent").as[PurchaserAgentSessionQuestions]
             Future.successful(UpdateReturnAgentRequest(
-              stornId = fullReturn.stornId,
+              stornId = userAnswers.storn,
               returnResourceRef = fullReturn.returnResourceRef,
               agentType = agentType.toString,
               name = paSessionQuestions.purchaserAgentName,
@@ -143,7 +143,7 @@ object UpdateReturnAgentRequest {
           case Vendor =>
             val vaSessionQuestions: VendorAgentSessionQuestions = (userAnswers.data \ "vendorAgentCurrent").as[VendorAgentSessionQuestions]
             Future.successful(UpdateReturnAgentRequest(
-              stornId = fullReturn.stornId,
+              stornId = userAnswers.storn,
               returnResourceRef = fullReturn.returnResourceRef,
               agentType = agentType.toString,
               name = vaSessionQuestions.vendorAgentName,

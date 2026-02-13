@@ -165,6 +165,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
           redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
 
           verify(mockBackendConnector, times(1)).updateReturnAgent(any[UpdateReturnAgentRequest])(any(), any())
+          flash(result).get("purchaserAgentUpdated") mustBe Some("Agent name")
         }
       }
 
@@ -189,6 +190,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
 
           redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
           verify(mockBackendConnector, atLeastOnce()).createReturnAgent(any[CreateReturnAgentRequest])(any(), any())
+          flash(result).get("purchaserAgentCreated") mustBe Some("Agent name")
         }
       }
 
