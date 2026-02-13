@@ -46,8 +46,8 @@
                 content = HtmlContent(
                     s"""<h3 class="govuk-notification-banner__heading">${
                         messages(
-                            "vendorAgent.overview.vendorAgentRemoved",
-                            if(!vendorAgentName.isBlank) vendorAgentName else messages("vendorAgent.overview.aVendorAgent")
+                            "site.overview.removed",
+                            if(!vendorAgentName.isBlank) vendorAgentName else messages("site.agent.anAgent")
                         )
                     }</h3>"""
                 ),
@@ -64,8 +64,8 @@
                 content = HtmlContent(
                     s"""<h3 class="govuk-notification-banner__heading">${
                         messages(
-                            "vendorAgent.overview.vendorAgentCreated",
-                            if(!vendorAgentName.isBlank) vendorAgentName else messages("vendorAgent.overview.aVendorAgent")
+                            "site.overview.created",
+                            if(!vendorAgentName.isBlank) vendorAgentName else messages("site.agent.anAgent")
                         )
                     }</h3>"""
                 ),
@@ -82,8 +82,8 @@
                 content = HtmlContent(
                     s"""<h3 class="govuk-notification-banner__heading">${
                         messages(
-                            "vendorAgent.overview.vendorAgentUpdated",
-                            if(!vendorAgentName.isBlank) vendorAgentName else messages("vendorAgent.overview.aVendorAgent")
+                            "site.overview.updated",
+                            if(!vendorAgentName.isBlank) vendorAgentName else messages("site.agent.anAgent")
                         )
                     }</h3>"""
                 ),

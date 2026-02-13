@@ -47,7 +47,8 @@ class PurchaserCreateOrUpdateService {
   def result(userAnswers: UserAnswers,
              sessionData: PurchaserSessionQuestions,
              backendConnector: StampDutyLandTaxConnector,
-             purchaserRequestService: PurchaserRequestService)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+             purchaserRequestService: PurchaserRequestService,
+             purchaserService: PurchaserService)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
     val (vendorList, purchaserList) = userAnswers.fullReturn match {
       case Some(fr) => (fr.purchaser.getOrElse(Seq.empty), fr.purchaser.getOrElse(Seq.empty))
@@ -59,11 +60,11 @@ class PurchaserCreateOrUpdateService {
     for {
       _ <- (sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID).isDefined, errorCalc) match {
         case (true, _) =>
-          callUpdatePurchaser(backendConnector, purchaserRequestService, userAnswers, sessionData)
+          callUpdatePurchaser(backendConnector, purchaserRequestService, purchaserService, userAnswers, sessionData)
         case (false, true) =>
-          callCreatePurchaser(backendConnector, purchaserRequestService, userAnswers, sessionData)
-        case (false, false) => //TODO: Redirect to above 99 purchasers error page
-         Future.unit
+          callCreatePurchaser(backendConnector, purchaserRequestService, purchaserService, userAnswers, sessionData)
+        case _ =>
+         Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
       }
     } yield {
       Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
@@ -73,6 +74,7 @@ class PurchaserCreateOrUpdateService {
   def callUpdatePurchaser(
                            backendConnector: StampDutyLandTaxConnector,
                            purchaserRequestService: PurchaserRequestService,
+                           purchaserService: PurchaserService,
                            userAnswers: UserAnswers,
                            sessionData: PurchaserSessionQuestions)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
@@ -137,11 +139,13 @@ class PurchaserCreateOrUpdateService {
         Future.failed(new IllegalStateException("Return version update did not produce a new version"))
       }
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
+      .flashing("purchaserUpdated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
   }
 
   def callCreatePurchaser(
                                    backendConnector: StampDutyLandTaxConnector,
                                    purchaserRequestService: PurchaserRequestService,
+                                   purchaserService: PurchaserService,
                                    userAnswers: UserAnswers,
                                    sessionData: PurchaserSessionQuestions)
                                  (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result]  = {
@@ -174,6 +178,7 @@ class PurchaserCreateOrUpdateService {
           Future.unit
       }
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
+      .flashing("purchaserCreated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
   }
 
 }

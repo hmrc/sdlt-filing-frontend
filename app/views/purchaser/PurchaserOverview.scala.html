@@ -63,7 +63,43 @@
         @govukNotificationBanner(
             NotificationBanner(
                 title = messages("site.success"),
-                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("purchaser.purchaserOverview.purchaserRemoved", if(!purchaserName.isBlank) then purchaserName else messages("purchaser.purchaserOverview.aPurchaser"))}</h3>"""),
+                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("site.overview.removed", if(!purchaserName.isBlank) then purchaserName else messages("site.purchaser.aPurchaser"))}</h3>"""),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("purchaserCreated").map { purchaserName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "site.overview.created",
+                            if(!purchaserName.isBlank) purchaserName else messages("site.purchaser.aPurchaser")
+                        )
+                    }</h3>"""
+                ),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("purchaserUpdated").map { purchaserName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "site.overview.updated",
+                            if(!purchaserName.isBlank) purchaserName else messages("site.purchaser.aPurchaser")
+                        )
+                    }</h3>"""
+                ),
                 bannerType = Some("success"),
                 role = Some("alert")
             )

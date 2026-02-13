@@ -105,7 +105,8 @@ class PurchaserCheckYourAnswersController @Inject()(
                 purchaserCreateOrUpdateService.result(userAnswers,
                   sessionData,
                   backendConnector,
-                  purchaserRequestService)
+                  purchaserRequestService,
+                  purchaserService)
               } else {
                 Future.successful(Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()))
               }

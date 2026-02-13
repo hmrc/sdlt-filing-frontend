@@ -18,20 +18,18 @@ package controllers.vendor
 
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
-import constants.FullReturnConstants.completeFullReturn
-import models.vendor.*
-import models.{CreateReturnResult, UserAnswers}
+import constants.FullReturnConstants.*
+import models.vendor.{CreateVendorReturn, UpdateVendorRequest, UpdateVendorReturn}
+import models.{CreateReturnResult, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.{JsNull, JsObject, Json}
-import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.vendor.{VendorCreateOrUpdateService, VendorRequestService}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
@@ -42,8 +40,6 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
 
   private val mockSessionRepository = mock[SessionRepository]
   private val mockBackendConnector = mock[StampDutyLandTaxConnector]
-  private val mockVendorRequestService = mock[VendorRequestService]
-  private val mockVendorCreateOrUpdateService = mock[VendorCreateOrUpdateService]
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: FakeRequest[_] = FakeRequest()
@@ -53,6 +49,33 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
     super.beforeEach()
     reset(mockSessionRepository)
   }
+
+  private def vendorCurrentData(vendorId: Option[String] = None) = Json.obj(
+    "vendorCurrent" -> Json.obj(
+      "vendorID" -> Json.toJson(vendorId),
+      "whoIsTheVendor" -> "Individual",
+      "vendorOrCompanyName" -> Json.obj(
+        "forename1" -> "Jane",
+        "forename2" -> "Elizabeth",
+        "name" -> "Johnson",
+      ),
+      "vendorAddress" -> Json.obj(
+        "houseNumber" -> "15",
+        "line1" -> "Park Lane",
+        "line2" -> "Mayfair",
+        "line3" -> "London",
+        "line4" -> JsNull,
+        "line5" -> JsNull,
+        "postcode" -> "W1K 1LB",
+        "country" -> Json.obj(
+          "code" -> "GB",
+          "name" -> "UK"
+        ),
+        "addressValidated" -> true
+      ),
+      "representedByAnAgent" -> "true"
+    )
+  )
 
   "Check Your Answers Controller" - {
 
@@ -81,22 +104,7 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
           id = "12345",
           returnId = None,
           storn = "TESTSTORN",
-          data = Json.obj(
-            "whoIsTheVendor" -> "Individual",
-            "vendorOrCompanyName" -> "John Doe",
-            "vendorAddress" -> Json.obj(
-              "houseNumber" -> JsNull,
-              "line1" -> "Test Street",
-              "line2" -> JsNull,
-              "line3" -> JsNull,
-              "line4" -> JsNull,
-              "line5" -> JsNull,
-              "postcode" -> JsNull,
-              "country" -> JsNull,
-              "addressValidated" -> false
-            ),
-          ),
-          lastUpdated = Instant.now
+          data = vendorCurrentData()
         )
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -116,22 +124,7 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
           id = "12345",
           returnId = Some("AB2346"),
           storn = "TESTSTORN",
-          data = Json.obj(
-            "whoIsTheVendor" -> "Individual",
-            "vendorOrCompanyName" -> "John Doe",
-            "vendorAddress" -> Json.obj(
-              "houseNumber" -> JsNull,
-              "line1" -> "Test Street",
-              "line2" -> JsNull,
-              "line3" -> JsNull,
-              "line4" -> JsNull,
-              "line5" -> JsNull,
-              "postcode" -> JsNull,
-              "country" -> JsNull,
-              "addressValidated" -> false
-            ),
-          ),
-          lastUpdated = Instant.now
+          data = vendorCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -166,67 +159,96 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
     }
 
     "onSubmit" - {
-      "must redirect to VendorOverview when all required data is present and valid" in {
-        
-        val fullReturn = completeFullReturn
-        
-        val createVendorRequest = CreateVendorRequest(
-          stornId = "12345",
-          returnResourceRef = "RRF-2024-001",
-          name = "Samsung",
-          addressLine1 = "Street 1",
-          isRepresentedByAgent = "Yes"
+      "must create vendor and redirect to VendorOverview when all required data is present and valid" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "TESTSTORN",
+          returnId = Some("12313"),
+          fullReturn = Some(incompleteFullReturn),
+          data = vendorCurrentData()
         )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        val createVendorReturn = CreateVendorReturn("VEN-REF-001","VEN001")
+        when(mockBackendConnector.createVendor(any())(any(), any()))
+          .thenReturn(Future.successful(createVendorReturn))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.vendor.routes.VendorCheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+          verify(mockBackendConnector, times(1)).createVendor(any())(any(), any())
+          flash(result).get("vendorCreated") mustBe Some("Jane Elizabeth Johnson")
+        }
+      }
+
+      "must update vendor and redirect to VendorOverview when all required data is present and valid for an existing vendor" in {
+
+        val fullReturn = completeFullReturn
 
         val userAnswers = UserAnswers(
           id = "12345",
           storn = "TESTSTORN",
           returnId = Some("12313"),
           fullReturn = Some(fullReturn),
-          data = Json.obj(
-            "vendorCurrent" -> Json.obj(
-              "vendorID" -> "VEN001",
-              "whoIsTheVendor" -> "Individual",
-              "vendorOrCompanyName" -> Json.obj(
-                "forename1" -> "Jane",
-                "forename2" -> "Elizabeth",
-                "name" -> "Johnson",
-              ),
-              "vendorAddress" -> Json.obj(
-                "houseNumber" -> "15",
-                "line1" -> "Park Lane",
-                "line2" -> "Mayfair",
-                "line3" -> "London",
-                "line4" -> JsNull,
-                "line5" -> JsNull,
-                "postcode" ->  "W1K 1LB",
-                "country" -> Json.obj(
-                  "code" -> "GB",
-                  "name" -> "UK"
-                ),
-                "addressValidated" -> true
-              ),
-              "representedByAnAgent" -> "true"
-            )),
-          lastUpdated = Instant.now
+          data = vendorCurrentData(Some("VEN001"))
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
-        when(mockBackendConnector.createVendor(any())(any(), any())).thenReturn(Future.successful(CreateVendorReturn("VEN-REF-001","VEN001")))
-
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-
-        when(mockVendorRequestService.convertToVendorRequest(any(), any(), any())).thenReturn(createVendorRequest)
-
-        when(mockVendorCreateOrUpdateService.result(any(), any(), any(),
-          any())(any(),any(),any())).thenReturn(Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())))
+        val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+        val updateVendorReturn = UpdateVendorReturn(true)
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+        when(mockBackendConnector.updateVendor(any[UpdateVendorRequest])(any(), any()))
+          .thenReturn(Future.successful(updateVendorReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
-          .overrides(bind[VendorRequestService].toInstance(mockVendorRequestService))
-          .overrides(bind[VendorCreateOrUpdateService].toInstance(mockVendorCreateOrUpdateService))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.vendor.routes.VendorCheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
+          flash(result).get("vendorUpdated") mustBe Some("Jane Elizabeth Johnson")
+        }
+      }
+
+      "must redirect to overview when vendor and purchaser count exceeds maximum" in {
+        val vendors = (1 to 50).map(i => mock[models.Vendor])
+        val purchasers = (1 to 49).map(i => mock[models.Purchaser])
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "TESTSTORN",
+          returnId = Some("12313"),
+          fullReturn = Some(incompleteFullReturn.copy(
+            vendor = Some(vendors),
+            purchaser = Some(purchasers)
+          )),
+          data = vendorCurrentData(None)
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
@@ -239,7 +261,7 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
         }
       }
 
-      "must redirect back to JourneyRecoveryController when required data is missing or invalid" in {
+      "must redirect back to JourneyRecoveryController when returnId is missing" in {
 
         val incompleteData = Json.obj(
           "whoIsTheVendor" -> "Individual"
@@ -315,7 +337,6 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
-
     }
   }
 }
