@@ -77,8 +77,7 @@ class LandAddressController @Inject()(
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, LandAddressPage)
       } yield if (updated) {
-        //TODO - DTR-2444 - SPRINT-8 - Update when DTR-2444 is built
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+       Redirect(controllers.land.routes.LocalAuthorityCodeController.onPageLoad(mode))
       }
       else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())

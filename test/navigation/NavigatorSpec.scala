@@ -205,6 +205,10 @@ class NavigatorSpec extends SpecBase {
         "go from LandAddNlpgUprnPage to LandNlpgUprn page" in {
           navigator.nextPage(LandAddNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
+
+        "go from LocalAuthorityCodePage to Local Authority code for the land or property page" in {
+          navigator.nextPage(LocalAuthorityCodePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
+        }
       }
     }
 
