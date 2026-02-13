@@ -98,7 +98,7 @@ class PurchaserCheckYourAnswersController @Inject()(
         case Some(userAnswers) if userAnswers.returnId.isDefined =>
           userAnswers.data.validate[PurchaserSessionQuestions] match {
             case JsSuccess(sessionData, _) if purchaserService.purchaserSessionOptionalQuestionsValidation(sessionData, userAnswers) =>
-              purchaserCreateOrUpdateService.result(userAnswers, sessionData, backendConnector, purchaserRequestService)
+              purchaserCreateOrUpdateService.result(userAnswers, sessionData, backendConnector, purchaserRequestService, purchaserService)
             case _ => Future.successful(Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()))
           }
         case _ => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))

@@ -63,7 +63,43 @@
         @govukNotificationBanner(
             NotificationBanner(
                 title = messages("site.success"),
-                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("vendor.vendorOverview.vendorRemoved", if(!vendorName.isBlank) then vendorName else messages("vendor.vendorOverview.aVendor"))}</h3>"""),
+                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${messages("site.overview.removed", if(!vendorName.isBlank) then vendorName else messages("site.vendor.aVendor"))}</h3>"""),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("vendorCreated").map { vendorName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "site.overview.created",
+                            if(!vendorName.isBlank) vendorName else messages("site.vendor.aVendor")
+                        )
+                    }</h3>"""
+                ),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("vendorUpdated").map { vendorName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "site.overview.updated",
+                            if(!vendorName.isBlank) vendorName else messages("site.vendor.aVendor")
+                        )
+                    }</h3>"""
+                ),
                 bannerType = Some("success"),
                 role = Some("alert")
             )

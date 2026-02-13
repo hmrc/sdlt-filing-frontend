@@ -236,24 +236,33 @@ case class Vendor(
 object Vendor {
   implicit val format: OFormat[Vendor] = Json.format[Vendor]
 
-  def from(userAnswers: Option[UserAnswers]): Future[Vendor] = {
-    val vendorSessionQuestions: VendorSessionQuestions = userAnswers.get.data.as[VendorSessionQuestions]
+  def from(userAnswers: UserAnswers): Future[Vendor] = {
+    val vendorSessionQuestions: VendorSessionQuestions = userAnswers.data.as[VendorSessionQuestions]
+
+    val existingVendor = for {
+      fullReturn <- userAnswers.fullReturn
+      vendors <- fullReturn.vendor
+      vendorId <- vendorSessionQuestions.vendorCurrent.vendorID
+      existing <- vendors.find(_.vendorID.contains(vendorId))
+    } yield existing
+
     Future.successful(Vendor(
       vendorID = vendorSessionQuestions.vendorCurrent.vendorID,
+      returnID = userAnswers.returnId,
       forename1 = vendorSessionQuestions.vendorCurrent.vendorOrCompanyName.forename1,
       forename2 = vendorSessionQuestions.vendorCurrent.vendorOrCompanyName.forename2,
       name = Some(vendorSessionQuestions.vendorCurrent.vendorOrCompanyName.name),
       houseNumber = vendorSessionQuestions.vendorCurrent.vendorAddress.houseNumber,
-      address1 = vendorSessionQuestions.vendorCurrent.vendorAddress.line1,
+      address1 = Some(vendorSessionQuestions.vendorCurrent.vendorAddress.line1),
       address2 = vendorSessionQuestions.vendorCurrent.vendorAddress.line2,
       address3 = vendorSessionQuestions.vendorCurrent.vendorAddress.line3,
       address4 = vendorSessionQuestions.vendorCurrent.vendorAddress.line4,
-      postcode = vendorSessionQuestions.vendorCurrent.vendorAddress.postcode,
-      isRepresentedByAgent = Some("NO")
-    )
-    )
+      postcode = Some(vendorSessionQuestions.vendorCurrent.vendorAddress.postcode),
+      isRepresentedByAgent = existingVendor.map(_.isRepresentedByAgent).getOrElse(Some("NO")),
+      vendorResourceRef = existingVendor.flatMap(_.vendorResourceRef),
+      nextVendorID = existingVendor.flatMap(_.nextVendorID)
+    ))
   }
-  
 }
 
 case class Land(

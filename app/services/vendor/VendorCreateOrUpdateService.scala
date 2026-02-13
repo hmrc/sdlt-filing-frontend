@@ -16,78 +16,55 @@
 
 package services.vendor
 
+import com.google.inject.Inject
 import connectors.StampDutyLandTaxConnector
-import models.vendor.VendorSessionQuestions
+import models.vendor.{CreateVendorRequest, UpdateVendorRequest}
 import models.{ReturnVersionUpdateRequest, UserAnswers, Vendor}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.FullName
 
 import scala.concurrent.{ExecutionContext, Future}
-class VendorCreateOrUpdateService {
+class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxConnector)(implicit ex: ExecutionContext){
 
-  private def vendorOptDetails(userAnswers: UserAnswers,
-                               sessionData: VendorSessionQuestions): Option[(String, Option[String])] = {
+  def createVendor(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
-      fullReturn <- userAnswers.fullReturn
-      vendorList <- fullReturn.vendor
-      vendorID <- sessionData.vendorCurrent.vendorID
-      vendor <- vendorList.find(_.vendorID.contains(vendorID))
-      vendorReturnRef <- vendor.vendorResourceRef
-    } yield (vendorReturnRef, vendor.nextVendorID)
-
+      vendor <- Vendor.from(userAnswers)
+      createVendorRequest <- CreateVendorRequest.from(userAnswers, vendor)
+      createVendorReturn <- backendConnector.createVendor(createVendorRequest)
+    } yield {
+      if (createVendorReturn.vendorId.nonEmpty) {
+        Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
+          .flashing("vendorCreated" -> FullName.fullName(createVendorRequest.forename1, createVendorRequest.forename2, createVendorRequest.name))
+      } else {
+        Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+      }
+    }
   }
 
-  def result(userAnswers: UserAnswers,
-             sessionData: VendorSessionQuestions,
-             backendConnector: StampDutyLandTaxConnector,
-             vendorRequestService: VendorRequestService)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+  def updateVendor(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+    for {
+      vendor <- Vendor.from(userAnswers)
+      updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
+      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      updateVendorRequest <- UpdateVendorRequest.from(userAnswers, vendor) if updateReturnVersionReturn.newVersion.isDefined
+      updateVendorReturn <- backendConnector.updateVendor(updateVendorRequest) if updateReturnVersionReturn.newVersion.isDefined
+    } yield {
+      if (updateVendorReturn.updated) {
+        Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
+          .flashing("vendorUpdated" -> FullName.fullName(updateVendorRequest.forename1, updateVendorRequest.forename2, updateVendorRequest.name))
+      } else {
+        Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+      }
+    }
+  }
 
+  def isVendorPurchaserCountBelowMaximum(userAnswers: UserAnswers): Boolean = {
     val (vendorList, purchaserList) = userAnswers.fullReturn match {
       case Some(fr) => (fr.vendor.getOrElse(Seq.empty), fr.purchaser.getOrElse(Seq.empty))
       case None => (Seq.empty, Seq.empty)
     }
-    val errorCalc: Boolean = (vendorList.length + purchaserList.length) < 99
-
-    for {
-      vendor <- Vendor.from(Some(userAnswers))
-      returnId = userAnswers.returnId.getOrElse(
-        throw new NotFoundException("Return ID is required")
-      )
-      _ <- (sessionData.vendorCurrent.vendorID.isDefined, errorCalc) match {
-        case (true, _) =>
-          ReturnVersionUpdateRequest.from(userAnswers).flatMap { updateReturnVersionRequest =>
-            backendConnector.updateReturnVersion(updateReturnVersionRequest).flatMap { returnVersion =>
-              if (returnVersion.newVersion.isDefined) {
-                backendConnector.updateVendor(
-                  vendorRequestService.convertToUpdateVendorRequest(
-                    vendor, userAnswers.storn, returnId,
-                    vendorOptDetails(userAnswers, sessionData).map(_._1).getOrElse(
-                      throw new IllegalStateException("Vendor not found in full return")
-                    ),
-                    vendorOptDetails(userAnswers, sessionData).map(_._2).getOrElse(
-                      throw new IllegalStateException("Vendor not found in full return")
-                    )
-                  )
-                )
-              } else {
-                Future.failed(new IllegalStateException("Return version update did not produce a new version"))
-              }
-            }
-          }
-        case (false, true) =>
-          backendConnector.createVendor(
-            vendorRequestService.convertToVendorRequest(
-              vendor,
-              userAnswers.storn,
-              returnId
-            )
-          )
-        case (false, false) => //TODO: Redirect to above 99 vendors error page
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      }
-    } yield {
-      Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
-    }
+    (vendorList.length + purchaserList.length) < 99
   }
 }
