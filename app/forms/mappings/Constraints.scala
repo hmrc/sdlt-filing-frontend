@@ -242,7 +242,7 @@ trait Constraints {
 
         if (checkScotlandRegex(effectiveTransactionDate, contractEffDate, code, postcode) && !codeTrim.matches(welshLocalAuthNumbers)) {
            Valid
-        } else if (checkWalshRegex(effectiveTransactionDate, code, contractEffDate, welshLocalAuthNumbers)) {
+        } else if (checkWalshRegex(effectiveTransactionDate, code, contractEffDate, welshLocalAuthNumbers) && !code.matches("^9[0-9]{3}$") && !code.matches("^899[89]$"))  {
            Valid
         } else {
           Invalid(errorKey)
@@ -300,7 +300,7 @@ trait Constraints {
             effectiveTransactionDate.exists(_.isBefore(cr223EffectiveFrom)) =>            
             false
 
-          case _ if contractEffDate.isEmpty =>            
+          case _ if contractEffDate.isEmpty =>
             false
           case _ if code == "8999" &&
             !contractEffDate.exists(_.isBefore(theScotlandActDateTime)) =>            
