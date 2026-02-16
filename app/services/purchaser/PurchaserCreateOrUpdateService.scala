@@ -60,11 +60,17 @@ class PurchaserCreateOrUpdateService {
       .map(_.length)
       .getOrElse(0)
 
+    val vendorCount = userAnswers.fullReturn
+      .flatMap(_.vendor)
+      .map(_.length)
+      .getOrElse(0)
+
     val hasPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID).isDefined
+    val vendorPurchaserCount = purchaserCount + vendorCount
 
-    logger.info(s"[PurchaserCreateOrUpdateService][result] hasPurchaserId=$hasPurchaserId, purchaserCount=$purchaserCount")
+    logger.info(s"[PurchaserCreateOrUpdateService][result] hasPurchaserId=$hasPurchaserId, vendorPurchaserCount=$vendorPurchaserCount")
 
-    val resultFuture = (hasPurchaserId, purchaserCount < 99) match {
+    val resultFuture = (hasPurchaserId, vendorPurchaserCount < 99) match {
       case (true, _) =>
         logger.info("[PurchaserCreateOrUpdateService][result] Routing to UPDATE purchaser")
         callUpdatePurchaser(backendConnector, purchaserRequestService, purchaserService, userAnswers, sessionData)
@@ -72,7 +78,7 @@ class PurchaserCreateOrUpdateService {
         logger.info("[PurchaserCreateOrUpdateService][result] Routing to CREATE purchaser")
         callCreatePurchaser(backendConnector, purchaserRequestService, purchaserService, userAnswers, sessionData)
       case _ =>
-        logger.warn("[PurchaserCreateOrUpdateService][result] Purchaser count >= 99, skipping create/update")
+        logger.warn("[PurchaserCreateOrUpdateService][result] Purchaser vendor count >= 99, skipping create/update")
         Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
     }
 

@@ -1223,6 +1223,35 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           verify(mockBackendConnector, never).createPurchaser(any())(any(), any())
         }
 
+        "must skip creation when errorCalc is false (99 or more vendors and purchasers combined)" in {
+          val mockBackendConnector = mock[StampDutyLandTaxConnector]
+          val mockPurchaserRequestService = mock[PurchaserRequestService]
+          val mockPurchaserService = mock[PurchaserService]
+          val service = new PurchaserCreateOrUpdateService()
+
+          val vendors = (1 to 50).map(i => mock[models.Vendor])
+          val purchasers = (1 to 49).map(i => createPurchaser(
+            purchaserID =  Some(s"purchaser-$i"),
+            isCompany = Some("YES"),
+            purchaserResourceRef = Some(testPurchaserResourceRef),
+            nextPurchaserID = Some(testNextPurchaserId)
+          ))
+          val fullReturn = createFullReturn(vendors = vendors, purchasers = purchasers)
+
+          val userAnswers = createMainPurchaserIndividualUserAnswers(
+            fullReturn = Some(fullReturn)
+          )
+
+          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
+
+          val result = service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService).futureValue
+
+          status(Future.successful(result)) mustEqual SEE_OTHER
+          redirectLocation(Future.successful(result)).value mustEqual
+            controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+          verify(mockBackendConnector, never).createPurchaser(any())(any(), any())
+        }
+
         "must calculate errorCalc correctly with vendors and purchasers combined (98 total)" in {
           val mockBackendConnector = mock[StampDutyLandTaxConnector]
           val mockPurchaserRequestService = mock[PurchaserRequestService]
