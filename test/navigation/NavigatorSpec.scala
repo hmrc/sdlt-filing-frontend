@@ -187,10 +187,9 @@ class NavigatorSpec extends SpecBase {
         "go from LandTypeOfPropertyPage to InterestTransferredOrCreated page" in {
           navigator.nextPage(LandTypeOfPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(NormalMode)
         }
-
-        // TODO - DTR-2430 - SPRINT-8 Redirect to SDLT - Confirm the address of the land or property
+        
         "go from LandInterestTransferredOrCreatedPage to ConfirmAddressOfLandOrProperty page" in {
-          navigator.nextPage(LandInterestTransferredOrCreatedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
+          navigator.nextPage(LandInterestTransferredOrCreatedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(NormalMode)
         }
 
         "go from LandRegisteredHmRegistryPage to Title number for the land or property page" in {
@@ -204,6 +203,10 @@ class NavigatorSpec extends SpecBase {
         // TODO - DTR-2459 - SPRINT-9 - Redirect to What is the NLPG UPRN of the land or property
         "go from LandAddNlpgUprnPage to LandNlpgUprn page" in {
           navigator.nextPage(LandAddNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
+        }
+
+        "go from ConfirmLandOrPropertyAddressPage to ReturnTasklist" in {//TODO: DTR-2444
+          navigator.nextPage(ConfirmLandOrPropertyAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
       }
     }
