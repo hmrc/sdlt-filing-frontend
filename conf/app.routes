@@ -321,3 +321,8 @@ GET         /about-the-land/title-number                                        
 POST        /about-the-land/title-number                                                             controllers.land.LandTitleNumberController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-land/title-number/change                                                      controllers.land.LandTitleNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-land/title-number/change                                                      controllers.land.LandTitleNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-land/confirm-land-or-property-address                        controllers.land.ConfirmLandOrPropertyAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/confirm-land-or-property-address                        controllers.land.ConfirmLandOrPropertyAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/confirm-land-or-property-address/change                 controllers.land.ConfirmLandOrPropertyAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/confirm-land-or-property-address/change                  controllers.land.ConfirmLandOrPropertyAddressController.onSubmit(mode: Mode = CheckMode)
