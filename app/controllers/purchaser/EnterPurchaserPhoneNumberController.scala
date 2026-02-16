@@ -25,6 +25,7 @@ import pages.purchaser.{EnterPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoI
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.EnterPurchaserPhoneNumberView
 
@@ -39,6 +40,7 @@ class EnterPurchaserPhoneNumberController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: EnterPurchaserPhoneNumberFormProvider,
+                                        purchaserService: PurchaserService,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: EnterPurchaserPhoneNumberView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -60,10 +62,14 @@ class EnterPurchaserPhoneNumberController @Inject()(
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, mode, purchaserName))
+          purchaserService.continueIfAddingMainPurchaserToRoute(
+            userAnswers = request.userAnswers,
+            continueRoute = Ok(view(preparedForm, mode, purchaserName)),
+            mode = mode,
+            journeyJumpRoute = Redirect(controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(mode))
+          )
       }
   }
-
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

@@ -1225,7 +1225,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       }
 
       "when handling errors" - {
-        "must fail when returnId is missing" in {
+        "must redirect to CYA when returnId is missing" in {
           val mockBackendConnector = mock[StampDutyLandTaxConnector]
           val mockPurchaserRequestService = mock[PurchaserRequestService]
           val service = new PurchaserCreateOrUpdateService()
@@ -1233,10 +1233,11 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           val userAnswers = createPurchaserCompanyUserAnswers(returnId = None)
           val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
 
-          whenReady(service.result( userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService).failed) { exception =>
-            exception mustBe an[NotFoundException]
-            exception.getMessage mustBe "Return ID is required"
-          }
+          val result = service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService).futureValue
+
+          status(Future.successful(result)) mustEqual SEE_OTHER
+          redirectLocation(Future.successful(result)).value mustEqual
+            controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url
         }
       }
     }

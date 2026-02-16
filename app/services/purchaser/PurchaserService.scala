@@ -114,6 +114,21 @@ class PurchaserService {
         case (None, Some(_), _) => Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
       }
   }
+
+  def continueIfAddingMainPurchaserToRoute(userAnswers: UserAnswers,
+                                           continueRoute: Result,
+                                           mode: Mode,
+                                           journeyJumpRoute: Result): Result = {
+    val mainPurchaserID = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
+    val confirmNameOfThePurchaser = userAnswers.get(ConfirmNameOfThePurchaserPage)
+    (confirmNameOfThePurchaser, mainPurchaserID, mode) match {
+      case (_, _, _) if mode == CheckMode => continueRoute
+      case (Some(ConfirmNameOfThePurchaser.Yes), _, _) => continueRoute
+      case (Some(ConfirmNameOfThePurchaser.No), _, _) => journeyJumpRoute
+      case (None, None, _) => continueRoute
+      case (None, Some(_), _) => journeyJumpRoute
+    }
+  }
   
   def checkPurchaserTypeAndCompanyDetails(purchaserType: WhoIsMakingThePurchase, userAnswers: UserAnswers, continueRoute: Result, mode: Mode): Result =
     userAnswers.get(WhoIsMakingThePurchasePage) match {

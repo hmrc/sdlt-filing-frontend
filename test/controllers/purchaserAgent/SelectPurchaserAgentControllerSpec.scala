@@ -49,19 +49,19 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
   val testStorn = "STN005"
 
   private def createAgent(
-      agentId: Option[String] = None,
-      name: Option[String] = None,
-      houseNumber: Option[String] = None,
-      address1: Option[String] = Some("123 Street"),
-      address2: Option[String] = Some("Town"),
-      address3: Option[String] = Some("City"),
-      address4: Option[String] = Some("County"),
-      postcode: Option[String] = Some("AA1 1AA"),
-      phone: Option[String] = Some("0123456789"),
-      email: Option[String] = Some("test@example.com"),
-      dxAddress: Option[String] = Some("yes"),
-      agentResourceReference: Option[String] = Some("REF001")
-    ) : Agent =
+                           agentId: Option[String] = None,
+                           name: Option[String] = None,
+                           houseNumber: Option[String] = None,
+                           address1: Option[String] = Some("123 Street"),
+                           address2: Option[String] = Some("Town"),
+                           address3: Option[String] = Some("City"),
+                           address4: Option[String] = Some("County"),
+                           postcode: Option[String] = Some("AA1 1AA"),
+                           phone: Option[String] = Some("0123456789"),
+                           email: Option[String] = Some("test@example.com"),
+                           dxAddress: Option[String] = Some("yes"),
+                           agentResourceReference: Option[String] = Some("REF001")
+                         ) : Agent =
     Agent(
       storn = Some(testStorn),
       agentId = agentId,
@@ -131,14 +131,10 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
     agent = Some(List.empty)
   )
 
-
-  val agentSummaryList: Seq[(Option[String], Option[String], Option[String])] =
+  val agentSummaryList: Seq[(String, Option[String])] =
     agentList.map { agent =>
-      (
-        agent.name,
-        agent.address3,
-        agent.agentId
-      )
+      val displayName = Seq(agent.name, agent.address3).flatten.mkString(", ")
+      (displayName, agent.agentId.map(_.toString))
     }
 
   val formProvider = new SelectPurchaserAgentFormProvider()
@@ -156,7 +152,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
       "must return OK and the correct view for a GET when agent list exists" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
-
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
 
         val userAnswers = emptyUserAnswers
@@ -202,7 +197,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
         }
       }
-      
+
       "must redirect to Purchaser Agent Name Page for a GET when agent list is empty" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(Seq.empty)
@@ -229,7 +224,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
       "must populate the view correctly on a GET when the question has previously been answered" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
-
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
 
         val userAnswers = emptyUserAnswers
@@ -246,11 +240,10 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, selectPurchaserAgentRoute)
-
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) must include ("Sarah Jones")
+          contentAsString(result) must include("Sarah Jones")
         }
       }
 
@@ -326,7 +319,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, selectPurchaserAgentRoute)
-
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -384,7 +376,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
         }
       }
-      
+
       "must redirect to Return Task List when main purchaser name exists but no storn for a POST" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
 
@@ -411,6 +403,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
       "must return a Bad Request and errors when invalid data is submitted" in {
         when(mockPurchaserService.mainPurchaserName(any())).thenReturn(Some(NameOfPurchaser(None, None, "Sarah Jones")))
         when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
+
         val userAnswers = emptyUserAnswers
           .copy(fullReturn = Some(testFullReturn))
           .set(PurchaserAgentBeforeYouStartPage, true).success.value
@@ -428,9 +421,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
               .withFormUrlEncodedBody(("value", "invalid value"))
 
           val boundForm = form.bind(Map("value" -> "invalid value"))
-
           val view = application.injector.instanceOf[SelectPurchaserAgentView]
-
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
@@ -439,15 +430,9 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must call handleAgentSelection and redirect to Do you want to add a reference for this return when a valid agent is selected" in {
-        when(mockPurchaserAgentService.agentSummaryList(any()))
-          .thenReturn(agentSummaryList)
-
+        when(mockPurchaserAgentService.agentSummaryList(any())).thenReturn(agentSummaryList)
         when(mockPurchaserAgentService.handleAgentSelection(any(), any[Seq[Agent]], any(), any()))
-          .thenReturn(
-            Future.successful(
-              Redirect(onwardRoute.url)
-            )
-          )
+          .thenReturn(Future.successful(Redirect(onwardRoute.url)))
 
         val userAnswers = emptyUserAnswers
           .copy(fullReturn = Some(testFullReturn))
@@ -456,7 +441,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[PurchaserAgentService].toInstance(mockPurchaserAgentService)
-
           )
           .build()
 
@@ -512,7 +496,6 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
