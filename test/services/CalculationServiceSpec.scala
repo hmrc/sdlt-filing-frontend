@@ -108,7 +108,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       firstTimeBuyer = None
     )
 
-    def createRequestWithPropDetails(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, premiumAmount: BigDecimal= 0, nonUKResident: Option[Boolean] = None) =  Request(
+    def createRequestWithPropDetails(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, premiumAmount: BigDecimal= 0, nonUKResident: Option[Boolean] = None, twoOrMoreProp: Option[Boolean] = Some(false)) =  Request(
       holdingType = hType,
       propertyType = pType,
       effectiveDate = eDate,
@@ -118,7 +118,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       propertyDetails =  Some(
         PropertyDetails(
           individual = true,
-          twoOrMoreProperties = Some(false),
+          twoOrMoreProperties = twoOrMoreProp,
           replaceMainResidence = Some(true),
           sharedOwnership = None,
           currentValue = None
@@ -2154,7 +2154,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           freehold,
           nonResidential,
           LocalDate.of(2016, 3, 17),
-          Some(true)
+          isLinked = Some(true)
         )
 
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
@@ -2171,7 +2171,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           freehold,
           mixed,
           LocalDate.of(2017, 3, 18),
-          Some(true)
+          isLinked = Some(true)
         )
 
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
@@ -2403,6 +2403,23 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         }
 
+        "given no relief code, property type is Residential Additional Property, effective date is 1/4/2016 and isLinked = true" in {
+
+          val testRequest = createRequestWithPropDetails(
+            freehold,
+            residential,
+            LocalDate.of(2016, 4, 1),
+            twoOrMoreProp = Some(true)
+          ).copy(isLinked = Some(true))
+          val result = createResult("freeholdResidentialAdditionalPropertyDec14")
+
+          when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))).thenReturn(result)
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))
+          verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+        }
+
       }
 
       "Tax Relief Code is ReliefFrom15PercentRate(35)" when {
@@ -2545,7 +2562,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
     "given no taxRelief details, for Freehold Non-residential property type " when {
       "effective date is before 2016/3/17 and isLinked = true" in {
-        val testRequest = createRequest(freehold, nonResidential, LocalDate.of(2012, 3, 16), Some(true))
+        val testRequest = createRequest(freehold, nonResidential, LocalDate.of(2012, 3, 16), isLinked = Some(true))
 
         val result = createResult(RESULT_HEADING_GENERIC)
 
@@ -2555,7 +2572,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
       }
       "effective date is before 2016/3/17 and isLinked = false" in {
-        val testRequest = createRequest(freehold, nonResidential, LocalDate.of(2012, 3, 16), Some(false))
+        val testRequest = createRequest(freehold, nonResidential, LocalDate.of(2012, 3, 16), isLinked = Some(false))
 
         val result = createResult(RESULT_HEADING_GENERIC)
 
@@ -2582,7 +2599,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
               freehold,
               nonResidential,
               LocalDate.of(2019, 3, 16),
-              isLinkedValue
+              isLinked = isLinkedValue
             )
 
             val result = createResultInSeq("freeholdNonResidential, March2016 onwards")
@@ -2710,7 +2727,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
       "given a request without taxRelief details for FreeHold mixed property type" when {
         "isLinked = false and for any Dates " in {
-          val testRequest = createRequest(freehold, mixed, LocalDate.of(2024, 3, 16), Some(false))
+          val testRequest = createRequest(freehold, mixed, LocalDate.of(2024, 3, 16), isLinked = Some(false))
 
           the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message "Value not defined"
         }
