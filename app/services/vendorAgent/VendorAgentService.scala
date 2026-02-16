@@ -23,14 +23,14 @@ import pages.vendorAgent.*
 import scala.util.Try
 
 class VendorAgentService {
-  
+
   def populateAssignedVendorAgentInSession(returnAgent: ReturnAgent, userAnswers: UserAnswers): Try[UserAnswers] = {
 
     returnAgent.returnAgentID match {
       case Some(agentId) =>
 
         val vendorAgentAddress = Address(
-          line1 = returnAgent.address1.get,
+          line1 = returnAgent.address1.getOrElse(""),
           line2 = returnAgent.address2,
           line3 = returnAgent.address3,
           line4 = returnAgent.address4,
@@ -38,26 +38,36 @@ class VendorAgentService {
         )
 
         val vendorAgentsContactDetails = VendorAgentsContactDetails(
-          phoneNumber = returnAgent.phone, emailAddress = returnAgent.email
+          phoneNumber = returnAgent.phone,
+          emailAddress = returnAgent.email
         )
-        
-        val vendorAgentsAddReference = returnAgent.reference match {
-          case Some(value) => VendorAgentsAddReference.Yes
-          case None => VendorAgentsAddReference.No
-        }
+
+        val hasContactDetails = returnAgent.phone.isDefined || returnAgent.email.isDefined
+        val hasReference = returnAgent.reference.isDefined
 
         for {
           withId <- userAnswers.set(VendorAgentOverviewPage, agentId)
-          withName <- withId.set(AgentNamePage, returnAgent.name.get)
-          withAddress <- withName.set(VendorAgentAddressPage, vendorAgentAddress)
-          addContact <- withAddress.set(AddVendorAgentContactDetailsPage, returnAgent.phone.isDefined || returnAgent.email.isDefined)
-          withContact <- addContact.set(VendorAgentsContactDetailsPage, vendorAgentsContactDetails)
-          addReference <- withContact.set(VendorAgentsAddReferencePage, vendorAgentsAddReference)
-          finalAnswers <- addReference.set(VendorAgentsReferencePage, returnAgent.reference.get)
+          withName <- returnAgent.name match {
+            case Some(name) => withId.set(AgentNamePage, name)
+            case None => Try(withId)
+          }
+          withAddress <- returnAgent.address1 match {
+            case Some(_) => withName.set(VendorAgentAddressPage, vendorAgentAddress)
+            case None => Try(withName)
+          }
+          withContact <- withAddress.set(AddVendorAgentContactDetailsPage, hasContactDetails)
+          withDetails <- if (hasContactDetails) withContact.set(VendorAgentsContactDetailsPage, vendorAgentsContactDetails)
+          else Try(withContact)
+          withAddRef <- withDetails.set(VendorAgentsAddReferencePage, if (hasReference) VendorAgentsAddReference.Yes else VendorAgentsAddReference.No)
+          finalAnswers <- returnAgent.reference match {
+            case Some(ref) => withAddRef.set(VendorAgentsReferencePage, ref)
+            case None => Try(withAddRef)
+          }
         } yield finalAnswers
 
-      case _ =>
-        Try(throw new IllegalStateException(s"Vendor ${returnAgent.returnAgentID} is missing"))
+      case None =>
+        Try(throw new IllegalStateException(s"ReturnAgent is missing a returnAgentID"))
     }
   }
+  
 }

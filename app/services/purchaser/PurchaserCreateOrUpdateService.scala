@@ -19,161 +19,139 @@ package services.purchaser
 import connectors.StampDutyLandTaxConnector
 import models.purchaser.{CreatePurchaserRequest, PurchaserSessionQuestions, UpdatePurchaserRequest}
 import models.{CompanyDetails, Purchaser, ReturnVersionUpdateRequest, UserAnswers}
-
-import scala.language.postfixOps
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.{ExecutionContext, Future}
-import org.slf4j.{Logger, LoggerFactory}
 
 class PurchaserCreateOrUpdateService {
 
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   private def purchaserOptDetails(userAnswers: UserAnswers,
-                               sessionData: PurchaserSessionQuestions): Option[(String, Option[String])] = {
+                                  sessionData: PurchaserSessionQuestions): Option[(String, Option[String])] =
     for {
-      fullReturn <- userAnswers.fullReturn
+      fullReturn    <- userAnswers.fullReturn
       purchaserList <- fullReturn.purchaser
-      purchaserID <- sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
-      purchaser <- purchaserList.find(_.purchaserID.contains(purchaserID))
-      purchaserReturnRef <- purchaser.purchaserResourceRef
-    } yield (purchaserReturnRef, purchaser.nextPurchaserID)
+      purchaserID   <- sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
+      purchaser     <- purchaserList.find(_.purchaserID.contains(purchaserID))
+      resourceRef   <- purchaser.purchaserResourceRef
+    } yield (resourceRef, purchaser.nextPurchaserID)
 
-  }
+  private def purchaserResourceRef(userAnswers: UserAnswers, sessionData: PurchaserSessionQuestions): String =
+    purchaserOptDetails(userAnswers, sessionData)
+      .map(_._1)
+      .getOrElse("purchaser not found in full return")
 
+  private def requireReturnId(userAnswers: UserAnswers): String =
+    userAnswers.returnId.getOrElse(throw new NotFoundException("Return ID is required"))
+  
   def result(userAnswers: UserAnswers,
              sessionData: PurchaserSessionQuestions,
              backendConnector: StampDutyLandTaxConnector,
-             purchaserRequestService: PurchaserRequestService)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+             purchaserRequestService: PurchaserRequestService)
+            (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
-    val (vendorList, purchaserList) = userAnswers.fullReturn match {
-      case Some(fr) => (fr.purchaser.getOrElse(Seq.empty), fr.purchaser.getOrElse(Seq.empty))
-      case None => (Seq.empty, Seq.empty)
+    val purchaserCount = userAnswers.fullReturn
+      .flatMap(_.purchaser)
+      .map(_.length)
+      .getOrElse(0)
+
+    val hasPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID).isDefined
+
+    logger.info(s"[PurchaserCreateOrUpdateService][result] hasPurchaserId=$hasPurchaserId, purchaserCount=$purchaserCount")
+
+    val resultFuture = (hasPurchaserId, purchaserCount < 99) match {
+      case (true, _) =>
+        logger.info("[PurchaserCreateOrUpdateService][result] Routing to UPDATE purchaser")
+        callUpdatePurchaser(backendConnector, purchaserRequestService, userAnswers, sessionData)
+      case (false, true) =>
+        logger.info("[PurchaserCreateOrUpdateService][result] Routing to CREATE purchaser")
+        callCreatePurchaser(backendConnector, purchaserRequestService, userAnswers, sessionData)
+      case _ =>
+        logger.warn("[PurchaserCreateOrUpdateService][result] Purchaser count >= 99, skipping create/update")
+        Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
     }
 
-    val errorCalc: Boolean = (vendorList.length + purchaserList.length) < 99
-
-    for {
-      _ <- (sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID).isDefined, errorCalc) match {
-        case (true, _) =>
-          callUpdatePurchaser(backendConnector, purchaserRequestService, userAnswers, sessionData)
-        case (false, true) =>
-          callCreatePurchaser(backendConnector, purchaserRequestService, userAnswers, sessionData)
-        case (false, false) => //TODO: Redirect to above 99 purchasers error page
-         Future.unit
-      }
-    } yield {
-      Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
+    resultFuture.recover {
+      case ex =>
+        logger.error(s"[PurchaserCreateOrUpdateService][result] Failed to create/update purchaser: ${ex.getMessage}", ex)
+        Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
     }
   }
 
-  def callUpdatePurchaser(
-                           backendConnector: StampDutyLandTaxConnector,
-                           purchaserRequestService: PurchaserRequestService,
-                           userAnswers: UserAnswers,
-                           sessionData: PurchaserSessionQuestions)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+  def callUpdatePurchaser(backendConnector: StampDutyLandTaxConnector,
+                          purchaserRequestService: PurchaserRequestService,
+                          userAnswers: UserAnswers,
+                          sessionData: PurchaserSessionQuestions)
+                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
     for {
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-
-      returnVersion <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-
-      companyDetails <- CompanyDetails.from(userAnswers)
-
-      purchaser <- Purchaser.from(Some(userAnswers), logger)
-
-      returnId = userAnswers.returnId.getOrElse(
-        throw new NotFoundException("Return ID is required")
-      )
-      _ <- if (returnVersion.newVersion.isDefined) {
-
-        for {
-          updateRequest <- UpdatePurchaserRequest.from(userAnswers, purchaser)
-          updateResponse <- backendConnector.updatePurchaser(updateRequest)
-          _ <- if (updateResponse.updated) {
-            //TODO delete after purchaser working
-            logger.info("[callUpdatePurchaser] purchaser being updated" + purchaser)
-            logger.info("[callUpdatePurchaser] purchaser update request" + updateRequest)
-            logger.info("[callUpdatePurchaser] purchaser session data" + sessionData)
-            Future.successful(())
-          } else {
-            Future.failed(new IllegalStateException("Purchaser update failed - backend returned updated = false"))
-          }
-          _ <- {
-            val mainPurchaserID = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
-            val updatingPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
-            val toUpdateOrCreateEligible = mainPurchaserID == updatingPurchaserId
-            val companyDetailsExist = userAnswers.fullReturn.flatMap(_.companyDetails).isDefined
-            val isCompany = purchaser.isCompany.contains("YES")
-
-            (toUpdateOrCreateEligible, isCompany, companyDetailsExist) match {
-              case (true, true, false) => backendConnector.createCompanyDetails(
-                purchaserRequestService.convertToCreateCompanyDetailsRequest(
-                  companyDetails,
-                  userAnswers.storn,
-                  returnId,
-                  purchaserOptDetails(userAnswers, sessionData).map(_._1).getOrElse(
-                    "purchaser not found in full return")
-                )
-              )
-              case (true, true, true) => backendConnector.updateCompanyDetails(
-                purchaserRequestService.convertToUpdateCompanyDetailsRequest(
-                  companyDetails,
-                  userAnswers.storn,
-                  returnId,
-                  purchaserOptDetails(userAnswers, sessionData).map(_._1).getOrElse(
-                    "purchaser not found in full return")
-                )
-              )
-              case _ =>
-                Future.unit
-            }
-          }
-        } yield ()
-      } else {
+      returnVersion              <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      _                          <- if (returnVersion.newVersion.isEmpty)
         Future.failed(new IllegalStateException("Return version update did not produce a new version"))
+      else Future.unit
+      companyDetails             <- CompanyDetails.from(userAnswers)
+      purchaser                  <- Purchaser.from(Some(userAnswers), logger)
+      returnId                    = requireReturnId(userAnswers)
+      updateRequest              <- UpdatePurchaserRequest.from(userAnswers, purchaser)
+      updateResponse             <- backendConnector.updatePurchaser(updateRequest)
+      _                          <- if (!updateResponse.updated)
+        Future.failed(new IllegalStateException("Purchaser update failed - backend returned updated = false"))
+      else {
+        logger.info(s"[callUpdatePurchaser] purchaser being updated: $purchaser")
+        logger.info(s"[callUpdatePurchaser] update request: $updateRequest")
+        logger.info(s"[callUpdatePurchaser] session data: $sessionData")
+        Future.unit
+      }
+      mainPurchaserID             = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
+      updatingPurchaserId         = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID)
+      isMainPurchaser             = mainPurchaserID == updatingPurchaserId
+      isCompany                   = purchaser.isCompany.contains("YES")
+      companyDetailsExist         = userAnswers.fullReturn.flatMap(_.companyDetails).isDefined
+      _                          <- (isMainPurchaser, isCompany, companyDetailsExist) match {
+        case (true, true, false) =>
+          backendConnector.createCompanyDetails(
+            purchaserRequestService.convertToCreateCompanyDetailsRequest(
+              companyDetails, userAnswers.storn, returnId, purchaserResourceRef(userAnswers, sessionData)
+            )
+          )
+        case (true, true, true) =>
+          backendConnector.updateCompanyDetails(
+            purchaserRequestService.convertToUpdateCompanyDetailsRequest(
+              companyDetails, userAnswers.storn, returnId, purchaserResourceRef(userAnswers, sessionData)
+            )
+          )
+        case _ => Future.unit
       }
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
   }
 
-  def callCreatePurchaser(
-                                   backendConnector: StampDutyLandTaxConnector,
-                                   purchaserRequestService: PurchaserRequestService,
-                                   userAnswers: UserAnswers,
-                                   sessionData: PurchaserSessionQuestions)
-                                 (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result]  = {
+  def callCreatePurchaser(backendConnector: StampDutyLandTaxConnector,
+                          purchaserRequestService: PurchaserRequestService,
+                          userAnswers: UserAnswers,
+                          sessionData: PurchaserSessionQuestions)
+                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
-    for  {
-      companyDetails <- CompanyDetails.from(userAnswers)
-
-      purchaser <- Purchaser.from(Some(userAnswers), logger)
-
-      returnId = userAnswers.returnId.getOrElse(
-        throw new NotFoundException("Return ID is required")
-      )
-
-      createRequest <- CreatePurchaserRequest.from(userAnswers, purchaser)
+    for {
+      companyDetails        <- CompanyDetails.from(userAnswers)
+      purchaser             <- Purchaser.from(Some(userAnswers), logger)
+      returnId               = requireReturnId(userAnswers)
+      createRequest         <- CreatePurchaserRequest.from(userAnswers, purchaser)
       createPurchaserReturn <- backendConnector.createPurchaser(createRequest)
-
       doesMainPurchaserExist = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID)).isDefined
-
-      _ <- (purchaser.isCompany, doesMainPurchaserExist) match {
+      _                     <- (purchaser.isCompany, doesMainPurchaserExist) match {
         case (Some("YES"), false) =>
           backendConnector.createCompanyDetails(
             purchaserRequestService.convertToCreateCompanyDetailsRequest(
-              companyDetails,
-              userAnswers.storn,
-              returnId,
-              createPurchaserReturn.purchaserResourceRef
+              companyDetails, userAnswers.storn, returnId, createPurchaserReturn.purchaserResourceRef
             )
           )
-        case (_ , _) =>
-          Future.unit
+        case _ => Future.unit
       }
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
   }
-
 }

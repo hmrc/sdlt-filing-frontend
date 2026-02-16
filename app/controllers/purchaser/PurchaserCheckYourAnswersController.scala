@@ -19,19 +19,19 @@ package controllers.purchaser
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.UserAnswers
-import models.purchaser.{ConfirmNameOfThePurchaser, PurchaserSessionQuestions}
-import pages.purchaser.{ConfirmNameOfThePurchaserPage, PurchaserAndCompanyIdPage}
+import models.purchaser._
+import pages.purchaser._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.libs.json._
+import play.api.mvc.*
 import repositories.SessionRepository
-import viewmodels.checkAnswers.*
-import views.html.purchaser.PurchaserCheckYourAnswersView
+import services.purchaser._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.govuk.summarylist.*
-import play.api.mvc.*
-import services.purchaser.{PurchaserCreateOrUpdateService, PurchaserRequestService, PurchaserService}
+import viewmodels.checkAnswers.*
 import viewmodels.checkAnswers.purchaser.*
+import viewmodels.govuk.summarylist.*
+import views.html.purchaser.PurchaserCheckYourAnswersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,45 +53,42 @@ class PurchaserCheckYourAnswersController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      sessionRepository.get(request.userAnswers.id).map {
 
-      for {
-        result <- sessionRepository.get(request.userAnswers.id)
-      } yield {
-
-        val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
-        val isDataEmpty = result.exists(_.data.value.isEmpty)
-
-        if (isReturnIdEmpty) {
+        case Some(userAnswers) if userAnswers.returnId.isEmpty =>
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        } else {
-          (isDataEmpty, result) match {
-            case (true, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-            case (_, Some(userAnswers)) =>
 
-              val baseRowsConnected = Seq(
-                IsPurchaserActingAsTrusteeSummary.row(Some(userAnswers)),
-                PurchaserAndVendorConnectedSummary.row(Some(userAnswers))
-              )
+        case Some(userAnswers) if userAnswers.data.value.isEmpty =>
+          Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
 
-              val baseRows = {
-                val mainPurchaserID = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
-                val confirmNameOfThePurchaser = userAnswers.get(ConfirmNameOfThePurchaserPage)
-                val purchaserAndCompanyIdPage = userAnswers.get(PurchaserAndCompanyIdPage).map(_.purchaserID)
+        case Some(userAnswers) =>
+          val connectedRows = Seq(
+            IsPurchaserActingAsTrusteeSummary.row(Some(userAnswers)),
+            PurchaserAndVendorConnectedSummary.row(Some(userAnswers))
+          )
 
-                (confirmNameOfThePurchaser, mainPurchaserID) match {
-                  case (Some(ConfirmNameOfThePurchaser.Yes), _) => purchaserService.initialSummaryRows(userAnswers) ++ purchaserService.individualConditionalSummaryRows(userAnswers) ++ purchaserService.companyConditionalSummaryRows(userAnswers) ++ baseRowsConnected
-                  case (Some(ConfirmNameOfThePurchaser.No), _) => purchaserService.initialSummaryRows(userAnswers)
-                  case (None, mainPurchaserID) if (mainPurchaserID == purchaserAndCompanyIdPage) => purchaserService.initialSummaryRows(userAnswers) ++ purchaserService.individualConditionalSummaryRows(userAnswers) ++ purchaserService.companyConditionalSummaryRows(userAnswers) ++ baseRowsConnected
-                  case (_, _) => purchaserService.initialSummaryRows(userAnswers)
-                }
-              }
-              val summaryList = SummaryListViewModel(rows = baseRows)
-              Ok(view(summaryList))
-            case (false, None)
-            => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          val mainPurchaserID = userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
+          val confirmName = userAnswers.get(ConfirmNameOfThePurchaserPage)
+          val purchaserAndCompanyId = userAnswers.get(PurchaserAndCompanyIdPage).map(_.purchaserID)
 
+          def fullRows = purchaserService.initialSummaryRows(userAnswers) ++
+            purchaserService.individualConditionalSummaryRows(userAnswers) ++
+            purchaserService.companyConditionalSummaryRows(userAnswers) ++
+            connectedRows
+
+          def initialRows = purchaserService.initialSummaryRows(userAnswers) ++ connectedRows
+
+          val rows = (confirmName, mainPurchaserID) match {
+            case (Some(ConfirmNameOfThePurchaser.Yes), _) => fullRows
+            case (Some(ConfirmNameOfThePurchaser.No), _) => initialRows
+            case (None, id) if id == purchaserAndCompanyId => fullRows
+            case _ => initialRows
           }
-        }
+
+          Ok(view(SummaryListViewModel(rows = rows)))
+
+        case None =>
+          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       }
   }
 
@@ -100,22 +97,11 @@ class PurchaserCheckYourAnswersController @Inject()(
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) if userAnswers.returnId.isDefined =>
           userAnswers.data.validate[PurchaserSessionQuestions] match {
-            case JsSuccess(sessionData, _) =>
-              if (purchaserService.purchaserSessionOptionalQuestionsValidation(sessionData, userAnswers)) {
-                purchaserCreateOrUpdateService.result(userAnswers,
-                  sessionData,
-                  backendConnector,
-                  purchaserRequestService)
-              } else {
-                Future.successful(Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()))
-              }
-            case JsError(error) =>
-              Future.successful(Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()))
+            case JsSuccess(sessionData, _) if purchaserService.purchaserSessionOptionalQuestionsValidation(sessionData, userAnswers) =>
+              purchaserCreateOrUpdateService.result(userAnswers, sessionData, backendConnector, purchaserRequestService)
+            case _ => Future.successful(Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()))
           }
-
-        case _ =>
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        case _ => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
   }
-
 }

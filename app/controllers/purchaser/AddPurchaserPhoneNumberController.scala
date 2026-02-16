@@ -25,10 +25,11 @@ import pages.purchaser.{AddPurchaserPhoneNumberPage, EnterPurchaserPhoneNumberPa
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.AddPurchaserPhoneNumberView
-import scala.util.Success
 
+import scala.util.Success
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,7 +42,8 @@ class AddPurchaserPhoneNumberController @Inject()(
                                                    requireData: DataRequiredAction,
                                                    formProvider: AddPurchaserPhoneNumberFormProvider,
                                                    val controllerComponents: MessagesControllerComponents,
-                                                   view: AddPurchaserPhoneNumberView
+                                                   view: AddPurchaserPhoneNumberView,
+                                                   purchaserService: PurchaserService
                                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -61,7 +63,12 @@ class AddPurchaserPhoneNumberController @Inject()(
             case Some(value) => form.fill(value)
           }
 
-          Ok(view(preparedForm, mode, purchaserName))
+          purchaserService.continueIfAddingMainPurchaserToRoute(
+            userAnswers = request.userAnswers,
+            continueRoute = Ok(view(preparedForm, mode, purchaserName)),
+            mode = mode,
+            journeyJumpRoute = Redirect(controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(mode))
+          )
       }
   }
 

@@ -366,9 +366,9 @@ class PurchaserAgentServiceSpec extends SpecBase {
 
       "must create summary list of agents" in {
         val result = service.agentSummaryList(testAgents)
-        val expectedResult: Seq[(Option[String], Option[String], Option[String])] = Seq(
-          (Some("Joe Smith"), Some("City"), Some("AGT001")),
-          (Some("Sarah Jones"), None, Some("AGT002"))
+        val expectedResult = List(
+          ("Joe Smith, City", Some("AGT001")),
+          ("Sarah Jones", Some("AGT002"))
         )
         result mustBe expectedResult
       }

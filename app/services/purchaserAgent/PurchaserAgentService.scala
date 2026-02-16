@@ -86,8 +86,11 @@ class PurchaserAgentService @Inject(
     } yield clearedAnswers
   }
 
-  def agentSummaryList(agents: Seq[Agent]): Seq[(Option[String], Option[String], Option[String])] = {
-    agents.map(agent => (agent.name, agent.address3, agent.agentId))
+  def agentSummaryList(agents: Seq[Agent]): Seq[(String, Option[String])] = {
+    agents.map { agent =>
+      val displayName = Seq(agent.name, agent.address3).flatten.mkString(", ")
+      (displayName, agent.agentId.map(_.toString))
+    }
   }
 
   def handleAgentSelection(
@@ -125,7 +128,7 @@ class PurchaserAgentService @Inject(
       case Some(agentId) =>
 
         val purchaserAgentAddress = Address(
-          line1 = returnAgent.address1.get,
+          line1 = returnAgent.address1.getOrElse(""),
           line2 = returnAgent.address2,
           line3 = returnAgent.address3,
           line4 = returnAgent.address4,
@@ -133,7 +136,8 @@ class PurchaserAgentService @Inject(
         )
 
         val purchaserAgentsContactDetails = PurchaserAgentsContactDetails(
-          phoneNumber = returnAgent.phone, emailAddress = returnAgent.email
+          phoneNumber = returnAgent.phone,
+          emailAddress = returnAgent.email
         )
 
         val authorised: PurchaserAgentAuthorised = returnAgent.isAuthorised match {
@@ -141,13 +145,22 @@ class PurchaserAgentService @Inject(
           case _ => PurchaserAgentAuthorised.No
         }
 
+        val hasContactDetails = returnAgent.phone.isDefined || returnAgent.email.isDefined
+
         val baseAnswers = for {
           withId <- userAnswers.set(PurchaserAgentOverviewPage, agentId)
-          withName <- withId.set(PurchaserAgentNamePage, returnAgent.name.get)
-          withAddress <- withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
-          addContact <- withAddress.set(AddContactDetailsForPurchaserAgentPage, returnAgent.phone.isDefined || returnAgent.email.isDefined)
-          withContact <- addContact.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
-        } yield withContact
+          withName <- returnAgent.name match {
+            case Some(name) => withId.set(PurchaserAgentNamePage, name)
+            case None => Try(withId)
+          }
+          withAddress <- returnAgent.address1 match {
+            case Some(_) => withName.set(PurchaserAgentAddressPage, purchaserAgentAddress)
+            case None => Try(withName)
+          }
+          withContact <- withAddress.set(AddContactDetailsForPurchaserAgentPage, hasContactDetails)
+          withDetails <- if (hasContactDetails) withContact.set(PurchaserAgentsContactDetailsPage, purchaserAgentsContactDetails)
+          else Try(withContact)
+        } yield withDetails
 
         val answersWithReference = baseAnswers.flatMap { answers =>
           returnAgent.reference match {
@@ -163,8 +176,8 @@ class PurchaserAgentService @Inject(
 
         answersWithReference.flatMap(_.set(PurchaserAgentAuthorisedPage, authorised))
 
-      case _ =>
-        Try(throw new IllegalStateException(s"ReturnAgent ${returnAgent.returnAgentID} is missing returnAgentID"))
+      case None =>
+        Try(throw new IllegalStateException(s"ReturnAgent is missing a returnAgentID"))
     }
   }
 
