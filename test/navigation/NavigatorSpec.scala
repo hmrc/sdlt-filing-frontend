@@ -187,7 +187,7 @@ class NavigatorSpec extends SpecBase {
         "go from LandTypeOfPropertyPage to InterestTransferredOrCreated page" in {
           navigator.nextPage(LandTypeOfPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(NormalMode)
         }
-        
+
         "go from LandInterestTransferredOrCreatedPage to ConfirmAddressOfLandOrProperty page" in {
           navigator.nextPage(LandInterestTransferredOrCreatedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(NormalMode)
         }
@@ -205,8 +205,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandAddNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
 
-        "go from ConfirmLandOrPropertyAddressPage to ReturnTasklist" in {//TODO: DTR-2444
-          navigator.nextPage(ConfirmLandOrPropertyAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        "go from ConfirmLandOrPropertyAddressPage to ReturnTasklist" in {
+          navigator.nextPage(ConfirmLandOrPropertyAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode)
         }
       }
     }

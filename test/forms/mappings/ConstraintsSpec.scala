@@ -356,5 +356,288 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       val result = maxCheckboxes(2, "error.max").apply(Set(1, 2, 3))
         result mustBe Invalid("error.max")
     }
+
+   }
+
+  "check localAuthorityCodeConstraints" - {
+    val effectiveTransactionDateAfterScottLandActDt = "2024-12-31"
+    val effectiveContractDateAfterScottLandActDt = "2023-11-01"
+    val effectiveTransactionDateBeforeScottLandActDt = "2011-12-31"
+    val effectiveContractDateBeforeScottLandActDt = "2009-10-01"
+    val walshEffectiveTransactionDateBeforeWalshActDt = "2010-10-01"
+    val walshEffectiveTransactionDateAfterWalshActDt = "2024-10-01"
+    val walshEffectiveContractDateAfterWalshActDt = "2024-12-31"
+    val effectiveTransactionDateBeforeCR223tDt = "2015-03-01"
+    val effectiveTransactionDateAfterCR223tDt = "2024-03-01"
+    val effectiveContractDateAfterCR223tDt = "2019-12-31"
+
+    val ukPostCode = "TE1 7NQ"
+    val ScotlandPostcode = "AB1 TTE"
+    val errorKeyMessage = "land.localAuthorityCode.constraint.invalid"
+
+    "Check Valid Response " - {
+      "must return valid response for valid code - 0360 with valid ukPostCode" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ukPostCode, errorKeyMessage).apply("0360")
+        result mustBe Valid
+      }
+
+      "must return valid  response for  dummy code - 8999 for effectiveTransactionDateAfterScottLandActDt and effectiveContractDateBeforeScottLandActDt " in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateBeforeScottLandActDt)),
+          ScotlandPostcode,
+          errorKeyMessage).apply("8999")
+        result mustBe Valid
+      }
+
+      "must return valid response for AB1 postcode - 8998  with effectiveTransactionDateAfterScottLandActDt and effectiveContractDateBeforeScottLandActDt" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateBeforeScottLandActDt)),
+          ScotlandPostcode,
+          errorKeyMessage).apply("8998")
+        result mustBe Valid
+      }
+
+      "must return valid response for england auth code - 0335 with effectiveTransactionDateAfterScottLandActDt and effectiveContractDateAfterScottLandActDt" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ukPostCode, errorKeyMessage).apply("0335")
+        result mustBe Valid
+      }
+
+      "must return Valid response for england auth code- 0114" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ukPostCode, errorKeyMessage).apply("0114")
+        result mustBe Valid
+      }
+
+      "must return Valid response for england auth code- 0630" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ukPostCode, errorKeyMessage).apply("0630")
+        result mustBe Valid
+      }
+
+      "must return Valid response for valid uk auth - 0630 with empty eff and contract dates" in {
+        val result = localAuthorityCodeConstraints(
+          None,
+          None,
+          ukPostCode, errorKeyMessage).apply("0630")
+        result mustBe Valid
+      }
+
+      "must return Valid response for valid data Uk authcode- 0220 is submitted with empty eff and contract dates" in {
+        val result = localAuthorityCodeConstraints(
+          None,
+          None,
+          ukPostCode,
+          errorKeyMessage).apply("0220")
+        result mustBe Valid
+      }
+
+      "must return valid response for walsh authcode - 6805 (walsh) with walshEffectiveTransactionDateBeforeWalshActDt and eff contract dt is none" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(walshEffectiveTransactionDateBeforeWalshActDt)),
+          None,
+          ukPostCode, errorKeyMessage).apply("6805")
+        result mustBe Valid
+      }
+
+      "must return valid response for walsh authcode - 6996 (walsh) with effectdate is after act date and empty contract date" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(walshEffectiveTransactionDateAfterWalshActDt)),
+          None,
+          ukPostCode, errorKeyMessage).apply("6996")
+        result mustBe Valid
+      }
+
+      "must return valid response for walsh authcode - 6998 (walsh) with date of contract after Wales effective act date" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(walshEffectiveContractDateAfterWalshActDt)),
+          contractEffDate = Some(LocalDate.parse(walshEffectiveContractDateAfterWalshActDt)),
+          ukPostCode,
+          errorKeyMessage).apply("6998")
+        result mustBe Valid
+      }
+
+      "must return valid response for walsh authcode - 6999 (walsh) with date of contract is after Wales act date" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(walshEffectiveTransactionDateAfterWalshActDt)),
+          contractEffDate = Some(LocalDate.parse(walshEffectiveContractDateAfterWalshActDt)),
+          ukPostCode,
+          errorKeyMessage).apply("6999")
+        result mustBe Valid
+      }
+    }
+
+    "Check Invalid Response " - {
+
+      "must return Invalid  response for  dummy code - 8999 with effectiveTransactionDateAfterScottLandActDt and effectiveContractDateAfterScottLandActDt" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ScotlandPostcode, errorKeyMessage).apply("8999")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return Invalid response for AB1 postcode - 8998" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ScotlandPostcode, errorKeyMessage).apply("8998")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return Invalid response for AB1 postcode - 0335 with Scotland postcode" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ScotlandPostcode, errorKeyMessage).apply("0335")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return Invalid response for AB1 postcode - 0114 with Scotland postcode with valid dates post after scotland act date" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ScotlandPostcode, errorKeyMessage).apply("0114")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid error message for valid uk auth - 0220  with Scotland postcode with valid dates post after scotland act date" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ScotlandPostcode, errorKeyMessage).apply("0220")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid error message for valid uk auth - 0335 with Scotland postcode, before scotland effective transaction act date" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateBeforeScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateBeforeScottLandActDt)),
+          ScotlandPostcode,
+          errorKeyMessage).apply("0335")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid error message for walsh authcode - 6805 (walsh) with after walsh act date" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(walshEffectiveTransactionDateAfterWalshActDt)),
+          None,
+          ScotlandPostcode, errorKeyMessage).apply("6805")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid error message for walsh authcode - 6996 (walsh) with effectdate is before act date and empty contract date" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(walshEffectiveTransactionDateBeforeWalshActDt)),
+          None,
+          ScotlandPostcode, errorKeyMessage).apply("6996")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid error message for valid data Uk authcode - 0724 is submitted with older eff and contract dates" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateBeforeScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateBeforeScottLandActDt)),
+          ukPostCode,
+          errorKeyMessage).apply("0724")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for walsh authcode - 6805 (walsh) with walshEffectiveTransactionDateBeforeWalshActDt and eff contract dt is none wtih scotish postcode" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(walshEffectiveTransactionDateBeforeWalshActDt)),
+          None,
+          ScotlandPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for walsh authcode - 6996 (walsh) with effectdate is after act date and empty contract date scotish postcode" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(walshEffectiveTransactionDateAfterWalshActDt)),
+          None,
+          ScotlandPostcode, errorKeyMessage).apply("6996")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for invalid code -1234" in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ukPostCode,
+          errorKeyMessage).apply("1234")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return Invalid response for AB1 postcode " in {
+        val result = localAuthorityCodeConstraints(
+          Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          Some(LocalDate.parse(effectiveContractDateAfterScottLandActDt)),
+          ScotlandPostcode,
+          errorKeyMessage).apply("0360")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return Invalid response for dummy code 8998 when an empty date of contract" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterScottLandActDt)),
+          contractEffDate = None,
+          ScotlandPostcode,
+          errorKeyMessage).apply("8998")
+
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return Invalid response for dummy code 8998 when effective transaction date is before CR223 effective date" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateBeforeCR223tDt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          ScotlandPostcode,
+          errorKeyMessage)
+          .apply("8998")
+
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return Invalid response for Scottish Local Auth code 9000 when both current and effective transaction date are after CR223 effective date" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223tDt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          ScotlandPostcode,
+          errorKeyMessage)
+          .apply("9000")
+
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for walsh auth code - 6998 (walsh) when effective is existed and date of contract is after Wales effective act date" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(walshEffectiveTransactionDateBeforeWalshActDt)),
+          contractEffDate = Some(LocalDate.parse(walshEffectiveContractDateAfterWalshActDt)),
+          ScotlandPostcode,
+          errorKeyMessage).apply("6998")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for walsh auth code - 6999 (walsh) when date of contract is after Wales act date" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(walshEffectiveTransactionDateBeforeWalshActDt)),
+          contractEffDate = Some(LocalDate.parse(walshEffectiveContractDateAfterWalshActDt)),
+          ScotlandPostcode,
+          errorKeyMessage).apply("6999")
+        result mustBe Invalid(errorKeyMessage)
+      }
+    }
   }
 }
