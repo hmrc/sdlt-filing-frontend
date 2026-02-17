@@ -711,6 +711,8 @@ purchaser.purchaserOverview.error.required                                      
 purchaser.purchaserOverview.noPurchaser.button                                      = Add a purchaser
 purchaser.purchaserOverview.summaryInfo.text                                        = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
 purchaser.purchaserOverview.noPurchaser.p1                                          = You have no purchasers listed. You must add a purchaser to complete this return.
+purchaser.purchaserOverview.mainPurchaserIncomplete.part1                           = You need to
+purchaser.purchaserOverview.mainPurchaserIncomplete.part2                           = update {0}’s details
 
 # Purchaser Agent
 purchaserAgent.overview.title                                                   = Purchaser’s agent overview - About the purchaser’s agent

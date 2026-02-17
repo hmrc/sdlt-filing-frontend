@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.FullReturnService
-import services.purchaser.PopulatePurchaserService
+import services.purchaser.{PopulatePurchaserService, PurchaserService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.PurchaserPaginationHelper
@@ -46,7 +46,8 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
                                             view: PurchaserOverview,
                                             formProvider: PurchaserOverviewFormProvider,
                                             populatePurchaserService: PopulatePurchaserService,
-                                            purchaserPaginationHelper: PurchaserPaginationHelper
+                                            purchaserPaginationHelper: PurchaserPaginationHelper,
+                                            purchaserService: PurchaserService
                                            )(implicit executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Logging {
 
@@ -69,11 +70,12 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
               val vendorList = fullReturn.vendor.getOrElse(Seq.empty)
               val purchaserList = fullReturn.purchaser.getOrElse(Seq.empty)
               val errorCalc: Boolean = (vendorList.length + purchaserList.length) > 99
+              val isMainPurchaserComplete = purchaserService.isMainPurchaserComplete(userAnswers)
 
               purchaserList match {
-                case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
+                case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc, isMainPurchaserComplete))
                 case purchasers =>
-                  purchaserPaginationHelper.generatePurchaserSummary(paginationIndex, purchasers, request.userAnswers)
+                  purchaserPaginationHelper.generatePurchaserSummary(paginationIndex, purchasers, userAnswers)
                     .fold(
                       Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
                     ) { summary =>
@@ -81,7 +83,10 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
                       val pagination: Option[Pagination] = purchaserPaginationHelper.generatePagination(paginationIndex, numberOfPages)
                       val paginationText: Option[String] = purchaserPaginationHelper.getPaginationInfoText(paginationIndex, purchasers)
 
-                      Ok(view(Some(summary), pagination, paginationText, postAction, form, NormalMode, errorCalc))
+                      val mainPurchaserId = purchaserService.getMainPurchaser(userAnswers).flatMap(_.purchaserID)
+                      val mainPurchaserName = purchaserService.mainPurchaserName(userAnswers).map(_.fullName)
+                      Ok(view(Some(summary), pagination, paginationText, postAction, form,
+                        NormalMode, errorCalc, isMainPurchaserComplete, mainPurchaserId, mainPurchaserName))
                     }
               }
             }
@@ -100,19 +105,20 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
       val vendorList = request.userAnswers.fullReturn.flatMap(_.vendor).getOrElse(Seq.empty)
       val purchaserList = request.userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
       val errorCalc: Boolean = (vendorList.length + purchaserList.length) > 99
+      val isMainPurchaserComplete = purchaserService.isMainPurchaserComplete(request.userAnswers)
 
       form.bindFromRequest().fold(
         formWithErrors => {
           purchaserList match {
             case Nil =>
-              Future.successful(BadRequest(view(None, None, None, postAction, formWithErrors, mode, errorCalc)))
+              Future.successful(BadRequest(view(None, None, None, postAction, formWithErrors, mode, errorCalc, isMainPurchaserComplete)))
             case purchasers =>
               val summary = purchaserPaginationHelper.generatePurchaserSummary(1, purchasers, request.userAnswers)
               val numberOfPages = purchaserPaginationHelper.getNumberOfPages(purchasers)
               val pagination = purchaserPaginationHelper.generatePagination(1, numberOfPages)
               val paginationText = purchaserPaginationHelper.getPaginationInfoText(1, purchasers)
 
-              Future.successful(BadRequest(view(summary, pagination, paginationText, postAction, formWithErrors, mode, errorCalc)))
+              Future.successful(BadRequest(view(summary, pagination, paginationText, postAction, formWithErrors, mode, errorCalc, isMainPurchaserComplete)))
           }
         },
         value =>

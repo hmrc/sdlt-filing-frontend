@@ -38,7 +38,10 @@
         redirect: Call,
         form: Form[_],
         mode: Mode,
-        errorCalc: Boolean
+        errorCalc: Boolean,
+        isMainPurchaserComplete: Boolean,
+        mainPurchaserId: Option[String] = None,
+        mainPurchaserName: Option[String] = None
 )(
         implicit request: Request[_],
         messages: Messages
@@ -57,6 +60,24 @@
                 )
             )
         )
+    }
+
+    @(mainPurchaserId, isMainPurchaserComplete) match {
+        case (Some(purchaserId), false) => {
+            @govukNotificationBanner(
+                NotificationBanner(
+                    content = HtmlContent(s"""
+                        <p class="govuk-notification-banner__heading">
+                            ${messages("purchaser.purchaserOverview.mainPurchaserIncomplete.part1")}
+                            <a class="govuk-notification-banner__link" href="${controllers.purchaser.routes.PurchaserOverviewController.changePurchaser(purchaserId).url}">
+                                ${messages("purchaser.purchaserOverview.mainPurchaserIncomplete.part2", mainPurchaserName.getOrElse(messages("site.purchaser.aPurchaser")))}
+                            </a>.
+                        </p>
+                        """)
+                )
+            )
+        }
+        case _ => {}
     }
 
     @request.flash.get("purchaserDeleted").map { purchaserName =>

@@ -18,9 +18,10 @@ package controllers.purchaser
 
 import base.SpecBase
 import forms.purchaser.PurchaserOverviewFormProvider
-import models.{FullReturn, GetReturnByRefRequest, NormalMode, Purchaser, UserAnswers}
+import models.{FullReturn, GetReturnByRefRequest, NormalMode, Purchaser, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -33,10 +34,21 @@ import views.html.purchaser.PurchaserOverview
 import scala.concurrent.Future
 import scala.util.Success
 
-class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
+class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
   private val formProvider = new PurchaserOverviewFormProvider()
   private val form = formProvider()
+
+  private val mockFullReturnService = mock[FullReturnService]
+  private val mockSessionRepository = mock[SessionRepository]
+  private val mockPopulatePurchaserService = mock[PopulatePurchaserService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockFullReturnService)
+    reset(mockSessionRepository)
+    reset(mockPopulatePurchaserService)
+  }
 
   def createPurchaser(id: String,
                       forename1: Option[String] = None,
@@ -63,6 +75,8 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
     name = Some("Smith")
   )
 
+  private val testIncompletePurchaser = testPurchaser.copy(address1 = None)
+
   private val testFullReturn = FullReturn(
     stornId = testStorn,
     returnResourceRef = testReturnRef,
@@ -86,10 +100,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
 
     "onPageLoad" - {
 
-      "must return OK and the correct view when no vendors exist" in {
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
+      "must return OK and the correct view when no purchasers exist" in {
         val emptyFullReturn = FullReturn(stornId = testStorn,
           returnResourceRef = testReturnRef, vendor = None, purchaser = None)
         val emptyUserAnswers = testUserAnswers.copy(fullReturn = Some(emptyFullReturn))
@@ -113,14 +124,11 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
           val view = application.injector.instanceOf[PurchaserOverview]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(None, None, None, routes.PurchaserBeforeYouStartController.onPageLoad(), form, NormalMode, false)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(None, None, None, routes.PurchaserBeforeYouStartController.onPageLoad(), form, NormalMode, false, true)(request, messages(application)).toString
         }
       }
 
-      "must return OK and the correct view with vendors" in {
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
+      "must return OK and the correct view with purchasers" in {
         when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
           .thenReturn(Future.successful(testFullReturn))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -142,10 +150,34 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must calculate errorCalc correctly when vendors + purchasers > 99" in {
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
+      "must return OK and the correct view with notification banner when main purchaser is incomplete" in {
+        val fullReturn = testFullReturn.copy(
+          purchaser = Some(Seq(testIncompletePurchaser)),
+          returnInfo = Some(ReturnInfo(mainPurchaserID = Some(testid)))
+        )
 
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturn))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers.copy(fullReturn = Some(fullReturn))))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("update John Michael Smith’s details")
+        }
+      }
+
+      "must calculate errorCalc correctly when vendors + purchasers > 99" in {
         val purchasers = (1 to 60).map(i => createPurchaser(
           s"PUR$i",
           name = Some(s"Purchaser$i")
@@ -177,9 +209,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must return OK with pagination when more than 15 purchasers exist" in {
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
         val purchasers = (1 to 20).map(i => createPurchaser(
           s"VEN$i",
           name = Some(s"Vendor$i")
@@ -226,8 +255,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to JourneyRecovery when fullReturnService fails" in {
-        val mockFullReturnService = mock[FullReturnService]
-
         when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Service error")))
 
@@ -248,9 +275,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to ReturnTaskList when vendors missing PurchaserId" in {
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
         val purchaserWithoutRef = Purchaser(purchaserID = None, surname = Some("Jones"))
         val fullReturnWithBadVendor = FullReturn(stornId = testStorn,
           returnResourceRef = testReturnRef, vendor = None, purchaser = Some(Seq(purchaserWithoutRef)))
@@ -277,9 +301,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must handle pagination index correctly" in {
-        val mockFullReturnService = mock[FullReturnService]
-        val mockSessionRepository = mock[SessionRepository]
-
         val purchasers = (1 to 30).map(i => createPurchaser(
           s"PUR$i",
           name = Some(s"Purchaser$i")
@@ -314,8 +335,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
     "onSubmit" - {
 
       "must redirect to Before you start when user answers yes (true)" in {
-        val mockSessionRepository = mock[SessionRepository]
-
         val application = applicationBuilder(userAnswers = Some(testUserAnswers))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -334,8 +353,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to ReturnTaskList when user answers no (false)" in {
-        val mockSessionRepository = mock[SessionRepository]
-
         val application = applicationBuilder(userAnswers = Some(testUserAnswers))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -415,9 +432,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
     "changePurchaser" - {
 
       "must populate session and redirect to VendorCYA when vendor found" in {
-        val mockPopulatePurchaserService = mock[PopulatePurchaserService]
-        val mockSessionRepository = mock[SessionRepository]
-
         when(mockPopulatePurchaserService.populatePurchaserInSession(any(), any(), any()))
           .thenReturn(Success(testUserAnswers))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -497,8 +511,6 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar {
     "removePurchaser" - {
 
       "must set vendorId in session and redirect to Remove Vendor" in {
-        val mockSessionRepository = mock[SessionRepository]
-
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(testUserAnswers))
