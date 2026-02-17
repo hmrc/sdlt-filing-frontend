@@ -443,7 +443,203 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, testAddress1, testAddress2.get, testPostcode)(request, messages(application)).toString
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted and address2 is missing" in {
+
+      val fullReturnMissingAddress2 = FullReturn(
+        stornId = testStorn,
+        returnResourceRef = testReturnRef,
+        vendor = None,
+        land = Some(Seq(testLandMissingAddress2))
+      )
+
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
+
+        val boundForm = form.bind(Map("value" -> "invalid value"))
+
+        val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, testAddress1, "", testPostcode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to the next page when valid data is submitted with value 'yes' and address2 is missing" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val fullReturnMissingAddress2 = FullReturn(
+        stornId = testStorn,
+        returnResourceRef = testReturnRef,
+        vendor = None,
+        land = Some(Seq(testLandMissingAddress2))
+      )
+
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
+            .withFormUrlEncodedBody(("value", "yes"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to LandAddressController when valid data is submitted with value 'no' and address2 is missing" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val fullReturnMissingAddress2 = FullReturn(
+        stornId = testStorn,
+        returnResourceRef = testReturnRef,
+        vendor = None,
+        land = Some(Seq(testLandMissingAddress2))
+      )
+
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
+            .withFormUrlEncodedBody(("value", "no"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.land.routes.LandAddressController.redirectToAddressLookupLand().url
+      }
+    }
+
+    "must return a Bad Request with empty strings when invalid data is submitted and no valid land exists" in {
+
+      val emptyFullReturn = FullReturn(
+        stornId = testStorn,
+        returnResourceRef = testReturnRef,
+        vendor = None,
+        land = Some(Seq.empty)
+      )
+
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(emptyFullReturn))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
+
+        val boundForm = form.bind(Map("value" -> "invalid value"))
+
+        val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "", "", "")(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to the next page when valid data is submitted with value 'yes' and no valid land exists" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val emptyFullReturn = FullReturn(
+        stornId = testStorn,
+        returnResourceRef = testReturnRef,
+        vendor = None,
+        land = Some(Seq.empty)
+      )
+
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(emptyFullReturn))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
+            .withFormUrlEncodedBody(("value", "yes"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to LandAddressController when valid data is submitted with value 'no' and no valid land exists" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val emptyFullReturn = FullReturn(
+        stornId = testStorn,
+        returnResourceRef = testReturnRef,
+        vendor = None,
+        land = Some(Seq.empty)
+      )
+
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(emptyFullReturn))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
+            .withFormUrlEncodedBody(("value", "no"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.land.routes.LandAddressController.redirectToAddressLookupLand().url
       }
     }
 
