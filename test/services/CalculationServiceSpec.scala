@@ -1588,7 +1588,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdZeroRateTaxReliefRes
       }
 
-      "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: throws an exception" in {
+      "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: falls back to standard calculation" in {
         val testRequest = createRequestWithTaxRelief(
           HoldingTypes.freehold,
           PropertyTypes.mixed,
@@ -1598,7 +1598,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           isLinked = Some(false)
         )
 
-        the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message "Value not defined"
+        val result = createResult("freeholdNonResidentialMar12toMar16")
+
+        when(mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16(any(), any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar12toMar16(testRequest)
       }
 
       "given relief code ReliefFrom15PercentRate(35) :: falls back to calculateNoTaxRelief" in {
@@ -2139,12 +2145,15 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar16Onwards(any[Request])
         verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
       }
-    }
-    "throw exception for invalid request for freeholdSelfAssessedRes" when {
       "given the request holding type is freehold, property type is mixed property effective date is before 17/03/2017 and isLinked = false " in {
         val testRequest = createRequest(freehold, mixed, LocalDate.of(2016, 3, 6), isLinked = Some(false))
+        val result = createResult("freeholdNonResidentialMar12toMar16")
 
-        the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message "Value not defined"
+        when(mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16(any[Request], any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar12toMar16(testRequest)
       }
     }
 
@@ -2242,21 +2251,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
         verifyNoMoreInteractions(mockFreeholdCalculationService)
-      }
-
-      "throw an exception for a leasehold mixed property mixed for a date outside of the allowed range" in {
-
-        val dates = Seq(
-          LocalDate.of(2016, 3, 17),
-          LocalDate.of(2008, 3, 11),
-          LocalDate.of(2017, 3, 17)
-        )
-
-        dates.foreach { date =>
-          val req = createRequest(HoldingTypes.leasehold, PropertyTypes.mixed, date)
-          val ex = the[RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(req)
-          ex.getMessage mustBe s"Mixed property logic not implemented for request: $req"
-        }
       }
 
       "given a request with relief code FirstTimeBuyersRelief and property type is Residential with no twoOrMoreProperties and effective date on or after 25/3/2010 or before 25/3/2012" in {
@@ -2614,6 +2608,26 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
     }
 
+    "select the freeholdNonResidentialMar12toMar16 function" when {
+      "holding type is freehold, property type is Mixed, transaction is not linked & date is before 17/03/2016" in {
+        val testRequest = createRequest(freehold, nonResidential, LocalDate.of(2016, 3, 16), isLinked = Some(false))
+        val result = createResult("freeholdNonResidentialMar12toMar16, March2016")
+
+        when(mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16(any[Request], any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+      "holding type is freehold, property type is Non-residential, transaction is not linked & date is before 17/03/2016" in {
+        val testRequest = createRequest(freehold, mixed, LocalDate.of(2016, 3, 16), isLinked = Some(false))
+        val result = createResult("freeholdNonResidentialMar12toMar16, March2016")
+
+        when(mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16(any[Request], any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+      }
+    }
+
+
     "return Fallback result AcquisitionRelief(14)" when {
       "given a Leasehold holding type" in {
         val testRequest = createRequestWithTaxRelief(
@@ -2706,35 +2720,46 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedRes
       }
+    }
 
+    "return fall-back result" when {
       "given no taxReliefDetails, date is 22/11/2017, and isLinked is true, false, or None" in {
 
-          forAll(generateIsLinkedAllPossibleValues) {
-            isLinkedValue =>
-              val testRequest = createRequest(
-                HoldingTypes.leasehold,
-                PropertyTypes.mixed,
-                LocalDate.of(2017, 11, 21),
-                isLinked = isLinkedValue
-              )
+        forAll(generateIsLinkedAllPossibleValues) {
+          isLinkedValue =>
+            val testRequest = createRequest(leasehold, mixed, LocalDate.of(2017, 11, 21), isLinked = isLinkedValue)
+            val result = createResult("leaseholdNonResidentialMar16Onwards")
 
               reset(mockLeaseholdCalculationService)
 
-              the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) should have message
-                s"Mixed property logic not implemented for request: ${testRequest.copy(isLinked = None)}"
-          }
+            when(mockLeaseholdCalculationService.leaseholdNonResidentialMar16Onwards(testRequest)).thenReturn(Seq(result))
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockLeaseholdCalculationService, times(1)).leaseholdNonResidentialMar16Onwards(testRequest)
+        }
       }
 
       "given a request without taxRelief details for FreeHold mixed property type" when {
         "isLinked = false and for any Dates " in {
           val testRequest = createRequest(freehold, mixed, LocalDate.of(2024, 3, 16), isLinked = Some(false))
+          val result = createResult("leaseholdNonResidentialMar16Onwards")
 
-          the [RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message "Value not defined"
+          when(mockFreeholdCalculationService.freeholdNonResidentialMar16Onwards(testRequest)).thenReturn(Seq(result))
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar16Onwards(testRequest)
         }
         "isLinked = None and for any Dates " in {
           val testRequest = createRequest(freehold, mixed, LocalDate.of(2024, 3, 16), None)
+          val result = createResult("leaseholdNonResidentialMar16Onwards")
 
-          the[RequiredValueNotDefinedException] thrownBy testCalculationService.calculateTax(testRequest) must have message s"Value not defined"
+          when(mockFreeholdCalculationService.freeholdNonResidentialMar16Onwards(testRequest)).thenReturn(Seq(result))
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar16Onwards(testRequest)
         }
       }
     }

@@ -28,14 +28,17 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     if(isComplexCalculation(request)){
       calculateTaxRelief(request)
     } else {
-      (request.holdingType, request.propertyType) match {
-        case (HoldingTypes.leasehold, PropertyTypes.residential) => calculateLeaseholdResidentialTax(request)
-        case (HoldingTypes.leasehold, PropertyTypes.nonResidential) => calculateLeaseholdNonResidentialTax(request)
-        case (HoldingTypes.leasehold, PropertyTypes.mixed) => calculateLeaseholdMixedPropertyTax(request)
-        case (HoldingTypes.freehold, PropertyTypes.residential) => calculateFreeholdResidentialTax(request)
-        case (HoldingTypes.freehold, PropertyTypes.nonResidential) => calculateFreeholdNonResidentialTax(request)
-        case _ => throw new RequiredValueNotDefinedException("Value not defined")
-      }
+      calculateBaseTax(request)
+    }
+  }
+
+  private def calculateBaseTax(request: Request): CalculationResponse = {
+    (request.holdingType, request.propertyType) match {
+      case (HoldingTypes.leasehold, PropertyTypes.residential) => calculateLeaseholdResidentialTax(request)
+      case (HoldingTypes.leasehold,                         _) => calculateLeaseholdNonResidentialTax(request)
+      case (HoldingTypes.freehold,  PropertyTypes.residential) => calculateFreeholdResidentialTax(request)
+      case (HoldingTypes.freehold,                          _) => calculateFreeholdNonResidentialTax(request)
+      case _ => throw new RequiredValueNotDefinedException("Value not defined")
     }
   }
 
@@ -508,29 +511,28 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           CalculationResponse(Seq(
             freeCalculationService.freeholdSelfAssessedRes
           ))
+      case (`freehold`, `mixed` | `nonResidential`, false, Some(false))
+        if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+        calculateBaseTax(request)
       /* ------------- LeaseHoldCases--------------------------- */
       case (`leasehold`, _, _, Some(true))
         if request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) =>
           CalculationResponse(Seq(
             leaseCalculationService.leaseholdSelfAssessedRes
           ))
+      case (`leasehold`, `mixed`, _, _)
+        if isAfterMar2008AndBeforeMar2016(request.effectiveDate) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdSelfAssessedRes
+        ))
       case _ =>
-        calculateTax(request.copy(taxReliefDetails = None, isLinked = None, interestTransferred = None))
+        calculateBaseTax(request)
     }
   }
 
   private def isComplexCalculation(request: Request): Boolean =
-    request.taxReliefDetails.nonEmpty || request.isLinked.nonEmpty || request.interestTransferred.nonEmpty
+    request.taxReliefDetails.nonEmpty || request.isLinked.nonEmpty || request.interestTransferred.nonEmpty || request.propertyType == mixed
 
   private def isAdditionalProperty(request: Request): Boolean =
     request.propertyDetails.exists(_.twoOrMoreProperties.contains(true))
-
-  def calculateLeaseholdMixedPropertyTax(request: Request): CalculationResponse = {
-    if (isAfterMar2008AndBeforeMar2016(request.effectiveDate))
-      CalculationResponse(Seq(
-        leaseCalculationService.leaseholdSelfAssessedRes
-      ))
-    else
-      throw new RequiredValueNotDefinedException(s"Mixed property logic not implemented for request: $request")
-  }
 }
