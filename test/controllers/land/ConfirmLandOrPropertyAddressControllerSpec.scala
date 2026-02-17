@@ -95,6 +95,15 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
     interestCreatedTransferred = None
   )
 
+  private val testLandMissingAddress2 = Land(
+    address1 = Some(testAddress1),
+    address2 = None,
+    postcode = Some(testPostcode),
+    willSendPlanByPost = None,
+    localAuthorityNumber = None,
+    interestCreatedTransferred = None
+  )
+
   private val testLandMissingPostcode = Land(
     address1 = Some(testAddress1),
     address2 = testAddress2,
@@ -132,7 +141,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, testAddress1, testAddress2, testPostcode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, testAddress1, testAddress2.get, testPostcode)(request, messages(application)).toString
       }
     }
 
@@ -151,7 +160,58 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ConfirmLandOrPropertyAddress.values.head), NormalMode, testAddress1, testAddress2, testPostcode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(ConfirmLandOrPropertyAddress.values.head), NormalMode, testAddress1, testAddress2.get, testPostcode)(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET when address2 is missing" in {
+
+      val fullReturnMissingAddress2 = FullReturn(
+        stornId = testStorn,
+        returnResourceRef = testReturnRef,
+        vendor = None,
+        land = Some(Seq(testLandMissingAddress2))
+      )
+
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, confirmLandOrPropertyAddressRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode, testAddress1, "", testPostcode)(request, messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly when address2 is missing and question has previously been answered" in {
+
+      val fullReturnMissingAddress2 = FullReturn(
+        stornId = testStorn,
+        returnResourceRef = testReturnRef,
+        vendor = None,
+        land = Some(Seq(testLandMissingAddress2))
+      )
+
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
+        .set(ConfirmLandOrPropertyAddressPage, ConfirmLandOrPropertyAddress.values.head).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, confirmLandOrPropertyAddressRoute)
+
+        val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(ConfirmLandOrPropertyAddress.values.head), NormalMode, testAddress1, "", testPostcode)(request, messages(application)).toString
       }
     }
 
@@ -177,7 +237,6 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         redirectLocation(result).value mustEqual controllers.land.routes.LandAddressController.redirectToAddressLookupLand().url
       }
     }
-    
 
     "must redirect to LandAddressController when postcode is missing" in {
 
@@ -384,7 +443,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "", Some(""), "")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "", "", "")(request, messages(application)).toString
       }
     }
 

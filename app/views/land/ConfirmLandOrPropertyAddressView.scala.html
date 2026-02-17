@@ -24,11 +24,12 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     h1: h1,
+    p: Paragraph,
     caption: Caption
 )
 
 
-@(form: Form[_], mode: Mode, address1: String, address2: Option[String], postcode: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, address1: String, address2: String, postcode: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("land.confirmLandOrPropertyAddress.title"))) {
 
@@ -42,7 +43,8 @@
 
     @caption(messages("site.land.caption"))
     @h1(messages("land.confirmLandOrPropertyAddress.heading"))
-        <p class="govuk-body-m">@Html(messages("land.confirmLandOrPropertyAddress.full", address1, address2, postcode))</p>
+    @p(Seq(address1, address2, postcode).filter(_.trim.nonEmpty).mkString("<br>"))
+
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
