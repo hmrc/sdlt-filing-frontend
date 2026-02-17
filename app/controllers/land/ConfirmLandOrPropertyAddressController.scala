@@ -56,13 +56,20 @@ class ConfirmLandOrPropertyAddressController @Inject()(
       val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
       val totalLand = landList.length == 1
 
-      (address1, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
-        case (Some(address1) , Some(postcode), None, None, None) if totalLand =>
+      (address1, address2, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
+        case (Some(address1), Some(address2) , Some(postcode), None, None, None) if totalLand =>
           val preparedForm = request.userAnswers.get(ConfirmLandOrPropertyAddressPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
           Ok(view(preparedForm, mode, address1, address2, postcode))
+
+        case (Some(address1), None, Some(postcode), None, None, None) if totalLand =>
+          val preparedForm = request.userAnswers.get(ConfirmLandOrPropertyAddressPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode, address1, "", postcode))
 
         case _ => Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
       }
@@ -73,7 +80,7 @@ class ConfirmLandOrPropertyAddressController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, "", Some(""), ""))),
+          Future.successful(BadRequest(view(formWithErrors, mode, "", "", ""))),
 
         value =>
           for {
