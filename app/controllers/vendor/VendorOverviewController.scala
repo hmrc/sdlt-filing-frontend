@@ -67,7 +67,7 @@ class VendorOverviewController @Inject()(
 
               val vendorList = fullReturn.vendor.getOrElse(Seq.empty)
               val purchaserList = fullReturn.purchaser.getOrElse(Seq.empty)
-              val errorCalc: Boolean = (vendorList.length + purchaserList.length) > 99
+              val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
 
               vendorList match {
                 case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
@@ -98,7 +98,7 @@ class VendorOverviewController @Inject()(
       val postAction: Call = controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)
       val vendorList = request.userAnswers.fullReturn.flatMap(_.vendor).getOrElse(Seq.empty)
       val purchaserList = request.userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
-      val errorCalc: Boolean = (vendorList.length + purchaserList.length) > 99
+      val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
 
       form.bindFromRequest().fold(
         formWithErrors => {

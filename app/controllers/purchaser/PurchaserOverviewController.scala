@@ -69,7 +69,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
 
               val vendorList = fullReturn.vendor.getOrElse(Seq.empty)
               val purchaserList = fullReturn.purchaser.getOrElse(Seq.empty)
-              val errorCalc: Boolean = (vendorList.length + purchaserList.length) > 99
+              val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
               val isMainPurchaserComplete = purchaserService.isMainPurchaserComplete(userAnswers)
 
               purchaserList match {
@@ -104,7 +104,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
       val postAction: Call = controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)
       val vendorList = request.userAnswers.fullReturn.flatMap(_.vendor).getOrElse(Seq.empty)
       val purchaserList = request.userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
-      val errorCalc: Boolean = (vendorList.length + purchaserList.length) > 99
+      val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
       val isMainPurchaserComplete = purchaserService.isMainPurchaserComplete(request.userAnswers)
 
       form.bindFromRequest().fold(

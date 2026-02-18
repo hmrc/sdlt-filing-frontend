@@ -177,8 +177,8 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
         }
       }
 
-      "must calculate errorCalc correctly when vendors + purchasers > 99" in {
-        val purchasers = (1 to 60).map(i => createPurchaser(
+      "must calculate errorCalc correctly when vendors + purchasers > 98" in {
+        val purchasers = (1 to 49).map(i => createPurchaser(
           s"PUR$i",
           name = Some(s"Purchaser$i")
         ))
@@ -205,6 +205,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
           val result = route(application, request).value
 
           status(result) mustEqual OK
+          contentAsString(result) must include("To add a new purchaser, you must remove a purchaser or vendor")
         }
       }
 
