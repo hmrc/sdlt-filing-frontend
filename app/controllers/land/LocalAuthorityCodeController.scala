@@ -20,104 +20,83 @@ import controllers.actions.*
 import forms.land.LocalAuthorityCodeFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.land.{LandAddressPage, LocalAuthorityCodePage}
+import pages.land.LocalAuthorityCodePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.land.LocalAuthorityCodeView
+import services.land.{LocalAuthorityCodeService, LocalAuthorityFormContext}
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class LocalAuthorityCodeController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: LocalAuthorityCodeFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: LocalAuthorityCodeView
-                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
+                                              override val messagesApi: MessagesApi,
+                                              sessionRepository: SessionRepository,
+                                              navigator: Navigator,
+                                              identify: IdentifierAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              formProvider: LocalAuthorityCodeFormProvider,
+                                              preparationService: LocalAuthorityCodeService,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              view: LocalAuthorityCodeView
+                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val userAnswers = request.userAnswers
-      val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-      val transactionDates: Option[(Option[String], Option[String])] = for {
-        fr <- userAnswers.fullReturn
-        tr <- fr.transaction
-      } yield (tr.effectiveDate, tr.contractDate)
+      val context: LocalAuthorityFormContext =
+        preparationService.prepareFormContext(request.userAnswers)
 
-      val effectiveTransactionDate: Option[LocalDate] =
-        transactionDates.flatMap { case (effOpt, _) => effOpt.map(LocalDate.parse(_, formatter)) }
+      context.landPostcode match {
+        case Some(postcode) =>
+          val form = formProvider(
+            context.effectiveTransactionDate,
+            context.contractEffectiveDate,
+            context.landPostcode
+          )
 
-      val contractEffDate: Option[LocalDate] =
-        transactionDates.flatMap { case (_, conOpt) => conOpt.map(LocalDate.parse(_, formatter)) }
+          val preparedForm = request.userAnswers.get(LocalAuthorityCodePage) match {
+            case None    => form
+            case Some(v) => form.fill(v)
+          }
 
-      val landPostcode: String =
-        request.userAnswers.get(LandAddressPage).flatMap(_.postcode)
-          .orElse {
-            for {
-              fr    <- request.userAnswers.fullReturn
-              lands <- fr.land
-              pc    <- lands.flatMap(_.postcode).headOption
-            } yield pc
-          }.getOrElse("")
-          
+          Ok(view(preparedForm, mode))
 
-      val form = formProvider(effectiveTransactionDate, contractEffDate, landPostcode)
-      val preparedForm = request.userAnswers.get(LocalAuthorityCodePage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        case None =>
+          Redirect(controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(mode))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val userAnswers = request.userAnswers
-      val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-      val transactionDates: Option[(Option[String], Option[String])] = for {
-        fr <- userAnswers.fullReturn
-        tr <- fr.transaction
-      } yield (tr.effectiveDate, tr.contractDate)
+      val context: LocalAuthorityFormContext =
+        preparationService.prepareFormContext(request.userAnswers)
 
-      val effectiveTransactionDate: Option[LocalDate] =
-        transactionDates.flatMap { case (effOpt, _) => effOpt.map(LocalDate.parse(_, formatter)) }
+      context.landPostcode match {
+        case Some(postcode) =>
+          val form = formProvider(
+            context.effectiveTransactionDate,
+            context.contractEffectiveDate,
+            context.landPostcode
+          )
 
-      val contractEffDate: Option[LocalDate] =
-        transactionDates.flatMap { case (_, conOpt) => conOpt.map(LocalDate.parse(_, formatter)) }
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode))),
 
-      val landPostcode: String =
-        request.userAnswers.get(LandAddressPage).flatMap(_.postcode)
-          .orElse {
-            for {
-              fr    <- request.userAnswers.fullReturn
-              lands <- fr.land
-              pc    <- lands.flatMap(_.postcode).headOption
-            } yield pc
-          }.getOrElse("")
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(LocalAuthorityCodePage, value))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(LocalAuthorityCodePage, mode, updatedAnswers))
+          )
 
-      val form = formProvider(effectiveTransactionDate, contractEffDate, landPostcode)
-      
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(LocalAuthorityCodePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(LocalAuthorityCodePage, mode, updatedAnswers))
-      )
+        case None =>
+          Future.successful(Redirect(controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(mode)))
+      }
   }
 }

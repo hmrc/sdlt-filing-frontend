@@ -31,7 +31,7 @@ class LocalAuthorityCodeFormProviderSpec extends StringFieldBehaviours {
   val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
   val effectiveTransactionDate: Option[LocalDate] = Option(LocalDate.parse("2015-04-01", formatter))
   val contractEffDate: Option[LocalDate] = Option(LocalDate.parse("2015-04-01", formatter))
-  val postcode = "RG1 7NQ"
+  val postcode: Option[String] = Some("RG1 7NQ")
 
    val form = new LocalAuthorityCodeFormProvider()(effectiveTransactionDate,contractEffDate, postcode)
 

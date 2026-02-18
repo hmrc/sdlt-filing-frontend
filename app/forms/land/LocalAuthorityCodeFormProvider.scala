@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class LocalAuthorityCodeFormProvider @Inject()  extends Mappings {
 
-  def apply(effectiveTransactionDate: Option[LocalDate], contractEffDate: Option[LocalDate], postcode :String): Form[String] = {
+  def apply(effectiveTransactionDate: Option[LocalDate], contractEffDate: Option[LocalDate], postcode : Option[String]): Form[String] = {
 
     Form(
       "value" -> text("land.localAuthorityCode.error.required")

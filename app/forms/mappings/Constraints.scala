@@ -231,7 +231,7 @@ trait Constraints {
         Invalid(errorKey)
     }
 
-  protected def localAuthorityCodeConstraints(effectiveTransactionDate: Option[LocalDate], contractEffDate: Option[LocalDate], postcode: String, errorKey: String): Constraint[String] = Constraint {
+  protected def localAuthorityCodeConstraints(effectiveTransactionDate: Option[LocalDate], contractEffDate: Option[LocalDate], postcode: Option[String], errorKey: String): Constraint[String] = Constraint {
 
     code =>
       val codeTrim = code
@@ -241,20 +241,19 @@ trait Constraints {
       if (codeTrim.matches(authorityCodeRegex)) {
 
         if (checkScotlandRegex(effectiveTransactionDate, contractEffDate, code, postcode) && !codeTrim.matches(welshLocalAuthNumbers)) {
-           Valid
-        } else if (checkWalshRegex(effectiveTransactionDate, code, contractEffDate, welshLocalAuthNumbers) && !isScottishPostcode(postcode) && !code.matches("^9[0-9]{3}$") && !code.matches("^899[89]$"))  {
-           Valid
+          Valid
+        } else if (checkWelshRegex(effectiveTransactionDate, code, contractEffDate, welshLocalAuthNumbers) && !isScottishPostcode(postcode) && !code.matches("^9[0-9]{3}$") && !code.matches("^899[89]$")) {
+          Valid
         } else {
           Invalid(errorKey)
         }
       }
-        else
-        {
-          Invalid(errorKey)
-        }
+      else {
+        Invalid(errorKey)
+      }
   }
 
-  private def checkWalshRegex(
+  private def checkWelshRegex(
                                effectiveTransactionDate: Option[LocalDate],
                                code: String,
                                contractEffDate: Option[LocalDate],
@@ -286,7 +285,7 @@ trait Constraints {
     !isInvalid
   }
 
-  private def checkScotlandRegex(effectiveTransactionDate: Option[LocalDate], contractEffDate: Option[LocalDate], code: String, postcode: String): Boolean = {
+  private def checkScotlandRegex(effectiveTransactionDate: Option[LocalDate], contractEffDate: Option[LocalDate], code: String, postcode: Option[String]): Boolean = {
 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val cr223EffectiveFrom = LocalDate.parse("2015-04-01", formatter)
@@ -296,15 +295,15 @@ trait Constraints {
       case true =>
         true match {
           case _ if currentDay.isBefore(cr223EffectiveFrom) ||
-            effectiveTransactionDate.exists(_.isBefore(cr223EffectiveFrom)) =>            
+            effectiveTransactionDate.exists(_.isBefore(cr223EffectiveFrom)) =>
             false
 
           case _ if contractEffDate.isEmpty =>
             false
           case _ if code == "8999" &&
-            !contractEffDate.exists(_.isBefore(theScotlandActDateTime)) =>            
+            !contractEffDate.exists(_.isBefore(theScotlandActDateTime)) =>
             false
-          case _ if code == "8998" && !contractEffDate.exists(_.isBefore(cr223EffectiveFrom)) =>            
+          case _ if code == "8998" && !contractEffDate.exists(_.isBefore(cr223EffectiveFrom)) =>
             false
           case _ => true
         }
@@ -320,25 +319,30 @@ trait Constraints {
 
   }
 
-    private def isScottishPostcode(postCode : String)= {
-      val  postcodeOutcode = postCode.substring(0, postCode.indexOf(" "));
+  private def isScottishPostcode(postCode: Option[String]) = {
 
-      postcodeOutcode.matches("^AB([1-3]|23|3[0-8]|4[1-5]|5[1-6])$")
-        || postcodeOutcode.matches("^DD([1-9]|1[0-1])$")
-        || postcodeOutcode.matches("^PH([1-9]|1[0-9]|2[0-6]|3[0-9]|4[0-4])$")
-        || postcodeOutcode.matches("^FK([1-9]|1[0-9]|2[0-1])$")
-        || postcodeOutcode.matches("^G([1-2]|1[1-2]|14|15|20|21|32|33|41|43|45|46|51|53|6[0-9]|7[1-8]|8[1-4])$")
-        || postcodeOutcode.matches("^PA(1|[3-9]|1[0-4]|1[6-9]|[2-4][0-9]|6[0-8]|7[0-8])$")
-        || postcodeOutcode.matches("^DG([1-9]|10|11|13)$")
-        || postcodeOutcode.matches("^KA([1-9]|1[0-9]|2[0-9]|30)$")
-        || postcodeOutcode.matches("^ML([1-9]|1[0-2])$")
-        || postcodeOutcode.matches("^EH([1-2]|[4-9]|10|1[2-9]|2[0-9]|3[0-9]|4[0-9]|5[2-5])$")
-        || postcodeOutcode.matches("^TD([1-4]|[6-7]|10|11|13|14)$")
-        || postcodeOutcode.matches("^KY([1-9]|1[0-6])$")
-        || postcodeOutcode.matches("^IV([1-9]|1[0-9]|2[0-8]|3[0-2]|36|4[0-9]|5[1-6])$")
-        || postcodeOutcode.matches("^KW([1-3]|[5-9]|1[0-7])$")
-        || postcodeOutcode.matches("^ZE([1-3])$")
-        || postcodeOutcode.matches("^HS([1-9])$")
+    postCode match {
+      case Some(postcode) =>
+        val postcodeOutcode = postcode.substring(0, postcode.indexOf(" "));
+
+        postcodeOutcode.matches("^AB([1-3]|23|3[0-8]|4[1-5]|5[1-6])$")
+          || postcodeOutcode.matches("^DD([1-9]|1[0-1])$")
+          || postcodeOutcode.matches("^PH([1-9]|1[0-9]|2[0-6]|3[0-9]|4[0-4])$")
+          || postcodeOutcode.matches("^FK([1-9]|1[0-9]|2[0-1])$")
+          || postcodeOutcode.matches("^G([1-2]|1[1-2]|14|15|20|21|32|33|41|43|45|46|51|53|6[0-9]|7[1-8]|8[1-4])$")
+          || postcodeOutcode.matches("^PA(1|[3-9]|1[0-4]|1[6-9]|[2-4][0-9]|6[0-8]|7[0-8])$")
+          || postcodeOutcode.matches("^DG([1-9]|10|11|13)$")
+          || postcodeOutcode.matches("^KA([1-9]|1[0-9]|2[0-9]|30)$")
+          || postcodeOutcode.matches("^ML([1-9]|1[0-2])$")
+          || postcodeOutcode.matches("^EH([1-2]|[4-9]|10|1[2-9]|2[0-9]|3[0-9]|4[0-9]|5[2-5])$")
+          || postcodeOutcode.matches("^TD([1-4]|[6-7]|10|11|13|14)$")
+          || postcodeOutcode.matches("^KY([1-9]|1[0-6])$")
+          || postcodeOutcode.matches("^IV([1-9]|1[0-9]|2[0-8]|3[0-2]|36|4[0-9]|5[1-6])$")
+          || postcodeOutcode.matches("^KW([1-3]|[5-9]|1[0-7])$")
+          || postcodeOutcode.matches("^ZE([1-3])$")
+          || postcodeOutcode.matches("^HS([1-9])$")
+
+      case None => false
     }
-
+  }
 }
