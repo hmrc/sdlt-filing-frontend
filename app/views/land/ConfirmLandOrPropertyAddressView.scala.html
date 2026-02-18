@@ -39,11 +39,9 @@
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-
-
-    @caption(messages("site.land.caption"))
-    @h1(messages("land.confirmLandOrPropertyAddress.heading"))
-    @p(Seq(address1, address2, postcode).filter(_.trim.nonEmpty).mkString("<br>"))
+        @caption(messages("site.land.caption"))
+        @h1(messages("land.confirmLandOrPropertyAddress.heading"))
+        @p(Seq(address1, address2, postcode).filter(_.trim.nonEmpty).mkString("<br>"))
 
         @govukRadios(
             RadiosViewModel(

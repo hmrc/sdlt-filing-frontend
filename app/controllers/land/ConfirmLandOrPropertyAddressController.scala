@@ -78,21 +78,70 @@ class ConfirmLandOrPropertyAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, "", "", ""))),
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmLandOrPropertyAddressPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (value.toString == "yes") {
-              Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswers))
-            } else {
-              Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
-            }
-          }
-      )
+      val address1 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address1.isDefined).flatMap(_.address1)))
+      val address2 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address2.isDefined).flatMap(_.address2)))
+      val postcode = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.postcode.isDefined).flatMap(_.postcode)))
+      val willSendPlanByPost = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.willSendPlanByPost.isDefined)))
+      val localAuthorityNumber = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.localAuthorityNumber.isDefined)))
+      val interestCreatedTransferred = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.interestCreatedTransferred.isDefined)))
+      val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
+      val totalLand = landList.length == 1
+
+      (address1, address2, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
+        case (Some(address1), Some(address2), Some(postcode), None, None, None) if totalLand =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, address1, address2, postcode))),
+
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmLandOrPropertyAddressPage, value))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield {
+                if (value.toString == "yes") {
+                  Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswers))
+                } else {
+                  Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
+                }
+              }
+          )
+
+        case (Some(address1), None, Some(postcode), None, None, None) if totalLand =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, address1, "", postcode))),
+
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmLandOrPropertyAddressPage, value))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield {
+                if (value.toString == "yes") {
+                  Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswers))
+                } else {
+                  Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
+                }
+              }
+          )
+
+        case _ =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, "", "", ""))),
+
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmLandOrPropertyAddressPage, value))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield {
+                if (value.toString == "yes") {
+                  Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswers))
+                } else {
+                  Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
+                }
+              }
+          )
+      }
   }
 }
