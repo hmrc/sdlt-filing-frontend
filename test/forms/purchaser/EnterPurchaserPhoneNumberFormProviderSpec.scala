@@ -24,7 +24,7 @@ class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "purchaser.enterPhoneNumber.error.required"
   val lengthKey = "purchaser.enterPhoneNumber.error.length"
-  val invalidKey = "purchaser.enterPhoneNumber.error.invalid"
+  val invalidMsgKey = "purchaser.enterPhoneNumber.error.invalid"
   val maxLength = 14
 
   val form = new EnterPurchaserPhoneNumberFormProvider()()
@@ -53,7 +53,7 @@ class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
 
     "must not bind strings with invalid characters" in {
       val result = form.bind(Map(fieldName -> "123|456"))
-      result.errors.map(_.message) must contain(invalidKey)
+      result.errors.map(_.message) must contain(invalidMsgKey)
     }
     }
   }

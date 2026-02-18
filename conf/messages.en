@@ -940,3 +940,17 @@ land.confirmLandOrPropertyAddress.isThisTheLand                               = 
 land.confirmLandOrPropertyAddress.checkYourAnswersLabel                       = Confirm the address of the land or property – About the land
 land.confirmLandOrPropertyAddress.error.required                              = Select Yes or No
 land.confirmLandOrPropertyAddress.change.hidden                               = ConfirmLandOrPropertyAddress
+
+
+land.localAuthorityCode.title                                                 = What is the local authority code? - About the land
+land.localAuthorityCode.heading                                               = What is the local authority code?
+land.localAuthorityCode.checkYourAnswersLabel                                 = Local authority code
+land.localAuthorityCode.error.required                                        = Enter local authority code
+land.localAuthorityCode.error.length                                          = Local authority code must be 4 characters or less
+land.localAuthorityCode.change.hidden                                         = Local authority code
+land.checkYourAnswers.localAuthorityCode.missing                              = Provide local authority code
+land.localAuthorityCode.hint.prefix                                           = Search the {0}
+land.localAuthorityCode.hint.suffix                                           = list of local authority codes (opens in a new window).
+land.localAuthorityCode.hint.link                                             = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
+land.localAuthorityCode.regexExp                                              = Invalid local authority code
+land.localAuthorityCode.constraint.invalid                                    = Provide valid local authority code

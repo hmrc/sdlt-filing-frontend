@@ -92,7 +92,7 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
 
     "must return valid for value within in range" in {
       val result = inRange(1, 10, "error.range").apply(5)
-      result mustEqual(Valid)
+      result mustEqual (Valid)
     }
 
     "must return invalid for value below minimum" in {
@@ -166,7 +166,7 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     "must return Valid for a date before or equal to the maximum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         date <- datesBetween(LocalDate.of(2000, 1, 1), max)
       } yield (max, date)
 
@@ -181,7 +181,7 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     "must return Invalid for a date after the maximum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         date <- datesBetween(max.plusDays(1), LocalDate.of(3000, 1, 2))
       } yield (max, date)
 
@@ -199,7 +199,7 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     "must return Valid for a date after or equal to the minimum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        min  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        min <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         date <- datesBetween(min, LocalDate.of(3000, 1, 1))
       } yield (min, date)
 
@@ -214,7 +214,7 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     "must return Invalid for a date before the minimum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        min  <- datesBetween(LocalDate.of(2000, 1, 2), LocalDate.of(3000, 1, 1))
+        min <- datesBetween(LocalDate.of(2000, 1, 2), LocalDate.of(3000, 1, 1))
         date <- datesBetween(LocalDate.of(2000, 1, 1), min.minusDays(1))
       } yield (min, date)
 
@@ -265,8 +265,8 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
   }
 
   "validUtr" - {
-    val validUtrString: Seq[String] = Seq("1111111111","9570845180")
-    val invalidUtrStrings: Seq[String] = Seq("1234567899","5570845180")
+    val validUtrString: Seq[String] = Seq("1111111111", "9570845180")
+    val invalidUtrStrings: Seq[String] = Seq("1234567899", "5570845180")
     val invalidUtrLength: Seq[String] = Seq("12134", "2343243", "3123123123123123", "42342342342342342323423423")
     val invalidUtrRegex: Seq[String] = Seq("23423khjbh", "agagagagag", "12--------", "          ")
     val invalidUtrMultipleErrors: String = "12ab"
@@ -279,7 +279,7 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     }
 
     "must return Invalid for an invalid UTR number" in {
-      invalidUtrStrings.foreach{ utr =>
+      invalidUtrStrings.foreach { utr =>
         val result = validUtr("error.utr")(utr)
         result mustBe Invalid("error.utr.invalid")
       }
@@ -305,9 +305,9 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     }
   }
 
-  "vatChecksumMod97Len9" -  {
-    val validVATString: Seq[String] = Seq("438573857","438573857", "438573857")
-    val invalidVatStrings: Seq[String] = Seq("123456789","987654321")
+  "vatChecksumMod97Len9" - {
+    val validVATString: Seq[String] = Seq("438573857", "438573857", "438573857")
+    val invalidVatStrings: Seq[String] = Seq("123456789", "987654321")
     val invalidVatLength: Seq[String] = Seq("12134", "2343243", "3123123123123123", "42342342342342342323423423")
     val invalidVatRegex: Seq[String] = Seq("12345678H", "ZXCVBNMLK", "12-------", "          ")
     val invalidVatMultipleErrors: String = "12ab"
@@ -320,7 +320,7 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     }
 
     "must return Invalid for an invalid vat number" in {
-      invalidVatStrings.foreach{ vat =>
+      invalidVatStrings.foreach { vat =>
         val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
         result mustBe Invalid("purchaser.registrationNumber.error.invalid")
       }
@@ -345,7 +345,7 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       result mustBe Invalid("purchaser.registrationNumber.error.regex.invalid", "^[0-9]*$")
     }
   }
-  
+
   "maxCheckboxes" - {
     "must return Valid for a number less than the threshold" in {
       val result = maxCheckboxes(4, "error.max").apply(Set(1, 2, 3))
@@ -354,7 +354,428 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
 
     "must return Invalid for a number more than the threshold" in {
       val result = maxCheckboxes(2, "error.max").apply(Set(1, 2, 3))
-        result mustBe Invalid("error.max")
+      result mustBe Invalid("error.max")
+    }
+
+  }
+
+  "check localAuthorityCodeConstraints" - {
+
+    val effectiveContractDateBeforeScotlandActDt = "2009-10-01"
+    val welshEffectiveTransactionDateBeforeWelshActDt = "2010-10-01"
+    val welshEffectiveTransactionDateAfterWelshActDt = "2024-10-01"
+    val welshEffectiveContractDateAfterWelshActDt = "2024-12-31"
+    val welshEffectiveContractDateBeforeWelshActDt = "2011-12-31"
+    val effectiveTransactionDateBeforeCR223tDt = "2015-03-01"
+    val effectiveContractDateBeforeCR223tDt = "2012-03-01"
+    val effectiveTransactionDateAfterCR223Dt = "2024-03-01"
+    val effectiveContractDateAfterCR223tDt = "2019-12-31"
+    val effectiveContractBetweenScotActDtAndCR223Dt = "2013-10-01"
+    val ukPostcode = Some("TE1 7NQ")
+    val scotlandPostcode = Some("AB1 TTE")
+    val errorKeyMessage = "land.localAuthorityCode.constraint.invalid"
+
+    "Transaction exists with effective date time - Effective date ≥ CR223" - {
+
+      "must return valid response for English local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          ukPostcode,
+          errorKeyMessage).apply("0220")
+        result mustBe Valid
+      }
+
+      "must return Invalid response for Scottish local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          ukPostcode,
+          errorKeyMessage).apply("9053")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for Welsh local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
+          contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateAfterWelshActDt)),
+          ukPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for dummy local authority code 8998 with Scottish postcode" in {
+        Seq("8998", "8999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+            contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+            scotlandPostcode,
+            errorKeyMessage).apply(code)
+          result mustBe Invalid(errorKeyMessage)
+        }
+      }
+    }
+
+    "Transaction exists without effective date time & contract date" - {
+
+      "must return valid response for English local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = None,
+          contractEffDate = None,
+          ukPostcode,
+          errorKeyMessage).apply("0220")
+        result mustBe Valid
+      }
+
+      "must return Invalid response for Scottish local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = None,
+          contractEffDate = None,
+          ukPostcode,
+          errorKeyMessage).apply("9053")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return valid response for Welsh local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = None,
+          contractEffDate = None,
+          ukPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Valid
+      }
+
+      "must return invalid response for dummy local authority codes 8998 and 8999 with Scottish postcode" in {
+        Seq("8998", "8999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = None,
+            contractEffDate = None,
+            scotlandPostcode,
+            errorKeyMessage).apply(code)
+          result mustBe Invalid(errorKeyMessage)
+        }
+      }
+
+      "must return valid response for Welsh special codes with UK postcode" in {
+        Seq("6996", "6997", "6998", "6999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = None,
+            contractEffDate = None,
+            ukPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Valid
+        }
+      }
+    }
+
+    "Scottish Postcode - Transaction exists with effective date time >= CR223" - {
+
+      "must return invalid response for English local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          scotlandPostcode,
+          errorKeyMessage).apply("0220")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid for Scottish local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          scotlandPostcode,
+          errorKeyMessage).apply("9053")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for Welsh local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
+          contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateAfterWelshActDt)),
+          scotlandPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Invalid(errorKeyMessage)
+      }
+    }
+
+    "Scottish Postcode - Transaction exists with effective date time < CR223" - {
+
+      "must return invalid response for English local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateBeforeCR223tDt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateBeforeCR223tDt)),
+          scotlandPostcode,
+          errorKeyMessage).apply("0220")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid for Scottish local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateBeforeCR223tDt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateBeforeCR223tDt)),
+          scotlandPostcode,
+          errorKeyMessage).apply("9053")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid for dummy Scottish local authority code" in {
+        Seq("8998", "8999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateBeforeCR223tDt)),
+            contractEffDate = Some(LocalDate.parse(effectiveContractDateBeforeCR223tDt)),
+            scotlandPostcode,
+            errorKeyMessage
+          ).apply(code)
+          result mustBe Invalid(errorKeyMessage)
+        }
+      }
+
+      "must return invalid response Welsh local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateBeforeWelshActDt)),
+          contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateBeforeWelshActDt)),
+          scotlandPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Invalid(errorKeyMessage)
+      }
+    }
+
+    "Welsh - Transaction exist with effective date time > Wales act date (Welsh LA code)" - {
+
+      "must return invalid for Welsh local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
+          contractEffDate = None,
+          ukPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return valid response for Welsh special local authority codes" in {
+
+        Seq("6996", "6997").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
+            contractEffDate = None,
+            ukPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Valid
+        }
+
+        Seq("6998", "6999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
+            contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateAfterWelshActDt)),
+            ukPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Valid
+        }
+      }
+    }
+
+    "Welsh - Transaction exist with effective date time < Wales act date (Welsh LA code)" - {
+
+      "must return invalid for Welsh local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateBeforeWelshActDt)),
+          contractEffDate = None,
+          scotlandPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for Welsh special local authority codes" in {
+
+        Seq("6996", "6997").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateBeforeWelshActDt)),
+            contractEffDate = None,
+            scotlandPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Invalid(errorKeyMessage)
+        }
+
+        Seq("6998", "6999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateBeforeWelshActDt)),
+            contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateAfterWelshActDt)),
+            scotlandPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Invalid(errorKeyMessage)
+        }
+      }
+    }
+
+    "Transaction with contract date < scotland act date and effective date > CR223" - {
+
+      "must return valid response for Scottish dummy local authority codes" in {
+        Seq("8998", "8999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+            contractEffDate = Some(LocalDate.parse(effectiveContractDateBeforeScotlandActDt)),
+            scotlandPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Valid
+        }
+      }
+    }
+
+    "Transaction with contract date in between scotland act date and CR223, and effective date > CR223" - {
+
+      "must return valid response for Scottish dummy 8998 local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractBetweenScotActDtAndCR223Dt)),
+          ukPostcode,
+          errorKeyMessage).apply("8998")
+        result mustBe Valid
+      }
+
+      "must return invalid response for Scottish dummy 8999 local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = Some(LocalDate.parse(effectiveContractBetweenScotActDtAndCR223Dt)),
+          ukPostcode,
+          errorKeyMessage).apply("8999")
+        result mustBe Invalid(errorKeyMessage)
+      }
+    }
+
+    "Transaction with no contract date and effective date > CR223" - {
+
+      "must return valid response for English local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = None,
+          ukPostcode,
+          errorKeyMessage).apply("0220")
+        result mustBe Valid
+      }
+
+      "must return invalid response for Scottish local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = None,
+          ukPostcode,
+          errorKeyMessage).apply("9053")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return valid response for Welsh local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+          contractEffDate = None,
+          ukPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return invalid response for Scottish dummy local authority codes" in {
+        Seq("8998", "8999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+            contractEffDate = None,
+            ukPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Invalid(errorKeyMessage)
+        }
+      }
+
+      "must return valid response for special local authority codes" in {
+        Seq("6996", "6997").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+            contractEffDate = None,
+            ukPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Valid
+        }
+      }
+
+      "must return invalid response for special local authority codes" in {
+        Seq("6998", "6999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
+            contractEffDate = None,
+            ukPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Invalid(errorKeyMessage)
+        }
+      }
+    }
+
+    "Transaction with no effective date and contract date > CR223" - {
+
+      "must return valid response for English local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = None,
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          ukPostcode,
+          errorKeyMessage).apply("0220")
+        result mustBe Valid
+      }
+
+      "must return invalid response for Scottish local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = None,
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          ukPostcode,
+          errorKeyMessage).apply("9053")
+        result mustBe Invalid(errorKeyMessage)
+      }
+
+      "must return valid response for Welsh local authority code" in {
+        val result = localAuthorityCodeConstraints(
+          effectiveTransactionDate = None,
+          contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+          ukPostcode,
+          errorKeyMessage).apply("6805")
+        result mustBe Valid
+      }
+
+      "must return invalid response for dummy local authority codes" in {
+        Seq("8998", "8999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = None,
+            contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+            ukPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Invalid(errorKeyMessage)
+        }
+      }
+
+      "must return valid response for special local authority codes" in {
+        Seq("6996", "6997", "6998", "6999").foreach { code =>
+          val result = localAuthorityCodeConstraints(
+            effectiveTransactionDate = None,
+            contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
+            ukPostcode,
+            errorKeyMessage
+          ).apply(code)
+
+          result mustBe Valid
+        }
+      }
     }
   }
 }
