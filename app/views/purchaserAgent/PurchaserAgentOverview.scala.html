@@ -46,8 +46,44 @@
                 content = HtmlContent(
                     s"""<h3 class="govuk-notification-banner__heading">${
                         messages(
-                            "purchaserAgent.overview.purchaserAgentRemoved",
-                            if(!purchaserAgentName.isBlank) purchaserAgentName else messages("purchaserAgent.overview.aPurchaserAgent")
+                            "site.overview.removed",
+                            if(!purchaserAgentName.isBlank) purchaserAgentName else messages("site.agent.anAgent")
+                        )
+                    }</h3>"""
+                ),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("purchaserAgentCreated").map { purchaserAgentName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "site.overview.created",
+                            if(!purchaserAgentName.isBlank) purchaserAgentName else messages("site.agent.anAgent")
+                        )
+                    }</h3>"""
+                ),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("purchaserAgentUpdated").map { purchaserAgentName =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "site.overview.updated",
+                            if(!purchaserAgentName.isBlank) purchaserAgentName else messages("site.agent.anAgent")
                         )
                     }</h3>"""
                 ),

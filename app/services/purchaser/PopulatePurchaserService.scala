@@ -221,6 +221,7 @@ class PopulatePurchaserService {
                                  userAnswers: UserAnswers): Try[UserAnswers] = {
 
     val mainPurchaserCheck = isMainPurchaser(id, userAnswers)
+    val companyDetailsID = userAnswers.fullReturn.flatMap(_.companyDetails.map(_.companyDetailsID)).flatten
     (mainPurchaserCheck, purchaser.isCompany, purchaser.address1, purchaser.surname, purchaser.companyName) match {
       case (true, Some("YES"), Some(line1), _, Some(name)) =>
         for {
@@ -245,6 +246,16 @@ class PopulatePurchaserService {
         for {
           finalAnswers <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
             buildAddress(line1, purchaser.address2, purchaser.address3, purchaser.address4, purchaser.postcode), purchaser, mainPurchaserCheck, id)
+        } yield finalAnswers
+      case (true, Some("YES"), _, _, _) =>
+        for {
+          answersWithId <- userAnswers.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, companyDetailsID))
+          finalAnswers <- answersWithId.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company)
+        } yield finalAnswers
+      case (true, Some("NO"), _, _, _) =>
+        for {
+          answersWithId <- userAnswers.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, None))
+          finalAnswers <- answersWithId.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual)
         } yield finalAnswers
       case _ =>
         Try(throw new IllegalStateException(s"Purchaser ${purchaser.purchaserID} is missing required data."))

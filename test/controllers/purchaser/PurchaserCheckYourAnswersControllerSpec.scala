@@ -608,7 +608,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-        when(mockPurchaserCreateOrUpdateService.result(any(), any(), any(),
+        when(mockPurchaserCreateOrUpdateService.result(any(), any(), any(), any(),
           any())(any(), any(), any())).thenReturn(Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))

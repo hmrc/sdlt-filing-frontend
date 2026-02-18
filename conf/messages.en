@@ -45,6 +45,14 @@ site.vendor.theVendor                                                           
 site.purchaser.thePurchaser                                                         = the purchaser
 site.agent.theAgent                                                                 = the agent
 
+site.vendor.aVendor                                                                 = a vendor
+site.purchaser.aPurchaser                                                           = a purchaser
+site.agent.anAgent                                                                  = an agent
+
+site.overview.created                                                               = You have added {0}
+site.overview.updated                                                               = You have updated {0}
+site.overview.removed                                                               = You have removed {0}
+
 site.journeyRecovery.continue.title                                                 = Sorry, there is a problem with the service
 site.journeyRecovery.continue.heading                                               = Sorry, there is a problem with the service
 site.journeyRecovery.continue.guidance                                              = [Add content to explain how to proceed.]
@@ -385,11 +393,9 @@ vendor.vendorOverview.noVendor.subHeadingWithVendors                            
 vendor.vendorOverview.noVendor.subHeadingNoVendors                                  = Do you need to add another vendor?
 vendor.vendorOverview.noVendor.headingNoVendors                                     = You do not have any vendors added.
 vendor.vendorOverview.summaryInfo.text                                              = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
-vendor.vendorOverview.vendorRemoved                                                 = You have removed {0}
 vendor.vendorOverview.noVendor.p1                                                   = You have no vendors. You must add a vendor.
 vendor.vendorOverview.noVendor.button                                               = Add a vendor
 vendor.vendorOverview.error.required                                                = Please select an option
-vendor.vendorOverview.aVendor                                                       = a vendor
 
 vendor.whoIsTheVendor.title                                                         = Who is the vendor? - About the vendor
 vendor.whoIsTheVendor.heading                                                       = Who is the vendor?
@@ -701,18 +707,17 @@ purchaser.purchaserOverview.title                                               
 purchaser.purchaserOverview.heading                                                 = Purchaser Overview
 purchaser.purchaserOverview.noPurchaser.subHeadingNoPurchasers                      = Do you need to add another purchaser?
 purchaser.purchaserOverview.limitReached                                            = To add a new purchaser, you must remove a purchaser or vendor
-purchaser.purchaserOverview.purchaserRemoved                                        = You have removed {0}
-purchaser.purchaserOverview.aPurchaser                                              = a purchaser
 purchaser.purchaserOverview.error.required                                          = Please select an option
 purchaser.purchaserOverview.noPurchaser.button                                      = Add a purchaser
 purchaser.purchaserOverview.summaryInfo.text                                        = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
 purchaser.purchaserOverview.noPurchaser.p1                                          = You have no purchasers listed. You must add a purchaser to complete this return.
+purchaser.purchaserOverview.mainPurchaserIncomplete.part1                           = You need to
+purchaser.purchaserOverview.mainPurchaserIncomplete.part2                           = update {0}’s details
 
 # Purchaser Agent
 purchaserAgent.overview.title                                                   = Purchaser’s agent overview - About the purchaser’s agent
 purchaserAgent.overview.heading                                                 = Purchaser’s agent overview
 purchaserAgent.overview.noPurchaser.subHeadingNoPurchasers                      = Do you want to add an agent for the purchaser?
-purchaserAgent.overview.purchaserAgentRemoved                                   = You have removed {0}
 purchaserAgent.overview.aPurchaserAgent                                         = a purchaser’s agent
 purchaserAgent.overview.error.required                                          = Please select an option
 purchaserAgent.overview.noPurchaser.p1                                          = You have no agents listed for the purchaser.
@@ -850,9 +855,6 @@ vendorAgent.BeforeYouStart.change.hidden                                      = 
 vendorAgent.overview.title                                                    = Vendor’s agent overview
 vendorAgent.overview.heading                                                  = Vendor’s agent overview
 vendorAgent.overview.noVendor.subHeadingNoVendors                             = Do you want to add an agent for the vendor?
-vendorAgent.overview.vendorAgentRemoved                                       = You have removed {0}
-vendorAgent.overview.vendorAgentCreated                                       = You have added {0}
-vendorAgent.overview.vendorAgentUpdated                                       = You have updated {0}
 vendorAgent.overview.aVendorAgent                                             = a vendor’s agent
 vendorAgent.overview.error.required                                           = Please select an option
 vendorAgent.overview.noVendor.p1                                              = You have no agents listed for the vendor.

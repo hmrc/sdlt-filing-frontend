@@ -751,67 +751,59 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(PurchaserAndVendorConnected.No)
         }
 
-        "must fail when address1 is missing" in {
-          val purchaserNoAddress = Purchaser(
+        "must successfully populate session with incomplete company purchaser" in {
+          val incompleteCompanyPurchaser = Purchaser(
             purchaserID = Some("PUR008"),
-            surname = Some("Davis"),
+            surname = None,
+            address1 = None,
+            isCompany = Some("YES")
+          )
+
+          val companyDetails = CompanyDetails(companyDetailsID = Some("CD001"))
+
+          val fullReturn: FullReturn =
+            emptyFullReturn.copy(
+              purchaser = Some(Seq(incompleteCompanyPurchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR008"))),
+              companyDetails = Some(companyDetails)
+            )
+
+          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+            .copy(fullReturn = Some(fullReturn))
+
+
+          val result = service.populatePurchaserInSession(incompleteCompanyPurchaser, "PUR008", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+          updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR008", Some("CD001")))
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
+        }
+
+        "must successfully populate session with incomplete individual purchaser" in {
+          val incompleteIndividualPurchaser = Purchaser(
+            purchaserID = Some("PUR008"),
+            surname = None,
             address1 = None,
             isCompany = Some("NO")
           )
 
           val fullReturnWithNoAddress: FullReturn =
-            emptyFullReturn.copy(purchaser = Some(Seq(purchaserNoAddress)),
+            emptyFullReturn.copy(purchaser = Some(Seq(incompleteIndividualPurchaser)),
               returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR008"))))
 
           val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
             .copy(fullReturn = Some(fullReturnWithNoAddress))
 
 
-          val result = service.populatePurchaserInSession(purchaserNoAddress, "PUR008", userAnswers)
+          val result = service.populatePurchaserInSession(incompleteIndividualPurchaser, "PUR008", userAnswers)
 
-          result mustBe a[Failure[_]]
-          result.failed.get mustBe an[IllegalStateException]
-          result.failed.get.getMessage must include("is missing required data")
-        }
+          result mustBe a[Success[_]]
 
-        "must fail when surname is missing for individual" in {
-          val purchaserIndividualNoName = Purchaser(
-            purchaserID = Some("PUR009"),
-            surname = None,
-            address1 = Some("130 Pine Avenue"),
-            isCompany = Some("NO")
-          )
-          val fullReturnIndividualNoName: FullReturn =
-            emptyFullReturn.copy(purchaser = Some(Seq(purchaserIndividualNoName)))
-
-          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-            .copy(fullReturn = Some(fullReturnIndividualNoName))
-
-
-          val result = service.populatePurchaserInSession(purchaserIndividualNoName, "PUR009", userAnswers)
-
-          result mustBe a[Failure[_]]
-          result.failed.get mustBe an[IllegalStateException]
-        }
-
-        "must fail when company name is missing for company" in {
-          val purchaserCompanyNoName = Purchaser(
-            purchaserID = Some("PUR010"),
-            companyName = None,
-            address1 = Some("140 Corporate Drive"),
-            isCompany = Some("YES")
-          )
-          val fullReturnCompanyNoName: FullReturn =
-            emptyFullReturn.copy(purchaser = Some(Seq(purchaserCompanyNoName)))
-
-          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
-            .copy(fullReturn = Some(fullReturnCompanyNoName))
-
-
-          val result = service.populatePurchaserInSession(purchaserCompanyNoName, "PUR010", userAnswers)
-
-          result mustBe a[Failure[_]]
-          result.failed.get mustBe an[IllegalStateException]
+          val updatedAnswers = result.get
+          updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR008", None))
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
         }
 
         "must fail when isCompany is missing" in {

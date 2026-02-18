@@ -28,6 +28,43 @@ import viewmodels.checkAnswers.purchaser.*
 import scala.util.Try
 
 class PurchaserService {
+  
+  def getMainPurchaser(userAnswers: UserAnswers): Option[Purchaser] = {
+    userAnswers.fullReturn.flatMap { fullReturn =>
+      val mainPurchaserID = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
+      fullReturn.purchaser.flatMap(_.find(purchaser => mainPurchaserID.equals(purchaser.purchaserID)))
+    }
+  }
+
+  private def getCompanyDetails(userAnswers: UserAnswers): Option[CompanyDetails] = {
+    userAnswers.fullReturn.flatMap { fullReturn =>
+      fullReturn.companyDetails
+    }
+  }
+  
+  def isMainPurchaserComplete(userAnswers: UserAnswers): Boolean = {
+    getMainPurchaser(userAnswers).exists { mainPurchaser =>
+      mainPurchaser.isCompany match {
+        case Some("YES") => isMainCompanyPurchaserComplete(mainPurchaser, getCompanyDetails(userAnswers))
+        case Some("NO") => isMainIndividualPurchaserComplete(mainPurchaser)
+        case _ => false
+      }
+    }
+  }
+
+  private def isMainCompanyPurchaserComplete(mainPurchaser: Purchaser, companyDetails: Option[CompanyDetails]): Boolean = {
+    (mainPurchaser.companyName, mainPurchaser.address1, companyDetails) match {
+      case (Some(_), Some(_), Some(_)) => true
+      case _ => false
+    }
+  }
+
+  private def isMainIndividualPurchaserComplete(mainPurchaser: Purchaser): Boolean = {
+    (mainPurchaser.surname, mainPurchaser.address1, mainPurchaser.hasNino) match {
+      case (Some(_), Some(_), Some(_)) => true
+      case _ => false
+    }
+  }
 
   def createPurchaserName(purchaser: Purchaser): Option[NameOfPurchaser] = {
     purchaser.companyName match {

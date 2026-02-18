@@ -16,11 +16,14 @@
 
 package models.vendor
 
+import constants.FullReturnConstants.*
 import models.{FullReturn, UserAnswers, Vendor}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -49,7 +52,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
     returnResourceRef = "RRF-2024-001"
   )
 
-  private val minimalFullReturn = FullReturn(
+  private val minimalFullReturnWithVendor = FullReturn(
     stornId = "12345",
     returnResourceRef = "RRF-2024-001",
     vendor = Some(
@@ -450,6 +453,88 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         vendorReturn1 must not equal vendorReturn2
       }
     }
+
+    ".from" - {
+      "must create CreateVendorRequest from userAnswers and a complete vendor" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(emptyFullReturn)
+        )
+
+        val expected = CreateVendorRequest(
+          stornId = userAnswers.storn,
+          returnResourceRef = emptyFullReturn.returnResourceRef,
+          title = None,
+          forename1 = Some("Jane"),
+          forename2 = Some("Elizabeth"),
+          name = "Johnson",
+          houseNumber = Some("15"),
+          addressLine1 = "Park Lane",
+          addressLine2 = Some("Mayfair"),
+          addressLine3 = Some("London"),
+          addressLine4 = None,
+          postcode = Some("W1K 1LB"),
+          isRepresentedByAgent = "YES"
+        )
+
+        val result = CreateVendorRequest.from(userAnswers, completeVendor).futureValue
+
+        result mustBe expected
+      }
+
+      "must create CreateVendorRequest from userAnswers and a minimal vendor" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(emptyFullReturn)
+        )
+
+        val minimalVendor: Vendor = Vendor(
+          name = Some("Johnson"),
+          address1 = Some("Park Lane"),
+          isRepresentedByAgent = Some("NO")
+        )
+
+        val expected = CreateVendorRequest(
+          stornId = userAnswers.storn,
+          returnResourceRef = emptyFullReturn.returnResourceRef,
+          name = "Johnson",
+          addressLine1 = "Park Lane",
+          isRepresentedByAgent = "NO"
+        )
+
+        val result = CreateVendorRequest.from(userAnswers, minimalVendor).futureValue
+
+        result mustBe expected
+      }
+
+      "must fail to create CreateVendorRequest when fullReturn is missing" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = None
+        )
+
+        val result = intercept[NoSuchElementException] {
+          await(CreateVendorRequest.from(userAnswers, completeVendor))
+        }
+        result.getMessage mustBe "Full return not found"
+      }
+
+      "must fail to create CreateVendorRequest when mandatory fields are missing" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(emptyFullReturn)
+        )
+
+        val result = intercept[NoSuchElementException] {
+          await(CreateVendorRequest.from(userAnswers, completeVendor.copy(name = None)))
+        }
+        result.getMessage mustBe "Vendor mandatory fields not found"
+      }
+    }
   }
 
   "UpdateVendorRequest" - {
@@ -759,6 +844,95 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         vendorRequest1 must not equal vendorRequest2
       }
     }
+
+    ".from" - {
+      "must create UpdateVendorRequest from userAnswers and a complete vendor" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(emptyFullReturn)
+        )
+
+        val expected = UpdateVendorRequest(
+          stornId = userAnswers.storn,
+          returnResourceRef = emptyFullReturn.returnResourceRef,
+          title = Some("Mrs"),
+          forename1 = Some("Jane"),
+          forename2 = Some("Elizabeth"),
+          name = "Johnson",
+          houseNumber = Some("15"),
+          addressLine1 = "Park Lane",
+          addressLine2 = Some("Mayfair"),
+          addressLine3 = Some("London"),
+          addressLine4 = None,
+          postcode = Some("W1K 1LB"),
+          isRepresentedByAgent = "YES",
+          vendorResourceRef = "VEN-REF-001",
+          nextVendorId = Some("VEN-ID-002")
+        )
+
+        val result = UpdateVendorRequest.from(
+          userAnswers,
+          completeVendor.copy(nextVendorID = Some("VEN-ID-002"))
+        ).futureValue
+
+        result mustBe expected
+      }
+
+      "must create UpdateVendorRequest from userAnswers and a minimal vendor" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(emptyFullReturn)
+        )
+
+        val minimalVendor: Vendor = Vendor(
+          name = Some("Johnson"),
+          address1 = Some("Park Lane"),
+          isRepresentedByAgent = Some("YES"),
+          vendorResourceRef = Some("VEN-REF-001")
+        )
+
+        val expected = UpdateVendorRequest(
+          stornId = userAnswers.storn,
+          returnResourceRef = emptyFullReturn.returnResourceRef,
+          name = "Johnson",
+          addressLine1 = "Park Lane",
+          isRepresentedByAgent = "YES",
+          vendorResourceRef = "VEN-REF-001"
+        )
+
+        val result = UpdateVendorRequest.from(userAnswers, minimalVendor).futureValue
+
+        result mustBe expected
+      }
+
+      "must fail to create UpdateVendorRequest when fullReturn is missing" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = None
+        )
+
+        val result = intercept[NoSuchElementException] {
+          await(UpdateVendorRequest.from(userAnswers, completeVendor))
+        }
+        result.getMessage mustBe "Full return not found"
+      }
+
+      "must fail to create UpdateVendorRequest when mandatory fields are missing" in {
+        val userAnswers = UserAnswers(
+          id = "12345",
+          storn = "12345",
+          fullReturn = Some(emptyFullReturn)
+        )
+
+        val result = intercept[NoSuchElementException] {
+          await(UpdateVendorRequest.from(userAnswers, completeVendor.copy(name = None)))
+        }
+        result.getMessage mustBe "Vendor mandatory fields not found"
+      }
+    }
   }
 
   "UpdateVendorReturn" - {
@@ -1040,7 +1214,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         val userAnswers = UserAnswers(
           id = "12345",
           storn = "12345",
-          fullReturn = Some(minimalFullReturn)
+          fullReturn = Some(minimalFullReturnWithVendor)
         )
         val vendorResourceRef = "VRF-001"
         
@@ -1054,7 +1228,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         val userAnswers = UserAnswers(
           id = "12345",
           storn = "12345",
-          fullReturn = Some(minimalFullReturn)
+          fullReturn = Some(minimalFullReturnWithVendor)
         )
         val vendorResourceRef = "VRF-000"
 

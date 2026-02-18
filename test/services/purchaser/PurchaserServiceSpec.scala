@@ -2024,5 +2024,188 @@ class PurchaserServiceSpec extends SpecBase {
         }
       }
     }
+
+    "getMainPurchaser" - {
+
+      "must return the main purchaser" - {
+
+        "when only one purchaser in the list" in {
+          val singlePurchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("YES"),
+            companyName = Some("Test Company")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(singlePurchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001")))
+            )))
+
+          service.getMainPurchaser(userAnswers) mustBe Some(singlePurchaser)
+        }
+
+        "when multiple purchasers in the list" in {
+          val purchaser1 = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("YES"),
+            companyName = Some("Test Company")
+          )
+
+          val purchaser2 = Purchaser(
+            purchaserID = Some("PURCH002"),
+            isCompany = Some("YES"),
+            companyName = Some("Test Company")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser1, purchaser2)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001")))
+            )))
+
+          service.getMainPurchaser(userAnswers) mustBe Some(purchaser1)
+        }
+      }
+
+      "must return None" - {
+
+        "when the mainPurchaserId doesn't match any in the purchaser list" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("YES"),
+            companyName = Some("Test Company")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH002")))
+            )))
+
+          service.getMainPurchaser(userAnswers) mustBe None
+        }
+
+        "when fullReturn is None" in {
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = None)
+
+          service.getMainPurchaser(userAnswers) mustBe None
+        }
+      }
+    }
+
+    "isMainPurchaserComplete" - {
+
+      "must return true" - {
+
+        "when all company required fields are present" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("YES"),
+            companyName = Some("Test Company"),
+            address1 = Some("123 Test Street")
+          )
+
+          val companyDetails = CompanyDetails()
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001"))),
+              companyDetails = Some(companyDetails)
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe true
+        }
+
+        "when all individual required fields are present" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("NO"),
+            surname = Some("Test Name"),
+            address1 = Some("123 Test Street"),
+            hasNino = Some("YES")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001")))
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe true
+        }
+      }
+
+      "must return false" - {
+        "when required data is missing for an individual purchaser" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("NO"),
+            address1 = Some("123 Test Street")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001")))
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe false
+        }
+
+        "when required data is missing for a company purchaser" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("YES"),
+            address1 = Some("123 Test Street")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001")))
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe false
+        }
+
+        "when no main purchaser is found" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("NO"),
+            surname = Some("Test Name"),
+            address1 = Some("123 Test Street")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH002")))
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe false
+        }
+
+        "when isCompany is missing" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = None,
+            surname = Some("Test Name"),
+            address1 = Some("123 Test Street"),
+            hasNino = Some("YES")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001")))
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe false
+        }
+      }
+    }
   }
 }

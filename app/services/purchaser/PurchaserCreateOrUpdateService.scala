@@ -47,11 +47,12 @@ class PurchaserCreateOrUpdateService {
 
   private def requireReturnId(userAnswers: UserAnswers): String =
     userAnswers.returnId.getOrElse(throw new NotFoundException("Return ID is required"))
-  
+
   def result(userAnswers: UserAnswers,
              sessionData: PurchaserSessionQuestions,
              backendConnector: StampDutyLandTaxConnector,
-             purchaserRequestService: PurchaserRequestService)
+             purchaserRequestService: PurchaserRequestService,
+             purchaserService: PurchaserService)
             (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
     val purchaserCount = userAnswers.fullReturn
@@ -59,19 +60,25 @@ class PurchaserCreateOrUpdateService {
       .map(_.length)
       .getOrElse(0)
 
+    val vendorCount = userAnswers.fullReturn
+      .flatMap(_.vendor)
+      .map(_.length)
+      .getOrElse(0)
+
     val hasPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID).isDefined
+    val vendorPurchaserCount = purchaserCount + vendorCount
 
-    logger.info(s"[PurchaserCreateOrUpdateService][result] hasPurchaserId=$hasPurchaserId, purchaserCount=$purchaserCount")
+    logger.info(s"[PurchaserCreateOrUpdateService][result] hasPurchaserId=$hasPurchaserId, vendorPurchaserCount=$vendorPurchaserCount")
 
-    val resultFuture = (hasPurchaserId, purchaserCount < 99) match {
+    val resultFuture = (hasPurchaserId, vendorPurchaserCount < 99) match {
       case (true, _) =>
         logger.info("[PurchaserCreateOrUpdateService][result] Routing to UPDATE purchaser")
-        callUpdatePurchaser(backendConnector, purchaserRequestService, userAnswers, sessionData)
+        callUpdatePurchaser(backendConnector, purchaserRequestService, purchaserService, userAnswers, sessionData)
       case (false, true) =>
         logger.info("[PurchaserCreateOrUpdateService][result] Routing to CREATE purchaser")
-        callCreatePurchaser(backendConnector, purchaserRequestService, userAnswers, sessionData)
+        callCreatePurchaser(backendConnector, purchaserRequestService, purchaserService, userAnswers, sessionData)
       case _ =>
-        logger.warn("[PurchaserCreateOrUpdateService][result] Purchaser count >= 99, skipping create/update")
+        logger.warn("[PurchaserCreateOrUpdateService][result] Purchaser vendor count >= 99, skipping create/update")
         Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
     }
 
@@ -84,6 +91,7 @@ class PurchaserCreateOrUpdateService {
 
   def callUpdatePurchaser(backendConnector: StampDutyLandTaxConnector,
                           purchaserRequestService: PurchaserRequestService,
+                          purchaserService: PurchaserService,
                           userAnswers: UserAnswers,
                           sessionData: PurchaserSessionQuestions)
                          (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
@@ -128,10 +136,12 @@ class PurchaserCreateOrUpdateService {
         case _ => Future.unit
       }
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
+      .flashing("purchaserUpdated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
   }
 
   def callCreatePurchaser(backendConnector: StampDutyLandTaxConnector,
                           purchaserRequestService: PurchaserRequestService,
+                          purchaserService: PurchaserService,
                           userAnswers: UserAnswers,
                           sessionData: PurchaserSessionQuestions)
                          (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
@@ -153,5 +163,6 @@ class PurchaserCreateOrUpdateService {
         case _ => Future.unit
       }
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
+      .flashing("purchaserCreated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
   }
 }

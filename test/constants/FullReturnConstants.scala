@@ -145,7 +145,7 @@ object FullReturnConstants {
     address3 = Some("London"),
     address4 = None,
     postcode = Some("W1K 1LB"),
-    isRepresentedByAgent = Some("true"),
+    isRepresentedByAgent = Some("YES"),
     vendorResourceRef = Some("VEN-REF-001"),
     nextVendorID = None
   )
@@ -163,7 +163,7 @@ object FullReturnConstants {
     address3 = Some("London"),
     address4 = None,
     postcode = Some("W12 1BL"),
-    isRepresentedByAgent = Some("false"),
+    isRepresentedByAgent = Some("NO"),
     vendorResourceRef = Some("VEN-REF-002"),
     nextVendorID = None
   )
@@ -181,9 +181,27 @@ object FullReturnConstants {
     address3 = Some("Essex"),
     address4 = None,
     postcode = Some("SS1 1LB"),
-    isRepresentedByAgent = Some("true"),
+    isRepresentedByAgent = Some("YES"),
     vendorResourceRef = Some("VEN-REF-003"),
     nextVendorID = None
+  )
+
+  val completeVendorWithNextId: Vendor = Vendor(
+    vendorID = Some("VEN001"),
+    returnID = Some("RET123456789"),
+    title = Some("Mrs"),
+    forename1 = Some("Jane"),
+    forename2 = Some("Elizabeth"),
+    name = Some("Johnson"),
+    houseNumber = Some("15"),
+    address1 = Some("Park Lane"),
+    address2 = Some("Mayfair"),
+    address3 = Some("London"),
+    address4 = None,
+    postcode = Some("W1K 1LB"),
+    isRepresentedByAgent = Some("YES"),
+    vendorResourceRef = Some("VEN-REF-001"),
+    nextVendorID = Some("VEN002")
   )
 
   val completeLand: Land = Land(

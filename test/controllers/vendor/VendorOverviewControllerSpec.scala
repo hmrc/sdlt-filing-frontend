@@ -140,11 +140,11 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must calculate errorCalc correctly when vendors + purchasers > 99" in {
+      "must calculate errorCalc correctly when vendors + purchasers > 98" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
-        val vendors = (1 to 60).map(i => createVendor(
+        val vendors = (1 to 49).map(i => createVendor(
           s"VEN$i",
           name = Some(s"Vendor$i"),
           vendorResourceRef = Some(s"REF$i")
@@ -172,6 +172,7 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
+          contentAsString(result) must include("To add a new vendor, you must remove a purchaser or vendor")
         }
       }
 

@@ -40,12 +40,12 @@ object VendorCurrent {
 
 case class VendorSessionAddress(
                                  houseNumber: Option[String] = None,
-                                 line1: Option[String] = None,
+                                 line1: String,
                                  line2: Option[String] = None,
                                  line3: Option[String] = None,
                                  line4: Option[String] = None,
                                  line5: Option[String] = None,
-                                 postcode: Option[String] = None,
+                                 postcode: String,
                                  country: Option[VendorSessionCountry],
                                  addressValidated: Option[Boolean] = None
                                )
