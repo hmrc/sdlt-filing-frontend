@@ -1192,6 +1192,122 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
 
+      // SDLT - Tax Calc Case - 28a - Self Assessed
+      "TaxReliefCode is RightToBuy: 22" when {
+        "date is on 17th March 2016" when {
+          "the transaction is linked" must {
+            "return the self assessed response" when {
+              "Property Type Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 17,
+                        |  "effectiveDateMonth": 3,
+                        |  "effectiveDateYear": 2016,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type Non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Non-residential",
+                        |  "effectiveDateDay": 17,
+                        |  "effectiveDateMonth": 3,
+                        |  "effectiveDateYear": 2016,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+        "date is after 17th March 2016" when {
+          "the transaction is linked" must {
+            "return the self assessed response" when {
+              "Property Type Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 16,
+                        |  "effectiveDateMonth": 9,
+                        |  "effectiveDateYear": 2021,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type Non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Non-residential",
+                        |  "effectiveDateDay": 16,
+                        |  "effectiveDateMonth": 2,
+                        |  "effectiveDateYear": 2019,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
+
       // SDLT - Tax Calc Case - 27 - Self Assessed
       "the transaction is linked" when {
         "date is before 4th December 2014" when {
