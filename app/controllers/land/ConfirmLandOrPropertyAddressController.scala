@@ -19,8 +19,9 @@ package controllers.land
 import controllers.actions.*
 import forms.land.ConfirmLandOrPropertyAddressFormProvider
 import models.Mode
+import models.address.Address
 import navigation.Navigator
-import pages.land.ConfirmLandOrPropertyAddressPage
+import pages.land.{ConfirmLandOrPropertyAddressPage, LandAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -49,6 +50,8 @@ class ConfirmLandOrPropertyAddressController @Inject()(
 
       val address1 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address1.isDefined).flatMap(_.address1)))
       val address2 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address2.isDefined).flatMap(_.address2)))
+      val address3 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address3.isDefined).flatMap(_.address3)))
+      val address4 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address4.isDefined).flatMap(_.address4)))
       val postcode = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.postcode.isDefined).flatMap(_.postcode)))
       val willSendPlanByPost = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.willSendPlanByPost.isDefined)))
       val localAuthorityNumber = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.localAuthorityNumber.isDefined)))
@@ -56,20 +59,13 @@ class ConfirmLandOrPropertyAddressController @Inject()(
       val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
       val totalLand = landList.length == 1
 
-      (address1, address2, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
-        case (Some(address1), Some(address2) , Some(postcode), None, None, None) if totalLand =>
+      (address1, address2, address3, address4, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
+        case (Some(add1), _, _, _, Some(post), None, None, None) if totalLand =>
           val preparedForm = request.userAnswers.get(ConfirmLandOrPropertyAddressPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-          Ok(view(preparedForm, mode, address1, address2, postcode))
-
-        case (Some(address1), None, Some(postcode), None, None, None) if totalLand =>
-          val preparedForm = request.userAnswers.get(ConfirmLandOrPropertyAddressPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-          Ok(view(preparedForm, mode, address1, "", postcode))
+          Ok(view(preparedForm, mode, address1, address2, address3, address4, postcode))
 
         case _ => Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
       }
@@ -78,57 +74,41 @@ class ConfirmLandOrPropertyAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       val address1 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address1.isDefined).flatMap(_.address1)))
       val address2 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address2.isDefined).flatMap(_.address2)))
+      val address3 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address3.isDefined).flatMap(_.address3)))
+      val address4 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address4.isDefined).flatMap(_.address4)))
       val postcode = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.postcode.isDefined).flatMap(_.postcode)))
       val willSendPlanByPost = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.willSendPlanByPost.isDefined)))
       val localAuthorityNumber = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.localAuthorityNumber.isDefined)))
       val interestCreatedTransferred = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.interestCreatedTransferred.isDefined)))
       val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
       val totalLand = landList.length == 1
-
-      (address1, address2, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
-        case (Some(address1), Some(address2), Some(postcode), None, None, None) if totalLand =>
+      
+      (address1, address2, address3, address4, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
+        case (Some(add1), _, _, _, Some(post), None, None, None) if totalLand =>
           form.bindFromRequest().fold(
             formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode, address1, address2, postcode))),
-
+              Future.successful(BadRequest(view(formWithErrors, mode, address1, address2, address3, address4, postcode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmLandOrPropertyAddressPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
                 if (value.toString == "yes") {
-                  Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswers))
+                  val address = Address(line1 = add1, line2 = address2, line3 = address3, line4 = address4, postcode = postcode)
+                  val updatedAnswersWithAddress = updatedAnswers.set(LandAddressPage, address).get
+                  sessionRepository.set(updatedAnswersWithAddress)
+                  Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswersWithAddress))
                 } else {
                   Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
                 }
               }
           )
-
-        case (Some(address1), None, Some(postcode), None, None, None) if totalLand =>
-          form.bindFromRequest().fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode, address1, "", postcode))),
-
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmLandOrPropertyAddressPage, value))
-                _ <- sessionRepository.set(updatedAnswers)
-              } yield {
-                if (value.toString == "yes") {
-                  Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswers))
-                } else {
-                  Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
-                }
-              }
-          )
-
         case _ =>
           form.bindFromRequest().fold(
             formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode, "", "", ""))),
+              Future.successful(BadRequest(view(formWithErrors, mode, address1, address2, address3, address4, postcode))),
 
             value =>
               for {

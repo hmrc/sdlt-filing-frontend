@@ -29,7 +29,7 @@
 )
 
 
-@(form: Form[_], mode: Mode, address1: String, address2: String, postcode: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, address1: Option[String], address2: Option[String], address3: Option[String], address4: Option[String], postcode: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("land.confirmLandOrPropertyAddress.title"))) {
 
@@ -41,7 +41,7 @@
 
         @caption(messages("site.land.caption"))
         @h1(messages("land.confirmLandOrPropertyAddress.heading"))
-        @p(Seq(address1, address2, postcode).filter(_.trim.nonEmpty).mkString("<br>"))
+        @p(Seq(address1, address2, address3, address4, postcode).flatten.filter(_.trim.nonEmpty).mkString("<br>"))
 
         @govukRadios(
             RadiosViewModel(
