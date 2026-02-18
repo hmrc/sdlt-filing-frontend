@@ -44,43 +44,53 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
   val formProvider = new ConfirmLandOrPropertyAddressFormProvider()
   val form = formProvider()
 
-  val testAddress1 = "123 Test Street"
+  val testAddress1 = Some("123 Test Street")
   val testAddress2 = Some("Test Town")
-  val testPostcode = "AB12 3CD"
+  val testAddress3 = Some("Test County")
+  val testAddress4 = Some("Test City")
+  val testPostcode = Some("AB12 3CD")
   val testStorn = "TESTSTORN"
   val testReturnRef = "REF001"
 
   private val testLand = Land(
-    address1 = Some(testAddress1),
+    address1 = testAddress1,
     address2 = testAddress2,
-    postcode = Some(testPostcode),
+    address3 = testAddress3,
+    address4 = testAddress4,
+    postcode = testPostcode,
     willSendPlanByPost = None,
     localAuthorityNumber = None,
     interestCreatedTransferred = None
   )
 
   private val testLandWithWillSendPlanByPost = Land(
-    address1 = Some(testAddress1),
+    address1 = testAddress1,
     address2 = testAddress2,
-    postcode = Some(testPostcode),
+    address3 = testAddress3,
+    address4 = testAddress4,
+    postcode = testPostcode,
     willSendPlanByPost = Some("true"),
     localAuthorityNumber = None,
     interestCreatedTransferred = None
   )
 
   private val testLandWithLocalAuthorityNumber = Land(
-    address1 = Some(testAddress1),
+    address1 = testAddress1,
     address2 = testAddress2,
-    postcode = Some(testPostcode),
+    address3 = testAddress3,
+    address4 = testAddress4,
+    postcode = testPostcode,
     willSendPlanByPost = None,
     localAuthorityNumber = Some("LA123"),
     interestCreatedTransferred = None
   )
 
   private val testLandWithInterestCreatedTransferred = Land(
-    address1 = Some(testAddress1),
+    address1 = testAddress1,
     address2 = testAddress2,
-    postcode = Some(testPostcode),
+    address3 = testAddress3,
+    address4 = testAddress4,
+    postcode = testPostcode,
     willSendPlanByPost = None,
     localAuthorityNumber = None,
     interestCreatedTransferred = Some("created")
@@ -89,24 +99,19 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
   private val testLandMissingAddress1 = Land(
     address1 = None,
     address2 = testAddress2,
-    postcode = Some(testPostcode),
-    willSendPlanByPost = None,
-    localAuthorityNumber = None,
-    interestCreatedTransferred = None
-  )
-
-  private val testLandMissingAddress2 = Land(
-    address1 = Some(testAddress1),
-    address2 = None,
-    postcode = Some(testPostcode),
+    address3 = testAddress3,
+    address4 = testAddress4,
+    postcode = testPostcode,
     willSendPlanByPost = None,
     localAuthorityNumber = None,
     interestCreatedTransferred = None
   )
 
   private val testLandMissingPostcode = Land(
-    address1 = Some(testAddress1),
+    address1 = testAddress1,
     address2 = testAddress2,
+    address3 = testAddress3,
+    address4 = testAddress4,
     postcode = None,
     willSendPlanByPost = None,
     localAuthorityNumber = None,
@@ -141,7 +146,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, testAddress1, testAddress2.get, testPostcode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, testAddress1, testAddress2, testAddress3, testAddress4, testPostcode)(request, messages(application)).toString
       }
     }
 
@@ -160,58 +165,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ConfirmLandOrPropertyAddress.values.head), NormalMode, testAddress1, testAddress2.get, testPostcode)(request, messages(application)).toString
-      }
-    }
-
-    "must return OK and the correct view for a GET when address2 is missing" in {
-
-      val fullReturnMissingAddress2 = FullReturn(
-        stornId = testStorn,
-        returnResourceRef = testReturnRef,
-        vendor = None,
-        land = Some(Seq(testLandMissingAddress2))
-      )
-
-      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, confirmLandOrPropertyAddressRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, testAddress1, "", testPostcode)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly when address2 is missing and question has previously been answered" in {
-
-      val fullReturnMissingAddress2 = FullReturn(
-        stornId = testStorn,
-        returnResourceRef = testReturnRef,
-        vendor = None,
-        land = Some(Seq(testLandMissingAddress2))
-      )
-
-      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
-        .set(ConfirmLandOrPropertyAddressPage, ConfirmLandOrPropertyAddress.values.head).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, confirmLandOrPropertyAddressRoute)
-
-        val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ConfirmLandOrPropertyAddress.values.head), NormalMode, testAddress1, "", testPostcode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(ConfirmLandOrPropertyAddress.values.head), NormalMode, testAddress1, testAddress2, testAddress3, testAddress4, testPostcode)(request, messages(application)).toString
       }
     }
 
@@ -443,109 +397,11 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, testAddress1, testAddress2.get, testPostcode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, testAddress1, testAddress2, testAddress3, testAddress4, testPostcode)(request, messages(application)).toString
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted and address2 is missing" in {
-
-      val fullReturnMissingAddress2 = FullReturn(
-        stornId = testStorn,
-        returnResourceRef = testReturnRef,
-        vendor = None,
-        land = Some(Seq(testLandMissingAddress2))
-      )
-
-      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, testAddress1, "", testPostcode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted with value 'yes' and address2 is missing" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val fullReturnMissingAddress2 = FullReturn(
-        stornId = testStorn,
-        returnResourceRef = testReturnRef,
-        vendor = None,
-        land = Some(Seq(testLandMissingAddress2))
-      )
-
-      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
-            .withFormUrlEncodedBody(("value", "yes"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
-    "must redirect to LandAddressController when valid data is submitted with value 'no' and address2 is missing" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val fullReturnMissingAddress2 = FullReturn(
-        stornId = testStorn,
-        returnResourceRef = testReturnRef,
-        vendor = None,
-        land = Some(Seq(testLandMissingAddress2))
-      )
-
-      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturnMissingAddress2))
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, confirmLandOrPropertyAddressRoute)
-            .withFormUrlEncodedBody(("value", "no"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandAddressController.redirectToAddressLookupLand().url
-      }
-    }
-
-    "must return a Bad Request with empty strings when invalid data is submitted and no valid land exists" in {
+    "must return a Bad Request and errors when invalid data is submitted and no valid land exists" in {
 
       val emptyFullReturn = FullReturn(
         stornId = testStorn,
@@ -570,7 +426,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "", "", "")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, None, None, None, None, None)(request, messages(application)).toString
       }
     }
 
