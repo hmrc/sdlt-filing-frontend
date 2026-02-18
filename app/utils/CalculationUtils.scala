@@ -70,4 +70,8 @@ object CalculationUtils extends DateUtil {
   def isAfterMar2012AndBeforeDec2014(date: LocalDate): Boolean = {
     date.onOrAfter(Dates.MAR_22_2012_RESIDENTIAL_DATE) && date.isBefore(Dates.DECEMBER2014_RESIDENTIAL_DATE)
   }
+
+  def isAfter22Mar2012AndBefore25Mar2012(date: LocalDate): Boolean = {
+    date.onOrAfter(Dates.MAR_22_2012_RESIDENTIAL_DATE) && date.isBefore(Dates.MAR2012_RESIDENTIAL_DATE)
+  }
 }
