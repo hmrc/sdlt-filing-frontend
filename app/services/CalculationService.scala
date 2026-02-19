@@ -453,6 +453,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               freeCalculationService.freeholdSelfAssessedRes
             ))
 
+          case (`freehold`, `residential`, _, RightToBuy, Some(true))
+            if isAfterMar2012AndBeforeDec2014(request.effectiveDate) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdSelfAssessedMarch2012ToApril2014
+            ))
+
           /* ------------- LeaseHoldCases--------------------------- */
           case (`leasehold`, _, _, CollectiveEnfranchisementByLeaseholders, _)
             if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>

@@ -4,14 +4,15 @@
  */
 
 package base
+
 import config.scalabuild.FrontendAppConfig
+import controllers.scalabuild.actions._
 import models.scalabuild.UserAnswers
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.MockitoSugar
-import controllers.scalabuild.actions.{DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, FakeDataRetrievalAction, FakeIdentifierAction, IdentifierAction}
-import org.scalatest.{OptionValues, TryValues}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.{OptionValues, TryValues}
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
@@ -21,10 +22,8 @@ import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.play.PlayMongoModule
 
-import java.time.{Clock, LocalDate, ZoneId}
+import java.time.{Clock, Instant, ZoneId}
 import scala.concurrent.Future
-
-import java.time.Instant
 
 trait ScalaSpecBase extends TryValues with OptionValues with ScalaFutures with MockitoSugar with Matchers {
 

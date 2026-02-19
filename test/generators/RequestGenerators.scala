@@ -17,8 +17,6 @@ import scala.util.Try
 
 trait RequestGenerators {
 
-  // 21 Items / ouf of 25 in TaxReliefCode
-  // TODO: looks like something is missing already in the list below
   private val zeroRateTaxReliefGen: Gen[TaxReliefCode with StandardZeroRate] = Gen.oneOf(Set(
     PartExchange,
     ReLocationEmployment,
@@ -43,7 +41,6 @@ trait RequestGenerators {
     SeedingRelief
   ))
 
-  // 21 Items:: as per Jira Story specified / ouf of 25 in TaxReliefCode
   private val zeroRateLeaseHoldsTaxReliefGen: Gen[TaxReliefCode with StandardZeroRate] = Gen.oneOf(Set(
     PartExchange,
     ReLocationEmployment,
@@ -119,6 +116,17 @@ trait RequestGenerators {
     day <- Gen.oneOf(1 to 31)
   } yield Try {
     if (onOrAfterDate.toEpochDay < LocalDate.of(year, month, day).toEpochDay)
+      Some(LocalDate.of(year, month, day))
+    else
+      None
+  }.toOption.flatten
+
+  private val onOrAfterAndBeforeDateGenerator: LocalDate => LocalDate => Gen[Option[LocalDate]] = (onOrAfterDate: LocalDate) => (beforeDate: LocalDate) => for {
+    year <- Gen.oneOf(onOrAfterDate.getYear to beforeDate.getYear)
+    month <- Gen.oneOf(1 to 12)
+    day <- Gen.oneOf(1 to 31)
+  } yield Try {
+    if (LocalDate.of(year, month, day).toEpochDay >= onOrAfterDate.toEpochDay && LocalDate.of(year, month, day).toEpochDay < beforeDate.toEpochDay)
       Some(LocalDate.of(year, month, day))
     else
       None
@@ -239,6 +247,29 @@ trait RequestGenerators {
         taxReliefDetails = Some(
           TaxReliefDetails(taxReliefCode = RightToBuy,
           isPartialRelief = Some(false))),
+      )
+
+  val freeHoldResidentialRightToBuyFromMarch2012ToApril2014: Gen[Request] =
+    for {
+      nonZeroAmount <- amountGen
+      anyDay <- onOrAfterAndBeforeDateGenerator(LocalDate.of(2012, 3, 22))(LocalDate.of(2014, 4, 12))
+    } yield
+      Request(
+        holdingType = HoldingTypes.freehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = anyDay.getOrElse(LocalDate.of(2012, 3, 22)),
+        nonUKResident = None,
+        premium = nonZeroAmount,
+        highestRent = BigDecimal(0),
+        propertyDetails = None,
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = Some(true),
+        isLinked = Some(true),
+        interestTransferred = None,
+        taxReliefDetails = Some(
+          TaxReliefDetails(taxReliefCode = RightToBuy,
+            isPartialRelief = None )),
       )
 
   def leaseholdNoTaxReliefGenerator(date: LocalDate, onOrAfter: Boolean): Gen[Request] = {

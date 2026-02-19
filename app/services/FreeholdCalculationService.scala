@@ -509,6 +509,11 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
       .freeholdSelfAssessedResult
   }
 
+  val freeholdSelfAssessedMarch2012ToApril2014: Result = {
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+  }
+
   val freeholdZeroRateTaxReliefRes: Result =
     FreeholdResultFactory
       .freeholdZeroRateTaxRelief
