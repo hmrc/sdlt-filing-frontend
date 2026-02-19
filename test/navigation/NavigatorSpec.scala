@@ -233,7 +233,7 @@ class NavigatorSpec extends SpecBase {
 
         // TODO DTR-2465: Redirect to MineralsOrMineralRightsController ? (lr-8) page
         "go from LandSendingPlanByPostPage to lr-8 page" in {
-          navigator.nextPage(LandSendingPlanByPostPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode)
+          navigator.nextPage(LandSendingPlanByPostPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
         }
 
       }
