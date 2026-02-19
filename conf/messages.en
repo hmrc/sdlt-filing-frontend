@@ -942,7 +942,7 @@ land.confirmLandOrPropertyAddress.error.required                              = 
 land.confirmLandOrPropertyAddress.change.hidden                               = ConfirmLandOrPropertyAddress
 
 
-land.localAuthorityCode.title                                                 = What is the local authority code?
+land.localAuthorityCode.title                                                 = What is the local authority code? - About the land
 land.localAuthorityCode.heading                                               = What is the local authority code?
 land.localAuthorityCode.checkYourAnswersLabel                                 = Local authority code
 land.localAuthorityCode.error.required                                        = Enter local authority code
