@@ -403,6 +403,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedRes
             ))
+          case (`freehold`, _, _, AcquisitionRelief, Some(true)) if
+            request.effectiveDate.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdSelfAssessedRes
+            ))
           case (`freehold`, `residential`, true, PreCompletionTransaction, Some(false))
             if request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(

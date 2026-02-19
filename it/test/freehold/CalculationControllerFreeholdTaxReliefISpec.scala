@@ -1309,6 +1309,91 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
             }
           }
         }
+        // SDLT - Tax Calc Case - 27a - Self Assessed
+        "date is on or after 4th December 2014" when {
+          "TaxReliefCode is AcquisitionTaxRelief: 14" must {
+            "return the self assessed response" when {
+              "Property Type is Residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Residential",
+                        | "effectiveDateDay": 3,
+                        | "effectiveDateMonth": 1,
+                        | "effectiveDateYear": 2015,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "taxReliefDetails": {
+                        |   "taxReliefCode": 14
+                        | },
+                        | "isLinked": true
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type is Non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Non-residential",
+                        | "effectiveDateDay": 3,
+                        | "effectiveDateMonth": 1,
+                        | "effectiveDateYear": 2015,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "taxReliefDetails": {
+                        |   "taxReliefCode": 14
+                        | },
+                        | "isLinked": true
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type is Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Mixed",
+                        | "effectiveDateDay": 3,
+                        | "effectiveDateMonth": 1,
+                        | "effectiveDateYear": 2015,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "taxReliefDetails": {
+                        |   "taxReliefCode": 14
+                        | },
+                        | "isLinked": true
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
       }
 
       // SDLT - Tax Calc Case - 44 - Self Assessed
