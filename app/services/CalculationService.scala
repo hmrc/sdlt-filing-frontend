@@ -423,6 +423,16 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedRes
             ))
+          case (`freehold`, `residential`, false, ReliefFrom15PercentRate, Some(true))
+            if request.effectiveDate.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdSelfAssessedRes
+            ))
+          case (`freehold`, `residential`, true, ReliefFrom15PercentRate, Some(true))
+            if request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdSelfAssessedRes
+            ))
           case (`freehold`, _, _, taxReliefCode, Some(true)) if selfAssessedFreeHoldReliefCodes.contains(taxReliefCode) && request.effectiveDate.isBefore(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(freeCalculationService.freeholdSelfAssessedRes))
 

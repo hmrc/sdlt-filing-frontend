@@ -1314,7 +1314,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
       // SDLT - Tax Calc Case - 44 - Self Assessed
       "the transaction is linked" when {
         "date is on or after 6th April 2013 and before 4th December 2014" when {
-          "the TaxReliefCode is ReliefFrom15PercentRate: 14" must {
+          "the TaxReliefCode is ReliefFrom15PercentRate: 35" must {
             "return the self assessed response" when {
               "Property type is Residential" in {
                 val request: WSResponse = ws
@@ -1330,6 +1330,83 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         | "effectiveDateYear": 2013,
                         | "premium": 1000000,
                         | "highestRent": 0,
+                        | "isLinked": true,
+                        | "taxReliefDetails": {
+                        |   "taxReliefCode": 35
+                        | }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
+
+      // SDLT - Tax Calc Case - 44a - Self Assessed
+      "the transaction is linked" when {
+        "date is on or after 4th December 2014" when {
+          "the TaxReliefCode is ReliefFrom15PercentRate: 35" must {
+            "return the self assessed response" when {
+              "Property type is Residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Residential",
+                        | "effectiveDateDay": 4,
+                        | "effectiveDateMonth": 12,
+                        | "effectiveDateYear": 2014,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "isLinked": true,
+                        | "taxReliefDetails": {
+                        |   "taxReliefCode": 35
+                        | }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
+
+      // SDLT - Tax Calc Case - 44b - Self Assessed
+      "the transaction is linked" when {
+        "date is on or after 1st April 2016" when {
+          "the TaxReliefCode is ReliefFrom15PercentRate: 35" must {
+            "return the self assessed response" when {
+              "Property type is Residential Additional Property" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Residential",
+                        | "effectiveDateDay": 1,
+                        | "effectiveDateMonth": 4,
+                        | "effectiveDateYear": 2016,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "propertyDetails": {
+                        |   "individual": "Yes",
+                        |   "twoOrMoreProperties": "Yes",
+                        |   "replaceMainResidence": "Yes"
+                        | },
                         | "isLinked": true,
                         | "taxReliefDetails": {
                         |   "taxReliefCode": 35
