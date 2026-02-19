@@ -15,7 +15,7 @@ import enums.HoldingTypes._
 import enums.PropertyTypes._
 import enums.sdltRebuild._
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
-import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
+import exceptions.InvalidDateException
 import generators.RequestGenerators
 import models._
 import models.sdltRebuild.TaxReliefDetails
@@ -2066,9 +2066,59 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
 
       }
+
+      "given the request with tax relief code  RightToBuy  and property type is  mixed property effective date is on 17/03/2016 and isLinked = true " in {
+        val testRequest = createRequestWithTaxRelief(freehold, mixed, LocalDate.of(2016, 3, 17), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = Some(true))
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
+
+      "given the request with tax relief code  RightToBuy  and property type is  mixed property effective date is after 17/03/2016 and isLinked = true " in {
+        val testRequest = createRequestWithTaxRelief(freehold, mixed, LocalDate.of(2021, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = Some(true))
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
       "given the request with tax relief code  RightToBuy  and property type is  nonResidential property effective date is before 17/03/2016 and isLinked = true " in {
 
         val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2016, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = Some(true))
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
+
+      "given the request with tax relief code  RightToBuy  and property type is  nonResidential property effective date is on 17/03/2016 and isLinked = true " in {
+
+        val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2016, 3, 17), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = Some(true))
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+
+      }
+
+      "given the request with tax relief code  RightToBuy  and property type is  nonResidential property effective date is after 17/03/2016 and isLinked = true " in {
+
+        val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2026, 3, 16), taxReliefCode = RightToBuy, twoOrMoreProperties = Some(false), isLinked = Some(true))
         val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
         when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
@@ -2440,59 +2490,100 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))
       }
 
-      "given a tax relief code  RightToBuy , Residential property & isLinked = true " when {
-        "effective date is between  2014/12/4 - 2016/03/31(including these dates)" in {
+      "given a tax relief code  RightToBuy(22)" when {
+        "Residential property & isLinked = true" when {
+          "effective date is between  2014/12/4 - 2016/03/31(including these dates)" in {
 
-          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2014, 12, 14), taxReliefCode = RightToBuy)
-          val result = createResult("freeholdResidentialDec14Onwards")
+            val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2014, 12, 14), taxReliefCode = RightToBuy)
+            val result = createResult("freeholdResidentialDec14Onwards")
 
-          when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(any[Request](), meq(false), meq(false))).thenReturn(result)
+            when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(any[Request](), meq(false), meq(false))).thenReturn(result)
 
-          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-          verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))
-        }
-        "effective date is in between 2012/3/22 - 2014/12/3(including these dates) " in {
-
-          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2012, 4, 12), taxReliefCode = RightToBuy)
-          val result = createResult("freeholdResidentialMar12toDec14")
-
-          when(mockFreeholdCalculationService.freeholdResidentialMar12toDec14(any[Request]())).thenReturn(result)
-
-          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
-
-          verify(mockFreeholdCalculationService, times(1)).freeholdResidentialMar12toDec14(any[Request])
-        }
-        "effective date is before 2012/03/22" in {
-
-          val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2010, 4, 12), taxReliefCode = RightToBuy)
-          val ex = the [InvalidDateException] thrownBy {
-            testCalculationService.calculateTaxRelief(testRequest)
+            verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))
           }
+          "effective date is in between 2012/3/22 - 2014/12/3(including these dates) " in {
 
-          ex.getMessage mustBe s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
+            val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2012, 4, 12), taxReliefCode = RightToBuy)
+            val result = createResult("freeholdResidentialMar12toDec14")
 
-          verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
-          verifyNoMoreInteractions(mockLeaseholdCalculationService)
+            when(mockFreeholdCalculationService.freeholdResidentialMar12toDec14(any[Request]())).thenReturn(result)
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockFreeholdCalculationService, times(1)).freeholdResidentialMar12toDec14(any[Request])
+          }
+          "effective date is before 2012/03/22" in {
+
+            val testRequest = createRequestWithTaxRelief(freehold, residential, LocalDate.of(2010, 4, 12), taxReliefCode = RightToBuy)
+            val ex = the [InvalidDateException] thrownBy {
+              testCalculationService.calculateTaxRelief(testRequest)
+            }
+
+            ex.getMessage mustBe s"Date of ${testRequest.effectiveDate} is invalid or before 22/3/2012"
+
+            verify(mockLeaseholdCalculationService, never).leaseholdSelfAssessedRes
+            verifyNoMoreInteractions(mockLeaseholdCalculationService)
 
 
+          }
         }
 
-        "given no relief code, property type is Residential Additional Property, effective date is 1/4/2016 and isLinked = true" in {
+        "Mixed property and isLinked = false" when {
+          "effective date is before 17th of March 2016" in {
 
-          val testRequest = createRequestWithPropDetails(
-            freehold,
-            residential,
-            LocalDate.of(2016, 4, 1),
-            twoOrMoreProp = Some(true)
-          ).copy(isLinked = Some(true))
-          val result = createResult("freeholdResidentialAdditionalPropertyDec14")
+            val testRequest = createRequestWithTaxRelief(freehold, mixed, LocalDate.of(2010, 4, 12), taxReliefCode = RightToBuy, isLinked = Some(false))
 
-          when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))).thenReturn(result)
-          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+            val result = createResult("freeHoldMixedPropertyBefore17March2016")
 
-          verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))
-          verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+            when(mockFreeholdCalculationService.freeholdRightToBuyBeforeMarch2016(any[Request]())).thenReturn(result)
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockFreeholdCalculationService, times(1)).freeholdRightToBuyBeforeMarch2016(any[Request])
+
+          }
+          "effective date is on or after 17th of March 2016" in {
+
+            val testRequest = createRequestWithTaxRelief(freehold, mixed, LocalDate.of(2021, 3, 16), taxReliefCode = RightToBuy, isLinked = Some(false))
+
+            val result = createResult("freeHoldMixedPropertyOnOrAfter17March2016")
+
+            when(mockFreeholdCalculationService.freeholdNonResidentialMar16Onwards(any[Request]())).thenReturn(Seq(result))
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar16Onwards(any[Request])
+
+          }
+        }
+
+        "Non-residential property and isLinked = false" when {
+          "effective date is before 17th of March 2016" in {
+            val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2016, 3, 16), taxReliefCode = RightToBuy, isLinked = Some(false))
+
+            val result = createResult("freeHoldNonResidentialPropertyBefore17March2016")
+
+            when(mockFreeholdCalculationService.freeholdRightToBuyBeforeMarch2016(any[Request]())).thenReturn(result)
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockFreeholdCalculationService, times(1)).freeholdRightToBuyBeforeMarch2016(any[Request])
+          }
+          "effective date is on or after 17th of March 2016" in {
+
+            val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2021, 3, 16), taxReliefCode = RightToBuy, isLinked = Some(false))
+
+            val result = createResult("freeHoldNonResidentialPropertyOnOrAfter17March2016")
+
+            when(mockFreeholdCalculationService.freeholdNonResidentialMar16Onwards(any[Request]())).thenReturn(Seq(result))
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar16Onwards(any[Request])
+
+          }
         }
 
       }
@@ -2625,6 +2716,23 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
 
       }
+    }
+
+    "given no relief code, property type is Residential Additional Property, effective date is 1/4/2016 and isLinked = true" in {
+
+      val testRequest = createRequestWithPropDetails(
+        freehold,
+        residential,
+        LocalDate.of(2016, 4, 1),
+        twoOrMoreProp = Some(true)
+      ).copy(isLinked = Some(true))
+      val result = createResult("freeholdResidentialAdditionalPropertyDec14")
+
+      when(mockFreeholdCalculationService.freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))).thenReturn(result)
+      testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+      verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))
+      verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
     }
 
     "return self assessed AcquisitionRelief(14)" when {
