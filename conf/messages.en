@@ -954,3 +954,12 @@ land.localAuthorityCode.hint.suffix                                           = 
 land.localAuthorityCode.hint.link                                             = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
 land.localAuthorityCode.regexExp                                              = Invalid local authority code
 land.localAuthorityCode.constraint.invalid                                    = Provide valid local authority code
+
+land.nlpgUprn.title                                                           = What is the NLPG UPRN for the land or property? - About the land
+land.nlpgUprn.heading                                                         = What is the NLPG UPRN for the land or property?
+land.nlpgUprn.hint                                                            = This number can be up to 12 digits, like 100023336956. You can find it using the FindMyAddress website (England) or the Pointer database (Northern Ireland).
+land.nlpgUprn.checkYourAnswersLabel                                           = Land NLPG UPRN
+land.nlpgUprn.error.required                                                  = Enter Land NLPG UPRN
+land.nlpgUprn.error.length                                                    = The NLPG UPRN must be 14 characters or less
+land.nlpgUprn.change.hidden                                                   = Land NLPG UPRN
+land.nlpgUprn.error.format                                                    = The NLPG UPRN must only contain the prefix NI or numerical characters

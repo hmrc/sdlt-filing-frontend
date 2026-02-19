@@ -200,9 +200,13 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandTitleNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode)
         }
 
-        // TODO - DTR-2459 - SPRINT-9 - Redirect to What is the NLPG UPRN of the land or property
         "go from LandAddNlpgUprnPage to LandNlpgUprn page" in {
-          navigator.nextPage(LandAddNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
+          navigator.nextPage(LandAddNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandNlpgUprnController.onPageLoad(NormalMode)
+        }
+
+        //TODO - DTR-2462 - SPRINT-9 Redirect to Will you be sending plan by post page
+        "go from LandNlpgUprnPage to Will You Be Sending Plan by Post page" in {
+          navigator.nextPage(LandNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
 
         "go from ConfirmLandOrPropertyAddressPage to ReturnTasklist" in {
@@ -262,7 +266,14 @@ class NavigatorSpec extends SpecBase {
 
       //TODO - DTR-2495 - SPRINT-10 - mopup implement all check routes for Land CYA
       "must go from any land page to LandCheckYourAnswers" in {
+        navigator.nextPage(LandTypeOfPropertyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandInterestTransferredOrCreatedPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandRegisteredHmRegistryPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
         navigator.nextPage(LandTitleNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandAddNlpgUprnPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandNlpgUprnPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(ConfirmLandOrPropertyAddressPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LocalAuthorityCodePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
       }
 
       "must go from any preliminary page to CheckYourAnswers" in {
