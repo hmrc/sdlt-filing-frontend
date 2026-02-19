@@ -955,7 +955,7 @@ land.localAuthorityCode.hint.link                                             = 
 land.localAuthorityCode.regexExp                                              = Invalid local authority code
 land.localAuthorityCode.constraint.invalid                                    = Provide valid local authority code
 
-land.nlpgUprn.title                                                           = What is the NLPG UPRN for the land or property? - About the Land
+land.nlpgUprn.title                                                           = What is the NLPG UPRN for the land or property? - About the land
 land.nlpgUprn.heading                                                         = What is the NLPG UPRN for the land or property?
 land.nlpgUprn.hint                                                            = This number can be up to 12 digits, like 100023336956. You can find it using the FindMyAddress website (England) or the Pointer database (Northern Ireland).
 land.nlpgUprn.checkYourAnswersLabel                                           = Land NLPG UPRN
