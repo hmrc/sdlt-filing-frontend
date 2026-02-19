@@ -132,7 +132,8 @@ class Navigator @Inject()() {
   private def isLandSection(page: Page): Boolean = page match {
 
     case LandTypeOfPropertyPage | LandInterestTransferredOrCreatedPage | LandRegisteredHmRegistryPage
-         | LandAddNlpgUprnPage | LandTitleNumberPage | ConfirmLandOrPropertyAddressPage | LocalAuthorityCodePage | LandNlpgUprnPage => true
+         | LandAddNlpgUprnPage | LandTitleNumberPage | ConfirmLandOrPropertyAddressPage | LocalAuthorityCodePage | LandNlpgUprnPage
+         | LandMineralsOrMineralRightsPage => true
 
     case _ => false
   }
@@ -154,6 +155,8 @@ class Navigator @Inject()() {
       _ => controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode)
     case LocalAuthorityCodePage =>
       _ => controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
+    case LandMineralsOrMineralRightsPage =>
+      _ => controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode) // TODO DTR-2468: Redirect to Does the transaction involve agricultural or developmental land? (lr-9) page
 
     case _ => _ => routes.IndexController.onPageLoad()
   }

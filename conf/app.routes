@@ -336,3 +336,8 @@ GET         /about-the-land/enter-NLPG-UPRN                                     
 POST        /about-the-land/enter-NLPG-UPRN                                                          controllers.land.LandNlpgUprnController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-land/enter-NLPG-UPRN/change                                                   controllers.land.LandNlpgUprnController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-land/enter-NLPG-UPRN/change                                                   controllers.land.LandNlpgUprnController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-land/minerals-or-mineral-rights                                                controllers.land.LandMineralsOrMineralRightsController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/minerals-or-mineral-rights                                                controllers.land.LandMineralsOrMineralRightsController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/minerals-or-mineral-rights/change                                         controllers.land.LandMineralsOrMineralRightsController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/minerals-or-mineral-rights/change                                         controllers.land.LandMineralsOrMineralRightsController.onSubmit(mode: Mode = CheckMode)
