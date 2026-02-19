@@ -209,6 +209,11 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
 
+        // TODO DTR-2468: Redirect to Does the transaction involve agricultural or developmental land? (lr-9) page
+        "go from LandMineralsOrMineralRightsPage to lr-9 page" in {
+          navigator.nextPage(LandMineralsOrMineralRightsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
+        }
+
         "go from ConfirmLandOrPropertyAddressPage to ReturnTasklist" in {
           navigator.nextPage(ConfirmLandOrPropertyAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode)
         }

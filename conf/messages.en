@@ -963,3 +963,12 @@ land.nlpgUprn.error.required                                                  = 
 land.nlpgUprn.error.length                                                    = The NLPG UPRN must be 14 characters or less
 land.nlpgUprn.change.hidden                                                   = Land NLPG UPRN
 land.nlpgUprn.error.format                                                    = The NLPG UPRN must only contain the prefix NI or numerical characters
+
+land.landMineralsOrMineralRights.title                                        = Minerals or mineral rights
+land.landMineralsOrMineralRights.heading                                      = Minerals or mineral rights
+land.landMineralsOrMineralRights.subheading                                   = Are there any minerals or mineral rights reserved or excluded for the land or property?
+land.landMineralsOrMineralRights.p                                            = Mineral rights are the legal entitlement to exploit, mine or produce minerals and other natural resources beneath the land or property. When mineral rights are reserved or excluded, the owner of the land or property has no claim to any minerals or other natural resources beneath the land.
+land.landMineralsOrMineralRights.checkYourAnswersLabel                        = Minerals or mineral rights
+land.landMineralsOrMineralRights.error.required                               = Select Yes or No
+land.landMineralsOrMineralRights.change.hidden                                = Minerals or mineral rights
+land.landMineralsOrMineralRights.missing                                      = Select an answer
