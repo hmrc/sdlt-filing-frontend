@@ -214,9 +214,18 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandMineralsOrMineralRightsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
         }
 
-        "go from ConfirmLandOrPropertyAddressPage to ReturnTasklist" in {
+        "go from ConfirmLandOrPropertyAddressPage to Local Authority Code page" in {
           navigator.nextPage(ConfirmLandOrPropertyAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode)
         }
+
+        "go from LocalAuthorityCodePage to LandRegisteredHmRegistry page page" in {
+          navigator.nextPage(LocalAuthorityCodePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
+        }
+
+        "go from LandSelectMeasurementUnitPage to what is the are of land page" in { //TODO - DTR-2492 - SPRINT-9 - Update to what is the area of the land in (units) -lr-9c
+          navigator.nextPage(LandSelectMeasurementUnitPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
+        }
+
       }
     }
 
