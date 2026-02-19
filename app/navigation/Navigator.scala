@@ -132,7 +132,7 @@ class Navigator @Inject()() {
   private def isLandSection(page: Page): Boolean = page match {
 
     case LandTypeOfPropertyPage | LandInterestTransferredOrCreatedPage | LandRegisteredHmRegistryPage
-         | LandAddNlpgUprnPage | LandTitleNumberPage | ConfirmLandOrPropertyAddressPage | LocalAuthorityCodePage => true
+         | LandAddNlpgUprnPage | LandTitleNumberPage | ConfirmLandOrPropertyAddressPage | LocalAuthorityCodePage | LandNlpgUprnPage => true
 
     case _ => false
   }
@@ -147,7 +147,9 @@ class Navigator @Inject()() {
     case LandTitleNumberPage =>
       _ => controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode)
     case LandAddNlpgUprnPage =>
-      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2459 - SPRINT-9 Redirect to What is the NLPG UPRN for the land or property page
+      _ => controllers.land.routes.LandNlpgUprnController.onPageLoad(NormalMode)
+    case LandNlpgUprnPage =>
+      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2462 - SPRINT-9 Redirect to Will you be sending plan by post page
     case ConfirmLandOrPropertyAddressPage =>
       _ => controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode)
     case LocalAuthorityCodePage =>
@@ -200,7 +202,12 @@ class Navigator @Inject()() {
     //TODO - DTR-2495 - SPRINT-19 - Add land check route here to be uncommented in CYA task
     //    case LandTypeOfPropertyPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     //    case LandInterestTransferredOrCreatedPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LandRegisteredHmRegistryPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     //    case LandTitleNumberPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LandAddNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LandNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case ConfirmLandOrPropertyAddressPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LocalAuthorityCodePage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }
