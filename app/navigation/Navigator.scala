@@ -133,7 +133,7 @@ class Navigator @Inject()() {
 
     case LandTypeOfPropertyPage | LandInterestTransferredOrCreatedPage | LandRegisteredHmRegistryPage
          | LandAddNlpgUprnPage | LandTitleNumberPage | ConfirmLandOrPropertyAddressPage | LocalAuthorityCodePage | LandNlpgUprnPage
-         | LandMineralsOrMineralRightsPage | LandSelectMeasurementUnitPage | AreaOfLandPage => true
+         | LandMineralsOrMineralRightsPage | LandSelectMeasurementUnitPage | AreaOfLandPage | LandSendingPlanByPostPage => true
 
     case _ => false
   }
@@ -161,6 +161,8 @@ class Navigator @Inject()() {
       _ => controllers.land.routes.AreaOfLandController.onPageLoad(NormalMode)
     case AreaOfLandPage =>
       _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2495 - SPRINT-10 Redirect to Land check your answers
+    case LandSendingPlanByPostPage =>
+      _ => controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
 
     case _ => _ => routes.IndexController.onPageLoad()
   }

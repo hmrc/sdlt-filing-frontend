@@ -32,6 +32,11 @@ trait ModelGenerators {
       Gen.oneOf(LandSelectMeasurementUnit.values.toSeq)
     }
 
+  implicit lazy val arbitraryLandSendingPlanByPost: Arbitrary[LandSendingPlanByPost] =
+    Arbitrary {
+      Gen.oneOf(LandSendingPlanByPost.values.toSeq)
+    }
+
   implicit lazy val arbitraryConfirmLandOrPropertyAddress: Arbitrary[ConfirmLandOrPropertyAddress] =
     Arbitrary {
       Gen.oneOf(ConfirmLandOrPropertyAddress.values.toSeq)
