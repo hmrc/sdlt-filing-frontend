@@ -978,3 +978,18 @@ land.landSelectMeasurementUnit.heading                                          
 land.landSelectMeasurementUnit.HECTARES                                             = Hectares
 land.landSelectMeasurementUnit.SQMETRE                                              = Square metres
 land.landSelectMeasurementUnit.error.required                                       = Please select a unit of measurement
+
+land.areaOfLand.title                                                         = What is the area of land?
+land.areaOfLand.heading                                                       = What is the area of the land in {0}?
+land.areaOfLand.checkYourAnswersLabel                                         = Area of land
+land.areaOfLand.error.required                                                = Enter the area of land
+land.areaOfLand.error.length                                                  = Area of land must be 14 characters or less
+land.areaOfLand.error.invalid                                                 = Invalid error
+land.areaOfLand.change.hidden                                                 = Area of land
+land.areaOfLand.hint.SQMETRE                                                  = Enter the measurement in whole numbers
+land.areaOfLand.hint.HECTARES                                                 = Enter the measurement to 3 decimal places
+land.areaOfLand.SQMETRE.suffix                                                = m²
+land.areaOfLand.HECTARES.suffix                                               = Ha
+land.areaOfLand.SQMETRE                                                       = square metres
+land.areaOfLand.HECTARES                                                      = hectares
+land.areaOfLand.missing                                                       = Enter the area of land

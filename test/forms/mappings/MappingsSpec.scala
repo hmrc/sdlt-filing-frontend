@@ -259,4 +259,127 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.apply("value").value.value mustEqual "1"
     }
   }
+
+  "areaOfLand" - {
+
+    "when unit type is square metres" - {
+
+      val unitType = "SQMETRE"
+
+      val testForm: Form[String] =
+        Form(
+          "value" -> areaOfLand(unitType = unitType)
+        )
+
+      "must bind a valid integer" in {
+        val result = testForm.bind(Map("value" -> "1"))
+        result.get mustEqual "1.000"
+      }
+
+      "must bind a valid decimal with 1 trailing zero decimal place" in {
+        val result = testForm.bind(Map("value" -> "1.0"))
+        result.get mustEqual "1.000"
+      }
+
+      "must bind a valid decimal with 4 trailing zero decimal places" in {
+        val result = testForm.bind(Map("value" -> "1.0000"))
+        result.get mustEqual "1.000"
+      }
+
+      "must bind a valid number with commas and spaces" in {
+        val result = testForm.bind(Map("value" -> "1,2 34.00"))
+        result.get mustEqual "1234.000"
+      }
+
+      "must not bind values with non zero decimal places" in {
+        val result = testForm.bind(Map("value" -> "1.123"))
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+      }
+
+      "must not bind values with non-numeric characters" in {
+        val result = testForm.bind(Map("value" -> "abc"))
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+      }
+
+      "must not bind an empty value" in {
+        val result = testForm.bind(Map("value" -> ""))
+        result.errors must contain(FormError("value", "land.areaOfLand.error.required"))
+      }
+
+      "must not bind an empty map" in {
+        val result = testForm.bind(Map.empty[String, String])
+        result.errors must contain(FormError("value", "land.areaOfLand.error.required"))
+      }
+
+      "must not bind negative numbers" in {
+        val result = testForm.bind(Map("value" -> "-1"))
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+      }
+
+      "must not bind numbers over 14 characters" in {
+        val result = testForm.bind(Map("value" -> "123456789012345"))
+        result.errors must contain only FormError("value", "land.areaOfLand.error.length")
+      }
+
+      "must unbind a valid value" in {
+        val result = testForm.fill("1.000")
+        result.apply("value").value.value mustEqual "1.000"
+      }
+    }
+
+    "when unit type is hectares" - {
+
+      val unitType = "HECTARES"
+
+      val testForm: Form[String] =
+        Form(
+          "value" -> areaOfLand(unitType = unitType)
+        )
+
+      "must bind a valid decimal to 3 decimal places" in {
+        val result = testForm.bind(Map("value" -> "1.123"))
+        result.get mustEqual "1.123"
+      }
+
+      "must bind a valid decimal to 2 decimal places" in {
+        val result = testForm.bind(Map("value" -> "1.12"))
+        result.get mustEqual "1.120"
+      }
+
+      "must not bind values with non-numeric characters" in {
+        val result = testForm.bind(Map("value" -> "abc"))
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+      }
+
+      "must not bind an empty value" in {
+        val result = testForm.bind(Map("value" -> ""))
+        result.errors must contain(FormError("value", "land.areaOfLand.error.required"))
+      }
+
+      "must not bind an empty map" in {
+        val result = testForm.bind(Map.empty[String, String])
+        result.errors must contain(FormError("value", "land.areaOfLand.error.required"))
+      }
+
+      "must not bind negative numbers" in {
+        val result = testForm.bind(Map("value" -> "-1.123"))
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+      }
+
+      "must not bind numbers to more than 3 decimal places" in {
+        val result = testForm.bind(Map("value" -> "1.1234"))
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+      }
+
+      "must not bind numbers over 14 characters" in {
+        val result = testForm.bind(Map("value" -> "12345678901.345"))
+        result.errors must contain only FormError("value", "land.areaOfLand.error.length")
+      }
+
+      "must unbind a valid value" in {
+        val result = testForm.fill("1.000")
+        result.apply("value").value.value mustEqual "1.000"
+      }
+    }
+  }
 }

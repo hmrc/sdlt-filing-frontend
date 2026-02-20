@@ -24,7 +24,7 @@ import play.api.data.FormError
 
 class FormatterSpec extends AnyFreeSpec with Matchers with Formatters {
 
-  "stringForamtter" - {
+  "stringFormatter" - {
 
     val result = stringFormatter("error")
 
@@ -130,6 +130,66 @@ class FormatterSpec extends AnyFreeSpec with Matchers with Formatters {
 
       "must return error for invalid decimal (more than 2 places)" in {
         currencyFmt.bind("key", Map("key" -> "123.456")) mustEqual Left(Seq(FormError("key", "invalidNumeric", Seq.empty)))
+      }
+    }
+
+    "areaOfLandFormatter" - {
+
+      "when unit type is square metres" - {
+
+        val areaOfLandFmt = areaOfLandFormatter("SQMETRE", "required", "invalid", "invalidLength")
+
+        "must bind valid numeric string with trailing zeros" in {
+          areaOfLandFmt.bind("key", Map("key" -> "123.00")) mustEqual Right("123.000")
+        }
+
+        "must bind valid integer string" in {
+          areaOfLandFmt.bind("key", Map("key" -> "123")) mustEqual Right("123.000")
+        }
+
+        "must return error for malformed string" in {
+          areaOfLandFmt.bind("key", Map("key" -> "abc")) mustEqual Left(Seq(FormError("key", "invalid", Seq.empty)))
+        }
+
+        "must return error for numeric string with non zero decimal places" in {
+          areaOfLandFmt.bind("key", Map("key" -> "123.1")) mustEqual Left(Seq(FormError("key", "invalid", Seq.empty)))
+        }
+
+        "must return error for invalid string length" in {
+          areaOfLandFmt.bind("key", Map("key" -> "123456789012345")) mustEqual Left(Seq(FormError("key", "invalidLength", Seq.empty)))
+        }
+      }
+
+      "when unit type is hectares" - {
+
+        val areaOfLandFmt = areaOfLandFormatter("HECTARES", "required", "invalid", "invalidLength")
+
+        "must bind valid numeric string with 3 decimal places" in {
+          val result = areaOfLandFmt.bind("key", Map("key" -> "123.456"))
+          result mustEqual Right("123.456")
+        }
+
+        "must bind valid numeric string with 2 decimal places" in {
+          val result = areaOfLandFmt.bind("key", Map("key" -> "123.45"))
+          result mustEqual Right("123.450")
+        }
+
+        "must bind valid integer string" in {
+          val result = areaOfLandFmt.bind("key", Map("key" -> "123"))
+          result mustEqual Right("123.000")
+        }
+
+        "must return error for malformed string" in {
+          areaOfLandFmt.bind("key", Map("key" -> "abc")) mustEqual Left(Seq(FormError("key", "invalid", Seq.empty)))
+        }
+
+        "must return error for numeric string with more than 3 decimal places" in {
+          areaOfLandFmt.bind("key", Map("key" -> "123.4567")) mustEqual Left(Seq(FormError("key", "invalid", Seq.empty)))
+        }
+
+        "must return error for invalid string length" in {
+          areaOfLandFmt.bind("key", Map("key" -> "1234567890123.456")) mustEqual Left(Seq(FormError("key", "invalidLength", Seq.empty)))
+        }
       }
     }
   }

@@ -34,7 +34,7 @@
     @formHelper(action = controllers.land.routes.LandSelectMeasurementUnitController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
         @caption(messages("site.land.caption"))
