@@ -16,11 +16,10 @@
 
 package pages.land
 
-import models.land.LandSendingPlanByPost
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object LandSendingPlanByPostPage extends QuestionPage[LandSendingPlanByPost] {
+case object LandSendingPlanByPostPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ "landCurrent" \ toString
 

@@ -150,7 +150,7 @@ class Navigator @Inject()() {
     case LandAddNlpgUprnPage =>
       _ => controllers.land.routes.LandNlpgUprnController.onPageLoad(NormalMode)
     case LandNlpgUprnPage =>
-      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2462 - SPRINT-9 Redirect to Will you be sending plan by post page
+      _ => controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode)
     case ConfirmLandOrPropertyAddressPage =>
       _ => controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode)
     case LocalAuthorityCodePage =>

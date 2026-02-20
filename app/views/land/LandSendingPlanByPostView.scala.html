@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.land.LandSendingPlanByPost
 @import views.html.components._
 @this(
     layout: templates.Layout,
@@ -53,8 +52,17 @@
             RadiosViewModel(
                 field  = form("value"),
                 legend = LegendViewModel(""),
-                items  = LandSendingPlanByPost.options
-            )
+                items = Seq(
+                    RadioItem(
+                    value = Some("true"),
+                    content = Text(messages("site.yes"))
+                ),
+                RadioItem(
+                    value = Some("false"),
+                    content = Text(messages("site.no"))
+                )
+              )
+           )
         )
 
         @govukButton(

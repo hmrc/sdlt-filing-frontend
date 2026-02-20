@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.routes
 import forms.land.LandSendingPlanByPostFormProvider
 import models.NormalMode
-import models.land.LandSendingPlanByPost
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -43,7 +42,7 @@ class LandSendingPlanByPostControllerSpec extends SpecBase with MockitoSugar {
   lazy val landSendingPlanByPostRoute: String = controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode).url
 
   val formProvider = new LandSendingPlanByPostFormProvider()
-  val form: Form[LandSendingPlanByPost] = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   "LandSendingPlanByPost Controller" - {
 
@@ -65,7 +64,7 @@ class LandSendingPlanByPostControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, LandSendingPlanByPost.Yes).success.value
+      val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -77,7 +76,7 @@ class LandSendingPlanByPostControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LandSendingPlanByPost.Yes), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -98,7 +97,7 @@ class LandSendingPlanByPostControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, landSendingPlanByPostRoute)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 

@@ -18,11 +18,11 @@ package viewmodels.checkAnswers.land
 
 import base.SpecBase
 import models.CheckMode
-import models.land.LandSendingPlanByPost
 import pages.land.LandSendingPlanByPostPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class LandSendingPlanByPostSummarySpec extends SpecBase {
 
@@ -36,12 +36,12 @@ class LandSendingPlanByPostSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, LandSendingPlanByPost.Yes).success.value
+          val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, true).success.value
           val result = LandSendingPlanByPostSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landSendingPlanByPost.checkYourAnswersLabel")
           
-          val contentString = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
 
           contentString mustEqual msgs("site.yes")
 
@@ -58,13 +58,13 @@ class LandSendingPlanByPostSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, LandSendingPlanByPost.No).success.value
+          val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, false).success.value
 
           val result = LandSendingPlanByPostSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landSendingPlanByPost.checkYourAnswersLabel")
 
-          val contentString = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
 
           contentString mustEqual msgs("site.no")
 
