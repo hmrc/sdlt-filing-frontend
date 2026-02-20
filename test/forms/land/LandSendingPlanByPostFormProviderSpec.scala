@@ -16,11 +16,10 @@
 
 package forms.land
 
-import forms.behaviours.OptionFieldBehaviours
-import models.land.LandSendingPlanByPost
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class LandSendingPlanByPostFormProviderSpec extends OptionFieldBehaviours {
+class LandSendingPlanByPostFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new LandSendingPlanByPostFormProvider()()
 
@@ -28,12 +27,12 @@ class LandSendingPlanByPostFormProviderSpec extends OptionFieldBehaviours {
 
     val fieldName = "value"
     val requiredKey = "land.landSendingPlanByPost.error.required"
+    val invalidKey = "error.boolean"
 
-    behave like optionsField[LandSendingPlanByPost](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = LandSendingPlanByPost.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

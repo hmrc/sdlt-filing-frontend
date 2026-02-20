@@ -204,9 +204,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandAddNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandNlpgUprnController.onPageLoad(NormalMode)
         }
 
-        //TODO - DTR-2462 - SPRINT-9 Redirect to Will you be sending plan by post page
         "go from LandNlpgUprnPage to Will You Be Sending Plan by Post page" in {
-          navigator.nextPage(LandNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
+          navigator.nextPage(LandNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode)
         }
 
         // TODO DTR-2468: Redirect to Does the transaction involve agricultural or developmental land? (lr-9) page

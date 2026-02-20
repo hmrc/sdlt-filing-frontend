@@ -147,7 +147,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          println(contentAsString(result))
           contentAsString(result) mustEqual view(form.fill("1234"), NormalMode)(request, messages(application)).toString
         }
       }
@@ -190,7 +189,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          println(contentAsString(result))
           contentAsString(result) mustEqual view(form.fill("1234"), NormalMode)(request, messages(application)).toString
         }
       }

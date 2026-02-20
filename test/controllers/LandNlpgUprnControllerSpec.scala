@@ -129,8 +129,7 @@ class LandNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        //TODO - DTR-2462 - SPRINT-9 Redirect to Will you be sending plan by post page
-        redirectLocation(result).value mustEqual controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode).url
       }
     }
 

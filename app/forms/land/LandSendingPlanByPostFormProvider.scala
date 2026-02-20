@@ -17,15 +17,14 @@
 package forms.land
 
 import forms.mappings.Mappings
-import models.land.LandSendingPlanByPost
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class LandSendingPlanByPostFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[LandSendingPlanByPost] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[LandSendingPlanByPost]("land.landSendingPlanByPost.error.required")
+      "value" -> boolean("land.landSendingPlanByPost.error.required")
     )
 }

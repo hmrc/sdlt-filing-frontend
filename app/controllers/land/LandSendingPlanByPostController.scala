@@ -19,7 +19,6 @@ package controllers.land
 import controllers.actions.*
 import forms.land.LandSendingPlanByPostFormProvider
 import models.Mode
-import models.land.LandSendingPlanByPost
 import navigation.Navigator
 import pages.land.LandSendingPlanByPostPage
 import play.api.data.Form
@@ -44,7 +43,7 @@ class LandSendingPlanByPostController @Inject()(
                                        view: LandSendingPlanByPostView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[LandSendingPlanByPost] = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
