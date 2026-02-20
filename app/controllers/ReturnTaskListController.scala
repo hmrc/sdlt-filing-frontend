@@ -24,6 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.PropertyTypeHelper.isResidentialProperty
 import viewmodels.tasklist.*
 import views.html.ReturnTaskListView
 
@@ -31,18 +32,18 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnTaskListController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       fullReturnService: FullReturnService,
-                                       getData: DataRetrievalAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ReturnTaskListView,
-                                       sessionRepository: SessionRepository
-                                     ) (implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                          override val messagesApi: MessagesApi,
+                                          identify: IdentifierAction,
+                                          fullReturnService: FullReturnService,
+                                          getData: DataRetrievalAction,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          view: ReturnTaskListView,
+                                          sessionRepository: SessionRepository
+                                        )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(returnId: Option[String] = None): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
- 
+
       val effectiveReturnId = returnId.orElse(request.userAnswers.flatMap(_.returnId))
       effectiveReturnId.fold(
         Future.successful(Redirect(controllers.routes.NoReturnReferenceController.onPageLoad()))
@@ -52,13 +53,15 @@ class ReturnTaskListController @Inject()(
           userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
           _ <- sessionRepository.set(userAnswers)
         } yield {
+
           val sections = List(
             Some(PrelimTaskList.build(fullReturn)),
             Some(VendorTaskList.build(fullReturn)),
             Some(VendorAgentTaskList.build(fullReturn)),
             Some(PurchaserTaskList.build(fullReturn)),
             Some(PurchaserAgentTaskList.build(fullReturn)),
-            Some(LandTaskList.build(fullReturn))
+            Some(LandTaskList.build(fullReturn)),
+            if (isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None
           ).flatten
           Ok(view(sections: _*))
         }
