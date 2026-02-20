@@ -142,4 +142,40 @@ trait Formatters {
       override def unbind(key: String, value: BigDecimal): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
+
+  private[mappings] def areaOfLandFormatter(
+                                             unitType: String,
+                                             requiredKey: String,
+                                             invalidKey: String,
+                                             lengthKey: String,
+                                             args: Seq[String] = Seq.empty
+                                           ): Formatter[String] =
+    new Formatter[String] {
+
+      val squareMetresRegexp = """^[0-9]+(?:\.0+)?$"""
+      val hectaresRegexp = """^[0-9]+(?:\.[0-9]{0,3})?$"""
+      
+      val maxStringLength = 14
+      val validRegex: String = if (unitType.equalsIgnoreCase("HECTARES")) hectaresRegexp else squareMetresRegexp
+
+      private val baseFormatter = stringFormatter(requiredKey, args)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(",", "").replace(" ", ""))
+          .flatMap {
+            case s if s.length > maxStringLength =>
+              Left(Seq(FormError(key, lengthKey, args)))
+            case s if !s.matches(validRegex) =>
+              Left(Seq(FormError(key, invalidKey, args)))
+            case s =>
+              nonFatalCatch
+                .either(BigDecimal(s).setScale(3, BigDecimal.RoundingMode.HALF_UP).toString())
+                .left.map(_ => Seq(FormError(key, invalidKey, args)))
+          }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        baseFormatter.unbind(key, value.toString)
+    }
 }

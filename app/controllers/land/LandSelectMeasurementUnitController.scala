@@ -21,7 +21,7 @@ import forms.land.LandSelectMeasurementUnitFormProvider
 import models.land.LandSelectMeasurementUnit
 import models.Mode
 import navigation.Navigator
-import pages.land.LandSelectMeasurementUnitPage
+import pages.land.{AreaOfLandPage, LandSelectMeasurementUnitPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,6 +32,7 @@ import views.html.land.LandSelectMeasurementUnitView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class LandSelectMeasurementUnitController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -71,7 +72,13 @@ class LandSelectMeasurementUnitController @Inject()(
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(LandSelectMeasurementUnitPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
+              finalAnswers <- Future.fromTry {
+                if !value.equals(request.userAnswers.get(LandSelectMeasurementUnitPage)) then
+                  updatedAnswers.remove(AreaOfLandPage)
+                else
+                  Success(updatedAnswers)
+              }
+              _ <- sessionRepository.set(finalAnswers)
             } yield Redirect(navigator.nextPage(LandSelectMeasurementUnitPage, mode, updatedAnswers))
         )
       )
