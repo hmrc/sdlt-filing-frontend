@@ -61,4 +61,12 @@ trait Mappings extends Formatters with Constraints {
                          nonNumericKey: String = "error.nonNumeric",
                          args: Seq[String] = Seq.empty): FieldMapping[BigDecimal] =
     of(currencyFormatter(requiredKey, invalidNumeric, nonNumericKey, args))
+
+  protected def areaOfLand(unitType: String,
+                           requiredKey: String = "land.areaOfLand.error.required",
+                           invalidKey: String = "land.areaOfLand.error.invalid",
+                           lengthKey: String = "land.areaOfLand.error.length",
+                           args: Seq[String] = Seq.empty): FieldMapping[String] =
+    of(areaOfLandFormatter(unitType, requiredKey, invalidKey, lengthKey, args))
+
 }
