@@ -24,6 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.PropertyTypeHelper.isResidentialProperty
 import viewmodels.tasklist.*
 import views.html.ReturnTaskListView
 
@@ -52,6 +53,7 @@ class ReturnTaskListController @Inject()(
           userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
           _ <- sessionRepository.set(userAnswers)
         } yield {
+
           val sections = List(
             Some(PrelimTaskList.build(fullReturn)),
             Some(VendorTaskList.build(fullReturn)),
@@ -59,7 +61,7 @@ class ReturnTaskListController @Inject()(
             Some(PurchaserTaskList.build(fullReturn)),
             Some(PurchaserAgentTaskList.build(fullReturn)),
             Some(LandTaskList.build(fullReturn)),
-            Some(UkResidencyTaskList.build(fullReturn))
+            if (isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None
           ).flatten
           Ok(view(sections: _*))
         }
