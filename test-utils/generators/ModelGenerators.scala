@@ -27,6 +27,11 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryLandSelectMeasurementUnit: Arbitrary[LandSelectMeasurementUnit] =
+    Arbitrary {
+      Gen.oneOf(LandSelectMeasurementUnit.values.toSeq)
+    }
+
   implicit lazy val arbitraryConfirmLandOrPropertyAddress: Arbitrary[ConfirmLandOrPropertyAddress] =
     Arbitrary {
       Gen.oneOf(ConfirmLandOrPropertyAddress.values.toSeq)

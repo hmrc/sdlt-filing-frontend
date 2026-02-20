@@ -341,3 +341,8 @@ GET        /about-the-land/minerals-or-mineral-rights                           
 POST       /about-the-land/minerals-or-mineral-rights                                                controllers.land.LandMineralsOrMineralRightsController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-land/minerals-or-mineral-rights/change                                         controllers.land.LandMineralsOrMineralRightsController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-land/minerals-or-mineral-rights/change                                         controllers.land.LandMineralsOrMineralRightsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-land/unit-of-measurement                                                       controllers.land.LandSelectMeasurementUnitController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/unit-of-measurement                                                       controllers.land.LandSelectMeasurementUnitController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/unit-of-measurement/change                                                controllers.land.LandSelectMeasurementUnitController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/unit-of-measurement/change                                                controllers.land.LandSelectMeasurementUnitController.onSubmit(mode: Mode = CheckMode)
