@@ -31,18 +31,18 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReturnTaskListController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       fullReturnService: FullReturnService,
-                                       getData: DataRetrievalAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ReturnTaskListView,
-                                       sessionRepository: SessionRepository
-                                     ) (implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                          override val messagesApi: MessagesApi,
+                                          identify: IdentifierAction,
+                                          fullReturnService: FullReturnService,
+                                          getData: DataRetrievalAction,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          view: ReturnTaskListView,
+                                          sessionRepository: SessionRepository
+                                        )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(returnId: Option[String] = None): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
- 
+
       val effectiveReturnId = returnId.orElse(request.userAnswers.flatMap(_.returnId))
       effectiveReturnId.fold(
         Future.successful(Redirect(controllers.routes.NoReturnReferenceController.onPageLoad()))
@@ -58,7 +58,8 @@ class ReturnTaskListController @Inject()(
             Some(VendorAgentTaskList.build(fullReturn)),
             Some(PurchaserTaskList.build(fullReturn)),
             Some(PurchaserAgentTaskList.build(fullReturn)),
-            Some(LandTaskList.build(fullReturn))
+            Some(LandTaskList.build(fullReturn)),
+            Some(UkResidencyTaskList.build(fullReturn))
           ).flatten
           Ok(view(sections: _*))
         }
