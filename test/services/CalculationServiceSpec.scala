@@ -72,6 +72,8 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
     val generateIsLinkedAllPossibleValues : Gen[Option[Boolean]] = Gen.oneOf(None, Some(false), Some(true))
 
+    val generateMixedAndNonResidentialPropertyTypes : Gen[enums.PropertyTypes.Value] = Gen.oneOf(mixed, nonResidential)
+
     def createResult(msg: String) = Result(
       totalTax = 0,
       resultHeading = Some(msg),
@@ -1626,23 +1628,31 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar12toMar16(testRequest)
       }
+      "given relief code ReliefFrom15PercentRate(35) :: falls back to calculateNoTaxRelief, isLinked = true" when {
+        "effective date is after 17th of March 2016" when {
+          "property type is mixed or Non-residential" in {
+            forAll(generateMixedAndNonResidentialPropertyTypes){
+              propertyType =>
+                val testRequest = createRequestWithTaxRelief(
+                  freehold,
+                  propertyType,
+                  LocalDate.of(2019, 4, 6),
+                  taxReliefCode = ReliefFrom15PercentRate,
+                  isLinked = Some(true)
+                )
+                val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
 
-      "given relief code ReliefFrom15PercentRate(35) :: falls back to calculateNoTaxRelief" in {
-        val testRequest = createRequestWithTaxRelief(
-          freehold,
-          mixed,
-          LocalDate.of(2013, 4, 6),
-          taxReliefCode = ReliefFrom15PercentRate,
-          isLinked = Some(true)
-        )
+                reset(mockFreeholdCalculationService)
 
-        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+                when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
 
-        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+                testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
-        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+                verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
 
-        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+            }
+          }
+        }
       }
     }
 
@@ -2190,6 +2200,26 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
       }
+
+      "given taxReliefCode:ReliefFrom15PercentRate(35) and isLinked = true " when {
+        "effective date is before 17th of March 2016 " when {
+          "property type is Mixed or Non-residential" in {
+            forAll(generateMixedAndNonResidentialPropertyTypes){
+              propertyType  =>
+                val testRequest = createRequestWithTaxRelief(freehold, propertyType, LocalDate.of(2012, 4, 1), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(true))
+                val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+                reset(mockFreeholdCalculationService)
+
+                when(mockFreeholdCalculationService.freeHoldReliefFrom15PercentRateBefore17March2016).thenReturn(result)
+
+                testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+                verify(mockFreeholdCalculationService, times(1)).freeHoldReliefFrom15PercentRateBefore17March2016
+            }
+          }
+        }
+      }
     }
     "fallback on normal calculation for freeholdSelfAssessedRes with taxReliefDetails" when {
       "given a request with relief code AcquisitionRelief(14), leasehold, residential property type on or after 04/12/2014 and isLinked = true " in {
@@ -2239,6 +2269,38 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialDec14Onwards(any[Request], meq(false), meq(false))
         verify(mockFreeholdCalculationService, never).freeholdSelfAssessedRes
+      }
+      "given a request with taxReliefCode ReliefFrom15PercentRate(35), freehold, isLinked = false " when {
+        "effective date is before 17th of March 2016" when {
+          "property type is Mixed or Non-residential" in {
+            forAll(generateMixedAndNonResidentialPropertyTypes){
+              propertyType =>
+                val testRequest = createRequestWithTaxRelief(freehold, propertyType, LocalDate.of(2012, 3, 16), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(false))
+                val result = createResult("freeHoldNonResidentialOrMixedPropertyOnOrBefore17March2016")
+
+                reset(mockFreeholdCalculationService)
+                when(mockFreeholdCalculationService.freeholdNonResidentialMar12toMar16(any[Request], any())).thenReturn(result)
+                testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+                verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar12toMar16(any[Request], any())
+            }
+          }
+
+        }
+        "effective date is after 17th of March 2016" when {
+          "property type is Mixed or Non-residential" in {
+            forAll(generateMixedAndNonResidentialPropertyTypes){
+              propertyType =>
+                val testRequest = createRequestWithTaxRelief(freehold, propertyType, LocalDate.of(2021, 3, 16), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(false))
+                val result = createResult("freeHoldNonResidentialOrMixedPropertyOnOrAfter17March2016")
+
+                reset(mockFreeholdCalculationService)
+                when(mockFreeholdCalculationService.freeholdNonResidentialMar16Onwards(any[Request]())).thenReturn(Seq(result))
+                testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+                verify(mockFreeholdCalculationService, times(1)).freeholdNonResidentialMar16Onwards(any[Request])
+            }
+
+          }
+        }
       }
     }
 
@@ -2674,10 +2736,10 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           val testRequest = createRequestWithTaxRelief(freehold, nonResidential, LocalDate.of(2013, 4, 6), taxReliefCode = ReliefFrom15PercentRate, isLinked = Some(true))
           val result = createResult("freeholdSelfAssessedRes")
 
-          when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+          when(mockFreeholdCalculationService.freeHoldReliefFrom15PercentRateBefore17March2016).thenReturn(result)
           testCalculationService.calculateTaxRelief(testRequest) shouldBe CalculationResponse(Seq(result))
 
-          verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+          verify(mockFreeholdCalculationService, times(1)).freeHoldReliefFrom15PercentRateBefore17March2016
         }
 
         "property type is Residential Additional Property and date is before 1/4/2016" in {
@@ -3129,7 +3191,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
             val testRequest = createRequest(leasehold, mixed, LocalDate.of(2017, 11, 21), isLinked = isLinkedValue)
             val result = createResult("leaseholdNonResidentialMar16Onwards")
 
-              reset(mockLeaseholdCalculationService)
+            reset(mockLeaseholdCalculationService)
 
             when(mockLeaseholdCalculationService.leaseholdNonResidentialMar16Onwards(testRequest)).thenReturn(Seq(result))
 

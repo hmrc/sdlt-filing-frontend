@@ -442,7 +442,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedRes
             ))
-          case (`freehold`, `residential`, _, RightToBuy, Some(true))
+          case (`freehold`, `residential`, false, RightToBuy, Some(true))
             if isAfterMar2012AndBeforeDec2014(request.effectiveDate) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedMarch2012ToApril2014
@@ -462,6 +462,13 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedRes
             ))
+
+          case (`freehold`, `mixed`|`nonResidential`, false, ReliefFrom15PercentRate, Some(true))
+            if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeHoldReliefFrom15PercentRateBefore17March2016
+            ))
+
           case (`freehold`, _, _, taxReliefCode, Some(true)) if selfAssessedFreeHoldReliefCodes.contains(taxReliefCode) && request.effectiveDate.isBefore(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(freeCalculationService.freeholdSelfAssessedRes))
 
@@ -509,7 +516,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               leaseCalculationService.leaseholdZeroRateTaxReliefRes(request.leaseDetails)
             ))
           case (holdingType, propertyType, isAdditionalProperty, taxReliefCode, isLinked) =>
-            logWarn(s"TaxRelief logic not yet implemented for" +
+            logWarn(s"Falling back  to Non-Tax Relief cases as TaxRelief logic not yet implemented for " +
               s"taxReliefCode: $taxReliefCode, holdingType: $holdingType, propertyType: $propertyType, " +
               s"isAdditionalProperty: $isAdditionalProperty, isLinked: $isLinked")
             calculateTaxNoRelief(request)

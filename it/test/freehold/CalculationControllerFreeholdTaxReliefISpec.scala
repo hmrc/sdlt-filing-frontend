@@ -1717,6 +1717,68 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
 
+      // Tax Calc Case - 46 - Self Assessed
+      "the transaction is linked" when {
+        "date is before 17th of March 2016" when {
+          "the TaxReliefCode is ReliefFrom15PercentRate: 35" must {
+            "return the self assessed response" when {
+              "Property type is mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Mixed",
+                        | "effectiveDateDay": 1,
+                        | "effectiveDateMonth": 4,
+                        | "effectiveDateYear": 2012,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "isLinked": true,
+                        | "taxReliefDetails": {
+                        |   "taxReliefCode": 35
+                        | }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property type is Non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Non-residential",
+                        | "effectiveDateDay": 1,
+                        | "effectiveDateMonth": 4,
+                        | "effectiveDateYear": 2012,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "isLinked": true,
+                        | "taxReliefDetails": {
+                        |   "taxReliefCode": 35
+                        | }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
+
       // SDLT - Tax Calc Case - 41 - Self Assessed
       "date is on or after 23rd April 2009" must {
         "return the self assessed response" when {
