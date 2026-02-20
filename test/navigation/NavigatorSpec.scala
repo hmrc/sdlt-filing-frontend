@@ -226,8 +226,6 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandSelectMeasurementUnitPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
         }
 
-
-        // TODO DTR-2465: Redirect to MineralsOrMineralRightsController ? (lr-8) page
         "go from LandSendingPlanByPostPage to lr-8 page" in {
           navigator.nextPage(LandSendingPlanByPostPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
         }
