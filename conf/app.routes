@@ -346,3 +346,8 @@ GET        /about-the-land/unit-of-measurement                                  
 POST       /about-the-land/unit-of-measurement                                                       controllers.land.LandSelectMeasurementUnitController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-land/unit-of-measurement/change                                                controllers.land.LandSelectMeasurementUnitController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-land/unit-of-measurement/change                                                controllers.land.LandSelectMeasurementUnitController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-land/sending-plan-by-post                       controllers.land.LandSendingPlanByPostController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/sending-plan-by-post                       controllers.land.LandSendingPlanByPostController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/sending-plan-by-post/change                 controllers.land.LandSendingPlanByPostController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/sending-plan-by-post/change                 controllers.land.LandSendingPlanByPostController.onSubmit(mode: Mode = CheckMode)
