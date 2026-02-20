@@ -7,13 +7,12 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.{ContractPost201603FormProvider, ExchangeContractsFormProvider}
-import pages.scalabuild.{ContractPost201603Page, ExchangeContractsPage}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.mvc.Call
-import play.api.test.Helpers._
+import pages.scalabuild.{ContractPost201603Page, ExchangeContractsPage}
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import views.html.scalabuild.ExchangeContractsPreAndPostView
 
 class ExchangeContractsPreAndPostControllerSpec extends AnyFreeSpec with ScalaSpecBase {

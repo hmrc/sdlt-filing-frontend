@@ -1425,6 +1425,25 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
       }
 
+      "given selfAssessed freeHold residential with effective date from 22/03/2012 and to 04/12/2014" in {
+
+        forAll( freeHoldResidentialRightToBuyFromMarch2012ToApril2014 ) {
+          calRequest =>
+            reset(mockFreeholdCalculationService)
+            when(mockFreeholdCalculationService.freeholdSelfAssessedMarch2012ToApril2014)
+              .thenReturn(createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT))
+            val res: CalculationResponse = testCalculationService.calculateTaxRelief(calRequest)
+            verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedMarch2012ToApril2014
+            res shouldBe CalculationResponse(Seq(Result(
+              totalTax = 0,
+              resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+              resultHint = None,
+              npv = None,
+              taxCalcs = Seq.empty
+            )))
+        }
+      }
+
       "given relief code InvestmentZonesTaxSiteRelief(37)" in {
         val investmentTestRequest = createRequestWithTaxRelief(
           HoldingTypes.freehold,

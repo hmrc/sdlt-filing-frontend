@@ -1092,6 +1092,69 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
 
+      // SDLT - Tax Calc Case - 24e - Self Assessed
+      "TaxReliefCode is RightToBuy: 22 :: residential" when {
+        "the date is after 22/03/2012  and before 04/12/2014" when {
+          "transaction is linked" must {
+            "return the self assessed response" when {
+              "Property Type is Residential: effective date is 22/02/2013" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Residential",
+                        |  "effectiveDateDay": 22,
+                        |  "effectiveDateMonth": 2,
+                        |  "effectiveDateYear": 2013,
+                        |  "highestRent": 0,
+                        |  "premium": 10000,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+
+              "Property Type is Residential: effective date is 3/12/2014" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Residential",
+                        |  "effectiveDateDay": 3,
+                        |  "effectiveDateMonth": 12,
+                        |  "effectiveDateYear": 2014,
+                        |  "highestRent": 0,
+                        |  "premium": 10000,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
+
       // SDLT - Tax Calc Case - 24g - Self Assessed
       "TaxReliefCode is RightToBuy: 22" when {
         "date is on or after 1st April 2016" when {
