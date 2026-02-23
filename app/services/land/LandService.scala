@@ -22,9 +22,6 @@ import pages.land.LandTypeOfPropertyPage
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 
-import scala.concurrent.Future
-
-
 class LandService {
 
   def propertyTypeCheck(userAnswers: UserAnswers, continueRoute: Result): Result = {
@@ -41,24 +38,4 @@ class LandService {
 
     }
   }
-
-  def propertyTypeCheckAsync(
-                              userAnswers: UserAnswers,
-                              continueRoute: => Future[Result]
-                            ): Future[Result] =
-    userAnswers.get(LandTypeOfPropertyPage) match {
-      case Some(LandTypeOfProperty.Mixed | LandTypeOfProperty.NonResidential) =>
-        continueRoute
-
-      case None =>
-        Future.successful(
-          Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
-        )
-
-      case _ => //TODO - DTR-2495 - SPRINT-10 - Update to land CYA
-        Future.successful(
-          Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
-        )
-    }
-
 }
