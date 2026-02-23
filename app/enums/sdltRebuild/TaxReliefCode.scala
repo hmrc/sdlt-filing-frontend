@@ -42,6 +42,7 @@ case object OtherTaxReliefs                                                    e
 case object CombinationOfReliefs                                               extends TaxReliefCode(29) with StandardZeroRate
 case object AlternativeFinanceInvestmentBondsRelief                            extends TaxReliefCode(31) with StandardZeroRate
 case object FirstTimeBuyersRelief                                              extends TaxReliefCode(32) with SelfAssessed
+case object MultipleDwellingRelief                                             extends TaxReliefCode(33) with SelfAssessed
 case object PreCompletionTransaction                                           extends TaxReliefCode(34) with ZeroRate
 case object ReliefFrom15PercentRate                                            extends TaxReliefCode(35) with SelfAssessed
 case object FreeportsTaxSiteRelief                                             extends TaxReliefCode(36) with ZeroRate with SelfAssessed
@@ -78,7 +79,8 @@ object TaxReliefCode {
     AcquisitionRelief.fromCode,
     FreeportsTaxSiteRelief.fromCode,
     InvestmentZonesTaxSiteRelief.fromCode,
-    CollectiveEnfranchisementByLeaseholders.fromCode
+    CollectiveEnfranchisementByLeaseholders.fromCode,
+    MultipleDwellingRelief.fromCode
   )
 
   val zeroRateCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[ZeroRate])

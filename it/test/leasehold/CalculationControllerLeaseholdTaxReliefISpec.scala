@@ -1581,6 +1581,134 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
           request.json shouldBe selfAssessedResponse
         }
       }
+      //SDLT - Tax Calc Case 42 - Self Assessed
+      "return the self assessed response" when {
+        "Property type is Residential" in {
+          val request: WSResponse = ws
+            .url(calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  | "holdingType": "Leasehold",
+                  | "propertyType": "Residential",
+                  |  "effectiveDateDay": 24,
+                  |  "effectiveDateMonth": 3,
+                  |  "effectiveDateYear": 2012,
+                  |  "premium": 1000000,
+                  |  "highestRent": 0,
+                  |  "leaseDetails": {
+                  |    "startDateDay": 6,
+                  |    "startDateMonth": 4,
+                  |    "startDateYear": 2012,
+                  |    "endDateDay": 6,
+                  |    "endDateMonth": 4,
+                  |    "endDateYear": 2013,
+                  |    "leaseTerm": {
+                  |      "years": 1,
+                  |      "days": 1,
+                  |      "daysInPartialYear": 365
+                  |    },
+                  |    "year1Rent": 999,
+                  |    "year2Rent": 999
+                  |  },
+                  | "taxReliefDetails": {
+                  |   "taxReliefCode": 33
+                  | }
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          request.status shouldBe OK
+          request.json shouldBe selfAssessedResponse
+        }
+        "Property type is Non-Residential" in{
+          val request: WSResponse = ws
+            .url(calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  {
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Non-residential",
+                  |  "effectiveDateDay": 24,
+                  |  "effectiveDateMonth": 3,
+                  |  "effectiveDateYear": 2012,
+                  |  "premium": 1000000,
+                  |  "highestRent": 0,
+                  |  "leaseDetails": {
+                  |    "startDateDay": 6,
+                  |    "startDateMonth": 4,
+                  |    "startDateYear": 2012,
+                  |    "endDateDay": 6,
+                  |    "endDateMonth": 4,
+                  |    "endDateYear": 2013,
+                  |    "leaseTerm": {
+                  |      "years": 1,
+                  |      "days": 1,
+                  |      "daysInPartialYear": 365
+                  |    },
+                  |    "year1Rent": 999,
+                  |    "year2Rent": 999
+                  |  },
+                  |  "taxReliefDetails": {
+                  |   "taxReliefCode": 33
+                  | }
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          request.status shouldBe OK
+          request.json shouldBe selfAssessedResponse
+        }
+        "Property Type is Residential with additional property" in {
+          val request: WSResponse = ws
+            .url(calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 24,
+                  |  "effectiveDateMonth": 3,
+                  |  "effectiveDateYear": 2012,
+                  |  "premium": 1000000,
+                  |  "highestRent": 0,
+                  |  "leaseDetails": {
+                  |    "startDateDay": 6,
+                  |    "startDateMonth": 4,
+                  |    "startDateYear": 2012,
+                  |    "endDateDay": 6,
+                  |    "endDateMonth": 4,
+                  |    "endDateYear": 2013,
+                  |    "leaseTerm": {
+                  |      "years": 1,
+                  |      "days": 1,
+                  |      "daysInPartialYear": 365
+                  |    },
+                  |    "year1Rent": 999,
+                  |    "year2Rent": 999
+                  |  },
+                  |  "propertyDetails": {
+                  |    "individual": "Yes",
+                  |    "twoOrMoreProperties": "Yes",
+                  |    "replaceMainResidence": "Yes"
+                  |  },
+                  |  "taxReliefDetails": {
+                  |   "taxReliefCode": 33
+                  | }
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          request.status shouldBe OK
+          request.json shouldBe selfAssessedResponse
+        }
+      }
     }
   }
 }

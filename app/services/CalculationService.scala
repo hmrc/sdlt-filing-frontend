@@ -371,6 +371,10 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
       case Some(taxReliefDetails) =>
         (request.holdingType, request.propertyType, isAdditionalProperty(request), taxReliefDetails.taxReliefCode, request.isLinked) match {
           /* ------------- FreeHoldCases--------------------------- */
+          case (`freehold`, _, _, MultipleDwellingRelief, _) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdSelfAssessedRes
+            ))
           case (`freehold`, _, _, CollectiveEnfranchisementByLeaseholders, _)
             if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>
             CalculationResponse(Seq(
@@ -462,6 +466,10 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(freeCalculationService.freeholdSelfAssessedRes))
 
           /* ------------- LeaseHoldCases--------------------------- */
+          case (`leasehold`, _, _, MultipleDwellingRelief, _) =>
+            CalculationResponse(Seq(
+              leaseCalculationService.leaseholdSelfAssessedRes
+            ))
           case (`leasehold`, _, _, CollectiveEnfranchisementByLeaseholders, _)
             if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>
             CalculationResponse(Seq(
