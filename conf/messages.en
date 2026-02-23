@@ -1003,3 +1003,16 @@ land.areaOfLand.HECTARES.suffix                                               = 
 land.areaOfLand.SQMETRE                                                       = square metres
 land.areaOfLand.HECTARES                                                      = hectares
 land.areaOfLand.missing                                                       = Enter the area of land
+
+land.landSendingPlanByPost.title                                               = Sending a plan by post - About the land
+land.landSendingPlanByPost.heading                                             = Sending a plan by post
+land.landSendingPlanByPost.subheading                                          = Will you be sending a plan by post?
+land.landSendingPlanByPost.checkYourAnswersLabel                               = Sending a plan by post
+land.landSendingPlanByPost.error.required                                      = Select land sending plan by post
+land.landSendingPlanByPost.change.hidden                                       = Sending a plan by post
+land.landSendingPlanByPost.details.summary                                     = Sending your plan by post
+land.landSendingPlanByPost.details.content1                                    = The plan should indicate the scale used or be endorsed as ‘Not to Scale’. It must also show the return’s reference number, a description of the land and the local authority code.
+land.landSendingPlanByPost.details.content2                                    = Send the land or property plan to:
+land.landSendingPlanByPost.details.content3                                    = BT Stamp Duty Land Tax<br>HM Revenue and Customs<br>BX9 1LT
+land.landSendingPlanByPost.p                                                   = A plan is required for all transactions involving land that does not have a postal address or where a boundary needs defining.
+and.landSendingPlanByPost.missing                                              = Select land sending plan by post

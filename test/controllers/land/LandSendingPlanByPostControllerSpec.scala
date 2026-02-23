@@ -18,44 +18,44 @@ package controllers.land
 
 import base.SpecBase
 import controllers.routes
-import forms.land.LandAddNlpgUprnFormProvider
-import models.{CheckMode, NormalMode}
+import forms.land.LandSendingPlanByPostFormProvider
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.LandAddNlpgUprnPage
+import pages.land.LandSendingPlanByPostPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.land.LandAddNlpgUprnView
+import views.html.land.LandSendingPlanByPostView
 
 import scala.concurrent.Future
 
-class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
+class LandSendingPlanByPostControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new LandAddNlpgUprnFormProvider()
-  val form = formProvider()
+  lazy val landSendingPlanByPostRoute: String = controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode).url
 
-  lazy val landAddNlpgUprnRoute = controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode).url
-  lazy val landAddNlpgUprnRouteCheckMode = controllers.land.routes.LandAddNlpgUprnController.onPageLoad(CheckMode).url
+  val formProvider = new LandSendingPlanByPostFormProvider()
+  val form: Form[Boolean] = formProvider()
 
-  "LandAddNlpgUprn Controller" - {
+  "LandSendingPlanByPost Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, landAddNlpgUprnRoute)
+        val request = FakeRequest(GET, landSendingPlanByPostRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[LandAddNlpgUprnView]
+        val view = application.injector.instanceOf[LandSendingPlanByPostView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -64,14 +64,14 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(LandAddNlpgUprnPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, landAddNlpgUprnRoute)
+        val request = FakeRequest(GET, landSendingPlanByPostRoute)
 
-        val view = application.injector.instanceOf[LandAddNlpgUprnView]
+        val view = application.injector.instanceOf[LandSendingPlanByPostView]
 
         val result = route(application, request).value
 
@@ -80,7 +80,7 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when Yes is submitted" in {
+    "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -96,7 +96,7 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, landAddNlpgUprnRoute)
+          FakeRequest(POST, landSendingPlanByPostRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -106,71 +106,18 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the Enter LandSendingPlanByPost page when No is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, landAddNlpgUprnRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode).url
-      }
-    }
-
-    // TODO - DTR-2459 - SPRINT-9 - update redirect
-    "must redirect to the Land CYA page when No is submitted in check mode" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, landAddNlpgUprnRouteCheckMode)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, landAddNlpgUprnRoute)
+          FakeRequest(POST, landSendingPlanByPostRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[LandAddNlpgUprnView]
+        val view = application.injector.instanceOf[LandSendingPlanByPostView]
 
         val result = route(application, request).value
 
@@ -184,7 +131,7 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, landAddNlpgUprnRoute)
+        val request = FakeRequest(GET, landSendingPlanByPostRoute)
 
         val result = route(application, request).value
 
@@ -193,18 +140,19 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+    "redirect to Journey Recovery for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, landAddNlpgUprnRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+          FakeRequest(POST, landSendingPlanByPostRoute)
+            .withFormUrlEncodedBody(("value", "yes"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }

@@ -133,7 +133,7 @@ class Navigator @Inject()() {
 
     case LandTypeOfPropertyPage | LandInterestTransferredOrCreatedPage | LandRegisteredHmRegistryPage
          | LandAddNlpgUprnPage | LandTitleNumberPage | ConfirmLandOrPropertyAddressPage | LocalAuthorityCodePage | LandNlpgUprnPage
-         | LandMineralsOrMineralRightsPage | LandSelectMeasurementUnitPage | AreaOfLandPage => true
+         | LandMineralsOrMineralRightsPage | LandSelectMeasurementUnitPage | AreaOfLandPage | LandSendingPlanByPostPage => true
 
     case _ => false
   }
@@ -150,7 +150,7 @@ class Navigator @Inject()() {
     case LandAddNlpgUprnPage =>
       _ => controllers.land.routes.LandNlpgUprnController.onPageLoad(NormalMode)
     case LandNlpgUprnPage =>
-      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2462 - SPRINT-9 Redirect to Will you be sending plan by post page
+      _ => controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode)
     case ConfirmLandOrPropertyAddressPage =>
       _ => controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode)
     case LocalAuthorityCodePage =>
@@ -161,6 +161,8 @@ class Navigator @Inject()() {
       _ => controllers.land.routes.AreaOfLandController.onPageLoad(NormalMode)
     case AreaOfLandPage =>
       _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2495 - SPRINT-10 Redirect to Land check your answers
+    case LandSendingPlanByPostPage =>
+      _ => controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
 
     case _ => _ => routes.IndexController.onPageLoad()
   }
