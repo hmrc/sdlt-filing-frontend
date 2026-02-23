@@ -354,7 +354,7 @@ POST       /about-the-land/enter-area-of-land                                   
 GET        /about-the-land/enter-area-of-land/change                                                 controllers.land.AreaOfLandController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-land/enter-area-of-land/change                                                 controllers.land.AreaOfLandController.onSubmit(mode: Mode = CheckMode)
 
-GET        /about-the-land/sending-plan-by-post                       controllers.land.LandSendingPlanByPostController.onPageLoad(mode: Mode = NormalMode)
-POST       /about-the-land/sending-plan-by-post                       controllers.land.LandSendingPlanByPostController.onSubmit(mode: Mode = NormalMode)
-GET        /about-the-land/sending-plan-by-post/change                 controllers.land.LandSendingPlanByPostController.onPageLoad(mode: Mode = CheckMode)
-POST       /about-the-land/sending-plan-by-post/change                 controllers.land.LandSendingPlanByPostController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-land/sending-plan-by-post                                                      controllers.land.LandSendingPlanByPostController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/sending-plan-by-post                                                      controllers.land.LandSendingPlanByPostController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/sending-plan-by-post/change                                               controllers.land.LandSendingPlanByPostController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/sending-plan-by-post/change                                               controllers.land.LandSendingPlanByPostController.onSubmit(mode: Mode = CheckMode)
