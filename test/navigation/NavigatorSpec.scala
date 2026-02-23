@@ -222,8 +222,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LocalAuthorityCodePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
         }
 
-        "go from LandSelectMeasurementUnitPage to what is the are of land page" in { //TODO - DTR-2492 - SPRINT-9 - Update to what is the area of the land in (units) -lr-9c
-          navigator.nextPage(LandSelectMeasurementUnitPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
+        "go from LandSelectMeasurementUnitPage to what is the are of land page" in {
+          navigator.nextPage(LandSelectMeasurementUnitPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.AreaOfLandController.onPageLoad(NormalMode)
+        }
+
+        "go from AreaOfLandPage to Land check your answers page" in { // TODO - DTR-2495 - SPRINT-10 Redirect to Land check your answers
+          navigator.nextPage(AreaOfLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
 
       }

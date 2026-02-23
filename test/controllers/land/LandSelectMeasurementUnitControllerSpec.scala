@@ -20,12 +20,13 @@ import base.SpecBase
 import controllers.routes
 import forms.land.LandSelectMeasurementUnitFormProvider
 import models.land.{LandSelectMeasurementUnit, LandTypeOfProperty}
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.{LandSelectMeasurementUnitPage, LandTypeOfPropertyPage}
+import pages.land.{AreaOfLandPage, LandSelectMeasurementUnitPage, LandTypeOfPropertyPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -199,6 +200,40 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must clear land area and redirect to the next page when previous unit type was different" in {
+
+      val userAnswers = emptyUserAnswers
+        .set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
+        .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
+        .set(AreaOfLandPage, "100.000").success.value
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, landSelectMeasurementUnitRoute)
+            .withFormUrlEncodedBody(("value", LandSelectMeasurementUnit.Hectares.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(AreaOfLandPage).isDefined mustBe false
       }
     }
 

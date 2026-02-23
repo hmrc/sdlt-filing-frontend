@@ -348,3 +348,8 @@ GET         /about-the-land/unit-of-measurement/change                          
 POST        /about-the-land/unit-of-measurement/change                                               controllers.land.LandSelectMeasurementUnitController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-UK-residency/before-you-start                                                     controllers.ukResidency.UkResidencyBeforeYouStartController.onPageLoad()
+
+GET        /about-the-land/enter-area-of-land                                                        controllers.land.AreaOfLandController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/enter-area-of-land                                                        controllers.land.AreaOfLandController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/enter-area-of-land/change                                                 controllers.land.AreaOfLandController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/enter-area-of-land/change                                                 controllers.land.AreaOfLandController.onSubmit(mode: Mode = CheckMode)
