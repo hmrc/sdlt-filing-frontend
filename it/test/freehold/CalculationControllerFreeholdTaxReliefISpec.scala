@@ -1193,10 +1193,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
             }
           }
         }
-      }
-
-      // SDLT - Tax Calc Case - 28 - Self Assessed
-      "TaxReliefCode is RightToBuy: 22" when {
+        // SDLT - Tax Calc Case - 28 - Self Assessed
         "date is before 17th March 2016" when {
           "the transaction is linked" must {
             "return the self assessed response" when {
@@ -1237,6 +1234,38 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         |  "effectiveDateDay": 16,
                         |  "effectiveDateMonth": 2,
                         |  "effectiveDateYear": 2016,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+        // SDLT - Tax Calc Case - 24f - Self Assessed
+        "date is on or after 4th Dec 2014" when {
+          "the transaction is linked" must {
+            "return the self assessed response" when {
+              "Property Type Residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Residential",
+                        |  "effectiveDateDay": 16,
+                        |  "effectiveDateMonth": 2,
+                        |  "effectiveDateYear": 2015,
                         |  "premium": 1000000,
                         |  "highestRent": 0,
                         |  "isLinked": true,
