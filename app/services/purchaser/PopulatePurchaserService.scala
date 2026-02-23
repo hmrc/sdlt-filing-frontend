@@ -239,23 +239,27 @@ class PopulatePurchaserService {
         } yield finalAnswers
       case (false, Some("YES"), Some(line1), _, Some(name)) =>
         for {
-          finalAnswers <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
+          purchaserPages <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
             buildAddress(line1, purchaser.address2, purchaser.address3, purchaser.address4, purchaser.postcode), purchaser, mainPurchaserCheck, id)
+          finalAnswers <- finalPurchaserPages(purchaserPages)
         } yield finalAnswers
       case (false, Some("NO"), Some(line1), Some(name), _) =>
         for {
-          finalAnswers <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
+          purchaserPages <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
             buildAddress(line1, purchaser.address2, purchaser.address3, purchaser.address4, purchaser.postcode), purchaser, mainPurchaserCheck, id)
+          finalAnswers <- finalPurchaserPages(purchaserPages)
         } yield finalAnswers
       case (true, Some("YES"), _, _, _) =>
         for {
           answersWithId <- userAnswers.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, companyDetailsID))
-          finalAnswers <- answersWithId.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company)
+          typeOfPurchaser <- answersWithId.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company)
+          finalAnswers <- finalPurchaserPages(typeOfPurchaser)
         } yield finalAnswers
       case (true, Some("NO"), _, _, _) =>
         for {
           answersWithId <- userAnswers.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, None))
-          finalAnswers <- answersWithId.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual)
+          typeOfPurchaser <- answersWithId.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual)
+          finalAnswers <- finalPurchaserPages(typeOfPurchaser)
         } yield finalAnswers
       case _ =>
         Try(throw new IllegalStateException(s"Purchaser ${purchaser.purchaserID} is missing required data."))
