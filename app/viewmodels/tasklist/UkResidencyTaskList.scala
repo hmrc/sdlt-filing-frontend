@@ -43,7 +43,8 @@ object UkResidencyTaskList {
     val url =
       residency match {
         case Some(_) =>
-          controllers.routes.ReturnTaskListController.onPageLoad().url // TODO - DTR-2511 - SPRINT-10 - Update to Residency Check Your Answers when created
+          // TODO - DTR-2511 - SPRINT-10 - Update to Residency Check Your Answers when created
+          controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
         case None =>
           controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
       }
