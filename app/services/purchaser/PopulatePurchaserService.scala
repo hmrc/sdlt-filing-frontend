@@ -192,30 +192,18 @@ class PopulatePurchaserService {
     }
   }
 
-  private def finalPurchaserPages(previousPages: UserAnswers) = {
-    val isTrustee = previousPages.fullReturn.flatMap(_.purchaser).flatMap(_.find(_.isTrustee.isDefined))
-    val isConnectedToVendor = previousPages.fullReturn.flatMap(_.purchaser).flatMap(_.find(_.isConnectedToVendor.isDefined))
+  private def finalPurchaserPages(previousPages: UserAnswers, purchaser: Purchaser) = {
+    val isTrustee = purchaser.isTrustee.exists(_.toUpperCase == "YES")
+    val isConnectedToVendor = purchaser.isConnectedToVendor.exists(_.toUpperCase == "YES")
 
-    (isTrustee, isConnectedToVendor) match {
-      case (Some(trustee), Some(connectedVendor)) => for {
-        withTrustee <- previousPages.set(IsPurchaserActingAsTrusteePage, IsPurchaserActingAsTrustee.Yes)
-        finalAnswers <- withTrustee.set(PurchaserAndVendorConnectedPage, PurchaserAndVendorConnected.Yes)
-      } yield finalAnswers
-      case (Some(trustee), None) => for {
-        withTrustee <- previousPages.set(IsPurchaserActingAsTrusteePage, IsPurchaserActingAsTrustee.Yes)
-        finalAnswers <- withTrustee.set(PurchaserAndVendorConnectedPage, PurchaserAndVendorConnected.No)
-      } yield finalAnswers
-      case (None, Some(connectedVendor)) => for {
-        withTrustee <- previousPages.set(IsPurchaserActingAsTrusteePage, IsPurchaserActingAsTrustee.No)
-        finalAnswers <- withTrustee.set(PurchaserAndVendorConnectedPage, PurchaserAndVendorConnected.Yes)
-      } yield finalAnswers
-      case _ => for {
-        withTrustee <- previousPages.set(IsPurchaserActingAsTrusteePage, IsPurchaserActingAsTrustee.No)
-        finalAnswers <- withTrustee.set(PurchaserAndVendorConnectedPage, PurchaserAndVendorConnected.No)
-      } yield finalAnswers
-    }
+    for {
+      withTrustee <- previousPages.set(IsPurchaserActingAsTrusteePage,
+        if (isTrustee) IsPurchaserActingAsTrustee.Yes else IsPurchaserActingAsTrustee.No)
+      finalAnswers <- withTrustee.set(PurchaserAndVendorConnectedPage,
+        if (isConnectedToVendor) PurchaserAndVendorConnected.Yes else PurchaserAndVendorConnected.No)
+    } yield finalAnswers
   }
-
+  
   def populatePurchaserInSession(purchaser: Purchaser,
                                  id: String,
                                  userAnswers: UserAnswers): Try[UserAnswers] = {
@@ -228,38 +216,38 @@ class PopulatePurchaserService {
           withPurchaserPages <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
             buildAddress(line1, purchaser.address2, purchaser.address3, purchaser.address4, purchaser.postcode), purchaser, mainPurchaserCheck, id)
           withCompanyPages <- companyPagesUpdate(withPurchaserPages, purchaser)
-          finalAnswers <- finalPurchaserPages(withCompanyPages)
+          finalAnswers <- finalPurchaserPages(withCompanyPages, purchaser)
         } yield finalAnswers
       case (true, Some("NO"), Some(line1), Some(name), _) =>
         for {
           withPurchaserPages <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
             buildAddress(line1, purchaser.address2, purchaser.address3, purchaser.address4, purchaser.postcode), purchaser, mainPurchaserCheck, id)
           withIndividualPages <- individualPagesUpdate(withPurchaserPages, purchaser)
-          finalAnswers <- finalPurchaserPages(withIndividualPages)
+          finalAnswers <- finalPurchaserPages(withIndividualPages, purchaser)
         } yield finalAnswers
       case (false, Some("YES"), Some(line1), _, Some(name)) =>
         for {
           purchaserPages <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
             buildAddress(line1, purchaser.address2, purchaser.address3, purchaser.address4, purchaser.postcode), purchaser, mainPurchaserCheck, id)
-          finalAnswers <- finalPurchaserPages(purchaserPages)
+          finalAnswers <- finalPurchaserPages(purchaserPages, purchaser)
         } yield finalAnswers
       case (false, Some("NO"), Some(line1), Some(name), _) =>
         for {
           purchaserPages <- purchaserPagesUpdate(userAnswers, createPurchaserName(purchaser),
             buildAddress(line1, purchaser.address2, purchaser.address3, purchaser.address4, purchaser.postcode), purchaser, mainPurchaserCheck, id)
-          finalAnswers <- finalPurchaserPages(purchaserPages)
+          finalAnswers <- finalPurchaserPages(purchaserPages, purchaser)
         } yield finalAnswers
       case (true, Some("YES"), _, _, _) =>
         for {
           answersWithId <- userAnswers.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, companyDetailsID))
           typeOfPurchaser <- answersWithId.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company)
-          finalAnswers <- finalPurchaserPages(typeOfPurchaser)
+          finalAnswers <- finalPurchaserPages(typeOfPurchaser, purchaser)
         } yield finalAnswers
       case (true, Some("NO"), _, _, _) =>
         for {
           answersWithId <- userAnswers.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(id, None))
           typeOfPurchaser <- answersWithId.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual)
-          finalAnswers <- finalPurchaserPages(typeOfPurchaser)
+          finalAnswers <- finalPurchaserPages(typeOfPurchaser, purchaser)
         } yield finalAnswers
       case _ =>
         Try(throw new IllegalStateException(s"Purchaser ${purchaser.purchaserID} is missing required data."))

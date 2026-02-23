@@ -710,7 +710,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             phone = Some("05012345678"),
             registrationNumber = Some("COMREG789"),
             placeOfRegistration = Some("Birmingham"),
-            isTrustee = Some("YES")
+            isTrustee = Some("YES"),
+            isConnectedToVendor = Some("NO")
           )
 
           val fullReturnWithIndividualPurchaserTrustee: FullReturn =
@@ -734,6 +735,20 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
 
         "must successfully populate session with connected vendor flag only" in {
           val purchaserConnectedVendor = Purchaser(
+            purchaserID = Some("PUR001"),
+            forename1 = Some("John"),
+            forename2 = Some("Michael"),
+            surname = Some("Smith"),
+            address1 = Some("20 Test Road"),
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = Some("L1 1AA"),
+            isCompany = Some("NO"),
+            phone = Some("07123456789"),
+            nino = Some("AB123456C"),
+            dateOfBirth = Some("10/03/1992"),
+            isTrustee = Some("NO"),
             isConnectedToVendor = Some("YES")
           )
 
@@ -746,7 +761,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
 
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-          val result = service.populatePurchaserInSession(individualPurchaser, "PUR001", userAnswers)
+          val result = service.populatePurchaserInSession(purchaserConnectedVendor, "PUR001", userAnswers)
 
           result mustBe a[Success[_]]
 
@@ -754,6 +769,44 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
 
           updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(IsPurchaserActingAsTrustee.No)
           updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(PurchaserAndVendorConnected.Yes)
+        }
+
+        "must successfully populate session with isTrustee NO and isConnectedToVendor NO explicitly set" in {
+          val purchaserExplicitNo = Purchaser(
+            purchaserID = Some("PUR001"),
+            forename1 = Some("John"),
+            forename2 = Some("Michael"),
+            surname = Some("Smith"),
+            address1 = Some("20 Test Road"),
+            address2 = None,
+            address3 = None,
+            address4 = None,
+            postcode = Some("L1 1AA"),
+            isCompany = Some("NO"),
+            phone = Some("07123456789"),
+            nino = Some("AB123456C"),
+            dateOfBirth = Some("10/03/1992"),
+            isTrustee = Some("NO"),
+            isConnectedToVendor = Some("NO")
+          )
+
+          val fullReturn = fullReturnWithIndividualMainPurchaser.copy(
+            purchaser = Some(Seq(purchaserExplicitNo))
+          )
+
+          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+            .copy(fullReturn = Some(fullReturn))
+
+          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+          val result = service.populatePurchaserInSession(purchaserExplicitNo, "PUR001", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(IsPurchaserActingAsTrustee.No)
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(PurchaserAndVendorConnected.No)
         }
 
         "must successfully populate session with no trustee or connected vendor flags" in {
@@ -764,6 +817,52 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
           val result = service.populatePurchaserInSession(individualPurchaser, "PUR001", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(IsPurchaserActingAsTrustee.No)
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(PurchaserAndVendorConnected.No)
+        }
+
+        "must not leak trustee/vendor flags from another purchaser in the full return" in {
+          val mainPurchaserWithFlags = Purchaser(
+            purchaserID = Some("PUR001"),
+            forename1 = Some("Glenn"),
+            surname = Some("Goodwin"),
+            address1 = Some("39 Silkmore Crescent"),
+            postcode = Some("ST17 4JL"),
+            isCompany = Some("NO"),
+            phone = Some("07123456789"),
+            nino = Some("AB123456C"),
+            dateOfBirth = Some("10/03/1992"),
+            isTrustee = Some("YES"),
+            isConnectedToVendor = Some("YES")
+          )
+
+          val secondPurchaser = Purchaser(
+            purchaserID = Some("PUR002"),
+            forename1 = Some("Scott"),
+            surname = Some("Goodwin"),
+            address1 = Some("39 Silkmore Crescent"),
+            postcode = Some("ST17 4JL"),
+            isCompany = Some("NO"),
+            isTrustee = Some("NO"),
+            isConnectedToVendor = Some("NO")
+          )
+
+          val fullReturn = emptyFullReturn.copy(
+            purchaser = Some(Seq(mainPurchaserWithFlags, secondPurchaser)),
+            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001")))
+          )
+
+          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+            .copy(fullReturn = Some(fullReturn))
+
+          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+          val result = service.populatePurchaserInSession(secondPurchaser, "PUR002", userAnswers)
 
           result mustBe a[Success[_]]
 
