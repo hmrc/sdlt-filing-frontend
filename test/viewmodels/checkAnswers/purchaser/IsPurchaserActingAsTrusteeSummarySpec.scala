@@ -28,7 +28,7 @@ class IsPurchaserActingAsTrusteeSummarySpec extends SpecBase {
 
   "IsPurchaserActingAsTrusteeSummary" - {
     "when purchaser name is present" - {
-      "must return a summary list row with surname only" in {
+      "must return a summary list row with full name" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           implicit val msgs: Messages = messages(application)
@@ -39,7 +39,7 @@ class IsPurchaserActingAsTrusteeSummarySpec extends SpecBase {
 
           val result = IsPurchaserActingAsTrusteeSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "Yes"

@@ -38,7 +38,7 @@ object PurchaserAndVendorConnectedSummary  {
         )
 
         SummaryListRowViewModel(
-          key     = messages("purchaser.purchaserAndVendorConnected.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
+          key     = messages("purchaser.purchaserAndVendorConnected.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(CheckMode).url)
@@ -53,7 +53,7 @@ object PurchaserAndVendorConnectedSummary  {
       )
 
       SummaryListRowViewModel(
-        key = messages("purchaser.purchaserAndVendorConnected.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
+        key = messages("purchaser.purchaserAndVendorConnected.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
         value = value
       )
     }
