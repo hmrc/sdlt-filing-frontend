@@ -538,6 +538,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           CalculationResponse(Seq(
             freeCalculationService.freeholdSelfAssessedRes
           ))
+      case (`freehold`, `residential`, true, Some(true))
+        if request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>
+        CalculationResponse(Seq(
+          freeCalculationService.freeholdSelfAssessedRes
+        ))
       case (`freehold`, `mixed` | `nonResidential`, false, Some(false))
         if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
         calculateBaseTax(request)
