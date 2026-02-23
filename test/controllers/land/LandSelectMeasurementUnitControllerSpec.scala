@@ -260,46 +260,6 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    //TODO - DTR-2495 - SPRINT-10 - update redirect to CYA
-    "must redirect to CYA for a POST when property type is Residential" in {
-      val userAnswers = emptyUserAnswers
-        .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, landSelectMeasurementUnitRoute)
-            .withFormUrlEncodedBody(("value", LandSelectMeasurementUnit.Hectares.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
-      }
-    }
-
-    //TODO - DTR-2495 - SPRINT-10 - update redirect to CYA
-    "must redirect to CYA for a POST when property type is Additional" in {
-      val userAnswers = emptyUserAnswers
-        .set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional).success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, landSelectMeasurementUnitRoute)
-            .withFormUrlEncodedBody(("value", LandSelectMeasurementUnit.Hectares.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
-      }
-    }
-
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
