@@ -29,12 +29,18 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
+@detailsContent = {
+    @p(messages("land.landSendingPlanByPost.details.content1"))
+    @p(messages("land.landSendingPlanByPost.details.content2"))
+    @p(messages("land.landSendingPlanByPost.details.content3"))
+}
+
 @layout(pageTitle = title(form, messages("land.landSendingPlanByPost.title"))) {
 
     @formHelper(action = controllers.land.routes.LandSendingPlanByPostController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
           @caption(messages("site.land.caption"))
@@ -44,14 +50,14 @@
           @p(messages("land.landSendingPlanByPost.p"))
 
           @govukDetails(Details(
-          summary = messages("land.landSendingPlanByPost.change.link"),
-          content = HtmlContent(messages("land.landSendingPlanByPost.change.link.content"))
+              summary = messages("land.landSendingPlanByPost.details.summary"),
+              content = HtmlContent(detailsContent)
           ))
 
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(""),
+                legend = LegendViewModel(messages("land.landSendingPlanByPost.subheading")).asPageSubHeading(),
                 items = Seq(
                     RadioItem(
                     value = Some("true"),

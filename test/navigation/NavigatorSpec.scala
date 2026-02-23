@@ -229,7 +229,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AreaOfLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
 
-        "go from LandSendingPlanByPostPage to lr-8 page" in {
+        "go from LandSendingPlanByPostPage to LandMineralsOrMineralRights page" in {
           navigator.nextPage(LandSendingPlanByPostPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
         }
 

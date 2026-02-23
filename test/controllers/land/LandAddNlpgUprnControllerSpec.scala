@@ -106,8 +106,7 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    // TODO - DTR-2459 - SPRINT-9 - update redirect
-    "must redirect to the Enter NlpgUprn page when No is submitted" in {
+    "must redirect to the Enter LandSendingPlanByPost page when No is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -129,7 +128,7 @@ class LandAddNlpgUprnControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode).url
       }
     }
 
