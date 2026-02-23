@@ -518,6 +518,10 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     FreeholdResultFactory
       .freeholdZeroRateTaxRelief
 
+  val freeHoldReliefFrom15PercentRateBefore17March2016: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
   def freeholdAcquisitionTaxRelief(request: Request): Result = {
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
