@@ -163,6 +163,44 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
         }
       }
 
+      //SDLT - Tax Calc Case - 22g - Self Assessed
+      "with no taxReliefDetails" when {
+        "transaction is linked" when {
+          "date is on or after 1st Dec 2016" must {
+            "return the zero rate response" when {
+              "Property type is Residential Additional Property" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Residential",
+                        | "effectiveDateDay": 1,
+                        | "effectiveDateMonth": 4,
+                        | "effectiveDateYear": 2016,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "propertyDetails": {
+                        |   "individual": "Yes",
+                        |   "twoOrMoreProperties": "Yes",
+                        |   "replaceMainResidence": "Yes"
+                        | },
+                        | "isLinked": true
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
+
       // Case 1
       "with no taxReliefDetails" when {
         "transaction is not linked" when {
