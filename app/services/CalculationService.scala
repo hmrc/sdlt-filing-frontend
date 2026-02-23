@@ -13,7 +13,7 @@ import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfter22Mar2012AndBefore25Mar2012, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope}
 import utils.DateUtil
 import utils.LoggerUtil._
 
@@ -404,6 +404,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             ))
           case (`freehold`, _, _, AcquisitionRelief, Some(true)) if
             request.effectiveDate.isBefore(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdSelfAssessedRes
+            ))
+          case (`freehold`, `residential`, false, FirstTimeBuyersRelief, Some(true))
+            if isAfter22Mar2012AndBefore25Mar2012(request.effectiveDate) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedRes
             ))

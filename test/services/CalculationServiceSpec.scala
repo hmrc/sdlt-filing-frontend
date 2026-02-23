@@ -1551,6 +1551,24 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
             verify(mockFreeholdCalculationService, times(1)).freeholdRightToBuyBeforeMarch2016(freeHoldRightToRequest)
         }
       }
+
+      "tax relief code is FirstTimeBuyersRelief(32), isLinked = true and date is on or after 22rd March 2012 and before 25rd March 2012" in {
+        val testRequest = createRequestWithTaxRelief(
+          freehold,
+          residential,
+          LocalDate.of(2012, 3, 22),
+          taxReliefCode = FirstTimeBuyersRelief,
+          isLinked = Some(true)
+        )
+
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+      }
     }
 
     "select freehold / non-residential property with tax relief code" when {
@@ -2585,7 +2603,26 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verifyNoMoreInteractions(mockLeaseholdCalculationService)
       }
 
-      "given a relief code FirstTimeBuyerRelief & effective date before the minimum allowed date" in {
+      "given a relief code FirstTimeBuyerRelief, is freehold & effective date is after the maximum allowed date :: falls back to calculateNoTaxRelief" in {
+
+        val testRequest = createRequestWithTaxRelief(
+          freehold,
+          residential,
+          LocalDate.of(2012, 3, 26),
+          taxReliefCode = FirstTimeBuyersRelief,
+          isLinked = Some(true)
+
+        )
+        val result = createSelfAssessedResult(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT)
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedRes).thenReturn(result)
+        testCalculationService.calculateTaxRelief(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedRes
+      }
+
+
+      "given a relief code FirstTimeBuyerRelief, is leasehold & effective date before the minimum allowed date" in {
 
         val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2008, 3, 11), taxReliefCode = FirstTimeBuyersRelief)
         val ex = the [InvalidDateException] thrownBy {
@@ -2598,7 +2635,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verifyNoMoreInteractions(mockLeaseholdCalculationService)
       }
 
-      "given a relief code FirstTimeBuyerRelief & effective date after the maximum allowed date" in {
+      "given a relief code FirstTimeBuyerRelief is leasehold & effective date after the maximum allowed date" in {
 
         val testRequest = createRequestWithTaxRelief(leasehold, residential, LocalDate.of(2016, 3, 17), taxReliefCode = FirstTimeBuyersRelief)
         val result = createResult("leaseholdResidentialDec14Onwards")

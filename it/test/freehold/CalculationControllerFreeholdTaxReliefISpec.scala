@@ -2150,6 +2150,64 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           request.json shouldBe selfAssessedResponse
         }
       }
+
+      //SDLT - Tax Calc Case 32e -Self Assessed
+      "Property type is Residential" must {
+        "return the self assessed response" when {
+          "date is on or after 22rd March 2012" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    | "holdingType": "Freehold",
+                    | "propertyType": "Residential",
+                    | "effectiveDateDay": 22,
+                    | "effectiveDateMonth": 3,
+                    | "effectiveDateYear": 2012,
+                    | "premium": 1000000,
+                    | "highestRent": 0,
+                    | "isLinked": true,
+                    | "taxReliefDetails": {
+                    |   "taxReliefCode": 32
+                    | }
+                    |}
+                    |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+          }
+          "date is before 25rd March 2012" in{
+              val request: WSResponse = ws
+                .url(calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      | "holdingType": "Freehold",
+                      | "propertyType": "Residential",
+                      | "effectiveDateDay": 24,
+                      | "effectiveDateMonth": 3,
+                      | "effectiveDateYear": 2012,
+                      | "premium": 1000000,
+                      | "highestRent": 0,
+                      | "isLinked": true,
+                      | "taxReliefDetails": {
+                      |   "taxReliefCode": 32
+                      | }
+                      |}
+                      |""".stripMargin
+                  )
+                )
+
+              request.status shouldBe OK
+              request.json shouldBe selfAssessedResponse
+          }
+        }
+      }
       //SDLT - Tax Calc Case 42 - Self Assessed
         "return the self assessed response" when {
           "Property type is Residential" in {
