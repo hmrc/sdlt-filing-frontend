@@ -40,7 +40,7 @@ site.purchaserAgent.caption                                                     
 site.purchaserAgent.beforeStart.caption                                             = Add an agent for the purchaser
 site.vendorAgent.caption                                                            = About the vendor’s agent
 site.land.caption                                                                   = About the land
-site.ukResidency.caption                                                            = About UK Residency
+site.ukResidency.caption                                                            = About UK residency
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
