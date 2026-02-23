@@ -40,6 +40,7 @@ site.purchaserAgent.caption                                                     
 site.purchaserAgent.beforeStart.caption                                             = Add an agent for the purchaser
 site.vendorAgent.caption                                                            = About the vendor’s agent
 site.land.caption                                                                   = About the land
+site.ukResidency.caption                                                            = About UK residency
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -114,6 +115,8 @@ tasklist.vendorAgentQuestion.details                                            
 tasklist.vendorAgentQuestion.heading                                                = Vendor Agent Questions
 tasklist.landQuestion.details                                                       = Land Questions
 tasklist.landQuestion.heading                                                       = Land Questions
+tasklist.ukResidencyQuestion.details                                                = UK Residency Questions
+tasklist.ukResidencyQuestion.heading                                                = UK Residency Questions
 tasklist.inProgress                                                                 = In Progress
 tasklist.cannotStartYet                                                             = Can not Start
 tasklist.failed                                                                     = Failed
@@ -978,3 +981,10 @@ land.landSelectMeasurementUnit.heading                                          
 land.landSelectMeasurementUnit.HECTARES                                             = Hectares
 land.landSelectMeasurementUnit.SQMETRE                                              = Square metres
 land.landSelectMeasurementUnit.error.required                                       = Please select a unit of measurement
+
+ukResidency.BeforeYouStart.p1                                                              = In this section, you need to tell us about the purchaser’s residency status.
+ukResidency.BeforeYouStart.p2                                                              = We will ask for:
+ukResidency.BeforeYouStart.bullet1                                                         = if any of the purchasers are non-UK residents
+ukResidency.BeforeYouStart.bullet2                                                         = if any of the purchasers are a close company controlled by non-UK residents
+ukResidency.BeforeYouStart.p3                                                              = You can also provide:
+ukResidency.BeforeYouStart.bullet3                                                         = if purchasers are claiming Crown employment relief
