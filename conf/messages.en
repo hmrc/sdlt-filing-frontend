@@ -341,11 +341,11 @@ addressLookup.landQuestionsAddress.countryPicker.heading                        
 
 # Vendor Messages
 vendor.beforeStart.title                                                            = Before you start - About the vendor
-vendor.beforeStart.p1                                                               = Within this section of the return, you will need to tell us details about the vendor selling the property or land.
+vendor.beforeStart.p1                                                               = In this section, you need to tell us about the vendor selling the land or property.
 vendor.beforeStart.p2                                                               = We will ask for:
-vendor.beforeStart.bullet1                                                          = the vendor’s name
-vendor.beforeStart.bullet2                                                          = the vendor’s address
-vendor.beforeStart.bullet3                                                          = if the vendor has an agent
+vendor.beforeStart.bullet1                                                          = the type of vendor
+vendor.beforeStart.bullet2                                                          = the vendor’s name
+vendor.beforeStart.bullet3                                                          = the vendor’s address
 
 vendor.checkYourAnswers.vendorType.label                                            = Vendor type
 vendor.checkYourAnswers.vendorTypeMissing                                           = Enter vendor type
@@ -396,7 +396,7 @@ vendor.vendorOverview.noVendor.subHeadingWithVendors                            
 vendor.vendorOverview.noVendor.subHeadingNoVendors                                  = Do you need to add another vendor?
 vendor.vendorOverview.noVendor.headingNoVendors                                     = You do not have any vendors added.
 vendor.vendorOverview.summaryInfo.text                                              = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
-vendor.vendorOverview.noVendor.p1                                                   = You have no vendors. You must add a vendor.
+vendor.vendorOverview.noVendor.p1                                                   = You have no vendors listed. You must add a vendor to complete this return
 vendor.vendorOverview.noVendor.button                                               = Add a vendor
 vendor.vendorOverview.error.required                                                = Please select an option
 
@@ -406,6 +406,8 @@ vendor.whoIsTheVendor.Individual                                                
 vendor.whoIsTheVendor.Company                                                       = A company
 vendor.whoIsTheVendor.checkYourAnswersLabel                                         = Who is the vendor?
 vendor.whoIsTheVendor.change.hidden                                                 = Who is the vendor?
+vendor.whoIsTheVendor.Company.hintText                                              = This means any form of organisation, such as a company, council or charity
+vendor.whoIsTheVendor.Individual.hintText                                           = This means any person liable to pay Stamp Duty Land Tax (SDLT)
 vendor.whoIsTheVendor.error.required                                                = Please select an option
 
 # Agent Messages
