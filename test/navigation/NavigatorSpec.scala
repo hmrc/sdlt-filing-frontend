@@ -208,16 +208,15 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandNlpgUprnPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSendingPlanByPostController.onPageLoad(NormalMode)
         }
 
-        // TODO DTR-2468: Redirect to Does the transaction involve agricultural or developmental land? (lr-9) page
-        "go from LandMineralsOrMineralRightsPage to lr-9 page" in {
-          navigator.nextPage(LandMineralsOrMineralRightsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
+        "go from LandMineralsOrMineralRightsPage to AgriculturalOrDevelopmentalLand page" in {
+          navigator.nextPage(LandMineralsOrMineralRightsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.AgriculturalOrDevelopmentalLandController.onPageLoad(NormalMode)
         }
 
         "go from ConfirmLandOrPropertyAddressPage to Local Authority Code page" in {
           navigator.nextPage(ConfirmLandOrPropertyAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode)
         }
 
-        "go from LocalAuthorityCodePage to LandRegisteredHmRegistry page page" in {
+        "go from LocalAuthorityCodePage to LandRegisteredHmRegistry page" in {
           navigator.nextPage(LocalAuthorityCodePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
         }
 
@@ -231,6 +230,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from LandSendingPlanByPostPage to LandMineralsOrMineralRights page" in {
           navigator.nextPage(LandSendingPlanByPostPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
+        }
+        
+        "go from AgriculturalOrDevelopmentalLandPage to DoYouKnowTheAreaOfLand page" in {
+          navigator.nextPage(AgriculturalOrDevelopmentalLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(NormalMode)
         }
 
         "go from DoYouKnowTheAreaOfLandPage to LandSelectMeasurementUnit page" in {

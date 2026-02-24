@@ -359,6 +359,11 @@ POST       /about-the-land/sending-plan-by-post                                 
 GET        /about-the-land/sending-plan-by-post/change                                               controllers.land.LandSendingPlanByPostController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-land/sending-plan-by-post/change                                               controllers.land.LandSendingPlanByPostController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-land/agricultural-or-developmental                                             controllers.land.AgriculturalOrDevelopmentalLandController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-land/agricultural-or-developmental                                             controllers.land.AgriculturalOrDevelopmentalLandController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/agricultural-or-developmental/change                                      controllers.land.AgriculturalOrDevelopmentalLandController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-land/agricultural-or-developmental/change                                      controllers.land.AgriculturalOrDevelopmentalLandController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-land/add-area-of-land                                                          controllers.land.DoYouKnowTheAreaOfLandController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-land/add-area-of-land                                                          controllers.land.DoYouKnowTheAreaOfLandController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-land/add-area-of-land/change                                                   controllers.land.DoYouKnowTheAreaOfLandController.onPageLoad(mode: Mode = CheckMode)

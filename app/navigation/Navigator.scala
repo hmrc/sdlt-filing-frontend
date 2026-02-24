@@ -134,7 +134,7 @@ class Navigator @Inject()() {
     case LandTypeOfPropertyPage | LandInterestTransferredOrCreatedPage | LandRegisteredHmRegistryPage
          | LandAddNlpgUprnPage | LandTitleNumberPage | ConfirmLandOrPropertyAddressPage | LocalAuthorityCodePage | LandNlpgUprnPage
          | LandMineralsOrMineralRightsPage | LandSelectMeasurementUnitPage | AreaOfLandPage | LandSendingPlanByPostPage
-         | DoYouKnowTheAreaOfLandPage => true
+         | AgriculturalOrDevelopmentalLandPage | DoYouKnowTheAreaOfLandPage => true
 
     case _ => false
   }
@@ -157,13 +157,15 @@ class Navigator @Inject()() {
     case LocalAuthorityCodePage =>
       _ => controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
     case LandMineralsOrMineralRightsPage =>
-      _ => controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode) // TODO DTR-2468: Redirect to Does the transaction involve agricultural or developmental land? (lr-9) page
+      _ => controllers.land.routes.AgriculturalOrDevelopmentalLandController.onPageLoad(NormalMode)
     case LandSelectMeasurementUnitPage =>
       _ => controllers.land.routes.AreaOfLandController.onPageLoad(NormalMode)
     case AreaOfLandPage =>
       _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2495 - SPRINT-10 Redirect to Land check your answers
     case LandSendingPlanByPostPage =>
       _ => controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
+    case AgriculturalOrDevelopmentalLandPage =>
+      _ => controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(NormalMode)
     case DoYouKnowTheAreaOfLandPage =>
       _ => controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
 
