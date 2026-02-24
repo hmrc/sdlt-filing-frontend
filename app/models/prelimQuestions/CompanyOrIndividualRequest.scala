@@ -18,7 +18,8 @@ package models.prelimQuestions
 
 import models.{Enumerable, WithName}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
 sealed trait CompanyOrIndividualRequest
@@ -33,16 +34,13 @@ object CompanyOrIndividualRequest extends Enumerable.Implicits {
     Option2
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
-    RadioItem(
-      content = Text(
-        value match {
-          case Option1 => messages("prelim.purchaserIsIndividual.company")
-          case Option2 => messages("prelim.purchaserIsIndividual.individual")
-        }
-      ),
-      value = Some(value.toString),
-      id = Some(s"value_$index")
+  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
+    case (value, index) =>
+      RadioItem(
+        content = Text(messages(s"prelim.purchaserIsIndividual.${value.toString}")),
+        value = Some(value.toString),
+        id = Some(s"value_$index"),
+        hint = Some(Hint(content = Text(messages(s"prelim.purchaserIsIndividual.${value.toString}.hintText"))))
     )
   }
 

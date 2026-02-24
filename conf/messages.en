@@ -138,10 +138,12 @@ prelim.beforeStart.p3                                                           
 
 prelim.purchaserIsIndividual.title                                                  = Who is making the purchase? - Preliminary questions
 prelim.purchaserIsIndividual.heading                                                = Who is making the purchase?
-prelim.purchaserIsIndividual.individual                                             = An individual
+prelim.purchaserIsIndividual.Individual                                             = An individual
 prelim.purchaserIsIndividual.individual.value                                       = Individual
-prelim.purchaserIsIndividual.company                                                = A company
+prelim.purchaserIsIndividual.Individual.hintText                                    = This means any person liable to pay Stamp Duty Land Tax (SDLT)
+prelim.purchaserIsIndividual.Company                                                = A company
 prelim.purchaserIsIndividual.company.value                                          = Company
+prelim.purchaserIsIndividual.Company.hintText                                       = This means any form of organisation, such as a company, council or charity
 prelim.purchaserIsIndividual.checkYourAnswersLabel                                  = Purchaser type
 prelim.purchaserIsIndividual.error.required                                         = Select who is making the purchase
 prelim.purchaserIsIndividual.error.invalid                                          = Invalid selection
@@ -189,7 +191,7 @@ prelim.transactionType.link.message                                             
 
 addressLookup.prelimQuestionsAddress.lookupPage.title                               = Find the address of the land or property - Preliminary questions
 addressLookup.prelimQuestionsAddress.lookupPage.heading                             = Find the address of the land or property
-addressLookup.prelimQuestionsAddress.lookupPage.filterLabel                         = Property name or number
+addressLookup.prelimQuestionsAddress.lookupPage.filterLabel                         = Property name or number (optional)
 addressLookup.prelimQuestionsAddress.lookupPage.submitLabel                         = Continue
 addressLookup.prelimQuestionsAddress.lookupPage.manualAddressLinkText               = Enter the address manually
 addressLookup.prelimQuestionsAddress.selectPage.title                               = Choose the address of the land or property - Preliminary questions
@@ -960,23 +962,23 @@ land.localAuthorityCode.hint.link                                               
 land.localAuthorityCode.regexExp                                                    = Invalid local authority code
 land.localAuthorityCode.constraint.invalid                                          = Provide valid local authority code
 
-land.nlpgUprn.title                                                           = What is the NLPG UPRN for the land or property? - About the land
-land.nlpgUprn.heading                                                         = What is the NLPG UPRN for the land or property?
-land.nlpgUprn.hint                                                            = This number can be up to 12 digits, like 100023336956. You can find it using the FindMyAddress website (England) or the Pointer database (Northern Ireland).
-land.nlpgUprn.checkYourAnswersLabel                                           = Land NLPG UPRN
-land.nlpgUprn.error.required                                                  = Enter Land NLPG UPRN
-land.nlpgUprn.error.length                                                    = The NLPG UPRN must be 14 characters or less
-land.nlpgUprn.change.hidden                                                   = Land NLPG UPRN
-land.nlpgUprn.error.format                                                    = The NLPG UPRN must only contain the prefix NI or numerical characters
+land.nlpgUprn.title                                                                 = What is the NLPG UPRN for the land or property? - About the land
+land.nlpgUprn.heading                                                               = What is the NLPG UPRN for the land or property?
+land.nlpgUprn.hint                                                                  = This number can be up to 12 digits, like 100023336956. You can find it using the FindMyAddress website (England) or the Pointer database (Northern Ireland).
+land.nlpgUprn.checkYourAnswersLabel                                                 = Land NLPG UPRN
+land.nlpgUprn.error.required                                                        = Enter Land NLPG UPRN
+land.nlpgUprn.error.length                                                          = The NLPG UPRN must be 14 characters or less
+land.nlpgUprn.change.hidden                                                         = Land NLPG UPRN
+land.nlpgUprn.error.format                                                          = The NLPG UPRN must only contain the prefix NI or numerical characters
 
-land.landMineralsOrMineralRights.title                                        = Minerals or mineral rights
-land.landMineralsOrMineralRights.heading                                      = Minerals or mineral rights
-land.landMineralsOrMineralRights.subheading                                   = Are there any minerals or mineral rights reserved or excluded for the land or property?
-land.landMineralsOrMineralRights.p                                            = Mineral rights are the legal entitlement to exploit, mine or produce minerals and other natural resources beneath the land or property. When mineral rights are reserved or excluded, the owner of the land or property has no claim to any minerals or other natural resources beneath the land.
-land.landMineralsOrMineralRights.checkYourAnswersLabel                        = Minerals or mineral rights
-land.landMineralsOrMineralRights.error.required                               = Select Yes or No
-land.landMineralsOrMineralRights.change.hidden                                = Minerals or mineral rights
-land.landMineralsOrMineralRights.missing                                      = Select an answer
+land.landMineralsOrMineralRights.title                                              = Minerals or mineral rights
+land.landMineralsOrMineralRights.heading                                            = Minerals or mineral rights
+land.landMineralsOrMineralRights.subheading                                         = Are there any minerals or mineral rights reserved or excluded for the land or property?
+land.landMineralsOrMineralRights.p                                                  = Mineral rights are the legal entitlement to exploit, mine or produce minerals and other natural resources beneath the land or property. When mineral rights are reserved or excluded, the owner of the land or property has no claim to any minerals or other natural resources beneath the land.
+land.landMineralsOrMineralRights.checkYourAnswersLabel                              = Minerals or mineral rights
+land.landMineralsOrMineralRights.error.required                                     = Select Yes or No
+land.landMineralsOrMineralRights.change.hidden                                      = Minerals or mineral rights
+land.landMineralsOrMineralRights.missing                                            = Select an answer
 
 land.landSelectMeasurementUnit.title                                                = Select one unit of measurement for the area of land
 land.landSelectMeasurementUnit.heading                                              = Select one unit of measurement for the area of land
@@ -984,27 +986,27 @@ land.landSelectMeasurementUnit.HECTARES                                         
 land.landSelectMeasurementUnit.SQMETRE                                              = Square metres
 land.landSelectMeasurementUnit.error.required                                       = Please select a unit of measurement
 
-ukResidency.BeforeYouStart.p1                                                              = In this section, you need to tell us about the purchaser’s residency status.
-ukResidency.BeforeYouStart.p2                                                              = We will ask for:
-ukResidency.BeforeYouStart.bullet1                                                         = if any of the purchasers are non-UK residents
-ukResidency.BeforeYouStart.bullet2                                                         = if any of the purchasers are a close company controlled by non-UK residents
-ukResidency.BeforeYouStart.p3                                                              = You can also provide:
-ukResidency.BeforeYouStart.bullet3                                                         = if purchasers are claiming Crown employment relief
+ukResidency.BeforeYouStart.p1                                                       = In this section, you need to tell us about the purchaser’s residency status.
+ukResidency.BeforeYouStart.p2                                                       = We will ask for:
+ukResidency.BeforeYouStart.bullet1                                                  = if any of the purchasers are non-UK residents
+ukResidency.BeforeYouStart.bullet2                                                  = if any of the purchasers are a close company controlled by non-UK residents
+ukResidency.BeforeYouStart.p3                                                       = You can also provide:
+ukResidency.BeforeYouStart.bullet3                                                  = if purchasers are claiming Crown employment relief
 
-land.areaOfLand.title                                                         = What is the area of land?
-land.areaOfLand.heading                                                       = What is the area of the land in {0}?
-land.areaOfLand.checkYourAnswersLabel                                         = Area of land
-land.areaOfLand.error.required                                                = Enter the area of land
-land.areaOfLand.error.length                                                  = Area of land must be 14 characters or less
-land.areaOfLand.error.invalid                                                 = Invalid error
-land.areaOfLand.change.hidden                                                 = Area of land
-land.areaOfLand.hint.SQMETRE                                                  = Enter the measurement in whole numbers
-land.areaOfLand.hint.HECTARES                                                 = Enter the measurement to 3 decimal places
-land.areaOfLand.SQMETRE.suffix                                                = m²
-land.areaOfLand.HECTARES.suffix                                               = ha
-land.areaOfLand.SQMETRE                                                       = square metres
-land.areaOfLand.HECTARES                                                      = hectares
-land.areaOfLand.missing                                                       = Enter the area of land
+land.areaOfLand.title                                                               = What is the area of land?
+land.areaOfLand.heading                                                             = What is the area of the land in {0}?
+land.areaOfLand.checkYourAnswersLabel                                               = Area of land
+land.areaOfLand.error.required                                                      = Enter the area of land
+land.areaOfLand.error.length                                                        = Area of land must be 14 characters or less
+land.areaOfLand.error.invalid                                                       = Invalid error
+land.areaOfLand.change.hidden                                                       = Area of land
+land.areaOfLand.hint.SQMETRE                                                        = Enter the measurement in whole numbers
+land.areaOfLand.hint.HECTARES                                                       = Enter the measurement to 3 decimal places
+land.areaOfLand.SQMETRE.suffix                                                      = m²
+land.areaOfLand.HECTARES.suffix                                                     = ha
+land.areaOfLand.SQMETRE                                                             = square metres
+land.areaOfLand.HECTARES                                                            = hectares
+land.areaOfLand.missing                                                             = Enter the area of land
 
 land.landSendingPlanByPost.title                                               = Sending a plan by post - About the land
 land.landSendingPlanByPost.heading                                             = Sending a plan by post
