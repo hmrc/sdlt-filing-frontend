@@ -34,7 +34,7 @@ object AddPurchaserPhoneNumberSummary {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = messages("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
+          key = messages("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
@@ -49,7 +49,7 @@ object AddPurchaserPhoneNumberSummary {
       )
 
       SummaryListRowViewModel(
-        key = messages("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.name).getOrElse("")),
+        key = messages("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
         value = value
       )
     }
