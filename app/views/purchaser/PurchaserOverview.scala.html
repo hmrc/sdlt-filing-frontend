@@ -16,7 +16,7 @@
 
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import viewmodels.CaptionSize.ExtraLarge
+@import viewmodels.CaptionSize.Large
 
 @this(
         layout: templates.Layout,
@@ -66,7 +66,8 @@
         case (Some(purchaserId), false) => {
             @govukNotificationBanner(
                 NotificationBanner(
-                    content = HtmlContent(s"""
+                    content = HtmlContent(
+                        s"""
                         <p class="govuk-notification-banner__heading">
                             ${messages("purchaser.purchaserOverview.mainPurchaserIncomplete.part1")}
                             <a class="govuk-notification-banner__link" href="${controllers.purchaser.routes.PurchaserOverviewController.changePurchaser(purchaserId).url}">
@@ -133,7 +134,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @caption(messages("site.purchaser.caption"), size = ExtraLarge)
+        @caption(messages("site.purchaser.caption"), size = Large)
         @h1(messages("purchaser.purchaserOverview.heading"))
 
         @maybeSummaryList match {

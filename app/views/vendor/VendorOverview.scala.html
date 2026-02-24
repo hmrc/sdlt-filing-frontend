@@ -16,7 +16,7 @@
 
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import viewmodels.CaptionSize.ExtraLarge
+@import viewmodels.CaptionSize.Large
 
 @this(
         layout: templates.Layout,
@@ -112,7 +112,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @caption(messages("site.vendor.caption"), size = ExtraLarge)
+        @caption(messages("site.vendor.caption"), size = Large)
         @h1(messages("vendor.vendorOverview.heading"))
 
         @maybeSummaryList match {
