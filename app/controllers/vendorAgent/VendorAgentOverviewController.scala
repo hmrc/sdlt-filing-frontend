@@ -36,17 +36,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VendorAgentOverviewController @Inject()(
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  override val messagesApi: MessagesApi,
-                                                  identify: IdentifierAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  fullReturnService: FullReturnService,
-                                                  sessionRepository: SessionRepository,
-                                                  vendorAgentService: VendorAgentService,
-                                                  view: VendorAgentOverviewView,
-                                                  formProvider: VendorAgentOverviewFormProvider
-                                                )(implicit ec: ExecutionContext)
+                                               val controllerComponents: MessagesControllerComponents,
+                                               override val messagesApi: MessagesApi,
+                                               identify: IdentifierAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               fullReturnService: FullReturnService,
+                                               sessionRepository: SessionRepository,
+                                               vendorAgentService: VendorAgentService,
+                                               view: VendorAgentOverviewView,
+                                               formProvider: VendorAgentOverviewFormProvider
+                                             )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
@@ -93,7 +93,7 @@ class VendorAgentOverviewController @Inject()(
         },
         value =>
           if (value) {
-            Future.successful(Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad()))
+            Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)))
           } else {
             Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
           }

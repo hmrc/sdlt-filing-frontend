@@ -148,7 +148,7 @@ class VendorAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to Vendor Agent Before You Start page when no vendor agent and answer yes" in {
+      "must redirect to Vendor Agent Name page when no vendor agent and answer yes" in {
         val application =
           applicationBuilder(userAnswers = Some(userAnswersWithoutAgent)).build()
 
@@ -160,7 +160,7 @@ class VendorAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            routes.VendorAgentBeforeYouStartController.onPageLoad().url
+            routes.AgentNameController.onPageLoad(NormalMode).url
         }
       }
 
