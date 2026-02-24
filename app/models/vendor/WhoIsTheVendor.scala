@@ -19,6 +19,7 @@ package models.vendor
 import models.{Enumerable, WithName}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
 sealed trait whoIsTheVendor
@@ -26,6 +27,7 @@ sealed trait whoIsTheVendor
 object whoIsTheVendor extends Enumerable.Implicits {
 
   case object Company extends WithName("Company") with whoIsTheVendor
+
   case object Individual extends WithName("Individual") with whoIsTheVendor
 
   val values: Seq[whoIsTheVendor] = Seq(
@@ -36,8 +38,9 @@ object whoIsTheVendor extends Enumerable.Implicits {
     case (value, index) =>
       RadioItem(
         content = Text(messages(s"vendor.whoIsTheVendor.${value.toString}")),
-        value   = Some(value.toString),
-        id      = Some(s"value_$index")
+        value = Some(value.toString),
+        id = Some(s"value_$index"),
+        hint = Some(Hint(content = Text(messages(s"vendor.whoIsTheVendor.${value.toString}.hintText"))))
       )
   }
 
