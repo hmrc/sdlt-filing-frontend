@@ -49,9 +49,7 @@ class PurchaserPaginationHelperSpec extends SpecBase {
 
   private val fullReturnWithIndividualPurchaser: FullReturn =
     emptyFullReturn.copy(purchaser = Some(Seq(individualPurchaser)),
-      returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR00"))))
-
-
+      returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))))
 
 
   def createPurchaser(id: String,

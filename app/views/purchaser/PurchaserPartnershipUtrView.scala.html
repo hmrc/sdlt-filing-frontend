@@ -19,14 +19,14 @@
 @import viewmodels.LegendSize.Large
 
 @this(
-    layout: templates.Layout,
-    formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-    govukFieldset: GovukFieldset,
-    p: Paragraph,
-    caption: Caption
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        govukFieldset: GovukFieldset,
+        p: Paragraph,
+        caption: Caption
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
@@ -49,7 +49,7 @@
                     ).asPageHeading(size = Large)
                 ),
                 html = HtmlFormat.fill(Seq(
-                    p(messages("purchaser.partnershipUtr.p1")),
+                    p(messages("purchaser.partnershipUtr.p1", purchaserName)),
                     govukInput(
                         InputViewModel(
                             field = form("partnershipUniqueTaxpayerReference"),
