@@ -795,4 +795,58 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory
       .leaseholdSelfAssessedResult
   }
+
+  val leaseholdCollectiveEnfranchisementByLeaseholdersApr09Onwards: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
+  val leaseholdFreeportPartialRelief: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
+  val leaseholdResFTBReliefMar10BeforeMar12: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
+  val freeholdFreeportPartialRelief: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
+  val leaseholdOtherInterestTransferred: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
+  val leaseholdNov17Onwards: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
+  val leaseholdMixedPropMar08BeforeMar16: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
+  val leaseholdMultipleDwellingRelief: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
+  def leaseholdFreeportRelief(leaseDetails: Option[LeaseDetails]): Result = {
+    val calculatedNpv = Some(getNPV("leaseholdFreeportRelief", leaseDetails).toInt)
+    LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
+  }
+
+  def leaseholdResAddPropPreCompletionTransactionApr2016Onwards(leaseDetails: Option[LeaseDetails]): Result = {
+    val calculatedNpv = Some(getNPV("leaseholdResAddPropPreCompletionTransactionAfterApr2016", leaseDetails).toInt)
+    LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
+  }
+
+  def leaseholdPreCompletionTransactionApr2013Onwards(leaseDetails: Option[LeaseDetails]): Result = {
+    val calculatedNpv = Some(getNPV("leaseholdPreCompletionTransactionAfterApr2013", leaseDetails).toInt)
+    LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
+  }
+
+  def leaseholdMixedNonResPropStandardZeroRelief(leaseDetails: Option[LeaseDetails]): Result = {
+    val calculatedNpv = Some(getNPV("leaseholdMixedNonResPropStandardZeroRelief", leaseDetails).toInt)
+    LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
+  }
+
+
 }
