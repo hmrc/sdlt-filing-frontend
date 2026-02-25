@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.purchaser
 
 import models.{CheckMode, UserAnswers}
-import pages.purchaser.{EnterPurchaserPhoneNumberPage, NameOfPurchaserPage}
+import pages.purchaser.EnterPurchaserPhoneNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -32,7 +32,7 @@ object EnterPurchaserPhoneNumberSummary  {
       answer =>
 
         SummaryListRowViewModel(
-          key     = messages("purchaser.enterPhoneNumber.checkYourAnswersLabel", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
+          key     = "purchaser.enterPhoneNumber.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
