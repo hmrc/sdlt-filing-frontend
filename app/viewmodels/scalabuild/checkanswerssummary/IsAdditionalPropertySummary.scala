@@ -35,7 +35,7 @@ object IsAdditionalPropertySummary {
               "site.change",
               controllers.scalabuild.routes.IsAdditionalPropertyController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("isAdditionalProperty.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden"))
           )
         )
       } else {
@@ -43,7 +43,6 @@ object IsAdditionalPropertySummary {
           key = KeyViewModel("isAdditionalProperty.checkYourAnswersLabel").withCssClass(keyCssClass),
           value = ValueViewModel(value).withCssClass(valueCssClass)
         )
-
       }
     }
 }

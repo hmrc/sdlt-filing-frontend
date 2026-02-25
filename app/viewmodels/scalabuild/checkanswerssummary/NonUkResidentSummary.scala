@@ -35,7 +35,7 @@ object NonUkResidentSummary {
               "site.change",
               controllers.scalabuild.routes.NonUkResidentController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("nonUkResident.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden"))
           )
         )
       } else {

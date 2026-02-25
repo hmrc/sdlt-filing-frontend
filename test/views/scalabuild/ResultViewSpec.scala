@@ -14,7 +14,7 @@ class ResultViewSpec extends ViewTestFixture with TestObjects {
   val view: ResultView = app.injector.instanceOf[views.html.scalabuild.ResultView]
   val freeSummaryList: SummaryList = summaryListHelper(freeResNonIndAddMainJourney, false).getOrElse(SummaryList())
   val leaseSummaryList: SummaryList = summaryListHelper(leaseResNonIndAddMainJourney, false).getOrElse(SummaryList())
-  override val htmlContent: HtmlFormat.Appendable = view.apply(Seq(minResultDisplayTable()))(fakeRequest, messages)
+  override val htmlContent: HtmlFormat.Appendable = view.apply(Seq(minResultDisplayTable))(fakeRequest, messages)
 
   "ResultView" must {
     "render the correct content" in {

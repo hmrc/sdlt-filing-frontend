@@ -34,7 +34,7 @@ object OwnsOtherPropertiesSummary {
             "site.change",
             controllers.scalabuild.routes.OwnsOtherPropertiesController.onPageLoad().url
           )
-            .withVisuallyHiddenText(messages("ownsOtherProperties.change.hidden"))
+            .withVisuallyHiddenText(messages("site.change.hidden"))
         )
       )} else {
         SummaryListRowViewModel(

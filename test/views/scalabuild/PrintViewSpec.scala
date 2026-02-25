@@ -38,7 +38,7 @@ class PrintViewSpec extends ViewTestFixture with TestObjects {
       summaryRow must include(messages("nonUkResident.checkYourAnswersLabel"))
       summaryRow must include(messages("isPurchaserIndividual.checkYourAnswersLabel"))
       summaryRow must include(messages("isAdditionalProperty.checkYourAnswersLabel"))
-      summaryRow must include(messages("mainResidence.checkYourAnswersLabel"))
+      summaryRow must include(messages("replaceMainResidence.checkYourAnswersLabel"))
     }
 
     "render the correct summary rows for the result calculation" in {

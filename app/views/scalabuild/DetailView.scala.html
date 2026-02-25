@@ -37,7 +37,7 @@ govukTable: GovukTable
         )),
         rows = rows.map { row =>
             Seq(
-                TableRow(content = Text(row.rowHeading)),
+                TableRow(content = Text(row.rowHeading), classes = "govuk-table__header"),
                 TableRow(content = Text(row.rate.toString), classes = "govuk-!-text-align-right"),
                 TableRow(content = Text(row.taxDue.toString), classes = "govuk-!-text-align-right")
             )

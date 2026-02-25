@@ -37,7 +37,7 @@ class DetailViewSpec extends ViewTestFixture with TestObjects {
 
 
     "render the correct table rows headers in minimal freeholder path" in {
-      tableRowHeader must include(messages("Purchase Price Bands (£)"))
+      tableRowHeader must include(messages("Purchase price bands (£)"))
       tableRowHeader must include(messages("Percentage rate (%)"))
       tableRowHeader must include(messages("SDLT due (£)"))
     }

@@ -28,19 +28,19 @@ object PropertySummary {
       if (withAction) {
         SummaryListRowViewModel(
           key = KeyViewModel("propertyType.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(answer.toString).withCssClass(valueCssClass),
+          value = ValueViewModel(answer.displayCya).withCssClass(valueCssClass),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
               controllers.scalabuild.routes.ResidentialOrNonResidentialController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("property.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden"))
           )
         )
       } else {
         SummaryListRowViewModel(
           key = KeyViewModel("propertyType.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(answer.toString).withCssClass(valueCssClass)
+          value = ValueViewModel(answer.displayCya).withCssClass(valueCssClass)
         )
       }
     }

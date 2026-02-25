@@ -32,7 +32,8 @@ class CheckYourAnswersViewSpec extends ViewTestFixture with TestObjects {
     summaryRow must include(messages("nonUkResident.checkYourAnswersLabel"))
     summaryRow must include(messages("isPurchaserIndividual.checkYourAnswersLabel"))
     summaryRow must include(messages("isAdditionalProperty.checkYourAnswersLabel"))
-    summaryRow must include(messages("mainResidence.checkYourAnswersLabel"))
+    summaryRow must include(messages("purchasePrice.checkYourAnswersLabel"))
+    summaryRow must include(messages("replaceMainResidence.checkYourAnswersLabel"))
   }
 
 }

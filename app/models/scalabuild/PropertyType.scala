@@ -9,10 +9,17 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait PropertyType
+sealed trait PropertyType {
+  val displayCya: String
+}
+
   object PropertyType extends Enumerable.Implicits {
-    case object Residential extends PropertyType
-    case object NonResidential extends PropertyType
+    case object Residential extends PropertyType {
+    override val displayCya: String = "Residential"
+    }
+    case object NonResidential extends PropertyType {
+    override val displayCya: String = "Non-residential"
+  }
 
     val values: Seq[PropertyType] = Seq(
       Residential,

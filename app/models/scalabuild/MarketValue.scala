@@ -28,15 +28,18 @@ object MarketValue {
 
 sealed trait MarketValueChoice {
   def id: String
+  val displayCya: String
 }
 
 object MarketValueChoice extends Enumerable.Implicits {
   case object PayUpfront extends MarketValueChoice {
     val id = "paySDLTUpfront"
+    val displayCya = "Using market value election"
   }
 
   case object PayInStages extends MarketValueChoice {
     val id = "paySDLTInStages"
+    val displayCya = "Stages"
   }
 
   val values: Seq[MarketValueChoice] = Seq(

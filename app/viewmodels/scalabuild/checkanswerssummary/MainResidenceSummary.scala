@@ -6,7 +6,7 @@
 package viewmodels.scalabuild.checkanswerssummary
 
 import models.scalabuild.UserAnswers
-import pages.scalabuild.ReplaceMainResidencePage
+import pages.scalabuild.MainResidencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.scalabuild.FormatUtils.{keyCssClass, valueCssClass}
@@ -24,7 +24,7 @@ import viewmodels.scalabuild.implicits._
 object MainResidenceSummary {
 
   def row(answers: UserAnswers, withAction: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ReplaceMainResidencePage).map { answer =>
+    answers.get(MainResidencePage).map { answer =>
       val value = if (answer) "Yes" else "No"
       if (withAction) {
         SummaryListRowViewModel(
@@ -35,7 +35,7 @@ object MainResidenceSummary {
               "site.change",
               controllers.scalabuild.routes.MainResidenceController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("mainResidence.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden"))
           )
         )
       } else {
