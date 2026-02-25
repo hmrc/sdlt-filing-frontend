@@ -1021,6 +1021,15 @@ land.landSendingPlanByPost.details.content3                                    =
 land.landSendingPlanByPost.p                                                   = A plan is required for all transactions involving land that does not have a postal address or where a boundary needs defining.
 and.landSendingPlanByPost.missing                                              = Select land sending plan by post
 
+land.agriculturalOrDevelopmental.title                                         = Agricultural or developmental land
+land.agriculturalOrDevelopmental.heading                                       = Agricultural or developmental land
+land.agriculturalOrDevelopmental.subHeading                                    = Does the transaction involve agricultural or developmental land?
+land.agriculturalOrDevelopmental.p1                                            = Agricultural land refers to land primarily used for activities like farming, keeping livestock and horticulture. Developmental land refers to land with planning permission for a use other than agriculture.
+land.agriculturalOrDevelopmental.checkYourAnswersLabel                         = Does the transaction involve agricultural or developmental land?
+land.agriculturalOrDevelopmental.error.required                                = Select yes if the transaction involves agricultural or developmental land
+land.agriculturalOrDevelopmental.change.hidden                                 = if the transaction involves agricultural or developmental land
+land.agriculturalOrDevelopmental.missing                                       = Select if the transaction involves agricultural or developmental land
+
 land.doYouKnowTheAreaOfLand.title                                              = Do you know the area of the land? - About the land
 land.doYouKnowTheAreaOfLand.heading                                            = Do you know the area of the land?
 land.doYouKnowTheAreaOfLand.hint                                               = This is the accurate measurement of the area of the land or property in hectares or square metres
