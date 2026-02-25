@@ -940,11 +940,11 @@ land.titleNumber.error.length                                                   
 land.titleNumber.change.hidden                                                      = Title or folio number
 land.titleNumber.missing                                                            = Select title or folio number
 
-land.confirmLandOrPropertyAddress.title                                             = Confirm the address of the land or property – About the land
+land.confirmLandOrPropertyAddress.title                                             = Confirm the address of the land or property - About the land
 land.confirmLandOrPropertyAddress.heading                                           = Confirm the address of the land or property
 land.confirmLandOrPropertyAddress.confirmAddress                                    = Confirm address
 land.confirmLandOrPropertyAddress.isThisTheLand                                     = Is this the address of the land or property?
-land.confirmLandOrPropertyAddress.checkYourAnswersLabel                             = Confirm the address of the land or property – About the land
+land.confirmLandOrPropertyAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
 land.confirmLandOrPropertyAddress.error.required                                    = Select Yes or No
 land.confirmLandOrPropertyAddress.change.hidden                                     = ConfirmLandOrPropertyAddress
 
@@ -1020,3 +1020,10 @@ land.landSendingPlanByPost.details.content2                                    =
 land.landSendingPlanByPost.details.content3                                    = BT Stamp Duty Land Tax<br>HM Revenue and Customs<br>BX9 1LT
 land.landSendingPlanByPost.p                                                   = A plan is required for all transactions involving land that does not have a postal address or where a boundary needs defining.
 and.landSendingPlanByPost.missing                                              = Select land sending plan by post
+
+land.doYouKnowTheAreaOfLand.title                                              = Do you know the area of the land? - About the land
+land.doYouKnowTheAreaOfLand.heading                                            = Do you know the area of the land?
+land.doYouKnowTheAreaOfLand.hint                                               = This is the accurate measurement of the area of the land or property in hectares or square metres
+land.doYouKnowTheAreaOfLand.checkYourAnswersLabel                              = Do you know the area of the land?
+land.doYouKnowTheAreaOfLand.error.required                                     = Select doYouKnowTheAreaOfLand
+land.doYouKnowTheAreaOfLand.change.hidden                                      = DoYouKnowTheAreaOfLand
