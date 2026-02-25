@@ -233,6 +233,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LandSendingPlanByPostPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
         }
 
+        "go from DoYouKnowTheAreaOfLandPage to LandSelectMeasurementUnit page" in {
+          navigator.nextPage(DoYouKnowTheAreaOfLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
+        }
+
       }
     }
 
