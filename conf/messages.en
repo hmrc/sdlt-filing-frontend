@@ -636,7 +636,7 @@ purchaser.whoIsMakingThePurchase.Company.hintText                               
 purchaser.whoIsMakingThePurchase.Individual                                         = An individual
 purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel                   = Individual
 
-purchaser.whoIsMakingThePurchase.Individual.hintText                                = This means a person liable to pay Stamp Duty Land Tax (SDLT)
+purchaser.whoIsMakingThePurchase.Individual.hintText                                = This means any person liable to pay Stamp Duty Land Tax (SDLT)
 purchaser.whoIsMakingThePurchase.checkYourAnswersLabel                              = Type of purchaser
 purchaser.checkYourAnswers.whoIsMakingThePurchaser.Missing                          = Enter type of purchaser
 purchaser.whoIsMakingThePurchase.error.required                                     = Select an answer
