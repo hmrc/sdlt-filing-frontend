@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.vendorAgent
 
 import models.{CheckMode, UserAnswers}
-import pages.vendorAgent.AddVendorAgentContactDetailsPage
+import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -29,7 +29,8 @@ object AddVendorAgentContactDetailsSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
 
     val changeRoute = controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
-    val label = messages("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
+    val agentName = answers.get(AgentNamePage).getOrElse("the agent")
+    val label = messages("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel", agentName)
 
     answers.get(AddVendorAgentContactDetailsPage).map {
       answer =>
