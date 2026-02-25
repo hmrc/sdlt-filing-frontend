@@ -28,7 +28,7 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
   "Hitting the /calculate route" should {
     "return a 200 response for a freehold holding type" when {
       // SDLT - Tax Calc Case - 21 - Self Assessed
-      "transaction is linked, effective date is before 17/03/2017 and property type is mixed" in {
+      "transaction is linked, effective date is before 17/03/2016 and property type is mixed" in {
         val request: WSResponse = ws
           .url(calculateUrl)
           .post(
@@ -37,7 +37,7 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
                 |{
                 |  "holdingType": "Freehold",
                 |  "propertyType": "Mixed",
-                |  "effectiveDateDay": 6,
+                |  "effectiveDateDay": 16,
                 |  "effectiveDateMonth": 3,
                 |  "effectiveDateYear": 2016,
                 |  "highestRent": 0,
@@ -52,7 +52,7 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
         request.json shouldBe selfAssessedResponse
 
       }
-      "transaction is linked, effective date is before 17/03/2017 and property type is non-residential" in {
+      "transaction is linked, effective date is before 17/03/2016 and property type is non-residential" in {
         val request: WSResponse = ws
           .url(calculateUrl)
           .post(
@@ -61,7 +61,7 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
                 |{
                 |  "holdingType": "Freehold",
                 |  "propertyType": "Non-residential",
-                |  "effectiveDateDay": 6,
+                |  "effectiveDateDay": 16,
                 |  "effectiveDateMonth": 3,
                 |  "effectiveDateYear": 2016,
                 |  "highestRent": 0,
@@ -76,6 +76,54 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
         request.json shouldBe selfAssessedResponse
       }
 
+      // SDLT - Tax Calc Case - 21a - Self Assessed
+      "transaction is linked, effective date is on or after 17/03/2016 and property type is mixed" in {
+        val request: WSResponse = ws
+          .url(calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Freehold",
+                |  "propertyType": "Mixed",
+                |  "effectiveDateDay": 17,
+                |  "effectiveDateMonth": 3,
+                |  "effectiveDateYear": 2016,
+                |  "highestRent": 0,
+                |  "premium": 750000,
+                |  "isLinked": true
+                |}
+                |""".stripMargin
+            )
+          )
+
+        request.status shouldBe OK
+        request.json shouldBe selfAssessedResponse
+
+      }
+      "transaction is linked, effective date is on or after 17/03/2016 and property type is non-residential" in {
+        val request: WSResponse = ws
+          .url(calculateUrl)
+          .post(
+            Json.parse(
+              """
+                |{
+                |  "holdingType": "Freehold",
+                |  "propertyType": "Non-residential",
+                |  "effectiveDateDay": 17,
+                |  "effectiveDateMonth": 3,
+                |  "effectiveDateYear": 2016,
+                |  "highestRent": 0,
+                |  "premium": 750000,
+                |  "isLinked": true
+                |}
+                |""".stripMargin
+            )
+          )
+
+        request.status shouldBe OK
+        request.json shouldBe selfAssessedResponse
+      }
 
       //SDLT - Tax Calc Case -22e -Self Assessed
       "taxReliefDetails is not provided and isLinked = true" when {
@@ -166,8 +214,8 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
       //SDLT - Tax Calc Case - 22g - Self Assessed
       "with no taxReliefDetails" when {
         "transaction is linked" when {
-          "date is on or after 1st Dec 2016" must {
-            "return the zero rate response" when {
+          "date is on or after 1st April 2016" must {
+            "return the self assessed response" when {
               "Property type is Residential Additional Property" in {
                 val request: WSResponse = ws
                   .url(calculateUrl)
@@ -185,7 +233,7 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
                         | "propertyDetails": {
                         |   "individual": "Yes",
                         |   "twoOrMoreProperties": "Yes",
-                        |   "replaceMainResidence": "Yes"
+                        |   "replaceMainResidence": "No"
                         | },
                         | "isLinked": true
                         |}

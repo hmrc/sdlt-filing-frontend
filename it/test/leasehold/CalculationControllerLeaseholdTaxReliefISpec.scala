@@ -225,7 +225,7 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
                       |  "propertyDetails": {
                       |    "individual": "Yes",
                       |    "twoOrMoreProperties": "Yes",
-                      |    "replaceMainResidence": "Yes"
+                      |    "replaceMainResidence": "No"
                       |  },
                       |  "taxReliefDetails": {
                       |    "taxReliefCode": 14
@@ -584,7 +584,7 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
                         |  "propertyDetails": {
                         |    "individual": "Yes",
                         |    "twoOrMoreProperties": "Yes",
-                        |    "replaceMainResidence": "Yes"
+                        |    "replaceMainResidence": "No"
                         |  },
                         |  "isLinked": false,
                         |  "taxReliefDetails": {
@@ -682,7 +682,7 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
                         |  "propertyDetails": {
                         |    "individual": "Yes",
                         |    "twoOrMoreProperties": "Yes",
-                        |    "replaceMainResidence": "Yes"
+                        |    "replaceMainResidence": "No"
                         |  },
                         |  "isLinked": false,
                         |  "taxReliefDetails": {
@@ -857,7 +857,7 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
                         |  "propertyDetails": {
                         |    "individual": "Yes",
                         |    "twoOrMoreProperties": "Yes",
-                        |    "replaceMainResidence": "Yes"
+                        |    "replaceMainResidence": "No"
                         |  },
                         |  "isLinked": false,
                         |  "taxReliefDetails": {
@@ -1040,7 +1040,7 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
                         |  "propertyDetails": {
                         |    "individual": "Yes",
                         |    "twoOrMoreProperties": "Yes",
-                        |    "replaceMainResidence": "Yes"
+                        |    "replaceMainResidence": "No"
                         |  },
                         |  "isLinked": false,
                         |  "taxReliefDetails": {
@@ -1215,7 +1215,7 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
                         |  "propertyDetails": {
                         |    "individual": "Yes",
                         |    "twoOrMoreProperties": "Yes",
-                        |    "replaceMainResidence": "Yes"
+                        |    "replaceMainResidence": "No"
                         |  },
                         |  "isLinked": false,
                         |  "taxReliefDetails": {
@@ -1443,7 +1443,7 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
                       |  "propertyDetails": {
                       |    "individual": "Yes",
                       |    "twoOrMoreProperties": "Yes",
-                      |    "replaceMainResidence": "Yes"
+                      |    "replaceMainResidence": "No"
                       |  },
                       |  "taxReliefDetails": {
                       |   "taxReliefCode": 25
@@ -1695,7 +1695,7 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
                   |  "propertyDetails": {
                   |    "individual": "Yes",
                   |    "twoOrMoreProperties": "Yes",
-                  |    "replaceMainResidence": "Yes"
+                  |    "replaceMainResidence": "No"
                   |  },
                   |  "taxReliefDetails": {
                   |   "taxReliefCode": 33

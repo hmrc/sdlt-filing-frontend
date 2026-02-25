@@ -74,7 +74,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                       |  "propertyDetails": {
                       |    "individual": "Yes",
                       |    "twoOrMoreProperties": "Yes",
-                      |    "replaceMainResidence": "Yes"
+                      |    "replaceMainResidence": "No"
                       |  },
                       |  "isLinked": false,
                       |  "taxReliefDetails": {
@@ -222,7 +222,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                       | "propertyDetails": {
                       |   "individual": "Yes",
                       |   "twoOrMoreProperties": "Yes",
-                      |   "replaceMainResidence": "Yes"
+                      |   "replaceMainResidence": "No"
                       |},
                       | "taxReliefDetails": {
                       |   "taxReliefCode": 14
@@ -471,7 +471,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         |  "propertyDetails": {
                         |    "individual": "Yes",
                         |    "twoOrMoreProperties": "Yes",
-                        |    "replaceMainResidence": "Yes"
+                        |    "replaceMainResidence": "No"
                         |  },
                         |  "isLinked": false,
                         |  "taxReliefDetails": {
@@ -539,7 +539,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         | "propertyDetails": {
                         |   "individual": "Yes",
                         |   "twoOrMoreProperties": "Yes",
-                        |   "replaceMainResidence": "Yes"
+                        |   "replaceMainResidence": "No"
                         | },
                         | "taxReliefDetails": {
                         |   "taxReliefCode": 36,
@@ -654,7 +654,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         | "propertyDetails": {
                         |   "individual": "Yes",
                         |   "twoOrMoreProperties": "Yes",
-                        |   "replaceMainResidence": "Yes"
+                        |   "replaceMainResidence": "No"
                         | },
                         | "taxReliefDetails": {
                         |   "taxReliefCode": 37,
@@ -777,7 +777,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         | "propertyDetails": {
                         |   "individual": "Yes",
                         |   "twoOrMoreProperties": "Yes",
-                        |   "replaceMainResidence": "Yes"
+                        |   "replaceMainResidence": "No"
                         | },
                         | "taxReliefDetails": {
                         |   "taxReliefCode": 36,
@@ -892,7 +892,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         | "propertyDetails": {
                         |   "individual": "Yes",
                         |   "twoOrMoreProperties": "Yes",
-                        |   "replaceMainResidence": "Yes"
+                        |   "replaceMainResidence": "No"
                         | },
                         | "taxReliefDetails": {
                         |   "taxReliefCode": 37,
@@ -1013,7 +1013,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         |  "propertyDetails": {
                         |    "individual": "Yes",
                         |    "twoOrMoreProperties": "Yes",
-                        |    "replaceMainResidence": "Yes"
+                        |    "replaceMainResidence": "No"
                         |  },
                         |  "isLinked": true,
                         |  "taxReliefDetails": {
@@ -1177,7 +1177,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         |  "propertyDetails": {
                         |    "individual": "Yes",
                         |    "twoOrMoreProperties": "Yes",
-                        |    "replaceMainResidence": "Yes"
+                        |    "replaceMainResidence": "No"
                         |  },
                         |  "isLinked": true,
                         |  "taxReliefDetails": {
@@ -1448,7 +1448,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         | "propertyDetails": {
                         |   "individual": "Yes",
                         |   "twoOrMoreProperties": "Yes",
-                        |   "replaceMainResidence": "Yes"
+                        |   "replaceMainResidence": "No"
                         | },
                         | "taxReliefDetails": {
                         |   "taxReliefCode": 14
@@ -1698,7 +1698,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                         | "propertyDetails": {
                         |   "individual": "Yes",
                         |   "twoOrMoreProperties": "Yes",
-                        |   "replaceMainResidence": "Yes"
+                        |   "replaceMainResidence": "No"
                         | },
                         | "isLinked": true,
                         | "taxReliefDetails": {
@@ -1824,7 +1824,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                     | "propertyDetails": {
                     |   "individual": "Yes",
                     |   "twoOrMoreProperties": "Yes",
-                    |   "replaceMainResidence": "Yes"
+                    |   "replaceMainResidence": "No"
                     | },
                     | "taxReliefDetails": {
                     |   "taxReliefCode": 25
@@ -2107,9 +2107,9 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                     |{
                     | "holdingType": "Freehold",
                     | "propertyType": "Non-residential",
-                    | "effectiveDateDay": 20,
+                    | "effectiveDateDay": 17,
                     | "effectiveDateMonth": 3,
-                    | "effectiveDateYear": 2019,
+                    | "effectiveDateYear": 2016,
                     | "premium": 1000000,
                     | "highestRent": 0,
                     | "isLinked": true
@@ -2279,7 +2279,7 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
                     |  "propertyDetails": {
                     |    "individual": "Yes",
                     |    "twoOrMoreProperties": "Yes",
-                    |    "replaceMainResidence": "Yes"
+                    |    "replaceMainResidence": "No"
                     |  },
                     |  "isLinked": false,
                     |  "taxReliefDetails": {

@@ -504,19 +504,106 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     FreeholdResultFactory.freeholdResidentialApril21OnwardsResultNonUKRes(currentPremiumResult, asPrevResult = true, individual, additionalDwellings = true)
   }
 
-  val freeholdSelfAssessedRes: Result = {
+  val freeholdCollectiveEnfranchisementByLeaseholdersReliefAfterApr09: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdMultipleDwellingRelief: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResidentialRightToBuyMar12ToDec14: Result = {
     FreeholdResultFactory
       .freeholdSelfAssessedResult
   }
 
-  val freeholdSelfAssessedMarch2012ToApril2014: Result = {
+  val freeholdResidentialRightToBuyDec14Onwards: Result =
     FreeholdResultFactory
       .freeholdSelfAssessedResult
-  }
 
-  val freeholdZeroRateTaxReliefRes: Result =
+  val freeholdFreeportPartialRelief: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdFreeportRelief: Result =
     FreeholdResultFactory
       .freeholdZeroRateTaxRelief
+
+  val freeholdStandardZeroRateTaxRelief: Result =
+    FreeholdResultFactory
+      .freeholdZeroRateTaxRelief
+
+  val freeholdAcquisitionReliefBeforeDec2014: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdAcquisitionReliefDec14Onwards: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResidentialAddPropPreCompletionTransactionReliefApr16Onwards: Result =
+    FreeholdResultFactory
+      .freeholdZeroRateTaxRelief
+
+  val freeholdPreCompletionTransactionReliefApr13Onwards: Result =
+    FreeholdResultFactory
+      .freeholdZeroRateTaxRelief
+
+  val freeholdResAddPropRightToBuyReliefApr16Onwards: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResidentialReliefFrom15PercentRateApr13BeforeDec14: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResidentialReliefFrom15PercentRateDec14Onwards: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResAddPropReliefFrom15PercentRateApr16Onwards: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdStandardSelfAssessedReliefBeforeDec14: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdMixedNonResRightToBuyReliefMar16Onwards: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdMixedNonResRightToBuyReliefBeforeMar16: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdOtherInterestTransferred: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResidentialMar12BeforeDec14: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdMixedNonResMar16Onwards: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdMixedNonResBeforeMar16: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResidentialAfterDec14: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResidentialAddPropAprOnwards: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
+  val freeholdResidentialFTB22Mar12Before25Mar12: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
 
   val freeHoldReliefFrom15PercentRateBefore17March2016: Result =
     FreeholdResultFactory
