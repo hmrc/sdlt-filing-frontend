@@ -496,12 +496,14 @@ purchaser.address.link.message                                                  
 purchaser.beforeStart.title                                                         = Before you start - About the purchaser
 purchaser.beforeStart.p1                                                            = In this section, you need to tell us about the purchaser of the land or property.
 purchaser.beforeStart.p2                                                            = We will ask for:
-purchaser.beforeStart.p3                                                            = You can also provide:
 purchaser.beforeStart.bullet1                                                       = the purchaser’s name
 purchaser.beforeStart.bullet2                                                       = the purchaser’s address
 purchaser.beforeStart.bullet3                                                       = a valid form of ID
-purchaser.beforeStart.bullet4                                                       = if they’re connected to the vendor
-purchaser.beforeStart.bullet5                                                       = the purchaser’s phone number
+purchaser.beforeStart.bullet4                                                       = the type of company
+purchaser.beforeStart.bullet5                                                       = whether they’re a trustee
+purchaser.beforeStart.bullet6                                                       = whether they’re connected to the vendor
+purchaser.beforeStart.p3                                                            = You can also provide:
+purchaser.beforeStart.bullet7                                                       = the purchaser’s phone number
 
 purchaser.confirmIdentity.title                                                     = What information can you provide about {0}? - About the purchaser
 purchaser.confirmIdentity.heading                                                   = What information can you provide about {0}?
@@ -562,9 +564,9 @@ purchaser.formOfIdIndividual.title                                              
 purchaser.formOfIdIndividual.heading                                                = Provide a form of ID for {0}
 purchaser.formOfIdIndividual.p1                                                     = We need to confirm {0}’s identity for this return
 purchaser.formOfIdIndividual.p2                                                     = This could be:
-purchaser.formOfIdIndividual.li1                                                    = passport number
-purchaser.formOfIdIndividual.li2                                                    = driving licence number
-purchaser.formOfIdIndividual.li3                                                    = identity card number
+purchaser.formOfIdIndividual.li1                                                    = a passport number
+purchaser.formOfIdIndividual.li2                                                    = a driving licence number
+purchaser.formOfIdIndividual.li3                                                    = an identity card number
 purchaser.formOfIdIndividual.li4                                                    = any other reference issues by a recognised local or national authority
 purchaser.formOfIdIndividual.li5                                                    = an NHS reference can be used for UK residents or citizens without any other identification
 purchaser.formOfIdIndividual.p3                                                     = You must include country of issue
@@ -595,18 +597,18 @@ purchaser.name.form.no.input.error                                              
 purchaser.name.error.required                                                       = Nothing has been provided
 
 purchaser.nationalInsurance.title                                                   = What is the purchaser’s National Insurance number? - About the purchaser
-purchaser.nationalInsurance.heading                                                 = What is {0}’s national insurance number?
+purchaser.nationalInsurance.heading                                                 = What is {0}’s National Insurance number?
 purchaser.nationalInsurance.hint                                                    = It’s on their National Insurance card, benefit letter, payslip or P60 - for example, QQ 12 34 56 C
 purchaser.nationalInsurance.checkYourAnswersLabel                                   = National Insurance number
-purchaser.nationalInsurance.error.required                                          = Please enter the national insurance number
+purchaser.nationalInsurance.error.required                                          = Please enter the National Insurance number
 purchaser.nationalInsurance.error.length                                            = National insurance number must be {0} characters or less
-purchaser.nationalInsurance.error.invalid                                           = Please enter a valid national insurance number
+purchaser.nationalInsurance.error.invalid                                           = Please enter a valid National Insurance number
 purchaser.nationalInsurance.change.hidden                                           = What is the purchaser’s National Insurance number?
 
 purchaser.partnershipUtr.title                                                      = What is the purchaser’s Partnership Unique Taxpayer Reference (UTR)? - About the purchaser
 purchaser.partnershipUtr.heading                                                    = {0}’s Partnership Unique Taxpayer Reference (UTR)
 purchaser.partnershipUtr.hint                                                       = Their UTR should be 10 digits long
-purchaser.partnershipUtr.p1                                                         = You can find it in your Business Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+purchaser.partnershipUtr.p1                                                         = You can find it in {0}’s Business Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 purchaser.partnershipUtr.h2                                                         = What is {0}’s Partnership UTR?
 purchaser.partnershipUtr.checkYourAnswersLabel                                      = Purchaser’s partnership UTR
 purchaser.partnershipUtr.error.required                                             = Please enter the purchaser’s partnership UTR
@@ -634,7 +636,7 @@ purchaser.whoIsMakingThePurchase.Company.hintText                               
 purchaser.whoIsMakingThePurchase.Individual                                         = An individual
 purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel                   = Individual
 
-purchaser.whoIsMakingThePurchase.Individual.hintText                                = This means a person liable to pay Stamp Duty Land Tax (SDLT)
+purchaser.whoIsMakingThePurchase.Individual.hintText                                = This means any person liable to pay Stamp Duty Land Tax (SDLT)
 purchaser.whoIsMakingThePurchase.checkYourAnswersLabel                              = Type of purchaser
 purchaser.checkYourAnswers.whoIsMakingThePurchaser.Missing                          = Enter type of purchaser
 purchaser.whoIsMakingThePurchase.error.required                                     = Select an answer
@@ -660,7 +662,7 @@ purchaser.companyFormOfId.countryIssued.change.hidden                           
 
 purchaser.purchaserTypeOfCompany.title                                              = What type of company is the purchaser? - About the purchaser
 purchaser.purchaserTypeOfCompany.heading                                            = What type of company is {0}?
-purchaser.purchaserTypeOfCompany.hint                                               = Select up to four.
+purchaser.purchaserTypeOfCompany.hint                                               = Select up to four
 purchaser.purchaserTypeOfCompany.bank                                               = Bank
 purchaser.purchaserTypeOfCompany.buildingAssociation                                = Building association
 purchaser.purchaserTypeOfCompany.centralGovernment                                  = Central government
@@ -681,7 +683,7 @@ purchaser.purchaserTypeOfCompany.error.required                                 
 purchaser.purchaserTypeOfCompany.change.hidden                                      = Purchaser type of company
 
 purchaser.purchaserAndVendorConnected.title                                         = Are the purchaser and the vendor connected? - About the purchaser
-purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor(s) connected?
+purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor connected?
 purchaser.purchaserAndVendorConnected.checkYourAnswersLabel                         = Are {0} and the vendor connected?
 purchaser.purchaserAndVendorConnected.error.required                                = Please select an option
 purchaser.purchaserAndVendorConnected.change.hidden                                 = Purchaser and vendor connected yes or no

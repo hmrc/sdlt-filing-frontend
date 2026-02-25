@@ -32,7 +32,9 @@ class PurchaserPaginationHelper @Inject()(populatePurchaserService: PopulatePurc
   def getPaginationInfoText[A](paginationIndex: Int, itemList: Seq[A])
                               (implicit messages: Messages): Option[String] = {
 
-    if (itemList.length <= ROWS_ON_PAGE || paginationIndex <= 0) { None }
+    if (itemList.length <= ROWS_ON_PAGE || paginationIndex <= 0) {
+      None
+    }
     else {
       val paged = itemList.grouped(ROWS_ON_PAGE).toSeq
 
@@ -54,59 +56,61 @@ class PurchaserPaginationHelper @Inject()(populatePurchaserService: PopulatePurc
   def generatePurchaserSummary(paginationIndex: Int, purchasers: Seq[Purchaser], userAnswers: UserAnswers)
                               (implicit messages: Messages): Option[SummaryList] = {
 
-    val paged: Seq[Seq[Purchaser]] = purchasers.grouped(ROWS_ON_PAGE).toSeq
+    val sortedPurchasers = purchasers
+      .filter(_.purchaserID.isDefined)
+      .sortBy(p => !populatePurchaserService.isMainPurchaser(p.purchaserID.get, userAnswers))
+
+    val paged: Seq[Seq[Purchaser]] = sortedPurchasers.grouped(ROWS_ON_PAGE).toSeq
     val currentPage: Option[Seq[Purchaser]] = paged.lift(paginationIndex - 1)
 
     currentPage.flatMap { pagePurchasers =>
-      if (pagePurchasers.forall(_.purchaserID.isDefined)) {
+      if (pagePurchasers.nonEmpty) {
         Some(SummaryList(
-          rows = pagePurchasers
-            .sortBy(p => !populatePurchaserService.isMainPurchaser(p.purchaserID.get, userAnswers))
-            .flatMap { purchaserDetails =>
-              val mainPurchaserIDCheck = populatePurchaserService.isMainPurchaser(purchaserDetails.purchaserID.get, userAnswers)
+          rows = pagePurchasers.flatMap { purchaserDetails =>
+            val mainPurchaserIDCheck = populatePurchaserService.isMainPurchaser(purchaserDetails.purchaserID.get, userAnswers)
 
-              val maybeName: Option[String] = (purchaserDetails.surname, purchaserDetails.companyName, mainPurchaserIDCheck) match {
-                case (Some(name), _, true) => Some(FullName.fullName(purchaserDetails.forename1, purchaserDetails.forename2, name) + " (lead purchaser)")
-                case (Some(name), _, false) => Some(FullName.fullName(purchaserDetails.forename1, purchaserDetails.forename2, name))
-                case (_, Some(name), true) => Some(name + " (lead purchaser)")
-                case (_, Some(name), false) => Some(name)
-                case _ => None
-              }
-
-              for {
-                fullName <- maybeName
-                purchaserId <- purchaserDetails.purchaserID
-              } yield {
-                SummaryListRow(
-                  key = Key(
-                    content = Text(fullName),
-                    classes = "govuk-!-width-one-third govuk-!-font-weight-regular hmrc-summary-list__key"
-                  ),
-                  actions = Some(Actions(
-                    items = Seq(
-                      ActionItem(
-                        href = controllers.purchaser.routes.PurchaserOverviewController.changePurchaser(purchaserId).url,
-                        content = Text(messages("site.change")),
-                        visuallyHiddenText = Some(fullName)
-                      ),
-                      ActionItem(
-                        href = controllers.purchaser.routes.PurchaserOverviewController.removePurchaser(purchaserId).url,
-                        content = Text(messages("site.remove")),
-                        visuallyHiddenText = Some(fullName)
-                      )
-                    ),
-                    classes = "govuk-!-width-one-third"
-                  ))
-                )
-              }
+            val maybeName: Option[String] = (purchaserDetails.surname, purchaserDetails.companyName, mainPurchaserIDCheck) match {
+              case (Some(name), _, true) => Some(FullName.fullName(purchaserDetails.forename1, purchaserDetails.forename2, name) + " (lead purchaser)")
+              case (Some(name), _, false) => Some(FullName.fullName(purchaserDetails.forename1, purchaserDetails.forename2, name))
+              case (_, Some(name), true) => Some(name + " (lead purchaser)")
+              case (_, Some(name), false) => Some(name)
+              case _ => None
             }
+
+            for {
+              fullName <- maybeName
+              purchaserId <- purchaserDetails.purchaserID
+            } yield {
+              SummaryListRow(
+                key = Key(
+                  content = Text(fullName),
+                  classes = "govuk-!-width-one-third govuk-!-font-weight-regular hmrc-summary-list__key"
+                ),
+                actions = Some(Actions(
+                  items = Seq(
+                    ActionItem(
+                      href = controllers.purchaser.routes.PurchaserOverviewController.changePurchaser(purchaserId).url,
+                      content = Text(messages("site.change")),
+                      visuallyHiddenText = Some(fullName)
+                    ),
+                    ActionItem(
+                      href = controllers.purchaser.routes.PurchaserOverviewController.removePurchaser(purchaserId).url,
+                      content = Text(messages("site.remove")),
+                      visuallyHiddenText = Some(fullName)
+                    )
+                  ),
+                  classes = "govuk-!-width-one-third"
+                ))
+              )
+            }
+          }
         ))
       } else {
         None
       }
     }
   }
-  
+
 
   def generatePagination(paginationIndex: Int, numberOfPages: Int)
                         (implicit messages: Messages): Option[Pagination] =
