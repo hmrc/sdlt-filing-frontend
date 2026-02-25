@@ -9,20 +9,21 @@ import enums.TaxTypes
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.scalabuild.FormatUtils.{bigDecimalFormat, keyCssClass, valueCssClass}
-import viewmodels.scalabuild.govuk.summarylist.{
-  FluentKey,
-  FluentValue,
-  KeyViewModel,
-  SummaryListRowViewModel,
-  ValueViewModel
-}
+import viewmodels.scalabuild.govuk.summarylist.{ActionItemViewModel, FluentActionItem, FluentKey, FluentValue, KeyViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.scalabuild.implicits._
 
 object TaxesDueByTypeSummary {
-  def row(taxType: TaxTypes.Value, total: Int)(implicit messages: Messages): SummaryListRow = {
+  def row(taxType: TaxTypes.Value, total: Int, index: Int)(implicit messages: Messages): SummaryListRow = {
     SummaryListRowViewModel(
       key = KeyViewModel(messages(s"${taxType.toString}.resultLabel")).withCssClass(keyCssClass),
-      value = ValueViewModel(bigDecimalFormat(total)).withCssClass(valueCssClass)
+      value = ValueViewModel(bigDecimalFormat(total)).withCssClass(valueCssClass),
+      actions = Seq(
+        ActionItemViewModel(
+          "site.viewCalculation",
+          controllers.scalabuild.routes.DetailController.onPageLoad(index).url
+        )
+          .withVisuallyHiddenText(messages("site.viewCalculation"))
+      )
     )
   }
 }

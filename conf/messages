@@ -10,6 +10,7 @@ site.print = print your calculation
 site.viewCalculation = View calculation
 site.yes = Yes
 site.no = No
+site.change.hidden = Change
 
 journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
@@ -49,9 +50,9 @@ startGuidance.content.l5 = purchasing residential property for more than £500,0
 holding.heading = Is your transaction Freehold or Leasehold?
 holding.title = Is your transaction Freehold or Leasehold?
 holding.checkYourAnswersLabel = Freehold or Leasehold
+holding.hidden = Freehold or Leasehold
 holding.error.required = Select ''Freehold'' or ''Leasehold''
 holding.hint = Choose ''Freehold'' if it’s a freehold transaction or you’re acquiring an existing lease. Choose ''Leasehold'' if it’s a new lease.
-holding.change.hidden = Change
 
 propertyType.heading = Is the transaction residential or non-residential?
 propertyType.title = Is the transaction residential or non-residential?
@@ -121,7 +122,7 @@ mainResidence.checkYourAnswersLabel = Main residence
 mainResidence.title = Will this property be your main residence?
 
 section.sharedOwnership = Shared ownership scheme
-section.checkYourAnswersLabel = Shared ownership
+sharedOwnership.checkYourAnswersLabel = Shared ownership
 sharedOwnership.heading = Are you buying the property through a shared ownership scheme?
 sharedOwnership.title = Are you buying the property through a shared ownership scheme?
 sharedOwnership.error.required = Select ''Yes'' or ''No''
@@ -129,6 +130,7 @@ sharedOwnership.p1 = The scheme must be operated by an approved qualifying body,
 
 currentValue.heading = What is the market value of the property?
 currentValue.checkYourAnswersLabel = Market value
+currentValue.resultLabel = Market value
 currentValue.title = What is the market value of the property?
 currentValue.p1 = This means the market value at the time of purchase. If the maximum share of the property ultimately obtainable is less than 100%, enter the value of that percentage.
 currentValue.error.required = Select a value
@@ -152,7 +154,7 @@ marketValue.details.d2.p2 = Further payments towards your property purchase made
 marketValue.details.d2.p3 = However if your total share in the property is never more than 80%, then you will not be liable for any further SDLT.
 marketValue.PayUpfront = Pay SDLT up front by making a market value election
 marketValue.PayInStages = Pay SDLT in stages
-marketValue.paySDLTUpfront.input = What is the cost in pounds?
+marketValue.paySDLTUpfront.input = Market value of the property you are buying
 marketValue.marketPropValue.input = Price of initial share of the property
 marketValue.error.required = Provide an answer to continue.
 marketValue.error.nonNumeric = Enter the amount again - don''t use any letters or characters including £
@@ -176,6 +178,12 @@ leaseDate.term.checkYourAnswersLabel = Term of lease
 leaseDate.premium.checkYourAnswersLabel = Premium
 leaseDate.rent.checkYourAnswersLabel = Year {0} rent
 leaseDate.highestRent.checkYourAnswersLabel = Highest 12 monthly rent
+
+year1Rent.checkYourAnswersLabel = Year 1 rent
+year2Rent.checkYourAnswersLabel = Year 2 rent
+year3Rent.checkYourAnswersLabel = Year 3 rent
+year4Rent.checkYourAnswersLabel = Year 4 rent
+year5Rent.checkYourAnswersLabel = Year 5 rent
 
 premium.heading = Total lease premium payable
 premium.title = Total lease premium payable
@@ -212,7 +220,7 @@ rents.error.nonNumeric = Enter the rent again - don't use any letters or charact
 
 checkYourAnswers.heading = Check your answers
 
-detail.table.header.bands = Purchase Price Bands (£)
+detail.table.header.bands = Purchase price bands (£)
 detail.table.header.percentage = Percentage rate (%)
 detail.table.header.due = SDLT due (£)
 

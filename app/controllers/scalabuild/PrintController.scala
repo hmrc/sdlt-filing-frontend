@@ -43,7 +43,7 @@ class PrintController @Inject() (
             Ok(
               view(
                 PrintDisplayTable(
-                  summaryList = toSummaryList(userAnswers),
+                  summaryList = toSummaryList(userAnswers, withAction = false),
                   resultsTables = value
                 )
               )
@@ -53,18 +53,35 @@ class PrintController @Inject() (
 
   }
 
-  private def toSummaryList(ua: UserAnswers)(implicit messages: Messages) = {
+  private def toSummaryList(ua: UserAnswers, withAction: Boolean)(implicit messages: Messages) = {
     SummaryListViewModel(
       rows = Seq(
-        HoldingSummary.row(ua, withAction = false),
-        PropertySummary.row(ua, withAction = false),
-        EffectiveDateSummary.row(ua, withAction = false),
-        IsAdditionalPropertySummary.row(ua, withAction = false),
-        MainResidenceSummary.row(ua, withAction = false),
-        NonUkResidentSummary.row(ua, withAction = false),
-        OwnsOtherPropertiesSummary.row(ua, withAction = false),
-        PurchasePriceSummary.row(ua, withAction = false),
-        PurchaserSummary.row(ua, withAction = false)
+        HoldingSummary.row(ua, withAction = withAction),
+        PropertySummary.row(ua, withAction = withAction),
+        EffectiveDateSummary.row(ua, withAction = withAction),
+        IsAdditionalPropertySummary.row(ua, withAction = withAction),
+        MainResidenceSummary.row(ua, withAction = withAction),
+        NonUkResidentSummary.row(ua, withAction = withAction),
+        OwnsOtherPropertiesSummary.row(ua, withAction = withAction),
+        PurchasePriceSummary.row(ua, withAction = withAction),
+        IsPurchaserIndividualSummary.row(ua, withAction = withAction),
+        ReplaceMainResidenceSummary.row(ua, withAction = withAction),
+        SharedOwnershipSummary.row(ua, withAction = withAction),
+        CurrentValueSummary.row(ua, withAction = withAction),
+        PaySdltSummary.row(ua, withAction = withAction),
+        LeaseStartDateSummary.row(ua, withAction = withAction),
+        LeaseEndDateSummary.row(ua, withAction = withAction),
+        LeaseTermSummary.row(ua),
+        PremiumSummary.row(ua, withAction = withAction),
+        Year1RentSummary.row(ua, withAction = withAction),
+        Year2RentSummary.row(ua, withAction = withAction),
+        Year3RentSummary.row(ua, withAction = withAction),
+        Year4RentSummary.row(ua, withAction = withAction),
+        Year5RentSummary.row(ua, withAction = withAction),
+        HighestRentSummary.row(ua),
+        ExchangeContractPreMarch2016Summary.row(ua, withAction = withAction),
+        ContractPostMarch2016Summary.row(ua, withAction = withAction),
+        RelevantRentSummary.row(ua, withAction = withAction)
       ).flatten
     )
   }

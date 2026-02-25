@@ -34,7 +34,7 @@ object PurchasePriceSummary {
                 "site.change",
                 controllers.scalabuild.routes.PurchasePriceController.onPageLoad().url
               )
-                .withVisuallyHiddenText(messages("purchasePrice.change.hidden"))
+                .withVisuallyHiddenText(messages("site.change.hidden"))
             )
           )
         } else {

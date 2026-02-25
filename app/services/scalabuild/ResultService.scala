@@ -9,7 +9,7 @@ import enums.{CalcTypes, TaxTypes}
 import jakarta.inject.Singleton
 import models.CalculationDetails
 import models.scalabuild.HoldingTypes.{Freehold, Leasehold}
-import models.scalabuild.{HoldingTypes, RequestFromMongo, ResultDisplayTable, UserAnswers}
+import models.scalabuild.{DisplayFreehold, DisplayLeasehold, DisplaySlab, DisplayType, HoldingTypes, RequestFromMongo, ResultDisplayTable, UserAnswers}
 import pages.scalabuild.HoldingPage
 import play.api.i18n.Lang.logger
 import play.api.i18n.Messages
@@ -33,43 +33,58 @@ class ResultService @Inject() (
       requestFromMongo: RequestFromMongo
   )(implicit messages: Messages): Either[ServiceError, Seq[ResultDisplayTable]] = {
     val holdingType = userAnswers.get(HoldingPage)
-    if (userAnswers.data == Json.parse("""{}"""))
+    if (userAnswers.data == Json.parse("""{}""")){
       Left(ResultServiceError("[ResultService][getResultDisplayTableList] User answers was empty"))
-    else if (holdingType.isEmpty) {
-      Left(ResultServiceError("[ResultService][getResultDisplayTableList] Could not get holding type"))
     } else {
-      val calculationResult = calculationService.calculateTax(requestFromMongo.toRequest).result
-      val isSlabInResult = calculationResult.exists(_.taxCalcs.exists(_.calcType.equals(CalcTypes.slab)))
-      val resultsDisplayTable = calculationResult.zipWithIndex.map { case (results, index) =>
-        val slabOrSlice = results.taxCalcs.head.calcType
+      holdingType.map { holding =>
+        val calculationResult = calculationService.calculateTax(requestFromMongo.toRequest).result
+        val isSlabInResult = calculationResult.exists(_.taxCalcs.exists(_.calcType.equals(CalcTypes.slab)))
+        val resultsDisplayTable = calculationResult.zipWithIndex.map { case (results, index) =>
+          val slabOrSlice = results.taxCalcs.head.calcType
+          val displayType = getDisplayType(holding, slabOrSlice)
 
-        ResultDisplayTable(
-          resultHeading = results.resultHeading,
-          resultHint = results.resultHint,
-          summaryTable = (holdingType, slabOrSlice) match {
-            case (Some(holding), CalcTypes.slab) =>
-              ResultSummarySlab(userAnswers, results.totalTax, results.taxCalcs.head.rate, holding)
-            case (Some(HoldingTypes.Freehold), _) =>
-              ResultSummaryFreehold(userAnswers, results.totalTax, isSlabInResult)
-            case (Some(HoldingTypes.Leasehold), _) =>
-              ResultSummaryLeasehold(results.totalTax, taxesDueByType(results.taxCalcs), results.npv)
+          ResultDisplayTable(
+            resultHeading = results.resultHeading,
+            resultHint = results.resultHint,
+            summaryTable = displayType match {
+              case DisplaySlab =>
+                ResultSummarySlab(userAnswers, results.totalTax, results.taxCalcs.head.rate, holding)
+              case DisplayFreehold =>
+                ResultSummaryFreehold(userAnswers, results.totalTax, isSlabInResult)
+              case DisplayLeasehold =>
+                // results displayed need to have view calculation link as action in SummaryListRow, not at the bottom
+                ResultSummaryLeasehold(results.totalTax, taxesDueByType(results.taxCalcs), results.npv, index)
               //impossible case
-            case _ => {
-                logger.error("\"[ResultService][getResultDisplayTableList] Could not infer Holding type and reached impossible case\"")
+              case _ => {
+                logger.error(
+                  "\"[ResultService][getResultDisplayTableList] Could not infer Holding type and reached impossible case\""
+                )
                 throw new Exception(
                   "[ResultService][getResultDisplayTableList] Could not infer Holding type and reached impossible case"
                 )
               }
-          },
-          totalTax = results.totalTax,
-          netPresentValue = results.npv,
-          taxesDue = taxesDueByType(results.taxCalcs),
-          viewDetailsLink = controllers.scalabuild.routes.DetailController.onPageLoad(index).url
-        )
-      }
-      Right(resultsDisplayTable)
+            },
+            totalTax = results.totalTax,
+            netPresentValue = results.npv,
+            taxesDue = taxesDueByType(results.taxCalcs),
+            viewDetailsLink = if (displayType == DisplayFreehold) {
+                  Some(controllers.scalabuild.routes.DetailController.onPageLoad(index).url)
+                } else {
+              None
+            }
+          )
+        }
+        resultsDisplayTable
+      }.toRight(ResultServiceError("[ResultService][getResultDisplayTableList] Could not get holding Type"))
     }
+  }
 
+  private def getDisplayType(holdingType: HoldingTypes, slabOrSlice: CalcTypes.Value): DisplayType = {
+    (holdingType, slabOrSlice) match {
+      case (_, CalcTypes.slab) => DisplaySlab
+      case (HoldingTypes.Freehold, _) => DisplayFreehold
+      case (HoldingTypes.Leasehold, _) => DisplayLeasehold
+    }
   }
 
   private def taxesDueByType(taxCalcs: Seq[CalculationDetails]): Seq[(TaxTypes.Value, Int)] = {
@@ -99,10 +114,11 @@ class ResultService @Inject() (
   private def ResultSummaryLeasehold(
       totalTax: Int,
       taxCalcs: Seq[(TaxTypes.Value, Int)],
-      nvp: Option[Int]
+      nvp: Option[Int],
+      index: Int
   )(implicit messages: Messages): SummaryList = {
     val taxesSummaryRows: Seq[SummaryListRow] =
-      taxCalcs.map(taxTotal => TaxesDueByTypeSummary.row(taxTotal._1, taxTotal._2))
+      taxCalcs.map(taxTotal => TaxesDueByTypeSummary.row(taxTotal._1, taxTotal._2, index))
     val totalDueSummary: SummaryListRow = TotalDueSummary.row(totalTax, Leasehold)
     val nvpRow = NpvSummary.row(nvp).toSeq
 

@@ -6,14 +6,14 @@
 package viewmodels.scalabuild.checkanswerssummary
 
 import models.scalabuild.UserAnswers
-import pages.scalabuild.IsPurchaserIndividualPage
+import pages.scalabuild.LeaseDatesPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.scalabuild.FormatUtils.{keyCssClass, valueCssClass}
+import utils.scalabuild.DateTimeFormats.localDateTimeFormatter
+import viewmodels.scalabuild.FormatUtils.valueCssClass
 import viewmodels.scalabuild.govuk.summarylist.{
   ActionItemViewModel,
   FluentActionItem,
-  FluentKey,
   FluentValue,
   KeyViewModel,
   SummaryListRowViewModel,
@@ -21,27 +21,26 @@ import viewmodels.scalabuild.govuk.summarylist.{
 }
 import viewmodels.scalabuild.implicits._
 
-object PurchaserSummary {
+object LeaseEndDateSummary {
 
   def row(answers: UserAnswers, withAction: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(IsPurchaserIndividualPage).map { answer =>
-      val value = if (answer) "Yes" else "No"
+    answers.get(LeaseDatesPage).map { answer =>
       if (withAction) {
         SummaryListRowViewModel(
-          key = KeyViewModel("isPurchaserIndividual.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(value).withCssClass(valueCssClass),
+          key = KeyViewModel(s"leaseDates.endDate.checkYourAnswersLabel"),
+          value = ValueViewModel(answer.endDate.format(localDateTimeFormatter())).withCssClass(valueCssClass),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.scalabuild.routes.IsPurchaserIndividualController.onPageLoad().url
+              controllers.scalabuild.routes.LeaseDatesController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("purchaser.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden"))
           )
         )
       } else {
         SummaryListRowViewModel(
-          key = KeyViewModel("isPurchaserIndividual.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(value).withCssClass(valueCssClass)
+          key = KeyViewModel(s"leaseDates.endDate.checkYourAnswersLabel"),
+          value = ValueViewModel(answer.endDate.format(localDateTimeFormatter())).withCssClass(valueCssClass)
         )
       }
     }

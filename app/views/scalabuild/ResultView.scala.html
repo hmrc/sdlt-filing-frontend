@@ -31,9 +31,11 @@
                 @govukSummaryList(result.summaryTable)
 
             </div>
-            <div class = "govuk-body govuk-!-margin-top-3">
-                <a href="@controllers.scalabuild.routes.DetailController.onPageLoad(index)" class="govuk-link">@messages("site.viewCalculation")</a>
-            </div>
+            @if(result.viewDetailsLink.isDefined){
+                <div class="govuk-body govuk-!-margin-top-3">
+                    <a href="@result.viewDetailsLink" class="govuk-link">@messages("site.viewCalculation")</a>
+                </div>
+            }
         }
         <div class = "govuk-body govuk-!-margin-top-3">
             <p class="govuk-body">You can <a href="@controllers.scalabuild.routes.PrintController.onPageLoad()" class="govuk-link" >@messages("site.print")</a></p>

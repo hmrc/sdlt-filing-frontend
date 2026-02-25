@@ -50,12 +50,12 @@ trait TestObjects {
     propertyType <- holding.set(ResidentialOrNonResidentialPage, Residential)
     effectiveDate <- propertyType.set(EffectiveDatePage, LocalDate.of(2025, 1, 1))
     nonUKResident <- effectiveDate.set(NonUkResidentPage, true)
+    addPropMainRes <- nonUKResident.setTwo(IsAdditionalPropertyPage, true, ReplaceMainResidencePage, true)
     additionalProperty <- nonUKResident.set(IsAdditionalPropertyPage, true)
     replaceMainResidence <- additionalProperty.set(ReplaceMainResidencePage, true)
-    purchasePrice <- replaceMainResidence.set(PremiumPage, BigDecimal(500000))
+    purchasePrice <- addPropMainRes.set(PremiumPage, BigDecimal(500000))
     individual <- purchasePrice.set(IsPurchaserIndividualPage, true)
-    allUpdatedAnswers <- individual.set(ReplaceMainResidencePage, true)
-  } yield allUpdatedAnswers
+  } yield individual
 
   val freeResNonIndAddMainUaData: JsObject = Json.parse(
     """{
@@ -142,11 +142,11 @@ trait TestObjects {
               PropertySummary.row(ua, withAction = withAction),
               EffectiveDateSummary.row(ua, withAction = withAction),
               IsAdditionalPropertySummary.row(ua, withAction = withAction),
-              MainResidenceSummary.row(ua, withAction = withAction),
+              ReplaceMainResidenceSummary.row(ua, withAction = withAction),
               NonUkResidentSummary.row(ua, withAction = withAction),
               OwnsOtherPropertiesSummary.row(ua, withAction = withAction),
               PurchasePriceSummary.row(ua, withAction = withAction),
-              PurchaserSummary.row(ua, withAction = withAction)
+              IsPurchaserIndividualSummary.row(ua, withAction = withAction)
             ).flatten
           )
         )
@@ -158,20 +158,22 @@ trait TestObjects {
       stringValue: Option[String] = None,
       currencyValue: Option[Int] = None,
       dateValue: Option[LocalDate] = None
-  )(messages: Messages): SummaryListRow = {
-    val valueText = (stringValue, currencyValue, dateValue) match {
-      case (Some(thisValue), None, None) => Value(Text(thisValue)).withCssClass(valueCssClass)
-      case (None, Some(thisValue), None) => Value(Text(bigDecimalFormat(thisValue))).withCssClass(valueCssClass)
+  )(messages: Messages): Option[SummaryListRow] = {
+    val valueText:Option[Value] = (stringValue, currencyValue, dateValue) match {
+      case (Some(thisValue), None, None) => Some(Value(Text(thisValue)).withCssClass(valueCssClass))
+      case (None, Some(thisValue), None) => Some(Value(Text(bigDecimalFormat(thisValue))).withCssClass(valueCssClass))
       case (None, None, Some(thisValue)) =>
-        Value(Text(thisValue.format(localDateTimeFormatter()))).withCssClass(valueCssClass)
+        Some(Value(Text(thisValue.format(localDateTimeFormatter()))).withCssClass(valueCssClass))
+      case _ => None
     }
-    SummaryListRow(
+    if (valueText.isDefined)
+      Some(SummaryListRow(
       key = Key(Text(messages(messageKey))).withCssClass(keyCssClass),
-      value = valueText
-    )
+      value = (valueText.get)
+    )) else None
   }
 
-  def minResultDisplayTable()(implicit messages: Messages) = {
+  def minResultDisplayTable(implicit messages: Messages): ResultDisplayTable = {
 
     ResultDisplayTable(
       resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
@@ -187,10 +189,10 @@ trait TestObjects {
           ),
           summaryRowHelper("purchasePrice.resultLabel", currencyValue = Some(600000))(messages),
           summaryRowHelper("totalTax.resultLabel", Some("2000"))(messages)
-        )
+        ).flatten
       ),
       taxesDue = Seq.empty,
-      viewDetailsLink = controllers.scalabuild.routes.DetailController.onPageLoad(0).url
+      viewDetailsLink = Some(controllers.scalabuild.routes.DetailController.onPageLoad(0).url)
     )
   }
   val sliceFreeResUkIndTwoMain: Seq[SliceDetails] = List(

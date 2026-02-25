@@ -34,7 +34,7 @@ object HoldingSummary {
               "site.change",
               controllers.scalabuild.routes.FreeholdOrLeaseholdController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("holding.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden"))
           )
         )
       } else {
