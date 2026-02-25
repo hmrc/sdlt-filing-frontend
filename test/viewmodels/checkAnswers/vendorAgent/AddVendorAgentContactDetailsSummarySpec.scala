@@ -26,7 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
 
-  "AddContactDetailsForPurchaserAgentSummarySpec" - {
+  "AddVendorAgentContactDetailsSummarySpecSpec" - {
 
     "when add contact details for vendor agent is present" - {
 
@@ -42,7 +42,7 @@ class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
 
           val result = AddVendorAgentContactDetailsSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel", "Agent name")
 
           val contentString = result.value.content.asHtml.toString()
 
@@ -63,10 +63,11 @@ class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers
             .set(AddVendorAgentContactDetailsPage, true).success.value
+            .set(AgentNamePage, "Agent name").success.value
 
           val result = AddVendorAgentContactDetailsSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel", "Agent name")
 
           val contentString = result.value.content.asHtml.toString()
 
@@ -106,7 +107,7 @@ class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
       }
     }
 
-    "when add contact details for purchaser agent is not present" - {
+    "when add contact details for vendor agent is not present" - {
 
       "must return a SummaryListRow with a link to if they want to add contact details" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -116,7 +117,7 @@ class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
 
           val result = AddVendorAgentContactDetailsSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel", "the agent")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")

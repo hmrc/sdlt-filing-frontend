@@ -417,7 +417,7 @@ vendor.whoIsTheVendor.error.required                                            
 vendorAgent.addVendorAgentContactDetails.title                                            = Do you want to add contact details for the agent? - About the vendor’s agent
 vendorAgent.addVendorAgentContactDetails.hint.radio                                       = We’ll only use these details to contact {0} about this return
 vendorAgent.addVendorAgentContactDetails.heading                                          = Do you want to add contact details for {0}?
-vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add contact details for the agent?
+vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                            = Do you want to add contact details for {0}?
 vendorAgent.addVendorAgentContactDetails.change.hidden                                    = Agent contact details
 vendorAgent.addVendorAgentContactDetails.error.required                                   = Please select an option
 
@@ -450,7 +450,7 @@ vendorAgent.VendorAgentsAddReference.title                                      
 vendorAgent.VendorAgentsAddReference.heading                                        = Do you want to add a reference for this return?
 vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel                          = Do you want to add a reference for this return?
 vendorAgent.VendorAgentsAddReference.change.hidden                                  = Do you want to add a reference for this return?
-vendorAgent.VendorAgentsAddReference.p                                              = This is the unique number or code that {0} will use to locate the return in their records.
+vendorAgent.VendorAgentsAddReference.hint                                           = This is the unique number or code that {0} will use to locate the return in their records
 vendorAgent.VendorAgentsAddReference.error.required                                 = Please select an option
 
 vendorAgent.vendorAgentsContactDetails.title                                        = What are the agent’s contact details? - About the vendor’s agent
@@ -866,7 +866,7 @@ vendorAgent.overview.heading                                                    
 vendorAgent.overview.noVendor.subHeadingNoVendors                                   = Do you want to add an agent for the vendor?
 vendorAgent.overview.aVendorAgent                                                   = a vendor’s agent
 vendorAgent.overview.error.required                                                 = Please select an option
-vendorAgent.overview.noVendor.p1                                                    = You have no agents listed for the vendor.
+vendorAgent.overview.noVendor.p1                                                    = There is no agent listed for the vendor.
 
 land.BeforeYouStart.p1                                                              = In this section, you need to tell us about the land or property being purchased.
 land.BeforeYouStart.p2                                                              = We will ask for:

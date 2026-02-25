@@ -44,7 +44,7 @@
                 field  = form("value"),
                 legend = LegendViewModel(messages("vendorAgent.VendorAgentsAddReference.heading")).asPageHeading(size = Large),
                 items  = VendorAgentsAddReference.options
-            ).withHint(HintViewModel(HtmlContent(Html(messages("vendorAgent.VendorAgentsAddReference.p", agentName)))))
+            ).withHint(HintViewModel(HtmlContent(Html(messages("vendorAgent.VendorAgentsAddReference.hint", agentName)))))
          )
 
         @govukButton(
