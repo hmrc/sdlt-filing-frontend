@@ -727,7 +727,7 @@ purchaserAgent.overview.heading                                                 
 purchaserAgent.overview.noPurchaser.subHeadingNoPurchasers                          = Do you want to add an agent for the purchaser?
 purchaserAgent.overview.aPurchaserAgent                                             = a purchaser’s agent
 purchaserAgent.overview.error.required                                              = Please select an option
-purchaserAgent.overview.noPurchaser.p1                                              = You have no agents listed for the purchaser.
+purchaserAgent.overview.noPurchaser.p1                                              = There is no agent listed for the purchaser.
 
 purchaserAgent.BeforeYouStart.title                                                 = Before you start - About the purchaser’s agent
 purchaserAgent.BeforeYouStart.heading                                               = Add an agent for the purchaser
