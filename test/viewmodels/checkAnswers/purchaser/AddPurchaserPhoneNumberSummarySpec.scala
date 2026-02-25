@@ -40,7 +40,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
 
         val result = AddPurchaserPhoneNumberSummary.row(Some(userAnswers))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
         val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
 
@@ -65,7 +65,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
 
         val result = AddPurchaserPhoneNumberSummary.row(Some(userAnswers))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
 
         val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()

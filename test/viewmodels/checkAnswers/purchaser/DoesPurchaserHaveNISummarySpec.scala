@@ -45,7 +45,7 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
 
           val result = DoesPurchaserHaveNISummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "Yes"
@@ -70,7 +70,7 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
 
         val result = DoesPurchaserHaveNISummary.row(Some(userAnswers))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
+        result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
 
