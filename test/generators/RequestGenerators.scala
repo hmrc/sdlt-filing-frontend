@@ -249,6 +249,54 @@ trait RequestGenerators {
           isPartialRelief = Some(false))),
       )
 
+  private val selfAssessedFreeHoldOnOrAfterDecember2014: Set[TaxReliefCode] = Set(
+    PartExchange,
+    ReLocationEmployment,
+    CompulsoryPurchaseFacilitatingDevelopment,
+    ComplianceWithPlanningObligations,
+    GroupRelief,
+    ReConstructionRelief,
+    DemutualisationOfInsuranceCompany,
+    DemutualisationOfBuildingSociety,
+    IncorporationOfLimitedLiabilityPartnership,
+    TransfersInvolvingPublicBodies,
+    TransferInConsequenceOfReorganisationOfParliamentaryConstituencies,
+    CharitiesTaxReliefs,
+    AcquisitionByBodiesEstablishedForNationalPurposes,
+    RegisteredSocialLandlords,
+    AlternativePropertyFinance,
+    CroftingCommunityRightToBuy,
+    DiplomaticPrivileges,
+    OtherTaxReliefs,
+    CombinationOfReliefs,
+    AlternativeFinanceInvestmentBondsRelief
+  )
+
+  val freeHoldAnyPropertyTypeAndTaxReliefSet: Gen[Request] =
+    for {
+      anyPropertyType <- Gen.oneOf(PropertyTypes.mixed, PropertyTypes.nonResidential, PropertyTypes.residential)
+      anyNonZeroAmount <- amountGen
+      anyDay <- onOrAfterDateGenerator(LocalDate.of(2014, 12, 4))
+      inSetTaxReliefCode <- Gen.oneOf(selfAssessedFreeHoldOnOrAfterDecember2014)
+    } yield
+      Request(
+        holdingType = HoldingTypes.freehold,
+        propertyType = anyPropertyType,
+        effectiveDate = anyDay.getOrElse(LocalDate.of(2014, 12, 4)),
+        nonUKResident = None,
+        premium = anyNonZeroAmount,
+        highestRent = BigDecimal(0),
+        propertyDetails = None,
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = None,
+        isLinked = Some(true),
+        interestTransferred = None,
+        taxReliefDetails = Some(
+          TaxReliefDetails(taxReliefCode = inSetTaxReliefCode,
+            isPartialRelief = None)),
+      )
+
   val freeHoldResidentialRightToBuyFromMarch2012ToApril2014: Gen[Request] =
     for {
       nonZeroAmount <- amountGen

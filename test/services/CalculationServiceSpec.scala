@@ -10,6 +10,7 @@
 
 package services
 
+import data.ResultText.RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT
 import enums.HoldingTypes._
 import enums.PropertyTypes._
 import enums.sdltRebuild._
@@ -1264,6 +1265,63 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdFreeportRelief
       }
 
+      "given selfAssessed any property type ~ TaxReliefCode is one of: [8|9|10|11|12|13|15|16|17|18|19|20|21|23|24|26|27|28|29|31]~ with effective date 04/12/2014" in {
+        // no additional property in scope
+        forAll( freeHoldAnyPropertyTypeAndTaxReliefSet ) {
+          calRequest =>
+            reset(mockFreeholdCalculationService)
+            when(mockFreeholdCalculationService.freeholdSelfAssessedOnOrAfterDecember2014)
+              .thenReturn(Result(
+                totalTax = 0,
+                resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+                resultHint = None,
+                npv = None,
+                taxCalcs = Seq.empty
+              ))
+            val res: CalculationResponse = testCalculationService.calculateTaxRelief(calRequest)
+            verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedOnOrAfterDecember2014
+            res shouldBe CalculationResponse(Seq(Result(
+              totalTax = 0,
+              resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+              resultHint = None,
+              npv = None,
+              taxCalcs = Seq.empty
+            )))
+        }
+
+        // with additional property
+        forAll( freeHoldAnyPropertyTypeAndTaxReliefSet ) {
+          calcRequest =>
+            val calcRequestWithAdditionalProperty = calcRequest
+              .copy(propertyDetails = Some(PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(true),
+                replaceMainResidence = Some(true),
+                sharedOwnership = None,
+                currentValue = None
+              )))
+            reset(mockFreeholdCalculationService)
+            when(mockFreeholdCalculationService.freeholdSelfAssessedOnOrAfterDecember2014)
+              .thenReturn(Result(
+                totalTax = 0,
+                resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+                resultHint = None,
+                npv = None,
+                taxCalcs = Seq.empty
+              ))
+            val res: CalculationResponse = testCalculationService.calculateTaxRelief(calcRequestWithAdditionalProperty)
+            verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedOnOrAfterDecember2014
+            res shouldBe CalculationResponse(Seq(Result(
+              totalTax = 0,
+              resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+              resultHint = None,
+              npv = None,
+              taxCalcs = Seq.empty
+            )))
+        }
+      }
+
+
       "given self-assessed residential Freeport relief" in {
         val freeportTestRequest = createRequest(freehold, residential, LocalDate.of(2000, 11, 22), Some(FreeportsTaxSiteRelief), isLinked = Some(false), isPartialRelief = Some(true))
         val result = createResult("freeholdFreeportPartialRelief")
@@ -1331,6 +1389,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialFTB22Mar12Before25Mar12
       }
     }
+
 
     "select freehold / non-residential property with tax relief code" when {
       "given a request with relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {

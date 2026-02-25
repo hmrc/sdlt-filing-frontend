@@ -1155,6 +1155,95 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
 
+      // SDLT - Tax Calc Case - 26a - Self Assessed
+      "the TaxReliefCode is one of: [8|9|10|11|12|13|15|16|17|18|19|20|21|23|24|26|27|28|29|31]" when {
+        "the date is On or After 04/12/2014" when {
+          "transaction is linked" must {
+            "return the self assessed response" when {
+              // Expand test case for any PropertyType
+              "Property Type is Residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Residential",
+                        |  "effectiveDateDay": 22,
+                        |  "effectiveDateMonth": 2,
+                        |  "effectiveDateYear": 2015,
+                        |  "highestRent": 0,
+                        |  "premium": 10000,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 8
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type is Non-Residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Non-residential",
+                        |  "effectiveDateDay": 4,
+                        |  "effectiveDateMonth": 12,
+                        |  "effectiveDateYear": 2014,
+                        |  "highestRent": 0,
+                        |  "premium": 12017,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 12
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type is Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 4,
+                        |  "effectiveDateMonth": 12,
+                        |  "effectiveDateYear": 2017,
+                        |  "highestRent": 0,
+                        |  "premium": 18017,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 31
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
+
       // SDLT - Tax Calc Case - 24g - Self Assessed
       "TaxReliefCode is RightToBuy: 22" when {
         "date is on or after 1st April 2016" when {
