@@ -9,12 +9,11 @@ import models.scalabuild.UserAnswers
 import pages.scalabuild.RentPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.scalabuild.FormatUtils.{bigDecimalFormat, keyCssClass, valueCssClass}
+import viewmodels.scalabuild.FormatUtils.{bigDecimalFormat, keyCssClass}
 import viewmodels.scalabuild.govuk.summarylist.{
   ActionItemViewModel,
   FluentActionItem,
   FluentKey,
-  FluentValue,
   KeyViewModel,
   SummaryListRowViewModel,
   ValueViewModel
@@ -28,7 +27,7 @@ object Year1RentSummary {
       if (withAction) {
         SummaryListRowViewModel(
           key = KeyViewModel("year1Rent.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(bigDecimalFormat(answer.year1Rent)).withCssClass(valueCssClass),
+          value = ValueViewModel.withId(text = bigDecimalFormat(answer.year1Rent), id = "td2_year1Rent"),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
@@ -40,7 +39,7 @@ object Year1RentSummary {
       } else {
         SummaryListRowViewModel(
           key = KeyViewModel("year1Rent.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(bigDecimalFormat(answer.year1Rent)).withCssClass(valueCssClass)
+          value = ValueViewModel.withId(text = bigDecimalFormat(answer.year1Rent), id = "td2_year1Rent"),
         )
       }
     }

@@ -27,9 +27,11 @@
     }
 
     @govukRadios(
-        RadiosViewModel.yesNo(
+        RadiosViewModel.yesNoCustomIdSuffix(
         field = form("nonUKResident"),
-        legend = LegendViewModel(messages("nonUkResident.heading")).asPageHeading()
+        fieldset = Fieldset(legend = Some(LegendViewModel(messages("nonUkResident.heading")).asPageHeading())),
+        yesId = "-yes",
+        noId = "-no"
         )
         .inline()
     )

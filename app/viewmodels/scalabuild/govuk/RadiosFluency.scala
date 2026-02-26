@@ -117,6 +117,33 @@ trait RadiosFluency {
         items = items
       ).inline()
     }
+    def yesNoCustomId(
+      field: Field,
+      fieldset: Fieldset,
+      yesId: String,
+      noId: String
+    )(implicit messages: Messages): Radios = {
+
+      val items = Seq(
+        RadioItem(
+          id = Some(s"${yesId}"),
+          value = Some("true"),
+          content = Text(messages("site.yes"))
+        ),
+        RadioItem(
+          id = Some(s"${noId}"),
+          value = Some("false"),
+          content = Text(messages("site.no"))
+        )
+      )
+
+      apply(
+        field = field,
+        fieldset = fieldset,
+        items = items
+      ).inline()
+    }
+
     def yesNoItemsWithConditionalHtml(
                                        field: Field,
                                        conditionalYesHtml: Option[Html] = None,

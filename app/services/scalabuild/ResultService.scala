@@ -9,7 +9,16 @@ import enums.{CalcTypes, TaxTypes}
 import jakarta.inject.Singleton
 import models.CalculationDetails
 import models.scalabuild.HoldingTypes.{Freehold, Leasehold}
-import models.scalabuild.{DisplayFreehold, DisplayLeasehold, DisplaySlab, DisplayType, HoldingTypes, RequestFromMongo, ResultDisplayTable, UserAnswers}
+import models.scalabuild.{
+  DisplayFreehold,
+  DisplayLeasehold,
+  DisplaySlab,
+  DisplayType,
+  HoldingTypes,
+  RequestFromMongo,
+  ResultDisplayTable,
+  UserAnswers
+}
 import pages.scalabuild.HoldingPage
 import play.api.i18n.Lang.logger
 import play.api.i18n.Messages
@@ -48,9 +57,9 @@ class ResultService @Inject() (
             resultHint = results.resultHint,
             summaryTable = displayType match {
               case DisplaySlab =>
-                ResultSummarySlab(userAnswers, results.totalTax, results.taxCalcs.head.rate, holding)
+                ResultSummarySlab(userAnswers, results.totalTax, results.taxCalcs.head.rate, holding, index)
               case DisplayFreehold =>
-                ResultSummaryFreehold(userAnswers, results.totalTax, isSlabInResult)
+                ResultSummaryFreehold(userAnswers, results.totalTax, isSlabInResult, index)
               case DisplayLeasehold =>
                 // results displayed need to have view calculation link as action in SummaryListRow, not at the bottom
                 ResultSummaryLeasehold(results.totalTax, taxesDueByType(results.taxCalcs), results.npv, index)
@@ -87,40 +96,41 @@ class ResultService @Inject() (
     }
   }
 
-  private def taxesDueByType(taxCalcs: Seq[CalculationDetails]): Seq[(TaxTypes.Value, Int)] = {
-    taxCalcs.map(taxCalc => (taxCalc.taxType, taxCalc.taxDue))
+  private def taxesDueByType(taxCalcs: Seq[CalculationDetails]): Seq[(TaxTypes.Value, Int, Option[Int])] = {
+    taxCalcs.map(taxCalc => (taxCalc.taxType, taxCalc.taxDue, taxCalc.rate))
   }
-  private def ResultSummaryFreehold(ua: UserAnswers, totalTax: Int, slabInResult: Boolean)(implicit messages: Messages): SummaryList = {
+
+  private def ResultSummaryFreehold(ua: UserAnswers, totalTax: Int, slabInResult: Boolean, index: Int)(implicit messages: Messages): SummaryList = {
     val summaryTable = SummaryListViewModel(
       rows = Seq(
-        EffectiveDateSummary.row(ua, withAction = false),
-        PurchasePriceSummary.row(ua, withAction = false)
-      ).flatten :+ TotalDueSummary.row(totalTax, Freehold, slab = slabInResult)
+        EffectiveDateSummary.row(ua, withAction = false, index = Some(index), resultTable = true),
+        PurchasePriceSummary.row(ua, withAction = false, index = Some(index), resultTable = true)
+      ).flatten :+ TotalDueSummary.row(totalTax, Freehold, slab = slabInResult, index)
     )
     summaryTable
   }
 
-  private def ResultSummarySlab(ua: UserAnswers, totalTax: Int, rate: Option[Int], holding: HoldingTypes )(implicit messages: Messages): SummaryList = {
+  private def ResultSummarySlab(ua: UserAnswers, totalTax: Int, rate: Option[Int], holding: HoldingTypes, index: Int)(implicit messages: Messages): SummaryList = {
     val summaryTable = SummaryListViewModel(
       rows = Seq(
-        EffectiveDateSummary.row(ua, withAction = false),
-        PurchasePriceSummary.row(ua, withAction = false),
-        RateSummary.row(rate)
-      ).flatten :+ TotalDueSummary.row(totalTax, holding, slab = true)
+        EffectiveDateSummary.row(ua, withAction = false, index =Some(index), resultTable = true),
+        PurchasePriceSummary.row(ua, withAction = false, index = Some(index), resultTable = true),
+        RateSummary.row(rate, index=index)
+      ).flatten :+ TotalDueSummary.row(totalTax, holding, slab = true, index)
     )
     summaryTable
   }
 
   private def ResultSummaryLeasehold(
       totalTax: Int,
-      taxCalcs: Seq[(TaxTypes.Value, Int)],
+      taxCalcs: Seq[(TaxTypes.Value, Int, Option[Int])],
       nvp: Option[Int],
       index: Int
   )(implicit messages: Messages): SummaryList = {
     val taxesSummaryRows: Seq[SummaryListRow] =
-      taxCalcs.map(taxTotal => TaxesDueByTypeSummary.row(taxTotal._1, taxTotal._2, index))
-    val totalDueSummary: SummaryListRow = TotalDueSummary.row(totalTax, Leasehold)
-    val nvpRow = NpvSummary.row(nvp).toSeq
+      taxCalcs.zipWithIndex.map{ case (taxTotal, taxCalcIndex) => TaxesDueByTypeSummary.row(taxTotal._1, taxTotal._2, rate = taxTotal._3, resultIndex = index, taxCalcIndex = taxCalcIndex)}
+    val totalDueSummary: SummaryListRow = TotalDueSummary.row(totalTax, Leasehold, index = index)
+    val nvpRow = NpvSummary.row(nvp, index).toSeq
 
     val rows:Seq[SummaryListRow] = Seq(totalDueSummary) ++ nvpRow ++ taxesSummaryRows
     val summaryTable = SummaryListViewModel(

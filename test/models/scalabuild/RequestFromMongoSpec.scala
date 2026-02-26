@@ -79,7 +79,9 @@ class RequestFromMongoSpec extends PlaySpec {
           )
         ),
         relevantRentDetails = None,
-        firstTimeBuyer = None
+        firstTimeBuyer = None,
+        mainResidence = None,
+        ownedOtherProperties = None
       )
 
       Json.fromJson[RequestFromMongo](testJson) shouldBe JsSuccess(model)
@@ -103,7 +105,9 @@ class RequestFromMongoSpec extends PlaySpec {
         mongoLeaseDetails = None,
         propertyDetails = None,
         relevantRentDetails = None,
-        firstTimeBuyer = None
+        firstTimeBuyer = None,
+        mainResidence = None,
+        ownedOtherProperties = None
       )
 
       Json.fromJson[RequestFromMongo](testJson) shouldBe JsSuccess(model)

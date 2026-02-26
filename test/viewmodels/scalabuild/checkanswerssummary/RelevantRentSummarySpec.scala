@@ -29,7 +29,7 @@ class RelevantRentSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is £1800 and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(RelevantRentPage, BigDecimal(1800)).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Relevant rental figure"), " govuk-!-width-one-half"),
+          key = Key(Text("Relevant rental figure"), " govuk-!-width-one-half previous-question-title"),
           value = Value(Text("£1,800"), " "),
           actions = Some(
             Actions(
@@ -51,7 +51,7 @@ class RelevantRentSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is £1800 and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(RelevantRentPage, BigDecimal(1800)).toOption
         val expected = SummaryListRow(
-          Key(Text("Relevant rental figure"), " govuk-!-width-one-half"),
+          key = Key(Text("Relevant rental figure"), " govuk-!-width-one-half previous-question-title"),
           Value(Text("£1,800"), " ")
         )
         val result = RelevantRentSummary.row(userAnswers.get, withAction = false)

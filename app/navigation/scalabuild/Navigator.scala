@@ -149,7 +149,7 @@ class Navigator @Inject() (
     answers match {
       case Some(Tuple2(Leasehold, false)) =>
         routes.LeaseDatesController.onPageLoad()
-      case Some(Tuple2(Freehold, false)) =>
+      case Some(Tuple2(Freehold, _)) =>
         routes.PurchasePriceController.onPageLoad()
       case Some(Tuple2(_, true)) =>
         routes.CurrentValueController.onPageLoad()
@@ -208,13 +208,7 @@ class Navigator @Inject() (
   private def additionalPropertyNormalMode(
       userAnswers: UserAnswers
   ):Call = {
-    def replaceMainResidenceOption(isAdditionalProperty: Option[Boolean]):Option[Boolean] = {
-      isAdditionalProperty match {
-        case Some(value) if value => (userAnswers.get(ReplaceMainResidencePage))
-        case Some(_)     => None
-        case _        => None
-      }
-    }
+
     val answers = for {
       holding <- userAnswers.get(HoldingPage)
       residential <- userAnswers.get(ResidentialOrNonResidentialPage)
@@ -223,14 +217,12 @@ class Navigator @Inject() (
       effectiveDate <- userAnswers.get(EffectiveDatePage)
     } yield (holding, residential, isIndividual, isAdditionalProperty, effectiveDate)
 
-    (answers, replaceMainResidenceOption(answers.map(_._4))) match {
-      case (Some(Tuple5(_, Residential, true, false,  date)),_)
-        if (date.isAfter(NOV2017_RESIDENTIAL_DATE) && date.isBefore(JULY2020_RESIDENTIAL_DATE) | date.isAfter(JUNE2021_RESIDENTIAL_DATE)) =>
+    answers match {
+      case Some(Tuple5(_, Residential, true, false,  date))
+        if date.onOrAfter(NOV2017_RESIDENTIAL_DATE) && date.isBefore(JULY2020_RESIDENTIAL_DATE) | date.isAfter(JUNE2021_RESIDENTIAL_DATE) =>
         routes.OwnsOtherPropertiesController.onPageLoad()
-      case (Some(Tuple5(Freehold, _, _, _,  _)),_) =>
-        routes.PurchasePriceController.onPageLoad()
-      case (Some(Tuple5(Leasehold, _, _, _,  _)),_ )=>
-        routes.PurchasePriceController.onPageLoad()
+      case Some(Tuple5(holding, _, _, _,  _)) =>
+        redirectBasedOnHolding(holding)
       case _ => routes.CheckYourAnswersController.onPageLoad()
     }
   }

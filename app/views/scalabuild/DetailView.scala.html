@@ -7,6 +7,8 @@
 @import viewmodels.scalabuild.govuk._
 @import viewmodels.scalabuild._
 @import models.scalabuild.DetailTableRow
+@import viewmodels.scalabuild.FormatUtils.bigDecimalFormat
+@import components.Caption
 
 @this(
 layout: templates.Layout,
@@ -15,16 +17,21 @@ govukButton: GovukButton,
 govukTable: GovukTable
 )
 
-@(caption: String, detailFooter: String, taxDue: Int, rows: Seq[DetailTableRow])(implicit rh: RequestHeader, messages: Messages)
+@(captionText: String, detailFooter: String, taxDue: Int, rows: Seq[DetailTableRow])(implicit rh: RequestHeader, messages: Messages)
 
 @layout() {
     <h1 class="govuk-heading-l">Detailed calculation</h1>
 
+    <table class="govuk-table">
+        <caption id="detailHeading" class="govuk-table__caption">
+            @captionText
+        </caption>
+    </table>
+
     @govukTable(Table(
-        caption = Some(caption),
         head = Some(Seq(
             HeadCell(
-                content = Text(messages("detail.table.header.bands")),
+                content = Text(messages("detail.table.header.bands")), attributes = Map("id" -> s"bandHeading"),
             ),
             HeadCell(
                 content = Text(messages("detail.table.header.percentage")),
@@ -35,21 +42,21 @@ govukTable: GovukTable
                 classes = "govuk-table__header--numeric"
             ),
         )),
-        rows = rows.map { row =>
+        rows = rows.zipWithIndex.map { case (row, index) =>
             Seq(
-                TableRow(content = Text(row.rowHeading), classes = "govuk-table__header"),
-                TableRow(content = Text(row.rate.toString), classes = "govuk-!-text-align-right"),
-                TableRow(content = Text(row.taxDue.toString), classes = "govuk-!-text-align-right")
+                TableRow(content = Text(row.rowHeading), classes = "govuk-table__header", attributes = Map("id" -> s"band${index+1}Range")),
+                TableRow(content = Text(row.rate.toString), classes = "govuk-!-text-align-right", attributes = Map("id" -> s"band${index+1}Rate")),
+                TableRow(content = Text(bigDecimalFormat(row.taxDue, "")), classes = "govuk-!-text-align-right", attributes = Map("id" -> s"band${index+1}Tax"))
             )
         } :+ Seq(
                 TableRow(content = Text("")),
                 TableRow(content = Text(detailFooter), classes = "govuk-!-text-align-right", attributes = Map("id" -> "detailFooter")),
-                TableRow(content = Text(taxDue.toString), classes = "govuk-!-text-align-right", attributes = Map("id" -> "totalSDLT"))
+                TableRow(content = Text(bigDecimalFormat(taxDue, "")), classes = "govuk-!-text-align-right", attributes = Map("id" -> "totalSDLT"))
                 )
 
     ))
     <div class = "govuk-body govuk-!-margin-top-3">
-        <p class="govuk-body">You can <a href="@controllers.scalabuild.routes.PrintController.onPageLoad()" class="govuk-link">@messages("site.print")</a></p>
+        <p class="govuk-body">You can <a href="@controllers.scalabuild.routes.PrintController.onPageLoad()" id="print-calculation" class="govuk-link">@messages("site.print")</a></p>
     </div>
 
     <div class = "govuk-body">

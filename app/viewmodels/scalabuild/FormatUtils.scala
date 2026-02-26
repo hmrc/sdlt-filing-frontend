@@ -7,7 +7,7 @@ package viewmodels.scalabuild
 
 object FormatUtils {
 
-  val keyCssClass = "govuk-!-width-one-half"
+  val keyCssClass = "govuk-!-width-one-half previous-question-title"
   val valueCssClass = ""
 
   def bigDecimalFormat(value: BigDecimal, currencySymbol: String = "£"): String =

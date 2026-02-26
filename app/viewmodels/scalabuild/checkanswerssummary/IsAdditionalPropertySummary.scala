@@ -9,12 +9,11 @@ import models.scalabuild.UserAnswers
 import pages.scalabuild.IsAdditionalPropertyPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.scalabuild.FormatUtils.{keyCssClass, valueCssClass}
+import viewmodels.scalabuild.FormatUtils.keyCssClass
 import viewmodels.scalabuild.govuk.summarylist.{
   ActionItemViewModel,
   FluentActionItem,
   FluentKey,
-  FluentValue,
   KeyViewModel,
   SummaryListRowViewModel,
   ValueViewModel
@@ -29,7 +28,7 @@ object IsAdditionalPropertySummary {
       if (withAction) {
         SummaryListRowViewModel(
           key = KeyViewModel("isAdditionalProperty.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(value).withCssClass(valueCssClass),
+          value = ValueViewModel.withId(text = s"$value",id = "td2_twoOrMoreProperties"),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
@@ -41,7 +40,7 @@ object IsAdditionalPropertySummary {
       } else {
         SummaryListRowViewModel(
           key = KeyViewModel("isAdditionalProperty.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(value).withCssClass(valueCssClass)
+          value = ValueViewModel.withId(text = s"$value",id = "td2_twoOrMoreProperties")
         )
       }
     }

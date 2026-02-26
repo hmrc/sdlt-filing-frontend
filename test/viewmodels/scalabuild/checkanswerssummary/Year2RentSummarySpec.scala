@@ -11,7 +11,7 @@ import models.scalabuild.RentPeriods
 import org.scalatest.wordspec.AnyWordSpec
 import pages.scalabuild.RentPage
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 
 class Year2RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
@@ -56,8 +56,8 @@ class Year2RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "there are 2 years rent and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(RentPage, rent2Year).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Year 2 rent"), " govuk-!-width-one-half"),
-          value = Value(Text("£5,000"), " "),
+          key = Key(Text("Year 2 rent"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_year2Rent">£5,000</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -76,8 +76,8 @@ class Year2RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "all years are defined and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(RentPage, rentAllYears).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Year 2 rent"), " govuk-!-width-one-half"),
-          value = Value(Text("£5,000"), " "),
+          key = Key(Text("Year 2 rent"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_year2Rent">£5,000</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -98,8 +98,8 @@ class Year2RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "there are 2 years rent and 'withAction' is false" in {
         val userAnswers = emptyUserAnswers.set(RentPage, rent2Year).toOption
         val expected = SummaryListRow(
-          Key(Text("Year 2 rent"), " govuk-!-width-one-half"),
-          Value(Text("£5,000"), " ")
+          Key(Text("Year 2 rent"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_year2Rent">£5,000</span>""")),
         )
         val result = Year2RentSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -108,8 +108,8 @@ class Year2RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "all years are defined and 'withAction' is false" in {
         val userAnswers = emptyUserAnswers.set(RentPage, rentAllYears).toOption
         val expected = SummaryListRow(
-          Key(Text("Year 2 rent"), " govuk-!-width-one-half"),
-          Value(Text("£5,000"), " ")
+          Key(Text("Year 2 rent"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_year2Rent">£5,000</span>""")),
         )
         val result = Year2RentSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

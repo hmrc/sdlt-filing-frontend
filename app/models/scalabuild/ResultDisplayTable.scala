@@ -13,14 +13,14 @@ case class ResultDisplayTable(
     totalTax: Int,
     netPresentValue: Option[Int],
     summaryTable: SummaryList,
-    taxesDue: Seq[(TaxTypes.Value, Int)],
+    taxesDue: Seq[(TaxTypes.Value, Int, Option[Int])],
     viewDetailsLink: Option[String] = None
 )
 
 sealed trait DisplayType
-  case object DisplaySlab extends DisplayType
-  case object DisplayFreehold extends DisplayType
-  case object DisplayLeasehold extends DisplayType
+case object DisplaySlab extends DisplayType
+case object DisplayFreehold extends DisplayType
+case object DisplayLeasehold extends DisplayType
 
 case class PrintDisplayTable(
     summaryList: SummaryList,

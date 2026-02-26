@@ -13,12 +13,12 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 
-class TotalDueSummarySpec extends AnyWordSpec with ScalaSpecBase {
+class TotalTaxSummarySpec extends AnyWordSpec with ScalaSpecBase {
   val messagesApi: MessagesApi = application().injector.instanceOf[MessagesApi]
   implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
 
-  "TotalDue Summary" should {
-    "Display the correct summary key and id" when {
+  "TotalTax Summary" should {
+    "Display the correct summary key and have the correct id" when {
       "result is received in the form of a slab" in {
         val expected = SummaryListRow(
           Key(Text("Total SDLT due (£)")),
@@ -30,9 +30,8 @@ class TotalDueSummarySpec extends AnyWordSpec with ScalaSpecBase {
       }
       "holding type is 'Leasehold' and result is slice" in {
         val expected = SummaryListRow(
-          Key(Text("Total amount of tax for this transaction")),
-          Value(HtmlContent("""<span id="totalTax0">3,000</span>"""))
-
+          key = Key(Text("Total amount of tax for this transaction")),
+          value = Value(HtmlContent("""<span id="totalTax0">3,000</span>"""))
         )
         val result = TotalDueSummary.row(3000, Leasehold, slab = false, index = 0)
         result shouldBe expected
@@ -41,10 +40,11 @@ class TotalDueSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "holding type is 'Freehold' and result is slice" in {
         val expected = SummaryListRow(
           Key(Text("Total tax")),
-          Value(HtmlContent("""<span id="totalTax0">3,000</span>"""))
+          Value(HtmlContent("""<span id="totalTax1">3,000</span>"""))
         )
-        val result = TotalDueSummary.row(3000, Freehold, slab = false, index = 0)
+        val result = TotalDueSummary.row(3000, Freehold, slab = false, index = 1)
         result shouldBe expected
+
       }
     }
   }

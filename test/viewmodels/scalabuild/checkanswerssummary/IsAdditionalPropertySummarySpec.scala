@@ -10,7 +10,7 @@ import controllers.scalabuild.routes
 import org.scalatest.wordspec.AnyWordSpec
 import pages.scalabuild.IsAdditionalPropertyPage
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 
 class IsAdditionalPropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
@@ -29,8 +29,8 @@ class IsAdditionalPropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Yes' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(IsAdditionalPropertyPage, true).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Additional residential property"), " govuk-!-width-one-half"),
-          value = Value(Text("Yes"), " "),
+          key = Key(Text("Additional residential property"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_twoOrMoreProperties">Yes</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -50,8 +50,8 @@ class IsAdditionalPropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'No' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(IsAdditionalPropertyPage, false).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Additional residential property"), " govuk-!-width-one-half"),
-          value = Value(Text("No"), " "),
+          key = Key(Text("Additional residential property"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_twoOrMoreProperties">No</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -72,8 +72,8 @@ class IsAdditionalPropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Yes' and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(IsAdditionalPropertyPage, true).toOption
         val expected = SummaryListRow(
-          Key(Text("Additional residential property"), " govuk-!-width-one-half"),
-          Value(Text("Yes"), " ")
+          key = Key(Text("Additional residential property"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_twoOrMoreProperties">Yes</span>""")),
         )
         val result = IsAdditionalPropertySummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -82,8 +82,8 @@ class IsAdditionalPropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'No' and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(IsAdditionalPropertyPage, false).toOption
         val expected = SummaryListRow(
-          Key(Text("Additional residential property"), " govuk-!-width-one-half"),
-          Value(Text("No"), " ")
+          key = Key(Text("Additional residential property"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_twoOrMoreProperties">No</span>""")),
         )
         val result = IsAdditionalPropertySummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

@@ -17,7 +17,7 @@ class DetailViewSpec extends ViewTestFixture with TestObjects {
   val detailCaption = "This is a breakdown of how the total amount of SDLT was calculated"
   val detailFooterText = "Total SDLT due"
   override val htmlContent: HtmlFormat.Appendable = view.apply(
-    caption = detailCaption,
+    captionText = detailCaption,
     detailFooter = "Total SDLT due",
     taxDue = 47500,
     rows = detailFreeResUkIndTwoMain )(fakeRequest, messages)
@@ -27,7 +27,7 @@ class DetailViewSpec extends ViewTestFixture with TestObjects {
       heading mustBe detailHeading
       tableCaption mustBe detailCaption
       detailFooter mustBe detailFooterText
-      totalSDLT mustBe 47500.toString
+      totalSDLT mustBe "47,500"
     }
 
     "render the correct links" in {

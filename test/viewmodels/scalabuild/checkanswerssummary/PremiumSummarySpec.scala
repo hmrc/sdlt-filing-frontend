@@ -11,6 +11,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import pages.scalabuild.PremiumPage
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 
 class PremiumSummarySpec extends AnyWordSpec with ScalaSpecBase {
@@ -29,8 +30,8 @@ class PremiumSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is £300000 and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(PremiumPage, BigDecimal(300000)).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Premium"), " govuk-!-width-one-half"),
-          value = Value(Text("£300,000"), " "),
+          key = Key(Text("Premium"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_premium">£300,000</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -51,8 +52,8 @@ class PremiumSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is £300000 and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(PremiumPage, BigDecimal(300000)).toOption
         val expected = SummaryListRow(
-          Key(Text("SDLT on Premium"), " govuk-!-width-one-half"),
-          Value(Text("£300,000"), " ")
+          key = Key(Text("SDLT on Premium")),
+          value = Value(content = HtmlContent(s"""<span id="td2_premium">£300,000</span>""")),
         )
         val result = PremiumSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

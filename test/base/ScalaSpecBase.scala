@@ -4,7 +4,6 @@
  */
 
 package base
-
 import config.scalabuild.FrontendAppConfig
 import controllers.scalabuild.actions._
 import models.scalabuild.UserAnswers

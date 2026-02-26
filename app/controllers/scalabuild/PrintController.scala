@@ -6,8 +6,9 @@
 package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.scalabuild.HoldingTypes.{Freehold, Leasehold}
 import models.scalabuild.{PrintDisplayTable, UserAnswers}
-import pages.scalabuild.RequestGroup
+import pages.scalabuild.{HoldingPage, RequestGroup}
 import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -54,6 +55,12 @@ class PrintController @Inject() (
   }
 
   private def toSummaryList(ua: UserAnswers, withAction: Boolean)(implicit messages: Messages) = {
+    val premiumOrPriceSummaryRow = ua.get(HoldingPage) match {
+      case Some(Freehold) => PurchasePriceSummary.row(ua, withAction = withAction)
+      case Some(Leasehold) => PremiumSummary.row(ua, withAction = withAction)
+      case None        => None
+    }
+
     SummaryListViewModel(
       rows = Seq(
         HoldingSummary.row(ua, withAction = withAction),
@@ -63,7 +70,7 @@ class PrintController @Inject() (
         MainResidenceSummary.row(ua, withAction = withAction),
         NonUkResidentSummary.row(ua, withAction = withAction),
         OwnsOtherPropertiesSummary.row(ua, withAction = withAction),
-        PurchasePriceSummary.row(ua, withAction = withAction),
+        premiumOrPriceSummaryRow,
         IsPurchaserIndividualSummary.row(ua, withAction = withAction),
         ReplaceMainResidenceSummary.row(ua, withAction = withAction),
         SharedOwnershipSummary.row(ua, withAction = withAction),
@@ -72,7 +79,6 @@ class PrintController @Inject() (
         LeaseStartDateSummary.row(ua, withAction = withAction),
         LeaseEndDateSummary.row(ua, withAction = withAction),
         LeaseTermSummary.row(ua),
-        PremiumSummary.row(ua, withAction = withAction),
         Year1RentSummary.row(ua, withAction = withAction),
         Year2RentSummary.row(ua, withAction = withAction),
         Year3RentSummary.row(ua, withAction = withAction),
