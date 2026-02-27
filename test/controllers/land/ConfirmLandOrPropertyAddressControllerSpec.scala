@@ -526,7 +526,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
       }
     }
   }
