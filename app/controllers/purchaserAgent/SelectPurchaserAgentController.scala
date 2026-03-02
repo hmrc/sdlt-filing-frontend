@@ -33,16 +33,16 @@ import javax.inject.Inject
 import scala.concurrent.Future
 
 class SelectPurchaserAgentController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: SelectPurchaserAgentFormProvider,
-                                       purchaserService: PurchaserService,
-                                       purchaserAgentService: PurchaserAgentService,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: SelectPurchaserAgentView
-                                     ) extends FrontendBaseController with I18nSupport with Logging {
+                                                override val messagesApi: MessagesApi,
+                                                identify: IdentifierAction,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                formProvider: SelectPurchaserAgentFormProvider,
+                                                purchaserService: PurchaserService,
+                                                purchaserAgentService: PurchaserAgentService,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                view: SelectPurchaserAgentView
+                                              ) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -54,24 +54,24 @@ class SelectPurchaserAgentController @Inject()(
 
       (maybeMainPurchaserName, beforeYouStartYes, maybeStorn) match {
         case (None, true, _) =>
-          Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
+          Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
 
         case (Some(purchaser), true, Some(storn)) =>
           maybeAgents match {
-              case None => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
+            case None => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
 
-              case Some(agents) =>
-                agents match {
-                  case Nil => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
-                  case agents =>
-                    val form: Form[String] = formProvider(agents)
+            case Some(agents) =>
+              agents match {
+                case Nil => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
+                case agents =>
+                  val form: Form[String] = formProvider(agents)
 
-                    val preparedForm = request.userAnswers.get(SelectPurchaserAgentPage) match {
-                      case None => form
-                      case Some(value) => form.fill(value)
-                    }
-                    Future.successful(Ok(view(preparedForm, mode, purchaser, Some(purchaserAgentService.agentSummaryList(agents)))))
-                }
+                  val preparedForm = request.userAnswers.get(SelectPurchaserAgentPage) match {
+                    case None => form
+                    case Some(value) => form.fill(value)
+                  }
+                  Future.successful(Ok(view(preparedForm, mode, purchaser, Some(purchaserAgentService.agentSummaryList(agents)))))
+              }
           }
         case _ =>
           Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
@@ -87,7 +87,7 @@ class SelectPurchaserAgentController @Inject()(
 
       (maybeMainPurchaserName, maybeStorn) match {
         case (None, _) =>
-          Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode)))
+          Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(mode)))
 
         case (Some(purchaser), Some(storn)) =>
           maybeAgents match {
