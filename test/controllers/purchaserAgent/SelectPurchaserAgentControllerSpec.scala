@@ -61,7 +61,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
                            email: Option[String] = Some("test@example.com"),
                            dxAddress: Option[String] = Some("yes"),
                            agentResourceReference: Option[String] = Some("REF001")
-                         ) : Agent =
+                         ): Agent =
     Agent(
       storn = Some(testStorn),
       agentId = agentId,
@@ -265,7 +265,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
         }
       }
 
@@ -349,7 +349,7 @@ class SelectPurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
         }
       }
 
