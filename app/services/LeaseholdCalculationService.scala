@@ -824,6 +824,10 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory
       .leaseholdSelfAssessedResult
 
+  val leaseholdResidentialFTBWithMultipleLands: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
   val leaseholdMultipleDwellingRelief: Result =
     LeaseholdResultFactory
       .leaseholdSelfAssessedResult

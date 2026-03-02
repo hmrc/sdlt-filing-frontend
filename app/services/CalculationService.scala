@@ -15,9 +15,10 @@ import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.EffectivePropertyType._
 import models.sdltRebuild.{Mixed, NonResidential, Residential, ResidentialAdditionalProperty}
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, isAfterNov2017AndBeforeJul20}
 import utils.DateUtil
 import utils.LoggerUtil._
+import Dates._
 
 import javax.inject.{Inject, Singleton}
 
@@ -363,9 +364,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
 
   def calculateTaxRelief(request: Request): CalculationResponse = {
 
-    // Comment (to be removed)
-    // Property types from the AS-IS design are:
-    // residential, nonResidential, mixed and residentialAdditionalProperty
+    val date = request.effectiveDate
 
     request.taxReliefDetails match {
       case _ if request.interestTransferred.contains("OT") => calculateTaxForOtherInterestTransferred(request)
@@ -378,7 +377,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               freeCalculationService.freeholdMultipleDwellingRelief
             ))
           case (`freehold`, _, CollectiveEnfranchisementByLeaseholders, _)
-            if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>
+            if date.onOrAfter(APRIL2009_EFFECTIVE_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdCollectiveEnfranchisementByLeaseholdersReliefAfterApr09
             ))
@@ -392,7 +391,8 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               freeCalculationService.freeholdFreeportRelief
             ))
-          case (`freehold`, Mixed | NonResidential, RightToBuy, Some(false)) if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+          case (`freehold`, Mixed | NonResidential, RightToBuy, Some(false))
+            if date.isBefore(MARCH2016_NON_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdRightToBuyBeforeMarch2016(request)
             ))
@@ -405,94 +405,93 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               freeCalculationService.freeholdAcquisitionTaxRelief(request)
             ))
-          case (`freehold`, _, AcquisitionRelief, Some(true)) if
-            request.effectiveDate.isBefore(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
+          case (`freehold`, _, AcquisitionRelief, Some(true))
+            if date.isBefore(DECEMBER2014_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdAcquisitionReliefBeforeDec2014
             ))
           case (`freehold`, Residential, FirstTimeBuyersRelief, Some(true))
-            if isAfter22Mar2012AndBefore25Mar2012(request.effectiveDate) =>
+            if isAfter22Mar2012AndBefore25Mar2012(date) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdResidentialFTB22Mar12Before25Mar12
             ))
-          case (`freehold`, _, AcquisitionRelief, Some(true)) if
-            request.effectiveDate.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
+          case (`freehold`, _, AcquisitionRelief, Some(true))
+            if date.onOrAfter(DECEMBER2014_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdAcquisitionReliefDec14Onwards
             ))
           case (`freehold`, ResidentialAdditionalProperty, PreCompletionTransaction, Some(false))
-            if request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>
+            if date.onOrAfter(APRIL2016_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdResidentialAddPropPreCompletionTransactionReliefApr16Onwards
             ))
           case (`freehold`, Residential | NonResidential | Mixed, PreCompletionTransaction, Some(false))
-            if request.effectiveDate.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) =>
+            if date.onOrAfter(APRIL2013_TAX_YEAR_START_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdPreCompletionTransactionReliefApr13Onwards
             ))
           case (`freehold`, Residential, RightToBuy, Some(true))
-            if request.effectiveDate.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
+            if date.onOrAfter(DECEMBER2014_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdResidentialRightToBuyDec14Onwards
             ))
           case (`freehold`, NonResidential | Mixed, RightToBuy, Some(true))
-            if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+            if date.isBefore(MARCH2016_NON_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdMixedNonResRightToBuyReliefBeforeMar16
             ))
           case (`freehold`, NonResidential | Mixed, RightToBuy, Some(true))
-            if request.effectiveDate.onOrAfter(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+            if date.onOrAfter(MARCH2016_NON_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdMixedNonResRightToBuyReliefMar16Onwards
             ))
           case (`freehold`, ResidentialAdditionalProperty, RightToBuy, Some(true))
-            if request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>
+            if date.onOrAfter(APRIL2016_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdResAddPropRightToBuyReliefApr16Onwards
             ))
           case (`freehold`, Residential, RightToBuy, Some(true))
-            if isAfterMar2012AndBeforeDec2014(request.effectiveDate) =>
+            if isAfterMar2012AndBeforeDec2014(date) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdResidentialRightToBuyMar12ToDec14
             ))
           case (`freehold`, Residential, ReliefFrom15PercentRate, Some(true))
-            if isAfterApr2013AndBeforeDec2014(request.effectiveDate) =>
+            if isAfterApr2013AndBeforeDec2014(date) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdResidentialReliefFrom15PercentRateApr13BeforeDec14
             ))
           case (`freehold`, Residential, ReliefFrom15PercentRate, Some(true))
-            if request.effectiveDate.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
+            if date.onOrAfter(DECEMBER2014_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdResidentialReliefFrom15PercentRateDec14Onwards
             ))
           case (`freehold`, ResidentialAdditionalProperty, ReliefFrom15PercentRate, Some(true))
-            if request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>
+            if date.onOrAfter(APRIL2016_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdResAddPropReliefFrom15PercentRateApr16Onwards
             ))
-
           case (`freehold`, Mixed | NonResidential, ReliefFrom15PercentRate, Some(true))
-            if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+            if date.isBefore(MARCH2016_NON_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeHoldReliefFrom15PercentRateBefore17March2016
             ))
-
-          case (`freehold`, _, taxReliefCode, Some(true)) if selfAssessedFreeHoldReliefCodes.contains(taxReliefCode) && request.effectiveDate.isBefore(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
-            CalculationResponse(Seq(freeCalculationService.freeholdStandardSelfAssessedReliefBeforeDec14))
-
-          case (`freehold`, _, taxReliefCode, Some(true)) if selfAssessedFreeHoldReliefCodes.contains(taxReliefCode)
-            && request.effectiveDate.onOrAfter(Dates.DECEMBER2014_ANY_PROP_DATE) =>
+          case (`freehold`, _, taxReliefCode, Some(true))
+            if selfAssessedFreeHoldReliefCodes.contains(taxReliefCode) && date.isBefore(DECEMBER2014_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdStandardSelfAssessedReliefBeforeDec14
+            ))
+          case (`freehold`, _, taxReliefCode, Some(true))
+            if selfAssessedFreeHoldReliefCodes.contains(taxReliefCode) && date.onOrAfter(DECEMBER2014_ANY_PROP_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedOnOrAfterDecember2014
             ))
-
           /* ------------- LeaseHoldCases--------------------------- */
           case (`leasehold`, _, MultipleDwellingRelief, _) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdMultipleDwellingRelief
             ))
           case (`leasehold`, _, CollectiveEnfranchisementByLeaseholders, _)
-            if request.effectiveDate.onOrAfter(Dates.APRIL2009_EFFECTIVE_DATE) =>
+            if date.onOrAfter(APRIL2009_EFFECTIVE_DATE) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdCollectiveEnfranchisementByLeaseholdersApr09Onwards
             ))
@@ -506,8 +505,13 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdFreeportRelief(request.leaseDetails)
             ))
+          case (`leasehold`, Residential, FirstTimeBuyersRelief, Some(true))
+            if isAfterNov2017AndBeforeJul20(date) && request.isMultipleLand.contains(true) =>
+            CalculationResponse(Seq(
+              leaseCalculationService.leaseholdResidentialFTBWithMultipleLands
+            ))
           case (`leasehold`, Residential, FirstTimeBuyersRelief, _)
-            if isAfterMar2010AndBeforeMar2012(request.effectiveDate) =>
+            if isAfterMar2010AndBeforeMar2012(date) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdResFTBReliefMar10BeforeMar12
             ))
@@ -516,12 +520,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               leaseCalculationService.leaseholdAcquisitionTaxReliefRes(request)
             ))
           case (`leasehold`, ResidentialAdditionalProperty, PreCompletionTransaction, Some(false))
-            if request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>
+            if date.onOrAfter(APRIL2016_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdResAddPropPreCompletionTransactionApr2016Onwards(request.leaseDetails)
             ))
           case (`leasehold`, Residential | NonResidential | Mixed, PreCompletionTransaction, Some(false))
-            if request.effectiveDate.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) =>
+            if date.onOrAfter(APRIL2013_TAX_YEAR_START_DATE) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdPreCompletionTransactionApr2013Onwards(request.leaseDetails)
             ))
@@ -538,53 +542,48 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     }
   }
 
-  def calculateTaxForOtherInterestTransferred(request: Request): CalculationResponse = {
-    if (request.holdingType == freehold)
-      CalculationResponse(Seq(freeCalculationService.freeholdOtherInterestTransferred))
-    else
-      CalculationResponse(Seq(leaseCalculationService.leaseholdOtherInterestTransferred))
-  }
-
   def calculateTaxNoRelief(request: Request): CalculationResponse = {
+
+    val date = request.effectiveDate
 
     (request.holdingType, effectivePropertyType(request), request.isLinked) match {
       /* ------------- FreeHoldCases--------------------------- */
       case (`freehold`, Mixed | NonResidential, Some(true))
-        if request.effectiveDate.onOrAfter(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+        if date.onOrAfter(MARCH2016_NON_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(
           freeCalculationService.freeholdMixedNonResMar16Onwards
         ))
       case (`freehold`, Mixed | NonResidential, Some(true))
-        if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+        if date.isBefore(MARCH2016_NON_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(
           freeCalculationService.freeholdMixedNonResBeforeMar16
         ))
       case (`freehold`, Residential, Some(true))
-        if isAfterMar2012AndBeforeDec2014(request.effectiveDate) =>
+        if isAfterMar2012AndBeforeDec2014(date) =>
         CalculationResponse(Seq(
           freeCalculationService.freeholdResidentialMar12BeforeDec14
         ))
       case (`freehold`, Residential, Some(true))
-        if request.effectiveDate.onOrAfter(Dates.DECEMBER2014_RESIDENTIAL_DATE) =>
-          CalculationResponse(Seq(
-            freeCalculationService.freeholdResidentialAfterDec14
-          ))
+        if date.onOrAfter(DECEMBER2014_RESIDENTIAL_DATE) =>
+        CalculationResponse(Seq(
+          freeCalculationService.freeholdResidentialAfterDec14
+        ))
       case (`freehold`, ResidentialAdditionalProperty, Some(true))
-        if request.effectiveDate.onOrAfter(Dates.APRIL2016_RESIDENTIAL_DATE) =>
+        if date.onOrAfter(APRIL2016_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(
           freeCalculationService.freeholdResidentialAddPropAprOnwards
         ))
       case (`freehold`, Mixed | NonResidential, Some(false))
-        if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) =>
+        if date.isBefore(MARCH2016_NON_RESIDENTIAL_DATE) =>
         calculateBaseTax(request)
       /* ------------- LeaseHoldCases--------------------------- */
-      case (`leasehold`, Residential | NonResidential | ResidentialAdditionalProperty | Mixed, Some(true))
-        if request.effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) =>
-          CalculationResponse(Seq(
-            leaseCalculationService.leaseholdNov17Onwards
-          ))
+      case (`leasehold`, _, Some(true))
+        if date.onOrAfter(NOV2017_RESIDENTIAL_DATE) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdNov17Onwards
+        ))
       case (`leasehold`, Mixed, _)
-        if isAfterMar2008AndBeforeMar2016(request.effectiveDate) =>
+        if isAfterMar2008AndBeforeMar2016(date) =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdMixedPropMar08BeforeMar16
         ))
@@ -595,6 +594,16 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
     }
   }
 
+  private def calculateTaxForOtherInterestTransferred(request: Request): CalculationResponse =
+    CalculationResponse(Seq(
+      if (request.holdingType == freehold) freeCalculationService.freeholdOtherInterestTransferred
+      else                                 leaseCalculationService.leaseholdOtherInterestTransferred
+    ))
+
   private def isComplexCalculation(request: Request): Boolean =
-    request.taxReliefDetails.nonEmpty || request.isLinked.nonEmpty || request.interestTransferred.nonEmpty || request.propertyType == mixed
+    request.taxReliefDetails.nonEmpty ||
+      request.isLinked.nonEmpty ||
+      request.interestTransferred.nonEmpty ||
+      request.propertyType == mixed ||
+      request.isMultipleLand.nonEmpty
 }

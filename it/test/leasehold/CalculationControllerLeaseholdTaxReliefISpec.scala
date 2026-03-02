@@ -1709,6 +1709,111 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
           request.json shouldBe selfAssessedResponse
         }
       }
+      // SDLT - Tax Calc Case - 61 - self assessed
+      "the TaxReliefCode is FirstTimeBuyersRelief: 32" when {
+        "there are multiple lands" when {
+          "Property Type is Residential" when {
+            "the transaction is linked" must {
+              "return self assessed response" when {
+                "date is on or after 22nd Nov 2017" in {
+                  val request: WSResponse = ws
+                    .url(calculateUrl)
+                    .post(
+                      Json.parse(
+                        """
+                          |{
+                          |  "holdingType": "Leasehold",
+                          |  "propertyType": "Residential",
+                          |  "effectiveDateDay": 22,
+                          |  "effectiveDateMonth": 11,
+                          |  "effectiveDateYear": 2017,
+                          |  "premium": 1000000,
+                          |  "highestRent": 0,
+                          |  "leaseDetails": {
+                          |    "startDateDay": 22,
+                          |    "startDateMonth": 11,
+                          |    "startDateYear": 2017,
+                          |    "endDateDay": 22,
+                          |    "endDateMonth": 11,
+                          |    "endDateYear": 2018,
+                          |    "leaseTerm": {
+                          |      "years": 1,
+                          |      "days": 1,
+                          |      "daysInPartialYear": 365
+                          |    },
+                          |    "year1Rent": 999,
+                          |    "year2Rent": 999
+                          |  },
+                          |  "propertyDetails": {
+                          |    "individual": "Yes",
+                          |    "twoOrMoreProperties": "No"
+                          |  },
+                          |  "firstTimeBuyer": "Yes",
+                          |  "isLinked": true,
+                          |  "isMultipleLand": true,
+                          |  "taxReliefDetails": {
+                          |    "taxReliefCode": 32
+                          |  }
+                          |}
+                          |""".stripMargin
+                      )
+                    )
+
+                  request.status shouldBe OK
+                  request.json shouldBe selfAssessedResponse
+                }
+                "date is before 8th July 2020" in {
+                  val request: WSResponse = ws
+                    .url(calculateUrl)
+                    .post(
+                      Json.parse(
+                        """
+                          |{
+                          |  "holdingType": "Leasehold",
+                          |  "propertyType": "Residential",
+                          |  "effectiveDateDay": 7,
+                          |  "effectiveDateMonth": 7,
+                          |  "effectiveDateYear": 2020,
+                          |  "premium": 1000000,
+                          |  "highestRent": 0,
+                          |  "leaseDetails": {
+                          |    "startDateDay": 7,
+                          |    "startDateMonth": 7,
+                          |    "startDateYear": 2020,
+                          |    "endDateDay": 7,
+                          |    "endDateMonth": 7,
+                          |    "endDateYear": 2021,
+                          |    "leaseTerm": {
+                          |      "years": 1,
+                          |      "days": 1,
+                          |      "daysInPartialYear": 365
+                          |    },
+                          |    "year1Rent": 999,
+                          |    "year2Rent": 999
+                          |  },
+                          |  "propertyDetails": {
+                          |    "individual": "Yes",
+                          |    "twoOrMoreProperties": "No"
+                          |  },
+                          |  "firstTimeBuyer": "Yes",
+                          |  "isLinked": true,
+                          |  "isMultipleLand": true,
+                          |  "taxReliefDetails": {
+                          |    "taxReliefCode": 32
+                          |  }
+                          |}
+                          |""".stripMargin
+                      )
+                    )
+
+                  request.status shouldBe OK
+                  request.json shouldBe selfAssessedResponse
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
