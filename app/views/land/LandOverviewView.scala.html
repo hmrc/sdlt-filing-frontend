@@ -1,0 +1,141 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import viewmodels.CaptionSize.Large
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        govukSummaryList: GovukSummaryList,
+        govukPagination: GovukPagination,
+        govukErrorSummary: GovukErrorSummary,
+        formHelper: FormWithCSRF,
+        p: Paragraph,
+        govukRadios: GovukRadios,
+        h1: h1,
+        caption: Caption,
+        govukNotificationBanner: GovukNotificationBanner
+)
+@(
+        maybeSummaryList: Option[SummaryList],
+        pagination: Option[Pagination],
+        paginationInfoText: Option[String],
+        redirect: Call,
+        form: Form[_],
+        mode: Mode,
+        errorCalc: Boolean
+)(
+        implicit request: Request[_],
+        messages: Messages
+)
+
+@layout(pageTitle = titleNoForm(messages("land.landOverview.title"))) {
+
+    @request.flash.get("landCreated").map { landAddress =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "site.overview.created",
+                            if(!landAddress.isBlank) landAddress else messages("site.land.aLand")
+                        )
+                    }</h3>"""
+                ),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("landUpdated").map { landAddress =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(
+                    s"""<h3 class="govuk-notification-banner__heading">${
+                        messages(
+                            "site.overview.updated",
+                            if(!landAddress.isBlank) landAddress else messages("site.land.aLand")
+                        )
+                    }</h3>"""
+                ),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @request.flash.get("landDeleted").map { landAddress =>
+        @govukNotificationBanner(
+            NotificationBanner(
+                title = messages("site.success"),
+                content = HtmlContent(s"""<h3 class="govuk-notification-banner__heading">${
+                    messages("site.overview.removed",
+                        if(!landAddress.isBlank) landAddress else messages("site.land.aLand"))}</h3>"""),
+                bannerType = Some("success"),
+                role = Some("alert")
+            )
+        )
+    }
+
+    @formHelper(action = controllers.land.routes.LandOverviewController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @caption(messages("site.land.caption"), size = Large)
+        @h1(messages("land.landOverview.heading"))
+
+        @maybeSummaryList match {
+            case Some(summary) => {
+
+                @paginationInfoText.map(p(_))
+
+                @govukSummaryList(summary)
+
+                @pagination.map(govukPagination(_))
+
+                @if(!errorCalc) {
+                    @govukRadios(
+                        RadiosViewModel.yesNo(
+                            field = form("value"),
+                            legend = LegendViewModel(messages("land.landOverview.noLand.subHeadingNoLands")).asPageSubHeading()
+                        )
+                    )
+
+                    @govukButton(
+                        ButtonViewModel(messages("site.continue"))
+                    )
+                } else {
+                    @p(messages("land.landOverview.limitReached"))
+                }
+            }
+            case None => {
+                @p("land.landOverview.noLand.p1")
+
+                @govukButton(
+                    ButtonViewModel(messages("land.landOverview.noLand.button"))
+                    .asLink(controllers.land.routes.LandBeforeYouStartController.onPageLoad().url)
+                )
+            }
+        }
+    }
+}

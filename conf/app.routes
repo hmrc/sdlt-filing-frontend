@@ -369,6 +369,11 @@ POST        /about-the-land/add-area-of-land                                    
 GET         /about-the-land/add-area-of-land/change                                                  controllers.land.DoYouKnowTheAreaOfLandController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-land/add-area-of-land/change                                                  controllers.land.DoYouKnowTheAreaOfLandController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-land/land-or-property-overview                                                 controllers.land.LandOverviewController.onPageLoad(mode: Mode = NormalMode, paginationIndex: Int ?= 1)
+POST       /about-the-land/land-or-property-overview                                                 controllers.land.LandOverviewController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-land/land-or-property-overview/change-land/:landId                             controllers.land.LandOverviewController.changeLand(landId: String)
+GET        /about-the-land/land-or-property-overview/remove-land/:landId                             controllers.land.LandOverviewController.removeLand(landId: String)
+
 GET        /about-UK-residency/crown-employment-relief                                               controllers.ukResidency.CrownEmploymentReliefController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-UK-residency/crown-employment-relief                                               controllers.ukResidency.CrownEmploymentReliefController.onSubmit(mode: Mode = NormalMode)
 GET        /about-UK-residency/crown-employment-relief/change                                        controllers.ukResidency.CrownEmploymentReliefController.onPageLoad(mode: Mode = CheckMode)

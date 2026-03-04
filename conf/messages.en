@@ -48,6 +48,7 @@ site.agent.theAgent                                                             
 
 site.vendor.aVendor                                                                 = a vendor
 site.purchaser.aPurchaser                                                           = a purchaser
+site.land.aLand                                                                     = a land
 site.agent.anAgent                                                                  = an agent
 
 site.overview.created                                                               = You have added {0}
@@ -1039,6 +1040,18 @@ land.doYouKnowTheAreaOfLand.hint                                                
 land.doYouKnowTheAreaOfLand.checkYourAnswersLabel                                   = Do you know the area of the land?
 land.doYouKnowTheAreaOfLand.error.required                                          = Select doYouKnowTheAreaOfLand
 land.doYouKnowTheAreaOfLand.change.hidden                                           = DoYouKnowTheAreaOfLand
+
+land.landOverview.title                                                        = Land or property overview - About the land
+land.landOverview.heading                                                      = Land or property overview
+land.landOverview.limitReached                                                 = To add a new land, you must remove one.
+land.landOverview.no-lands                                                     = You do not have any vendors added.
+land.landOverview.land-list                                                    = You do not have any vendors added.
+land.landOverview.noLand.subHeadingWithLands                                   = Do you want to add another area of land or property?
+land.landOverview.noLand.subHeadingNoLands                                     = Do you want to add another area of land or property?
+land.landOverview.summaryInfo.text                                             = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
+land.landOverview.noLand.p1                                                    = You have no land or properties listed. You must add the land or property to complete this return.
+land.landOverview.noLand.button                                                = Add the land or property
+land.landOverview.error.required                                               = Please select an option
 
 ukResidency.nonUkResidentPurchaser.title                                         = Are any of the purchasers non-UK residents? - About UK residency
 ukResidency.nonUkResidentPurchaser.heading                                       = Residency status
