@@ -95,30 +95,30 @@ class PurchaserService {
   }
 
   def populatePurchaserNameInSession(
-                                      purchaserCheck: String,
+                                      purchaserCheck: Boolean,
                                       userAnswers: UserAnswers
                                     ): Try[UserAnswers] = {
-    val confirmName = if (purchaserCheck == "yes") ConfirmNameOfThePurchaser.Yes else ConfirmNameOfThePurchaser.No
+    val confirmName = if (purchaserCheck) ConfirmNameOfThePurchaser.Yes else ConfirmNameOfThePurchaser.No
 
-    val purchaserOpt: Option[Purchaser] = userAnswers.fullReturn
-      .flatMap(_.purchaser)
-      .flatMap(_.headOption)
+    val mainPurchaserOpt: Option[Purchaser] = getMainPurchaser(userAnswers)
+    val companyDetailsIdOpt = userAnswers.fullReturn.flatMap(_.companyDetails.flatMap(_.companyDetailsID))
 
-    purchaserOpt match {
-      case Some(purchaser) if purchaserCheck == "yes" && purchaser.purchaserID.isDefined =>
-        createPurchaserName(purchaser) match {
+    mainPurchaserOpt match {
+      case Some(mainPurchaser) =>
+        createPurchaserName(mainPurchaser) match {
           case Some(purchaserName) =>
-
             for {
-              withName <- userAnswers.set(NameOfPurchaserPage, purchaserName)
-              withIndividualOrCompany <- withName.set(WhoIsMakingThePurchasePage, whoIsMakingThePurchase(purchaser.isCompany))
+              withName <- if (purchaserCheck) userAnswers.set(NameOfPurchaserPage, purchaserName) else Try(userAnswers)
+              withIndividualOrCompany <- if (purchaserCheck) withName.set(WhoIsMakingThePurchasePage, whoIsMakingThePurchase(mainPurchaser.isCompany)) else Try(withName)
               withConfirm <- withIndividualOrCompany.set(ConfirmNameOfThePurchaserPage, confirmName)
-            } yield withConfirm
-
+              withPurchaserAndCompanyId <- withConfirm.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(mainPurchaser.purchaserID.get, companyDetailsIdOpt))
+            } yield withPurchaserAndCompanyId
           case None =>
-            userAnswers.set(ConfirmNameOfThePurchaserPage, confirmName)
+            for {
+              withPurchaserAndCompanyId <- userAnswers.set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId(mainPurchaser.purchaserID.get, companyDetailsIdOpt))
+              withConfirm <- withPurchaserAndCompanyId.set(ConfirmNameOfThePurchaserPage, confirmName)
+            } yield withConfirm
         }
-
       case _ =>
         userAnswers.set(ConfirmNameOfThePurchaserPage, confirmName)
     }
@@ -326,7 +326,7 @@ class PurchaserService {
       if(isPurchaserMain || isPurchaserFirstMain) {
         sessionData.purchaserCurrent.whoIsMakingThePurchase match {
           case WhoIsMakingThePurchase.Individual.toString =>
-            individualMainPurchase(sessionData)
+            individualMainPurchaser(sessionData)
           case WhoIsMakingThePurchase.Company.toString =>
             companyMainPurchaser(sessionData)
           case _ => true
@@ -336,7 +336,7 @@ class PurchaserService {
       }
     }
 
-  private def individualMainPurchase(sessionData: PurchaserSessionQuestions): Boolean = {
+  private def individualMainPurchaser(sessionData: PurchaserSessionQuestions): Boolean = {
     val isPhoneNumberYes = sessionData.purchaserCurrent.addPurchaserPhoneNumber.contains(true)
     val isPhoneNumberPresent = sessionData.purchaserCurrent.enterPurchaserPhoneNumber.isDefined
     val doesPurchaserHaveNI = sessionData.purchaserCurrent.doesPurchaserHaveNI.contains(DoesPurchaserHaveNI.Yes)

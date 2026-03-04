@@ -19,13 +19,14 @@ package controllers.purchaser
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.UserAnswers
-import models.purchaser._
-import pages.purchaser._
+import models.purchaser.*
+import pages.purchaser.*
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.*
 import repositories.SessionRepository
-import services.purchaser._
+import services.purchaser.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.*
@@ -43,14 +44,12 @@ class PurchaserCheckYourAnswersController @Inject()(
                                                      requireData: DataRequiredAction,
                                                      sessionRepository: SessionRepository,
                                                      backendConnector: StampDutyLandTaxConnector,
-                                                     purchaserRequestService: PurchaserRequestService,
                                                      purchaserService: PurchaserService,
                                                      purchaserCreateOrUpdateService: PurchaserCreateOrUpdateService,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      view: PurchaserCheckYourAnswersView
-                                                   )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-
+                                                   )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+  
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       sessionRepository.get(request.userAnswers.id).map {
@@ -98,7 +97,20 @@ class PurchaserCheckYourAnswersController @Inject()(
         case Some(userAnswers) if userAnswers.returnId.isDefined =>
           userAnswers.data.validate[PurchaserSessionQuestions] match {
             case JsSuccess(sessionData, _) if purchaserService.purchaserSessionOptionalQuestionsValidation(sessionData, userAnswers) =>
-              purchaserCreateOrUpdateService.result(userAnswers, sessionData, backendConnector, purchaserRequestService, purchaserService)
+              val hasPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID).isDefined
+              val vendorPurchaserCountBelowMax = purchaserCreateOrUpdateService.isVendorPurchaserCountBelowMaximum(userAnswers)
+              logger.info(s"[PurchaserCheckYourAnswersController][onSubmit] hasPurchaserId=$hasPurchaserId, vendorPurchaserCountBelowMax=$vendorPurchaserCountBelowMax")
+              (hasPurchaserId, vendorPurchaserCountBelowMax) match {
+                case (true, _) =>
+                  logger.info("[PurchaserCheckYourAnswersController][onSubmit] Routing to UPDATE purchaser")
+                  purchaserCreateOrUpdateService.updatePurchaser(backendConnector, purchaserService, userAnswers)
+                case (false, true) =>
+                  logger.info("[PurchaserCheckYourAnswersController][onSubmit] Routing to CREATE purchaser")
+                  purchaserCreateOrUpdateService.createPurchaser(backendConnector, purchaserService, userAnswers)
+                case (false, false) =>
+                  logger.warn("[PurchaserCheckYourAnswersController][onSubmit] Purchaser vendor count >= 99, skipping create/update")
+                  Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
+              }
             case _ => Future.successful(Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()))
           }
         case _ => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))

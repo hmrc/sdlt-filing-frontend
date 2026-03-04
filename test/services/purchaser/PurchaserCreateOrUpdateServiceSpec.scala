@@ -21,16 +21,16 @@ import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants
 import models.purchaser.*
 import models.{CompanyDetails, FullReturn, Purchaser, ReturnInfo, ReturnVersionUpdateReturn, UserAnswers, Vendor}
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.{never, times, verify, when}
 import org.scalatestplus.mockito.*
 import play.api.libs.json.{JsNull, JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.{Instant, LocalDate}
+import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
@@ -489,59 +489,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       companyTypePensionfund = Some("NO")
     )
 
-  private def createSessionData(
-                                 purchaserAndCompanyId: Option[PurchaserAndCompanyId] = None,
-                                 isCompany: String
-                               ): PurchaserSessionQuestions = {
-    PurchaserSessionQuestions(
-      PurchaserCurrent(
-        purchaserAndCompanyId = purchaserAndCompanyId,
-        ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.No),
-        whoIsMakingThePurchase = if (isCompany == "Company") "YES" else "NO",
-        nameOfPurchaser = purchaserName,
-        purchaserAddress = PurchaserSessionAddress(
-          houseNumber = Some("1"),
-          line1 = Some("Street 1"),
-          line2 = Some("Street 2"),
-          line3 = Some("Street 3"),
-          line4 = Some("Street 4"),
-          line5 = Some("Street 5"),
-          postcode = Some("CR7 8LU"),
-          country = Some(PurchaserSessionCountry(
-            code = Some("GB"),
-            name = Some("UK")
-          )),
-          addressValidated = Some(true)),
-        addPurchaserPhoneNumber = Some(true),
-        enterPurchaserPhoneNumber = Some("+447874363636"),
-        doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
-        nationalInsuranceNumber = Some("AA123456A"),
-        purchaserFormOfIdIndividual = Some(PurchaserFormOfIdIndividual(idNumberOrReference = "ref", countryIssued = "country")),
-        purchaserDateOfBirth = Some(LocalDate.of(2000,2,2)),
-        purchaserConfirmIdentity = Some(PurchaserConfirmIdentity.VatRegistrationNumber),
-        registrationNumber = Some("VAT1234"),
-        purchaserUTRPage = Some("UTR1234"),
-        purchaserFormOfIdCompany  = Some(CompanyFormOfId(referenceId = "ID12345", countryIssued = "country")),
-        purchaserTypeOfCompany  = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
-          buildingAssociation = "YES",
-          centralGovernment = "NO",
-          individualOther = "NO",
-          insuranceAssurance = "NO",
-          localAuthority = "NO",
-          partnership = "NO",
-          propertyCompany = "NO",
-          publicCorporation = "NO",
-          otherCompany = "NO",
-          otherFinancialInstitute = "NO",
-          otherIncludingCharity = "NO",
-          superannuationOrPensionFund = "NO",
-          unincorporatedBuilder = "NO",
-          unincorporatedSoleTrader = "NO")),
-        isPurchaserActingAsTrustee = Some("yes"),
-        purchaserAndVendorConnected = Some("yes")
-      ))
-  }
-
   private def createFullReturnInfo(mainPurchaserID: Option[String]): ReturnInfo =
     ReturnInfo(
       returnID = Some("RET123456789"),
@@ -576,11 +523,10 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
   }
 
   "PurchaserCreateOrUpdateService" - {
-    ".callCreatePurchaser" - {
+    ".createPurchaser" - {
       "when purchaser type is Individual" - {
         "must successfully create Purchaser" in {
           val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
           val mockPurchaserService = mock[PurchaserService]
           val service = new PurchaserCreateOrUpdateService()
 
@@ -589,13 +535,12 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID)))
             ))
           )
-          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Individual")
 
           when(mockBackendConnector.createPurchaser(any())(any(), any()))
             .thenReturn(Future.successful(testCreatePurchaserReturn))
           when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-          val result = service.callCreatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).futureValue
+          val result = service.createPurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
           status(Future.successful(result)) mustEqual SEE_OTHER
           redirectLocation(Future.successful(result)).value mustEqual
@@ -608,12 +553,10 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       "when purchaser type is Company" - {
         "must successfully create Purchaser" in {
           val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
           val mockPurchaserService = mock[PurchaserService]
           val service = new PurchaserCreateOrUpdateService()
 
           val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(createFullReturn(returnInfo = Some(createFullReturnInfo(Some("differentMain"))))))
-          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
 
           when(mockBackendConnector.createPurchaser(any())(any(), any()))
             .thenReturn(Future.successful(testCreatePurchaserReturn))
@@ -621,7 +564,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
             .thenReturn(Future.successful(testCreateCompanyDetailsReturn))
           when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-          val result = service.callCreatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).futureValue
+          val result = service.createPurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
           status(Future.successful(result)) mustEqual SEE_OTHER
           redirectLocation(Future.successful(result)).value mustEqual
@@ -631,12 +574,10 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
         "must successfully create Company Details if main purchaser" in {
           val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
           val mockPurchaserService = mock[PurchaserService]
           val service = new PurchaserCreateOrUpdateService()
 
           val userAnswers = createMainPurchaserCompanyUserAnswers(fullReturn = Some(createFullReturn(returnInfo = None)))
-          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
 
           when(mockBackendConnector.createPurchaser(any())(any(), any()))
             .thenReturn(Future.successful(testCreatePurchaserReturn))
@@ -644,7 +585,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
             .thenReturn(Future.successful(testCreateCompanyDetailsReturn))
           when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-          val result = service.callCreatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).futureValue
+          val result = service.createPurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
           status(Future.successful(result)) mustEqual SEE_OTHER
           redirectLocation(Future.successful(result)).value mustEqual
@@ -654,28 +595,25 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must fail when returnId is missing" in {
+      "must fail when fullReturn is missing" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserRequestService = mock[PurchaserRequestService]
         val mockPurchaserService = mock[PurchaserService]
           val service = new PurchaserCreateOrUpdateService()
 
-        val userAnswers = createPurchaserCompanyUserAnswers(returnId = None)
-        val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
+        val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = None)
 
-        whenReady(service.callCreatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).failed) { exception =>
-          exception mustBe an[NotFoundException]
-          exception.getMessage mustBe "Return ID is required"
+        whenReady(service.createPurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
+          exception mustBe an[NoSuchElementException]
+          exception.getMessage mustBe "No Full Return"
         }
       }
     }
 
-    ".callUpdatePurchaser" - {
+    ".updatePurchaser" - {
       "when the purchaser is not main purchaser" - {
         "when purchaser type is Individual" - {
           "must successfully update purchaser when version update succeeds and returns new version" in {
             val mockBackendConnector = mock[StampDutyLandTaxConnector]
-            val mockPurchaserRequestService = mock[PurchaserRequestService]
             val mockPurchaserService = mock[PurchaserService]
             val service = new PurchaserCreateOrUpdateService()
 
@@ -693,8 +631,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               ))
             )
 
-            val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Individual")
-
             val returnVersionResponse = ReturnVersionUpdateReturn(
               newVersion = Some(2)
             )
@@ -705,7 +641,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               .thenReturn(Future.successful(testUpdatePurchaserReturn))
             when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-            val result = service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).futureValue
+            val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
             status(Future.successful(result)) mustEqual SEE_OTHER
             redirectLocation(Future.successful(result)).value mustEqual
@@ -720,7 +656,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "when purchaser type is Company" - {
           "must successfully update purchaser when version update succeeds and returns new version" in {
             val mockBackendConnector = mock[StampDutyLandTaxConnector]
-            val mockPurchaserRequestService = mock[PurchaserRequestService]
             val mockPurchaserService = mock[PurchaserService]
             val service = new PurchaserCreateOrUpdateService()
 
@@ -737,9 +672,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 )
               ))
             )
-
-            val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
-
             val returnVersionResponse = ReturnVersionUpdateReturn(
               newVersion = Some(2)
             )
@@ -750,7 +682,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               .thenReturn(Future.successful(testUpdatePurchaserReturn))
             when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-            val result = service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).futureValue
+            val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
             status(Future.successful(result)) mustEqual SEE_OTHER
             redirectLocation(Future.successful(result)).value mustEqual
@@ -766,7 +698,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "when purchaser type is Individual" - {
           "must successfully update purchaser when version update succeeds and returns new version" in {
             val mockBackendConnector = mock[StampDutyLandTaxConnector]
-            val mockPurchaserRequestService = mock[PurchaserRequestService]
             val mockPurchaserService = mock[PurchaserService]
             val service = new PurchaserCreateOrUpdateService()
 
@@ -784,8 +715,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               ))
             )
 
-            val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testmainPurchaserID, companyDetailsID = None)), isCompany = "Individual")
-
             val returnVersionResponse = ReturnVersionUpdateReturn(
               newVersion = Some(2)
             )
@@ -796,7 +725,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               .thenReturn(Future.successful(testUpdatePurchaserReturn))
             when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-            val result = service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).futureValue
+            val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
             status(Future.successful(result)) mustEqual SEE_OTHER
             redirectLocation(Future.successful(result)).value mustEqual
@@ -811,7 +740,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "when company details do not exist" - {
             "must successfully update purchaser when version update succeeds, return new version and create Company Details" in {
               val mockBackendConnector = mock[StampDutyLandTaxConnector]
-              val mockPurchaserRequestService = mock[PurchaserRequestService]
               val mockPurchaserService = mock[PurchaserService]
               val service = new PurchaserCreateOrUpdateService()
 
@@ -830,8 +758,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 ))
               )
 
-              val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testmainPurchaserID, companyDetailsID = None)), isCompany = "Company")
-
               val returnVersionResponse = ReturnVersionUpdateReturn(
                 newVersion = Some(2)
               )
@@ -844,7 +770,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 .thenReturn(Future.successful(testCreateCompanyDetailsReturn))
               when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-              val result = service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).futureValue
+              val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
               status(Future.successful(result)) mustEqual SEE_OTHER
               redirectLocation(Future.successful(result)).value mustEqual
@@ -859,7 +785,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "when company details exist" - {
             "must successfully update purchaser when version update succeeds, return new version and update Company Details" in {
               val mockBackendConnector = mock[StampDutyLandTaxConnector]
-              val mockPurchaserRequestService = mock[PurchaserRequestService]
               val mockPurchaserService = mock[PurchaserService]
               val service = new PurchaserCreateOrUpdateService()
 
@@ -878,8 +803,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 ))
               )
 
-              val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testmainPurchaserID, companyDetailsID = None)), isCompany = "Company")
-
               val returnVersionResponse = ReturnVersionUpdateReturn(
                 newVersion = Some(2)
               )
@@ -892,7 +815,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 .thenReturn(Future.successful(testUpdateCompanyDetailsReturn))
               when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-              val result = service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).futureValue
+              val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
               status(Future.successful(result)) mustEqual SEE_OTHER
               redirectLocation(Future.successful(result)).value mustEqual
@@ -908,7 +831,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
       "must fail when version update does not return a new version" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserRequestService = mock[PurchaserRequestService]
         val mockPurchaserService = mock[PurchaserService]
           val service = new PurchaserCreateOrUpdateService()
 
@@ -920,57 +842,18 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         )
         val fullReturn = createFullReturn(purchasers = Seq(purchaser), returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
-        val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
-
-        val returnVersionResponse = ReturnVersionUpdateReturn(
-          newVersion = None
-        )
 
         when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
-          .thenReturn(Future.successful(returnVersionResponse))
+          .thenReturn(Future.failed(new RuntimeException("Backend failure")))
 
-        whenReady(service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).failed) { exception =>
-          exception mustBe an[IllegalStateException]
-          exception.getMessage mustBe "Return version update did not produce a new version"
+        whenReady(service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
+          exception mustBe an[RuntimeException]
+          exception.getMessage mustBe "Backend failure"
         }
-      }
-
-
-      "must call updateReturnVersion exactly once" in {
-        val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserRequestService = mock[PurchaserRequestService]
-        val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
-
-        val purchaser = createPurchaser(
-          purchaserID = Some(testPurchaserId),
-          isCompany = Some("YES"),
-          purchaserResourceRef = Some(testPurchaserResourceRef),
-          nextPurchaserID = Some(testNextPurchaserId)
-        )
-        val fullReturn = createFullReturn(purchasers = Seq(purchaser), returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
-        val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
-        val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
-
-        val returnVersionResponse = ReturnVersionUpdateReturn(
-          newVersion = Some(2)
-        )
-
-        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
-          .thenReturn(Future.successful(returnVersionResponse))
-        when(mockBackendConnector.updatePurchaser(any())(any(), any()))
-          .thenReturn(Future.successful(testUpdatePurchaserReturn))
-        when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
-
-        service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService).futureValue
-
-        verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
-        verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
       }
 
       "must fail when purchaser is not found in full return" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserRequestService = mock[PurchaserRequestService]
         val mockPurchaserService = mock[PurchaserService]
           val service = new PurchaserCreateOrUpdateService()
 
@@ -978,7 +861,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           purchasers = Seq.empty,
           returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
-        val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
         val returnVersionResponse = ReturnVersionUpdateReturn(
           newVersion = Some(2)
@@ -987,7 +869,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.successful(returnVersionResponse))
 
-        whenReady(service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).failed) { exception =>
+        whenReady(service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
           exception mustBe an[NoSuchElementException]
           exception.getMessage must include("Purchaser mandatory Resources not found")
         }
@@ -995,7 +877,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
       "must fail when purchaser resource ref is not found" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserRequestService = mock[PurchaserRequestService]
         val mockPurchaserService = mock[PurchaserService]
           val service = new PurchaserCreateOrUpdateService()
 
@@ -1008,7 +889,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               isCompany = Some("YES"))),
           returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
-        val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
         val returnVersionResponse = ReturnVersionUpdateReturn(
           newVersion = Some(2)
@@ -1017,7 +897,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.successful(returnVersionResponse))
 
-        whenReady(service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).failed) { exception =>
+        whenReady(service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
           exception mustBe an[NoSuchElementException]
           exception.getMessage must include("Purchaser mandatory Resources not found")
         }
@@ -1025,7 +905,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
       "must propagate backend connector updateReturnVersion failures" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserRequestService = mock[PurchaserRequestService]
         val mockPurchaserService = mock[PurchaserService]
         val service = new PurchaserCreateOrUpdateService()
 
@@ -1038,20 +917,20 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               isCompany = Some("YES"))),
           returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
-        val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
         when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Backend failure")))
 
-        whenReady(service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).failed) { exception =>
+        whenReady(service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
           exception mustBe an[RuntimeException]
           exception.getMessage mustBe "Backend failure"
         }
+
+        verify(mockBackendConnector, never()).updatePurchaser(any())(any(), any())
       }
 
       "must propagate backend connector updatePurchaser failures" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserRequestService = mock[PurchaserRequestService]
         val mockPurchaserService = mock[PurchaserService]
         val service = new PurchaserCreateOrUpdateService()
 
@@ -1064,7 +943,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               isCompany = Some("YES"))),
           returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
-        val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
 
         val returnVersionResponse = ReturnVersionUpdateReturn(
           newVersion = Some(2)
@@ -1076,234 +954,11 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         when(mockBackendConnector.updatePurchaser(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Update purchaser failed")))
 
-        whenReady(service.callUpdatePurchaser(mockBackendConnector, mockPurchaserRequestService, mockPurchaserService, userAnswers, sessionData).failed) { exception =>
+        whenReady(service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
           exception mustBe an[RuntimeException]
           exception.getMessage mustBe "Update purchaser failed"
         }
       }
-
-      "must pass HeaderCarrier to connector" in {
-        val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserRequestService = mock[PurchaserRequestService]
-        val mockPurchaserService = mock[PurchaserService]
-        val service = new PurchaserCreateOrUpdateService()
-        val testHc = HeaderCarrier(sessionId = Some(uk.gov.hmrc.http.SessionId("test-session")))
-
-        val userAnswers = createPurchaserCompanyUserAnswers(
-          fullReturn = Some(createFullReturn(
-            returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
-            purchasers = Seq(
-              createPurchaser(
-                purchaserID = Some(testPurchaserId),
-                isCompany = Some("YES"),
-                purchaserResourceRef = Some(testPurchaserResourceRef),
-                nextPurchaserID = Some(testNextPurchaserId)
-              )
-            )
-          ))
-        )
-
-        val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
-
-        val returnVersionResponse = ReturnVersionUpdateReturn(
-          newVersion = Some(2)
-        )
-
-        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
-          .thenReturn(Future.successful(returnVersionResponse))
-        when(mockBackendConnector.updatePurchaser(any())(any(), any()))
-          .thenReturn(Future.successful(testUpdatePurchaserReturn))
-        when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
-
-        service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService)(ec, testHc, request).futureValue
-
-        verify(mockBackendConnector, times(1)).updateReturnVersion(any())(eqTo(testHc), any())
-        verify(mockBackendConnector, times(1)).updatePurchaser(any())(eqTo(testHc), any())
-      }
-    }
-
-    ".result" - {
-      "when updating an existing Purchaser" - {
-        "must call callUpdatePurchaser" in {
-          val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
-          val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
-
-          val userAnswers = createPurchaserCompanyUserAnswers(
-            fullReturn = Some(createFullReturn(
-              returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
-              purchasers = Seq(
-                createPurchaser(
-                  purchaserID = Some(testPurchaserId),
-                  isCompany = Some("YES"),
-                  purchaserResourceRef = Some(testPurchaserResourceRef),
-                  nextPurchaserID = Some(testNextPurchaserId)
-                )
-              )
-            ))
-          )
-
-          val sessionData = createSessionData(purchaserAndCompanyId = Some(PurchaserAndCompanyId(testPurchaserId, companyDetailsID = None)), isCompany = "Company")
-
-          val returnVersionResponse = ReturnVersionUpdateReturn(
-            newVersion = Some(2)
-          )
-
-          when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
-            .thenReturn(Future.successful(returnVersionResponse))
-          when(mockBackendConnector.updatePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful(testUpdatePurchaserReturn))
-          when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
-
-          val result = service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService).futureValue
-
-          status(Future.successful(result)) mustEqual SEE_OTHER
-          redirectLocation(Future.successful(result)).value mustEqual
-            controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-
-          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
-          verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
-        }
-      }
-
-      "when creating a Purchaser" - {
-        "must call callCreatePurchaser" in {
-          val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
-          val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
-
-          val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(createFullReturn(returnInfo = Some(createFullReturnInfo(Some("differentMain"))))))
-          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
-
-          when(mockBackendConnector.createPurchaser(any())(any(), any()))
-            .thenReturn(Future.successful(testCreatePurchaserReturn))
-          when(mockBackendConnector.createCompanyDetails(any())(any(), any()))
-            .thenReturn(Future.successful(testCreateCompanyDetailsReturn))
-          when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
-
-          val result = service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService).futureValue
-
-          status(Future.successful(result)) mustEqual SEE_OTHER
-          redirectLocation(Future.successful(result)).value mustEqual
-            controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-          verify(mockBackendConnector, times(1)).createPurchaser(any())(any(), any())
-        }
-
-        "must skip creation when errorCalc is false (99 or more entities)" in {
-          val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
-          val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
-
-          val purchasers = (1 to 99).map(i => createPurchaser(
-            purchaserID =  Some(s"purchaser-$i"),
-            isCompany = Some("YES"),
-            purchaserResourceRef = Some(testPurchaserResourceRef),
-            nextPurchaserID = Some(testNextPurchaserId)
-          ))
-
-          val fullReturn = createFullReturn(
-            returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
-            purchasers = purchasers
-          )
-
-          val userAnswers = createMainPurchaserIndividualUserAnswers(
-            fullReturn = Some(fullReturn)
-          )
-
-          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
-
-          val result = service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService).futureValue
-
-          status(Future.successful(result)) mustEqual SEE_OTHER
-          redirectLocation(Future.successful(result)).value mustEqual
-            controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-          verify(mockBackendConnector, never).createPurchaser(any())(any(), any())
-        }
-
-        "must skip creation when errorCalc is false (99 or more vendors and purchasers combined)" in {
-          val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
-          val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
-
-          val vendors = (1 to 50).map(i => mock[models.Vendor])
-          val purchasers = (1 to 49).map(i => createPurchaser(
-            purchaserID =  Some(s"purchaser-$i"),
-            isCompany = Some("YES"),
-            purchaserResourceRef = Some(testPurchaserResourceRef),
-            nextPurchaserID = Some(testNextPurchaserId)
-          ))
-          val fullReturn = createFullReturn(vendors = vendors, purchasers = purchasers)
-
-          val userAnswers = createMainPurchaserIndividualUserAnswers(
-            fullReturn = Some(fullReturn)
-          )
-
-          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
-
-          val result = service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService).futureValue
-
-          status(Future.successful(result)) mustEqual SEE_OTHER
-          redirectLocation(Future.successful(result)).value mustEqual
-            controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-          verify(mockBackendConnector, never).createPurchaser(any())(any(), any())
-        }
-
-        "must calculate errorCalc correctly with vendors and purchasers combined (98 total)" in {
-          val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
-          val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
-
-          val vendors = (1 to 50).map(i => mock[models.Vendor])
-          val purchasers = (1 to 48).map(i => createPurchaser(
-            purchaserID =  Some(s"purchaser-$i"),
-            isCompany = Some("YES"),
-            purchaserResourceRef = Some(testPurchaserResourceRef),
-            nextPurchaserID = Some(testNextPurchaserId)
-          ))
-          val fullReturn = createFullReturn(vendors = vendors, purchasers = purchasers)
-
-          val userAnswers = createMainPurchaserIndividualUserAnswers(
-            fullReturn = Some(fullReturn)
-          )
-
-          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
-
-          when(mockBackendConnector.createPurchaser(any())(any(), any()))
-            .thenReturn(Future.successful(testCreatePurchaserReturn))
-          when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
-
-          val result = service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService).futureValue
-
-          status(Future.successful(result)) mustEqual SEE_OTHER
-          redirectLocation(Future.successful(result)).value mustEqual
-            controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-          verify(mockBackendConnector, times(1)).createPurchaser(any())(any(), any())
-        }
-      }
-
-      "when handling errors" - {
-        "must redirect to CYA when returnId is missing" in {
-          val mockBackendConnector = mock[StampDutyLandTaxConnector]
-          val mockPurchaserRequestService = mock[PurchaserRequestService]
-          val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
-
-          val userAnswers = createPurchaserCompanyUserAnswers(returnId = None)
-          val sessionData = createSessionData(purchaserAndCompanyId = None, isCompany = "Company")
-
-          val result = service.result(userAnswers, sessionData, mockBackendConnector, mockPurchaserRequestService, mockPurchaserService).futureValue
-
-          status(Future.successful(result)) mustEqual SEE_OTHER
-          redirectLocation(Future.successful(result)).value mustEqual
-            controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url
-        }
-      }
     }
   }
-
 }

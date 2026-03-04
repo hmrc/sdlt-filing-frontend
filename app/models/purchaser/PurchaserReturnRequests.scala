@@ -16,7 +16,7 @@
 
 package models.purchaser
 
-import models.{Purchaser, UserAnswers}
+import models.{CompanyDetails, Purchaser, UserAnswers}
 import play.api.libs.json.{Json, OFormat}
 
 import scala.concurrent.Future
@@ -236,6 +236,41 @@ case class CreateCompanyDetailsRequest(
 
 object CreateCompanyDetailsRequest {
   implicit val format: OFormat[CreateCompanyDetailsRequest] = Json.format[CreateCompanyDetailsRequest]
+
+  def from(userAnswers: UserAnswers,
+           purchaserResourceRef: String): Future[CreateCompanyDetailsRequest] = {
+    userAnswers.returnId match {
+      case Some(returnId) =>
+        val purchaserSessionQuestions: PurchaserSessionQuestions = userAnswers.data.as[PurchaserSessionQuestions]
+        val purchaserCurrent = purchaserSessionQuestions.purchaserCurrent
+        Future.successful(
+          CreateCompanyDetailsRequest(
+            stornId = userAnswers.storn,
+            returnResourceRef = returnId,
+            purchaserResourceRef = purchaserResourceRef,
+            utr = purchaserCurrent.purchaserUTRPage,
+            vatReference = purchaserCurrent.registrationNumber,
+            compTypeBank = purchaserCurrent.purchaserTypeOfCompany.map(_.bank),
+            compTypeBuilder = purchaserCurrent.purchaserTypeOfCompany.map(_.unincorporatedBuilder),
+            compTypeBuildsoc = purchaserCurrent.purchaserTypeOfCompany.map(_.buildingAssociation),
+            compTypeCentgov = purchaserCurrent.purchaserTypeOfCompany.map(_.centralGovernment),
+            compTypeIndividual = purchaserCurrent.purchaserTypeOfCompany.map(_.individualOther),
+            compTypeInsurance = purchaserCurrent.purchaserTypeOfCompany.map(_.insuranceAssurance),
+            compTypeLocalauth = purchaserCurrent.purchaserTypeOfCompany.map(_.localAuthority),
+            compTypeOcharity = purchaserCurrent.purchaserTypeOfCompany.map(_.otherIncludingCharity),
+            compTypeOcompany = purchaserCurrent.purchaserTypeOfCompany.map(_.otherCompany),
+            compTypeOfinancial = purchaserCurrent.purchaserTypeOfCompany.map(_.otherFinancialInstitute),
+            compTypePartship = purchaserCurrent.purchaserTypeOfCompany.map(_.partnership),
+            compTypeProperty = purchaserCurrent.purchaserTypeOfCompany.map(_.propertyCompany),
+            compTypePubliccorp = purchaserCurrent.purchaserTypeOfCompany.map(_.publicCorporation),
+            compTypeSoletrader = purchaserCurrent.purchaserTypeOfCompany.map(_.unincorporatedSoleTrader),
+            compTypePenfund = purchaserCurrent.purchaserTypeOfCompany.map(_.superannuationOrPensionFund)
+          )
+        )
+      case None =>
+        Future.failed(new NoSuchElementException("[CreateCompanyDetailsRequest] Return ID not found"))
+    }
+  }
 }
 
 case class CreateCompanyDetailsReturn(
@@ -271,6 +306,41 @@ case class UpdateCompanyDetailsRequest(
 
 object UpdateCompanyDetailsRequest {
   implicit val format: OFormat[UpdateCompanyDetailsRequest] = Json.format[UpdateCompanyDetailsRequest]
+
+  def from(userAnswers: UserAnswers,
+           purchaserResourceRef: String): Future[UpdateCompanyDetailsRequest] = {
+    userAnswers.returnId match {
+      case Some(returnId) =>
+        val purchaserSessionQuestions: PurchaserSessionQuestions = userAnswers.data.as[PurchaserSessionQuestions]
+        val purchaserCurrent = purchaserSessionQuestions.purchaserCurrent
+        Future.successful(
+          UpdateCompanyDetailsRequest(
+            stornId = userAnswers.storn,
+            returnResourceRef = returnId,
+            purchaserResourceRef = purchaserResourceRef,
+            utr = purchaserCurrent.purchaserUTRPage,
+            vatReference = purchaserCurrent.registrationNumber,
+            compTypeBank = purchaserCurrent.purchaserTypeOfCompany.map(_.bank),
+            compTypeBuilder = purchaserCurrent.purchaserTypeOfCompany.map(_.unincorporatedBuilder),
+            compTypeBuildsoc = purchaserCurrent.purchaserTypeOfCompany.map(_.buildingAssociation),
+            compTypeCentgov = purchaserCurrent.purchaserTypeOfCompany.map(_.centralGovernment),
+            compTypeIndividual = purchaserCurrent.purchaserTypeOfCompany.map(_.individualOther),
+            compTypeInsurance = purchaserCurrent.purchaserTypeOfCompany.map(_.insuranceAssurance),
+            compTypeLocalauth = purchaserCurrent.purchaserTypeOfCompany.map(_.localAuthority),
+            compTypeOcharity = purchaserCurrent.purchaserTypeOfCompany.map(_.otherIncludingCharity),
+            compTypeOcompany = purchaserCurrent.purchaserTypeOfCompany.map(_.otherCompany),
+            compTypeOfinancial = purchaserCurrent.purchaserTypeOfCompany.map(_.otherFinancialInstitute),
+            compTypePartship = purchaserCurrent.purchaserTypeOfCompany.map(_.partnership),
+            compTypeProperty = purchaserCurrent.purchaserTypeOfCompany.map(_.propertyCompany),
+            compTypePubliccorp = purchaserCurrent.purchaserTypeOfCompany.map(_.publicCorporation),
+            compTypeSoletrader = purchaserCurrent.purchaserTypeOfCompany.map(_.unincorporatedSoleTrader),
+            compTypePenfund = purchaserCurrent.purchaserTypeOfCompany.map(_.superannuationOrPensionFund)
+          )
+        )
+      case None =>
+        Future.failed(new NoSuchElementException("[CreateCompanyDetailsRequest] Return ID not found"))
+    }
+  }
 }
 
 case class UpdateCompanyDetailsReturn(

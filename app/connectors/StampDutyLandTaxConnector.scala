@@ -210,6 +210,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreatePurchaserReturn]]
       .flatMap {
         case Right(resp) =>
+          logger.info(s"[createPurchaser] create purchaser request: $purchaserRequest, response: $resp")
           Future.successful(
             resp)
         case Left(error) =>
@@ -227,6 +228,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdatePurchaserReturn]]
       .flatMap {
         case Right(resp) =>
+          logger.info(s"[updatePurchaser] update purchaser request: $updatePurchaserRequest, response: $resp")
           Future.successful(
             resp)
         case Left(error) =>
