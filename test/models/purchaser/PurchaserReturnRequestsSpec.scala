@@ -16,10 +16,14 @@
 
 package models.purchaser
 
+import models.UserAnswers
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
+
+import java.time.Instant
 
 class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherValues with OptionValues {
   
@@ -219,8 +223,8 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     "stornId" -> "STORN12345",
     "returnResourceRef" -> "RRF-2024-001",
     "purchaserResourceRef" -> "PRF-001",
-    "utr" -> "1234567890",
-    "vatReference" -> "GB123456789",
+    "utr" -> "9876543210",
+    "vatReference" -> "GB987654321",
     "compTypeBank" -> "YES",
     "compTypeBuilder" -> "NO",
     "compTypeBuildsoc" -> "NO",
@@ -248,10 +252,10 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
     stornId = "STORN12345",
     returnResourceRef = "RRF-2024-001",
     purchaserResourceRef = "PRF-001",
-    utr = Some("1234567890"),
-    vatReference = Some("GB123456789"),
-    compTypeBank = Some("YES"),
-    compTypeBuilder = Some("NO"),
+    utr = Some("9876543210"),
+    vatReference = Some("GB987654321"),
+    compTypeBank = Some("NO"),
+    compTypeBuilder = Some("YES"),
     compTypeBuildsoc = Some("NO"),
     compTypeCentgov = Some("NO"),
     compTypeIndividual = Some("NO"),
@@ -353,6 +357,69 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
   private val validDeleteCompanyDetailsReturnJsonFalse = Json.obj("deleted" -> false)
   private val deleteCompanyDetailsReturnTrue = DeleteCompanyDetailsReturn(deleted = true)
   private val deleteCompanyDetailsReturnFalse = DeleteCompanyDetailsReturn(deleted = false)
+
+  val userAnswersWithCompanyDetails = UserAnswers(
+    id = "12345",
+    storn = "STORN12345",
+    returnId = Some("RRF-2024-001"),
+    data = Json.obj(
+      "purchaserCurrent" -> Json.obj(
+        "purchaserAndCompanyId" -> Json.obj(
+          "purchaserID" -> "PUR001",
+          "companyDetailsID" -> "COMPDET001",
+        ),
+        "ConfirmNameOfThePurchaser" -> "yes",
+        "whoIsMakingThePurchase" -> "Company",
+        "nameOfPurchaser" -> Json.obj(
+          "forename1" -> JsNull,
+          "forename2" -> JsNull,
+          "name" -> "Company"
+        ),
+        "purchaserAddress" -> Json.obj(
+          "houseNumber" -> JsNull,
+          "line1" -> "Street 1",
+          "line2" -> "Street 2",
+          "line3" -> "Street 3",
+          "line4" -> "Street 4",
+          "line5" -> "Street 5",
+          "postcode" -> "CR7 8LU",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        ),
+        "addPurchaserPhoneNumber" -> true,
+        "enterPurchaserPhoneNumber" -> "+447874363636",
+        "doesPurchaserHaveNI" -> JsNull,
+        "nationalInsuranceNumber" -> JsNull,
+        "purchaserFormOfIdIndividual" -> JsNull,
+        "purchaserDateOfBirth" -> JsNull,
+        "purchaserConfirmIdentity" -> JsNull,
+        "registrationNumber" -> "GB987654321",
+        "purchaserUTRPage" -> "9876543210",
+        "purchaserFormOfIdCompany" -> JsNull,
+        "purchaserTypeOfCompany" -> Json.obj(
+          "bank" -> "NO",
+          "buildingAssociation" -> "NO",
+          "centralGovernment" -> "NO",
+          "individualOther" -> "NO",
+          "insuranceAssurance" -> "NO",
+          "localAuthority" -> "NO",
+          "partnership" -> "NO",
+          "propertyCompany" -> "NO",
+          "publicCorporation" -> "NO",
+          "otherCompany" -> "NO",
+          "otherFinancialInstitute" -> "NO",
+          "otherIncludingCharity" -> "NO",
+          "superannuationOrPensionFund" -> "NO",
+          "unincorporatedBuilder" -> "YES",
+          "unincorporatedSoleTrader" -> "NO"
+        ),
+        "isPurchaserActingAsTrustee" -> "YES",
+        "purchaserAndVendorConnected" -> "YES"
+      )),
+    lastUpdated = Instant.now)
 
   "CreatePurchaserRequest" - {
 
@@ -945,8 +1012,8 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
         result.purchaserResourceRef mustBe "PRF-001"
-        result.utr mustBe Some("1234567890")
-        result.vatReference mustBe Some("GB123456789")
+        result.utr mustBe Some("9876543210")
+        result.vatReference mustBe Some("GB987654321")
         result.compTypeBank mustBe Some("YES")
       }
 
@@ -991,8 +1058,8 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         (json \ "stornId").as[String] mustBe "STORN12345"
         (json \ "returnResourceRef").as[String] mustBe "RRF-2024-001"
         (json \ "purchaserResourceRef").as[String] mustBe "PRF-001"
-        (json \ "utr").asOpt[String] mustBe Some("1234567890")
-        (json \ "vatReference").asOpt[String] mustBe Some("GB123456789")
+        (json \ "utr").asOpt[String] mustBe Some("9876543210")
+        (json \ "vatReference").asOpt[String] mustBe Some("GB987654321")
       }
     }
 
@@ -1021,7 +1088,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
 
       "must create instance with all fields" in {
         completeCreateCompanyDetailsRequest.stornId mustBe "STORN12345"
-        completeCreateCompanyDetailsRequest.utr mustBe Some("1234567890")
+        completeCreateCompanyDetailsRequest.utr mustBe Some("9876543210")
       }
 
       "must support equality" in {
@@ -1029,6 +1096,18 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val request2 = minimalCreateCompanyDetailsRequest.copy()
 
         request1 mustEqual request2
+      }
+    }
+
+    ".from" - {
+      "must create CreateCompanyDetailsRequest from userAnswers with complete company details" in {
+        val userAnswers = userAnswersWithCompanyDetails
+        CreateCompanyDetailsRequest.from(userAnswers, "PRF-001").futureValue mustBe completeCreateCompanyDetailsRequest
+      }
+
+      "must fail to create CreateCompanyDetailsRequest when no returnId is found" in {
+        val userAnswers = userAnswersWithCompanyDetails.copy(returnId = None)
+        CreateCompanyDetailsRequest.from(userAnswers, "PRF-001").failed.futureValue mustBe a[NoSuchElementException]
       }
     }
   }
@@ -1160,6 +1239,18 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val request2 = minimalUpdateCompanyDetailsRequest.copy()
 
         request1 mustEqual request2
+      }
+    }
+    
+    ".from" - {
+      "must create UpdateCompanyDetailsRequest from userAnswers with complete company details" in {
+        val userAnswers = userAnswersWithCompanyDetails
+        UpdateCompanyDetailsRequest.from(userAnswers, "PRF-001").futureValue mustBe completeUpdateCompanyDetailsRequest
+      }
+
+      "must fail to create UpdateCompanyDetailsRequest when no returnId is found" in {
+        val userAnswers = userAnswersWithCompanyDetails.copy(returnId = None)
+        UpdateCompanyDetailsRequest.from(userAnswers, "PRF-001").failed.futureValue mustBe a[NoSuchElementException]
       }
     }
   }

@@ -17,8 +17,8 @@
 package controllers.purchaser
 
 import base.SpecBase
-import connectors.StampDutyLandTaxConnector
-import models.purchaser.{ConfirmNameOfThePurchaser, CreatePurchaserReturn}
+import constants.FullReturnConstants.incompleteFullReturn
+import models.purchaser.ConfirmNameOfThePurchaser
 import models.{FullReturn, Purchaser, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -33,7 +33,7 @@ import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.purchaser.{PurchaserCreateOrUpdateService, PurchaserRequestService}
+import services.purchaser.PurchaserCreateOrUpdateService
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
@@ -43,18 +43,80 @@ import scala.concurrent.{ExecutionContext, Future}
 class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
 
   private val mockSessionRepository = mock[SessionRepository]
-  private val mockBackendConnector = mock[StampDutyLandTaxConnector]
-  private val mockPurchaserRequestService = mock[PurchaserRequestService]
   private val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: FakeRequest[_] = FakeRequest()
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
+  def purchaserCurrentData(purchaserId: Option[String] = None, companyDetailsId: Option[String] = None) = {
+    Json.obj(
+      "purchaserCurrent" -> Json.obj(
+        (purchaserId, companyDetailsId) match {
+          case (Some(pId), Some(cId)) => "purchaserAndCompanyId" -> Json.obj(
+            "purchaserID" -> Json.toJson(pId),
+            "companyDetailsID" -> Json.toJson(cId)
+          )
+          case _ => "purchaserAndCompanyId" -> JsNull
+        },
+        "ConfirmNameOfThePurchaser" -> "no",
+        "whoIsMakingThePurchase" -> "Company",
+        "nameOfPurchaser" -> Json.obj(
+          "forename1" -> JsNull,
+          "forename2" -> JsNull,
+          "name" -> "Company"
+        ),
+        "purchaserAddress" -> Json.obj(
+          "houseNumber" -> JsNull,
+          "line1" -> "Street 1",
+          "line2" -> "Street 2",
+          "line3" -> "Street 3",
+          "line4" -> "Street 4",
+          "line5" -> "Street 5",
+          "postcode" -> "CR7 8LU",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        ),
+        "addPurchaserPhoneNumber" -> true,
+        "enterPurchaserPhoneNumber" -> "+447874363636",
+        "doesPurchaserHaveNI" -> JsNull,
+        "nationalInsuranceNumber" -> JsNull,
+        "purchaserFormOfIdIndividual" -> JsNull,
+        "purchaserDateOfBirth" -> JsNull,
+        "purchaserConfirmIdentity" -> JsNull,
+        "registrationNumber" -> "VAT123",
+        "purchaserUTRPage" -> "UTR1234",
+        "purchaserFormOfIdCompany" -> JsNull,
+        "purchaserTypeOfCompany" -> Json.obj(
+          "bank" -> "YES",
+          "buildingAssociation" -> "NO",
+          "centralGovernment" -> "NO",
+          "individualOther" -> "NO",
+          "insuranceAssurance" -> "NO",
+          "localAuthority" -> "NO",
+          "partnership" -> "NO",
+          "propertyCompany" -> "NO",
+          "publicCorporation" -> "NO",
+          "otherCompany" -> "NO",
+          "otherFinancialInstitute" -> "NO",
+          "otherIncludingCharity" -> "NO",
+          "superannuationOrPensionFund" -> "NO",
+          "unincorporatedBuilder" -> "NO",
+          "unincorporatedSoleTrader" -> "NO"
+        ),
+        "isPurchaserActingAsTrustee" -> "YES",
+        "purchaserAndVendorConnected" -> "YES"
+      )
+    )
+  }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSessionRepository)
+    reset(mockPurchaserCreateOrUpdateService)
   }
 
   "Check Your Answers Controller" - {
@@ -186,14 +248,14 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
         )
-        val fullRetur = FullReturn(
+        val fullReturn = FullReturn(
           stornId = "STORN123456",
           returnResourceRef = "RRF-2024-001",
           returnInfo = Some(returnInfo),
         )
         val userAnswers = {
           UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullRetur),
+            Some(testReturnId), Some(fullReturn),
             data = Json.obj(
               "whoIsThePurchaser" -> "Individual",
               "purchaserOrCompanyName" -> "John Doe",
@@ -234,14 +296,14 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           storn = Some("STORN123456"),
           mainPurchaserID = Some("PUR001"),
         )
-        val fullRetur = FullReturn(
+        val fullReturn = FullReturn(
           stornId = "STORN123456",
           returnResourceRef = "RRF-2024-001",
           returnInfo = Some(returnInfo),
         )
         val userAnswers = {
           UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullRetur),
+            Some(testReturnId), Some(fullReturn),
             data = Json.obj(
               "whoIsThePurchaser" -> "Individual",
               "purchaserOrCompanyName" -> "John Doe",
@@ -286,14 +348,14 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           storn = Some("STORN123456"),
           mainPurchaserID = Some("PUR001"),
         )
-        val fullRetur = FullReturn(
+        val fullReturn = FullReturn(
           stornId = "STORN123456",
           returnResourceRef = "RRF-2024-001",
           returnInfo = Some(returnInfo),
         )
         val userAnswers = {
           UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullRetur),
+            Some(testReturnId), Some(fullReturn),
             data = Json.obj(
               "whoIsThePurchaser" -> "Company",
               "purchaserOrCompanyName" -> "UK Ltd",
@@ -333,14 +395,14 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           returnID = Some("RET123456789"),
           storn = Some("STORN123456"),
         )
-        val fullRetur = FullReturn(
+        val fullReturn = FullReturn(
           stornId = "STORN123456",
           returnResourceRef = "RRF-2024-001",
           returnInfo = Some(returnInfo),
         )
         val userAnswers = {
           UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullRetur),
+            Some(testReturnId), Some(fullReturn),
             data = Json.obj(
               "whoIsThePurchaser" -> "Company",
               "purchaserOrCompanyName" -> "John Doe",
@@ -381,14 +443,14 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           storn = Some("STORN123456"),
           mainPurchaserID = Some("PUR001"),
         )
-        val fullRetur = FullReturn(
+        val fullReturn = FullReturn(
           stornId = "STORN123456",
           returnResourceRef = "RRF-2024-001",
           returnInfo = Some(returnInfo),
         )
         val userAnswers = {
           UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullRetur),
+            Some(testReturnId), Some(fullReturn),
             data = Json.obj(
               "whoIsThePurchaser" -> "Company",
               "purchaserOrCompanyName" -> "John Doe",
@@ -434,14 +496,14 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           storn = Some("STORN123456"),
           mainPurchaserID = Some("PUR001"),
         )
-        val fullRetur = FullReturn(
+        val fullReturn = FullReturn(
           stornId = "STORN123456",
           returnResourceRef = "RRF-2024-001",
           returnInfo = Some(returnInfo),
         )
         val userAnswers = {
           UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullRetur),
+            Some(testReturnId), Some(fullReturn),
             data = Json.obj(
               "whoIsThePurchaser" -> "Company",
               "purchaserOrCompanyName" -> "John Doe",
@@ -457,9 +519,9 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
                 "line5" -> JsNull,
                 "postcode" -> JsNull,
                 "country" -> JsNull,
-                "addressValidated" -> true,
+                "addressValidated" -> true
               ),
-              "ConfirmNameOfThePurchaser" -> "ConfirmNameOfThePurchaser.Yes",
+              "ConfirmNameOfThePurchaser" -> "ConfirmNameOfThePurchaser.Yes"
             ),
           )
         }
@@ -511,7 +573,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
                 "line5" -> JsNull,
                 "postcode" -> JsNull,
                 "country" -> JsNull,
-                "addressValidated" -> true,
+                "addressValidated" -> true
               ),
             ),
           )
@@ -536,85 +598,27 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
 
     "onSubmit" - {
 
-      "must redirect to PurchaserOverview when all required data is present and valid" in {
+      "must update purchaser and redirect to PurchaserOverview when all required data is present and valid and purchaser ID present" in {
 
         val userAnswers = UserAnswers(
           id = "test-session-id",
           storn = "test-storn",
           returnId = Some("12345"),
           fullReturn = None,
-          data = Json.obj(
-            "purchaserCurrent" -> Json.obj(
-              "purchaserAndCompanyId" -> Json.obj(
-                "purchaserID" -> "PUR001",
-                "companyDetailsID" -> "COMPDET001",
-              ),
-              "ConfirmNameOfThePurchaser" -> "yes",
-              "whoIsMakingThePurchase" -> "Company",
-              "nameOfPurchaser" -> Json.obj(
-                "forename1" -> JsNull,
-                "forename2" -> JsNull,
-                "name" -> "Company",
-              ),
-              "purchaserAddress" -> Json.obj(
-                "houseNumber" -> JsNull,
-                "line1" -> "Street 1",
-                "line2" -> "Street 2",
-                "line3" -> "Street 3",
-                "line4" -> "Street 4",
-                "line5" -> "Street 5",
-                "postcode" -> "CR7 8LU",
-                "country" -> Json.obj(
-                  "code" -> "GB",
-                  "name" -> "UK"
-                ),
-                "addressValidated" -> true
-              ),
-              "addPurchaserPhoneNumber" -> true,
-              "enterPurchaserPhoneNumber" -> "+447874363636",
-              "doesPurchaserHaveNI" -> JsNull,
-              "nationalInsuranceNumber" -> JsNull,
-              "purchaserFormOfIdIndividual" -> JsNull,
-              "purchaserDateOfBirth" -> JsNull,
-              "purchaserConfirmIdentity" -> JsNull,
-              "registrationNumber" -> "VAT123",
-              "purchaserUTRPage" -> "UTR1234",
-              "purchaserFormOfIdCompany" -> JsNull,
-              "purchaserTypeOfCompany" -> Json.obj(
-                "bank" -> "YES",
-                "buildingAssociation" -> "NO",
-                "centralGovernment" -> "NO",
-                "individualOther" -> "NO",
-                "insuranceAssurance" -> "NO",
-                "localAuthority" -> "NO",
-                "partnership" -> "NO",
-                "propertyCompany" -> "NO",
-                "publicCorporation" -> "NO",
-                "otherCompany" -> "NO",
-                "otherFinancialInstitute" -> "NO",
-                "otherIncludingCharity" -> "NO",
-                "superannuationOrPensionFund" -> "NO",
-                "unincorporatedBuilder" -> "NO",
-                "unincorporatedSoleTrader" -> "NO"
-              ),
-              "isPurchaserActingAsTrustee" -> "yes",
-              "purchaserAndVendorConnected" -> "yes",
-            )),
-          lastUpdated = Instant.now)
+          data = purchaserCurrentData(Some("PUR001"), Some("COMPDET001"))
+        )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
-        when(mockBackendConnector.createPurchaser(any())(any(), any())).thenReturn(Future.successful(CreatePurchaserReturn("PUR-REF-001", "PUR001")))
-
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-        when(mockPurchaserCreateOrUpdateService.result(any(), any(), any(), any(),
-          any())(any(), any(), any())).thenReturn(Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())))
+        when(mockPurchaserCreateOrUpdateService.updatePurchaser(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())))
+        when(mockPurchaserCreateOrUpdateService.isVendorPurchaserCountBelowMaximum(any()))
+          .thenReturn(true)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
-          .overrides(bind[PurchaserRequestService].toInstance(mockPurchaserRequestService))
           .overrides(bind[PurchaserCreateOrUpdateService].toInstance(mockPurchaserCreateOrUpdateService))
           .build()
 
@@ -624,9 +628,75 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url.contains(redirectLocation(result).value) mustEqual true
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
         }
       }
+
+      "must create purchaser and redirect to PurchaserOverview when all required data is present and valid and no purchaser ID present" in {
+
+        val userAnswers = UserAnswers(
+          id = "test-session-id",
+          storn = "test-storn",
+          returnId = Some("12345"),
+          fullReturn = None,
+          data = purchaserCurrentData()
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        when(mockPurchaserCreateOrUpdateService.createPurchaser(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())))
+        when(mockPurchaserCreateOrUpdateService.isVendorPurchaserCountBelowMaximum(any()))
+          .thenReturn(true)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[PurchaserCreateOrUpdateService].toInstance(mockPurchaserCreateOrUpdateService))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+        }
+      }
+
+      "must redirect to overview when vendor and purchaser count exceeds maximum" in {
+        val vendors = (1 to 50).map(i => mock[models.Vendor])
+        val purchasers = (1 to 49).map(i => mock[models.Purchaser])
+
+        val userAnswers = UserAnswers(
+          id = "test-session-id",
+          storn = "test-storn",
+          returnId = Some("12345"),
+          fullReturn = Some(incompleteFullReturn.copy(
+            vendor = Some(vendors),
+            purchaser = Some(purchasers)
+          )),
+          data = purchaserCurrentData()
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onSubmit().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+        }
+      }
+
 
       "must redirect back to JourneyRecoveryController when required data is missing or invalid" in {
 

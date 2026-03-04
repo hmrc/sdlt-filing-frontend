@@ -52,16 +52,11 @@ class ConfirmNameOfThePurchaserController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val purchaserOpt: Option[Purchaser] = request.userAnswers.fullReturn
-        .flatMap(_.purchaser)
-        .flatMap(_.headOption)
-      
-      val mainPurchaserID = request.userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
+      val mainPurchaserOpt: Option[Purchaser] = purchaserService.getMainPurchaser(request.userAnswers)
 
-      purchaserOpt match {
+      mainPurchaserOpt match {
         case Some(purchaser) if purchaser.address1.isEmpty
-          && (purchaser.surname.isDefined || purchaser.companyName.isDefined)
-          && mainPurchaserID.isDefined =>
+          && (purchaser.surname.isDefined || purchaser.companyName.isDefined) =>
           
           val preparedForm = request.userAnswers.get(ConfirmNameOfThePurchaserPage) match {
             case None => form
@@ -84,12 +79,10 @@ class ConfirmNameOfThePurchaserController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          val purchaserOpt: Option[Purchaser] = request.userAnswers.fullReturn
-            .flatMap(_.purchaser)
-            .flatMap(_.headOption)
+          val mainPurchaserOpt: Option[Purchaser] = purchaserService.getMainPurchaser(request.userAnswers)
 
-          val isCompany = purchaserOpt.flatMap(_.companyName).isDefined
-          val name = purchaserOpt
+          val isCompany = mainPurchaserOpt.flatMap(_.companyName).isDefined
+          val name = mainPurchaserOpt
             .flatMap(p => p.companyName.orElse(p.surname))
             .getOrElse("")
 
@@ -99,7 +92,7 @@ class ConfirmNameOfThePurchaserController @Inject()(
         },
         value =>
           purchaserService.populatePurchaserNameInSession(
-            purchaserCheck = value.toString,
+            purchaserCheck = value.toString == "yes",
             userAnswers = request.userAnswers
           ) match {
             case Success(updatedAnswers) =>

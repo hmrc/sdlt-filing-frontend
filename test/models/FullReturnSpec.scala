@@ -186,70 +186,6 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
     fullReturn = Some(completeFullReturn.copy(vendor = Some(Seq(completeVendorWithNextId))))
   )
 
-  private val userAnswersPurchaserCompany = UserAnswers(
-    id = "test-session-id",
-    storn = "test-storn-123",
-    returnId = Some("12345"),
-    fullReturn = None,
-    data = Json.obj(
-      "purchaserCurrent" -> Json.obj(
-        "purchaserAndCompanyId" -> Json.obj(
-          "purchaserID" -> "PUR123",
-          "companyDetailsID" -> "COMPDET001",
-        ),
-        "ConfirmNameOfThePurchaser" -> "yes",
-        "whoIsMakingThePurchase" -> "Company",
-        "nameOfPurchaser" -> Json.obj(
-          "forename1" -> JsNull,
-          "forename2" -> JsNull,
-          "name" -> "Company",
-        ),
-        "purchaserAddress" -> Json.obj(
-          "houseNumber" -> JsNull,
-          "line1" -> "Street 1",
-          "line2" -> "Street 2",
-          "line3" -> "Street 3",
-          "line4" -> "Street 4",
-          "line5" -> "Street 5",
-          "postcode" -> "CR7 8LU",
-          "country" -> Json.obj(
-            "code" -> "GB",
-            "name" -> "UK"
-          ),
-          "addressValidated" -> true
-        ),
-        "addPurchaserPhoneNumber" -> true,
-        "enterPurchaserPhoneNumber" -> "+447874363636",
-        "doesPurchaserHaveNI" -> JsNull,
-        "nationalInsuranceNumber" -> JsNull,
-        "purchaserFormOfIdIndividual" -> JsNull,
-        "purchaserDateOfBirth" -> JsNull,
-        "purchaserConfirmIdentity" -> JsNull,
-        "registrationNumber" -> "VAT123",
-        "purchaserUTRPage" -> "UTR1234",
-        "purchaserFormOfIdCompany" -> JsNull,
-        "purchaserTypeOfCompany" -> Json.obj(
-          "bank" -> "YES",
-          "buildingAssociation" -> "NO",
-          "centralGovernment" -> "NO",
-          "individualOther" -> "NO",
-          "insuranceAssurance" -> "NO",
-          "localAuthority" -> "NO",
-          "partnership" -> "NO",
-          "propertyCompany" -> "NO",
-          "publicCorporation" -> "NO",
-          "otherCompany" -> "NO",
-          "otherFinancialInstitute" -> "NO",
-          "otherIncludingCharity" -> "NO",
-          "superannuationOrPensionFund" -> "NO",
-          "unincorporatedBuilder" -> "NO",
-          "unincorporatedSoleTrader" -> "NO"
-        ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
-      )),
-    lastUpdated = Instant.now)
-
   private val userAnswersPurchaserCompanyWithMultipleTypes = UserAnswers(
     id = "test-session-id",
     storn = "test-storn-123",
@@ -393,52 +329,6 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         "purchaserAndVendorConnected" -> "yes",
       )),
     lastUpdated = Instant.now)
-
-  private val validCompanyDetails = CompanyDetails(
-    companyDetailsID = Some("COMPDET001"),
-    returnID = Some("12345"),
-    purchaserID = Some("PUR123"),
-    UTR = Some("UTR1234"),
-    VATReference = Some("VAT123"),
-    companyTypeBank = Some("YES"),
-    companyTypeBuilder = Some("NO"),
-    companyTypeBuildsoc = Some("NO"),
-    companyTypeCentgov = Some("NO"),
-    companyTypeIndividual = Some("NO"),
-    companyTypeInsurance = Some("NO"),
-    companyTypeLocalauth = Some("NO"),
-    companyTypeOthercharity = Some("NO"),
-    companyTypeOthercompany = Some("NO"),
-    companyTypeOtherfinancial = Some("NO"),
-    companyTypePartnership = Some("NO"),
-    companyTypeProperty = Some("NO"),
-    companyTypePubliccorp = Some("NO"),
-    companyTypeSoletrader = Some("NO"),
-    companyTypePensionfund = Some("NO")
-  )
-
-  private val validCompanyDetailsWithMultipleTypes = CompanyDetails(
-    companyDetailsID = Some("COMPDET001"),
-    returnID = Some("12345"),
-    purchaserID = Some("PUR123"),
-    UTR = Some("UTR1234"),
-    VATReference = Some("VAT123"),
-    companyTypeBank = Some("YES"),
-    companyTypeBuilder = Some("NO"),
-    companyTypeBuildsoc = Some("YES"),
-    companyTypeCentgov = Some("NO"),
-    companyTypeIndividual = Some("NO"),
-    companyTypeInsurance = Some("NO"),
-    companyTypeLocalauth = Some("NO"),
-    companyTypeOthercharity = Some("NO"),
-    companyTypeOthercompany = Some("NO"),
-    companyTypeOtherfinancial = Some("NO"),
-    companyTypePartnership = Some("NO"),
-    companyTypeProperty = Some("NO"),
-    companyTypePubliccorp = Some("NO"),
-    companyTypeSoletrader = Some("NO"),
-    companyTypePensionfund = Some("NO")
-  )
 
   private val validVendorJson = Json.obj(
     "vendorID" -> "VEN001",
@@ -694,25 +584,6 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
         result mustEqual companyDetails
       }
-    }
-
-    ".from" - {
-      "when purchaser type is Company and has one types" - {
-        "must create Company Details" in {
-          val outcome = CompanyDetails.from(userAnswersPurchaserCompany).futureValue
-          val expected = validCompanyDetails
-          outcome shouldBe expected
-        }
-      }
-
-      "when purchaser type is Company and has multiple types" - {
-        "must create Company Details" in {
-          val outcome = CompanyDetails.from(userAnswersPurchaserCompanyWithMultipleTypes).futureValue
-          val expected = validCompanyDetailsWithMultipleTypes
-          outcome shouldBe expected
-        }
-      }
-
     }
   }
 

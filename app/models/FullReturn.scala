@@ -185,33 +185,6 @@ case class CompanyDetails(
 
 object CompanyDetails {
   implicit val format: OFormat[CompanyDetails] = Json.format[CompanyDetails]
-
-  def from(userAnswers: UserAnswers): Future[CompanyDetails] = {
-    val companyDetailsSessionQuestions: PurchaserSessionQuestions = userAnswers.data.as[PurchaserSessionQuestions]
-    Future.successful(
-      CompanyDetails(
-        companyDetailsID = companyDetailsSessionQuestions.purchaserCurrent.purchaserAndCompanyId.flatMap(_.companyDetailsID),
-        returnID = userAnswers.returnId,
-        purchaserID = companyDetailsSessionQuestions.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID),
-        UTR  = companyDetailsSessionQuestions.purchaserCurrent.purchaserUTRPage,
-        VATReference  = companyDetailsSessionQuestions.purchaserCurrent.registrationNumber,
-        companyTypeBank = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.bank),
-        companyTypeBuilder = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.unincorporatedBuilder),
-        companyTypeBuildsoc = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.buildingAssociation),
-        companyTypeCentgov = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.centralGovernment),
-        companyTypeIndividual = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.individualOther),
-        companyTypeInsurance = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.insuranceAssurance),
-        companyTypeLocalauth = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.localAuthority),
-        companyTypeOthercharity  = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.otherIncludingCharity),
-        companyTypeOthercompany = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.otherCompany),
-        companyTypeOtherfinancial = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.otherFinancialInstitute),
-        companyTypePartnership  = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.partnership),
-        companyTypeProperty = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.propertyCompany),
-        companyTypePubliccorp = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.publicCorporation),
-        companyTypeSoletrader = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.unincorporatedSoleTrader),
-        companyTypePensionfund = companyDetailsSessionQuestions.purchaserCurrent.purchaserTypeOfCompany.map(_.superannuationOrPensionFund)
-    ))
-  }
 }
 
 case class Vendor(
