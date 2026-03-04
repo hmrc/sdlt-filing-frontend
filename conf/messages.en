@@ -1040,6 +1040,17 @@ land.doYouKnowTheAreaOfLand.checkYourAnswersLabel                               
 land.doYouKnowTheAreaOfLand.error.required                                          = Select doYouKnowTheAreaOfLand
 land.doYouKnowTheAreaOfLand.change.hidden                                           = DoYouKnowTheAreaOfLand
 
+residency.nonUkResidentPurchaser.title = Are any of the purchasers non-UK residents? - About UK residency
+residency.nonUkResidentPurchaser.heading = Residency status
+residency.nonUkResidentPurchaser.subheading = Are any of the purchasers non-UK residents?
+residency.nonUkResidentPurchaser.p1 = A purchaser is considered a non-UK resident for the purposes of SDLT if they spent fewer than 183 days in the UK during the 12 months before the effective date of the transaction.
+residency.nonUkResidentPurchaser.p2 = Read the latest <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+residency.nonUkResidentPurchaser.hint.link = https://www.gov.uk/guidance/rates-of-stamp-duty-land-tax-for-non-uk-residents
+residency.nonUkResidentPurchaser.hint.suffix = HMRC guidance on residence status for SDLT (opens in a new tab)
+residency.nonUkResidentPurchaser.checkYourAnswersLabel = nonUkResidentPurchaser
+residency.nonUkResidentPurchaser.error.required = Select yes if nonUkResidentPurchaser
+residency.nonUkResidentPurchaser.change.hidden = NonUkResidentPurchaser
+
 ukResidency.crownEmploymentRelief.title                                             = Crown employment relief
 ukResidency.crownEmploymentRelief.heading                                           = Crown employment relief
 ukResidency.crownEmploymentRelief.subheading                                        = Are any of the purchasers claiming Crown employment relief?
