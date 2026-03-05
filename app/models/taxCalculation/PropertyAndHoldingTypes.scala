@@ -18,8 +18,6 @@ package models.taxCalculation
 
 import play.api.libs.json._
 
-import scala.collection.Seq
-
 object HoldingTypes extends Enumeration {
 
   val leasehold = Value

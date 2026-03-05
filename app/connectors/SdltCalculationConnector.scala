@@ -18,7 +18,6 @@ package connectors
 
 import config.FrontendAppConfig
 import models.taxCalculation.{SdltCalculationRequest, SdltCalculationResponse}
-import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, UpstreamErrorResponse}

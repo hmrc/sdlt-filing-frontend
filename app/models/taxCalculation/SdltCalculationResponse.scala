@@ -16,7 +16,6 @@
 
 package models.taxCalculation
 
-import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 
 case class CalculationResponse(result: Seq[SdltCalculationResponse])
