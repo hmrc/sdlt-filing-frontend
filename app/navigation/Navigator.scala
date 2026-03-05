@@ -25,6 +25,7 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
+import pages.ukResidency.CrownEmploymentReliefPage
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -61,6 +62,7 @@ class Navigator @Inject()() {
 
     case purchaserPage if isPurchaserSection(purchaserPage) => purchaserRoutes(purchaserPage)
     case landPage if isLandSection(landPage) => landRoutes(landPage)
+    case uKResidencyPage if isUkResidencySection(uKResidencyPage) => ukResidencyRoutes(uKResidencyPage)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -168,6 +170,20 @@ class Navigator @Inject()() {
       _ => controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(NormalMode)
     case DoYouKnowTheAreaOfLandPage =>
       _ => controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
+
+    case _ => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def isUkResidencySection(page: Page): Boolean = page match {
+
+    case CrownEmploymentReliefPage => true
+
+    case _ => false
+  }
+
+  private def ukResidencyRoutes(page: Page): UserAnswers => Call = page match {
+    case CrownEmploymentReliefPage => //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
+      _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
 
     case _ => _ => routes.IndexController.onPageLoad()
   }
