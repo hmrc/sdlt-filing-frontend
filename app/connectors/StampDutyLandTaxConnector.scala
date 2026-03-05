@@ -55,11 +55,11 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, FullReturn]]
       .flatMap {
         case Right(resp) =>
-          //TODO - Delete after full e2e testing
           logger.info(s"[getFullReturn] \n $resp")
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][getFullReturn]")
           Future.failed(error)
       }
       .recover {
@@ -77,6 +77,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][createReturn]")
           Future.failed(error)
       }
       .recover{
@@ -94,6 +95,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][createVendor]")
           Future.failed(error)
       }
       .recover {
@@ -111,6 +113,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateVendor]")
           Future.failed(error)
       }
       .recover {
@@ -128,6 +131,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][deleteVendor]")
           Future.failed(error)
       }
       .recover {
@@ -145,6 +149,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][createReturnAgent]")
           Future.failed(error)
       }
       .recover {
@@ -162,6 +167,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateReturnAgent]")
           Future.failed(error)
       }
       .recover {
@@ -179,6 +185,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][deleteReturnAgent]")
           Future.failed(error)
       }
       .recover {
@@ -196,6 +203,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateReturnVersion]")
           Future.failed(error)
       }
       .recover {
@@ -214,6 +222,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][createPurchaser]")
           Future.failed(error)
       }
       .recover {
@@ -232,6 +241,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updatePurchaser]")
           Future.failed(error)
       }
       .recover {
@@ -249,6 +259,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][deletePurchaser]")
           Future.failed(error)
       }
       .recover {
@@ -266,6 +277,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][createCompanyDetails]")
           Future.failed(error)
       }
       .recover {
@@ -283,6 +295,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateCompanyDetails]")
           Future.failed(error)
       }
       .recover {
@@ -300,6 +313,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][deleteCompanyDetails]")
           Future.failed(error)
       }
       .recover {
@@ -317,6 +331,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateReturnInfo]")
           Future.failed(error)
       }
       .recover {
@@ -335,6 +350,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][createLand]")
           Future.failed(error)
       }
       .recover {
@@ -352,6 +368,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateLand]")
           Future.failed(error)
       }
       .recover {
@@ -369,6 +386,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           Future.successful(
             resp)
         case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][deleteLand]")
           Future.failed(error)
       }
       .recover {
