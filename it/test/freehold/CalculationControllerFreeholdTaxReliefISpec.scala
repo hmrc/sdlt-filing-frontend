@@ -2383,6 +2383,176 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
             request.json shouldBe selfAssessedResponse
           }
         }
+
+      // SDLT - Tax Calc Case - 50 - Self Assessed
+      "TaxReliefCode is PreCompletionTransaction: 34" when {
+        "date is on 06/04/2013" when {
+
+          "the transaction is linked" must {
+            "return the self assessed response" when {
+              // PT::Residential, Mixed, Non-residential
+              "Property Type Residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Residential",
+                        |  "effectiveDateDay": 6,
+                        |  "effectiveDateMonth": 4,
+                        |  "effectiveDateYear": 2013,
+                        |  "premium": 10000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 34
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 6,
+                        |  "effectiveDateMonth": 4,
+                        |  "effectiveDateYear": 2013,
+                        |  "premium": 10000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 34
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type Non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 6,
+                        |  "effectiveDateMonth": 4,
+                        |  "effectiveDateYear": 2013,
+                        |  "premium": 10000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 34
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+        "any date after 06/04/2013" when {
+
+          "the transaction is linked" must {
+            "return the self assessed response" when {
+              // PT::Residential, Mixed, Non-residential
+              "Property Type Residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Residential",
+                        |  "effectiveDateDay": 17,
+                        |  "effectiveDateMonth": 4,
+                        |  "effectiveDateYear": 2015,
+                        |  "premium": 10000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 34
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 19,
+                        |  "effectiveDateMonth": 12,
+                        |  "effectiveDateYear": 2021,
+                        |  "premium": 10000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 34
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type Non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 1,
+                        |  "effectiveDateMonth": 9,
+                        |  "effectiveDateYear": 2019,
+                        |  "premium": 10000,
+                        |  "highestRent": 0,
+                        |  "isLinked": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 34
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

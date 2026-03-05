@@ -1264,6 +1264,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         testCalculationService.calculateTax(investmentTestRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdFreeportRelief
+        verifyNoMoreInteractions(mockFreeholdCalculationService)
       }
 
       "given selfAssessed any property type ~ TaxReliefCode is one of: [8|9|10|11|12|13|15|16|17|18|19|20|21|23|24|26|27|28|29|31]~ with effective date 04/12/2014" in {
@@ -1312,6 +1313,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
               ))
             val res: CalculationResponse = testCalculationService.calculateTaxRelief(calcRequestWithAdditionalProperty)
             verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedOnOrAfterDecember2014
+            verifyNoMoreInteractions(mockFreeholdCalculationService)
             res shouldBe CalculationResponse(Seq(Result(
               totalTax = 0,
               resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
@@ -1332,17 +1334,35 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         testCalculationService.calculateTax(freeportTestRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdFreeportPartialRelief
+        verifyNoMoreInteractions(mockFreeholdCalculationService)
       }
 
-      "given a request with relief code PreCompletionTransaction(34) and effective date of 6/4/2013" in {
+      "given a request with relief code PreCompletionTransaction(34) and effective date of 6/4/2013: isLinked false" in {
         val testRequest = createRequest(freehold, residential, LocalDate.of(2013, 4, 6), Some(PreCompletionTransaction), isLinked = Some(false), isPartialRelief = Some(false))
-        val result = createResult("freeholdPreCompletionTransactionReliefApr13Onwards")
+        val result = createResult("freeholdPreCompletionTransactionReliefApr13OnwardsIsLinkedFalse")
 
         when(mockFreeholdCalculationService.freeholdPreCompletionTransactionReliefApr13Onwards).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdPreCompletionTransactionReliefApr13Onwards
+        verifyNoMoreInteractions(mockFreeholdCalculationService)
+      }
+
+      "given a request with relief code PreCompletionTransaction(34) and effective date of 6/4/2013: isLinked true" in {
+        val testRequest = createRequest(
+          freehold, residential,
+          LocalDate.of(2013, 4, 6),
+          Some(PreCompletionTransaction),
+          isLinked = Some(true), isPartialRelief = Some(false))
+
+        val result = createResult("freeholdPreCompletionTransactionReliefApr13OnwardsIsLinkedTrue")
+
+        when(mockFreeholdCalculationService.freeholdSelfAssessedOnOrAfterApril2013).thenReturn(result)
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockFreeholdCalculationService, times(1)).freeholdSelfAssessedOnOrAfterApril2013
+        verifyNoMoreInteractions(mockFreeholdCalculationService)
       }
 
       "given relief code PreCompletionTransaction(34) and effective date before 6/4/2013 :: falls back to normal calculation" in {
@@ -1354,6 +1374,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockFreeholdCalculationService, times(1)).freeholdResidentialMar12toDec14(any())
+        verifyNoMoreInteractions(mockFreeholdCalculationService)
       }
 
       "given relief code AcquisitionRelief(14)" in {
