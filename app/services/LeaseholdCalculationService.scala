@@ -791,10 +791,6 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory.leaseholdAcquisitionTaxReliefRes(premiumResult, leasedResult, npv)
   }
 
-  val leaseholdSelfAssessedRes: Result = {
-    LeaseholdResultFactory
-      .leaseholdSelfAssessedResult
-  }
 
   val leaseholdCollectiveEnfranchisementByLeaseholdersApr09Onwards: Result =
     LeaseholdResultFactory
@@ -805,10 +801,6 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       .leaseholdSelfAssessedResult
 
   val leaseholdResFTBReliefMar10BeforeMar12: Result =
-    LeaseholdResultFactory
-      .leaseholdSelfAssessedResult
-
-  val freeholdFreeportPartialRelief: Result =
     LeaseholdResultFactory
       .leaseholdSelfAssessedResult
 
@@ -831,6 +823,11 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   val leaseholdMultipleDwellingRelief: Result =
     LeaseholdResultFactory
       .leaseholdSelfAssessedResult
+
+  val leaseholdSelfAssessedOnOrAfterNov2017: Result = {
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+  }
 
   def leaseholdFreeportRelief(leaseDetails: Option[LeaseDetails]): Result = {
     val calculatedNpv = Some(getNPV("leaseholdFreeportRelief", leaseDetails).toInt)

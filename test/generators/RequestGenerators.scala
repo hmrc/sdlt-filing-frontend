@@ -109,7 +109,6 @@ trait RequestGenerators {
       None
   }.toOption.flatten
 
-
   private val onOrAfterDateGenerator: LocalDate => Gen[Option[LocalDate]] = (onOrAfterDate: LocalDate) => for {
     year <- Gen.oneOf(onOrAfterDate.getYear to LocalDate.now.getYear)
     month <- Gen.oneOf(1 to 12)
@@ -272,6 +271,29 @@ trait RequestGenerators {
     AlternativeFinanceInvestmentBondsRelief
   )
 
+  private val selfAssessedLeaseHoldOnOrAfterNov2017: Set[TaxReliefCode] = Set(
+    PartExchange,
+    ReLocationEmployment,
+    CompulsoryPurchaseFacilitatingDevelopment,
+    ComplianceWithPlanningObligations,
+    GroupRelief,
+    ReConstructionRelief,
+    DemutualisationOfInsuranceCompany,
+    DemutualisationOfBuildingSociety,
+    IncorporationOfLimitedLiabilityPartnership,
+    TransfersInvolvingPublicBodies,
+    TransferInConsequenceOfReorganisationOfParliamentaryConstituencies,
+    CharitiesTaxReliefs,
+    AcquisitionByBodiesEstablishedForNationalPurposes,
+    RegisteredSocialLandlords,
+    AlternativePropertyFinance,
+    CroftingCommunityRightToBuy,
+    DiplomaticPrivileges,
+    OtherTaxReliefs,
+    CombinationOfReliefs,
+    AlternativeFinanceInvestmentBondsRelief
+  )
+
   val freeHoldAnyPropertyTypeAndTaxReliefSet: Gen[Request] =
     for {
       anyPropertyType <- Gen.oneOf(PropertyTypes.mixed, PropertyTypes.nonResidential, PropertyTypes.residential)
@@ -296,6 +318,32 @@ trait RequestGenerators {
           TaxReliefDetails(taxReliefCode = inSetTaxReliefCode,
             isPartialRelief = None)),
       )
+
+  def leaseHoldAnyPropertyTypeAndTaxReliefSet(effectiveDate: LocalDate, isLinked: Boolean, holdingTypes: HoldingTypes.Value = HoldingTypes.leasehold): Gen[Request] = {
+    for {
+      anyPropertyType <- Gen.oneOf(PropertyTypes.mixed, PropertyTypes.nonResidential, PropertyTypes.residential)
+      anyNonZeroAmount <- amountGen
+      anyDay <- onOrAfterDateGenerator(effectiveDate)
+      inSetTaxReliefCode <- Gen.oneOf(selfAssessedLeaseHoldOnOrAfterNov2017)
+    } yield
+      Request(
+        holdingType = holdingTypes,
+        propertyType = anyPropertyType,
+        effectiveDate = anyDay.getOrElse(LocalDate.of(2017, 11, 22)),
+        nonUKResident = None,
+        premium = anyNonZeroAmount,
+        highestRent = BigDecimal(0),
+        propertyDetails = None,
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = None,
+        isLinked = Some(isLinked),
+        interestTransferred = None,
+        taxReliefDetails = Some(
+          TaxReliefDetails(taxReliefCode = inSetTaxReliefCode,
+            isPartialRelief = None)),
+      )
+  }
 
   val freeHoldResidentialRightToBuyFromMarch2012ToApril2014: Gen[Request] =
     for {
