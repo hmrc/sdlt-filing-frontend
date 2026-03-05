@@ -485,6 +485,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedOnOrAfterDecember2014
             ))
+          case (`freehold`, Mixed | NonResidential | Residential, PreCompletionTransaction, Some(true))
+            if date.onOrAfter(APRIL2013_TAX_YEAR_START_DATE) =>
+              CalculationResponse(Seq(
+                freeCalculationService.freeholdSelfAssessedOnOrAfterApril2013
+              ))
+
           /* ------------- LeaseHoldCases--------------------------- */
           case (`leasehold`, _, MultipleDwellingRelief, _) =>
             CalculationResponse(Seq(
