@@ -8,7 +8,7 @@ package services
 import data.Dates
 import enums.HoldingTypes._
 import enums.PropertyTypes._
-import enums.sdltRebuild.TaxReliefCode.{selfAssessedFreeHoldReliefCodes, standardZeroRateFreeholdReliefCodes, standardZeroRateLeaseholdReliefCodes}
+import enums.sdltRebuild.TaxReliefCode.{selfAssessedFreeHoldReliefCodes, selfAssessedLeaseHoldReliefCodes, standardZeroRateFreeholdReliefCodes, standardZeroRateLeaseholdReliefCodes}
 import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
@@ -533,6 +533,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             if standardZeroRateLeaseholdReliefCodes.contains(taxReliefDetails.taxReliefCode) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdMixedNonResPropStandardZeroRelief(request.leaseDetails)
+            ))
+          case (`leasehold`, _, taxReliefCode, Some(true))
+            if selfAssessedLeaseHoldReliefCodes.contains(taxReliefCode) && date.onOrAfter(NOV2017_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              leaseCalculationService.leaseholdSelfAssessedOnOrAfterNov2017
             ))
           case (holdingType, _, taxReliefCode, isLinked) =>
             logWarn(s"Falling back to Non-Tax Relief cases as TaxRelief logic not yet implemented for " +

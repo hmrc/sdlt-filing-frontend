@@ -1814,6 +1814,204 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
           }
         }
       }
+      // SDLT - Tax Calc Case - 59a - Self Assessed
+      "the TaxReliefCode is one of: [8|9|10|11|12|13|15|16|17|18|19|20|21|23|24|26|27|28|29|31]" when {
+        "the date is On or After 22/11/2017" when {
+          "transaction is linked" must {
+            "return the self assessed response" when {
+              "Property Type is Residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Leasehold",
+                        |  "propertyType": "Residential",
+                        |  "effectiveDateDay": 7,
+                        |  "effectiveDateMonth": 7,
+                        |  "effectiveDateYear": 2018,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "leaseDetails": {
+                        |    "startDateDay": 7,
+                        |    "startDateMonth": 7,
+                        |    "startDateYear": 2018,
+                        |    "endDateDay": 7,
+                        |    "endDateMonth": 7,
+                        |    "endDateYear": 2019,
+                        |    "leaseTerm": {
+                        |      "years": 1,
+                        |      "days": 1,
+                        |      "daysInPartialYear": 365
+                        |    },
+                        |    "year1Rent": 999,
+                        |    "year2Rent": 999
+                        |  },
+                        |  "propertyDetails": {
+                        |    "individual": "Yes",
+                        |    "twoOrMoreProperties": "No"
+                        |  },
+                        |  "firstTimeBuyer": "Yes",
+                        |  "isLinked": true,
+                        |  "isMultipleLand": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 8
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type is Residential with additional property" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Leasehold",
+                        |  "propertyType": "Residential",
+                        |  "effectiveDateDay": 7,
+                        |  "effectiveDateMonth": 7,
+                        |  "effectiveDateYear": 2018,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "leaseDetails": {
+                        |    "startDateDay": 7,
+                        |    "startDateMonth": 7,
+                        |    "startDateYear": 2018,
+                        |    "endDateDay": 7,
+                        |    "endDateMonth": 7,
+                        |    "endDateYear": 2019,
+                        |    "leaseTerm": {
+                        |      "years": 1,
+                        |      "days": 1,
+                        |      "daysInPartialYear": 365
+                        |    },
+                        |    "year1Rent": 999,
+                        |    "year2Rent": 999
+                        |  },
+                        |  "propertyDetails": {
+                        |    "individual": "Yes",
+                        |    "twoOrMoreProperties": "Yes",
+                        |    "replaceMainResidence": "No"
+                        |  },
+                        |  "firstTimeBuyer": "Yes",
+                        |  "isLinked": true,
+                        |  "isMultipleLand": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 11
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type is Non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Leasehold",
+                        |  "propertyType": "Non-residential",
+                        |  "effectiveDateDay": 7,
+                        |  "effectiveDateMonth": 7,
+                        |  "effectiveDateYear": 2018,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "leaseDetails": {
+                        |    "startDateDay": 7,
+                        |    "startDateMonth": 7,
+                        |    "startDateYear": 2018,
+                        |    "endDateDay": 7,
+                        |    "endDateMonth": 7,
+                        |    "endDateYear": 2019,
+                        |    "leaseTerm": {
+                        |      "years": 1,
+                        |      "days": 1,
+                        |      "daysInPartialYear": 365
+                        |    },
+                        |    "year1Rent": 999,
+                        |    "year2Rent": 999
+                        |  },
+                        |  "propertyDetails": {
+                        |    "individual": "Yes",
+                        |    "twoOrMoreProperties": "No"
+                        |  },
+                        |  "firstTimeBuyer": "Yes",
+                        |  "isLinked": true,
+                        |  "isMultipleLand": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 15
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+              "Property Type is Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Leasehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 7,
+                        |  "effectiveDateMonth": 7,
+                        |  "effectiveDateYear": 2018,
+                        |  "premium": 1000000,
+                        |  "highestRent": 0,
+                        |  "leaseDetails": {
+                        |    "startDateDay": 7,
+                        |    "startDateMonth": 7,
+                        |    "startDateYear": 2018,
+                        |    "endDateDay": 7,
+                        |    "endDateMonth": 7,
+                        |    "endDateYear": 2019,
+                        |    "leaseTerm": {
+                        |      "years": 1,
+                        |      "days": 1,
+                        |      "daysInPartialYear": 365
+                        |    },
+                        |    "year1Rent": 999,
+                        |    "year2Rent": 999
+                        |  },
+                        |  "propertyDetails": {
+                        |    "individual": "Yes",
+                        |    "twoOrMoreProperties": "No"
+                        |  },
+                        |  "firstTimeBuyer": "Yes",
+                        |  "isLinked": true,
+                        |  "isMultipleLand": true,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 31
+                        |  }
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                request.status shouldBe OK
+                request.json shouldBe selfAssessedResponse
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

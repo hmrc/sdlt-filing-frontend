@@ -2343,6 +2343,64 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
     }
 
+    "select the leaseholdSelfAssessedOnOrAfterNov2017 function" when {
+      "given a request where relief code ~ TaxReliefCode is one of: [8|9|10|11|12|13|15|16|17|18|19|20|21|23|24|26|27|28|29|31]~ with effective date 22/11/2017" in {
+        // no additional property in scope
+        forAll(leaseHoldAnyPropertyTypeAndTaxReliefSet(LocalDate.of(2017, 11, 23), isLinked = true)) {
+          calRequest =>
+            reset(mockLeaseholdCalculationService)
+            when(mockLeaseholdCalculationService.leaseholdSelfAssessedOnOrAfterNov2017)
+              .thenReturn(Result(
+                totalTax = 0,
+                resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+                resultHint = None,
+                npv = None,
+                taxCalcs = Seq.empty
+              ))
+            val res: CalculationResponse = testCalculationService.calculateTaxRelief(calRequest)
+            verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedOnOrAfterNov2017
+            res shouldBe CalculationResponse(Seq(Result(
+              totalTax = 0,
+              resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+              resultHint = None,
+              npv = None,
+              taxCalcs = Seq.empty
+            )))
+        }
+
+        // with additional property
+        forAll(leaseHoldAnyPropertyTypeAndTaxReliefSet(LocalDate.of(2017, 11, 23), isLinked = true)) {
+          calcRequest =>
+            val calcRequestWithAdditionalProperty = calcRequest
+              .copy(propertyDetails = Some(PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(true),
+                replaceMainResidence = Some(true),
+                sharedOwnership = None,
+                currentValue = None
+              )))
+            reset(mockLeaseholdCalculationService)
+            when(mockLeaseholdCalculationService.leaseholdSelfAssessedOnOrAfterNov2017)
+              .thenReturn(Result(
+                totalTax = 0,
+                resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+                resultHint = None,
+                npv = None,
+                taxCalcs = Seq.empty
+              ))
+            val res: CalculationResponse = testCalculationService.calculateTaxRelief(calcRequestWithAdditionalProperty)
+            verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedOnOrAfterNov2017
+            res shouldBe CalculationResponse(Seq(Result(
+              totalTax = 0,
+              resultHeading = Some(RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT),
+              resultHint = None,
+              npv = None,
+              taxCalcs = Seq.empty
+            )))
+        }
+      }
+    }
+
     "given no relief code, property type is Residential Additional Property, effective date is before 1/4/2016 and isLinked = true" in {
       val testRequest = createRequest(freehold, residential, LocalDate.of(2016, 3, 31), isAddProp = true)
       val result = createResult("freeholdResidentialDec14Onwards")
@@ -2877,9 +2935,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         )
         testCalculationService.checkFTBHigherThreshold(propertyDetails, firstTimeBuyer = Some(true), 626000) shouldBe false
       }
-
     }
-
   }
-
 }
