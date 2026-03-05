@@ -17,26 +17,25 @@
 package models.taxCalculation
 
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import models.taxCalculation.validators.api.RequestValidators.*
 import play.api.libs.json.{Json, Writes}
 
 import java.time.LocalDate
 
 case class SdltCalculationRequest(
-                                   holdingType: HoldingTypes.Value,
-                                   propertyType: PropertyTypes.Value,
-                                   effectiveDate: LocalDate,
-                                   nonUKResident: Option[Boolean],
-                                   premium: BigDecimal,
-                                   highestRent: BigDecimal,
-                                   propertyDetails: Option[PropertyDetails],
-                                   leaseDetails: Option[LeaseDetails],
-                                   relevantRentDetails: Option[RelevantRentDetails],
-                                   firstTimeBuyer: Option[Boolean],
-                                   isLinked: Option[Boolean],
-                                   interestTransferred: Option[String],
-                                   taxReliefDetails: Option[TaxReliefDetails],
-                                   isMultipleLand: Option[Boolean]
+                                   holdingType         : HoldingTypes.Value,
+                                   propertyType        : PropertyTypes.Value,
+                                   effectiveDate       : LocalDate,
+                                   nonUKResident       : Option[Boolean],
+                                   premium             : BigDecimal,
+                                   highestRent         : BigDecimal,
+                                   propertyDetails     : Option[PropertyDetails],
+                                   leaseDetails        : Option[LeaseDetails],
+                                   relevantRentDetails : Option[RelevantRentDetails],
+                                   firstTimeBuyer      : Option[Boolean],
+                                   isLinked            : Option[Boolean],
+                                   interestTransferred : Option[String],
+                                   taxReliefDetails    : Option[TaxReliefDetails],
+                                   isMultipleLand      : Option[Boolean]
                                  )
 
 object SdltCalculationRequest {
@@ -44,11 +43,11 @@ object SdltCalculationRequest {
 }
 
 case class PropertyDetails(
-                            individual: Boolean,
-                            twoOrMoreProperties: Option[Boolean],
-                            replaceMainResidence: Option[Boolean],
-                            sharedOwnership: Option[Boolean],
-                            currentValue: Option[Boolean]
+                            individual           : Boolean,
+                            twoOrMoreProperties  : Option[Boolean],
+                            replaceMainResidence : Option[Boolean],
+                            sharedOwnership      : Option[Boolean],
+                            currentValue         : Option[Boolean]
                           )
 
 object PropertyDetails {
@@ -56,14 +55,14 @@ object PropertyDetails {
 }
 
 case class LeaseDetails(
-                         startDate: LocalDate,
-                         endDate: LocalDate,
-                         leaseTerm: LeaseTerm,
-                         year1Rent: BigDecimal,
-                         year2Rent: Option[BigDecimal],
-                         year3Rent: Option[BigDecimal],
-                         year4Rent: Option[BigDecimal],
-                         year5Rent: Option[BigDecimal]
+                         startDate : LocalDate,
+                         endDate   : LocalDate,
+                         leaseTerm : LeaseTerm,
+                         year1Rent : BigDecimal,
+                         year2Rent : Option[BigDecimal],
+                         year3Rent : Option[BigDecimal],
+                         year4Rent : Option[BigDecimal],
+                         year5Rent : Option[BigDecimal]
                        )
 
 object LeaseDetails {
@@ -71,9 +70,9 @@ object LeaseDetails {
 }
 
 case class LeaseTerm(
-                      years: Int,
-                      days: Int,
-                      daysInPartialYear: Int
+                      years             : Int,
+                      days              : Int,
+                      daysInPartialYear : Int
                     )
 
 object LeaseTerm {
@@ -81,9 +80,9 @@ object LeaseTerm {
 }
 
 case class RelevantRentDetails(
-                                exchangedContractsBeforeMar16: Option[Boolean],
-                                contractChangedSinceMar16: Option[Boolean],
-                                relevantRent: Option[BigDecimal]
+                                exchangedContractsBeforeMar16 : Option[Boolean],
+                                contractChangedSinceMar16     : Option[Boolean],
+                                relevantRent                  : Option[BigDecimal]
                               )
 
 object RelevantRentDetails {
@@ -91,8 +90,8 @@ object RelevantRentDetails {
 }
 
 case class TaxReliefDetails(
-                             taxReliefCode: Int,
-                             isPartialRelief: Option[Boolean]
+                             taxReliefCode   : Int,
+                             isPartialRelief : Option[Boolean]
                            )
 
 object TaxReliefDetails {

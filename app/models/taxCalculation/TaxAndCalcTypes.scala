@@ -19,7 +19,7 @@ package models.taxCalculation
 import play.api.libs.json._
 
 object TaxTypes extends Enumeration {
-  val rent = Value
+  val rent    = Value
   val premium = Value
 
   given Reads[Value] = Reads.enumNameReads(TaxTypes)
@@ -27,7 +27,7 @@ object TaxTypes extends Enumeration {
 
 object CalcTypes extends Enumeration {
   val slice = Value
-  val slab = Value
+  val slab  = Value
 
   given Reads[Value] = Reads.enumNameReads(CalcTypes)
 }

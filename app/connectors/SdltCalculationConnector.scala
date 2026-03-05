@@ -34,11 +34,10 @@ class SdltCalculationConnector @Inject()(val http: HttpClientV2,
 
   private lazy val sdltCalculationUrl = config.sdltCalculationUrl
   
-  private lazy val logger: Logger = LoggerFactory.getLogger(getClass)
-  
   def calculateStampDutyLandTax(request: SdltCalculationRequest)
                                (implicit hc: HeaderCarrier): Future[SdltCalculationResponse] =
-    http.post(url"$sdltCalculationUrl")
+    http
+      .post(url"$sdltCalculationUrl")
       .withBody(Json.toJson(request))
       .execute[SdltCalculationResponse]
       .map { resp =>

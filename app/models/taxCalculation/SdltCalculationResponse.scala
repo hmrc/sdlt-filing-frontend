@@ -19,20 +19,18 @@ package models.taxCalculation
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 
-case class CalculationResponse(
-                                result: Seq[SdltCalculationResponse]
-                              )
+case class CalculationResponse(result: Seq[SdltCalculationResponse])
 
 object CalculationResponse {
   implicit val reads: Reads[CalculationResponse] = Json.reads[CalculationResponse]
 }
 
 case class SdltCalculationResponse(
-                                    totalTax: Int,
-                                    resultHeading: Option[String],
-                                    resultHint: Option[String],
-                                    npv: Option[Int],
-                                    taxCalcs: Seq[CalculationDetails]
+                                    totalTax      : Int,
+                                    resultHeading : Option[String],
+                                    resultHint    : Option[String],
+                                    npv           : Option[Int],
+                                    taxCalcs      : Seq[CalculationDetails]
                                   )
 
 object SdltCalculationResponse {
@@ -40,15 +38,15 @@ object SdltCalculationResponse {
 }
 
 case class CalculationDetails(
-                               taxType: TaxTypes.Value,
-                               calcType: CalcTypes.Value,
-                               taxDue: Int,
-                               detailHeading: Option[String],
-                               bandHeading: Option[String],
-                               detailFooter: Option[String],
-                               rate: Option[Int],
-                               rateFraction: Option[Int],
-                               slices: Option[Seq[SliceDetails]]
+                               taxType       : TaxTypes.Value,
+                               calcType      : CalcTypes.Value,
+                               taxDue        : Int,
+                               detailHeading : Option[String],
+                               bandHeading   : Option[String],
+                               detailFooter  : Option[String],
+                               rate          : Option[Int],
+                               rateFraction  : Option[Int],
+                               slices        : Option[Seq[SliceDetails]]
                              )
 
 object CalculationDetails {
@@ -56,10 +54,10 @@ object CalculationDetails {
 }
 
 case class SliceDetails(
-                         from: Int,
-                         to: Option[Int],
-                         rate: Int,
-                         taxDue: Int
+                         from   : Int,
+                         to     : Option[Int],
+                         rate   : Int,
+                         taxDue : Int
                        )
 
 object SliceDetails {
