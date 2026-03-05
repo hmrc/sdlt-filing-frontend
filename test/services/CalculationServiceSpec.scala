@@ -21,7 +21,6 @@ import models._
 import models.sdltRebuild.TaxReliefDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{ArgumentMatchers, MockitoSugar}
-import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
@@ -67,12 +66,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       rate = None,
       slices = None
     )
-
-    val generateIsLinkedFalseAndNoneValue :Gen[Option[Boolean]] = Gen.oneOf(None, Some(false))
-
-    val generateIsLinkedAllPossibleValues : Gen[Option[Boolean]] = Gen.oneOf(None, Some(false), Some(true))
-
-    val generateMixedAndNonResidentialPropertyTypes : Gen[enums.PropertyTypes.Value] = Gen.oneOf(mixed, nonResidential)
 
     def createResult(msg: String) = Result(
       totalTax = 0,
@@ -2812,6 +2805,68 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockLeaseholdCalculationService, never).leaseholdResidentialFTBWithMultipleLands
         verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialDec14Onwards(any(), any(), any(), any())
+      }
+    }
+
+    //SDLT - Tax Calc Case - 54a_2020 - Self Assessed
+    "select the freeholdResidentialFTBOnOrAfter8July2022 function" when{
+      "Freehold ,Residential, FirstTimeBuyersRelief , isLinked = true & date is between 2020/07/08 and 2021/03/31(including these dates)" in {
+        val datesInBetween7March2020And31March2021 = onOrAfterAndBeforeDateGenerator(LocalDate.of(2020, 7, 8))(LocalDate.of(2021, 3, 31)).flatMap {
+          case Some(value) => value
+          case None => LocalDate.of(2020, 7, 8)
+        }
+        forAll(datesInBetween7March2020And31March2021) {
+          date =>
+            val testRequest = createRequest(freehold, residential, date, Some(FirstTimeBuyersRelief), isLinked = Some(true))
+              .copy(propertyDetails = Some(PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = None,
+                sharedOwnership = None,
+                currentValue = None
+              )))
+
+            val result = createResult("freeholdResidentialFTBOnOrAfter8July2020")
+
+            reset(mockFreeholdCalculationService)
+
+            when(mockFreeholdCalculationService.freeholdResidentialFTBOnOrAfter8July2020).thenReturn(result)
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockFreeholdCalculationService, times(1)).freeholdResidentialFTBOnOrAfter8July2020
+
+            verifyNoMoreInteractions(mockFreeholdCalculationService)
+        }
+      }
+      "Freehold , Residential ,FirstTimeBuyersRelief , isLinked = true, nonUKResident = true|false, & date is after 2021/03/31" in {
+        val datesAfter31March2021 = onOrAfterAndBeforeDateGenerator(LocalDate.of(2021, 4, 1))(LocalDate.now).flatMap {
+          case Some(value) => value
+          case None => LocalDate.of(2021, 4, 1)
+        }
+        forAll(datesAfter31March2021, generateTrueOrFalse) {
+          (date, booleanValue) =>
+            val testRequest = createRequest(freehold, residential, date, Some(FirstTimeBuyersRelief), isLinked = Some(true))
+              .copy(propertyDetails = Some(PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = None,
+                sharedOwnership = None,
+                currentValue = None
+              ))).copy(nonUKResident = Some(booleanValue))
+
+            val result = createResult("freeholdResidentialFTBOnOrAfter8July2020")
+
+            reset(mockFreeholdCalculationService)
+
+            when(mockFreeholdCalculationService.freeholdResidentialFTBOnOrAfter8July2020).thenReturn(result)
+
+            testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+            verify(mockFreeholdCalculationService, times(1)).freeholdResidentialFTBOnOrAfter8July2020
+
+            verifyNoMoreInteractions(mockFreeholdCalculationService)
+        }
       }
     }
   }

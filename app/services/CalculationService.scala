@@ -490,6 +490,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               CalculationResponse(Seq(
                 freeCalculationService.freeholdSelfAssessedOnOrAfterApril2013
               ))
+          case (`freehold`, Residential, FirstTimeBuyersRelief, Some(true))
+            if date.onOrAfter(JULY2020_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdResidentialFTBOnOrAfter8July2020
+            ))
 
           /* ------------- LeaseHoldCases--------------------------- */
           case (`leasehold`, _, MultipleDwellingRelief, _) =>

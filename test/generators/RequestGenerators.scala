@@ -6,6 +6,7 @@
 package generators
 
 import data.Dates.DECEMBER2014_RESIDENTIAL_DATE
+import enums.PropertyTypes.{mixed, nonResidential}
 import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import models.sdltRebuild.TaxReliefDetails
@@ -120,7 +121,7 @@ trait RequestGenerators {
       None
   }.toOption.flatten
 
-  private val onOrAfterAndBeforeDateGenerator: LocalDate => LocalDate => Gen[Option[LocalDate]] = (onOrAfterDate: LocalDate) => (beforeDate: LocalDate) => for {
+  def onOrAfterAndBeforeDateGenerator: LocalDate => LocalDate => Gen[Option[LocalDate]] = (onOrAfterDate: LocalDate) => (beforeDate: LocalDate) => for {
     year <- Gen.oneOf(onOrAfterDate.getYear to beforeDate.getYear)
     month <- Gen.oneOf(1 to 12)
     day <- Gen.oneOf(1 to 31)
@@ -130,6 +131,7 @@ trait RequestGenerators {
     else
       None
   }.toOption.flatten
+
 
   private def generateLeaseDetails(date: LocalDate): LeaseDetails = {
     LeaseDetails(
@@ -399,6 +401,11 @@ trait RequestGenerators {
         taxReliefDetails = None,
         interestTransferred = None
       )
+
   }
+  val generateIsLinkedFalseAndNoneValue :Gen[Option[Boolean]] = Gen.oneOf(None, Some(false))
+  val generateIsLinkedAllPossibleValues : Gen[Option[Boolean]] = Gen.oneOf(None, Some(false), Some(true))
+  val generateTrueOrFalse : Gen[Boolean] = Gen.oneOf(false , true)
+  val generateMixedAndNonResidentialPropertyTypes : Gen[enums.PropertyTypes.Value] = Gen.oneOf(mixed, nonResidential)
 
 }
