@@ -23,6 +23,6 @@
     @formHelper(action = controllers.scalabuild.routes.CheckYourAnswersController.onSubmit(), Symbol("autoComplete") -> "off") {
         @pageHeading(messages("checkYourAnswers.heading"))
         @govukSummaryList(list)
-        @govukButton(ButtonViewModel("continue-button",messages("site.calculate")))
+        @govukButton(ButtonViewModel(id = "calculate",content = messages("site.calculate")))
     }
 }

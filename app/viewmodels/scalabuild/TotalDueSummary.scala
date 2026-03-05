@@ -7,25 +7,20 @@ package viewmodels.scalabuild
 
 import models.scalabuild.HoldingTypes
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.scalabuild.FormatUtils.{bigDecimalFormat, keyCssClass, valueCssClass}
-import viewmodels.scalabuild.govuk.summarylist.{
-  FluentKey,
-  FluentValue,
-  KeyViewModel,
-  SummaryListRowViewModel,
-  ValueViewModel
-}
+import viewmodels.scalabuild.FormatUtils.bigDecimalFormat
+import viewmodels.scalabuild.govuk.summarylist.{KeyViewModel, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.scalabuild.implicits._
 
 object TotalDueSummary {
 
-  def row(totalTax: Int, holding: HoldingTypes, slab: Boolean = false)(implicit messages: Messages): SummaryListRow = {
+  def row(totalTax: Int, holding: HoldingTypes, slab: Boolean = false, index: Int)(implicit messages: Messages): SummaryListRow = {
     val messageKey = if (slab) "slab" else holding.toString.toLowerCase
+    val valueText = bigDecimalFormat(value = totalTax, currencySymbol = "")
     SummaryListRowViewModel(
-      key = KeyViewModel(s"totalTax.resultLabel.${messageKey}").withCssClass(keyCssClass),
-      value = ValueViewModel(bigDecimalFormat(totalTax)).withCssClass(valueCssClass)
+      key = KeyViewModel(s"totalTax.resultLabel.${messageKey}"),
+      value = ValueViewModel(content = HtmlContent(s"""<span id="totalTax$index">$valueText</span>"""))
     )
   }
-
 }

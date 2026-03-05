@@ -38,11 +38,11 @@
         </ul>
     </div>
     @govukRadios(
-        RadiosViewModel.yesNoCustomIdSuffix(
+        RadiosViewModel.yesNoCustomId(
             field = form("ownedOtherProperties"),
-            legend = LegendViewModel(messages("ownsOtherProperties.heading")).asVisuallyHidden(),
-            yesId = "-yes",
-            noId = "-no"
+            fieldset = Fieldset(legend = Some(LegendViewModel(messages("ownsOtherProperties.heading")).asVisuallyHidden())),
+            yesId = "ownedOtherProperties-yes",
+            noId = "ownedOtherProperties-no"
         ).inline()
     )
 

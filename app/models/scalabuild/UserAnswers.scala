@@ -56,8 +56,7 @@ final case class UserAnswers(
 
     updatedData.flatMap { d =>
       val updatedAnswers = copy(data = d)
-      pageOne.cleanup(Some(valueOne), updatedAnswers)
-      pageTwo.cleanup(Some(valueTwo), updatedAnswers)
+      pageOne.cleanup(Some(valueOne), updatedAnswers).flatMap(data => pageTwo.cleanup(Some(valueTwo), data))
     }
   }
 

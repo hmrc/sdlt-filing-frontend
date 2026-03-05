@@ -28,7 +28,9 @@ trait FreeholdRequestFromMongo {
       )
     ),
     firstTimeBuyer = None,
-    relevantRentDetails = None
+    relevantRentDetails = None,
+    mainResidence = None,
+    ownedOtherProperties = Some(true)
   )
 
   val slabRequest: RequestFromMongo = RequestFromMongo(
@@ -40,7 +42,9 @@ trait FreeholdRequestFromMongo {
     mongoLeaseDetails = None,
     propertyDetails = None,
     firstTimeBuyer = None,
-    relevantRentDetails = None
+    relevantRentDetails = None,
+    mainResidence = None,
+    ownedOtherProperties = None
   )
 
 }

@@ -20,8 +20,8 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import services.CalculationService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import viewmodels.scalabuild.TotalDueSummary
 import viewmodels.scalabuild.checkanswerssummary.{EffectiveDateSummary, PurchasePriceSummary}
 
@@ -34,7 +34,7 @@ class ResultServiceSpec
     with GuiceOneAppPerSuite
     with FreeholdRequestFromMongo {
 
-  val mockCalculationService = mock[CalculationService]
+  val mockCalculationService: CalculationService = mock[CalculationService]
 
   val testResultService = new ResultService(
     mockCalculationService
@@ -96,9 +96,10 @@ class ResultServiceSpec
         rows = Seq(
           EffectiveDateSummary.row(emptyUserAnswers2.copy(data = freeResNonIndAddMainUaData), withAction = false),
           PurchasePriceSummary.row(emptyUserAnswers2.copy(data = freeResNonIndAddMainUaData), withAction = false)
-        ).flatten :+ TotalDueSummary.row(freeResCalculationResult.totalTax, holding)
+        ).flatten :+ TotalDueSummary.row(freeResCalculationResult.totalTax, holding, index = 0)
       ),
-      taxesDue = Seq((freeResCalculationResult.taxCalcs.head.taxType, freeResCalculationResult.taxCalcs.head.taxDue)),
+      taxesDue =
+        Seq((freeResCalculationResult.taxCalcs.head.taxType, freeResCalculationResult.taxCalcs.head.taxDue, None)),
       viewDetailsLink = Some(routes.DetailController.onPageLoad(0).url)
     )
   )
@@ -132,18 +133,18 @@ class ResultServiceSpec
         val freeResSummaryList = SummaryList(
           List(
             SummaryListRow(
-              Key(Text("Effective date")),
-              Value(content = Text("1 January 2025"), " "),
+              key = Key(Text("Effective date")),
+              value = Value(content = HtmlContent("""<span id="effDate0">1 January 2025</span>""")),
               actions = None
             ),
             SummaryListRow(
-              Key(Text("Purchase price (£)"), " govuk-!-width-one-half"),
-              Value(content = Text("£500,000"), " "),
+              Key(Text("Purchase price (£)")),
+              Value(content = HtmlContent("""<span id="premium0">500,000</span>""")),
               actions = None
             ),
             SummaryListRow(
-              Key(Text("Total tax"), " govuk-!-width-one-half"),
-              Value(content = Text("£20,000"), " "),
+              Key(Text("Total tax")),
+              Value(content = HtmlContent("""<span id="totalTax0">20,000</span>""")),
               actions = None
             )
           )
@@ -157,7 +158,7 @@ class ResultServiceSpec
           totalTax = 20000,
           netPresentValue = None,
           summaryTable = freeResSummaryList,
-          taxesDue = List((premium, 20000)),
+          taxesDue = List((premium, 20000, None)),
           viewDetailsLink = Some(routes.DetailController.onPageLoad(0).url)
         )
 
@@ -219,40 +220,42 @@ class ResultServiceSpec
       val leaseResSummaryList = SummaryList(
         List(
           SummaryListRow(
-            Key(Text("Total amount of tax for this transaction"), " govuk-!-width-one-half"),
-            Value(content = Text("£15,000"), " "),
+            Key(Text("Total amount of tax for this transaction")),
+            Value(content = HtmlContent("""<span id="totalTax0">15,000</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("Net Present Value"), " govuk-!-width-one-half"),
-            Value(content = Text("£51,303"), " "),
+            Key(Text("Net Present Value")),
+            Value(HtmlContent("""<span id="npv0">£51,303</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("SDLT on Rent"), " govuk-!-width-one-half"),
-            Value(content = Text("£0"), " "),
+            Key(HtmlContent(s"""<span id="taxType00">SDLT on Rent</span>""")),
+            Value(HtmlContent(s"""<span id="taxDue00">£0</span>""")),
             actions = Some(
               Actions(
                 items = List(
                   ActionItem(
                     href = routes.DetailController.onPageLoad(0).url,
                     content = Text("View calculation"),
-                    visuallyHiddenText = Some("View calculation")
+                    visuallyHiddenText = Some("View calculation"),
+                    attributes = Map("id" -> "detailCalc0")
                   )
                 )
               )
             )
           ),
           SummaryListRow(
-            Key(Text("SDLT on Premium"), " govuk-!-width-one-half"),
-            Value(content = Text("£15,000"), " "),
+            Key(HtmlContent(s"""<span id="taxType01">SDLT on Premium</span>""")),
+            Value(HtmlContent(s"""<span id="taxDue01">£15,000</span>""")),
             actions = Some(
               Actions(
                 items = List(
                   ActionItem(
                     href = routes.DetailController.onPageLoad(0).url,
                     content = Text("View calculation"),
-                    visuallyHiddenText = Some("View calculation")
+                    visuallyHiddenText = Some("View calculation"),
+                    attributes = Map("id" -> "detailCalc1")
                   )
                 )
               )
@@ -267,7 +270,7 @@ class ResultServiceSpec
         totalTax = 15000,
         netPresentValue = Some(51303),
         summaryTable = leaseResSummaryList,
-        taxesDue = List((rent, 0), (premium, 15000)),
+        taxesDue = List((rent, 0, None), (premium, 15000, None)),
         viewDetailsLink = None
       )
 
@@ -351,40 +354,42 @@ class ResultServiceSpec
         val leaseResSummaryList1 = SummaryList(
           List(
             SummaryListRow(
-              Key(Text("Total amount of tax for this transaction"), " govuk-!-width-one-half"),
-              Value(content = Text("£48,426"), " "),
+              Key(Text("Total amount of tax for this transaction")),
+              Value(content = HtmlContent("""<span id="totalTax0">48,426</span>""")),
               actions = None
             ),
             SummaryListRow(
-              Key(Text("Net Present Value"), " govuk-!-width-one-half"),
-              Value(content = Text("£23,526"), " "),
+              Key(Text("Net Present Value")),
+              Value(HtmlContent("""<span id="npv0">£23,526</span>""")),
               actions = None
             ),
             SummaryListRow(
-              Key(Text("SDLT on Rent"), " govuk-!-width-one-half"),
-              Value(content = Text("£1,026"), " "),
+              key = Key(HtmlContent(s"""<span id="taxType00">SDLT on Rent</span>""")),
+              Value(HtmlContent(s"""<span id="taxDue00">£1,026</span>""")),
               actions = Some(
                 Actions(
                   items = List(
                     ActionItem(
                       href = routes.DetailController.onPageLoad(0).url,
                       content = Text("View calculation"),
-                      visuallyHiddenText = Some("View calculation")
+                      visuallyHiddenText = Some("View calculation"),
+                      attributes = Map("id" -> "detailCalc0")
                     )
                   )
                 )
               )
             ),
             SummaryListRow(
-              Key(Text("SDLT on Premium"), " govuk-!-width-one-half"),
-              Value(content = Text("£47,400"), " "),
+              key = Key(HtmlContent(s"""<span id="taxType01">SDLT on Premium</span>""")),
+              Value(HtmlContent(s"""<span id="taxDue01">£47,400</span>""")),
               actions = Some(
                 Actions(
                   items = List(
                     ActionItem(
                       href = routes.DetailController.onPageLoad(0).url,
                       content = Text("View calculation"),
-                      visuallyHiddenText = Some("View calculation")
+                      visuallyHiddenText = Some("View calculation"),
+                      attributes = Map("id" -> "detailCalc1")
                     )
                   )
                 )
@@ -396,40 +401,42 @@ class ResultServiceSpec
         val leaseResSummaryList2 = SummaryList(
           List(
             SummaryListRow(
-              Key(Text("Total amount of tax for this transaction"), " govuk-!-width-one-half"),
-              Value(content = Text("£22,500"), " "),
+              Key(Text("Total amount of tax for this transaction")),
+              Value(content = HtmlContent("""<span id="totalTax1">22,500</span>""")),
               actions = None
             ),
             SummaryListRow(
-              Key(Text("Net Present Value"), " govuk-!-width-one-half"),
-              Value(content = Text("£23,526"), " "),
+              Key(Text("Net Present Value")),
+              Value(HtmlContent("""<span id="npv1">£23,526</span>""")),
               actions = None
             ),
             SummaryListRow(
-              Key(Text("SDLT on Rent"), " govuk-!-width-one-half"),
-              Value(content = Text("£0"), classes = " "),
+              key = Key(HtmlContent(s"""<span id="taxType10">SDLT on Rent</span>""")),
+              Value(HtmlContent(s"""<span id="taxDue10">£0</span>""")),
               actions = Some(
                 Actions(
                   items = List(
                     ActionItem(
                       href = routes.DetailController.onPageLoad(1).url,
                       content = Text("View calculation"),
-                      visuallyHiddenText = Some("View calculation")
+                      visuallyHiddenText = Some("View calculation"),
+                      attributes = Map("id" -> "detailCalc0")
                     )
                   )
                 )
               )
             ),
             SummaryListRow(
-              Key(Text("SDLT on Premium"), " govuk-!-width-one-half"),
-              Value(content = Text("£22,500"), " "),
+              key = Key(HtmlContent(s"""<span id="taxType11">SDLT on Premium</span>""")),
+              Value(HtmlContent(s"""<span id="taxDue11">£22,500</span>""")),
               actions = Some(
                 Actions(
                   items = List(
                     ActionItem(
                       href = routes.DetailController.onPageLoad(1).url,
                       content = Text("View calculation"),
-                      visuallyHiddenText = Some("View calculation")
+                      visuallyHiddenText = Some("View calculation"),
+                      attributes = Map("id" -> "detailCalc1")
                     )
                   )
                 )
@@ -446,7 +453,7 @@ class ResultServiceSpec
           totalTax = 48426,
           netPresentValue = Some(23526),
           summaryTable = leaseResSummaryList1,
-          taxesDue = List((rent, 1026), (premium, 47400)),
+          taxesDue = List((rent, 1026, None), (premium, 47400, None)),
           viewDetailsLink = None
         )
 
@@ -459,7 +466,7 @@ class ResultServiceSpec
           totalTax = 22500,
           netPresentValue = Some(23526),
           summaryTable = leaseResSummaryList2,
-          taxesDue = List((rent, 0), (premium, 22500)),
+          taxesDue = List((rent, 0, None), (premium, 22500, None)),
           viewDetailsLink = None
         )
 
@@ -524,17 +531,17 @@ class ResultServiceSpec
         List(
           SummaryListRow(
             Key(Text("Effective date")),
-            Value(content = Text("1 July 2021"), " "),
+            value = Value(content = HtmlContent("""<span id="effDate0">1 July 2021</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("Purchase price (£)"), " govuk-!-width-one-half"),
-            Value(content = Text("£300,000"), " "),
+            Key(Text("Purchase price (£)")),
+            Value(content = HtmlContent("""<span id="premium0">300,000</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("Total SDLT due (£)"), " govuk-!-width-one-half"),
-            Value(content = Text("£4,500"), " "),
+            Key(Text("Total SDLT due (£)")),
+            Value(content = HtmlContent("""<span id="totalTax0">4,500</span>""")),
             actions = None
           )
         )
@@ -544,22 +551,22 @@ class ResultServiceSpec
         List(
           SummaryListRow(
             Key(Text("Effective date")),
-            Value(content = Text("1 July 2021"), " "),
+            value = Value(content = HtmlContent("""<span id="effDate1">1 July 2021</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("Purchase price (£)"), " govuk-!-width-one-half"),
-            Value(content = Text("£300,000"), " "),
+            Key(Text("Purchase price (£)")),
+            Value(content = HtmlContent("""<span id="premium1">300,000</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("Percentage rate (%)"), " govuk-!-width-one-half"),
-            Value(content = Text("3"), " "),
+            Key(Text("Percentage rate (%)")),
+            Value(HtmlContent("""<span id="taxRate1">3</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("Total SDLT due (£)"), " govuk-!-width-one-half"),
-            Value(content = Text("£9,000"), " "),
+            Key(Text("Total SDLT due (£)")),
+            Value(content = HtmlContent("""<span id="totalTax1">9,000</span>""")),
             actions = None
           )
         )
@@ -573,7 +580,7 @@ class ResultServiceSpec
         totalTax = 4500,
         netPresentValue = None,
         summaryTable = firstSummaryList1,
-        taxesDue = List((premium, 4500)),
+        taxesDue = List((premium, 4500, None)),
         viewDetailsLink = Some(routes.DetailController.onPageLoad(0).url)
       )
 
@@ -584,7 +591,7 @@ class ResultServiceSpec
         totalTax = 9000,
         netPresentValue = None,
         summaryTable = slabSummaryList,
-        taxesDue = List((premium, 9000)),
+        taxesDue = List((premium, 9000, Some(3))),
         viewDetailsLink = None
       )
 
@@ -644,21 +651,40 @@ class ResultServiceSpec
         )
       )
 
-      val freeResSummaryList = SummaryList(
+      val freeResSummaryList1 = SummaryList(
         List(
           SummaryListRow(
             Key(Text("Effective date")),
-            Value(content = Text("1 January 2025"), " "),
+            value = Value(content = HtmlContent("""<span id="effDate0">1 January 2025</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("Purchase price (£)"), " govuk-!-width-one-half"),
-            Value(content = Text("£500,000"), " "),
+            Key(Text("Purchase price (£)")),
+            Value(content = HtmlContent("""<span id="premium0">500,000</span>""")),
             actions = None
           ),
           SummaryListRow(
-            Key(Text("Total tax"), " govuk-!-width-one-half"),
-            Value(content = Text("£20,000"), " "),
+            Key(Text("Total tax")),
+            Value(content = HtmlContent("""<span id="totalTax0">20,000</span>""")),
+            actions = None
+          )
+        )
+      )
+      val freeResSummaryList2 = SummaryList(
+        List(
+          SummaryListRow(
+            Key(Text("Effective date")),
+            value = Value(content = HtmlContent("""<span id="effDate1">1 January 2025</span>""")),
+            actions = None
+          ),
+          SummaryListRow(
+            Key(Text("Purchase price (£)")),
+            Value(content = HtmlContent("""<span id="premium1">500,000</span>""")),
+            actions = None
+          ),
+          SummaryListRow(
+            Key(Text("Total tax")),
+            Value(content = HtmlContent("""<span id="totalTax1">20,000</span>""")),
             actions = None
           )
         )
@@ -671,8 +697,8 @@ class ResultServiceSpec
         ),
         totalTax = 20000,
         netPresentValue = None,
-        summaryTable = freeResSummaryList,
-        taxesDue = List((premium, 20000)),
+        summaryTable = freeResSummaryList1,
+        taxesDue = List((premium, 20000, None)),
         viewDetailsLink = Some(routes.DetailController.onPageLoad(0).url)
       )
       val freeResSecondExpectedResultsTable = ResultDisplayTable(
@@ -682,8 +708,8 @@ class ResultServiceSpec
         ),
         totalTax = 20000,
         netPresentValue = None,
-        summaryTable = freeResSummaryList,
-        taxesDue = List((premium, 20000)),
+        summaryTable = freeResSummaryList2,
+        taxesDue = List((premium, 20000, None)),
         viewDetailsLink = Some(routes.DetailController.onPageLoad(1).url)
       )
 

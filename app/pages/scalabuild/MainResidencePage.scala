@@ -5,12 +5,11 @@
 
 package pages.scalabuild
 
-import models.scalabuild.PageConstants.propertyDetails
 import play.api.libs.json.JsPath
 
 case object MainResidencePage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ propertyDetails \ toString
+  override def path: JsPath = JsPath \ toString
 
   override def toString: String = "mainResidence"
 

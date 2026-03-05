@@ -12,6 +12,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import pages.scalabuild.HoldingPage
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 
 class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
@@ -30,8 +31,8 @@ class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Freehold' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(HoldingPage, Freehold).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half"),
-          value = Value(Text("Freehold"), " "),
+          key = Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_holdingType">Freehold</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -51,8 +52,8 @@ class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Leasehold' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(HoldingPage, Leasehold).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half"),
-          value = Value(Text("Leasehold"), " "),
+          key = Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_holdingType">Leasehold</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -73,8 +74,8 @@ class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Freehold' and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(HoldingPage, Freehold).toOption
         val expected = SummaryListRow(
-          Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half"),
-          Value(Text("Freehold"), " ")
+          key = Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_holdingType">Freehold</span>""")),
         )
         val result = HoldingSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -83,8 +84,8 @@ class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Leasehold' and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(HoldingPage, Leasehold).toOption
         val expected = SummaryListRow(
-          Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half"),
-          Value(Text("Leasehold"), " ")
+          key = Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_holdingType">Leasehold</span>""")),
         )
         val result = HoldingSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

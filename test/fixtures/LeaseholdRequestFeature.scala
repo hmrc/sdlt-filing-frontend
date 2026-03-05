@@ -5,10 +5,10 @@
 
 package fixtures
 
-import java.time.LocalDate
-
 import enums.{HoldingTypes, PropertyTypes}
 import models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
+
+import java.time.LocalDate
 
 trait LeaseholdRequestFeature extends LeaseDetailsFixture {
 

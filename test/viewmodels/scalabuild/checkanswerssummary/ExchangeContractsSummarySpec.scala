@@ -11,6 +11,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import pages.scalabuild.ExchangeContractsPage
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 
 class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
@@ -29,8 +30,8 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Yes' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(ExchangeContractsPage, true).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half"),
-          value = Value(Text("Yes"), " "),
+          key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">Yes</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -50,8 +51,8 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'No' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(ExchangeContractsPage, false).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half"),
-          value = Value(Text("No"), " "),
+          key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">No</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -72,8 +73,8 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Yes' and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(ExchangeContractsPage, true).toOption
         val expected = SummaryListRow(
-          Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half"),
-          Value(Text("Yes"), " ")
+          key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">Yes</span>""")),
         )
         val result = ExchangeContractPreMarch2016Summary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -82,8 +83,8 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'No' and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(ExchangeContractsPage, false).toOption
         val expected = SummaryListRow(
-          Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half"),
-          Value(Text("No"), " ")
+          key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">No</span>""")),
         )
         val result = ExchangeContractPreMarch2016Summary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

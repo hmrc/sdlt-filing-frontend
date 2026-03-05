@@ -18,9 +18,26 @@ case object IsAdditionalPropertyPage extends QuestionPage[Boolean] {
   override def toString: String = "twoOrMoreProperties"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
-    value.map {
-      case false => userAnswers.remove(ReplaceMainResidencePage)
-      case _ => super.cleanup(value, userAnswers)
-    }.getOrElse(super.cleanup(value, userAnswers))
+    value
+      .map {
+        case false =>
+          // todo if (for ftb dates?) case here when implementing check mode
+          for {
+            replaceMainRes <- userAnswers.remove(ReplaceMainResidencePage)
+            mainRes <- replaceMainRes.remove(MainResidencePage)
+            ownedOther <- mainRes.remove(OwnsOtherPropertiesPage)
+          } yield {
+            ownedOther
+          }
+        case true =>
+          for {
+            mainRes <- userAnswers.remove(MainResidencePage)
+            ownedOther <- mainRes.remove(OwnsOtherPropertiesPage)
+          } yield {
+            ownedOther
+          }
+        case _ => super.cleanup(value, userAnswers)
+      }
+      .getOrElse(super.cleanup(value, userAnswers))
   }
 }

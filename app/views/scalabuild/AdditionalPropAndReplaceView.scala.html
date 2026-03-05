@@ -37,11 +37,11 @@
             noId = "No",
             conditionalYesHtml = Some(
                 govukRadios(
-                    RadiosViewModel.yesNoCustomIdSuffix(
+                    RadiosViewModel.yesNoCustomId(
                         field = replaceMainForm("replaceMainResidence"),
-                        legend = LegendViewModel(messages("replaceMainResidence.heading")).asPageHeading(),
-                        yesId = "Yes",
-                        noId = "No"
+                        fieldset = Fieldset(legend = Some(LegendViewModel(messages("replaceMainResidence.heading")).asPageHeading())),
+                        yesId = "mainResidenceYes",
+                        noId = "mainResidenceNo"
                     ).inline().withHint(Hint(content = HtmlContent(messages("replaceMainResidence.hint"))))
                 )
             )

@@ -11,7 +11,7 @@ import models.scalabuild.LeaseDates
 import org.scalatest.wordspec.AnyWordSpec
 import pages.scalabuild.LeaseDatesPage
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 
 import java.time.LocalDate
@@ -35,7 +35,7 @@ class LeaseEndDateSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(LeaseDatesPage, leaseDates).toOption
         val expected = SummaryListRow(
           key = Key(Text("End date as specified in lease")),
-          value = Value(Text("1 January 2225"), " "),
+          value = Value(content = HtmlContent(s"""<span id="td2_leaseEndDate">1 January 2225</span>""")),
           actions = Some(
             Actions(
               items = List(
@@ -57,7 +57,7 @@ class LeaseEndDateSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(LeaseDatesPage, leaseDates).toOption
         val expected = SummaryListRow(
           Key(Text("End date as specified in lease")),
-          Value(Text("1 January 2225"), " ")
+          value = Value(content = HtmlContent(s"""<span id="td2_leaseEndDate">1 January 2225</span>""")),
         )
         val result = LeaseEndDateSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

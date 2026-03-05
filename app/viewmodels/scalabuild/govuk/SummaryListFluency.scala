@@ -5,7 +5,7 @@
 
 package viewmodels.scalabuild.govuk
 
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 
 object summarylist extends SummaryListFluency
@@ -98,23 +98,32 @@ trait SummaryListFluency {
 
     def apply(content: Content): Key =
       Key(content = content)
+
+    def withId(text: String, id: String): Key =
+      Key(content = HtmlContent(s"""<span id="$id">$text</span>"""))
   }
 
   implicit class FluentKey(key: Key) {
 
     def withCssClass(className: String): Key =
       key.copy(classes = s"${key.classes} $className")
+
   }
 
   object ValueViewModel {
 
     def apply(content: Content): Value =
       Value(content = content)
+
+    def withId(text: String, id: String): Value =
+      Value(content = HtmlContent(s"""<span id="$id">$text</span>"""))
+
   }
 
   implicit class FluentValue(value: Value) {
 
     def withCssClass(className: String): Value =
       value.copy(classes = s"${value.classes} $className")
+
   }
 }

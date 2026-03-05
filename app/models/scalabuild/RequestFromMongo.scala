@@ -5,9 +5,12 @@
 
 package models.scalabuild
 
+import data.Dates
+import data.Dates.{APR2021_RESIDENTIAL_DATE, APRIL2016_RESIDENTIAL_DATE, JUNE2021_RESIDENTIAL_DATE}
 import enums.{HoldingTypes, PropertyTypes}
 import models._
 import play.api.libs.json.{Format, Json, OFormat}
+import utils.CalculationUtils.DateHelper
 
 import java.time.LocalDate
 
@@ -32,25 +35,80 @@ case class RequestFromMongo(
     mongoLeaseDetails: Option[MongoLeaseDetails],
     propertyDetails: Option[PropertyDetails],
     relevantRentDetails: Option[RelevantRentDetails],
-    firstTimeBuyer: Option[Boolean]
+    firstTimeBuyer: Option[Boolean],
+    mainResidence: Option[Boolean],
+    ownedOtherProperties: Option[Boolean]
 ) {
   def toRequest: Request = {
+    val oNonUKResident = nonUKResident match {
+      case Some(value) if effectiveDate.onOrAfter(APR2021_RESIDENTIAL_DATE) => Some(value)
+      case _        => None
+    }
+    val oPropertyDetails: Option[PropertyDetails] = propertyType match {
+      case enums.PropertyTypes.residential if effectiveDate.onOrAfter(APRIL2016_RESIDENTIAL_DATE)   => {
+        propertyDetails match {
+          case Some(value) => Some(constructPropertyDetails(value, mainResidence))
+          case  None => None
+        }
+      }
+      case _ => None
+    }
+    val oLeaseDetails = holdingType match {
+      case enums.HoldingTypes.leasehold => Some(constructLeaseDetails).flatten
+      case enums.HoldingTypes.freehold  => None
+      case _ => None
+    }
+    val effDateWithinFTBRange:Boolean = (effectiveDate.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE)  && effectiveDate.isBefore(Dates.JULY2020_RESIDENTIAL_DATE)) | effectiveDate.isAfter(JUNE2021_RESIDENTIAL_DATE)
+
+    val oFirstTimeBuyer = propertyType match {
+      case enums.PropertyTypes.residential if effDateWithinFTBRange => {
+        propertyDetails match {
+          case Some(propDetails) => Some(validFirstTimeBuyer(propDetails, mainResidence, ownedOtherProperties))
+          case None        => None
+        }
+      }
+      case _ => None
+    }
     val request = Request(
       holdingType = holdingType,
       propertyType = propertyType,
       effectiveDate = effectiveDate,
-      nonUKResident = nonUKResident,
+      nonUKResident = oNonUKResident,
       premium = premium,
       highestRent = getHighestRent,
-      propertyDetails = propertyDetails,
-      leaseDetails = constructLeaseDetails,
+      propertyDetails = oPropertyDetails,
+      leaseDetails = oLeaseDetails,
       relevantRentDetails = relevantRentDetails,
-      firstTimeBuyer = Some(true),
+      firstTimeBuyer = oFirstTimeBuyer,
       isLinked = None,
       interestTransferred = None,
       taxReliefDetails = None
     )
     request
+  }
+
+  private def constructPropertyDetails(propertyDetails: PropertyDetails, oMainResidence: Option[Boolean]) : PropertyDetails = {
+    val twoOrMore = if (propertyDetails.individual) propertyDetails.twoOrMoreProperties else None
+    val replaceMainResidence = if (propertyDetails.twoOrMoreProperties.contains(true)) propertyDetails.replaceMainResidence else None
+    val sharedOwnership = if (oMainResidence.contains(true)) propertyDetails.sharedOwnership else None
+    val currentValue = if (propertyDetails.sharedOwnership.contains(true)) propertyDetails.currentValue else None
+      PropertyDetails(
+        individual = propertyDetails.individual,
+        twoOrMoreProperties = twoOrMore,
+        replaceMainResidence = replaceMainResidence,
+        sharedOwnership = sharedOwnership,
+        currentValue = currentValue
+      )
+
+  }
+
+  private def validFirstTimeBuyer(propertyDetails: PropertyDetails, mainResidence: Option[Boolean], ownsOtherProperties: Option[Boolean]): Boolean ={
+
+    (ownsOtherProperties, mainResidence, propertyDetails.sharedOwnership, propertyDetails.currentValue) match {
+      case (Some(false), Some(true), _, Some(false)) => false
+      case (Some(false), Some(true), _, _) => true
+      case _ => false
+    }
   }
 
   private def getHighestRent: BigDecimal = {

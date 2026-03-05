@@ -51,8 +51,6 @@ trait TestObjects {
     effectiveDate <- propertyType.set(EffectiveDatePage, LocalDate.of(2025, 1, 1))
     nonUKResident <- effectiveDate.set(NonUkResidentPage, true)
     addPropMainRes <- nonUKResident.setTwo(IsAdditionalPropertyPage, true, ReplaceMainResidencePage, true)
-    additionalProperty <- nonUKResident.set(IsAdditionalPropertyPage, true)
-    replaceMainResidence <- additionalProperty.set(ReplaceMainResidencePage, true)
     purchasePrice <- addPropMainRes.set(PremiumPage, BigDecimal(500000))
     individual <- purchasePrice.set(IsPurchaserIndividualPage, true)
   } yield individual
