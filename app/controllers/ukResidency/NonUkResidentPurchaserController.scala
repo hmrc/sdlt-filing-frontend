@@ -19,15 +19,15 @@ package controllers.ukResidency
 import controllers.actions.*
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
 import models.land.LandTypeOfProperty
-import models.{Mode, NormalMode}
+import models.{GetReturnByRefRequest, Mode, NormalMode}
 import navigation.Navigator
-import pages.land.LandTypeOfPropertyPage
 import pages.purchaser.WhoIsMakingThePurchasePage
 import pages.ukResidency.NonUkResidentPurchaserPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ukResidency.NonUkResidentPurchaserView
 
@@ -42,31 +42,46 @@ class NonUkResidentPurchaserController @Inject()(
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   formProvider: NonUkResidentPurchaserFormProvider,
+                                                  fullReturnService: FullReturnService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: NonUkResidentPurchaserView
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
 
-      request.userAnswers.get(LandTypeOfPropertyPage) match {
+    val effectiveReturnId = request.userAnswers.returnId
 
-        case Some(LandTypeOfProperty.Residential | LandTypeOfProperty.Additional) =>
+    effectiveReturnId.fold(
+      Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
+    ) { id =>
+      fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.userAnswers.storn))
+        .flatMap { fullReturn =>
 
-          val preparedForm =
-            request.userAnswers.get(NonUkResidentPurchaserPage)
-              .fold(form)(form.fill)
+          val propertyType = fullReturn.land.flatMap(_.headOption).flatMap(
+            land =>
+              LandTypeOfProperty.enumerable.withName(land.propertyType.getOrElse(""))
+          )
 
-          Ok(view(preparedForm, mode))
+          propertyType match {
 
-        case Some(_) =>
-          Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
+            case Some(LandTypeOfProperty.Residential | LandTypeOfProperty.Additional) =>
 
-        case None =>
-          Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
-      }
+              val preparedForm =
+                request.userAnswers.get(NonUkResidentPurchaserPage)
+                  .fold(form)(form.fill)
+
+              Future.successful(Ok(view(preparedForm, mode)))
+
+            case Some(_) =>
+              Future.successful(Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode)))
+
+            case None =>
+              Future.successful(Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode)))
+          }
+        }
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

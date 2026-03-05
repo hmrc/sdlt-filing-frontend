@@ -17,14 +17,16 @@
 package controllers.ukResidency
 
 import base.SpecBase
+import constants.FullReturnConstants
+import constants.FullReturnConstants.emptyFullReturn
 import controllers.routes
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
 import models.land.LandTypeOfProperty
-import models.purchaser.WhoIsMakingThePurchase
-import models.{NormalMode, UserAnswers}
+import models.{FullReturn, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.land.LandTypeOfPropertyPage
 import pages.purchaser.WhoIsMakingThePurchasePage
@@ -35,11 +37,19 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.FullReturnService
 import views.html.ukResidency.NonUkResidentPurchaserView
 
 import scala.concurrent.Future
 
-class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
+class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  private val mockFullReturnService = mock[FullReturnService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockFullReturnService)
+  }
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -48,28 +58,47 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val nonUkResidentPurchaserRoute: String = controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(NormalMode).url
 
-  private val testStorn = "TESTSTORN"
+  private lazy val fullReturnComplete = FullReturnConstants.completeFullReturn
+
+  private lazy val testStorn = "TESTSTORN"
 
   val userAnswersResidentialIndividual: UserAnswers =
-    UserAnswers(userAnswersId, storn = testStorn)
-      .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-      .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
-
-  val userAnswersNonResidential: UserAnswers =
-    UserAnswers(userAnswersId, storn = testStorn)
-      .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-      .set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
+    UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
+      .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Individual).success.value
 
   val userAnswersAdditionalResidentialCompany: UserAnswers =
-    UserAnswers(userAnswersId, storn = testStorn)
-      .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
+    UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
+      .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Company).success.value
+
+  val userAnswersNonResidential: UserAnswers =
+    UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithPurchaserNonResidential))
       .set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional).success.value
+
+  private def fullReturnWithIndividualPurchaser: FullReturn =
+    fullReturnComplete.copy(purchaser = Some(Seq(FullReturnConstants.completePurchaser1)))
+    fullReturnComplete.copy(land = Some(Seq(FullReturnConstants.completeLand)))
+
+  private def fullReturnWithCompanyPurchaser: FullReturn =
+    fullReturnComplete.copy(purchaser = Some(Seq(FullReturnConstants.completePurchaser3)))
+    fullReturnComplete.copy(land = Some(Seq(FullReturnConstants.completeLandAdditional)))
+
+  private def fullReturnWithPurchaserNonResidential: FullReturn =
+    emptyFullReturn.copy(purchaser = Some(Seq(FullReturnConstants.completePurchaser2)))
+    fullReturnComplete.copy(land = Some(Seq(FullReturnConstants.completeLandNonResidential)))
 
   "NonUkResidentPurchaser Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      when(mockFullReturnService.getFullReturn(any())(any(), any()))
+        .thenReturn(Future.successful(fullReturnWithIndividualPurchaser))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual)).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual))
+          .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, nonUkResidentPurchaserRoute)
@@ -83,21 +112,14 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to LandTypeOfPropertyPage on a GET when data doesn't exist for this section" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, nonUkResidentPurchaserRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
-      }
-    }
-
     "must redirect to LandTypeOfPropertyPage on a GET when type of property is non-residential" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersNonResidential)).build()
+      when(mockFullReturnService.getFullReturn(any())(any(), any()))
+        .thenReturn(Future.successful(emptyFullReturn))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersNonResidential))
+          .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, nonUkResidentPurchaserRoute)
@@ -110,10 +132,15 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
+      when(mockFullReturnService.getFullReturn(any())(any(), any()))
+        .thenReturn(Future.successful(fullReturnWithIndividualPurchaser))
 
       val userAnswers = userAnswersResidentialIndividual.set(NonUkResidentPurchaserPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, nonUkResidentPurchaserRoute)
@@ -136,6 +163,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
@@ -162,6 +190,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -187,6 +216,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual))
           .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -213,6 +243,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -239,6 +270,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -256,8 +288,12 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+          )
+          .build()
 
       running(application) {
         val request =
@@ -277,7 +313,12 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+          )
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, nonUkResidentPurchaserRoute)
@@ -291,7 +332,12 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+          )
+          .build()
 
       running(application) {
         val request =
