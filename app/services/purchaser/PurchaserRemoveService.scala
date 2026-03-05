@@ -21,6 +21,7 @@ import models.purchaser.*
 import models.requests.DataRequest
 import models.{Mode, Purchaser, ReturnInfo, ReturnInfoRequest, ReturnVersionUpdateRequest, UserAnswers}
 import pages.purchaser.{PurchaserOverviewRemovePage, PurchaserRemovePage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Results.Redirect
@@ -37,7 +38,7 @@ class PurchaserRemoveService @Inject()(
                                         view: PurchaserRemoveView,
                                         backendConnector: StampDutyLandTaxConnector,
                                         purchaserService: PurchaserService
-                                      ) {
+                                      ) extends Logging {
 
   def isMainPurchaser(purchaserId: String, userAnswers: UserAnswers): Boolean = {
     val mainPurchaserID: Option[String] = userAnswers.fullReturn
@@ -249,9 +250,14 @@ class PurchaserRemoveService @Inject()(
     val removedPurchaser = PurchaserOps.findById(purchasers, purchaserIdSession)
     val previousPurchaserInList = PurchaserOps.findByNextId(purchasers, chosenPurchaserId)
 
+    logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] chosen purchaser to promote: $chosenPurchaser")
+    logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] purchaser to remove: $removedPurchaser")
+    logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] previous purchaser in list: $previousPurchaserInList")
+
     def changeNextIdOfPreviousPurchaser(): Future[Unit] = {
       (previousPurchaserInList, chosenPurchaser) match {
         case (Some(changeP), Some(chosenP)) if !isMainPurchaser && purchaserLength > 1 =>
+          logger.info(s"[PurchaserRemoveService][changeNextIdOfPreviousPurchaser]")
           PurchaserOps.updatePurchaser(userAnswers, changeP.copy(nextPurchaserID = chosenP.nextPurchaserID))
         case _ =>
           Future.successful(())
@@ -280,7 +286,11 @@ class PurchaserRemoveService @Inject()(
           maybeResult <- updateChosenPurchaserIfNeeded(Some(returnVersion))
         } yield maybeResult.getOrElse(PurchaserOps.purchaserOverviewRedirect(removedPurchaser))
       }
-      .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+      .recover {
+        case _ =>
+          logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] failed to delete purchaser. Redirecting to journey recovery")
+          PurchaserOps.journeyRecoveryRedirect
+      }
   }
 
   private def handleMultiplePurchasersWithNewMain(
@@ -293,6 +303,9 @@ class PurchaserRemoveService @Inject()(
 
     val purchasers = PurchaserOps.allPurchasers(userAnswers)
     val chosenPurchaser = PurchaserOps.findById(purchasers, chosenPurchaserId)
+
+    logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] chosen purchaser to remove: $chosenPurchaser")
+    logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] purchaser ID in session: $purchaserIdSession")
 
     def doUpdate(newVersion: Long): Future[Result] =
       updateChosenPurchaserMulti(
@@ -313,7 +326,11 @@ class PurchaserRemoveService @Inject()(
           }
         } yield r
       }
-      .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+      .recover {
+        case _ =>
+          logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] redirecting to journey recovery")
+          PurchaserOps.journeyRecoveryRedirect
+      }
   }
 
   private def updateChosenPurchaserDouble(
@@ -323,7 +340,7 @@ class PurchaserRemoveService @Inject()(
                                            userAnswers: UserAnswers,
                                            version: Option[Long] = None
                                          )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-
+    logger.info(s"[PurchaserRemoveService][updateChosenPurchaserDouble] version: $version")
     PurchaserOps
       .withReturnInfo(userAnswers) { returnInfo =>
         PurchaserOps.withNewVersion(userAnswers, version) { newReturnVersion =>
@@ -336,7 +353,10 @@ class PurchaserRemoveService @Inject()(
           } yield PurchaserOps.purchaserOverviewRedirect(removedPurchaser)
         }
       }
-      .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+      .recover { case _ =>
+        logger.info(s"[PurchaserRemoveService][updateChosenPurchaserDouble] failed update purchaser. Redirecting to journey recovery")
+        PurchaserOps.journeyRecoveryRedirect
+      }
   }
 
   private def updateChosenPurchaserMulti(
@@ -350,6 +370,11 @@ class PurchaserRemoveService @Inject()(
     val newMainPurchaser = purchasers.find(_.purchaserID.contains(chosenPurchaserId))
     val originalMainPurchaser = purchasers.find(_.purchaserID.contains(purchaserIdSession))
     val previousPurchaserInList = purchasers.find(_.nextPurchaserID.contains(chosenPurchaserId))
+
+    logger.info(s"[PurchaserRemoveService][updateChosenPurchaserMulti] purchasers: $purchasers")
+    logger.info(s"[PurchaserRemoveService][updateChosenPurchaserMulti] newMainPurchaser: $newMainPurchaser")
+    logger.info(s"[PurchaserRemoveService][updateChosenPurchaserMulti] originalMainPurchaser: $originalMainPurchaser")
+    logger.info(s"[PurchaserRemoveService][updateChosenPurchaserMulti] previousPurchaserInList: $previousPurchaserInList")
 
     PurchaserOps
       .withReturnInfo(userAnswers) { returnInfo =>
@@ -366,7 +391,11 @@ class PurchaserRemoveService @Inject()(
                           version = Some(newReturnVersion.toString)))
                     } yield PurchaserOps.purchaserOverviewRedirect(originalMainPurchaser)
                   }
-                  .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+                  .recover {
+                    case _ =>
+                      logger.info(s"[PurchaserRemoveService][updateChosenPurchaserMulti] updating mainPurchaserID and version in returnInfo failed. Redirecting to journey recovery")
+                      PurchaserOps.journeyRecoveryRedirect
+                  }
 
               case (Some(nextPId), Some(mainPId)) =>
                 PurchaserOps
@@ -379,17 +408,26 @@ class PurchaserRemoveService @Inject()(
                           version = Some(newReturnVersion.toString)))
                     } yield PurchaserOps.purchaserOverviewRedirect(originalMainPurchaser)
                   }
-                  .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+                  .recover {
+                    case _ =>
+                      logger.info(s"[PurchaserRemoveService][updateChosenPurchaserMulti] updating nextPurchaserIDs and mainPurchaserID and version in returnInfo failed. Redirecting to journey recovery")
+                      PurchaserOps.journeyRecoveryRedirect
+                  }
 
               case _ =>
                 Future.successful(PurchaserOps.purchaserOverviewRedirect())
             }
 
           case _ =>
+            logger.info(s"[PurchaserRemoveService][updateChosenPurchaserMulti] required data missing. Redirecting to journey recovery")
             Future.successful(PurchaserOps.journeyRecoveryRedirect)
         }
       }
-      .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+      .recover {
+        case _ =>
+          logger.info(s"[PurchaserRemoveService][updateChosenPurchaserMulti] return info missing. Redirecting to journey recovery")
+          PurchaserOps.journeyRecoveryRedirect
+      }
   }
 
 
