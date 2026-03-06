@@ -78,7 +78,7 @@ class NonUkResidentPurchaserController @Inject()(
     implicit request =>
 
       val isCompany: Boolean = request.userAnswers.fullReturn.flatMap(_.purchaser)
-        .flatMap(_.headOption).flatMap(_.isCompany).contains("true")
+        .flatMap(_.headOption).flatMap(_.isCompany).contains("YES")
 
       form.bindFromRequest().fold(
         formWithErrors =>

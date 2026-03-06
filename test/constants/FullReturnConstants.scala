@@ -48,7 +48,7 @@ object FullReturnConstants {
   val completePurchaser1: Purchaser = Purchaser(
     purchaserID = Some("PUR001"),
     returnID = Some("RET123456789"),
-    isCompany = Some("false"),
+    isCompany = Some("NO"),
     isTrustee = Some("false"),
     isConnectedToVendor = Some("false"),
     isRepresentedByAgent = Some("true"),
@@ -80,7 +80,7 @@ object FullReturnConstants {
   val completePurchaser2: Purchaser = Purchaser(
     purchaserID = Some("PUR002"),
     returnID = Some("RET123456789"),
-    isCompany = Some("false"),
+    isCompany = Some("NO"),
     isTrustee = Some("false"),
     isConnectedToVendor = Some("false"),
     isRepresentedByAgent = Some("true"),
@@ -112,7 +112,7 @@ object FullReturnConstants {
   val completePurchaser3: Purchaser = Purchaser(
     purchaserID = Some("PUR002"),
     returnID = Some("RET123456789"),
-    isCompany = Some("true"),
+    isCompany = Some("YES"),
     isTrustee = Some("false"),
     isConnectedToVendor = Some("false"),
     isRepresentedByAgent = Some("true"),
