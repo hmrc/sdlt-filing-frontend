@@ -2553,6 +2553,134 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           }
         }
       }
+
+      //SDLT - Tax Calc Case - 54a_2020 - Self Assessed
+      "TaxRelief code is FirstTimeBuyersRelief(32) & Property type is Residential" must {
+        "return the self assessed response" when {
+          "date is 2020/07/08 " in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    | "holdingType": "Freehold",
+                    | "propertyType": "Residential",
+                    | "effectiveDateDay":8,
+                    | "effectiveDateMonth":7,
+                    | "effectiveDateYear":2020,
+                    | "premium": 1000000,
+                    | "highestRent": 0,
+                    | "taxReliefDetails": {
+                    |   "taxReliefCode": 32
+                    | },
+                    | "propertyDetails": {
+                    | "individual": "Yes",
+                    | "twoOrMoreProperties": "No"
+                    | },
+                    | "isLinked": true
+                    |}
+                    |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+          }
+          "date is between 2020/07/08 and 2021/03/31(including these dates)" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    | "holdingType": "Freehold",
+                    | "propertyType": "Residential",
+                    | "effectiveDateDay": 21,
+                    | "effectiveDateMonth":9,
+                    | "effectiveDateYear": 2020,
+                    | "premium": 1000000,
+                    | "highestRent": 0,
+                    | "taxReliefDetails": {
+                    |   "taxReliefCode": 32
+                    | },
+                    | "propertyDetails": {
+                    | "individual": "Yes",
+                    | "twoOrMoreProperties": "No"
+                    | },
+                    | "isLinked": true
+                    |}
+                    |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+          }
+          "date is after 2021/03/31 nonUKResident = Yes " in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    | "holdingType": "Freehold",
+                    | "propertyType": "Residential",
+                    | "nonUKResident" : "Yes",
+                    | "effectiveDateDay": 1,
+                    | "effectiveDateMonth": 4,
+                    | "effectiveDateYear": 2021,
+                    | "premium": 1000000,
+                    | "highestRent": 0,
+                    | "taxReliefDetails": {
+                    |   "taxReliefCode": 32
+                    | },
+                    | "propertyDetails": {
+                    | "individual": "Yes",
+                    | "twoOrMoreProperties": "No"
+                    | },
+                    | "isLinked": true
+                    |}
+                    |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+          }
+          "date is after 2021/03/31 nonUKResident = No" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  """
+                    |{
+                    | "holdingType": "Freehold",
+                    | "propertyType": "Residential",
+                    | "nonUKResident" : "No",
+                    | "effectiveDateDay": 1,
+                    | "effectiveDateMonth": 4,
+                    | "effectiveDateYear": 2021,
+                    | "premium": 1000000,
+                    | "highestRent": 0,
+                    | "taxReliefDetails": {
+                    |   "taxReliefCode": 32
+                    | },
+                    | "propertyDetails": {
+                    | "individual": "Yes",
+                    | "twoOrMoreProperties": "No"
+                    | },
+                    | "isLinked": true
+                    |}
+                    |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+          }
+        }
+      }
     }
   }
 }
