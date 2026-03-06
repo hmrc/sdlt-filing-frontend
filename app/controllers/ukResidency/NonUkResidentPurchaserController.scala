@@ -19,7 +19,7 @@ package controllers.ukResidency
 import controllers.actions.*
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
 import models.land.LandTypeOfProperty
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.ukResidency.NonUkResidentPurchaserPage
 import play.api.data.Form
@@ -78,7 +78,7 @@ class NonUkResidentPurchaserController @Inject()(
     implicit request =>
 
       val isCompany: Boolean = request.userAnswers.fullReturn.flatMap(_.purchaser)
-        .flatMap(_.headOption).flatMap(_.isCompany).contains("YES")
+        .flatMap(_.headOption).flatMap(_.isCompany).contains("true")
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -92,7 +92,7 @@ class NonUkResidentPurchaserController @Inject()(
             if (isCompany) {
               Redirect(navigator.nextPage(NonUkResidentPurchaserPage, mode, updatedAnswers))
             } else if (value) {
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) //TODO - DTR-3002 - SPRINT 10 - Connect to CrownEmploymentRelief page
+              Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode))
             } else {
               Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2511 - SPRINT-12 - change to residency CYA page
             }

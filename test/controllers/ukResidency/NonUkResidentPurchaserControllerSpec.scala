@@ -136,32 +136,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, nonUkResidentPurchaserRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-      }
-    }
-
     "must redirect to the Close Companies page when valid data is submitted and yes selected for company purchaser" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -208,7 +182,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url //TODO - DTR-3002 - Sprint 10 - Connect to CrownEmploymentRelief page
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
       }
     }
 
@@ -238,7 +212,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the Crown Employment Relief page when valid data is submitted and no selected for company purchaser" in {
+    "must redirect to the Close Companies page when valid data is submitted and no selected for company purchaser" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -247,7 +221,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -260,7 +233,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url //TODO - DTR-3002 - Sprint 10 - Connect to CrownEmploymentRelief page
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url //TODO - DTR-2508 - Sprint 10 - Connect to CloseCompanies page
       }
     }
 
