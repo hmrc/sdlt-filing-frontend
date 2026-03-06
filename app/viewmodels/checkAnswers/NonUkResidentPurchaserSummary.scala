@@ -32,11 +32,11 @@ object NonUkResidentPurchaserSummary {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "residency.nonUkResidentPurchaser.checkYourAnswersLabel",
+          key = "ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("residency.nonUkResidentPurchaser.change.hidden"))
+              .withVisuallyHiddenText(messages("ukResidency.nonUkResidentPurchaser.change.hidden"))
           )
         )
     }

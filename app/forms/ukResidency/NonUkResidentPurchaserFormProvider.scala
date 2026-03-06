@@ -25,6 +25,6 @@ class NonUkResidentPurchaserFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("residency.nonUkResidentPurchaser.error.required")
+      "value" -> boolean("ukResidency.nonUkResidentPurchaser.error.required")
     )
 }

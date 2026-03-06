@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class NonUkResidentPurchaserFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "residency.nonUkResidentPurchaser.error.required"
+  val requiredKey = "ukResidency.nonUkResidentPurchaser.error.required"
   val invalidKey = "error.boolean"
 
   val form = new NonUkResidentPurchaserFormProvider()()

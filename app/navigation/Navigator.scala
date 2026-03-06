@@ -25,8 +25,7 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
-import pages.ukResidency.NonUkResidentPurchaserPage
-import pages.ukResidency.CrownEmploymentReliefPage
+import pages.ukResidency.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}

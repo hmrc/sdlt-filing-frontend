@@ -18,15 +18,14 @@ package controllers.ukResidency
 
 import base.SpecBase
 import constants.FullReturnConstants
-import constants.FullReturnConstants.emptyFullReturn
+import constants.FullReturnConstants.minimalFullReturn
 import controllers.routes
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
 import models.land.LandTypeOfProperty
 import models.{FullReturn, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import org.scalatest.BeforeAndAfterEach
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.land.LandTypeOfPropertyPage
 import pages.purchaser.WhoIsMakingThePurchasePage
@@ -37,19 +36,11 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.FullReturnService
 import views.html.ukResidency.NonUkResidentPurchaserView
 
 import scala.concurrent.Future
 
-class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
-
-  private val mockFullReturnService = mock[FullReturnService]
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockFullReturnService)
-  }
+class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -86,18 +77,15 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
     fullReturnComplete.copy(land = Some(Seq(FullReturnConstants.completeLandAdditional)))
 
   private def fullReturnWithPurchaserNonResidential: FullReturn =
-    emptyFullReturn.copy(purchaser = Some(Seq(FullReturnConstants.completePurchaser2)))
-    fullReturnComplete.copy(land = Some(Seq(FullReturnConstants.completeLandNonResidential)))
+    minimalFullReturn.copy(purchaser = Some(Seq(FullReturnConstants.completePurchaser2)))
+    minimalFullReturn.copy(land = Some(Seq(FullReturnConstants.completeLandNonResidential)))
 
   "NonUkResidentPurchaser Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      when(mockFullReturnService.getFullReturn(any())(any(), any()))
-        .thenReturn(Future.successful(fullReturnWithIndividualPurchaser))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual))
-          .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
           .build()
 
       running(application) {
@@ -112,13 +100,10 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
       }
     }
 
-    "must redirect to LandTypeOfPropertyPage on a GET when type of property is non-residential" in {
-      when(mockFullReturnService.getFullReturn(any())(any(), any()))
-        .thenReturn(Future.successful(emptyFullReturn))
+    "must redirect to Residency CYA on a GET when type of property is non-residential" in {
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswersNonResidential))
-          .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
           .build()
 
       running(application) {
@@ -127,19 +112,16 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url // TODO - DTR-2511 - SPRINT-12 - change to residency CYA page
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      when(mockFullReturnService.getFullReturn(any())(any(), any()))
-        .thenReturn(Future.successful(fullReturnWithIndividualPurchaser))
 
       val userAnswers = userAnswersResidentialIndividual.set(NonUkResidentPurchaserPage, true).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
           .build()
 
       running(application) {
@@ -163,7 +145,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
       val application =
         applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
@@ -177,7 +158,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
@@ -190,7 +171,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
       val application =
         applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -216,7 +196,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
       val application =
         applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual))
           .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -243,7 +222,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
         applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -260,7 +238,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
       }
     }
 
-    "must redirect to the Residency CYA page when valid data is submitted and no selected for company purchaser" in {
+    "must redirect to the Crown Employment Relief page when valid data is submitted and no selected for company purchaser" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -270,7 +248,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
         applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[FullReturnService].toInstance(mockFullReturnService),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -283,16 +260,13 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url // TODO - DTR-2511 - SPRINT-12 - change to residency CYA page
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url //TODO - DTR-3002 - Sprint 10 - Connect to CrownEmploymentRelief page
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-          )
           .build()
 
       running(application) {
@@ -315,9 +289,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
 
       val application =
         applicationBuilder(userAnswers = None)
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-          )
           .build()
 
       running(application) {
@@ -334,9 +305,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar wi
 
       val application =
         applicationBuilder(userAnswers = None)
-          .overrides(
-            bind[FullReturnService].toInstance(mockFullReturnService),
-          )
           .build()
 
       running(application) {

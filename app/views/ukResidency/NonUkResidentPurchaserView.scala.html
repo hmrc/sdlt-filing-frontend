@@ -31,17 +31,17 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("residency.nonUkResidentPurchaser.title"))) {
+@layout(pageTitle = title(form, messages("ukResidency.nonUkResidentPurchaser.title"))) {
 
     @caption(messages("site.ukResidency.caption"))
 
-    @h1(messages("residency.nonUkResidentPurchaser.heading"))
-    @paragraph(messages("residency.nonUkResidentPurchaser.p1"))
-    
+    @h1(messages("ukResidency.nonUkResidentPurchaser.heading"))
+    @paragraph(messages("ukResidency.nonUkResidentPurchaser.p1"))
+
     @paragraphWithLink(
-        messageKey = "residency.nonUkResidentPurchaser.p2",
-        linkKey = "residency.nonUkResidentPurchaser.hint.link",
-        textKey = "residency.nonUkResidentPurchaser.hint.suffix"
+        messageKey = "ukResidency.nonUkResidentPurchaser.p2",
+        linkKey = "ukResidency.nonUkResidentPurchaser.hint.link",
+        textKey = "ukResidency.nonUkResidentPurchaser.hint.suffix"
     )
 
     @formHelper(action = controllers.ukResidency.routes.NonUkResidentPurchaserController.onSubmit(mode), Symbol("autoComplete") -> "off") {
@@ -53,7 +53,7 @@
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("residency.nonUkResidentPurchaser.subheading")).asPageSubHeading(),
+                legend = LegendViewModel(messages("ukResidency.nonUkResidentPurchaser.subheading")).asPageSubHeading(),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),
