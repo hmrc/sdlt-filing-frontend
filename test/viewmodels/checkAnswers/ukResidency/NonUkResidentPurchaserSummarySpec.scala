@@ -22,7 +22,6 @@ import pages.ukResidency.NonUkResidentPurchaserPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import viewmodels.checkAnswers.NonUkResidentPurchaserSummary
 
 class NonUkResidentPurchaserSummarySpec extends SpecBase {
 

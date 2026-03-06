@@ -116,6 +116,22 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to Journey Recovery on a GET when fullReturn is None" in {
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, nonUkResidentPurchaserRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = userAnswersResidentialIndividual.set(NonUkResidentPurchaserPage, true).success.value
