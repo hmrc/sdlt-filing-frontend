@@ -140,11 +140,14 @@ class PurchaserRemoveService @Inject()(
                          )(f: Long => Future[A])(implicit hc: HeaderCarrier,
                                                  ec: ExecutionContext,
                                                  request: DataRequest[AnyContent]): Future[A] =
+      logger.info(s"[PurchaserRemoveService][withNewVersion] version passed in: $version")
       for {
         updateReq <- ReturnVersionUpdateRequest.from(userAnswers, version)
         versionResponse <- backendConnector.updateReturnVersion(updateReq)
         newVersion <- versionResponse.newVersion match {
-          case Some(v) => Future.successful(v)
+          case Some(v) =>
+            logger.info(s"[PurchaserRemoveService][withNewVersion] update return version response version: $v")
+            Future.successful(v)
           case None => Future.failed(new IllegalStateException("Return version was not updated (newVersion missing)"))
         }
         result <- f(newVersion)
@@ -161,15 +164,16 @@ class PurchaserRemoveService @Inject()(
 
     def deleteCompanyDetailsIfPresent(
                                        userAnswers: UserAnswers,
+                                       isMainPurchaser: Boolean,
                                        companyDetailsIdInSession: Option[String]
                                      )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
       companyDetailsIdInSession match {
-        case Some(companyId) =>
+        case Some(companyId) if isMainPurchaser =>
           for {
             req <- DeleteCompanyDetailsRequest.from(userAnswers, companyId)
             _ <- backendConnector.deleteCompanyDetails(req)
           } yield ()
-        case None =>
+        case _ =>
           Future.successful(())
       }
 
@@ -281,7 +285,7 @@ class PurchaserRemoveService @Inject()(
       .withNewVersion(userAnswers) { returnVersion =>
         for {
           _ <- PurchaserOps.deletePurchaser(userAnswers, purchaserIdSession)
-          _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, companyDetailsIdInSession)
+          _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, isMainPurchaser, companyDetailsIdInSession)
           _ <- changeNextIdOfPreviousPurchaser()
           maybeResult <- updateChosenPurchaserIfNeeded(Some(returnVersion))
         } yield maybeResult.getOrElse(PurchaserOps.purchaserOverviewRedirect(removedPurchaser))
@@ -294,12 +298,11 @@ class PurchaserRemoveService @Inject()(
   }
 
   private def handleMultiplePurchasersWithNewMain(
-                                   chosenPurchaserId: String,
-                                   purchaserIdSession: String,
-                                   companyDetailsIdInSession: Option[String] = None,
-                                   userAnswers: UserAnswers,
-                                   version: Option[Long] = None
-                                 )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                                                   chosenPurchaserId: String,
+                                                   purchaserIdSession: String,
+                                                   companyDetailsIdInSession: Option[String] = None,
+                                                   userAnswers: UserAnswers
+                                                 )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     val purchasers = PurchaserOps.allPurchasers(userAnswers)
     val chosenPurchaser = PurchaserOps.findById(purchasers, chosenPurchaserId)
@@ -316,10 +319,10 @@ class PurchaserRemoveService @Inject()(
       )
 
     PurchaserOps
-      .withNewVersion(userAnswers, version) { newReturnVersion =>
+      .withNewVersion(userAnswers) { newReturnVersion =>
         for {
           _ <- PurchaserOps.deletePurchaser(userAnswers, purchaserIdSession)
-          _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, companyDetailsIdInSession)
+          _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, true, companyDetailsIdInSession)
           r <- chosenPurchaser match {
             case Some(_) => doUpdate(newReturnVersion)
             case None => Future.successful(PurchaserOps.purchaserOverviewRedirect())
@@ -349,7 +352,7 @@ class PurchaserRemoveService @Inject()(
             _ <- PurchaserOps.updateReturnInfo(
               userAnswers,
               returnInfo.copy(mainPurchaserID = Some(chosenPurchaserId),
-              version = Some(newReturnVersion.toString)))
+                version = Some(newReturnVersion.toString)))
           } yield PurchaserOps.purchaserOverviewRedirect(removedPurchaser)
         }
       }

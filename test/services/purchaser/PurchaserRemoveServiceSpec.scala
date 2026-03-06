@@ -631,9 +631,9 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
             .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
           when(mockBackendConnector.deletePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful((DeletePurchaserReturn(deleted = true))))
+            .thenReturn(Future.successful(DeletePurchaserReturn(deleted = true)))
           when(mockBackendConnector.updatePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful((UpdatePurchaserReturn(updated = true))))
+            .thenReturn(Future.successful(UpdatePurchaserReturn(updated = true)))
 
           val result = service.handleRemoval(
             PurchaserRemove.Remove(nonmainPurchaserID),
@@ -644,6 +644,62 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           verify(mockBackendConnector).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector).deletePurchaser(any())(any(), any())
           verify(mockBackendConnector).updatePurchaser(any())(any(), any())
+          verify(mockBackendConnector, never()).deleteCompanyDetails(any())(any(), any())
+        }
+
+        "must handle Remove for non-main purchaser with multiple purchasers and main purchaser is company" in {
+          val mainPurchaserID = "PURCH001"
+          val nonmainPurchaserID = "PURCH002"
+
+          val purchaser1 = createPurchaser(
+            mainPurchaserID,
+            companyName = Some("TestCo"),
+            isCompany = Some("YES"),
+            nextPurchaserID = Some(nonmainPurchaserID),
+            purchaserRef = Some("1")
+          )
+          val purchaser2 = createPurchaser(
+            nonmainPurchaserID,
+            forename1 = Some("Jane"),
+            surname = Some("Doe"),
+            nextPurchaserID = None,
+            purchaserRef = Some("2")
+          )
+
+          val returnInfo = ReturnInfo(mainPurchaserID = Some(mainPurchaserID), version = Some("0"))
+          val fullReturn = emptyFullReturn.copy(
+            purchaser = Some(Seq(purchaser1, purchaser2)),
+            returnInfo = Some(returnInfo),
+            companyDetails = Some(CompanyDetails(companyDetailsID = Some("COMP001")))
+          )
+          val purchaserRefs = PurchaserAndCompanyId(nonmainPurchaserID, Some("COMP001"))
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(fullReturn))
+            .set(PurchaserOverviewRemovePage, purchaserRefs).success.value
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(
+            FakeRequest(),
+            "id",
+            userAnswers
+          )
+
+          when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+            .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
+          when(mockBackendConnector.deletePurchaser(any())(any(), any()))
+            .thenReturn(Future.successful(DeletePurchaserReturn(deleted = true)))
+          when(mockBackendConnector.updatePurchaser(any())(any(), any()))
+            .thenReturn(Future.successful(UpdatePurchaserReturn(updated = true)))
+
+          val result = service.handleRemoval(
+            PurchaserRemove.Remove(nonmainPurchaserID),
+            userAnswers
+          )
+
+          status(result) mustBe SEE_OTHER
+          verify(mockBackendConnector).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector).deletePurchaser(any())(any(), any())
+          verify(mockBackendConnector).updatePurchaser(any())(any(), any())
+          verify(mockBackendConnector, never()).deleteCompanyDetails(any())(any(), any())
         }
 
         "must handle Remove for main purchaser with exactly two purchasers" in {
@@ -681,11 +737,11 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
             .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
           when(mockBackendConnector.deletePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful((DeletePurchaserReturn(deleted = true))))
+            .thenReturn(Future.successful(DeletePurchaserReturn(deleted = true)))
           when(mockBackendConnector.updatePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful((UpdatePurchaserReturn(updated = true))))
+            .thenReturn(Future.successful(UpdatePurchaserReturn(updated = true)))
           when(mockBackendConnector.updateReturnInfo(any())(any(), any()))
-            .thenReturn(Future.successful((ReturnInfoReturn(updated = true))))
+            .thenReturn(Future.successful(ReturnInfoReturn(updated = true)))
 
           val result = service.handleRemoval(
             PurchaserRemove.Remove(mainPurchaserID),
@@ -727,9 +783,9 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
             .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
           when(mockBackendConnector.deletePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful((DeletePurchaserReturn(deleted = true))))
+            .thenReturn(Future.successful(DeletePurchaserReturn(deleted = true)))
           when(mockBackendConnector.deleteCompanyDetails(any())(any(), any()))
-            .thenReturn(Future.successful((DeleteCompanyDetailsReturn(deleted = true))))
+            .thenReturn(Future.successful(DeleteCompanyDetailsReturn(deleted = true)))
 
           val result = service.handleRemoval(
             PurchaserRemove.Remove(purchaserId),
@@ -782,9 +838,9 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
             .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
           when(mockBackendConnector.deletePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful((DeletePurchaserReturn(deleted = true))))
+            .thenReturn(Future.successful(DeletePurchaserReturn(deleted = true)))
           when(mockBackendConnector.updateReturnInfo(any())(any(), any()))
-            .thenReturn(Future.successful((ReturnInfoReturn(updated = true))))
+            .thenReturn(Future.successful(ReturnInfoReturn(updated = true)))
 
           val result = service.handleRemoval(
             PurchaserRemove.SelectNewMain(newmainPurchaserID),
@@ -839,11 +895,11 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
             .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
           when(mockBackendConnector.deletePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful((DeletePurchaserReturn(deleted = true))))
+            .thenReturn(Future.successful(DeletePurchaserReturn(deleted = true)))
           when(mockBackendConnector.updatePurchaser(any())(any(), any()))
-            .thenReturn(Future.successful((UpdatePurchaserReturn(updated = true))))
+            .thenReturn(Future.successful(UpdatePurchaserReturn(updated = true)))
           when(mockBackendConnector.updateReturnInfo(any())(any(), any()))
-            .thenReturn(Future.successful((ReturnInfoReturn(updated = true))))
+            .thenReturn(Future.successful(ReturnInfoReturn(updated = true)))
 
           val result = service.handleRemoval(
             PurchaserRemove.SelectNewMain(newmainPurchaserID),
