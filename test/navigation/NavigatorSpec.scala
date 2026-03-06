@@ -24,6 +24,7 @@ import pages.land.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
+import pages.ukResidency.CrownEmploymentReliefPage
 import pages.vendor.*
 import pages.vendorAgent.*
 
@@ -240,6 +241,14 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(DoYouKnowTheAreaOfLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
         }
 
+      }
+
+      "ukResidency Routes" - {
+        
+        "go from CrownEmplymentReliefPage to check your answers page" in { //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
+          navigator.nextPage(CrownEmploymentReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
+        }
+        
       }
     }
 
