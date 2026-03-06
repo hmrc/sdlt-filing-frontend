@@ -176,7 +176,8 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET when land property type is 'Non-residential'" in {
+    //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
+    "must redirect to UK Residency CYA for a GET when land property type is 'Non-residential'" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturnNonResidential))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -191,7 +192,8 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET when land property type is 'Mixed'" in {
+    //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
+    "must redirect to UK Residency CYA for a GET when land property type is 'Mixed'" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturnMixed))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

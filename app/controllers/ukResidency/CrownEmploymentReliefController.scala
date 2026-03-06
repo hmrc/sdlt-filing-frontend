@@ -54,16 +54,17 @@ class CrownEmploymentReliefController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val maybeLand = request.userAnswers.fullReturn.flatMap(_.land)
+      val propertyType = request.userAnswers.fullReturn
+        .flatMap(_.land)
+        .flatMap(_.headOption)
+        .flatMap(_.propertyType)
+        .flatMap(LandTypeOfProperty.enumerable.withName)
 
-      maybeLand match {
-        case Some(propertyType) if propertyType.flatMap(_.propertyType)
-          .exists(pt =>
-            pt == LandTypeOfProperty.Residential.toString ||
-            pt == LandTypeOfProperty.Additional.toString
-          ) =>
+      propertyType match {
+        case Some(LandTypeOfProperty.Residential | LandTypeOfProperty.Additional) =>
           Ok(view(preparedForm, mode))
 
+        //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
         case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
   }
