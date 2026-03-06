@@ -71,9 +71,9 @@ POST      /rent                        controllers.scalabuild.RentController.onS
 GET       /summary                           controllers.scalabuild.CheckYourAnswersController.onPageLoad()
 POST      /summary                           controllers.scalabuild.CheckYourAnswersController.onSubmit()
 
-GET       /result                            controllers.scalabuild.ResultController.onPageLoad()
+GET       /result                                               controllers.scalabuild.ResultController.onPageLoad()
 
-GET       /detail/:index                     controllers.scalabuild.DetailController.onPageLoad(index: Int)
+GET       /detail                              controllers.scalabuild.DetailController.onPageLoad(resultIndex: Option[Int], taxCalcIndex: Option[Int])
 
-GET       /print                            controllers.scalabuild.PrintController.onPageLoad()
+GET       /print                                                controllers.scalabuild.PrintController.onPageLoad()
 

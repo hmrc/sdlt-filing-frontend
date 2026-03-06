@@ -34,7 +34,8 @@ object ExchangeContractPreMarch2016Summary {
               "site.change",
               controllers.scalabuild.routes.ExchangeContractsController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.contractPre201603"))
+              .withAttribute(("id", "change_contractPre201603"))
           )
         )
       } else {

@@ -63,7 +63,7 @@ class MarketValueFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
       val result = formWithLowFtb.bind(
         Map(
           "value" -> "PayInStages",
-          "marketPropValue" -> "2000"
+          "paySDLTInStages" -> "2000"
         )
       )
       result.errors mustBe Nil
@@ -74,27 +74,27 @@ class MarketValueFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
       val result = formWithLowFtb.bind(
         Map("value" -> "PayInStages")
       )
-      result.errors mustBe Seq(FormError("marketPropValue", requiredError))
+      result.errors mustBe Seq(FormError("paySDLTInStages", requiredError))
     }
 
     "should return non-numeric error for PayInStages invalid input" in {
       val result = formWithLowFtb.bind(
         Map(
           "value" -> "PayInStages",
-          "marketPropValue" -> "!!!"
+          "paySDLTInStages" -> "!!!"
         )
       )
-      result.errors mustBe Seq(FormError("marketPropValue", nonNumericError))
+      result.errors mustBe Seq(FormError("paySDLTInStages", nonNumericError))
     }
 
     "should return max value error for PayInStages when over limit" in {
       val result = formWithLowFtb.bind(
         Map(
           "value" -> "PayInStages",
-          "marketPropValue" -> (lowLimit + 1).toString
+          "paySDLTInStages" -> (lowLimit + 1).toString
         )
       )
-      result.errors mustBe Seq(FormError("marketPropValue", maxValueError, Seq(lowLimit)))
+      result.errors mustBe Seq(FormError("paySDLTInStages", maxValueError, Seq(lowLimit)))
     }
 
     "should return required error when no radio selected" in {
@@ -111,19 +111,19 @@ class MarketValueFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
       val result = formWithLowFtb.bind(
         Map(
           "value" -> "PayInStages",
-          "marketPropValue" -> "5000",
+          "paySDLTInStages" -> "5000",
           "paySDLTUpfront" -> "999999"
         )
       )
       result.value mustBe Some(MarketValue(PayInStages, None, Some(5000)))
     }
 
-    "should ignore the marketPropValue field when PayUpfront selected" in {
+    "should ignore the paySDLTInStages field when PayUpfront selected" in {
       val result = formWithHighFtb.bind(
         Map(
           "value" -> "PayUpfront",
           "paySDLTUpfront" -> "5000",
-          "marketPropValue" -> "123456"
+          "paySDLTInStages" -> "123456"
         )
       )
       result.value mustBe Some(MarketValue(PayUpfront, Some(5000), None))
@@ -141,18 +141,18 @@ class MarketValueFormProviderSpec extends AnyFreeSpec with ScalaSpecBase {
     "should return error if PayInStages amount has more than 2 decimal places" in {
       val data = Map(
         "value" -> "PayInStages",
-        "marketPropValue" -> "987.654"
+        "paySDLTInStages" -> "987.654"
       )
       val result = formWithHighFtb.bind(data)
-      result.errors must contain(FormError("marketPropValue", "marketValue.error.nonNumeric"))
+      result.errors must contain(FormError("paySDLTInStages", "marketValue.error.nonNumeric"))
     }
 
     "unapply should populate the form fields correctly" in {
-      val model = MarketValue(value = PayUpfront, paySDLTUpfront = Some(BigDecimal(100)), marketPropValue = None)
+      val model = MarketValue(value = PayUpfront, paySDLTUpfront = Some(BigDecimal(100)), paySDLTInStages = None)
       val filledForm = formWithHighFtb.fill(model)
       filledForm("value").value mustBe Some(PayUpfront.toString)
       filledForm("paySDLTUpfront").value mustBe Some("100")
-      filledForm("marketPropValue").value mustBe None
+      filledForm("paySDLTInStages").value mustBe None
     }
   }
 }

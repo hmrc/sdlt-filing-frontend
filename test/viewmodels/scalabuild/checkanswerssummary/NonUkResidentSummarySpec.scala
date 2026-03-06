@@ -38,7 +38,8 @@ class NonUkResidentSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.NonUkResidentController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Are any of the purchasers non-UK resident?"),
+                  attributes = Map(("id", "change_nonUKResident"))
                 )
               )
             )
@@ -59,7 +60,8 @@ class NonUkResidentSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.NonUkResidentController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Are any of the purchasers non-UK resident?"),
+                  attributes = Map(("id", "change_nonUKResident"))
                 )
               )
             )
@@ -74,7 +76,7 @@ class NonUkResidentSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(NonUkResidentPage, true).toOption
         val expected = SummaryListRow(
           key = Key(Text("Non-UK resident"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_nonUKResident">Yes</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_nonUKResident">Yes</span>"""))
         )
         val result = NonUkResidentSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -84,7 +86,7 @@ class NonUkResidentSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(NonUkResidentPage, false).toOption
         val expected = SummaryListRow(
           key = Key(Text("Non-UK resident"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_nonUKResident">No</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_nonUKResident">No</span>"""))
         )
         val result = NonUkResidentSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

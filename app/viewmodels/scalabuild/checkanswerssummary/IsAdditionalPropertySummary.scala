@@ -32,9 +32,11 @@ object IsAdditionalPropertySummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.scalabuild.routes.IsAdditionalPropertyController.onPageLoad().url
+              //todo: change controller when double page removed
+              controllers.scalabuild.routes.AdditionalPropAndReplaceController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.twoOrMoreProperties"))
+              .withAttribute(("id", "change_twoOrMoreProperties"))
           )
         )
       } else {

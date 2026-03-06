@@ -27,7 +27,7 @@ class MarketValueFormProvider extends Mappings {
                                 "marketValue.error.nonNumeric"
                               ).verifying(maxValueContraints(maxValue))
                            ),
-        "marketPropValue" -> mandatoryIfEqual(
+        "paySDLTInStages" -> mandatoryIfEqual(
                               fieldName = "value",
                               value = PayInStages.toString,
                               currency(

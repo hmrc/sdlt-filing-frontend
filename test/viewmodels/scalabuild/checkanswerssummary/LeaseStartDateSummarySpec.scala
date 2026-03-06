@@ -34,7 +34,7 @@ class LeaseStartDateSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is '1 January 2025' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(LeaseDatesPage, leaseDates).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Start date as specified in lease")),
+          key = Key(Text("Start date as specified in lease"), " govuk-!-width-one-half previous-question-title"),
           value = Value(content = HtmlContent(s"""<span id="td2_leaseStartDate">1 January 2025</span>""")),
           actions = Some(
             Actions(
@@ -42,7 +42,8 @@ class LeaseStartDateSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.LeaseDatesController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Start date as specified in lease?"),
+                  attributes = Map(("id","change_leaseStartDate"))
                 )
               )
             )
@@ -56,7 +57,7 @@ class LeaseStartDateSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is '1 January 2025' and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(LeaseDatesPage, leaseDates).toOption
         val expected = SummaryListRow(
-          Key(Text("Start date as specified in lease")),
+          Key(Text("Start date as specified in lease"), " govuk-!-width-one-half previous-question-title"),
           value = Value(content = HtmlContent(s"""<span id="td2_leaseStartDate">1 January 2025</span>""")),
         )
         val result = LeaseStartDateSummary.row(userAnswers.get, withAction = false)

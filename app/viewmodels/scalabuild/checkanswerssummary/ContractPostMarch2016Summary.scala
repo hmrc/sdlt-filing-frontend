@@ -34,7 +34,8 @@ object ContractPostMarch2016Summary {
               "site.change",
               controllers.scalabuild.routes.ContractPost201603Controller.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.contractPost201603"))
+              .withAttribute(("id", "change_contractPost201603"))
           )
         )
       } else {

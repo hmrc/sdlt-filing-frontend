@@ -39,7 +39,8 @@ class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.FreeholdOrLeaseholdController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Is property freehold or leasehold?"),
+                  attributes = Map(("id", "change_holdingType"))
                 )
               )
             )
@@ -60,7 +61,8 @@ class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.FreeholdOrLeaseholdController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Is property freehold or leasehold?"),
+                  attributes = Map(("id", "change_holdingType"))
                 )
               )
             )
@@ -75,7 +77,7 @@ class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(HoldingPage, Freehold).toOption
         val expected = SummaryListRow(
           key = Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_holdingType">Freehold</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_holdingType">Freehold</span>"""))
         )
         val result = HoldingSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -85,7 +87,7 @@ class HoldingSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(HoldingPage, Leasehold).toOption
         val expected = SummaryListRow(
           key = Key(Text("Freehold or Leasehold"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_holdingType">Leasehold</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_holdingType">Leasehold</span>"""))
         )
         val result = HoldingSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

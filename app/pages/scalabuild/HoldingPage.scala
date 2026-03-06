@@ -20,13 +20,9 @@ case object HoldingPage extends QuestionPage[HoldingTypes] {
     value.map {
       case Freehold =>
         for {
-          leaseTerm <- userAnswers.remove(LeaseTermPage)
-          leaseDates <- leaseTerm.remove(LeaseDatesPage)
-          rentPage <- leaseDates.remove(RentPage)
-          currentValue <- rentPage.remove(CurrentValuePage)
-          marketValue <- currentValue.remove(MarketValuePage)
-          premium <- marketValue.remove(RentPage)
-        } yield premium
+          leaseObject <- userAnswers.remove(MongoLeaseDetailPage)
+          unUsedJourneyFieldsRemoved <- leaseObject.remove(RelevantRentDetailPage)
+        } yield unUsedJourneyFieldsRemoved
 
       case Leasehold =>
         for {

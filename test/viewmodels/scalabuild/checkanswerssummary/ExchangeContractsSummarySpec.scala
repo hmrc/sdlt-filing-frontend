@@ -30,7 +30,8 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'Yes' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(ExchangeContractsPage, true).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
+          key =
+            Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
           value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">Yes</span>""")),
           actions = Some(
             Actions(
@@ -38,7 +39,8 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.ExchangeContractsController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Exchange of contracts before 17 March 2016?"),
+                  attributes = Map(("id", "change_contractPre201603"))
                 )
               )
             )
@@ -51,7 +53,8 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is 'No' and 'withAction' is true " in {
         val userAnswers = emptyUserAnswers.set(ExchangeContractsPage, false).toOption
         val expected = SummaryListRow(
-          key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
+          key =
+            Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
           value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">No</span>""")),
           actions = Some(
             Actions(
@@ -59,7 +62,8 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.ExchangeContractsController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Exchange of contracts before 17 March 2016?"),
+                  attributes = Map(("id", "change_contractPre201603"))
                 )
               )
             )
@@ -74,7 +78,7 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(ExchangeContractsPage, true).toOption
         val expected = SummaryListRow(
           key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">Yes</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">Yes</span>"""))
         )
         val result = ExchangeContractPreMarch2016Summary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -84,7 +88,7 @@ class ExchangeContractsSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(ExchangeContractsPage, false).toOption
         val expected = SummaryListRow(
           key = Key(Text("Exchange of contracts before 17 March 2016"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">No</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_contractPre201603">No</span>"""))
         )
         val result = ExchangeContractPreMarch2016Summary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

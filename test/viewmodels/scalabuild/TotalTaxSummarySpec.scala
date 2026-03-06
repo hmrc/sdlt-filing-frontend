@@ -31,7 +31,7 @@ class TotalTaxSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "holding type is 'Leasehold' and result is slice" in {
         val expected = SummaryListRow(
           key = Key(Text("Total amount of tax for this transaction")),
-          value = Value(HtmlContent("""<span id="totalTax0">3,000</span>"""))
+          value = Value(HtmlContent("""<span id="totalTax0">£3,000</span>"""))
         )
         val result = TotalDueSummary.row(3000, Leasehold, slab = false, index = 0)
         result shouldBe expected

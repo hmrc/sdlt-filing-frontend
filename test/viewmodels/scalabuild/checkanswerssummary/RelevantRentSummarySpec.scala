@@ -11,6 +11,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import pages.scalabuild.RelevantRentPage
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Actions, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
 
 class RelevantRentSummarySpec extends AnyWordSpec with ScalaSpecBase {
@@ -30,14 +31,15 @@ class RelevantRentSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(RelevantRentPage, BigDecimal(1800)).toOption
         val expected = SummaryListRow(
           key = Key(Text("Relevant rental figure"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(Text("£1,800"), " "),
+          value = Value(content = HtmlContent(s"""<span id="td2_relevantRent">£1,800</span>""")),
           actions = Some(
             Actions(
               items = List(
                 ActionItem(
                   href = routes.RelevantRentController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Relevant rental figure?"),
+                  attributes = Map(("id", "change_relevantRent"))
                 )
               )
             )
@@ -52,7 +54,7 @@ class RelevantRentSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(RelevantRentPage, BigDecimal(1800)).toOption
         val expected = SummaryListRow(
           key = Key(Text("Relevant rental figure"), " govuk-!-width-one-half previous-question-title"),
-          Value(Text("£1,800"), " ")
+          value = Value(content = HtmlContent(s"""<span id="td2_relevantRent">£1,800</span>"""))
         )
         val result = RelevantRentSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

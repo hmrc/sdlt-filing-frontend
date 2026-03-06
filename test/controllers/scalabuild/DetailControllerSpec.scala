@@ -17,7 +17,7 @@ import play.api.test.Helpers._
 class DetailControllerSpec extends AnyFreeSpec with ScalaSpecBase with TestObjects() {
 
   def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/result")
-  lazy val detailRoute = routes.DetailController.onPageLoad(0).url
+  lazy val detailRoute = routes.DetailController.onPageLoad(Some(0),Some(0)).url
 
   "Detail Controller" - {
     "must return OK and the correct view for a GET" in {

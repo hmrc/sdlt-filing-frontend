@@ -9,12 +9,11 @@ import models.scalabuild.UserAnswers
 import pages.scalabuild.MarketValuePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.scalabuild.FormatUtils.{keyCssClass, valueCssClass}
+import viewmodels.scalabuild.FormatUtils.keyCssClass
 import viewmodels.scalabuild.govuk.summarylist.{
   ActionItemViewModel,
   FluentActionItem,
   FluentKey,
-  FluentValue,
   KeyViewModel,
   SummaryListRowViewModel,
   ValueViewModel
@@ -28,19 +27,20 @@ object PaySdltSummary {
       if (withAction) {
         SummaryListRowViewModel(
           key = KeyViewModel("marketValue.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(answer.displayCya).withCssClass(valueCssClass),
+          value = ValueViewModel.withId(text = s"$answer.displayCya",id = "td2_marketValue"),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
               controllers.scalabuild.routes.MarketValueController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.marketValue"))
+              .withAttribute(("id", "change_marketValue"))
           )
         )
       } else {
         SummaryListRowViewModel(
           key = KeyViewModel("marketValue.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel(answer.displayCya).withCssClass(valueCssClass)
+          value = ValueViewModel.withId(text = s"$answer.displayCya",id = "td2_marketValue"),
         )
       }
     }

@@ -10,9 +10,11 @@ import pages.scalabuild.LeaseDatesPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.scalabuild.DateTimeFormats.localDateTimeFormatter
+import viewmodels.scalabuild.FormatUtils.keyCssClass
 import viewmodels.scalabuild.govuk.summarylist.{
   ActionItemViewModel,
   FluentActionItem,
+  FluentKey,
   KeyViewModel,
   SummaryListRowViewModel,
   ValueViewModel
@@ -26,19 +28,20 @@ object LeaseEndDateSummary {
       val dateText = answer.endDate.format(localDateTimeFormatter())
       if (withAction) {
         SummaryListRowViewModel(
-          key = KeyViewModel(s"leaseDates.endDate.checkYourAnswersLabel"),
+          key = KeyViewModel(s"leaseDates.endDate.checkYourAnswersLabel").withCssClass(keyCssClass),
           value = ValueViewModel.withId(text =s"$dateText", id = "td2_leaseEndDate"),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
               controllers.scalabuild.routes.LeaseDatesController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.leaseEndDate"))
+              .withAttribute(("id", "change_leaseEndDate"))
           )
         )
       } else {
         SummaryListRowViewModel(
-          key = KeyViewModel(s"leaseDates.endDate.checkYourAnswersLabel"),
+          key = KeyViewModel(s"leaseDates.endDate.checkYourAnswersLabel").withCssClass(keyCssClass),
           value = ValueViewModel.withId(text =s"$dateText", id = "td2_leaseEndDate")
         )
       }

@@ -13,7 +13,6 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
-import viewmodels.scalabuild.FormatUtils.bigDecimalFormat
 
 class TaxesDueByTypeSummarySpec extends AnyWordSpec with ScalaSpecBase {
   val messagesApi: MessagesApi = application().injector.instanceOf[MessagesApi]
@@ -31,10 +30,10 @@ class TaxesDueByTypeSummarySpec extends AnyWordSpec with ScalaSpecBase {
             Actions(
               items = List(
                 ActionItem(
-                  href = routes.DetailController.onPageLoad(0).url,
+                  href = routes.DetailController.onPageLoad(Some(0), Some(0)).url,
                   content = Text("View calculation"),
                   visuallyHiddenText = Some("View calculation"),
-                  attributes = Map("id" -> "detailCalc0")
+                  attributes = Map("id" -> "detailCalc00")
                 )
               )
             )
@@ -52,10 +51,10 @@ class TaxesDueByTypeSummarySpec extends AnyWordSpec with ScalaSpecBase {
             Actions(
               items = List(
                 ActionItem(
-                  href = routes.DetailController.onPageLoad(1).url,
+                  href = routes.DetailController.onPageLoad(Some(1), Some(1)).url,
                   content = Text("View calculation"),
                   visuallyHiddenText = Some("View calculation"),
-                  attributes = Map("id" -> "detailCalc1")
+                  attributes = Map("id" -> "detailCalc11")
                 )
               )
             )
@@ -68,7 +67,7 @@ class TaxesDueByTypeSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "Display the correct summary key and no view calculation link" when {
         "tax type is premium with a rate of 3" in {
           val expected = SummaryListRow(
-            Key(HtmlContent(s"""<span id="taxType11">SDLT on Premium (3%)</span>""")),
+            Key(HtmlContent(s"""<span id="taxType11">SDLT on premium (3%)</span>""")),
             value = Value(HtmlContent(s"""<span id="taxDue11">£3,000</span>"""))
           )
           val result =

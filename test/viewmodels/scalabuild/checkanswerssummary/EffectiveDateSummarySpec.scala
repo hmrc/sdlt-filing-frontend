@@ -41,28 +41,8 @@ class EffectiveDateSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.EffectiveDateController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
-                )
-              )
-            )
-          )
-        )
-        val result = EffectiveDateSummary.row(userAnswers.get, withAction = true, index = Some(0), resultTable = false)
-        result shouldBe Some(expected)
-      }
-      //summary on print page
-      "'withAction' is false " in {
-        val userAnswers = emptyUserAnswers.set(EffectiveDatePage, LocalDate.of(2025, 1, 1)).toOption
-        val expected = SummaryListRow(
-          key = Key(Text("Effective date of transaction"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(HtmlContent(s"""<span id="td2_effectiveDate">1 January 2025</span>""")),
-          actions = Some(
-            Actions(
-              items = List(
-                ActionItem(
-                  href = routes.EffectiveDateController.onPageLoad().url,
-                  content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Effective date of your transaction?"),
+                  attributes = Map(("id", "change_effectiveDate"))
                 )
               )
             )
@@ -72,8 +52,20 @@ class EffectiveDateSummarySpec extends AnyWordSpec with ScalaSpecBase {
         result shouldBe Some(expected)
       }
     }
-    // first result summary
+    "return a summary row for EffectiveDate without a change link" when {
+      //summary on print page
+      "'withAction' is false " in {
+        val userAnswers = emptyUserAnswers.set(EffectiveDatePage, LocalDate.of(2025, 1, 1)).toOption
+        val expected = SummaryListRow(
+          key = Key(Text("Effective date of transaction"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(HtmlContent(s"""<span id="td2_effectiveDate">1 January 2025</span>"""))
+        )
+        val result = EffectiveDateSummary.row(userAnswers.get, withAction = false, index = Some(0), resultTable = false)
+        result shouldBe Some(expected)
+      }
+    }
     "return a summary row for EffectiveDate without a change link and id of 'effDate00' for the value" when {
+      // first result summary
       "resultTable is true and it's the first result" in {
         val userAnswers = emptyUserAnswers.set(EffectiveDatePage, LocalDate.of(2025, 1, 1)).toOption
         val expected = SummaryListRow(

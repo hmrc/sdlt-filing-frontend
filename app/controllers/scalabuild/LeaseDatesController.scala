@@ -14,11 +14,12 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.scalabuild.LeaseTermService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.scalabuild.LeaseDatesView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.scalabuild.LeaseDatesView
 
 class LeaseDatesController @Inject()(
                                       val controllerComponents: MessagesControllerComponents,
@@ -26,6 +27,7 @@ class LeaseDatesController @Inject()(
                                       formProvider: LeaseDatesFormProvider,
                                       sessionRepository: SessionRepository,
                                       navigator: Navigator,
+                                      leaseTermService: LeaseTermService,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       identify: IdentifierAction
@@ -69,4 +71,16 @@ class LeaseDatesController @Inject()(
         }
       )
   }
+// todo: Implement for check mode
+
+//  private def calculateLeaseTerm(userAnswers: UserAnswers): Option[LeaseTerm] = {
+//    for {
+//      effectiveDate <- userAnswers.get(EffectiveDatePage)
+//      leaseDates <- userAnswers.get(LeaseDatesPage)
+//    } yield leaseTermService.calculateTermOfLease(
+//      effectiveDate = effectiveDate,
+//      leaseStart = leaseDates.startDate,
+//      leaseEnd = leaseDates.endDate
+//    )
+//  }
 }

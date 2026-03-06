@@ -42,8 +42,8 @@ class MarketValueViewSpec extends ViewTestFixture {
     }
 
     "render the input field labels correctly" in {
-      inputFieldLabel.get(1) mustBe messages("marketValue.paySDLTUpfront.input")
-      inputFieldLabel.get(3) mustBe messages("marketValue.marketPropValue.input")
+      inputFieldLabel.get(1) mustBe messages("marketValue.PayUpfront.input")
+      inputFieldLabel.get(3) mustBe messages("marketValue.PayInStages.input")
     }
 
     "render the correct button" in {

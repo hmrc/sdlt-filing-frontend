@@ -38,7 +38,8 @@ class SharedOwnershipSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.SharedOwnershipController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Are you buying the property through a shared ownership scheme?"),
+                  attributes = Map(("id", "change_sharedOwnership"))
                 )
               )
             )
@@ -59,7 +60,8 @@ class SharedOwnershipSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.SharedOwnershipController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Are you buying the property through a shared ownership scheme?"),
+                  attributes = Map(("id", "change_sharedOwnership"))
                 )
               )
             )
@@ -74,7 +76,7 @@ class SharedOwnershipSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(SharedOwnershipPage, true).toOption
         val expected = SummaryListRow(
           Key(Text("Shared ownership"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_sharedOwnership">Yes</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_sharedOwnership">Yes</span>"""))
         )
         val result = SharedOwnershipSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -84,7 +86,7 @@ class SharedOwnershipSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(SharedOwnershipPage, false).toOption
         val expected = SummaryListRow(
           Key(Text("Shared ownership"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_sharedOwnership">No</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_sharedOwnership">No</span>"""))
         )
         val result = SharedOwnershipSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

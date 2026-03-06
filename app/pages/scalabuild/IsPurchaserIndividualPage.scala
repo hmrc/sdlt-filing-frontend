@@ -26,7 +26,9 @@ case object IsPurchaserIndividualPage extends QuestionPage[Boolean] {
           sharedOwnership <- main.remove(SharedOwnershipPage)
           twoOrMore <- sharedOwnership.remove(IsAdditionalPropertyPage)
           ownedOther <- twoOrMore.remove(OwnsOtherPropertiesPage)
-        } yield ownedOther
+          currentValue <- ownedOther.remove(CurrentValuePage)
+          allUnusedPathsRemoved <- currentValue.remove(MarketValuePage)
+        } yield allUnusedPathsRemoved
 
       case _ => super.cleanup(value, userAnswers)
     }.getOrElse(super.cleanup(value, userAnswers))

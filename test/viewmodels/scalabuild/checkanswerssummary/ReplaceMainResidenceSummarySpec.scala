@@ -36,9 +36,11 @@ class ReplaceMainResidenceSummarySpec extends AnyWordSpec with ScalaSpecBase {
             Actions(
               items = List(
                 ActionItem(
-                  href = routes.ReplaceMainResidenceController.onPageLoad().url,
+                  // todo: change to ReplaceMainResidenceController when removing double page
+                  href = routes.AdditionalPropAndReplaceController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Are you replacing a main residence?"),
+                  attributes = Map(("id", "change_replaceMainResidence"))
                 )
               )
             )
@@ -57,9 +59,11 @@ class ReplaceMainResidenceSummarySpec extends AnyWordSpec with ScalaSpecBase {
             Actions(
               items = List(
                 ActionItem(
-                  href = routes.ReplaceMainResidenceController.onPageLoad().url,
+                  // todo: change to ReplaceMainResidenceController when removing double page
+                  href = routes.AdditionalPropAndReplaceController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Are you replacing a main residence?"),
+                  attributes = Map(("id", "change_replaceMainResidence"))
                 )
               )
             )
@@ -74,7 +78,7 @@ class ReplaceMainResidenceSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(ReplaceMainResidencePage, true).toOption
         val expected = SummaryListRow(
           key = Key(Text("Replacing main residence"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_replaceMainResidence">Yes</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_replaceMainResidence">Yes</span>"""))
         )
         val result = ReplaceMainResidenceSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -84,7 +88,7 @@ class ReplaceMainResidenceSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(ReplaceMainResidencePage, false).toOption
         val expected = SummaryListRow(
           key = Key(Text("Replacing main residence"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_replaceMainResidence">No</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_replaceMainResidence">No</span>"""))
         )
         val result = ReplaceMainResidenceSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

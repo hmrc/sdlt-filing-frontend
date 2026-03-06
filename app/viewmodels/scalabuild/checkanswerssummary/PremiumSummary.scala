@@ -26,22 +26,23 @@ object PremiumSummary {
     answers.get(PremiumPage).map { answer =>
       val valueText = bigDecimalFormat(answer)
       if (withAction) {
-          SummaryListRowViewModel(
-            key = KeyViewModel("premium.checkYourAnswersLabel").withCssClass(keyCssClass),
-            value = ValueViewModel.withId(text = valueText, id = "td2_premium"),
-            actions = Seq(
-              ActionItemViewModel(
-                "site.change",
-                controllers.scalabuild.routes.PremiumController.onPageLoad().url
-              )
-                .withVisuallyHiddenText(messages("site.change.hidden"))
+        SummaryListRowViewModel(
+          key = KeyViewModel("premium.checkYourAnswersLabel").withCssClass(keyCssClass),
+          value = ValueViewModel.withId(text = valueText, id = "td2_premium"),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              controllers.scalabuild.routes.PremiumController.onPageLoad().url
             )
+              .withVisuallyHiddenText(messages("site.change.hidden.premium"))
+              .withAttribute(("id", "change_premium"))
           )
-        } else {
-          SummaryListRowViewModel(
-            key = KeyViewModel("premium.resultLabel"),
-            value = ValueViewModel.withId(text = valueText, id = "td2_premium")
-          )
-        }
+        )
+      } else {
+        SummaryListRowViewModel(
+          key = KeyViewModel("premium.checkYourAnswersLabel").withCssClass(keyCssClass),
+          value = ValueViewModel.withId(text = valueText, id = "td2_premium")
+        )
+      }
     }
 }

@@ -27,9 +27,11 @@
 
 @printDisplayTable.resultsTables.zipWithIndex.map { case (result, index) =>
 <div>
-    @pageHeading(result.resultHeading.getOrElse(""))
+    <h1 class="govuk-heading-l" id="resultHeading@index">@result.resultHeading</h1>
 
-    <h2>Result of SDLT calculation</h2>
+    <h2 class="govuk-heading-m">Result of SDLT calculation</h2>
+
+    <p class = "govuk-body govuk-!-margin-top-3" id="resultHint@index">@Html(result.resultHint)</p>
 
     @govukSummaryList(result.summaryTable)
 

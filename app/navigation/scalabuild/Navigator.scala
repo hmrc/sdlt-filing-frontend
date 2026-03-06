@@ -31,6 +31,7 @@ class Navigator @Inject() (
     case ReplaceMainResidencePage        => userAnswers => replaceMainResidenceNormalMode(userAnswers)
     case OwnsOtherPropertiesPage         => userAnswers => ownsOtherPropertiesNormalMode(userAnswers)
     case MainResidencePage               => userAnswers => mainResidenceNormalMode(userAnswers)
+    case SharedOwnershipPage             => userAnswers => sharedOwnershipNormalMode(userAnswers)
     case CurrentValuePage                => userAnswers => currentValueNormalMode(userAnswers)
     case MarketValuePage                 => _ => routes.LeaseDatesController.onPageLoad()
     case LeaseDatesPage                  => userAnswers => leaseDatesNormalMode(userAnswers)
@@ -49,6 +50,18 @@ class Navigator @Inject() (
 //        checkRouteMap(page) (userAnswers)
 //    }
 
+  private def sharedOwnershipNormalMode(answers: UserAnswers): Call = {
+    val sharedOwnership: Option[Boolean] = answers.get(SharedOwnershipPage)
+    val holding: Option[HoldingTypes] = answers.get(HoldingPage)
+
+    (sharedOwnership, holding) match {
+      case (Some(true), _) => routes.CurrentValueController.onPageLoad()
+      case (Some(false), Some(Leasehold)) => routes.LeaseDatesController.onPageLoad()
+      case (Some(false), Some(Freehold)) => routes.PurchasePriceController.onPageLoad()
+      case _ => routes.JourneyRecoveryController.onPageLoad()
+    }
+  }
+
   private def exchangeContractsNormalMode(
       userAnswers: UserAnswers
   ): Call = {
@@ -60,6 +73,7 @@ class Navigator @Inject() (
       case _ => routes.CheckYourAnswersController.onPageLoad()
     }
   }
+
   private def rentNormalMode(
       userAnswers: UserAnswers
   ): Call = {
@@ -73,8 +87,10 @@ class Navigator @Inject() (
     } yield (propertyType, premiumBelow150000, allRentsUnder2000, effectiveDate)
 
     answers match {
-      case Some(Tuple4(NonResidential, true, true, date)) if date.isAfter(MARCH2016_NON_RESIDENTIAL_DATE) => routes.ExchangeContractsPreAndPostController.onPageLoad()
-      case Some(Tuple4(NonResidential, true, true, date)) => routes.RelevantRentController.onPageLoad()
+      case Some(Tuple4(NonResidential, true, true, date)) if date.onOrAfter(MARCH2016_NON_RESIDENTIAL_DATE) => routes.ExchangeContractsPreAndPostController.onPageLoad()
+      case Some(Tuple4(NonResidential, true, true, date)) => {
+        routes.RelevantRentController.onPageLoad()
+      }
       case _ =>
         routes.CheckYourAnswersController.onPageLoad()
     }
@@ -96,7 +112,6 @@ class Navigator @Inject() (
       case Some(Tuple2(Freehold, false)) => routes.PurchasePriceController.onPageLoad()
       case Some(Tuple2(Leasehold, false)) => routes.LeaseDatesController.onPageLoad()
       case Some(Tuple2(_, true)) => routes.MarketValueController.onPageLoad()
-      case None        => ???
       case _ =>
         routes.JourneyRecoveryController.onPageLoad()
     }
@@ -152,7 +167,7 @@ class Navigator @Inject() (
       case Some(Tuple2(Freehold, _)) =>
         routes.PurchasePriceController.onPageLoad()
       case Some(Tuple2(_, true)) =>
-        routes.CurrentValueController.onPageLoad()
+        routes.SharedOwnershipController.onPageLoad()
       case _ =>
         routes.JourneyRecoveryController.onPageLoad()
     }
@@ -244,7 +259,6 @@ class Navigator @Inject() (
       case _ =>
         routes.JourneyRecoveryController.onPageLoad()
     }
-
   }
 
 }

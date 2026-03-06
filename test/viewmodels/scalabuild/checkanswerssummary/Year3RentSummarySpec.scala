@@ -65,7 +65,8 @@ class Year3RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.RentController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Year 3 rent?"),
+                  attributes = Map(("id", "change_year3Rent"))
                 )
               )
             )
@@ -85,7 +86,8 @@ class Year3RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.RentController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Year 3 rent?"),
+                  attributes = Map(("id", "change_year3Rent"))
                 )
               )
             )
@@ -100,7 +102,7 @@ class Year3RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(RentPage, rent3Year).toOption
         val expected = SummaryListRow(
           key = Key(Text("Year 3 rent"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_year3Rent">£5,000</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_year3Rent">£5,000</span>"""))
         )
         val result = Year3RentSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -110,7 +112,7 @@ class Year3RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(RentPage, rentAllYears).toOption
         val expected = SummaryListRow(
           key = Key(Text("Year 3 rent"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_year3Rent">£5,000</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_year3Rent">£5,000</span>"""))
         )
         val result = Year3RentSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

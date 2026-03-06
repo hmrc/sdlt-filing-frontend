@@ -34,7 +34,8 @@ object SharedOwnershipSummary {
               "site.change",
               controllers.scalabuild.routes.SharedOwnershipController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.sharedOwnership"))
+              .withAttribute(("id", "change_sharedOwnership"))
           )
         )
       } else {

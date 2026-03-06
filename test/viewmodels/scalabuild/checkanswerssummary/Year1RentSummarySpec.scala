@@ -46,7 +46,8 @@ class Year1RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.RentController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Year 1 rent?"),
+                  attributes = Map(("id", "change_year1Rent"))
                 )
               )
             )
@@ -61,7 +62,7 @@ class Year1RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(RentPage, rents).toOption
         val expected = SummaryListRow(
           Key(Text("Year 1 rent"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_year1Rent">£5,000</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_year1Rent">£5,000</span>"""))
         )
         val result = Year1RentSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

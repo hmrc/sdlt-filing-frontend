@@ -37,7 +37,8 @@ class IsPurchaserIndividualSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.IsPurchaserIndividualController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Are you purchasing the property as an individual?"),
+                  attributes = Map(("id", "change_individual"))
                 )
               )
             )
@@ -58,7 +59,8 @@ class IsPurchaserIndividualSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.IsPurchaserIndividualController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Are you purchasing the property as an individual?"),
+                  attributes = Map(("id", "change_individual"))
                 )
               )
             )
@@ -73,7 +75,7 @@ class IsPurchaserIndividualSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(IsPurchaserIndividualPage, true).toOption
         val expected = SummaryListRow(
           key = Key(Text("Individual"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_individual">Yes</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_individual">Yes</span>"""))
         )
         val result = IsPurchaserIndividualSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -83,7 +85,7 @@ class IsPurchaserIndividualSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(IsPurchaserIndividualPage, false).toOption
         val expected = SummaryListRow(
           key = Key(Text("Individual"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_individual">No</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_individual">No</span>"""))
         )
         val result = IsPurchaserIndividualSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

@@ -59,7 +59,8 @@ class Year5RentSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.RentController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Year 5 rent?"),
+                  attributes = Map(("id", "change_year5Rent"))
                 )
               )
             )

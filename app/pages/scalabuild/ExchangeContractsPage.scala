@@ -19,9 +19,11 @@ case object ExchangeContractsPage extends QuestionPage[Boolean]{
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
     value.map {
-      case false => userAnswers.remove(ContractPost201603Page)
+      case false => for {
+        contractVaried <- userAnswers.remove(ContractPost201603Page)
+        relRent <- contractVaried.remove(RelevantRentPage)
+      } yield relRent
       case _ => super.cleanup(value, userAnswers)
     }.getOrElse(super.cleanup(value, userAnswers))
   }
-
 }

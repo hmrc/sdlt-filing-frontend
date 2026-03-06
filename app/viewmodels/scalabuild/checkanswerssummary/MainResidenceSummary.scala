@@ -34,7 +34,8 @@ object MainResidenceSummary {
               "site.change",
               controllers.scalabuild.routes.MainResidenceController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.mainResidence"))
+              .withAttribute(("id", "change_mainResidence"))
           )
         )
       } else {

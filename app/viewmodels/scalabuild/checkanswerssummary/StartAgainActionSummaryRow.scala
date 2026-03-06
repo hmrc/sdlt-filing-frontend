@@ -22,6 +22,7 @@ object StartAgainActionSummaryRow {
             controllers.scalabuild.routes.StartGuidanceController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("site.startAgain"))
+            .withAttribute(("id", "startAgain"))
         )
       )
 
