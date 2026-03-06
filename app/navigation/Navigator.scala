@@ -25,7 +25,7 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
-import pages.ukResidency.CrownEmploymentReliefPage
+import pages.ukResidency.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -62,7 +62,7 @@ class Navigator @Inject()() {
 
     case purchaserPage if isPurchaserSection(purchaserPage) => purchaserRoutes(purchaserPage)
     case landPage if isLandSection(landPage) => landRoutes(landPage)
-    case uKResidencyPage if isUkResidencySection(uKResidencyPage) => ukResidencyRoutes(uKResidencyPage)
+    case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -174,14 +174,16 @@ class Navigator @Inject()() {
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
-  private def isUkResidencySection(page: Page): Boolean = page match {
+  private def isResidencySection(page: Page): Boolean = page match {
 
-    case CrownEmploymentReliefPage => true
+    case NonUkResidentPurchaserPage | CrownEmploymentReliefPage => true
 
     case _ => false
   }
 
-  private def ukResidencyRoutes(page: Page): UserAnswers => Call = page match {
+  private def residencyRoutes(page: Page): UserAnswers => Call = page match {
+    case NonUkResidentPurchaserPage =>
+      _ => routes.ReturnTaskListController.onPageLoad() //TODO - DTR-2508 - Sprint 10 - Connect to CloseCompany page
     case CrownEmploymentReliefPage => //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
       _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
 

@@ -48,7 +48,7 @@ object FullReturnConstants {
   val completePurchaser1: Purchaser = Purchaser(
     purchaserID = Some("PUR001"),
     returnID = Some("RET123456789"),
-    isCompany = Some("false"),
+    isCompany = Some("NO"),
     isTrustee = Some("false"),
     isConnectedToVendor = Some("false"),
     isRepresentedByAgent = Some("true"),
@@ -80,7 +80,39 @@ object FullReturnConstants {
   val completePurchaser2: Purchaser = Purchaser(
     purchaserID = Some("PUR002"),
     returnID = Some("RET123456789"),
-    isCompany = Some("false"),
+    isCompany = Some("NO"),
+    isTrustee = Some("false"),
+    isConnectedToVendor = Some("false"),
+    isRepresentedByAgent = Some("true"),
+    title = Some("Mrs"),
+    surname = Some("Smith"),
+    forename1 = Some("Sarah"),
+    forename2 = Some("Jane"),
+    companyName = None,
+    houseNumber = Some("42"),
+    address1 = Some("High Street"),
+    address2 = Some("Kensington"),
+    address3 = Some("London"),
+    address4 = None,
+    postcode = Some("SW1A 1AA"),
+    phone = Some("020 7946 0959"),
+    nino = Some("CD987654Z"),
+    purchaserResourceRef = Some("PUR-REF-002"),
+    nextPurchaserID = None,
+    lMigrated = Some("N"),
+    createDate = Some("2024-10-01"),
+    lastUpdateDate = Some("2024-10-15"),
+    isUkCompany = Some("false"),
+    hasNino = Some("true"),
+    dateOfBirth = Some("1987-08-22"),
+    registrationNumber = None,
+    placeOfRegistration = None
+  )
+
+  val completePurchaser3: Purchaser = Purchaser(
+    purchaserID = Some("PUR002"),
+    returnID = Some("RET123456789"),
+    isCompany = Some("YES"),
     isTrustee = Some("false"),
     isConnectedToVendor = Some("false"),
     isRepresentedByAgent = Some("true"),
@@ -207,7 +239,53 @@ object FullReturnConstants {
   val completeLand: Land = Land(
     landID = Some("LND001"),
     returnID = Some("RET123456789"),
-    propertyType = Some("RESIDENTIAL"),
+    propertyType = Some("01"),
+    interestCreatedTransferred = Some("FREEHOLD"),
+    houseNumber = Some("123"),
+    address1 = Some("Baker Street"),
+    address2 = Some("Marylebone"),
+    address3 = Some("London"),
+    address4 = None,
+    postcode = Some("NW1 6XE"),
+    landArea = Some("250.5"),
+    areaUnit = Some("SQMETRE"),
+    localAuthorityNumber = Some("5900"),
+    mineralRights = Some("false"),
+    NLPGUPRN = Some("10012345678"),
+    willSendPlanByPost = Some("false"),
+    titleNumber = Some("TGL123456"),
+    landResourceRef = Some("LND-REF-001"),
+    nextLandID = None,
+    DARPostcode = Some("NW1 6XE")
+  )
+
+  val completeLandAdditional: Land = Land(
+    landID = Some("LND001"),
+    returnID = Some("RET123456789"),
+    propertyType = Some("04"),
+    interestCreatedTransferred = Some("FREEHOLD"),
+    houseNumber = Some("123"),
+    address1 = Some("Baker Street"),
+    address2 = Some("Marylebone"),
+    address3 = Some("London"),
+    address4 = None,
+    postcode = Some("NW1 6XE"),
+    landArea = Some("250.5"),
+    areaUnit = Some("SQMETRE"),
+    localAuthorityNumber = Some("5900"),
+    mineralRights = Some("false"),
+    NLPGUPRN = Some("10012345678"),
+    willSendPlanByPost = Some("false"),
+    titleNumber = Some("TGL123456"),
+    landResourceRef = Some("LND-REF-001"),
+    nextLandID = None,
+    DARPostcode = Some("NW1 6XE")
+  )
+
+  val completeLandNonResidential: Land = Land(
+    landID = Some("LND001"),
+    returnID = Some("RET123456789"),
+    propertyType = Some("02"),
     interestCreatedTransferred = Some("FREEHOLD"),
     houseNumber = Some("123"),
     address1 = Some("Baker Street"),
@@ -298,7 +376,7 @@ object FullReturnConstants {
     reference = Some("SP/2024/001"),
     isAuthorised = Some("true")
   )
-  
+
   val completeReturnAgentVendor: ReturnAgent = completeReturnAgent.copy(
     agentType = Some("VENDOR")
   )
@@ -485,7 +563,7 @@ object FullReturnConstants {
     returnResourceRef = "RRF-2024-001"
   )
 
-   val minimalFullReturn: FullReturn = FullReturn(
+  val minimalFullReturn: FullReturn = FullReturn(
     stornId = "STORN123456",
     returnResourceRef = "RRF-2024-001",
     sdltOrganisation = Some(completeSdltOrganisation),

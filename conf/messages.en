@@ -1040,6 +1040,17 @@ land.doYouKnowTheAreaOfLand.checkYourAnswersLabel                               
 land.doYouKnowTheAreaOfLand.error.required                                          = Select doYouKnowTheAreaOfLand
 land.doYouKnowTheAreaOfLand.change.hidden                                           = DoYouKnowTheAreaOfLand
 
+ukResidency.nonUkResidentPurchaser.title                                         = Are any of the purchasers non-UK residents? - About UK residency
+ukResidency.nonUkResidentPurchaser.heading                                       = Residency status
+ukResidency.nonUkResidentPurchaser.subheading                                    = Are any of the purchasers non-UK residents?
+ukResidency.nonUkResidentPurchaser.p1                                            = A purchaser is considered a non-UK resident for the purposes of SDLT if they spent fewer than 183 days in the UK during the 12 months before the effective date of the transaction.
+ukResidency.nonUkResidentPurchaser.p2                                            = Read the latest <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+ukResidency.nonUkResidentPurchaser.hint.link                                     = https://www.gov.uk/guidance/rates-of-stamp-duty-land-tax-for-non-uk-residents
+ukResidency.nonUkResidentPurchaser.hint.suffix                                   = HMRC guidance on residence status for SDLT (opens in a new tab)
+ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel                         = Non-UK Resident Purchaser
+ukResidency.nonUkResidentPurchaser.error.required                                = Select yes if nonUkResidentPurchaser
+ukResidency.nonUkResidentPurchaser.change.hidden                                 = Non-UK Resident Purchaser
+
 ukResidency.crownEmploymentRelief.title                                             = Crown employment relief
 ukResidency.crownEmploymentRelief.heading                                           = Crown employment relief
 ukResidency.crownEmploymentRelief.subheading                                        = Are any of the purchasers claiming Crown employment relief?
