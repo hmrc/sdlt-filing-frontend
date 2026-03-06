@@ -21,14 +21,11 @@ import constants.FullReturnConstants
 import constants.FullReturnConstants.minimalFullReturn
 import controllers.routes
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
-import models.land.LandTypeOfProperty
 import models.{FullReturn, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.LandTypeOfPropertyPage
-import pages.purchaser.WhoIsMakingThePurchasePage
 import pages.ukResidency.NonUkResidentPurchaserPage
 import play.api.data.Form
 import play.api.inject.bind
@@ -56,29 +53,32 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
   val userAnswersResidentialIndividual: UserAnswers =
     UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
       .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
-      .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Individual).success.value
 
   val userAnswersAdditionalResidentialCompany: UserAnswers =
     UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
       .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
-      .set(WhoIsMakingThePurchasePage, models.purchaser.WhoIsMakingThePurchase.Company).success.value
 
   val userAnswersNonResidential: UserAnswers =
     UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
       .copy(fullReturn = Some(fullReturnWithPurchaserNonResidential))
-      .set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional).success.value
 
   private def fullReturnWithIndividualPurchaser: FullReturn =
-    fullReturnComplete.copy(purchaser = Some(Seq(FullReturnConstants.completePurchaser1)))
-    fullReturnComplete.copy(land = Some(Seq(FullReturnConstants.completeLand)))
+    fullReturnComplete.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser1)),
+      land = Some(Seq(FullReturnConstants.completeLand))
+    )
 
   private def fullReturnWithCompanyPurchaser: FullReturn =
-    fullReturnComplete.copy(purchaser = Some(Seq(FullReturnConstants.completePurchaser3)))
-    fullReturnComplete.copy(land = Some(Seq(FullReturnConstants.completeLandAdditional)))
+    fullReturnComplete.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser3)),
+      land = Some(Seq(FullReturnConstants.completeLandAdditional))
+    )
 
   private def fullReturnWithPurchaserNonResidential: FullReturn =
-    minimalFullReturn.copy(purchaser = Some(Seq(FullReturnConstants.completePurchaser2)))
-    minimalFullReturn.copy(land = Some(Seq(FullReturnConstants.completeLandNonResidential)))
+    minimalFullReturn.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser2)),
+      land = Some(Seq(FullReturnConstants.completeLandNonResidential))
+    )
 
   "NonUkResidentPurchaser Controller" - {
 
