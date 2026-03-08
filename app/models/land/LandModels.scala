@@ -16,7 +16,9 @@
 
 package models.land
 
+import models.UserAnswers
 import play.api.libs.json.{Json, OFormat}
+import scala.concurrent.Future
 
 case class CreateLandRequest(
   stornId: String,
@@ -93,6 +95,24 @@ case class DeleteLandRequest(
 
 object DeleteLandRequest {
   implicit val format: OFormat[DeleteLandRequest] = Json.format[DeleteLandRequest]
+  def from(userAnswers: UserAnswers, landResourceRef: String): Future[DeleteLandRequest] = {
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        fullReturn.land.flatMap(_.find(_.landResourceRef.contains(landResourceRef))) match {
+          case Some(_) =>
+            Future.successful(DeleteLandRequest(
+              storn = fullReturn.stornId,
+              returnResourceRef = fullReturn.returnResourceRef,
+              landResourceRef = landResourceRef
+            ))
+          case None =>
+            Future.failed(new NoSuchElementException("Land not found"))
+        }
+
+      case None =>
+        Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class DeleteLandReturn(
