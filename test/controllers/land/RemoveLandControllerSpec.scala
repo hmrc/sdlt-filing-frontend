@@ -59,7 +59,7 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
     land = Some(Seq(
       Land(
         returnID =  Some("221110168"),
-        landResourceRef = Some("1"),
+        landResourceRef = Some("LND-REF-001"),
         landID  = Some("221110171"),
         address1 = Some("Test"),
         address2 = Some("stafford"),
