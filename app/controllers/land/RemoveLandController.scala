@@ -51,7 +51,7 @@ class RemoveLandController @Inject()(
       val landResourceRef = "LND-REF-001"
       // request.userAnswers.get(LandOverviewRemovePage).map { landResourceRef =>
 
-      val maybeReturnLandToRemove = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landResourceRef.contains(landResourceRef))))
+      val maybeReturnLandToRemove = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landResourceRef.exists( _.trim == landResourceRef.trim))))
       val addressLine1 = maybeReturnLandToRemove.flatMap(_.address1).getOrElse("")
 
       maybeReturnLandToRemove match {
@@ -79,7 +79,7 @@ class RemoveLandController @Inject()(
       val maybeLandToDelete: Option[Land] = for {
         fullReturn <- request.userAnswers.fullReturn
         allLands <- fullReturn.land
-        returnLandToDelete <- allLands.find(_.landResourceRef.contains(landResourceRef))
+        returnLandToDelete <- allLands.find(_.landResourceRef.exists(_.trim == landResourceRef.trim))
       } yield returnLandToDelete
 
       maybeLandToDelete match {

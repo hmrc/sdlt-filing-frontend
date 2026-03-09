@@ -108,7 +108,7 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to journey recovery if full return does not contain adddressLine1 for a GET" in {
+      "must redirect to journey recovery if full return does not contains land for a GET" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
