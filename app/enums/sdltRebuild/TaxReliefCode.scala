@@ -91,7 +91,7 @@ object TaxReliefCode {
 
   val selfAssessedFreeHoldReliefCodes: Set[TaxReliefCode] = standardZeroRateFreeholdReliefCodes.filterNot(_ == SeedingRelief)
 
-  val selfAssessedLeaseHoldReliefCodes: Set[TaxReliefCode] = standardZeroRateLeaseholdReliefCodes.filterNot(_ == SeedingRelief)
+  val selfAssessedLeaseHoldReliefCodes: Set[TaxReliefCode] = standardZeroRateLeaseholdReliefCodes.filterNot(_ == SeedingRelief) ++ Set(AcquisitionRelief, RightToBuy, PreCompletionTransaction, ReliefFrom15PercentRate)
 
   val selfAssessedCodes: Set[TaxReliefCode] = toName.values.toSet.filter(_.isInstanceOf[SelfAssessed])
 
