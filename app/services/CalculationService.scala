@@ -6,6 +6,7 @@
 package services
 
 import data.Dates
+import data.Dates._
 import enums.HoldingTypes._
 import enums.PropertyTypes._
 import enums.sdltRebuild.TaxReliefCode.{selfAssessedFreeHoldReliefCodes, selfAssessedLeaseHoldReliefCodes, standardZeroRateFreeholdReliefCodes, standardZeroRateLeaseholdReliefCodes}
@@ -15,10 +16,9 @@ import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.EffectivePropertyType._
 import models.sdltRebuild.{Mixed, NonResidential, Residential, ResidentialAdditionalProperty}
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, isAfterNov2017AndBeforeJul20}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, minimumThresholdGreaterThan500K}
 import utils.DateUtil
 import utils.LoggerUtil._
-import Dates._
 
 import javax.inject.{Inject, Singleton}
 
@@ -48,7 +48,6 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
   def calculateFreeholdResidentialTax(request: Request): CalculationResponse = {
 
     val premium = request.premium
-
     request.effectiveDate match {
       case date if nonUKResident(request.nonUKResident) && date.isAfter(Dates.MAR2021_RESIDENTIAL_DATE) =>
         calculateFreeholdNonUKResidentTax(request)
@@ -554,6 +553,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             if selfAssessedLeaseHoldReliefCodes.contains(taxReliefCode) && date.onOrAfter(NOV2017_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdSelfAssessedOnOrAfterNov2017
+            ))
+          case (`leasehold`, Residential, FirstTimeBuyersRelief, Some(true))
+            if minimumThresholdGreaterThan500K(request.premium) && request.isMultipleLand.contains(false) && date.betweenDates(NOV2017_RESIDENTIAL_DATE, JULY2020_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              leaseCalculationService.leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020
             ))
           case (holdingType, _, taxReliefCode, isLinked) =>
             logWarn(s"Falling back to Non-Tax Relief cases as TaxRelief logic not yet implemented for " +

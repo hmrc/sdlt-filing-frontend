@@ -14,6 +14,8 @@ object CalculationUtils extends DateUtil {
     premium < 40000
   }
 
+  private val minimumThreshold500K:BigDecimal = 500000
+
   private def nrsdltOutOfScopeForRent(premium: BigDecimal, leaseTermYears: Int, highestRent: BigDecimal,
                                                   firstTimeBuyer: Boolean, sharedOwnership: Boolean): Boolean = {
     (firstTimeBuyer && sharedOwnership) || leaseTermYears <= 7 || (premium < 40000 && highestRent < 1000)
@@ -37,6 +39,10 @@ object CalculationUtils extends DateUtil {
 
   def duringNRB500HolidayPeriod(date: LocalDate): Boolean = {
     date.onOrAfter(Dates.JULY2020_RESIDENTIAL_DATE) && date.onOrBefore(Dates.JUNE2021_RESIDENTIAL_DATE)
+  }
+
+  def minimumThresholdGreaterThan500K(premium:BigDecimal): Boolean = {
+    premium > minimumThreshold500K
   }
 
   def duringNRB250HolidayPeriod(date: LocalDate): Boolean = {

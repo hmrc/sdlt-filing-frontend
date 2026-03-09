@@ -2681,6 +2681,106 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           }
         }
       }
+
+      //SDLT - Tax Calc Case - 60a - self assessed
+      "TaxRelief code is FirstTimeBuyersRelief(32) & Property type is Residential, isLinked = true, premium > 500000 ,isMultipleLand = false" must {
+        "return the self assessed response when 2017/11/22 and 2020/07/08" when {
+          "date is 2017/11/23 " in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Residential",
+                     | "effectiveDateDay": 23,
+                     | "effectiveDateMonth": 11,
+                     | "effectiveDateYear": 2017,
+                     | "premium": 787659,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     |   "startDateDay": 23,
+                     |   "startDateMonth": 11,
+                     |   "startDateYear": 2017,
+                     |   "endDateDay": 23,
+                     |   "endDateMonth": 11,
+                     |   "endDateYear": 2018,
+                     |   "leaseTerm": {
+                     |      "years": 1,
+                     |      "days": 1,
+                     |      "daysInPartialYear": 365
+                     |    },
+                     |   "year1Rent": 1001,
+                     |   "year2Rent": 1001
+                     |  },
+                     |  "firstTimeBuyer": "Yes",
+                     |  "isMultipleLand": false,
+                     |  "isLinked": true,
+                     |  "taxReliefDetails": {
+                     |   "taxReliefCode": 32
+                     | },
+                     |  "propertyDetails": {
+                     |  "individual": "Yes",
+                     |  "twoOrMoreProperties": "No"
+                     |  }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+          }
+          "date is 2018/8/22 " in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Residential",
+                     | "effectiveDateDay": 22,
+                     | "effectiveDateMonth": 8,
+                     | "effectiveDateYear": 2018,
+                     | "premium": 600000,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     |   "startDateDay": 22,
+                     |   "startDateMonth": 8,
+                     |   "startDateYear": 2018,
+                     |   "endDateDay": 22,
+                     |   "endDateMonth":8,
+                     |   "endDateYear": 2019,
+                     |   "leaseTerm": {
+                     |      "years": 1,
+                     |      "days": 1,
+                     |      "daysInPartialYear": 365
+                     |    },
+                     |   "year1Rent": 1001,
+                     |   "year2Rent": 1001
+                     |  },
+                     |  "firstTimeBuyer": "Yes",
+                     |  "isMultipleLand": false,
+                     |  "isLinked": true,
+                     |  "taxReliefDetails": {
+                     |   "taxReliefCode": 32
+                     | },
+                     |  "propertyDetails": {
+                     |  "individual": "Yes",
+                     |  "twoOrMoreProperties": "No"
+                     |  }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            request.status shouldBe OK
+            request.json shouldBe selfAssessedResponse
+          }
+        }
+      }
     }
   }
 }

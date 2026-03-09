@@ -16,5 +16,9 @@ trait DateUtil {
     def onOrBefore(compDate: LocalDate): Boolean = {
       dt.isBefore(compDate) || dt.isEqual(compDate)
     }
+
+    def betweenDates(dateAfter:LocalDate, dateBefore:LocalDate):Boolean ={
+      dt.isAfter(dateAfter) && dt.isBefore(dateBefore)
+    }
   }
 }

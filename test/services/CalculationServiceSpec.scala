@@ -2882,6 +2882,41 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
       }
     }
+
+    //SDLT - Tax Calc Case - 60a - self assessed
+    "select the leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020 function" when {
+      "Leasehold, residential, FirstTimeBuyersRelief, isLinked = true, premium > 500000 ,isMultipleLand = false and date is between 22/11/2017 and 08/07/2020" in {
+        val dateAfterNovember2017AndBeforeJuly2020 = onOrAfterAndBeforeDateGenerator(LocalDate.of(2017,11,23)) (LocalDate.of(2020,7,9)).flatMap {
+          case Some(value) => value
+          case None => LocalDate.of(2017,11,23)
+        }
+        forAll(dateAfterNovember2017AndBeforeJuly2020) {
+          date => {
+            val testRequest = createRequest(leasehold, residential, date, Some(FirstTimeBuyersRelief), isLinked = Some(true), isMultipleLand = Some(false))
+              .copy(propertyDetails = Some(PropertyDetails(
+                individual = true,
+                twoOrMoreProperties = Some(false),
+                replaceMainResidence = None,
+                sharedOwnership = None,
+                currentValue = None
+              ))).copy(premium = 500001)
+
+            val result = createResult("leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020")
+
+            reset(mockLeaseholdCalculationService)
+
+            when(mockLeaseholdCalculationService.leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020).thenReturn(result)
+
+            testCalculationService.calculateTax(testRequest).result shouldBe Seq(result)
+
+            verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020
+
+            verifyNoMoreInteractions(mockLeaseholdCalculationService)
+          }
+
+        }
+      }
+    }
   }
 
   "checkFTB" must {

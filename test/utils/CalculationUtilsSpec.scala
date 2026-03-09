@@ -5,11 +5,16 @@
 
 package utils
 
+import generators.RequestGenerators
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play._
-import utils.CalculationUtils.{leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScope}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import utils.CalculationUtils.{leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScope, minimumThresholdGreaterThan500K}
 
-class CalculationUtilsSpec extends PlaySpec {
+class CalculationUtilsSpec extends PlaySpec with ScalaCheckPropertyChecks with RequestGenerators {
+
+  implicit override val generatorDrivenConfig: PropertyCheckConfiguration =
+    PropertyCheckConfiguration(minSuccessful = 50)
 
   ".leaseholdNRSDLTOutOfScope" must {
     "return true" when {
@@ -65,6 +70,21 @@ class CalculationUtilsSpec extends PlaySpec {
 
       "leasePeriod < 7 years" in {
         leaseholdNRSDLTInScopeForLeaseOrPremium(50000, 1, 1001, firstTimeBuyer=false, sharedOwnership=false) shouldBe false
+      }
+    }
+  }
+
+  ".minimumThresholdGreaterThan500K" must {
+    "return true when premium > 500000" in {
+      forAll(generateMinimumThresholdGreaterThan500K) {
+      value  =>
+        minimumThresholdGreaterThan500K(value) shouldBe true
+      }
+    }
+    "return false when premium <= 500000" in {
+      forAll(generateMinimumThresholdGLessThanOrEqualTo500K) {
+        value  =>
+          minimumThresholdGreaterThan500K(value) shouldBe false
       }
     }
   }
