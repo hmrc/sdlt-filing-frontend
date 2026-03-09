@@ -526,6 +526,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdResFTBReliefMar10BeforeMar12
             ))
+          case (`leasehold`, Residential, FirstTimeBuyersRelief, Some(true))
+            if date.onOrAfter(JULY2020_RESIDENTIAL_DATE) =>
+            CalculationResponse(Seq(
+              leaseCalculationService.leaseholdResidentialFTBOnOrAfterJul2020
+            ))
           case (`leasehold`, _, AcquisitionRelief, Some(false)) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdAcquisitionTaxReliefRes(request)

@@ -2414,6 +2414,19 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
       }
     }
+    "select the leaseholdResidentialOnOrAfterJul2020 function" when {
+      "given a request where FirstTimeBuyer(32), property type is Residential, is on or after 08/07/2020 and isLinked = true" in {
+        val testRequest = createRequest(leasehold, residential, LocalDate.of(2020, 7, 22), isLinked = Some(true), taxReliefCode = Some(FirstTimeBuyersRelief))
+        val result = createResult("freeholdAcquisitionReliefBeforeDec2014")
+
+        when(mockLeaseholdCalculationService.leaseholdResidentialFTBOnOrAfterJul2020).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialFTBOnOrAfterJul2020
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+    }
 
     "given no relief code, property type is Residential Additional Property, effective date is before 1/4/2016 and isLinked = true" in {
       val testRequest = createRequest(freehold, residential, LocalDate.of(2016, 3, 31), isAddProp = true)
@@ -2786,14 +2799,14 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
       "date is not before 08/07/2020" in {
         val testRequest = createRequest(leasehold, residential, LocalDate.of(2020, 7, 8), Some(FirstTimeBuyersRelief), isLinked = Some(true), isMultipleLand = Some(true))
-        val result = createResult("leaseholdNov17Onwards")
+        val result = createResult("leaseholdResidentialFTBOnOrAfterJul2020")
 
-        when(mockLeaseholdCalculationService.leaseholdNov17Onwards).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdResidentialFTBOnOrAfterJul2020).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockLeaseholdCalculationService, never).leaseholdResidentialFTBWithMultipleLands
-        verify(mockLeaseholdCalculationService, times(1)).leaseholdNov17Onwards
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResidentialFTBOnOrAfterJul2020
       }
       "date is not after 22/11/2017" in {
         val testRequest = createRequest(leasehold, residential, LocalDate.of(2017, 11, 21), Some(FirstTimeBuyersRelief), isLinked = Some(true), isMultipleLand = Some(true))

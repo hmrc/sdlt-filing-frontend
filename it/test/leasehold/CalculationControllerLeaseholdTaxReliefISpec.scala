@@ -1365,6 +1365,59 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
             }
           }
         }
+        // SDLT - Tax Calc Case - 60_2020 - Self Assessed
+        "date is on or after 08/07/2020" must {
+          "return self assessed response" when {
+            "Property Type is Residential" in {
+              val request: WSResponse = ws
+                .url(calculateUrl)
+                .post(
+                  Json.parse(
+                    """
+                      |{
+                      |  "holdingType": "Leasehold",
+                      |  "propertyType": "Residential",
+                      |  "effectiveDateDay": 27,
+                      |  "effectiveDateMonth": 7,
+                      |  "effectiveDateYear": 2020,
+                      |  "premium": 1000000,
+                      |  "highestRent": 0,
+                      |  "leaseDetails": {
+                      |    "startDateDay": 27,
+                      |    "startDateMonth": 7,
+                      |    "startDateYear": 2020,
+                      |    "endDateDay": 27,
+                      |    "endDateMonth": 7,
+                      |    "endDateYear": 2021,
+                      |    "leaseTerm": {
+                      |      "years": 1,
+                      |      "days": 1,
+                      |      "daysInPartialYear": 365
+                      |    },
+                      |    "year1Rent": 999,
+                      |    "year2Rent": 999
+                      |  },
+                      |  "propertyDetails": {
+                      |    "individual": "No",
+                      |    "twoOrMoreProperties": "No",
+                      |    "replaceMainResidence": "No"
+                      |  },
+                      |  "firstTimeBuyer": "Yes",
+                      |  "isLinked": true,
+                      |  "isMultipleLand": true,
+                      |  "taxReliefDetails": {
+                      |    "taxReliefCode": 32
+                      |  }
+                      |}
+                      |""".stripMargin
+                  )
+                )
+
+              request.status shouldBe OK
+              request.json shouldBe selfAssessedResponse
+            }
+          }
+        }
       }
 
       // SDLT - Tax Calc Case - 41 - Self Assessed

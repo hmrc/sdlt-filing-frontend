@@ -829,6 +829,10 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       .leaseholdSelfAssessedResult
   }
 
+  val leaseholdResidentialFTBOnOrAfterJul2020: Result =
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+
   def leaseholdFreeportRelief(leaseDetails: Option[LeaseDetails]): Result = {
     val calculatedNpv = Some(getNPV("leaseholdFreeportRelief", leaseDetails).toInt)
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
