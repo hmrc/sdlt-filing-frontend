@@ -47,11 +47,11 @@ class RemoveLandController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      //TODO update to take landResourceRef from user answers overview page DTR-2498.
-      val landResourceRef = "LND-REF-001"
-      // request.userAnswers.get(LandOverviewRemovePage).map { landResourceRef =>
+      //TODO update to take removeLandId from user answers overview page DTR-2498.
+      val removeLandId = "LND-REF-001"
+      // request.userAnswers.get(LandOverviewRemovePage).map { removeLandId =>
 
-      val maybeReturnLandToRemove = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landResourceRef.exists( _.trim == landResourceRef.trim))))
+      val maybeReturnLandToRemove = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landResourceRef.contains(removeLandId))))
       val addressLine1 = maybeReturnLandToRemove.flatMap(_.address1).getOrElse("")
 
       maybeReturnLandToRemove match {
@@ -74,12 +74,12 @@ class RemoveLandController @Inject()(
     implicit request =>
 
       //TODO update to take ID from user answers overview page DTR-2498
-      val landResourceRef = "LND-REF-001"
-      // request.userAnswers.get(LandOverviewRemovePage).map { landResourceRef =>
+      val removeLandId = "LND-REF-001"
+      // request.userAnswers.get(LandOverviewRemovePage).map { removeLandId =>
       val maybeLandToDelete: Option[Land] = for {
         fullReturn <- request.userAnswers.fullReturn
         allLands <- fullReturn.land
-        returnLandToDelete <- allLands.find(_.landResourceRef.exists(_.trim == landResourceRef.trim))
+        returnLandToDelete <- allLands.find(_.landResourceRef.contains(removeLandId))
       } yield returnLandToDelete
 
       maybeLandToDelete match {
@@ -97,7 +97,7 @@ class RemoveLandController @Inject()(
                 (for {
                   updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
                   returnVersion <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-                  deleteLandRequest <- DeleteLandRequest.from(request.userAnswers, landResourceRef) if returnVersion.newVersion.isDefined
+                  deleteLandRequest <- DeleteLandRequest.from(request.userAnswers, removeLandId) if returnVersion.newVersion.isDefined
                   deleteLandReturn <- backendConnector.deleteLand(deleteLandRequest) if returnVersion.newVersion.isDefined
                 } yield {
                   //Redirect(controllers.land.routes.LandOverviewController.onPageLoad()).flashing("landDeleted" -> addressLine1)

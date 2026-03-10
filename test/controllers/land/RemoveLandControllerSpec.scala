@@ -31,7 +31,6 @@ import play.api.inject.bind
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.land.RemoveLandView
 
@@ -158,11 +157,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
 
       "must redirect to the next page when valid data is submitted" in {
 
-        val mockSessionRepository = mock[SessionRepository]
-
         val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
 
-        // val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
         when(
@@ -176,8 +172,6 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
         ).thenReturn(
           Future.successful(DeleteLandReturn(true))
         )
-
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val application = applicationBuilder(Some(userAnswers))
           .overrides(
