@@ -16,7 +16,7 @@ import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.EffectivePropertyType._
 import models.sdltRebuild.{Mixed, NonResidential, Residential, ResidentialAdditionalProperty}
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, minimumThresholdGreaterThan500K}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, premiumIsGreaterThan500K}
 import utils.DateUtil
 import utils.LoggerUtil._
 
@@ -555,9 +555,14 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               leaseCalculationService.leaseholdSelfAssessedOnOrAfterNov2017
             ))
           case (`leasehold`, Residential, FirstTimeBuyersRelief, Some(true))
-            if minimumThresholdGreaterThan500K(request.premium) && request.isMultipleLand.contains(false) && date.betweenDates(NOV2017_RESIDENTIAL_DATE, JULY2020_RESIDENTIAL_DATE) =>
+            if !premiumIsGreaterThan500K(request.premium) && request.isMultipleLand.contains(false) && isAfterNov2017AndBeforeJul20(date) =>
             CalculationResponse(Seq(
-              leaseCalculationService.leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020
+              leaseCalculationService.leaseholdResFTBAfterNov17AndBeforeJul20upTo500k
+            ))
+          case (`leasehold`, Residential, FirstTimeBuyersRelief, Some(true))
+            if premiumIsGreaterThan500K(request.premium) && request.isMultipleLand.contains(false) && isAfterNov2017AndBeforeJul20(date) =>
+            CalculationResponse(Seq(
+              leaseCalculationService.leaseholdResFTBAfterNov17AndBeforeJul20greaterThan500k
             ))
           case (holdingType, _, taxReliefCode, isLinked) =>
             logWarn(s"Falling back to Non-Tax Relief cases as TaxRelief logic not yet implemented for " +

@@ -9,7 +9,7 @@ import generators.RequestGenerators
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import utils.CalculationUtils.{leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScope, minimumThresholdGreaterThan500K}
+import utils.CalculationUtils.{leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScope, premiumIsGreaterThan500K}
 
 class CalculationUtilsSpec extends PlaySpec with ScalaCheckPropertyChecks with RequestGenerators {
 
@@ -74,17 +74,17 @@ class CalculationUtilsSpec extends PlaySpec with ScalaCheckPropertyChecks with R
     }
   }
 
-  ".minimumThresholdGreaterThan500K" must {
+  ".premiumIsGreaterThan500K" must {
     "return true when premium > 500000" in {
       forAll(generateMinimumThresholdGreaterThan500K) {
       value  =>
-        minimumThresholdGreaterThan500K(value) shouldBe true
+        premiumIsGreaterThan500K(value) shouldBe true
       }
     }
     "return false when premium <= 500000" in {
       forAll(generateMinimumThresholdGLessThanOrEqualTo500K) {
         value  =>
-          minimumThresholdGreaterThan500K(value) shouldBe false
+          premiumIsGreaterThan500K(value) shouldBe false
       }
     }
   }

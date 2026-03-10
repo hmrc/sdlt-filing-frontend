@@ -41,7 +41,7 @@ object CalculationUtils extends DateUtil {
     date.onOrAfter(Dates.JULY2020_RESIDENTIAL_DATE) && date.onOrBefore(Dates.JUNE2021_RESIDENTIAL_DATE)
   }
 
-  def minimumThresholdGreaterThan500K(premium:BigDecimal): Boolean = {
+  def premiumIsGreaterThan500K(premium:BigDecimal): Boolean = {
     premium > minimumThreshold500K
   }
 
