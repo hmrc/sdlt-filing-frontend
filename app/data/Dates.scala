@@ -22,6 +22,7 @@ object Dates {
   val MARCH2016_NON_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2016, 3, 17)
   val APRIL2016_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2016, 4, 1)
   val NOV2017_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2017, 11, 22)
+  val NOV2017_EFFECTIVE_DATE: LocalDate = LocalDate.of(2017, 11, 22)
   val JULY2020_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2020, 7, 8)
   val MAR2021_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2021, 3, 31)
   val APR2021_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2021, 4, 1)

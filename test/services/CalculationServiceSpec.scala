@@ -2081,6 +2081,21 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
 
       "given no taxReliefDetails" when {
+        "transaction type is Leasehold, date is on or after 22/11/2017 and isLinked is true " in {
+
+          val result = createResult("leaseholdNov17Onwards")
+
+          forAll(leaseholdNoTaxReliefGenerator(LocalDate.of(2017, 11, 22), onOrAfter = true)) {
+            leaseholdNoTaxReliefRequest =>
+              reset(mockLeaseholdCalculationService)
+
+              when(mockLeaseholdCalculationService.leaseholdNov17Onwards).thenReturn(result)
+              testCalculationService.calculateTax(leaseholdNoTaxReliefRequest) shouldBe CalculationResponse(Seq(result))
+              verify(mockLeaseholdCalculationService, times(1)).leaseholdNov17Onwards
+              verifyNoMoreInteractions(mockFreeholdCalculationService)
+          }
+        }
+        //Case 19
         "transaction type is Leasehold, date is on or after 22/11/2017, and isLinked is true" in {
 
           val result = createResult("leaseholdNov17Onwards")

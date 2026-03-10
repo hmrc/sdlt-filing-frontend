@@ -603,6 +603,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         calculateBaseTax(request)
       /* ------------- LeaseHoldCases--------------------------- */
       case (`leasehold`, _, Some(true))
+        if date.onOrAfter(NOV2017_EFFECTIVE_DATE) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdNov17Onwards
+        ))
+      case (`leasehold`, _, Some(true))
         if date.onOrAfter(NOV2017_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdNov17Onwards
