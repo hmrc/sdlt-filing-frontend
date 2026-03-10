@@ -144,7 +144,6 @@ class LandOverviewController @Inject()(
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(LandOverviewRemovePage, landId))
         _ <- sessionRepository.set(updatedAnswers)
-        // TODO: Remove Land Controller
-      } yield Redirect(controllers.land.routes.LandBeforeYouStartController.onPageLoad())
+      } yield Redirect(controllers.land.routes.RemoveLandController.onPageLoad())
     }
 }

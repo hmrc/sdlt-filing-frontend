@@ -508,7 +508,6 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
     }
 
     ".removeLand" - {
-      // TODO: Redirect to Remove Land Page
       "must set landId in session and redirect to Remove Land" in {
         val mockSessionRepository = mock[SessionRepository]
 
@@ -526,12 +525,12 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.LandBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.RemoveLandController.onPageLoad().url
 
           verify(mockSessionRepository, times(1)).set(any())
         }
       }
-      // TODO: Redirect to Remove Land Page
+
       "must handle different lands IDs" in {
         val landIds = Seq("LND001", "LND002", "LND003")
 
@@ -553,7 +552,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual routes.LandBeforeYouStartController.onPageLoad().url
+            redirectLocation(result).value mustEqual routes.RemoveLandController.onPageLoad().url
           }
         }
       }
