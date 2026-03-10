@@ -59,7 +59,7 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
       Land(
         returnID =  Some("221110168"),
         landResourceRef = Some("LND-REF-001"),
-        landID  = Some("221110171"),
+        landID  = Some("LND-REF-001"),
         address1 = Some("Test"),
         address2 = Some("stafford"),
         postcode =  Some("TE11 7HE"),
@@ -240,8 +240,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          //TODO update to land overview page DTR-2498
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+          redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
 
@@ -263,8 +263,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          //TODO update to land overview page DTR-2498
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+          redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
 
@@ -295,11 +295,10 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          //TODO update to land overview page DTR-2498
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
-          //TODO update to land overview page DTR-2498
-         // flash(result).get("landDeleted").value mustEqual "Test"
+          redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
+
+          flash(result).get("landDeleted").value mustEqual "Test"
         }
       }
 
