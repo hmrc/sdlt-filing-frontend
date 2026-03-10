@@ -833,7 +833,12 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory
       .leaseholdSelfAssessedResult
 
-  val leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020: Result = {
+  val leaseholdResFTBAfterNov17AndBeforeJul20greaterThan500k: Result = {
+    LeaseholdResultFactory
+      .leaseholdSelfAssessedResult
+  }
+
+  val leaseholdResFTBAfterNov17AndBeforeJul20upTo500k: Result = {
     LeaseholdResultFactory
       .leaseholdSelfAssessedResult
   }

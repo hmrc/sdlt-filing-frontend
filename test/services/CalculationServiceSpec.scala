@@ -2770,14 +2770,14 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
     "not select the leaseholdResidentialFTBWithMultipleLands function" when {
       "isMultipleLand is false" in {
         val testRequest = createRequest(leasehold, residential, LocalDate.of(2020, 7, 7), Some(FirstTimeBuyersRelief), isLinked = Some(true), isMultipleLand = Some(false))
-        val result = createResult("leaseholdNov17Onwards")
+        val result = createResult("leaseholdResFTBAfterNov17AndBeforeJul20upTo500k")
 
-        when(mockLeaseholdCalculationService.leaseholdNov17Onwards).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdResFTBAfterNov17AndBeforeJul20upTo500k).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockLeaseholdCalculationService, never).leaseholdResidentialFTBWithMultipleLands
-        verify(mockLeaseholdCalculationService, times(1)).leaseholdNov17Onwards
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResFTBAfterNov17AndBeforeJul20upTo500k
       }
       "isMultipleLand is None" in {
         val testRequest = createRequest(leasehold, residential, LocalDate.of(2020, 7, 7), Some(FirstTimeBuyersRelief), isLinked = Some(true), isMultipleLand = None)
@@ -2898,10 +2898,36 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
     }
 
+    //SDLT - Tax Calc Case - 60 - self assessed
+    "select the leaseholdResFTBAfterNov17AndBeforeJul20upTo500k function" when {
+      "Leasehold & Residential & FirstTimeBuyersRelief & isLinked & premium <= 500000 & isMultipleLand = false & date is on or after 22/11/2017" in {
+        val testRequest = createRequest(leasehold, residential, LocalDate.of(2017, 11, 22), Some(FirstTimeBuyersRelief), isLinked = Some(true), isMultipleLand = Some(false))
+          .copy(premium = 500000)
+        val result = createResult("leaseholdResFTBAfterNov17AndBeforeJul20upTo500k")
+
+        when(mockLeaseholdCalculationService.leaseholdResFTBAfterNov17AndBeforeJul20upTo500k).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResFTBAfterNov17AndBeforeJul20upTo500k
+      }
+      "Leasehold & Residential & FirstTimeBuyersRelief & isLinked & premium <= 500000 & isMultipleLand = false & date is before 8/7/2020" in {
+        val testRequest = createRequest(leasehold, residential, LocalDate.of(2020, 7, 7), Some(FirstTimeBuyersRelief), isLinked = Some(true), isMultipleLand = Some(false))
+          .copy(premium = 500000)
+        val result = createResult("leaseholdResFTBAfterNov17AndBeforeJul20upTo500k")
+
+        when(mockLeaseholdCalculationService.leaseholdResFTBAfterNov17AndBeforeJul20upTo500k).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdResFTBAfterNov17AndBeforeJul20upTo500k
+      }
+    }
+
     //SDLT - Tax Calc Case - 60a - self assessed
     "select the leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020 function" when {
       "Leasehold, residential, FirstTimeBuyersRelief, isLinked = true, premium > 500000 ,isMultipleLand = false and date is between 22/11/2017 and 08/07/2020" in {
-        val dateAfterNovember2017AndBeforeJuly2020 = onOrAfterAndBeforeDateGenerator(LocalDate.of(2017,11,23)) (LocalDate.of(2020,7,9)).flatMap {
+        val dateAfterNovember2017AndBeforeJuly2020 = onOrAfterAndBeforeDateGenerator(LocalDate.of(2017,11,22)) (LocalDate.of(2020,7,7)).flatMap {
           case Some(value) => value
           case None => LocalDate.of(2017,11,23)
         }
@@ -2916,15 +2942,15 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
                 currentValue = None
               ))).copy(premium = 500001)
 
-            val result = createResult("leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020")
+            val result = createResult("leaseholdResFTBAfterNov17AndBeforeJul20greaterThan500k")
 
             reset(mockLeaseholdCalculationService)
 
-            when(mockLeaseholdCalculationService.leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020).thenReturn(result)
+            when(mockLeaseholdCalculationService.leaseholdResFTBAfterNov17AndBeforeJul20greaterThan500k).thenReturn(result)
 
             testCalculationService.calculateTax(testRequest).result shouldBe Seq(result)
 
-            verify(mockLeaseholdCalculationService, times(1)).leaseholdSelfAssessedAfterNovember2017AndBeforeJuly2020
+            verify(mockLeaseholdCalculationService, times(1)).leaseholdResFTBAfterNov17AndBeforeJul20greaterThan500k
 
             verifyNoMoreInteractions(mockLeaseholdCalculationService)
           }

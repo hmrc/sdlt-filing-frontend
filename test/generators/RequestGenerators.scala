@@ -405,7 +405,6 @@ trait RequestGenerators {
   }
   val generateIsLinkedFalseAndNoneValue :Gen[Option[Boolean]] = Gen.oneOf(None, Some(false))
   val generateIsLinkedAllPossibleValues : Gen[Option[Boolean]] = Gen.oneOf(None, Some(false), Some(true))
-  val generateIsLinkedNoneAndFalseValues : Gen[Option[Boolean]] = Gen.oneOf(Some(false), None)
   val generateMinimumThresholdGreaterThan500K : Gen[BigDecimal] = Gen.choose(500001, 50000000).map(BigDecimal(_))
   val generateMinimumThresholdGLessThanOrEqualTo500K : Gen[BigDecimal] = Gen.choose(1, 500000).map(BigDecimal(_))
   val generateTrueOrFalse : Gen[Boolean] = Gen.oneOf(false , true)
