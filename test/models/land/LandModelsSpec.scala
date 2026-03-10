@@ -16,11 +16,18 @@
 
 package models.land
 
+import base.SpecBase
+import constants.FullReturnConstants.completeFullReturn
+import org.scalatest.RecoverMethods.recoverToExceptionIf
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 
-class LandModelsSpec extends AnyFreeSpec with Matchers {
+import scala.concurrent.ExecutionContext
+
+class LandModelsSpec extends SpecBase with Matchers {
+
+  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   "CreateLandRequest" - {
 
@@ -599,18 +606,41 @@ class LandModelsSpec extends AnyFreeSpec with Matchers {
 
   "DeleteLandRequest" - {
 
+    val request = DeleteLandRequest(
+      storn = "STORN12345",
+      returnResourceRef = "100001",
+      landResourceRef = "L100001"
+    )
+
     "must serialize to JSON correctly" in {
-      val request = DeleteLandRequest(
-        storn = "STORN12345",
-        returnResourceRef = "100001",
-        landResourceRef = "L100001"
-      )
 
       val json = Json.toJson(request)
 
       (json \ "storn").as[String] mustBe "STORN12345"
       (json \ "returnResourceRef").as[String] mustBe "100001"
       (json \ "landResourceRef").as[String] mustBe "L100001"
+    }
+
+    "must check NoSuchElementException throw error message when landResourceRef not found" in {
+      val testReturnId = "test-return-id"
+      val testStorn = "test-storn"
+      val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)
+      val userAnswersWithExistingData = userAnswers
+        .copy(fullReturn = Some(completeFullReturn))
+      recoverToExceptionIf[NoSuchElementException] {
+        DeleteLandRequest.from(userAnswersWithExistingData, "L100001")
+      }.map { ex =>
+        ex.getMessage mustBe "Land not found"
+      }
+      }
+
+    "must check NoSuchElementException should throw error message when fullReturn is None" in {
+
+      recoverToExceptionIf[NoSuchElementException] {
+        DeleteLandRequest.from(emptyUserAnswers, "L100001")
+      }.map { ex =>
+        ex.getMessage mustBe "Full return not found"
+      }
     }
 
     "must deserialize from JSON correctly" in {

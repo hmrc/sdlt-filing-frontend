@@ -1059,3 +1059,8 @@ ukResidency.crownEmploymentRelief.checkYourAnswersLabel                         
 ukResidency.crownEmploymentRelief.missing                                           = Select if any purchasers are claiming Crown employment relief
 ukResidency.crownEmploymentRelief.error.required                                    = Please select an option
 ukResidency.crownEmploymentRelief.change.hidden                                     = CrownEmploymentRelief
+
+land.removeLand.title                                                          = Are you sure you want to remove the land or property?
+land.removeLand.heading                                                        = Are you sure you want to remove {0}?
+land.removeLand.error.required                                                 = Select yes if remove Land
+land.removeLand.change.hidden                                                  = Are you sure you want to remove the land or property?
