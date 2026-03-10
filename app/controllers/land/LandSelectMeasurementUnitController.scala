@@ -71,7 +71,7 @@ class LandSelectMeasurementUnitController @Inject()(
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(LandSelectMeasurementUnitPage, value))
               finalAnswers <- Future.fromTry {
-                if !value.equals(request.userAnswers.get(LandSelectMeasurementUnitPage)) then
+                if !request.userAnswers.get(LandSelectMeasurementUnitPage).contains(value) then
                   updatedAnswers.remove(AreaOfLandPage)
                 else
                   Success(updatedAnswers)

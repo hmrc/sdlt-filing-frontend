@@ -17,7 +17,7 @@
 package services.land
 
 import models.land.LandTypeOfProperty
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers, Land}
 import pages.land.LandTypeOfPropertyPage
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -37,5 +37,21 @@ class LandService {
         Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
 
     }
+  }
+
+  def getMainLand(userAnswers: UserAnswers): Option[Land] = {
+    val mainLandId: Option[String] = userAnswers.fullReturn
+      .flatMap(_.returnInfo)
+      .flatMap(_.mainLandID)
+
+    userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(land => mainLandId.equals(land.landID))))
+  }
+
+  def isMainLand(userAnswers: UserAnswers, landId: String): Boolean = {
+    val mainLandId:Option[String] = userAnswers.fullReturn
+      .flatMap(_.returnInfo)
+      .flatMap(_.mainLandID)
+    
+    mainLandId.contains(landId)
   }
 }

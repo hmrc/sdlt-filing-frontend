@@ -21,7 +21,7 @@ import forms.land.ConfirmLandOrPropertyAddressFormProvider
 import models.Mode
 import models.address.Address
 import navigation.Navigator
-import pages.land.{ConfirmLandOrPropertyAddressPage, LandAddressPage}
+import pages.land.{ConfirmLandOrPropertyAddressPage, LandAddressPage, LandIdPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -83,10 +83,11 @@ class ConfirmLandOrPropertyAddressController @Inject()(
       val localAuthorityNumber = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.localAuthorityNumber.isDefined)))
       val interestCreatedTransferred = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.interestCreatedTransferred.isDefined)))
       val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
+      val landId = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landID.isDefined).flatMap(_.landID)))
       val totalLand = landList.length == 1
       
-      (address1, address2, address3, address4, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
-        case (Some(add1), _, _, _, Some(post), None, None, None) if totalLand =>
+      (landId, address1, address2, address3, address4, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
+        case (Some(landId), Some(add1), _, _, _, Some(post), None, None, None) if totalLand =>
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, address1, address2, address3, address4, postcode))),
@@ -95,12 +96,17 @@ class ConfirmLandOrPropertyAddressController @Inject()(
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmLandOrPropertyAddressPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
+                val updatedAnswersWithLandId = updatedAnswers.set(LandIdPage, landId).get
                 if (value.toString == "yes") {
                   val address = Address(line1 = add1, line2 = address2, line3 = address3, line4 = address4, postcode = postcode)
-                  val updatedAnswersWithAddress = updatedAnswers.set(LandAddressPage, address).get
+                  val updatedAnswersWithAddress = updatedAnswersWithLandId.set(LandAddressPage, address).get
+
                   sessionRepository.set(updatedAnswersWithAddress)
-                  Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswersWithAddress))
+
+                  Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswersWithLandId))
                 } else {
+                  sessionRepository.set(updatedAnswersWithLandId)
+
                   Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())
                 }
               }

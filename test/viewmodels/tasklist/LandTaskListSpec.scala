@@ -30,7 +30,7 @@ class LandTaskListSpec extends SpecBase {
   private val fullReturnCompleteWithMultipleLands = completeFullReturn.copy(
     land = Some(Seq(completeLand, completeLand.copy(landID = Some("LAND-ID-2")), completeLand.copy(landID = Some("LAND-ID-3")))))
   private val fullReturnIncompleteLand = fullReturnComplete.copy(
-    land = Some(Seq(completeLand.copy(landArea = None))))
+    land = Some(Seq(completeLand.copy(mineralRights = None))))
   private val fullReturnMissingLand = fullReturnComplete.copy(land = None)
 
   "LandTaskList" - {
@@ -148,7 +148,7 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand)
 
-          result.url mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
 
@@ -160,7 +160,7 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnCompleteWithMultipleLands)
 
-          result.url mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
 
@@ -203,7 +203,7 @@ class LandTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.landQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
           row.status mustBe TLCompleted
-          row.url mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+          row.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
 
