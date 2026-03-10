@@ -384,5 +384,10 @@ POST        /about-UK-residency/non-UK-resident-purchaser                       
 GET         /about-UK-residency/non-UK-resident-purchaser/change                                     controllers.ukResidency.NonUkResidentPurchaserController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-UK-residency/non-UK-resident-purchaser/change                                     controllers.ukResidency.NonUkResidentPurchaserController.onSubmit(mode: Mode = CheckMode)
 
+GET         /about-UK-residency/close-company                                                         controllers.ukResidency.CloseCompanyController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-UK-residency/close-company                                                         controllers.ukResidency.CloseCompanyController.onSubmit(mode: Mode = NormalMode)
+GET         /about-UK-residency/close-company/change                                                  controllers.ukResidency.CloseCompanyController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-UK-residency/close-company/change                                                  controllers.ukResidency.CloseCompanyController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-land/remove-land-or-property                                                   controllers.land.RemoveLandController.onPageLoad()
 POST       /about-the-land/remove-land-or-property                                                   controllers.land.RemoveLandController.onSubmit()

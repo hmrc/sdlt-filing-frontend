@@ -24,8 +24,7 @@ import pages.land.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.ukResidency.CrownEmploymentReliefPage
-import pages.ukResidency.NonUkResidentPurchaserPage
+import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import pages.vendor.*
 import pages.vendorAgent.*
 
@@ -247,7 +246,10 @@ class NavigatorSpec extends SpecBase {
       "residency routes" - {
 
         "go from NonUkResidentPurchaserPage to CloseCompany page" in {
-          navigator.nextPage(NonUkResidentPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad() //TODO - DTR-2508 - Sprint 10 - Connect to PurchaserCloseCompanyPage
+          navigator.nextPage(NonUkResidentPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode)
+        }
+        "go from CloseCompanyPage to CrownEmploymentRelief" in {
+          navigator.nextPage(CloseCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
         }
         "go from CrownEmplymentReliefPage to check your answers page" in { //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
           navigator.nextPage(CrownEmploymentReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
@@ -315,6 +317,13 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(LandNlpgUprnPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
         navigator.nextPage(ConfirmLandOrPropertyAddressPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
         navigator.nextPage(LocalAuthorityCodePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+      }
+
+      //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
+      "must go from any residency page to ResidencyCheckYourAnswers" in {
+        navigator.nextPage(NonUkResidentPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(CloseCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(CrownEmploymentReliefPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
       }
 
       "must go from any preliminary page to CheckYourAnswers" in {

@@ -173,7 +173,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url //TODO - DTR-2508 - Sprint 10 - Connect to CloseCompanies page
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode).url
       }
     }
 
@@ -249,7 +249,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url //TODO - DTR-2508 - Sprint 10 - Connect to CloseCompanies page
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode).url
       }
     }
 
