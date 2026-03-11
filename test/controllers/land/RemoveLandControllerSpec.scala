@@ -18,6 +18,7 @@ package controllers.land
 
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
+import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.land.RemoveLandFormProvider
 import models.land.DeleteLandReturn
@@ -25,7 +26,7 @@ import models.{FullReturn, Land, ReturnInfo, ReturnVersionUpdateReturn, UserAnsw
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.RemoveLandPage
+import pages.land.{LandOverviewRemovePage, RemoveLandPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.{Call, Request}
@@ -53,21 +54,21 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
     stornId = testStorn,
     returnResourceRef = "REF001",
     returnInfo = Some(ReturnInfo(
-        version = Some("2")
-      )),
+      version = Some("2")
+    )),
     land = Some(Seq(
       Land(
-        returnID =  Some("221110168"),
+        returnID = Some("221110168"),
         landResourceRef = Some("LND-REF-001"),
-        landID  = Some("LND-REF-001"),
+        landID = Some("LND-REF-001"),
         address1 = Some("Test"),
         address2 = Some("stafford"),
-        postcode =  Some("TE11 7HE"),
+        postcode = Some("TE11 7HE"),
       )
     ))
   )
-  
-  
+
+
   "RemoveLand Controller" - {
 
     "onPageLoad()" - {
@@ -75,9 +76,13 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
       "must return OK and the correct view for a GET" in {
 
         val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
+
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
+
         running(application) {
+
           val request = FakeRequest(GET, removeLandRoute)
 
           val result = route(application, request).value
@@ -92,6 +97,7 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
       "must populate the view correctly on a GET when the question has previously been answered" in {
 
         val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn)).set(RemoveLandPage, true).success.value
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -109,7 +115,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
 
       "must redirect to journey recovery if full return does not contains land for a GET" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val userAnswers = emptyUserAnswers.set(LandOverviewRemovePage, "LND-REF-001").success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           val request = FakeRequest(GET, removeLandRoute)
@@ -140,7 +147,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
     "onSubmit()" - {
 
       "must redirect to journey recovery if full return does not contain land for a POST" in {
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn.copy(land= None)))
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn.copy(land = None)))
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
 
         val application = applicationBuilder(Some(userAnswers)).build()
 
@@ -157,7 +165,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
 
       "must redirect to the next page when valid data is submitted" in {
 
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn)).set(RemoveLandPage, true).success.value
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
 
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
@@ -186,13 +195,14 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.land.routes.RemoveLandController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
 
       "must return a Bad Request and errors when invalid data is submitted" in {
 
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn)).set(RemoveLandPage, true).success.value
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
@@ -214,7 +224,9 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
 
       "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn.copy(land = None)))
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           val request =
@@ -229,7 +241,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to land overview when no is selected" in {
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn)).set(RemoveLandPage, true).success.value
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -246,7 +259,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to land overview when backend fails" in {
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn)).set(RemoveLandPage, true).success.value
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
 
         when(mockConnector.updateReturnVersion(any())(any[HeaderCarrier], any[Request[_]]))
           .thenReturn(Future.failed(new RuntimeException("simulated backend failure")))
@@ -269,7 +283,40 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must redirect to land overview and set flash message when land is deleted" in {
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+        val testLand = Land(
+          landID = Some("LND001"),
+          returnID = Some("RET123456789"),
+          propertyType = Some("04"),
+          interestCreatedTransferred = Some("FREEHOLD"),
+          houseNumber = Some("123"),
+          address1 = Some("Baker Street"),
+          address2 = Some("Marylebone"),
+          address3 = Some("London"),
+          address4 = None,
+          postcode = Some("NW1 6XE"),
+          landArea = Some("250.5"),
+          areaUnit = Some("SQMETRE"),
+          localAuthorityNumber = Some("5900"),
+          mineralRights = Some("false"),
+          NLPGUPRN = Some("10012345678"),
+          willSendPlanByPost = Some("false"),
+          titleNumber = Some("TGL123456"),
+          landResourceRef = Some("LND-REF-001"),
+          nextLandID = None,
+          DARPostcode = Some("NW1 6XE")
+        )
+
+        val fullReturnWithLand = completeFullReturn.copy(
+          land = Some(Seq(testLand))
+        )
+
+        val landId = testLand.landID.value
+
+        val userAnswers = emptyUserAnswers.set(LandOverviewRemovePage, landId)
+          .success
+          .value
+          .copy(storn = testStorn, fullReturn = Some(fullReturnWithLand))
+
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
         when(
@@ -279,10 +326,11 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
         )
 
         when(
-          mockBackendConnector.deleteReturnAgent(any())(any(), any())
+          mockBackendConnector.deleteLand(any())(any(), any())
         ).thenReturn(
           Future.successful(DeleteLandReturn(true))
         )
+
         val application = applicationBuilder(Some(userAnswers))
           .overrides(
             bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
@@ -295,14 +343,12 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-
           redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
-
-          flash(result).get("landDeleted").value mustEqual "Test"
+          flash(result).get("landDeleted").value mustEqual testLand.address1.get
         }
       }
 
     }
-    }
+  }
 
 }

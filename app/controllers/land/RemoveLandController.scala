@@ -49,7 +49,7 @@ class RemoveLandController @Inject()(
 
       request.userAnswers.get(LandOverviewRemovePage).map { removeLandId =>
 
-        val maybeReturnLandToRemove = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landResourceRef.contains(removeLandId))))
+        val maybeReturnLandToRemove = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landID.contains(removeLandId))))
 
         val addressLine1 = maybeReturnLandToRemove.flatMap(_.address1).getOrElse("")
 
@@ -76,10 +76,11 @@ class RemoveLandController @Inject()(
         val maybeLandToDelete: Option[Land] = for {
           fullReturn <- request.userAnswers.fullReturn
           allLands <- fullReturn.land
-          returnLandToDelete <- allLands.find(_.landResourceRef.contains(removeLandId))
+          returnLandToDelete <- allLands.find(_.landID.contains(removeLandId)) if returnLandToDelete.landResourceRef.isDefined
         } yield returnLandToDelete
 
         maybeLandToDelete match {
+
           case None =>
             Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
@@ -94,15 +95,15 @@ class RemoveLandController @Inject()(
                   (for {
                     updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
                     returnVersion <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-                    deleteLandRequest <- DeleteLandRequest.from(request.userAnswers, removeLandId) if returnVersion.newVersion.isDefined
+                    deleteLandRequest <- DeleteLandRequest.from(request.userAnswers, maybeLandToDelete.landResourceRef.get)
                     deleteLandReturn <- backendConnector.deleteLand(deleteLandRequest) if returnVersion.newVersion.isDefined
                   } yield {
                     Redirect(controllers.land.routes.LandOverviewController.onPageLoad()).flashing("landDeleted" -> addressLine1)
                   }).recover {
                     case _ =>
                       Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
-
                   }
+
                 } else {
                   Future.successful(Redirect(controllers.land.routes.LandOverviewController.onPageLoad()))
                 }
@@ -111,6 +112,5 @@ class RemoveLandController @Inject()(
       }.getOrElse(
         Future.successful(Redirect(controllers.land.routes.LandOverviewController.onPageLoad()))
       )
-
   }
 }
