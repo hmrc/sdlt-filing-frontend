@@ -57,6 +57,16 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
       land = Some(Seq(FullReturnConstants.completeLandAdditional))
     )
 
+  val userAnswersWithIndividualPurchaser: UserAnswers =
+    UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
+
+  private def fullReturnWithIndividualPurchaser: FullReturn =
+    FullReturnConstants.completeFullReturn.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser3.copy(isCompany = Some("NO")))),
+      land = Some(Seq(FullReturnConstants.completeLandAdditional))
+    )
+  
   "CloseCompany Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -90,6 +100,22 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+      }
+    }
+    "must redirect to JourneyRecovery when purchaser is not a company on GET" in {
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersWithIndividualPurchaser)).build()
+
+      running(application) {
+
+        val request = FakeRequest(GET, closeCompanyRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
