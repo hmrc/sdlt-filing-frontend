@@ -45,6 +45,10 @@ object CalculationUtils extends DateUtil {
     premium > minimumThreshold500K
   }
 
+  def maximumThreshold(premium:BigDecimal, max: BigDecimal): Boolean = {
+    premium <= max
+  }
+
   def duringNRB250HolidayPeriod(date: LocalDate): Boolean = {
     date.onOrAfter(Dates.JULY2021_RESIDENTIAL_DATE) && date.onOrBefore(Dates.SEPT2021_RESIDENTIAL_DATE)
   }

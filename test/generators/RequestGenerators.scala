@@ -91,6 +91,8 @@ trait RequestGenerators {
 
 
   private val amountGen: Gen[Int] = Gen.oneOf(1 to 1000000)
+  private def amountGenWithLimit(limit: Int): Gen[Int] = Gen.oneOf(1 to limit)
+
   private val dateGenerator : Gen[Option[LocalDate]] = for {
     year <- Gen.oneOf(1990 to 2025)
     month <- Gen.oneOf(1 to 12)
@@ -403,6 +405,56 @@ trait RequestGenerators {
       )
 
   }
+  val freeHoldResidentialFTBFromNov2017ToJuly2020: Gen[Request] =
+    for {
+      nonZeroAmount <- amountGenWithLimit(500000)
+      anyDay <- onOrAfterAndBeforeDateGenerator(LocalDate.of(2017, 11, 22))(LocalDate.of(2020, 7, 8))
+    } yield
+      Request(
+        holdingType = HoldingTypes.freehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = anyDay.getOrElse(LocalDate.of(2017, 11, 22)),
+        nonUKResident = None,
+        premium = nonZeroAmount,
+        highestRent = BigDecimal(0),
+        propertyDetails = Some(
+          PropertyDetails(
+            individual = true,
+            twoOrMoreProperties = None,
+            replaceMainResidence = None,
+            sharedOwnership = None,
+            currentValue = None
+          )
+        ),
+        leaseDetails = None,
+        relevantRentDetails = None,
+        firstTimeBuyer = Some(true),
+        isLinked = Some(true),
+        interestTransferred = None,
+        taxReliefDetails = Some(
+          TaxReliefDetails(taxReliefCode = FirstTimeBuyersRelief,
+            isPartialRelief = None )),
+        isMultipleLand = Some(false)
+      )
+
+  val generatePremiumWithinMaxThreshold : Gen[(BigDecimal,BigDecimal)] =
+    for {
+      max <- amountGen
+      premium <- amountGenWithLimit(max)
+
+    } yield
+      (premium, max)
+
+  val generatePremiumOutsideMaxThreshold : Gen[(BigDecimal,BigDecimal)] =
+    for {
+      max <- amountGen
+
+    } yield
+      (max+1, max)
+
+
+
+  val generatePremium : Gen[BigDecimal] = Gen.choose(1, 9999999).map(BigDecimal(_))
   val generateIsLinkedFalseAndNoneValue :Gen[Option[Boolean]] = Gen.oneOf(None, Some(false))
   val generateIsLinkedAllPossibleValues : Gen[Option[Boolean]] = Gen.oneOf(None, Some(false), Some(true))
   val generateMinimumThresholdGreaterThan500K : Gen[BigDecimal] = Gen.choose(500001, 50000000).map(BigDecimal(_))

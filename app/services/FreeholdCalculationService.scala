@@ -576,6 +576,10 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     FreeholdResultFactory
       .freeholdSelfAssessedResult
 
+  val freeholdResidentialReliefFirstTimeBuyersReliefAfterNov2017AndBeforeJul2020: Result =
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+
   val freeholdResAddPropReliefFrom15PercentRateApr16Onwards: Result =
     FreeholdResultFactory
       .freeholdSelfAssessedResult

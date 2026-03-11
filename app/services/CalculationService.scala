@@ -16,9 +16,10 @@ import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.EffectivePropertyType._
 import models.sdltRebuild.{Mixed, NonResidential, Residential, ResidentialAdditionalProperty}
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, premiumIsGreaterThan500K}
+import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, premiumIsGreaterThan500K, maximumThreshold}
 import utils.DateUtil
 import utils.LoggerUtil._
+import data.Premium.MAX_PREMIUM_FTB
 
 import javax.inject.{Inject, Singleton}
 
@@ -408,6 +409,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             if date.isBefore(DECEMBER2014_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdAcquisitionReliefBeforeDec2014
+            ))
+          case (`freehold`, Residential, FirstTimeBuyersRelief, Some(true))
+            if isAfterNov2017AndBeforeJul20(date) && request.isMultipleLand.contains(false) && maximumThreshold(request.premium, MAX_PREMIUM_FTB) =>
+            CalculationResponse(Seq(
+              freeCalculationService.freeholdResidentialReliefFirstTimeBuyersReliefAfterNov2017AndBeforeJul2020
             ))
           case (`freehold`, Residential, FirstTimeBuyersRelief, Some(true))
             if isAfter22Mar2012AndBefore25Mar2012(date) =>

@@ -2882,6 +2882,84 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
 
+      // SDLT - Tax Calc Case - 54a - self assessed
+      "the TaxReliefCode is FirstTimeBuyersRelief: 32" when {
+        "there aren't multiple lands" when {
+          "Property Type is Residential" when {
+            "Premium is less than or equal to 500,000" when {
+              "the transaction is linked" must {
+                "return self assessed response" when {
+                  "date is on or after 22nd Nov 2017" in {
+                    val request: WSResponse = ws
+                      .url(calculateUrl)
+                      .post(
+                        Json.parse(
+                          """
+                            |{
+                            |  "holdingType": "Freehold",
+                            |  "propertyType": "Residential",
+                            |  "effectiveDateDay": 22,
+                            |  "effectiveDateMonth": 11,
+                            |  "effectiveDateYear": 2017,
+                            |  "premium": 500000,
+                            |  "highestRent": 0,
+                            |  "propertyDetails": {
+                            |    "individual": "Yes",
+                            |    "twoOrMoreProperties": "No"
+                            |  },
+                            |  "taxReliefDetails": {
+                            |    "taxReliefCode": 32
+                            |  },
+                            |  "firstTimeBuyer": "Yes",
+                            |  "isLinked": true,
+                            |  "isMultipleLand": false
+                            |}
+                            |""".stripMargin
+                        )
+                      )
+
+                    request.status shouldBe OK
+                    request.json shouldBe selfAssessedResponse
+                  }
+                  "date is before 8th July 2020" in {
+                    val request: WSResponse = ws
+                      .url(calculateUrl)
+                      .post(
+                        Json.parse(
+                          """
+                            |{
+                            |  "holdingType": "Freehold",
+                            |  "propertyType": "Residential",
+                            |  "effectiveDateDay": 7,
+                            |  "effectiveDateMonth": 7,
+                            |  "effectiveDateYear": 2020,
+                            |  "premium": 500000,
+                            |  "highestRent": 0,
+                            |  "propertyDetails": {
+                            |    "individual": "Yes",
+                            |    "twoOrMoreProperties": "No"
+                            |  },
+                            |  "taxReliefDetails": {
+                            |    "taxReliefCode": 32
+                            |  },
+                            |  "firstTimeBuyer": "Yes",
+                            |  "isLinked": true,
+                            |  "isMultipleLand": false
+                            |}
+                            |""".stripMargin
+                        )
+                      )
+
+                    request.status shouldBe OK
+                    request.json shouldBe selfAssessedResponse
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
       // SDLT - Tax Calc Case - 56a - self assessed
       "TaxReliefCode is First time buyer's relief: 32 :: MultipleLand's" when {
         "effective date is between 22/11/2017 and 08/07/2020" when {
@@ -2923,6 +3001,5 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
         }
       }
     }
-
   }
 }

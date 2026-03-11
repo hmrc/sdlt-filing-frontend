@@ -1450,6 +1450,20 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
             verify(mockFreeholdCalculationService, times(1)).freeholdRightToBuyBeforeMarch2016(freeHoldRightToRequest)
         }
       }
+      "given a request with relief code FirstTimeBuyersRelief and property type is Residential with no twoOrMoreProperties and the premium <= 500,000 and effective date on or after 22/11/2017 or before 08/07/2020" in {
+
+        val result = createResult("freeholdResidentialReliefFirstTimeBuyersReliefAfterNov2017AndBeforeJul20")
+
+        forAll(freeHoldResidentialFTBFromNov2017ToJuly2020) {
+          freeholdRequest =>
+            reset(mockFreeholdCalculationService)
+
+            when(mockFreeholdCalculationService.freeholdResidentialReliefFirstTimeBuyersReliefAfterNov2017AndBeforeJul2020).thenReturn(result)
+            testCalculationService.calculateTax(freeholdRequest) shouldBe CalculationResponse(Seq(result))
+            verify(mockFreeholdCalculationService, times(1)).freeholdResidentialReliefFirstTimeBuyersReliefAfterNov2017AndBeforeJul2020
+            verifyNoMoreInteractions(mockFreeholdCalculationService)
+        }
+      }
 
       "tax relief code is FirstTimeBuyersRelief(32), isLinked = true and date is on or after 22rd March 2012 and before 25rd March 2012" in {
         val testRequest = createRequest(freehold, residential, LocalDate.of(2012, 3, 22), taxReliefCode = Some(FirstTimeBuyersRelief), isLinked = Some(true))
