@@ -145,11 +145,11 @@ prelim.purchaserIsIndividual.Individual.hintText                                
 prelim.purchaserIsIndividual.Company                                                = A company
 prelim.purchaserIsIndividual.company.value                                          = Company
 prelim.purchaserIsIndividual.Company.hintText                                       = This means any form of organisation, such as a company, council or charity
-prelim.purchaserIsIndividual.checkYourAnswersLabel                                  = Purchaser type
+prelim.purchaserIsIndividual.checkYourAnswersLabel                                  = Type of purchaser
 prelim.purchaserIsIndividual.error.required                                         = Select who is making the purchase
 prelim.purchaserIsIndividual.error.invalid                                          = Invalid selection
-prelim.purchaserIsIndividual.change.hidden                                          = Purchaser type
-prelim.purchaserIsIndividual.link.message                                           = Enter purchaser type
+prelim.purchaserIsIndividual.change.hidden                                          = Type of purchaser
+prelim.purchaserIsIndividual.link.message                                           = Enter type of purchaser
 
 prelim.purchaser.individual.title                                                   = What is the purchaser’s surname? - Preliminary questions
 prelim.purchaser.individual.heading                                                 = What is the purchaser’s surname?
@@ -182,10 +182,10 @@ prelim.transactionType.conveyanceTransfer                                       
 prelim.transactionType.grantOfLease                                                 = L - Grant of lease
 prelim.transactionType.conveyanceTransferLease                                      = A - Conveyance/transfer with lease involvement
 prelim.transactionType.otherTransaction                                             = O - Other
-prelim.transactionType.checkYourAnswersLabel                                        = Transaction type
+prelim.transactionType.checkYourAnswersLabel                                        = Type of transaction
 prelim.transactionType.error.required                                               = Select the type of transaction
-prelim.transactionType.change.hidden                                                = Change transaction type
-prelim.transactionType.link.message                                                 = Enter transaction type
+prelim.transactionType.change.hidden                                                = Change type of transaction
+prelim.transactionType.link.message                                                 = Enter type of transaction
 
 # Address Lookup
 # Prelim Questions Address Lookup
@@ -682,7 +682,7 @@ purchaser.purchaserTypeOfCompany.unincorporatedBuilder                          
 purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                           = Unincorporated sole trader other than builder
 purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                              = Type of company
 purchaser.purchaserTypeOfCompany.error.required                                     = Select type of company
-purchaser.purchaserTypeOfCompany.change.hidden                                      = Purchaser type of company
+purchaser.purchaserTypeOfCompany.change.hidden                                      = Type of company
 
 purchaser.purchaserAndVendorConnected.title                                         = Are the purchaser and the vendor connected? - About the purchaser
 purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor connected?
