@@ -48,12 +48,18 @@ class CloseCompanyController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(CloseCompanyPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val isCompany: Boolean = request.userAnswers.fullReturn.flatMap(_.purchaser)
+        .flatMap(_.headOption).flatMap(_.isCompany).contains("YES")
 
-      Ok(view(preparedForm, mode))
+      if (isCompany) {
+        val preparedForm = request.userAnswers.get(CloseCompanyPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Ok(view(preparedForm, mode))
+      } else {
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO - DTR-2511 - change to residency CYA page
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

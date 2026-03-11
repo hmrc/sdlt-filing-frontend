@@ -17,12 +17,14 @@
 package controllers.ukResidency
 
 import base.SpecBase
+import constants.FullReturnConstants
 import controllers.routes
 import forms.ukResidency.CloseCompanyFormProvider
-import models.NormalMode
+import models.{FullReturn, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ukResidency.CloseCompanyPage
 import play.api.inject.bind
@@ -43,11 +45,23 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val closeCompanyRoute = controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode).url
 
+  private lazy val testStorn = "TESTSTORN"
+
+  val userAnswersWithCompanyPurchaser: UserAnswers =
+    UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
+
+  private def fullReturnWithCompanyPurchaser: FullReturn =
+    FullReturnConstants.completeFullReturn.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser3)),
+      land = Some(Seq(FullReturnConstants.completeLandAdditional))
+    )
+
   "CloseCompany Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithCompanyPurchaser)).build()
 
       running(application) {
         val request = FakeRequest(GET, closeCompanyRoute)
@@ -63,7 +77,7 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(CloseCompanyPage, true).success.value
+      val userAnswers = userAnswersWithCompanyPurchaser.set(CloseCompanyPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -102,6 +116,9 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(CloseCompanyPage) mustBe Some(true)
       }
     }
 
@@ -127,6 +144,9 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(CloseCompanyPage) mustBe Some(false)
       }
     }
 
