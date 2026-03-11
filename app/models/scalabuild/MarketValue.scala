@@ -11,10 +11,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 case class MarketValue(value: MarketValueChoice,
-                       paySDLTUpfront: Option[BigDecimal], paySDLTInStages: Option[BigDecimal]
+                       paySDLTUpfront: Option[BigDecimal],
+                       paySDLTInStages: Option[BigDecimal]
                       ) {
   def premium: BigDecimal =
-    paySDLTUpfront.orElse(throw new IllegalStateException("MarketValue must contain a premium")).getOrElse(throw new IllegalStateException("MarketValue must contain a premium"))
+    paySDLTUpfront.orElse(paySDLTInStages).getOrElse(throw new IllegalStateException("MarketValue must contain a premium"))
 }
 
 object MarketValue {
