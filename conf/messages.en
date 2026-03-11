@@ -1073,6 +1073,14 @@ ukResidency.crownEmploymentRelief.missing                                       
 ukResidency.crownEmploymentRelief.error.required                                    = Please select an option
 ukResidency.crownEmploymentRelief.change.hidden                                     = CrownEmploymentRelief
 
+ukResidency.closeCompany.title                                                      = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
+ukResidency.closeCompany.heading                                                    = Close companies
+ukResidency.closeCompany.subheading                                                 = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
+ukResidency.closeCompany.p1                                                         = A close company is broadly defined as a company controlled by five or fewer participators (usually shareholders), or where any number of directors are also shareholders. If the company is controlled by non-UK residents, then it will be treated as a non-UK resident for the purposes of SDLT.
+ukResidency.closeCompany.checkYourAnswersLabel                                      = Close company
+ukResidency.closeCompany.error.required                                             = Select yes if any of the purchasers are a UK resident close company controlled directly or non-directly by non-UK residents
+ukResidency.closeCompany.change.hidden                                              = Close company
+
 land.removeLand.title                                                          = Are you sure you want to remove the land or property?
 land.removeLand.heading                                                        = Are you sure you want to remove {0}?
 land.removeLand.error.required                                                 = Select yes if remove Land

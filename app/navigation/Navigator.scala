@@ -176,14 +176,17 @@ class Navigator @Inject()() {
 
   private def isResidencySection(page: Page): Boolean = page match {
 
-    case NonUkResidentPurchaserPage | CrownEmploymentReliefPage => true
+    case NonUkResidentPurchaserPage | CloseCompanyPage | CrownEmploymentReliefPage  => true
 
     case _ => false
   }
 
   private def residencyRoutes(page: Page): UserAnswers => Call = page match {
     case NonUkResidentPurchaserPage =>
-      _ => routes.ReturnTaskListController.onPageLoad() //TODO - DTR-2508 - Sprint 10 - Connect to CloseCompany page
+      _ => controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode)
+    case CloseCompanyPage =>
+      _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
+
     case CrownEmploymentReliefPage => //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
       _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
 
