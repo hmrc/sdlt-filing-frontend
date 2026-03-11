@@ -5,16 +5,17 @@
 
 package services
 
-import java.time.LocalDate
-import data.ResultText.{RESULT_HEADING_GENERIC, RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
+import data.ResultText.RESULT_HEADING_GENERIC
 import enums.sdltRebuild.AcquisitionRelief
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import models.sdltRebuild.TaxReliefDetails
-import models.{CalculationDetails, Result, _}
+import models._
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+
+import java.time.LocalDate
 
 class FreeholdCalculationServiceSpec extends PlaySpec with ScalaCheckPropertyChecks {
 

@@ -527,6 +527,11 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
       .freeholdSelfAssessedResult
   }
 
+  val freeholdSelfAssessedResidentialFirstTimeBuyer500kMax: Result = {
+    FreeholdResultFactory
+      .freeholdSelfAssessedResult
+  }
+
   val freeholdResidentialRightToBuyDec14Onwards: Result =
     FreeholdResultFactory
       .freeholdSelfAssessedResult
@@ -615,7 +620,7 @@ class FreeholdCalculationService @Inject()(val baseCalculationService: BaseCalcu
     FreeholdResultFactory
       .freeholdSelfAssessedResult
 
-  val freeholdResidentialFTBOnOrAfter8July2020: Result =
+  val freeholdResidentialFirstTimeBuyer500kMax: Result =
     FreeholdResultFactory
       .freeholdSelfAssessedResult
 
