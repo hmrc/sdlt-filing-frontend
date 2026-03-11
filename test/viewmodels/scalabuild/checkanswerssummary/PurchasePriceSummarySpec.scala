@@ -17,7 +17,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListR
 class PurchasePriceSummarySpec extends AnyWordSpec with ScalaSpecBase {
   val messagesApi: MessagesApi = application().injector.instanceOf[MessagesApi]
   implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
-  
+
   "PurchasePrice Summary" should {
     "not return a summary row for PurchasePrice" when {
       "there is no data for PurchasePrice in the UserAnswers" in {
@@ -38,7 +38,8 @@ class PurchasePriceSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.PurchasePriceController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Purchase price?"),
+                  attributes = Map(("id", "change_purchasePrice"))
                 )
               )
             )
@@ -53,7 +54,7 @@ class PurchasePriceSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(PurchasePricePage, BigDecimal(300000)).toOption
         val expected = SummaryListRow(
           key = Key(Text("Purchase price"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_purchasePrice">£300,000</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_purchasePrice">£300,000</span>"""))
         )
         val result = PurchasePriceSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -64,7 +65,7 @@ class PurchasePriceSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(PurchasePricePage, BigDecimal(300000)).toOption
         val expected = SummaryListRow(
           key = Key(Text("Purchase price (£)")),
-          value = Value(content = HtmlContent(s"""<span id="premium0">300,000</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="premium0">300,000</span>"""))
         )
         val result = PurchasePriceSummary.row(userAnswers.get, withAction = false, resultTable = true, index = Some(0))
         result shouldBe Some(expected)
@@ -73,7 +74,7 @@ class PurchasePriceSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(PurchasePricePage, BigDecimal(300000)).toOption
         val expected = SummaryListRow(
           key = Key(Text("Purchase price (£)")),
-          value = Value(content = HtmlContent(s"""<span id="premium1">300,000</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="premium1">300,000</span>"""))
         )
         val result = PurchasePriceSummary.row(userAnswers.get, withAction = false, resultTable = true, index = Some(1))
         result shouldBe Some(expected)

@@ -20,7 +20,9 @@ class DetailViewSpec extends ViewTestFixture with TestObjects {
     captionText = detailCaption,
     detailFooter = "Total SDLT due",
     taxDue = 47500,
-    rows = detailFreeResUkIndTwoMain )(fakeRequest, messages)
+    rows = detailFreeResUkIndTwoMain,
+    bandHeading = "Purchase price bands (£)"
+  )(fakeRequest, messages)
 
   "DetailView" must {
     "render the correct content when slice results are returned" in {

@@ -34,7 +34,8 @@ object IsPurchaserIndividualSummary {
               "site.change",
               controllers.scalabuild.routes.IsPurchaserIndividualController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.isPurchaserIndividual"))
+              .withAttribute(("id", "change_individual"))
           )
         )
       } else {

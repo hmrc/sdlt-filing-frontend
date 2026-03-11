@@ -38,7 +38,8 @@ class PremiumSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.PremiumController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Premium payable?"),
+                  attributes = Map(("id", "change_premium"))
                 )
               )
             )
@@ -52,8 +53,8 @@ class PremiumSummarySpec extends AnyWordSpec with ScalaSpecBase {
       "answer is £300000 and 'withAction' is false " in {
         val userAnswers = emptyUserAnswers.set(PremiumPage, BigDecimal(300000)).toOption
         val expected = SummaryListRow(
-          key = Key(Text("SDLT on Premium")),
-          value = Value(content = HtmlContent(s"""<span id="td2_premium">£300,000</span>""")),
+          key = Key(Text("Premium"), " govuk-!-width-one-half previous-question-title"),
+          value = Value(content = HtmlContent(s"""<span id="td2_premium">£300,000</span>"""))
         )
         val result = PremiumSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

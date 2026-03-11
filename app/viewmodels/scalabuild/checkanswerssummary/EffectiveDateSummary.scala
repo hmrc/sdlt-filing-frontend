@@ -36,7 +36,8 @@ object EffectiveDateSummary {
               "site.change",
               controllers.scalabuild.routes.EffectiveDateController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.effectiveDate"))
+              .withAttribute(("id", "change_effectiveDate"))
           )
         )
       } else if (resultTable) {

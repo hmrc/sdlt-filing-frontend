@@ -30,6 +30,18 @@ trait InputFluency {
         label = label,
         errorMessage = errorMessage(field)
       )
+    def apply(
+      field: Field,
+      label: Label,
+      id: String
+    )(implicit messages: Messages): Input =
+      Input(
+        id = id,
+        name = field.name,
+        value = field.value,
+        label = label,
+        errorMessage = errorMessage(field)
+      )
   }
 
   implicit class FluentInput(input: Input) {

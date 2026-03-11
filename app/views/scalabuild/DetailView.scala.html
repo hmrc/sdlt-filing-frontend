@@ -17,7 +17,7 @@ govukButton: GovukButton,
 govukTable: GovukTable
 )
 
-@(captionText: String, detailFooter: String, taxDue: Int, rows: Seq[DetailTableRow])(implicit rh: RequestHeader, messages: Messages)
+@(captionText: String, detailFooter: String, taxDue: Int, rows: Seq[DetailTableRow], bandHeading: String)(implicit rh: RequestHeader, messages: Messages)
 
 @layout() {
     <h1 class="govuk-heading-l">Detailed calculation</h1>
@@ -31,7 +31,7 @@ govukTable: GovukTable
     @govukTable(Table(
         head = Some(Seq(
             HeadCell(
-                content = Text(messages("detail.table.header.bands")), attributes = Map("id" -> s"bandHeading"),
+                content = Text(bandHeading), attributes = Map("id" -> s"bandHeading"),
             ),
             HeadCell(
                 content = Text(messages("detail.table.header.percentage")),

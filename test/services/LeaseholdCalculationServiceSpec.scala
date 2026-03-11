@@ -5,16 +5,16 @@
 
 package services
 
-import data.ResultText.{RESULT_HEADING_TAX_RELIEF, RESULT_HEADING_TAX_RELIEF_SELF_ASSESSMENT}
 import enums.sdltRebuild.AcquisitionRelief
-import java.time.LocalDate
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import fixtures.{LeaseholdRequestFeature, LeaseholdResultFixture}
+import models._
 import models.sdltRebuild.TaxReliefDetails
-import models.{CalculationDetails, Result, _}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
+
+import java.time.LocalDate
 
 class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeature with LeaseholdResultFixture {
 

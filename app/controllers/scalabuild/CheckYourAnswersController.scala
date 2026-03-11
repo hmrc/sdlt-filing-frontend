@@ -9,8 +9,7 @@ import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, 
 import models.scalabuild.HoldingTypes.{Freehold, Leasehold}
 import models.scalabuild.UserAnswers
 import models.scalabuild.requests.DataRequest
-import pages.scalabuild.{CurrentValuePage, EffectiveDatePage, HoldingPage, RequestGroup}
-import play.api.i18n.Lang.logger
+import pages.scalabuild.{CurrentValuePage, EffectiveDatePage, HoldingPage}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.scalabuild.FtbLimitService
@@ -36,16 +35,8 @@ class CheckYourAnswersController @Inject() (
     with I18nSupport {
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request: DataRequest[AnyContent] =>
-      request.userAnswers
-        .get(RequestGroup)
-        .fold {
-          logger.error("Couldn't make RequestFromMongo out of requestGroup")
-          Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad())
-        } { _ =>
-          val list = toSummaryList(request.userAnswers, withAction = true)
-          Ok(view(list))
-        }
-
+      val list = toSummaryList(request.userAnswers, withAction = true)
+      Ok(view(list))
   }
 
   def onSubmit: Action[AnyContent] =
@@ -57,14 +48,14 @@ class CheckYourAnswersController @Inject() (
 
   private def toSummaryList(userAnswers: UserAnswers, withAction: Boolean)(implicit messages: Messages): SummaryList = {
     val premiumOrPriceSummaryRow = userAnswers.get(HoldingPage) match {
-      case Some(Freehold) => PurchasePriceSummary.row(userAnswers, withAction = withAction)
+      case Some(Freehold)  => PurchasePriceSummary.row(userAnswers, withAction = withAction)
       case Some(Leasehold) => PremiumSummary.row(userAnswers, withAction = withAction)
-      case None        => None
+      case None            => None
     }
 
     val threshold: Option[(Int, Boolean)] =
       for {
-        effectiveDate <-userAnswers.get(EffectiveDatePage)
+        effectiveDate <- userAnswers.get(EffectiveDatePage)
         currentValue <- userAnswers.get(CurrentValuePage)
         threshold = service.ftbLimit(effectiveDate)
       } yield (threshold, currentValue)
@@ -95,7 +86,7 @@ class CheckYourAnswersController @Inject() (
         HighestRentSummary.row(userAnswers),
         ExchangeContractPreMarch2016Summary.row(userAnswers, withAction = withAction),
         ContractPostMarch2016Summary.row(userAnswers, withAction = withAction),
-        RelevantRentSummary.row(userAnswers, withAction = withAction),
+        RelevantRentSummary.row(userAnswers, withAction = withAction)
       ).flatten
     )
   }

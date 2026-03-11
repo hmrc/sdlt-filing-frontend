@@ -8,17 +8,17 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import forms.scalabuild.SharedOwnershipFormProvider
 import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.scalabuild.SharedOwnershipPage
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.scalabuild.SharedOwnershipView
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 
 class SharedOwnershipControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
-  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/shared-ownership")
+  def onwardRoute = Call("GET", "/calculate-stamp-duty-land-tax/current-value")
 
   val formProvider = new SharedOwnershipFormProvider()
   val form = formProvider()
@@ -50,7 +50,6 @@ class SharedOwnershipControllerSpec extends AnyFreeSpec with ScalaSpecBase {
       }
     }
 
-
     "must redirect to the next page when valid data is submitted" in {
 
       val application = applicationBuilder().build()
@@ -58,7 +57,8 @@ class SharedOwnershipControllerSpec extends AnyFreeSpec with ScalaSpecBase {
       running(application) {
         val request =
           FakeRequest(POST, sharedOwnershipRoute)
-            .withFormUrlEncodedBody(("sharedOwnership", "true")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+            .withFormUrlEncodedBody(("sharedOwnership", "true"))
+            .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val result = route(application, request).value
 
@@ -74,7 +74,8 @@ class SharedOwnershipControllerSpec extends AnyFreeSpec with ScalaSpecBase {
       running(application) {
         val request =
           FakeRequest(POST, sharedOwnershipRoute)
-            .withFormUrlEncodedBody(("sharedOwnership", "")).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+            .withFormUrlEncodedBody(("sharedOwnership", ""))
+            .addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
         val boundForm = form.bind(Map("sharedOwnership" -> ""))
 

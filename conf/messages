@@ -10,7 +10,7 @@ site.print = print your calculation
 site.viewCalculation = View calculation
 site.yes = Yes
 site.no = No
-site.change.hidden = Change
+site.change.hidden = change
 
 journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
@@ -154,8 +154,8 @@ marketValue.details.d2.p2 = Further payments towards your property purchase made
 marketValue.details.d2.p3 = However if your total share in the property is never more than 80%, then you will not be liable for any further SDLT.
 marketValue.PayUpfront = Pay SDLT up front by making a market value election
 marketValue.PayInStages = Pay SDLT in stages
-marketValue.paySDLTUpfront.input = Market value of the property you are buying
-marketValue.marketPropValue.input = Price of initial share of the property
+marketValue.PayUpfront.input = Market value of the property you are buying
+marketValue.PayInStages.input = Price of initial share of the property
 marketValue.error.required = Provide an answer to continue.
 marketValue.error.nonNumeric = Enter the amount again - don''t use any letters or characters including £
 marketValue.error.maxValue = Enter a value that is £{0} or less.
@@ -220,6 +220,8 @@ rents.error.nonNumeric = Enter the rent again - don't use any letters or charact
 
 checkYourAnswers.heading = Check your answers
 
+detail.table.header.bands.purchasePrice = Purchase price bands (£)
+detail.table.header.bands.rent = Rent bands (£)
 detail.table.header.bands = Purchase price bands (£)
 detail.table.header.percentage = Percentage rate (%)
 detail.table.header.due = SDLT due (£)
@@ -238,3 +240,28 @@ rateSummary.resultLabel = Percentage rate (%)
 
 sdltHomePage.link.href = https://www.gov.uk/stamp-duty-land-tax
 govUk.link.text = GOV.UK
+
+site.change.hidden.contractPre201603 = Exchange of contracts before 17 March 2016?
+site.change.hidden.contractPost201603 = Contract changed on or after 17 March 2016?
+site.change.hidden.currentValue = Is the current market value of the property £" + ftbThreshold(scope.data.effectiveDate) +" or less?" : undefined
+site.change.hidden.effectiveDate = Effective date of your transaction?
+site.change.hidden.holdingType = Is property freehold or leasehold?
+site.change.hidden.twoOrMoreProperties = Will you own two or more properties?
+site.change.hidden.isPurchaserIndividual = Are you purchasing the property as an individual?
+site.change.hidden.leaseEndDate = End date as specified in lease?
+site.change.hidden.leaseStartDate = Start date as specified in lease?
+site.change.hidden.mainResidence = Will this property be your main residence?
+site.change.hidden.nonUKResident = Are any of the purchasers non-UK resident?
+site.change.hidden.ownedOtherProperties = Have you ever owned any other property?
+site.change.hidden.marketValue = Pay SDLT
+site.change.hidden.premium = Premium payable?
+site.change.hidden.propertyType = Is property residential or non-residential?
+site.change.hidden.purchasePrice = Purchase price?
+site.change.hidden.relevantRent = Relevant rental figure?
+site.change.hidden.replaceMainResidence = Are you replacing a main residence?
+site.change.hidden.sharedOwnership = Are you buying the property through a shared ownership scheme?
+site.change.hidden.year1Rent = Year 1 rent?
+site.change.hidden.year2Rent = Year 2 rent?
+site.change.hidden.year3Rent = Year 3 rent?
+site.change.hidden.year4Rent = Year 4 rent?
+site.change.hidden.year5Rent = Year 5 rent?

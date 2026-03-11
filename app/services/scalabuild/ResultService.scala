@@ -77,7 +77,7 @@ class ResultService @Inject() (
             netPresentValue = results.npv,
             taxesDue = taxesDueByType(results.taxCalcs),
             viewDetailsLink = if (displayType == DisplayFreehold) {
-                  Some(controllers.scalabuild.routes.DetailController.onPageLoad(index).url)
+                  Some(controllers.scalabuild.routes.DetailController.onPageLoad(Some(index), Some(0)).url)
                 } else {
               None
             }

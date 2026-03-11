@@ -33,7 +33,8 @@ object PropertySummary {
               "site.change",
               controllers.scalabuild.routes.ResidentialOrNonResidentialController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.propertyType"))
+              .withAttribute(("id", "change_propertyType"))
           )
         )
       } else {

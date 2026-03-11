@@ -34,7 +34,8 @@ object Year4RentSummary {
                 "site.change",
                 controllers.scalabuild.routes.RentController.onPageLoad().url
               )
-                .withVisuallyHiddenText(messages("site.change.hidden"))
+                .withVisuallyHiddenText(messages("site.change.hidden.year4Rent"))
+                .withAttribute(("id", "change_year4Rent"))
             )
           )
         } else {

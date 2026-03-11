@@ -34,7 +34,8 @@ object CurrentValueSummary {
                 "site.change",
                 controllers.scalabuild.routes.CurrentValueController.onPageLoad().url
               )
-                .withVisuallyHiddenText(messages("site.change.hidden"))
+                .withVisuallyHiddenText(messages("site.change.hidden.currentValue"))
+                .withAttribute(("id", "change_currentValue"))
             )
           )
         } else {

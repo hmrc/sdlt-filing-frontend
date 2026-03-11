@@ -7,6 +7,7 @@ package controllers.scalabuild
 
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.SharedOwnershipFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.SharedOwnershipPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -24,6 +25,7 @@ class SharedOwnershipController @Inject()(
                                            view: SharedOwnershipView,
                                            formProvider: SharedOwnershipFormProvider,
                                            sessionRepository: SessionRepository,
+                                           navigator: Navigator,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            identify: IdentifierAction
@@ -45,7 +47,7 @@ class SharedOwnershipController @Inject()(
           updatedAnswers <- Future
             .fromTry(request.userAnswers.set(SharedOwnershipPage, value))
           _ <- sessionRepository.set(updatedAnswers)
-        } yield Redirect(controllers.scalabuild.routes.SharedOwnershipController.onPageLoad().url)
+        } yield Redirect(navigator.nextPage(SharedOwnershipPage, updatedAnswers))
       )
 
   }

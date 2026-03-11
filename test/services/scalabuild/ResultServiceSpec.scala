@@ -100,7 +100,7 @@ class ResultServiceSpec
       ),
       taxesDue =
         Seq((freeResCalculationResult.taxCalcs.head.taxType, freeResCalculationResult.taxCalcs.head.taxDue, None)),
-      viewDetailsLink = Some(routes.DetailController.onPageLoad(0).url)
+      viewDetailsLink = Some(routes.DetailController.onPageLoad(Some(0), Some(0)).url)
     )
   )
   val validUserAnswers = freeResNonIndAddMainJourney
@@ -159,7 +159,7 @@ class ResultServiceSpec
           netPresentValue = None,
           summaryTable = freeResSummaryList,
           taxesDue = List((premium, 20000, None)),
-          viewDetailsLink = Some(routes.DetailController.onPageLoad(0).url)
+          viewDetailsLink = Some(routes.DetailController.onPageLoad(Some(0), Some(0)).url)
         )
 
         val userAnswers = UserAnswers(
@@ -221,7 +221,7 @@ class ResultServiceSpec
         List(
           SummaryListRow(
             Key(Text("Total amount of tax for this transaction")),
-            Value(content = HtmlContent("""<span id="totalTax0">15,000</span>""")),
+            Value(content = HtmlContent("""<span id="totalTax0">£15,000</span>""")),
             actions = None
           ),
           SummaryListRow(
@@ -236,10 +236,10 @@ class ResultServiceSpec
               Actions(
                 items = List(
                   ActionItem(
-                    href = routes.DetailController.onPageLoad(0).url,
+                    href = routes.DetailController.onPageLoad(Some(0), Some(0)).url,
                     content = Text("View calculation"),
                     visuallyHiddenText = Some("View calculation"),
-                    attributes = Map("id" -> "detailCalc0")
+                    attributes = Map("id" -> "detailCalc00")
                   )
                 )
               )
@@ -252,10 +252,10 @@ class ResultServiceSpec
               Actions(
                 items = List(
                   ActionItem(
-                    href = routes.DetailController.onPageLoad(0).url,
+                    href = routes.DetailController.onPageLoad(Some(0), Some(1)).url,
                     content = Text("View calculation"),
                     visuallyHiddenText = Some("View calculation"),
-                    attributes = Map("id" -> "detailCalc1")
+                    attributes = Map("id" -> "detailCalc01")
                   )
                 )
               )
@@ -355,7 +355,7 @@ class ResultServiceSpec
           List(
             SummaryListRow(
               Key(Text("Total amount of tax for this transaction")),
-              Value(content = HtmlContent("""<span id="totalTax0">48,426</span>""")),
+              Value(content = HtmlContent("""<span id="totalTax0">£48,426</span>""")),
               actions = None
             ),
             SummaryListRow(
@@ -370,10 +370,10 @@ class ResultServiceSpec
                 Actions(
                   items = List(
                     ActionItem(
-                      href = routes.DetailController.onPageLoad(0).url,
+                      href = routes.DetailController.onPageLoad(Some(0), Some(0)).url,
                       content = Text("View calculation"),
                       visuallyHiddenText = Some("View calculation"),
-                      attributes = Map("id" -> "detailCalc0")
+                      attributes = Map("id" -> "detailCalc00")
                     )
                   )
                 )
@@ -386,10 +386,10 @@ class ResultServiceSpec
                 Actions(
                   items = List(
                     ActionItem(
-                      href = routes.DetailController.onPageLoad(0).url,
+                      href = routes.DetailController.onPageLoad(Some(0), Some(1)).url,
                       content = Text("View calculation"),
                       visuallyHiddenText = Some("View calculation"),
-                      attributes = Map("id" -> "detailCalc1")
+                      attributes = Map("id" -> "detailCalc01")
                     )
                   )
                 )
@@ -402,7 +402,7 @@ class ResultServiceSpec
           List(
             SummaryListRow(
               Key(Text("Total amount of tax for this transaction")),
-              Value(content = HtmlContent("""<span id="totalTax1">22,500</span>""")),
+              Value(content = HtmlContent("""<span id="totalTax1">£22,500</span>""")),
               actions = None
             ),
             SummaryListRow(
@@ -417,10 +417,10 @@ class ResultServiceSpec
                 Actions(
                   items = List(
                     ActionItem(
-                      href = routes.DetailController.onPageLoad(1).url,
+                      href = routes.DetailController.onPageLoad(Some(1), Some(0)).url,
                       content = Text("View calculation"),
                       visuallyHiddenText = Some("View calculation"),
-                      attributes = Map("id" -> "detailCalc0")
+                      attributes = Map("id" -> "detailCalc10")
                     )
                   )
                 )
@@ -433,10 +433,10 @@ class ResultServiceSpec
                 Actions(
                   items = List(
                     ActionItem(
-                      href = routes.DetailController.onPageLoad(1).url,
+                      href = routes.DetailController.onPageLoad(Some(1), Some(1)).url,
                       content = Text("View calculation"),
                       visuallyHiddenText = Some("View calculation"),
-                      attributes = Map("id" -> "detailCalc1")
+                      attributes = Map("id" -> "detailCalc11")
                     )
                   )
                 )
@@ -581,7 +581,7 @@ class ResultServiceSpec
         netPresentValue = None,
         summaryTable = firstSummaryList1,
         taxesDue = List((premium, 4500, None)),
-        viewDetailsLink = Some(routes.DetailController.onPageLoad(0).url)
+        viewDetailsLink = Some(routes.DetailController.onPageLoad(Some(0), Some(0)).url)
       )
 
       val slabExpectedResultsTable = ResultDisplayTable(
@@ -699,7 +699,7 @@ class ResultServiceSpec
         netPresentValue = None,
         summaryTable = freeResSummaryList1,
         taxesDue = List((premium, 20000, None)),
-        viewDetailsLink = Some(routes.DetailController.onPageLoad(0).url)
+        viewDetailsLink = Some(routes.DetailController.onPageLoad(Some(0), Some(0)).url)
       )
       val freeResSecondExpectedResultsTable = ResultDisplayTable(
         resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
@@ -710,7 +710,7 @@ class ResultServiceSpec
         netPresentValue = None,
         summaryTable = freeResSummaryList2,
         taxesDue = List((premium, 20000, None)),
-        viewDetailsLink = Some(routes.DetailController.onPageLoad(1).url)
+        viewDetailsLink = Some(routes.DetailController.onPageLoad(Some(1), Some(0)).url)
       )
 
       val userAnswers = UserAnswers(

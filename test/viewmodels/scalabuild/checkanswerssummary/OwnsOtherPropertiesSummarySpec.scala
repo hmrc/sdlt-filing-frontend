@@ -38,7 +38,8 @@ class OwnsOtherPropertiesSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.OwnsOtherPropertiesController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Have you ever owned any other property?"),
+                  attributes = Map(("id", "change_ownedOtherProperties"))
                 )
               )
             )
@@ -59,7 +60,8 @@ class OwnsOtherPropertiesSummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.OwnsOtherPropertiesController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Have you ever owned any other property?"),
+                  attributes = Map(("id", "change_ownedOtherProperties"))
                 )
               )
             )
@@ -74,7 +76,7 @@ class OwnsOtherPropertiesSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(OwnsOtherPropertiesPage, true).toOption
         val expected = SummaryListRow(
           key = Key(Text("Owned other property"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_ownedOtherProperties">Yes</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_ownedOtherProperties">Yes</span>"""))
         )
         val result = OwnsOtherPropertiesSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -84,7 +86,7 @@ class OwnsOtherPropertiesSummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(OwnsOtherPropertiesPage, false).toOption
         val expected = SummaryListRow(
           key = Key(Text("Owned other property"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_ownedOtherProperties">No</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_ownedOtherProperties">No</span>"""))
         )
         val result = OwnsOtherPropertiesSummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

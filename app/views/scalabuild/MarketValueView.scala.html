@@ -77,33 +77,23 @@
                 legend = LegendViewModel(messages("marketValue.heading")).asVisuallyHidden(),
                 items  = MarketValueChoice.options.map
                             { item =>
-                                item.value match {
-                                                    case Some("PayUpfront") =>
-                                                        item.copy(conditionalHtml =
-                                                                    Some(govukInput(
-                                                                        InputViewModel(
-                                                                        field = form("paySDLTUpfront"),
-                                                                        label = Label(
-                                                                                    classes = "govuk-label--l",
-                                                                                    content = messages("marketValue.paySDLTUpfront.input")
-                                                                                )
-                                                                            ).withPoundPrefix
-                                                                        )
-                                                                    ))
-                                                    case Some("PayInStages") =>
-                                                        item.copy(conditionalHtml =
-                                                                    Some(govukInput(
-                                                                        InputViewModel(
-                                                                        field = form("marketPropValue"),
-                                                                        label = Label(
-                                                                                    classes = "govuk-label--l",
-                                                                                    content = messages("marketValue.marketPropValue.input")
-                                                                                )
-                                                                            ).withPoundPrefix
-                                                                        )
-                                                                    ))
-                                                    case _ => item
-                                                 }
+                                (item.value, item.id) match {
+                                      case (Some(paymentChoice), Some(id)) =>
+                                          item.copy(
+                                              conditionalHtml =
+                                              Some(govukInput(
+                                                  InputViewModel(
+                                                      field = form(id),
+                                                      label = Label(
+                                                          classes = "govuk-label--l",
+                                                          content = messages(s"marketValue.$paymentChoice.input")
+                                                      ),
+                                                      id = s"${paymentChoice}Amount"
+                                                  ).withPoundPrefix
+                                              )
+                                          ))
+                                      case _ => item
+                                   }
                             }
             )
 

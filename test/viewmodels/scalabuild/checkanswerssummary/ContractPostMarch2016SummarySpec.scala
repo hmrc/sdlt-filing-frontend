@@ -38,7 +38,8 @@ class ContractPostMarch2016SummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.ContractPost201603Controller.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Contract changed on or after 17 March 2016?"),
+                  attributes = Map(("id", "change_contractPost201603"))
                 )
               )
             )
@@ -59,8 +60,8 @@ class ContractPostMarch2016SummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.ContractPost201603Controller.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
-                )
+                  visuallyHiddenText = Some("Contract changed on or after 17 March 2016?"),
+                  attributes = Map(("id", "change_contractPost201603"))                )
               )
             )
           )

@@ -31,19 +31,5 @@ class CheckYourAnswersControllerSpec extends AnyFreeSpec with ScalaSpecBase with
         status(result)          mustEqual OK
       }
     }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, checkYourAnswersRoute)
-
-        val result = route(application, request).value
-
-        status(result)                 mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
   }
 }

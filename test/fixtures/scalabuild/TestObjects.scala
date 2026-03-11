@@ -70,6 +70,37 @@ trait TestObjects {
       |    "premium": 500000
       |}""".stripMargin).as[JsObject]
 
+  val freeResNonIndAddMainNotWithinBoundaryUaData: JsObject = Json.parse(
+    """{
+      |    "holdingType": "Freehold",
+      |    "propertyType": "Residential",
+      |    "effectiveDate": "2021-08-01",
+      |    "nonUKResident": true,
+      |    "propertyDetails": {
+      |      "individual": true,
+      |      "twoOrMoreProperties": true,
+      |      "ownedOtherProperties": false,
+      |      "replaceMainResidence": true
+      |    },
+      |    "premium": 500000
+      |}""".stripMargin).as[JsObject]
+
+  val freeResNonIndAddMainFullUaData: JsObject = Json.parse(
+    """{
+      |    "holdingType": "Freehold",
+      |    "propertyType": "Residential",
+      |    "effectiveDate": "2025-01-01",
+      |    "nonUKResident": true,
+      |    "mainResidence": true,
+      |    "propertyDetails": {
+      |      "individual": true,
+      |      "twoOrMoreProperties": false,
+      |      "replaceMainResidence": true
+      |    },
+      |    "ownedOtherProperties": false,
+      |    "premium": 500000
+      |}""".stripMargin).as[JsObject]
+
   val leaseResNonIndAddMainJourney: Try[UserAnswers] = for {
     holding <- emptyUserAnswers2.set(HoldingPage, Leasehold)
     propertyType <- holding.set(ResidentialOrNonResidentialPage, Residential)
@@ -117,6 +148,176 @@ trait TestObjects {
       |    "premium": 500000
       |}""".stripMargin)
     .as[JsObject]
+
+  val leaseResNonIndAddMainFullUaData: JsObject = Json
+    .parse("""{
+             |    "holdingType": "Leasehold",
+             |    "propertyType": "Residential",
+             |    "effectiveDate": "2025-01-01",
+             |    "nonUKResident": false,
+             |    "mainResidence": true,
+             |    "ownedOtherProperties": false,
+             |    "propertyDetails": {
+             |      "individual": true,
+             |      "sharedOwnership": true,
+             |      "twoOrMoreProperties": false,
+             |      "replaceMainResidence": false,
+             |      "currentValue": true
+             |    },
+             |    "mongoLeaseDetails": {
+             |      "leaseDates": {
+             |        "startDate": "2025-01-01",
+             |        "endDate": "2200-01-01"
+             |      },
+             |      "rentDetails": {
+             |        "year1Rent": 1800,
+             |        "year2Rent": 1800,
+             |        "year3Rent": 1800,
+             |        "year4Rent": 1800,
+             |        "year5Rent": 1800
+             |      },
+             |      "leaseTerm": {
+             |        "years": 175,
+             |        "days": 1,
+             |        "daysInPartialYear": 365
+             |      }
+             |    },
+             |    "premium": 500000,
+             |    "marketValue": "PayUpfront",
+             |    "relevantRentDetails": {
+             |      "relevantRent": 1000,
+             |      "contractChangedSinceMar16": true
+             |      }
+             |}""".stripMargin)
+    .as[JsObject]
+
+  val leaseResNonIndAddMainFullPremAndRentBelowThresholdUaData: JsObject = Json
+    .parse("""{
+             |    "holdingType": "Leasehold",
+             |    "propertyType": "Residential",
+             |    "effectiveDate": "2025-01-01",
+             |    "nonUKResident": false,
+             |    "mainResidence": true,
+             |    "ownedOtherProperties": false,
+             |    "propertyDetails": {
+             |      "individual": true,
+             |      "sharedOwnership": true,
+             |      "twoOrMoreProperties": false,
+             |      "replaceMainResidence": false,
+             |      "currentValue": true
+             |    },
+             |    "mongoLeaseDetails": {
+             |      "leaseDates": {
+             |        "startDate": "2025-01-01",
+             |        "endDate": "2200-01-01"
+             |      },
+             |      "rentDetails": {
+             |        "year1Rent": 1800,
+             |        "year2Rent": 1800,
+             |        "year3Rent": 1800,
+             |        "year4Rent": 1800,
+             |        "year5Rent": 1800
+             |      },
+             |      "leaseTerm": {
+             |        "years": 175,
+             |        "days": 1,
+             |        "daysInPartialYear": 365
+             |      }
+             |    },
+             |    "premium": 149000,
+             |    "marketValue": "PayUpfront",
+             |    "relevantRentDetails": {
+             |      "relevantRent": 1000,
+             |      "contractChangedSinceMar16": true,
+             |      "exchangedContractsBeforeMar16": true
+             |      }
+             |}""".stripMargin)
+    .as[JsObject]
+  val leaseResNonIndAddMainFullPremAndRentAboveThresholdUaData: JsObject = Json
+    .parse("""{
+             |    "holdingType": "Leasehold",
+             |    "propertyType": "Residential",
+             |    "effectiveDate": "2025-01-01",
+             |    "nonUKResident": false,
+             |    "mainResidence": true,
+             |    "ownedOtherProperties": false,
+             |    "propertyDetails": {
+             |      "individual": true,
+             |      "sharedOwnership": true,
+             |      "twoOrMoreProperties": false,
+             |      "replaceMainResidence": false,
+             |      "currentValue": true
+             |    },
+             |    "mongoLeaseDetails": {
+             |      "leaseDates": {
+             |        "startDate": "2025-01-01",
+             |        "endDate": "2200-01-01"
+             |      },
+             |      "rentDetails": {
+             |        "year1Rent": 1800,
+             |        "year2Rent": 1800,
+             |        "year3Rent": 1800,
+             |        "year4Rent": 1800,
+             |        "year5Rent": 1800
+             |      },
+             |      "leaseTerm": {
+             |        "years": 175,
+             |        "days": 1,
+             |        "daysInPartialYear": 365
+             |      }
+             |    },
+             |    "premium": 249000,
+             |    "marketValue": "PayUpfront",
+             |    "relevantRentDetails": {
+             |      "relevantRent": 1000,
+             |      "contractChangedSinceMar16": true,
+             |      "exchangedContractsBeforeMar16": true
+             |      }
+             |}""".stripMargin)
+    .as[JsObject]
+
+  val leaseResNonIndAddMainFullUaPreApril2016Data: JsObject = Json
+    .parse("""{
+             |    "holdingType": "Leasehold",
+             |    "propertyType": "Residential",
+             |    "effectiveDate": "2025-01-01",
+             |    "nonUKResident": false,
+             |    "mainResidence": true,
+             |    "ownedOtherProperties": false,
+             |    "propertyDetails": {
+             |      "individual": true,
+             |      "sharedOwnership": true,
+             |      "twoOrMoreProperties": false,
+             |      "replaceMainResidence": false,
+             |      "currentValue": true
+             |    },
+             |    "mongoLeaseDetails": {
+             |      "leaseDates": {
+             |        "startDate": "2025-01-01",
+             |        "endDate": "2200-01-01"
+             |      },
+             |      "rentDetails": {
+             |        "year1Rent": 1800,
+             |        "year2Rent": 1800,
+             |        "year3Rent": 1800,
+             |        "year4Rent": 1800,
+             |        "year5Rent": 1800
+             |      },
+             |      "leaseTerm": {
+             |        "years": 175,
+             |        "days": 1,
+             |        "daysInPartialYear": 365
+             |      }
+             |    },
+             |    "premium": 500000,
+             |    "marketValue": "PayUpfront",
+             |    "relevantRentDetails": {
+             |      "relevantRent": 1000,
+             |      "contractChangedSinceMar16": true
+             |      }
+             |}""".stripMargin)
+    .as[JsObject]
+
 
   val slabUaData: JsObject = Json
     .parse("""{
@@ -190,7 +391,7 @@ trait TestObjects {
         ).flatten
       ),
       taxesDue = Seq.empty,
-      viewDetailsLink = Some(controllers.scalabuild.routes.DetailController.onPageLoad(0).url)
+      viewDetailsLink = Some(controllers.scalabuild.routes.DetailController.onPageLoad(Some(0), Some(0)).url)
     )
   }
   val sliceFreeResUkIndTwoMain: Seq[SliceDetails] = List(

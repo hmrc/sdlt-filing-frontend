@@ -39,7 +39,8 @@ class PropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.ResidentialOrNonResidentialController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Is property residential or non-residential?"),
+                  attributes = Map(("id", "change_propertyType"))
                 )
               )
             )
@@ -60,7 +61,8 @@ class PropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
                 ActionItem(
                   href = routes.ResidentialOrNonResidentialController.onPageLoad().url,
                   content = Text("Change"),
-                  visuallyHiddenText = Some("Change")
+                  visuallyHiddenText = Some("Is property residential or non-residential?"),
+                  attributes = Map(("id", "change_propertyType"))
                 )
               )
             )
@@ -75,7 +77,7 @@ class PropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(ResidentialOrNonResidentialPage, Residential).toOption
         val expected = SummaryListRow(
           Key(Text("Residential or non-residential"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_propertyType">Residential</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_propertyType">Residential</span>"""))
         )
         val result = PropertySummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)
@@ -85,7 +87,7 @@ class PropertySummarySpec extends AnyWordSpec with ScalaSpecBase {
         val userAnswers = emptyUserAnswers.set(ResidentialOrNonResidentialPage, NonResidential).toOption
         val expected = SummaryListRow(
           Key(Text("Residential or non-residential"), " govuk-!-width-one-half previous-question-title"),
-          value = Value(content = HtmlContent(s"""<span id="td2_propertyType">Non-residential</span>""")),
+          value = Value(content = HtmlContent(s"""<span id="td2_propertyType">Non-residential</span>"""))
         )
         val result = PropertySummary.row(userAnswers.get, withAction = false)
         result shouldBe Some(expected)

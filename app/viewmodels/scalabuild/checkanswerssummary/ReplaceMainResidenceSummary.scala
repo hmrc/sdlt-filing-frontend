@@ -32,9 +32,11 @@ object ReplaceMainResidenceSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.scalabuild.routes.ReplaceMainResidenceController.onPageLoad().url
+              //todo: change controller when double page removed
+              controllers.scalabuild.routes.AdditionalPropAndReplaceController.onPageLoad().url
             )
-              .withVisuallyHiddenText(messages("site.change.hidden"))
+              .withVisuallyHiddenText(messages("site.change.hidden.replaceMainResidence"))
+              .withAttribute(("id", "change_replaceMainResidence"))
           )
         )
       } else {

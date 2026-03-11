@@ -81,6 +81,7 @@ abstract class ViewTestFixture extends PlaySpec
   lazy val bullet = document.select("li").text
 
   lazy val detailFooter = document.select("#detailFooter").text()
+  lazy val bandHeading = document.select("#bandHeading").text()
   lazy val totalSDLT = document.select("#totalSDLT").text()
 
 }

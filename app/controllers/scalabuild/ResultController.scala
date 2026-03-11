@@ -34,7 +34,10 @@ class ResultController @Inject() (
       request.userAnswers
         .get(RequestGroup)
         .fold(
-          Future.successful(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
+          {
+            logger.error(s"[ResultController][onPageLoad]Could not make RequestGroup From Mongo data ${request.userAnswers.data}")
+            Future.successful(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))
+          }
         ) { requestFromMongo: RequestFromMongo =>
           resultService.getResultDisplayTableList(request.userAnswers, requestFromMongo) match {
             case Left(error) =>

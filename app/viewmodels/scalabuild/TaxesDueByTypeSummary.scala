@@ -34,15 +34,15 @@ object TaxesDueByTypeSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.viewCalculation",
-              controllers.scalabuild.routes.DetailController.onPageLoad(resultIndex).url
+              controllers.scalabuild.routes.DetailController.onPageLoad(Some(resultIndex), Some(taxCalcIndex)).url
             )
               .withVisuallyHiddenText(messages("site.viewCalculation"))
-              .withAttribute(attribute = ("id", s"detailCalc$taxCalcIndex"))
+              .withAttribute(attribute = ("id", s"detailCalc$resultIndex$taxCalcIndex"))
           )
         )
       case Some(percentageRate) =>
         SummaryListRowViewModel(
-          key = KeyViewModel.withId(text = keyText + s" ($percentageRate%)", id = keyId),
+          key = KeyViewModel.withId(text = "SDLT on premium" + s" ($percentageRate%)", id = keyId),
           value = ValueViewModel.withId(text = valueText, id = valueId)
         )
     }
