@@ -50,6 +50,15 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
 
   val testStorn = "TESTSTORN"
 
+  val landWithLandId = Land(
+    returnID = Some("221110168"),
+    landResourceRef = Some("LND-REF-001"),
+    landID = Some("LND-REF-001"),
+    address1 = Some("Test"),
+    address2 = Some("stafford"),
+    postcode = Some("TE11 7HE"),
+  )
+
   private val testFullReturn = FullReturn(
     stornId = testStorn,
     returnResourceRef = "REF001",
@@ -57,14 +66,7 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
       version = Some("2")
     )),
     land = Some(Seq(
-      Land(
-        returnID = Some("221110168"),
-        landResourceRef = Some("LND-REF-001"),
-        landID = Some("LND-REF-001"),
-        address1 = Some("Test"),
-        address2 = Some("stafford"),
-        postcode = Some("TE11 7HE"),
-      )
+      landWithLandId
     ))
   )
 
@@ -139,6 +141,23 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must redirect to LandOverviewController if full return does not contains landId for a GET" in {
+
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, removeLandRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
 
@@ -281,6 +300,42 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
+
+      "must redirect to the overview page when missing landId in LandOverviewRemovePage Page" in {
+
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn)).set(RemoveLandPage, true).success.value
+
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        when(
+          mockBackendConnector.updateReturnVersion(any())(any(), any())
+        ).thenReturn(
+          Future.successful(ReturnVersionUpdateReturn(Some(2)))
+        )
+
+        when(
+          mockBackendConnector.deleteLand(any())(any(), any())
+        ).thenReturn(
+          Future.successful(DeleteLandReturn(true))
+        )
+
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          ).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, removeLandRoute)
+              .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
+        }
+      }
+
 
       "must redirect to land overview and set flash message when land is deleted" in {
         val testLand = Land(
