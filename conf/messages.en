@@ -682,7 +682,7 @@ purchaser.purchaserTypeOfCompany.unincorporatedBuilder                          
 purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                           = Unincorporated sole trader other than builder
 purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                              = Type of company
 purchaser.purchaserTypeOfCompany.error.required                                     = Select type of company
-purchaser.purchaserTypeOfCompany.change.hidden                                      = Type of purchaser company
+purchaser.purchaserTypeOfCompany.change.hidden                                      = Type of company
 
 purchaser.purchaserAndVendorConnected.title                                         = Are the purchaser and the vendor connected? - About the purchaser
 purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor connected?
