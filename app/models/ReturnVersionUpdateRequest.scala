@@ -29,7 +29,7 @@ case class ReturnVersionUpdateRequest(
 object ReturnVersionUpdateRequest {
   implicit val format: OFormat[ReturnVersionUpdateRequest] = Json.format[ReturnVersionUpdateRequest]
 
-  def from(userAnswers: UserAnswers, version: Option[Long] = None): Future[ReturnVersionUpdateRequest] = {
+  def from(userAnswers: UserAnswers, version: Option[Int] = None): Future[ReturnVersionUpdateRequest] = {
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
         if(version.isDefined) {
