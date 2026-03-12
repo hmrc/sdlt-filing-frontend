@@ -1119,7 +1119,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingAssociation = "NO",
+            buildingSociety = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1152,7 +1152,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingAssociation = "NO",
+            buildingSociety = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1185,7 +1185,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingAssociation = "NO",
+            buildingSociety = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1215,7 +1215,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingAssociation = "NO",
+            buildingSociety = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1245,7 +1245,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingAssociation = "NO",
+            buildingSociety = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1372,7 +1372,7 @@ class PurchaserServiceSpec extends SpecBase {
               purchaserTypeOfCompany = Some(
                 PurchaserTypeOfCompanyAnswers(
                   bank = "YES",
-                  buildingAssociation = "NO",
+                  buildingSociety = "NO",
                   centralGovernment = "NO",
                   individualOther = "NO",
                   insuranceAssurance = "NO",
@@ -1612,7 +1612,7 @@ class PurchaserServiceSpec extends SpecBase {
               purchaserTypeOfCompany = Some(
                 PurchaserTypeOfCompanyAnswers(
                   bank = "YES",
-                  buildingAssociation = "NO",
+                  buildingSociety = "NO",
                   centralGovernment = "NO",
                   individualOther = "NO",
                   insuranceAssurance = "NO",
@@ -1745,7 +1745,7 @@ class PurchaserServiceSpec extends SpecBase {
             val dataWithCompanyTypePresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
                 purchaserTypeOfCompany = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
-                  buildingAssociation = "YES",
+                  buildingSociety = "YES",
                   centralGovernment = "NO",
                   individualOther = "NO",
                   insuranceAssurance = "NO",
@@ -1883,7 +1883,7 @@ class PurchaserServiceSpec extends SpecBase {
             purchaserTypeOfCompany = Some(
               PurchaserTypeOfCompanyAnswers(
                 bank = "YES",
-                buildingAssociation = "NO",
+                buildingSociety = "NO",
                 centralGovernment = "NO",
                 individualOther = "NO",
                 insuranceAssurance = "NO",

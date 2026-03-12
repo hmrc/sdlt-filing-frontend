@@ -22,7 +22,7 @@ import play.api.libs.json.{Format, Json}
 
 case class PurchaserTypeOfCompanyAnswers(
                                           bank: String,
-                                          buildingAssociation: String,
+                                          buildingSociety: String,
                                           centralGovernment: String,
                                           individualOther: String,
                                           insuranceAssurance: String,
@@ -44,7 +44,7 @@ object PurchaserTypeOfCompanyAnswers {
   def fromSet(selected: Set[PurchaserTypeOfCompany]): PurchaserTypeOfCompanyAnswers = {
     PurchaserTypeOfCompanyAnswers(
       bank = if (selected.contains(Bank)) "YES" else "NO",
-      buildingAssociation = if (selected.contains(BuildingAssociation)) "YES" else "NO",
+      buildingSociety = if (selected.contains(BuildingSociety)) "YES" else "NO",
       centralGovernment = if (selected.contains(CentralGovernment)) "YES" else "NO",
       individualOther = if (selected.contains(IndividualOther)) "YES" else "NO",
       insuranceAssurance = if (selected.contains(InsuranceAssurance)) "YES" else "NO",
@@ -64,7 +64,7 @@ object PurchaserTypeOfCompanyAnswers {
   def toSet(answers: PurchaserTypeOfCompanyAnswers): Set[PurchaserTypeOfCompany] = {
     val allValues: Map[PurchaserTypeOfCompany, String] = Map(
       Bank -> answers.bank,
-      BuildingAssociation -> answers.buildingAssociation,
+      BuildingSociety -> answers.buildingSociety,
       CentralGovernment -> answers.centralGovernment,
       IndividualOther -> answers.individualOther,
       InsuranceAssurance -> answers.insuranceAssurance,

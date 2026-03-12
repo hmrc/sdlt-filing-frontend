@@ -230,7 +230,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
           "bank" -> "YES",
-          "buildingAssociation" -> "YES",
+          "buildingSociety" -> "YES",
           "centralGovernment" -> "NO",
           "individualOther" -> "NO",
           "insuranceAssurance" -> "NO",

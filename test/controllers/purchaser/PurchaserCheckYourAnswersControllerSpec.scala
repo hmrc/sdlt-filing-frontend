@@ -92,7 +92,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
           "bank" -> "YES",
-          "buildingAssociation" -> "NO",
+          "buildingSociety" -> "NO",
           "centralGovernment" -> "NO",
           "individualOther" -> "NO",
           "insuranceAssurance" -> "NO",
