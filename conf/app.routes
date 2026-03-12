@@ -379,15 +379,15 @@ POST       /about-UK-residency/crown-employment-relief                          
 GET        /about-UK-residency/crown-employment-relief/change                                        controllers.ukResidency.CrownEmploymentReliefController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-UK-residency/crown-employment-relief/change                                        controllers.ukResidency.CrownEmploymentReliefController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-UK-residency/non-UK-resident-purchaser                                            controllers.ukResidency.NonUkResidentPurchaserController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-UK-residency/non-UK-resident-purchaser                                            controllers.ukResidency.NonUkResidentPurchaserController.onSubmit(mode: Mode = NormalMode)
-GET         /about-UK-residency/non-UK-resident-purchaser/change                                     controllers.ukResidency.NonUkResidentPurchaserController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-UK-residency/non-UK-resident-purchaser/change                                     controllers.ukResidency.NonUkResidentPurchaserController.onSubmit(mode: Mode = CheckMode)
+GET         /about-UK-residency/residency-status                                                      controllers.ukResidency.NonUkResidentPurchaserController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-UK-residency/residency-status                                                      controllers.ukResidency.NonUkResidentPurchaserController.onSubmit(mode: Mode = NormalMode)
+GET         /about-UK-residency/residency-status/change                                               controllers.ukResidency.NonUkResidentPurchaserController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-UK-residency/residency-status/change                                               controllers.ukResidency.NonUkResidentPurchaserController.onSubmit(mode: Mode = CheckMode)
 
-GET         /about-UK-residency/close-company                                                         controllers.ukResidency.CloseCompanyController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-UK-residency/close-company                                                         controllers.ukResidency.CloseCompanyController.onSubmit(mode: Mode = NormalMode)
-GET         /about-UK-residency/close-company/change                                                  controllers.ukResidency.CloseCompanyController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-UK-residency/close-company/change                                                  controllers.ukResidency.CloseCompanyController.onSubmit(mode: Mode = CheckMode)
+GET         /about-UK-residency/close-companies                                                        controllers.ukResidency.CloseCompanyController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-UK-residency/close-companies                                                        controllers.ukResidency.CloseCompanyController.onSubmit(mode: Mode = NormalMode)
+GET         /about-UK-residency/close-companies/change                                                 controllers.ukResidency.CloseCompanyController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-UK-residency/close-companies/change                                                 controllers.ukResidency.CloseCompanyController.onSubmit(mode: Mode = CheckMode)
 
 GET        /about-the-land/remove-land-or-property                                                   controllers.land.RemoveLandController.onPageLoad()
 POST       /about-the-land/remove-land-or-property                                                   controllers.land.RemoveLandController.onSubmit()
