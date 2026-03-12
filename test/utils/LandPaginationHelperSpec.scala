@@ -26,8 +26,9 @@ import services.land.LandService
 class LandPaginationHelperSpec extends SpecBase {
   private implicit val messages: Messages = stubMessages()
 
-  val service = new LandService()
-  val helper = new LandPaginationHelper(service)
+  val sortService = new SortService()
+  val landService = new LandService()
+  val helper = new LandPaginationHelper(sortService, landService)
 
   private def createLand(landId: String, address: Option[String] = None, landResourceRef: Option[String] = None): Land = {
     Land(
