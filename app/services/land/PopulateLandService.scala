@@ -47,7 +47,7 @@ class PopulateLandService {
           withNlpgUprn <- nlpgUprnPages(land, withTitleNumber)
           withSendingPlanByPost <- sendingPlanByPostPage(land, withNlpgUprn)
           withMineralsOrMineralRights <- mineralsOrMineralRightsPage(land, withSendingPlanByPost)
-          finalAnswers <- withMineralsOrMineralRights.set(LandIdPage, landId)
+          finalAnswers <- withMineralsOrMineralRights.set(LandOverviewPage, landId)
         } yield finalAnswers
 
       case _ =>

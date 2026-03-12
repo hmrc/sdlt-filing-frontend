@@ -19,7 +19,7 @@ package pages.land
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object LandIdPage extends QuestionPage[String] {
+case object LandOverviewPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ "landCurrent" \ toString
 

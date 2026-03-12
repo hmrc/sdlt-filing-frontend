@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.land
 
 import models.{CheckMode, UserAnswers}
 import pages.land.LandNlpgUprnPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object LandNlpgUprnSummary {
 
@@ -31,11 +31,11 @@ object LandNlpgUprnSummary {
       answer =>
 
         SummaryListRowViewModel(
-          key = "landNlpgUprn.checkYourAnswersLabel",
+          key = "land.nlpgUprn.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("landNlpgUprn.change.hidden"))
+              .withVisuallyHiddenText(messages("land.nlpgUprn.change.hidden"))
           )
         )
     }

@@ -33,8 +33,8 @@ class LandService {
       case None =>
         Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
 
-      case _ => //TODO - DTR-2495 - SPRINT-10 - Update to land CYA
-        Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
+      case _ =>
+        Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
 
     }
   }

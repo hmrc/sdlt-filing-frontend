@@ -893,7 +893,7 @@ land.landTypeOfProperty.03                                                      
 land.landTypeOfProperty.03.hintText                                                 = Where the whole property is non-residential
 land.landTypeOfProperty.04                                                          = 04 - Additional residential property liable to higher rate
 land.landTypeOfProperty.04.hintText                                                 = Where the purchaser owns more than one residential property at any one time
-land.landTypeOfProperty.checkYourAnswersLabel                                       = What is the type of property?
+land.landTypeOfProperty.checkYourAnswersLabel                                       = Type of property
 land.landTypeOfProperty.error.required                                              = Please select an option
 land.landTypeOfProperty.change.hidden                                               = Type of property
 land.checkYourAnswers.landTypeOfProperty.missing                                    = Select type of property
@@ -1085,3 +1085,7 @@ land.removeLand.title                                                          =
 land.removeLand.heading                                                        = Are you sure you want to remove {0}?
 land.removeLand.error.required                                                 = Select yes if remove Land
 land.removeLand.change.hidden                                                  = Are you sure you want to remove the land or property?
+
+land.address.checkYourAnswersLabel                                        = Land address
+land.address.change.hidden                                                = Land address
+land.checkYourAnswers.address.missing                                        = Enter land address

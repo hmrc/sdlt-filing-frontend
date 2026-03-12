@@ -65,7 +65,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(LandIdPage) mustBe Some("LDN001")
+          updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
           updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Mixed)
           updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
           updatedAnswers.get(LandAddressPage) mustBe Some(Address(
@@ -123,7 +123,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(LandIdPage) mustBe Some("LDN001")
+          updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
           updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Mixed)
           updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
           updatedAnswers.get(LandAddressPage) mustBe Some(Address(
@@ -181,7 +181,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(LandIdPage) mustBe Some("LDN001")
+          updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
           updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.NonResidential)
           updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
           updatedAnswers.get(LandAddressPage) mustBe Some(Address(
@@ -240,7 +240,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(LandIdPage) mustBe Some("LDN001")
+          updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
           updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.NonResidential)
           updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
           updatedAnswers.get(LandAddressPage) mustBe Some(Address(
@@ -297,7 +297,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
         val updatedAnswers = result.get
 
-        updatedAnswers.get(LandIdPage) mustBe Some("LDN001")
+        updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
         updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Residential)
         updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
         updatedAnswers.get(LandAddressPage) mustBe Some(Address(
@@ -355,7 +355,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
         val updatedAnswers = result.get
 
-        updatedAnswers.get(LandIdPage) mustBe Some("LDN001")
+        updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
         updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Additional)
         updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
         updatedAnswers.get(LandAddressPage) mustBe Some(Address(
@@ -413,7 +413,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
         val updatedAnswers = result.get
 
-        updatedAnswers.get(LandIdPage) mustBe Some("LDN001")
+        updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
         updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Additional)
         updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
         updatedAnswers.get(LandAddressPage) mustBe Some(Address(
@@ -471,7 +471,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
         val updatedAnswers = result.get
 
-        updatedAnswers.get(LandIdPage) mustBe Some("LDN001")
+        updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
         updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Additional)
         updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
         updatedAnswers.get(LandAddressPage) mustBe Some(Address(

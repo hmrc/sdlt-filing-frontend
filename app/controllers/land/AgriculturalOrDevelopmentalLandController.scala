@@ -70,8 +70,8 @@ class AgriculturalOrDevelopmentalLandController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield if (value) {
             Redirect(navigator.nextPage(AgriculturalOrDevelopmentalLandPage, mode, updatedAnswers))
-          } else { // TODO: DTR-2495 - redirect to Land CYA - SPRINT 10
-            Redirect(controllers.land.routes.LandBeforeYouStartController.onPageLoad())
+          } else {
+            Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
           }
       )
   }
