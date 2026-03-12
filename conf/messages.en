@@ -675,11 +675,11 @@ purchaser.purchaserTypeOfCompany.partnership                                    
 purchaser.purchaserTypeOfCompany.propertyCompany                                    = 08 - Property company
 purchaser.purchaserTypeOfCompany.publicCorporation                                  = 07 - Public corporation
 purchaser.purchaserTypeOfCompany.otherCompany                                       = 14 - Other company
-purchaser.purchaserTypeOfCompany.otherFinancialInstitute                            = 13 - Other financial institute
+purchaser.purchaserTypeOfCompany.otherFinancialInstitute                            = 13 - Other financial institution
 purchaser.purchaserTypeOfCompany.otherIncludingCharity                              = 15 - Other, including charity
 purchaser.purchaserTypeOfCompany.superannuationOrPensionFund                        = 12 - Superannuation or pension fund
 purchaser.purchaserTypeOfCompany.unincorporatedBuilder                              = 01 - Unincorporated builder
-purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                           = 02 - Unincorporated sole trader other than builder
+purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                           = 02 - Unincorporated sole trader other than a builder
 purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                              = Type of company
 purchaser.purchaserTypeOfCompany.error.required                                     = Select type of company
 purchaser.purchaserTypeOfCompany.change.hidden                                      = Type of company
