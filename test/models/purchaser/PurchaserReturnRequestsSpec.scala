@@ -401,7 +401,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
           "bank" -> "NO",
-          "buildingAssociation" -> "NO",
+          "buildingSociety" -> "NO",
           "centralGovernment" -> "NO",
           "individualOther" -> "NO",
           "insuranceAssurance" -> "NO",

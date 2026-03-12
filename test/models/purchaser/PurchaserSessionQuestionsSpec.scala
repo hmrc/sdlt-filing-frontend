@@ -72,7 +72,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
         ),
         "purchaserTypeOfCompany" -> Json.obj(
           "bank" -> "YES",
-          "buildingAssociation" -> "NO",
+          "buildingSociety" -> "NO",
           "centralGovernment" -> "NO",
           "individualOther" -> "NO",
           "insuranceAssurance" -> "NO",
@@ -171,7 +171,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
               purchaserTypeOfCompany  = Some(
                 PurchaserTypeOfCompanyAnswers(
                   bank = "YES",
-                  buildingAssociation = "NO",
+                  buildingSociety = "NO",
                   centralGovernment = "NO",
                   individualOther = "NO",
                   insuranceAssurance = "NO",

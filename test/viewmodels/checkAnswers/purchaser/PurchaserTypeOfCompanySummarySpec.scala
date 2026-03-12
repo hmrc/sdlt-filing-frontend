@@ -37,7 +37,7 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers
             .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-              buildingAssociation = "NO",
+              buildingSociety = "NO",
               centralGovernment = "NO",
               individualOther = "NO",
               insuranceAssurance = "NO",
@@ -57,7 +57,7 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "Bank"
+          htmlContent mustEqual "09 - Bank"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode).url
