@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.{never, times, verify, when}
 import org.scalatestplus.mockito.*
+import pages.purchaser.PurchaserConfirmIdentityPage
 import play.api.libs.json.{JsNull, JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -958,6 +959,53 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           exception mustBe an[RuntimeException]
           exception.getMessage mustBe "Update purchaser failed"
         }
+      }
+    }
+
+    ".isUkCompanyCheck" - {
+
+      "must return YES when VAT registration number is present" in {
+        val userAnswers = emptyUserAnswers.set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber).success.value
+        val service = new PurchaserCreateOrUpdateService()
+
+        val result = service.isUkCompanyCheck(userAnswers)
+
+        result mustBe Some("YES")
+      }
+
+      "must return YES when corporation UTR number is present" in {
+        val userAnswers = emptyUserAnswers.set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.CorporationTaxUTR).success.value
+        val service = new PurchaserCreateOrUpdateService()
+
+        val result = service.isUkCompanyCheck(userAnswers)
+
+        result mustBe Some("YES")
+      }
+
+      "must return YES when partnership UTR is present" in {
+        val userAnswers = emptyUserAnswers.set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.PartnershipUTR).success.value
+        val service = new PurchaserCreateOrUpdateService()
+
+        val result = service.isUkCompanyCheck(userAnswers)
+
+        result mustBe Some("YES")
+      }
+
+      "must return NO when another form of ID is present" in {
+        val userAnswers = emptyUserAnswers.set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.AnotherFormOfID).success.value
+        val service = new PurchaserCreateOrUpdateService()
+
+        val result = service.isUkCompanyCheck(userAnswers)
+
+        result mustBe Some("NO")
+      }
+
+      "must return None when page is not answered" in {
+        val service = new PurchaserCreateOrUpdateService()
+
+        val result = service.isUkCompanyCheck(emptyUserAnswers)
+
+        result mustBe None
       }
     }
   }

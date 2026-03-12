@@ -17,18 +17,40 @@
 package services.purchaser
 
 import connectors.StampDutyLandTaxConnector
-import models.purchaser.{CreateCompanyDetailsRequest, CreatePurchaserRequest, UpdateCompanyDetailsRequest, UpdatePurchaserRequest}
+import models.purchaser.PurchaserConfirmIdentity.{AnotherFormOfID, CorporationTaxUTR, PartnershipUTR, VatRegistrationNumber}
+import models.purchaser.{CreateCompanyDetailsRequest, CreatePurchaserRequest, PurchaserConfirmIdentity, UpdateCompanyDetailsRequest, UpdatePurchaserRequest}
 import models.{Purchaser, ReturnVersionUpdateRequest, UserAnswers}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import org.slf4j.{Logger, LoggerFactory}
+import pages.purchaser.PurchaserConfirmIdentityPage
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserCreateOrUpdateService {
 
   val logger: Logger = LoggerFactory.getLogger(getClass)
+
+  def isUkCompanyCheck(userAnswers: UserAnswers): Option[String] = {
+    userAnswers.get(PurchaserConfirmIdentityPage) match {
+      case Some(VatRegistrationNumber | PartnershipUTR | CorporationTaxUTR) => Some("YES")
+      case Some(AnotherFormOfID) => Some("NO")
+      case _ => None
+    }
+  }
+
+  private def logFullPurchaser(p: Purchaser): Unit = {
+    logger.info(
+      s"""Full purchaser:
+         |purchaserID: ${p.purchaserID}
+         |returnID: ${p.returnID}
+         |isCompany: ${p.isCompany}
+         |isUkCompany: ${p.isUkCompany}
+         |registrationNumber: ${p.registrationNumber}
+         |placeOfRegistration: ${p.placeOfRegistration}""".stripMargin
+    )
+  }
   
   def updatePurchaser(backendConnector: StampDutyLandTaxConnector,
                           purchaserService: PurchaserService,
@@ -39,7 +61,13 @@ class PurchaserCreateOrUpdateService {
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
       returnVersion              <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
       purchaser                  <- Purchaser.from(Some(userAnswers), logger)
-      updateRequest              <- UpdatePurchaserRequest.from(userAnswers, purchaser)
+      
+      purchaserComplete = purchaser.copy(
+        isUkCompany = isUkCompanyCheck(userAnswers)
+      )
+      _ = logFullPurchaser(purchaserComplete)
+      
+      updateRequest              <- UpdatePurchaserRequest.from(userAnswers, purchaserComplete)
       updateResponse             <- backendConnector.updatePurchaser(updateRequest)
       _                          <- updateOrCreateCompanyDetails(backendConnector, userAnswers, purchaser, updateRequest.purchaserResourceRef)
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
@@ -47,13 +75,17 @@ class PurchaserCreateOrUpdateService {
   }
 
   def createPurchaser(backendConnector: StampDutyLandTaxConnector,
-                          purchaserService: PurchaserService,
-                          userAnswers: UserAnswers)
-                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+                      purchaserService: PurchaserService,
+                      userAnswers: UserAnswers)
+                     (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
     for {
       purchaser             <- Purchaser.from(Some(userAnswers), logger)
-      createRequest         <- CreatePurchaserRequest.from(userAnswers, purchaser)
+      purchaserComplete = purchaser.copy(
+        isUkCompany = isUkCompanyCheck(userAnswers)
+      )
+      _ = logFullPurchaser(purchaserComplete)
+      createRequest         <- CreatePurchaserRequest.from(userAnswers, purchaserComplete)
       createPurchaserReturn <- backendConnector.createPurchaser(createRequest)
       _                     <- updateOrCreateCompanyDetails(backendConnector, userAnswers, purchaser, createPurchaserReturn.purchaserResourceRef)
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
