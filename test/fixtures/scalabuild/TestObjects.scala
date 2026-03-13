@@ -45,6 +45,19 @@ trait TestObjects {
     lastUpdated = clock
   )
 
+  val uaFreeResBefore2016: UserAnswers = UserAnswers(
+    id = "user-123",
+    data = Json.parse(
+      """
+        |{
+        |"holdingType":"Freehold",
+        |"propertyType":"Residential",
+        |"effectiveDate": "2014-01-01"
+        |}
+        |""".stripMargin).as[JsObject],
+    lastUpdated = clock
+  )
+
   val freeResNonIndAddMainJourney: Try[UserAnswers] = for {
     holding <- emptyUserAnswers2.set(HoldingPage, Freehold)
     propertyType <- holding.set(ResidentialOrNonResidentialPage, Residential)

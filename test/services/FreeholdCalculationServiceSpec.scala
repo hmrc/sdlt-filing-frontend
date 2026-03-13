@@ -9,8 +9,8 @@ import data.ResultText.RESULT_HEADING_GENERIC
 import enums.sdltRebuild.AcquisitionRelief
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
-import models.sdltRebuild.TaxReliefDetails
 import models._
+import models.sdltRebuild.TaxReliefDetails
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
