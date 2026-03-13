@@ -16,13 +16,13 @@
 
 package models
 
+import models.land.LandSessionQuestions
 import models.vendor.VendorSessionQuestions
 import models.purchaser.PurchaserSessionQuestions
 import org.slf4j.Logger
 import play.api.libs.json.{Json, OFormat}
+
 import java.time.format.DateTimeFormatter
-
-
 import scala.concurrent.Future
 
 
@@ -263,6 +263,39 @@ case class Land(
 
 object Land {
   implicit val format: OFormat[Land] = Json.format[Land]
+
+  def from(userAnswers: UserAnswers): Future[Land] = {
+    val landSessionQuestions: LandSessionQuestions = (userAnswers.data \ "landCurrent").as[LandSessionQuestions]
+
+    val existingLand = for {
+      fullReturn <- userAnswers.fullReturn
+      land <- fullReturn.land
+      landId <- landSessionQuestions.landId
+      existing <- land.find(_.landID.contains(landId))
+    } yield existing
+
+    Future.successful(Land(
+      landID = landSessionQuestions.landId,
+      returnID = userAnswers.returnId,
+      propertyType = landSessionQuestions.propertyType,
+      interestCreatedTransferred = landSessionQuestions.landInterestTransferredOrCreated,
+      houseNumber = landSessionQuestions.landAddress.houseNumber,
+      address1 = Some(landSessionQuestions.landAddress.line1),
+      address2 = landSessionQuestions.landAddress.line2,
+      address3 = landSessionQuestions.landAddress.line3,
+      address4 = landSessionQuestions.landAddress.line4,
+      postcode = Some(landSessionQuestions.landAddress.postcode),
+      landArea = landSessionQuestions.areaOfLand,
+      localAuthorityNumber = Some(landSessionQuestions.localAuthorityCode),
+      mineralRights = existingLand.map(_.mineralRights).getOrElse(Some("NO")),
+      NLPGUPRN = landSessionQuestions.landNlpgUprn,
+      willSendPlanByPost = existingLand.map(_.willSendPlanByPost).getOrElse(Some("NO")),
+      titleNumber = landSessionQuestions.titleNumber,
+      landResourceRef = existingLand.flatMap(_.landResourceRef),
+      nextLandID = existingLand.flatMap(_.nextLandID),
+      DARPostcode = existingLand.flatMap(_.DARPostcode)
+    ))
+  }
 }
 
 case class Transaction(

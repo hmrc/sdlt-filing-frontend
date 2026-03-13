@@ -72,8 +72,7 @@ class DoYouKnowTheAreaOfLandController @Inject()(
             if (value) {
               Redirect(navigator.nextPage(DoYouKnowTheAreaOfLandPage, mode, updatedAnswers))
             } else {
-              //TODO: Change to Land CYA - DTR-2495
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+              Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
             }
           }
       )

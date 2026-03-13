@@ -131,8 +131,7 @@ class LandOverviewController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(populateLandService.populateLandInSession(land, request.userAnswers))
             _ <- sessionRepository.set(updatedAnswers)
-            // TODO: CYA Page
-          } yield Redirect(controllers.land.routes.LandBeforeYouStartController.onPageLoad())
+          } yield Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
 
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
