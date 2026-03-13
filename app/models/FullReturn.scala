@@ -16,13 +16,14 @@
 
 package models
 
+import models.purchaser.PurchaserConfirmIdentity.{AnotherFormOfID, CorporationTaxUTR, PartnershipUTR, VatRegistrationNumber}
 import models.vendor.VendorSessionQuestions
-import models.purchaser.PurchaserSessionQuestions
+import models.purchaser.{PurchaserConfirmIdentity, PurchaserSessionQuestions}
 import org.slf4j.Logger
+import pages.purchaser.PurchaserConfirmIdentityPage
 import play.api.libs.json.{Json, OFormat}
+
 import java.time.format.DateTimeFormatter
-
-
 import scala.concurrent.Future
 
 
@@ -105,6 +106,13 @@ object Purchaser {
       existing <- purchasers.find(_.purchaserID.contains(purchaserId))
     } yield existing
 
+    val isUkCompany = {
+      userAnswers.flatMap(_.get(PurchaserConfirmIdentityPage)) match {
+        case Some(VatRegistrationNumber | PartnershipUTR | CorporationTaxUTR) => Some("YES UK COMPANY")
+        case Some(AnotherFormOfID) => Some("NOT UK COMPANY")
+        case _ => None
+      }
+    }
 
     logger.info(s"[Purchaser][from] existing purchaser found: \n $existingPurchaser")
 
@@ -143,7 +151,7 @@ object Purchaser {
           lMigrated  = existingPurchaser.flatMap(_.lMigrated),
           createDate  = existingPurchaser.flatMap(_.createDate),
           lastUpdateDate = existingPurchaser.flatMap(_.lastUpdateDate),
-          isUkCompany = existingPurchaser.flatMap(_.isUkCompany),
+          isUkCompany = isUkCompany,
           hasNino  = purchaserSessionQuestions.purchaserCurrent.doesPurchaserHaveNI.map(_.toString.toLowerCase),
           dateOfBirth  = purchaserSessionQuestions.purchaserCurrent.purchaserDateOfBirth.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
           registrationNumber = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
