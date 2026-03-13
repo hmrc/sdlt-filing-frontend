@@ -9,11 +9,10 @@ import enums.sdltRebuild.AcquisitionRelief
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import fixtures.{LeaseholdRequestFeature, LeaseholdResultFixture}
-import models._
 import models.sdltRebuild.TaxReliefDetails
+import models._
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
-
 import java.time.LocalDate
 
 class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeature with LeaseholdResultFixture {
