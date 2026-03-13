@@ -47,9 +47,9 @@ class PurchaserCreateOrUpdateService {
   }
 
   def createPurchaser(backendConnector: StampDutyLandTaxConnector,
-                          purchaserService: PurchaserService,
-                          userAnswers: UserAnswers)
-                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+                      purchaserService: PurchaserService,
+                      userAnswers: UserAnswers)
+                     (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
     for {
       purchaser             <- Purchaser.from(Some(userAnswers), logger)
