@@ -16,7 +16,8 @@
 
 package models.taxCalculation
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{JsString, Json, OWrites, Writes, __}
 
 import java.time.LocalDate
 
@@ -38,7 +39,23 @@ case class SdltCalculationRequest(
                                  )
 
 object SdltCalculationRequest {
-  implicit val writes: Writes[SdltCalculationRequest] = Json.writes[SdltCalculationRequest]
+
+  implicit val writes: OWrites[SdltCalculationRequest] = (
+    (__ \ "holdingType").write[HoldingTypes.Value] and
+      (__ \ "propertyType").write[PropertyTypes.Value] and
+      __.write[LocalDate](multiFieldDateWrites("effectiveDate")) and
+      (__ \ "nonUKResident").writeNullable[Boolean](booleanToYesNoWrites) and
+      (__ \ "premium").write[BigDecimal] and
+      (__ \ "highestRent").write[BigDecimal] and
+      (__ \ "propertyDetails").writeNullable[PropertyDetails] and
+      (__ \ "leaseDetails").writeNullable[LeaseDetails] and
+      (__ \ "relevantRentDetails").writeNullable[RelevantRentDetails] and
+      (__ \ "firstTimeBuyer").writeNullable[Boolean](booleanToYesNoWrites) and
+      (__ \ "isLinked").writeNullable[Boolean] and
+      (__ \ "interestTransferred").writeNullable[String] and
+      (__ \ "taxReliefDetails").writeNullable[TaxReliefDetails] and
+      (__ \ "isMultipleLand").writeNullable[Boolean]
+    )(Tuple.fromProductTyped(_))
 }
 
 case class PropertyDetails(
@@ -50,7 +67,14 @@ case class PropertyDetails(
                           )
 
 object PropertyDetails {
-  implicit val writes: Writes[PropertyDetails] = Json.writes[PropertyDetails]
+
+  implicit val writes: OWrites[PropertyDetails] = (
+    (__ \ "individual").write[Boolean](booleanToYesNoWrites) and
+      (__ \ "twoOrMoreProperties").writeNullable[Boolean](booleanToYesNoWrites) and
+      (__ \ "replaceMainResidence").writeNullable[Boolean](booleanToYesNoWrites) and
+      (__ \ "sharedOwnership").writeNullable[Boolean](booleanToYesNoWrites) and
+      (__ \ "currentValue").writeNullable[Boolean](booleanToYesNoWrites)
+    )(Tuple.fromProductTyped(_))
 }
 
 case class LeaseDetails(
@@ -95,4 +119,18 @@ case class TaxReliefDetails(
 
 object TaxReliefDetails {
   implicit val writes: Writes[TaxReliefDetails] = Json.writes[TaxReliefDetails]
+}
+
+private def multiFieldDateWrites(prefix: String): OWrites[LocalDate] =
+  OWrites { d =>
+    Json.obj(
+      s"${prefix}Day"   -> d.getDayOfMonth,
+      s"${prefix}Month" -> d.getMonthValue,
+      s"${prefix}Year"  -> d.getYear
+    )
+  }
+
+private val booleanToYesNoWrites: Writes[Boolean] = {
+  case true  => JsString("Yes")
+  case false => JsString("No")
 }
