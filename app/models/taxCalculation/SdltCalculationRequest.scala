@@ -70,7 +70,7 @@ case class PropertyDetails(
 object PropertyDetails {
 
   implicit val writes: OWrites[PropertyDetails] = (
-    (__ \ "individual")           .write[Boolean](booleanToYesNoWrites)         and
+    (__ \ "individual")           .write[Boolean](booleanToYesNoWrites) and
     (__ \ "twoOrMoreProperties")  .writeNullable[Boolean](booleanToYesNoWrites) and
     (__ \ "replaceMainResidence") .writeNullable[Boolean](booleanToYesNoWrites) and
     (__ \ "sharedOwnership")      .writeNullable[Boolean](booleanToYesNoWrites) and
@@ -92,12 +92,12 @@ case class LeaseDetails(
 object LeaseDetails {
   implicit val writes: OWrites[LeaseDetails] = (
     __                 .write[LocalDate](multiFieldDateWrites("startDate")) and
-    __                 .write[LocalDate](multiFieldDateWrites("endDate"))   and
-    (__ \ "leaseTerm") .write[LeaseTerm]                                    and
-    (__ \ "year1Rent") .write[BigDecimal]                                   and
-    (__ \ "year2Rent") .writeNullable[BigDecimal]                           and
-    (__ \ "year3Rent") .writeNullable[BigDecimal]                           and
-    (__ \ "year4Rent") .writeNullable[BigDecimal]                           and
+    __                 .write[LocalDate](multiFieldDateWrites("endDate")) and
+    (__ \ "leaseTerm") .write[LeaseTerm] and
+    (__ \ "year1Rent") .write[BigDecimal] and
+    (__ \ "year2Rent") .writeNullable[BigDecimal] and
+    (__ \ "year3Rent") .writeNullable[BigDecimal] and
+    (__ \ "year4Rent") .writeNullable[BigDecimal] and
     (__ \ "year5Rent") .writeNullable[BigDecimal]
   )(Tuple.fromProductTyped(_))
 }
