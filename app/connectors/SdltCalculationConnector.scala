@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.taxCalculation.{SdltCalculationRequest, SdltCalculationResponse}
+import models.taxCalculation.{CalculationResponse, SdltCalculationRequest}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, UpstreamErrorResponse}
@@ -31,17 +31,15 @@ class SdltCalculationConnector @Inject()(val http: HttpClientV2,
                                          val config: FrontendAppConfig
                                        )(implicit ec: ExecutionContext) {
 
-  private lazy val sdltCalculationUrl = config.sdltCalculationUrl
-  
   def calculateStampDutyLandTax(request: SdltCalculationRequest)
-                               (implicit hc: HeaderCarrier): Future[SdltCalculationResponse] =
+                               (implicit hc: HeaderCarrier): Future[CalculationResponse] =
     http
-      .post(url"$sdltCalculationUrl")
+      .post(url"${config.sdltCalculationUrl}")
       .withBody(Json.toJson(request))
-      .execute[SdltCalculationResponse]
+      .execute[CalculationResponse]
       .map { resp =>
         logger.info(s"[SdltCalculationConnector][calculateStampDutyLandTax] response: $resp")
-        resp
+        resp.copy(result = resp.result.headOption.toSeq)
       }
       .recoverWith {
         case e: UpstreamErrorResponse =>
