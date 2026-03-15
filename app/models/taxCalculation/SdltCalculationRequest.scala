@@ -17,7 +17,8 @@
 package models.taxCalculation
 
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsString, Json, OWrites, Writes, __}
+import play.api.libs.json.{Json, OWrites, Writes, __}
+import RequestValidators.*
 
 import java.time.LocalDate
 
@@ -89,7 +90,16 @@ case class LeaseDetails(
                        )
 
 object LeaseDetails {
-  implicit val writes: Writes[LeaseDetails] = Json.writes[LeaseDetails]
+  implicit val writes: OWrites[LeaseDetails] = (
+    __.write[LocalDate](multiFieldDateWrites("startDate")) and
+      __.write[LocalDate](multiFieldDateWrites("endDate")) and
+      (__ \ "leaseTerm").write[LeaseTerm] and
+      (__ \ "year1Rent").write[BigDecimal] and
+      (__ \ "year2Rent").writeNullable[BigDecimal] and
+      (__ \ "year3Rent").writeNullable[BigDecimal] and
+      (__ \ "year4Rent").writeNullable[BigDecimal] and
+      (__ \ "year5Rent").writeNullable[BigDecimal]
+    )(Tuple.fromProductTyped(_))
 }
 
 case class LeaseTerm(
@@ -109,7 +119,11 @@ case class RelevantRentDetails(
                               )
 
 object RelevantRentDetails {
-  implicit val writes: Writes[RelevantRentDetails] = Json.writes[RelevantRentDetails]
+  implicit val writes: Writes[RelevantRentDetails] = (
+    (__ \ "contractPre201603").writeNullable[Boolean](booleanToYesNoWrites) and
+      (__ \ "contractVariedPost201603").writeNullable[Boolean](booleanToYesNoWrites) and
+      (__ \ "relevantRent").writeNullable[BigDecimal]
+    )(Tuple.fromProductTyped(_))
 }
 
 case class TaxReliefDetails(
@@ -119,18 +133,4 @@ case class TaxReliefDetails(
 
 object TaxReliefDetails {
   implicit val writes: Writes[TaxReliefDetails] = Json.writes[TaxReliefDetails]
-}
-
-private def multiFieldDateWrites(prefix: String): OWrites[LocalDate] =
-  OWrites { d =>
-    Json.obj(
-      s"${prefix}Day"   -> d.getDayOfMonth,
-      s"${prefix}Month" -> d.getMonthValue,
-      s"${prefix}Year"  -> d.getYear
-    )
-  }
-
-private val booleanToYesNoWrites: Writes[Boolean] = {
-  case true  => JsString("Yes")
-  case false => JsString("No")
 }
