@@ -110,8 +110,8 @@ object Purchaser {
 
     val isUkCompany = {
       userAnswers.flatMap(_.get(PurchaserConfirmIdentityPage)) match {
-        case Some(VatRegistrationNumber | PartnershipUTR | CorporationTaxUTR) => Some("YES")
-        case Some(AnotherFormOfID) => Some("NO")
+        case Some(VatRegistrationNumber | PartnershipUTR | CorporationTaxUTR) => Some("yes")
+        case Some(AnotherFormOfID) => Some("no")
         case _ => None
       }
     }
