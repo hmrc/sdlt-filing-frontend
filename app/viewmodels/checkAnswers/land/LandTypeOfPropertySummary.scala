@@ -27,8 +27,8 @@ import viewmodels.implicits.*
 
 object LandTypeOfPropertySummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
-    answers.flatMap(_.get(LandTypeOfPropertyPage)).map {
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+    answers.get(LandTypeOfPropertyPage).map {
       answer =>
 
         val value = ValueViewModel(

@@ -176,7 +176,7 @@ class LandMineralsOrMineralRightsControllerSpec extends SpecBase with MockitoSug
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
-    // TODO DTR-2495: Redirect to CYA page
+
     "must redirect to CYA page when property type is not Mixed or NonResidential" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -199,7 +199,7 @@ class LandMineralsOrMineralRightsControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
       }
     }
     

@@ -86,8 +86,7 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
       }
     }
-
-    //TODO - DTR-2495 - SPRINT-10 - update redirect to CYA
+    
     "redirect to CYA for a GET if property type is Residential" in {
 
       val userAnswers = emptyUserAnswers
@@ -102,11 +101,10 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
       }
     }
-
-    //TODO - DTR-2495 - SPRINT-10 - update redirect to CYA
+    
     "redirect to CYA for a GET if property type is Additional" in {
 
       val userAnswers = emptyUserAnswers
@@ -121,7 +119,7 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
       }
     }
 

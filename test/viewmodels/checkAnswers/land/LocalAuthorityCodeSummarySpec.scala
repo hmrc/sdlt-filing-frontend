@@ -37,7 +37,7 @@ class LocalAuthorityCodeSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LocalAuthorityCodePage, "1234").success.value
 
-          val result = LocalAuthorityCodeSummary.row(Some(userAnswers))
+          val result = LocalAuthorityCodeSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.localAuthorityCode.checkYourAnswersLabel")
 
@@ -54,9 +54,7 @@ class LocalAuthorityCodeSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-
-          val result = LocalAuthorityCodeSummary.row(Some(userAnswers))
+          val result = LocalAuthorityCodeSummary.row(emptyUserAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.localAuthorityCode.checkYourAnswersLabel")
 

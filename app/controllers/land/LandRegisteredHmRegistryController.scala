@@ -18,7 +18,7 @@ package controllers.land
 
 import controllers.actions.*
 import forms.land.LandRegisteredHmRegistryFormProvider
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
 import pages.land.LandRegisteredHmRegistryPage
 import play.api.data.Form
@@ -72,7 +72,12 @@ class LandRegisteredHmRegistryController @Inject()(
                 case true =>
                   Redirect(navigator.nextPage(LandRegisteredHmRegistryPage, mode, updatedAnswers))
                 case _ =>
-                  Redirect(controllers.land.routes.LandAddNlpgUprnController.onPageLoad(mode))
+                  if(mode == CheckMode) {
+                    Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+                  } else {
+                    Redirect(controllers.land.routes.LandAddNlpgUprnController.onPageLoad(mode))
+                  }
+
               }
             }
       )

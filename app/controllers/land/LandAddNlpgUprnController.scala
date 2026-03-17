@@ -70,7 +70,7 @@ class LandAddNlpgUprnController @Inject()(
             case true =>
               Redirect(navigator.nextPage(LandAddNlpgUprnPage, mode, updatedAnswers))
             case false if mode == CheckMode =>
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2495 - SPRINT-10 - change to land CYA
+              Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
             case _ =>
               Redirect(controllers.land.routes.LandSendingPlanByPostController.onPageLoad(mode))
           }

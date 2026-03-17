@@ -163,7 +163,7 @@ class Navigator @Inject()() {
     case LandSelectMeasurementUnitPage =>
       _ => controllers.land.routes.AreaOfLandController.onPageLoad(NormalMode)
     case AreaOfLandPage =>
-      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2495 - SPRINT-10 Redirect to Land check your answers
+      _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     case LandSendingPlanByPostPage =>
       _ => controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
     case AgriculturalOrDevelopmentalLandPage =>
@@ -234,15 +234,20 @@ class Navigator @Inject()() {
     case PurchaserAgentReferencePage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case PurchaserAgentAuthorisedPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
 
-    //TODO - DTR-2495 - SPRINT-19 - Add land check route here to be uncommented in CYA task
-    //    case LandTypeOfPropertyPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    //    case LandInterestTransferredOrCreatedPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    //    case LandRegisteredHmRegistryPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    //    case LandTitleNumberPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    //    case LandAddNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    //    case LandNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    //    case ConfirmLandOrPropertyAddressPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    //    case LocalAuthorityCodePage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandTypeOfPropertyPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandInterestTransferredOrCreatedPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandRegisteredHmRegistryPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandTitleNumberPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandAddNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case ConfirmLandOrPropertyAddressPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LocalAuthorityCodePage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case DoYouKnowTheAreaOfLandPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case AgriculturalOrDevelopmentalLandPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case AreaOfLandPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandSendingPlanByPostPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandMineralsOrMineralRightsPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    case LandSelectMeasurementUnitPage => _ => controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }

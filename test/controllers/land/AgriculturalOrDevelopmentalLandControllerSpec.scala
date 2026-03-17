@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.{AgriculturalOrDevelopmentalLandPage, LandTypeOfPropertyPage}
+import pages.land.{AgriculturalOrDevelopmentalLandPage, AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandTypeOfPropertyPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -46,16 +46,15 @@ class AgriculturalOrDevelopmentalLandControllerSpec extends SpecBase with Mockit
 
   "AgriculturalOrDevelopmentalLand Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when property type is Mixed" in {
+
       val userAnswers = emptyUserAnswers.set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, agriculturalOrDevelopmentalLandRoute)
-
         val result = route(application, request).value
-
         val view = application.injector.instanceOf[AgriculturalOrDevelopmentalLandView]
 
         status(result) mustEqual OK
@@ -63,19 +62,63 @@ class AgriculturalOrDevelopmentalLandControllerSpec extends SpecBase with Mockit
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must return OK and the correct view for a GET when property type is NonResidential" in {
 
-      val userAnswers = emptyUserAnswers
-        .set(AgriculturalOrDevelopmentalLandPage, true).success.value
-        .set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
+      val userAnswers = emptyUserAnswers.set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, agriculturalOrDevelopmentalLandRoute)
-
+        val result = route(application, request).value
         val view = application.injector.instanceOf[AgriculturalOrDevelopmentalLandView]
 
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Land CYA for a GET if property type is Residential" in {
+
+      val userAnswers = emptyUserAnswers.set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, agriculturalOrDevelopmentalLandRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Land CYA for a GET if property type is Additional" in {
+
+      val userAnswers = emptyUserAnswers.set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, agriculturalOrDevelopmentalLandRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+
+      val userAnswers = emptyUserAnswers
+        .set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
+        .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, agriculturalOrDevelopmentalLandRoute)
+        val view = application.injector.instanceOf[AgriculturalOrDevelopmentalLandView]
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -86,7 +129,6 @@ class AgriculturalOrDevelopmentalLandControllerSpec extends SpecBase with Mockit
     "must redirect to the next page when yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -109,16 +151,14 @@ class AgriculturalOrDevelopmentalLandControllerSpec extends SpecBase with Mockit
       }
     }
 
-    "must redirect to Land check your answers page when no is submitted" in {
+    "must redirect to LandCheckYourAnswers when no is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -131,7 +171,66 @@ class AgriculturalOrDevelopmentalLandControllerSpec extends SpecBase with Mockit
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must clear DoYouKnowTheAreaOfLandPage and AreaOfLandPage when answer changes from yes to no" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+        .set(DoYouKnowTheAreaOfLandPage, true).success.value
+        .set(AreaOfLandPage, "500").success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, agriculturalOrDevelopmentalLandRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must not clear downstream pages when answer remains yes" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+        .set(DoYouKnowTheAreaOfLandPage, true).success.value
+        .set(AreaOfLandPage, "500").success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, agriculturalOrDevelopmentalLandRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
@@ -145,9 +244,7 @@ class AgriculturalOrDevelopmentalLandControllerSpec extends SpecBase with Mockit
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
-
         val view = application.injector.instanceOf[AgriculturalOrDevelopmentalLandView]
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -161,7 +258,6 @@ class AgriculturalOrDevelopmentalLandControllerSpec extends SpecBase with Mockit
 
       running(application) {
         val request = FakeRequest(GET, agriculturalOrDevelopmentalLandRoute)
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

@@ -14,29 +14,40 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.land
 
 import models.{CheckMode, UserAnswers}
 import pages.land.LandNlpgUprnPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object LandNlpgUprnSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(LandNlpgUprnPage).map {
-      answer =>
-
-        SummaryListRowViewModel(
-          key = "landNlpgUprn.checkYourAnswersLabel",
+    val changeRoute = controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url
+    val label = messages("land.nlpgUprn.checkYourAnswersLabel")
+    answers.get(LandNlpgUprnPage) match {
+      case Some(answer) =>
+        Some(SummaryListRowViewModel(
+          key = label,
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("landNlpgUprn.change.hidden"))
+            ActionItemViewModel("site.change", changeRoute)
+              .withVisuallyHiddenText(messages("land.nlpgUprn.change.hidden"))
           )
+        ))
+      case None =>
+        val value = ValueViewModel(
+          HtmlContent(
+            s"""<a href="$changeRoute" class="govuk-link">${messages("land.nlpgUprn.missing")}</a>""")
         )
+        Some(SummaryListRowViewModel(
+          key = label,
+          value = value
+        ))
     }
 }

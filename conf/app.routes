@@ -391,3 +391,6 @@ POST        /about-UK-residency/close-companies/change                          
 
 GET        /about-the-land/remove-land-or-property                                                   controllers.land.RemoveLandController.onPageLoad()
 POST       /about-the-land/remove-land-or-property                                                   controllers.land.RemoveLandController.onSubmit()
+
+GET         /about-the-land/check-answers                                                            controllers.land.LandCheckYourAnswersController.onPageLoad()
+POST        /about-the-land/check-answers                                                            controllers.land.LandCheckYourAnswersController.onSubmit()
