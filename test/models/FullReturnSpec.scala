@@ -810,22 +810,22 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
       "must set isUkCompany to YES when VatRegistrationNumber is provided" in {
         val purchaser = Purchaser.from(Some(userAnswersPurchaserVatNumber), logger).futureValue
-        purchaser.isUkCompany mustBe Some("YES")
+        purchaser.isUkCompany mustBe Some("yes")
       }
 
       "must set isUkCompany to YES when Corporation UTR is provided" in {
         val purchaser = Purchaser.from(Some(userAnswersPurchaserCompanyWithCorporationUTR), logger).futureValue
-        purchaser.isUkCompany mustBe Some("YES")
+        purchaser.isUkCompany mustBe Some("yes")
       }
 
       "must set isUkCompany to YES when Partnership UTR is provided" in {
         val purchaser = Purchaser.from(Some(userAnswersPurchaserCompanyWithPartnershipUTR), logger).futureValue
-        purchaser.isUkCompany mustBe Some("YES")
+        purchaser.isUkCompany mustBe Some("yes")
       }
 
       "must set isUkCompany to NO when AnotherFormOfId is provided" in {
         val purchaser = Purchaser.from(Some(userAnswersPurchaserCompanyWithAnotherFormId), logger).futureValue
-        purchaser.isUkCompany mustBe Some("NO")
+        purchaser.isUkCompany mustBe Some("no")
       }
 
       "must set isUkCompany to None when identity page is not answered" in {
