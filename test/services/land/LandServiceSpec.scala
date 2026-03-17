@@ -67,7 +67,6 @@ class LandServiceSpec extends SpecBase with Matchers {
       redirectLocation(Future.successful(result)) mustBe Some(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url)
     }
 
-    //TODO - DTR-2495 - SPRINT-10 - update redirect to CYA
     "must redirect to CYA when property type is Residential" in {
       val userAnswers: UserAnswers = emptyUserAnswers
         .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential)
@@ -77,10 +76,9 @@ class LandServiceSpec extends SpecBase with Matchers {
       val result = service.propertyTypeCheck(userAnswers, continueRoute)
 
       result.header.status mustEqual SEE_OTHER
-      redirectLocation(Future.successful(result)) mustBe Some(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url)
+      redirectLocation(Future.successful(result)) mustBe Some(controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
     }
 
-    //TODO - DTR-2495 - SPRINT-10 - update redirect to CYA
     "must redirect to CYA when property type is Additional" in {
       val userAnswers: UserAnswers = emptyUserAnswers
         .set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional)
@@ -90,7 +88,7 @@ class LandServiceSpec extends SpecBase with Matchers {
       val result = service.propertyTypeCheck(userAnswers, continueRoute)
 
       result.header.status mustEqual SEE_OTHER
-      redirectLocation(Future.successful(result)) mustBe Some(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url)
+      redirectLocation(Future.successful(result)) mustBe Some(controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
     }
   }
 

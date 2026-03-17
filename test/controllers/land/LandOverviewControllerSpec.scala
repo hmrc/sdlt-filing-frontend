@@ -427,7 +427,6 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
     }
 
     ".changeLand" - {
-      // TODO: redirect to CYA page
       "must populate session and redirect to Land CYA when land found" in {
         val mockPopulateLandService = mock[PopulateLandService]
         val mockSessionRepository = mock[SessionRepository]
@@ -449,7 +448,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
 
           verify(mockPopulateLandService, times(1)).populateLandInSession(eqTo(testLand), any())
           verify(mockSessionRepository, times(1)).set(any())

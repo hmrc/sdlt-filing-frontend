@@ -38,7 +38,7 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
 
-          val result = LandTypeOfPropertySummary.row(Some(userAnswers))
+          val result = LandTypeOfPropertySummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
 
@@ -63,7 +63,7 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
 
-          val result = LandTypeOfPropertySummary.row(Some(userAnswers))
+          val result = LandTypeOfPropertySummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
 
@@ -88,7 +88,7 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
 
-          val result = LandTypeOfPropertySummary.row(Some(userAnswers))
+          val result = LandTypeOfPropertySummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
 
@@ -113,7 +113,7 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional).success.value
 
-          val result = LandTypeOfPropertySummary.row(Some(userAnswers))
+          val result = LandTypeOfPropertySummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
 
@@ -128,17 +128,28 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
       }
     }
 
-
     "when property type is not present" - {
 
-      "must return None" in {
+      "must return a summary list row with a link to add the property type" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = LandTypeOfPropertySummary.row(Some(emptyUserAnswers))
+          val result = LandTypeOfPropertySummary.row(emptyUserAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+
+          htmlContent must include("govuk-link")
+          htmlContent must include(
+            controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url
+          )
+          htmlContent must include(
+            msgs("land.checkYourAnswers.landTypeOfProperty.Missing")
+          )
+
+          result.actions mustBe None
         }
       }
     }
@@ -151,7 +162,7 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
 
-        val result = LandTypeOfPropertySummary.row(Some(userAnswers))
+        val result = LandTypeOfPropertySummary.row(userAnswers)
 
         result.actions.get.items.head.href mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url
       }
@@ -165,7 +176,7 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
 
-        val result = LandTypeOfPropertySummary.row(Some(userAnswers))
+        val result = LandTypeOfPropertySummary.row(userAnswers)
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must not include "<script>"
@@ -190,15 +201,15 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
         val additionalAnswers = emptyUserAnswers
           .set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional).success.value
 
-        val residentialResult = LandTypeOfPropertySummary.row(Some(residentialAnswers))
-        val mixedResult = LandTypeOfPropertySummary.row(Some(mixedAnswers))
-        val nonResidentialResult = LandTypeOfPropertySummary.row(Some(nonResidentialAnswers))
-        val additionalResult = LandTypeOfPropertySummary.row(Some(additionalAnswers))
+        val residentialResult = LandTypeOfPropertySummary.row(residentialAnswers)
+        val mixedResult = LandTypeOfPropertySummary.row(mixedAnswers)
+        val nonResidentialResult = LandTypeOfPropertySummary.row(nonResidentialAnswers)
+        val additionalResult = LandTypeOfPropertySummary.row(additionalAnswers)
 
-        val residentialContent= residentialResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        val mixedContent= mixedResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        val nonResidentialContent= nonResidentialResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        val additionalContent= additionalResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        val residentialContent = residentialResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        val mixedContent = mixedResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        val nonResidentialContent = nonResidentialResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        val additionalContent = additionalResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
 
         residentialContent mustEqual msgs("land.landTypeOfProperty.01")
         mixedContent mustEqual msgs("land.landTypeOfProperty.02")

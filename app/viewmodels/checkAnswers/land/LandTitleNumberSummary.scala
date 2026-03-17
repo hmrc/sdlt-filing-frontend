@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.land
 
 import models.{CheckMode, UserAnswers}
-import pages.land.LandTitleNumberPage
+import pages.land.{LandRegisteredHmRegistryPage, LandTitleNumberPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,30 +27,30 @@ import viewmodels.implicits.*
 
 object LandTitleNumberSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
     val changeRoute = controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
     val label = messages("land.titleNumber.checkYourAnswersLabel")
 
-    answers.get(LandTitleNumberPage).map {
-      answer =>
+    (answers.get(LandTitleNumberPage), answers.get(LandRegisteredHmRegistryPage)) match {
+      case (Some(landTitle), _) =>
 
-        SummaryListRowViewModel(
+        Some(SummaryListRowViewModel(
           key = label,
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(landTitle).toString)),
           actions = Seq(
             ActionItemViewModel("site.change", changeRoute)
               .withVisuallyHiddenText(messages("land.titleNumber.change.hidden"))
           )
+        ))
+      case (None, Some(true)) =>
+        val value = ValueViewModel(
+          HtmlContent(s"""<a href="$changeRoute" class="govuk-link">${messages("land.titleNumber.missing")}</a>""")
         )
-    }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(s"""<a href="$changeRoute" class="govuk-link">${messages("land.titleNumber.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+        Some(SummaryListRowViewModel(
+          key = label,
+          value = value
+        ))
+      case _ => None
     }
   }
 }

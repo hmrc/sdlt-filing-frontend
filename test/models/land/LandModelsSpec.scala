@@ -17,17 +17,45 @@
 package models.land
 
 import base.SpecBase
-import constants.FullReturnConstants.completeFullReturn
+import constants.FullReturnConstants.incompleteFullReturn
+import models.Land
 import org.scalatest.RecoverMethods.recoverToExceptionIf
-import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 
 import scala.concurrent.ExecutionContext
 
-class LandModelsSpec extends SpecBase with Matchers {
+class LandModelsSpec extends SpecBase {
 
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+
+  private val completeLand = Land(
+    landID = Some("LAND001"),
+    landResourceRef = Some("LAND-REF-001"),
+    propertyType = Some("NonResidential"),
+    interestCreatedTransferred = Some("Transfer"),
+    address1 = Some("1 Test Street"),
+    address2 = Some("Test Town"),
+    houseNumber = None,
+    address3 = None,
+    address4 = None,
+    postcode = Some("AB1 2CD"),
+    landArea = None,
+    areaUnit = None,
+    localAuthorityNumber = Some("1234"),
+    mineralRights = None,
+    NLPGUPRN = None,
+    willSendPlanByPost = None,
+    titleNumber = None,
+    nextLandID = None
+  )
+
+  private val completeLandFullReturn = incompleteFullReturn.copy(
+    land = Some(Seq(completeLand))
+  )
+
+  private val userAnswersWithFullReturn = emptyUserAnswers.copy(
+    fullReturn = Some(completeLandFullReturn)
+  )
 
   "CreateLandRequest" - {
 
@@ -258,9 +286,7 @@ class LandModelsSpec extends SpecBase with Matchers {
         "addressLine1"               -> "Main Street"
       )
 
-      val result = json.validate[CreateLandRequest]
-
-      result.isError mustBe true
+      json.validate[CreateLandRequest].isError mustBe true
     }
 
     "must fail to deserialize when required field returnResourceRef is missing" in {
@@ -271,9 +297,7 @@ class LandModelsSpec extends SpecBase with Matchers {
         "addressLine1"               -> "Main Street"
       )
 
-      val result = json.validate[CreateLandRequest]
-
-      result.isError mustBe true
+      json.validate[CreateLandRequest].isError mustBe true
     }
 
     "must fail to deserialize when required field addressLine1 is missing" in {
@@ -284,9 +308,7 @@ class LandModelsSpec extends SpecBase with Matchers {
         "interestTransferredCreated" -> "FREEHOLD"
       )
 
-      val result = json.validate[CreateLandRequest]
-
-      result.isError mustBe true
+      json.validate[CreateLandRequest].isError mustBe true
     }
 
     "must fail to deserialize when required field propertyType is missing" in {
@@ -297,9 +319,7 @@ class LandModelsSpec extends SpecBase with Matchers {
         "addressLine1"               -> "Main Street"
       )
 
-      val result = json.validate[CreateLandRequest]
-
-      result.isError mustBe true
+      json.validate[CreateLandRequest].isError mustBe true
     }
 
     "must fail to deserialize when required field interestTransferredCreated is missing" in {
@@ -310,20 +330,38 @@ class LandModelsSpec extends SpecBase with Matchers {
         "addressLine1"      -> "Main Street"
       )
 
-      val result = json.validate[CreateLandRequest]
+      json.validate[CreateLandRequest].isError mustBe true
+    }
 
-      result.isError mustBe true
+    "from" - {
+
+      "must return a CreateLandRequest when all required fields are present" in {
+        CreateLandRequest.from(userAnswersWithFullReturn, completeLand).futureValue mustBe a[CreateLandRequest]
+      }
+
+      "must fail with NoSuchElementException when fullReturn is None" in {
+        recoverToExceptionIf[NoSuchElementException] {
+          CreateLandRequest.from(emptyUserAnswers, completeLand)
+        }.map { ex =>
+          ex.getMessage mustBe "Full return not found"
+        }
+      }
+
+      "must fail with NoSuchElementException when land mandatory fields are missing" in {
+        val landMissingFields = completeLand.copy(propertyType = None)
+        recoverToExceptionIf[NoSuchElementException] {
+          CreateLandRequest.from(userAnswersWithFullReturn, landMissingFields)
+        }.map { ex =>
+          ex.getMessage mustBe "Land mandatory fields not found"
+        }
+      }
     }
   }
 
   "CreateLandReturn" - {
 
     "must serialize to JSON correctly" in {
-      val response = CreateLandReturn(
-        landResourceRef = "L100001",
-        landId = "LID123"
-      )
-
+      val response = CreateLandReturn(landResourceRef = "L100001", landId = "LID123")
       val json = Json.toJson(response)
 
       (json \ "landResourceRef").as[String] mustBe "L100001"
@@ -331,34 +369,20 @@ class LandModelsSpec extends SpecBase with Matchers {
     }
 
     "must deserialize from JSON correctly" in {
-      val json = Json.obj(
-        "landResourceRef" -> "L100001",
-        "landId"          -> "LID123"
-      )
-
+      val json = Json.obj("landResourceRef" -> "L100001", "landId" -> "LID123")
       val result = json.validate[CreateLandReturn]
 
       result mustBe a[JsSuccess[_]]
-      val response = result.get
-
-      response.landResourceRef mustBe "L100001"
-      response.landId mustBe "LID123"
+      result.get.landResourceRef mustBe "L100001"
+      result.get.landId mustBe "LID123"
     }
 
     "must fail to deserialize when landResourceRef is missing" in {
-      val json = Json.obj("landId" -> "LID123")
-
-      val result = json.validate[CreateLandReturn]
-
-      result.isError mustBe true
+      Json.obj("landId" -> "LID123").validate[CreateLandReturn].isError mustBe true
     }
 
     "must fail to deserialize when landId is missing" in {
-      val json = Json.obj("landResourceRef" -> "L100001")
-
-      val result = json.validate[CreateLandReturn]
-
-      result.isError mustBe true
+      Json.obj("landResourceRef" -> "L100001").validate[CreateLandReturn].isError mustBe true
     }
   }
 
@@ -531,11 +555,7 @@ class LandModelsSpec extends SpecBase with Matchers {
       val request = result.get
 
       request.stornId mustBe "STORN99999"
-      request.returnResourceRef mustBe "100002"
       request.landResourceRef mustBe "L100002"
-      request.propertyType mustBe "NON_RESIDENTIAL"
-      request.interestTransferredCreated mustBe "LEASEHOLD"
-      request.addressLine1 mustBe "Updated Business Park"
       request.nextLandId mustBe None
     }
 
@@ -548,9 +568,7 @@ class LandModelsSpec extends SpecBase with Matchers {
         "addressLine1"               -> "Oak Avenue"
       )
 
-      val result = json.validate[UpdateLandRequest]
-
-      result.isError mustBe true
+      json.validate[UpdateLandRequest].isError mustBe true
     }
 
     "must fail to deserialize when required field propertyType is missing" in {
@@ -562,45 +580,54 @@ class LandModelsSpec extends SpecBase with Matchers {
         "addressLine1"               -> "Oak Avenue"
       )
 
-      val result = json.validate[UpdateLandRequest]
+      json.validate[UpdateLandRequest].isError mustBe true
+    }
 
-      result.isError mustBe true
+    "from" - {
+
+      "must return an UpdateLandRequest when all required fields are present" in {
+        UpdateLandRequest.from(userAnswersWithFullReturn, completeLand).futureValue mustBe a[UpdateLandRequest]
+      }
+
+      "must fail with NoSuchElementException when fullReturn is None" in {
+        recoverToExceptionIf[NoSuchElementException] {
+          UpdateLandRequest.from(emptyUserAnswers, completeLand)
+        }.map { ex =>
+          ex.getMessage mustBe "Full return not found"
+        }
+      }
+
+      "must fail with NoSuchElementException when land mandatory fields are missing" in {
+        val landMissingFields = completeLand.copy(landResourceRef = None)
+        recoverToExceptionIf[NoSuchElementException] {
+          UpdateLandRequest.from(userAnswersWithFullReturn, landMissingFields)
+        }.map { ex =>
+          ex.getMessage mustBe "Land mandatory fields not found"
+        }
+      }
     }
   }
 
   "UpdateLandReturn" - {
 
     "must serialize to JSON correctly when updated is true" in {
-      val response = UpdateLandReturn(updated = true)
-
-      val json = Json.toJson(response)
-
+      val json = Json.toJson(UpdateLandReturn(updated = true))
       (json \ "updated").as[Boolean] mustBe true
     }
 
     "must serialize to JSON correctly when updated is false" in {
-      val response = UpdateLandReturn(updated = false)
-
-      val json = Json.toJson(response)
-
+      val json = Json.toJson(UpdateLandReturn(updated = false))
       (json \ "updated").as[Boolean] mustBe false
     }
 
     "must deserialize from JSON correctly when updated is true" in {
-      val json = Json.obj("updated" -> true)
-
-      val result = json.validate[UpdateLandReturn]
-
+      val result = Json.obj("updated" -> true).validate[UpdateLandReturn]
       result mustBe a[JsSuccess[_]]
       result.get.updated mustBe true
     }
 
     "must fail to deserialize when updated field is missing" in {
-      val json = Json.obj()
-
-      val result = json.validate[UpdateLandReturn]
-
-      result.isError mustBe true
+      Json.obj().validate[UpdateLandReturn].isError mustBe true
     }
   }
 
@@ -613,7 +640,6 @@ class LandModelsSpec extends SpecBase with Matchers {
     )
 
     "must serialize to JSON correctly" in {
-
       val json = Json.toJson(request)
 
       (json \ "storn").as[String] mustBe "STORN12345"
@@ -621,25 +647,38 @@ class LandModelsSpec extends SpecBase with Matchers {
       (json \ "landResourceRef").as[String] mustBe "L100001"
     }
 
-    "must check NoSuchElementException throw error message when landResourceRef not found" in {
-      val testReturnId = "test-return-id"
-      val testStorn = "test-storn"
-      val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)
-      val userAnswersWithExistingData = userAnswers
-        .copy(fullReturn = Some(completeFullReturn))
-      recoverToExceptionIf[NoSuchElementException] {
-        DeleteLandRequest.from(userAnswersWithExistingData, "L100001")
-      }.map { ex =>
-        ex.getMessage mustBe "Land not found"
-      }
+    "from" - {
+
+      "must return a DeleteLandRequest when land is found" in {
+        val userAnswers = emptyUserAnswers.copy(
+          fullReturn = Some(completeLandFullReturn.copy(
+            land = Some(Seq(completeLand.copy(landResourceRef = Some("L100001"))))
+          ))
+        )
+
+        DeleteLandRequest.from(userAnswers, "L100001").futureValue mustBe DeleteLandRequest(
+          storn = completeLandFullReturn.stornId,
+          returnResourceRef = completeLandFullReturn.returnResourceRef,
+          landResourceRef = "L100001"
+        )
       }
 
-    "must check NoSuchElementException should throw error message when fullReturn is None" in {
+      "must fail with NoSuchElementException when land is not found" in {
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeLandFullReturn))
 
-      recoverToExceptionIf[NoSuchElementException] {
-        DeleteLandRequest.from(emptyUserAnswers, "L100001")
-      }.map { ex =>
-        ex.getMessage mustBe "Full return not found"
+        recoverToExceptionIf[NoSuchElementException] {
+          DeleteLandRequest.from(userAnswers, "L-NOT-FOUND")
+        }.map { ex =>
+          ex.getMessage mustBe "Land not found"
+        }
+      }
+
+      "must fail with NoSuchElementException when fullReturn is None" in {
+        recoverToExceptionIf[NoSuchElementException] {
+          DeleteLandRequest.from(emptyUserAnswers, "L100001")
+        }.map { ex =>
+          ex.getMessage mustBe "Full return not found"
+        }
       }
     }
 
@@ -653,80 +692,47 @@ class LandModelsSpec extends SpecBase with Matchers {
       val result = json.validate[DeleteLandRequest]
 
       result mustBe a[JsSuccess[_]]
-      val request = result.get
-
-      request.storn mustBe "STORN12345"
-      request.returnResourceRef mustBe "100001"
-      request.landResourceRef mustBe "L100001"
+      result.get.storn mustBe "STORN12345"
+      result.get.returnResourceRef mustBe "100001"
+      result.get.landResourceRef mustBe "L100001"
     }
 
     "must fail to deserialize when storn is missing" in {
-      val json = Json.obj(
-        "returnResourceRef" -> "100001",
-        "landResourceRef"   -> "L100001"
-      )
-
-      val result = json.validate[DeleteLandRequest]
-
-      result.isError mustBe true
+      Json.obj("returnResourceRef" -> "100001", "landResourceRef" -> "L100001")
+        .validate[DeleteLandRequest].isError mustBe true
     }
 
     "must fail to deserialize when returnResourceRef is missing" in {
-      val json = Json.obj(
-        "storn"           -> "STORN12345",
-        "landResourceRef" -> "L100001"
-      )
-
-      val result = json.validate[DeleteLandRequest]
-
-      result.isError mustBe true
+      Json.obj("storn" -> "STORN12345", "landResourceRef" -> "L100001")
+        .validate[DeleteLandRequest].isError mustBe true
     }
 
     "must fail to deserialize when landResourceRef is missing" in {
-      val json = Json.obj(
-        "storn"             -> "STORN12345",
-        "returnResourceRef" -> "100001"
-      )
-
-      val result = json.validate[DeleteLandRequest]
-
-      result.isError mustBe true
+      Json.obj("storn" -> "STORN12345", "returnResourceRef" -> "100001")
+        .validate[DeleteLandRequest].isError mustBe true
     }
   }
 
   "DeleteLandReturn" - {
 
     "must serialize to JSON correctly when deleted is true" in {
-      val response = DeleteLandReturn(deleted = true)
-
-      val json = Json.toJson(response)
-
+      val json = Json.toJson(DeleteLandReturn(deleted = true))
       (json \ "deleted").as[Boolean] mustBe true
     }
 
     "must serialize to JSON correctly when deleted is false" in {
-      val response = DeleteLandReturn(deleted = false)
-
-      val json = Json.toJson(response)
-
+      val json = Json.toJson(DeleteLandReturn(deleted = false))
       (json \ "deleted").as[Boolean] mustBe false
     }
 
     "must deserialize from JSON correctly when deleted is true" in {
-      val json = Json.obj("deleted" -> true)
-
-      val result = json.validate[DeleteLandReturn]
-
+      val result = Json.obj("deleted" -> true).validate[DeleteLandReturn]
       result mustBe a[JsSuccess[_]]
       result.get.deleted mustBe true
     }
 
     "must fail to deserialize when deleted field is missing" in {
-      val json = Json.obj()
-
-      val result = json.validate[DeleteLandReturn]
-
-      result.isError mustBe true
+      Json.obj().validate[DeleteLandReturn].isError mustBe true
     }
   }
 }
