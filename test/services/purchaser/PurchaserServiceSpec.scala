@@ -2030,12 +2030,58 @@ class PurchaserServiceSpec extends SpecBase {
 
       "must return true" - {
 
-        "when all company required fields are present" in {
+        "when all company required fields are present with UTR number" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
             isCompany = Some("YES"),
             companyName = Some("Test Company"),
             address1 = Some("123 Test Street")
+          )
+
+          val companyDetails = CompanyDetails(
+            UTR = Some("UTR1234")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001"))),
+              companyDetails = Some(companyDetails)
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe true
+        }
+
+        "when all company required fields are present with VAT reference" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("YES"),
+            companyName = Some("Test Company"),
+            address1 = Some("123 Test Street")
+          )
+
+          val companyDetails = CompanyDetails(
+            VATReference = Some("VAT1234")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001"))),
+              companyDetails = Some(companyDetails)
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe true
+        }
+
+        "when all company required fields are present with other form of ID" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("YES"),
+            companyName = Some("Test Company"),
+            address1 = Some("123 Test Street"),
+            registrationNumber = Some("ID12345"),
+            placeOfRegistration = Some("country")
           )
 
           val companyDetails = CompanyDetails()
@@ -2050,13 +2096,35 @@ class PurchaserServiceSpec extends SpecBase {
           service.isMainPurchaserComplete(userAnswers) mustBe true
         }
 
-        "when all individual required fields are present" in {
+        "when all individual required fields are present with NINO" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
             isCompany = Some("NO"),
             surname = Some("Test Name"),
             address1 = Some("123 Test Street"),
-            hasNino = Some("YES")
+            hasNino = Some("YES"),
+            nino = Some("AA123456A"),
+            dateOfBirth = Some("1985-05-15")
+          )
+
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(emptyFullReturn.copy(
+              purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001")))
+            )))
+
+          service.isMainPurchaserComplete(userAnswers) mustBe true
+        }
+
+        "when all individual required fields are present without NINO" in {
+          val purchaser = Purchaser(
+            purchaserID = Some("PURCH001"),
+            isCompany = Some("NO"),
+            surname = Some("Test Name"),
+            address1 = Some("123 Test Street"),
+            hasNino = Some("NO"),
+            registrationNumber = Some("ID12345"),
+            placeOfRegistration = Some("country")
           )
 
           val userAnswers = emptyUserAnswers
