@@ -70,21 +70,21 @@ class PopulatePurchaserService {
   }
 
   private def generateCompanyTypeDetails(availableCompanyDetails: CompanyDetails): PurchaserTypeOfCompanyAnswers = {
-    PurchaserTypeOfCompanyAnswers(availableCompanyDetails.companyTypeBank.getOrElse("NO"),
-      availableCompanyDetails.companyTypeBuildsoc.getOrElse("NO"),
-      availableCompanyDetails.companyTypeCentgov.getOrElse("NO"),
-      availableCompanyDetails.companyTypeIndividual.getOrElse("NO"),
-      availableCompanyDetails.companyTypeInsurance.getOrElse("NO"),
-      availableCompanyDetails.companyTypeLocalauth.getOrElse("NO"),
-      availableCompanyDetails.companyTypePartnership.getOrElse("NO"),
-      availableCompanyDetails.companyTypeProperty.getOrElse("NO"),
-      availableCompanyDetails.companyTypePubliccorp.getOrElse("NO"),
-      availableCompanyDetails.companyTypeOthercompany.getOrElse("NO"),
-      availableCompanyDetails.companyTypeOtherfinancial.getOrElse("NO"),
-      availableCompanyDetails.companyTypeOthercharity.getOrElse("NO"),
-      availableCompanyDetails.companyTypePensionfund.getOrElse("NO"),
-      availableCompanyDetails.companyTypeBuilder.getOrElse("NO"),
-      availableCompanyDetails.companyTypeSoletrader.getOrElse("NO"))
+    PurchaserTypeOfCompanyAnswers(availableCompanyDetails.companyTypeBank.getOrElse("no"),
+      availableCompanyDetails.companyTypeBuildsoc.getOrElse("no"),
+      availableCompanyDetails.companyTypeCentgov.getOrElse("no"),
+      availableCompanyDetails.companyTypeIndividual.getOrElse("no"),
+      availableCompanyDetails.companyTypeInsurance.getOrElse("no"),
+      availableCompanyDetails.companyTypeLocalauth.getOrElse("no"),
+      availableCompanyDetails.companyTypePartnership.getOrElse("no"),
+      availableCompanyDetails.companyTypeProperty.getOrElse("no"),
+      availableCompanyDetails.companyTypePubliccorp.getOrElse("no"),
+      availableCompanyDetails.companyTypeOthercompany.getOrElse("no"),
+      availableCompanyDetails.companyTypeOtherfinancial.getOrElse("no"),
+      availableCompanyDetails.companyTypeOthercharity.getOrElse("no"),
+      availableCompanyDetails.companyTypePensionfund.getOrElse("no"),
+      availableCompanyDetails.companyTypeBuilder.getOrElse("no"),
+      availableCompanyDetails.companyTypeSoletrader.getOrElse("no"))
   }
 
   private def purchaserPagesUpdate(userAnswers: UserAnswers,

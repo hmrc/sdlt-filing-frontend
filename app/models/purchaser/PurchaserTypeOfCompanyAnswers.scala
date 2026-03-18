@@ -43,21 +43,21 @@ object PurchaserTypeOfCompanyAnswers {
 
   def fromSet(selected: Set[PurchaserTypeOfCompany]): PurchaserTypeOfCompanyAnswers = {
     PurchaserTypeOfCompanyAnswers(
-      bank = if (selected.contains(Bank)) "YES" else "NO",
-      buildingSociety = if (selected.contains(BuildingSociety)) "YES" else "NO",
-      centralGovernment = if (selected.contains(CentralGovernment)) "YES" else "NO",
-      individualOther = if (selected.contains(IndividualOther)) "YES" else "NO",
-      insuranceAssurance = if (selected.contains(InsuranceAssurance)) "YES" else "NO",
-      localAuthority = if (selected.contains(LocalAuthority)) "YES" else "NO",
-      partnership = if (selected.contains(Partnership)) "YES" else "NO",
-      propertyCompany = if (selected.contains(PropertyCompany)) "YES" else "NO",
-      publicCorporation = if (selected.contains(PublicCorporation)) "YES" else "NO",
-      otherCompany = if (selected.contains(OtherCompany)) "YES" else "NO",
-      otherFinancialInstitute = if (selected.contains(OtherFinancialInstitute)) "YES" else "NO",
-      otherIncludingCharity = if (selected.contains(OtherIncludingCharity)) "YES" else "NO",
-      superannuationOrPensionFund = if (selected.contains(SuperannuationOrPensionFund)) "YES" else "NO",
-      unincorporatedBuilder = if (selected.contains(UnincorporatedBuilder)) "YES" else "NO",
-      unincorporatedSoleTrader = if (selected.contains(UnincorporatedSoleTrader)) "YES" else "NO"
+      bank = if (selected.contains(Bank)) "yes" else "no",
+      buildingSociety = if (selected.contains(BuildingSociety)) "yes" else "no",
+      centralGovernment = if (selected.contains(CentralGovernment)) "yes" else "no",
+      individualOther = if (selected.contains(IndividualOther)) "yes" else "no",
+      insuranceAssurance = if (selected.contains(InsuranceAssurance)) "yes" else "no",
+      localAuthority = if (selected.contains(LocalAuthority)) "yes" else "no",
+      partnership = if (selected.contains(Partnership)) "yes" else "no",
+      propertyCompany = if (selected.contains(PropertyCompany)) "yes" else "no",
+      publicCorporation = if (selected.contains(PublicCorporation)) "yes" else "no",
+      otherCompany = if (selected.contains(OtherCompany)) "yes" else "no",
+      otherFinancialInstitute = if (selected.contains(OtherFinancialInstitute)) "yes" else "no",
+      otherIncludingCharity = if (selected.contains(OtherIncludingCharity)) "yes" else "no",
+      superannuationOrPensionFund = if (selected.contains(SuperannuationOrPensionFund)) "yes" else "no",
+      unincorporatedBuilder = if (selected.contains(UnincorporatedBuilder)) "yes" else "no",
+      unincorporatedSoleTrader = if (selected.contains(UnincorporatedSoleTrader)) "yes" else "no"
     )
   }
 
