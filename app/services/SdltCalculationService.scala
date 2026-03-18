@@ -78,7 +78,7 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector)(impl
   }
 
   private def parseEffectiveDate(date: String): (Int, Int, Int) = {
-    val d = LocalDate.parse(date).toString.split("-")
+    val d = LocalDate.parse(date)
     (d.getDayOfMonth, d.getMonthValue, d.getYear)
   }
 
