@@ -81,7 +81,7 @@ object PurchaserTypeOfCompanyAnswers {
     )
 
     allValues.collect {
-      case (key, "YES") => key
+      case (key, "yes") => key
     }.toSet
   }
 

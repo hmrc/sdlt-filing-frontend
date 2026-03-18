@@ -103,21 +103,21 @@ class PurchaserTypeOfCompanyControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = testUserAnswersCompany.set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-        buildingSociety = "YES",
-        centralGovernment = "NO",
-        individualOther = "NO",
-        insuranceAssurance = "NO",
-        localAuthority = "NO",
-        partnership = "NO",
-        propertyCompany = "NO",
-        publicCorporation = "NO",
-        otherCompany = "NO",
-        otherFinancialInstitute = "NO",
-        otherIncludingCharity = "NO",
-        superannuationOrPensionFund = "NO",
-        unincorporatedBuilder = "NO",
-        unincorporatedSoleTrader = "NO")).success.value
+      val userAnswers = testUserAnswersCompany.set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "yes",
+        buildingSociety = "yes",
+        centralGovernment = "no",
+        individualOther = "no",
+        insuranceAssurance = "no",
+        localAuthority = "no",
+        partnership = "no",
+        propertyCompany = "no",
+        publicCorporation = "no",
+        otherCompany = "no",
+        otherFinancialInstitute = "no",
+        otherIncludingCharity = "no",
+        superannuationOrPensionFund = "no",
+        unincorporatedBuilder = "no",
+        unincorporatedSoleTrader = "no")).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
