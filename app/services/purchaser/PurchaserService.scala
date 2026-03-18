@@ -67,15 +67,25 @@ class PurchaserService {
   }
 
   private def isMainCompanyPurchaserComplete(mainPurchaser: Purchaser, companyDetails: Option[CompanyDetails]): Boolean = {
-    (mainPurchaser.companyName, mainPurchaser.address1, companyDetails) match {
-      case (Some(_), Some(_), Some(_)) => true
+    val hasVatOrUtrId = companyDetails.exists(cd => cd.VATReference.isDefined || cd.UTR.isDefined)
+    val hasOtherFormOfId = mainPurchaser.registrationNumber.isDefined && mainPurchaser.placeOfRegistration.isDefined
+    val hasCompleteFormOfId = hasVatOrUtrId || hasOtherFormOfId
+    (mainPurchaser.companyName, mainPurchaser.address1, hasCompleteFormOfId) match {
+      case (Some(_), Some(_), true) => true
       case _ => false
     }
   }
 
   private def isMainIndividualPurchaserComplete(mainPurchaser: Purchaser): Boolean = {
-    (mainPurchaser.surname, mainPurchaser.address1, mainPurchaser.hasNino) match {
-      case (Some(_), Some(_), Some(_)) => true
+    val hasCompleteFormOfId = if (mainPurchaser.hasNino.exists(_.equalsIgnoreCase("YES"))) {
+      mainPurchaser.nino.isDefined && mainPurchaser.dateOfBirth.isDefined
+    } else if (mainPurchaser.hasNino.exists(_.equalsIgnoreCase("NO"))) {
+      mainPurchaser.registrationNumber.isDefined && mainPurchaser.placeOfRegistration.isDefined
+    } else {
+      false
+    }
+    (mainPurchaser.surname, mainPurchaser.address1, hasCompleteFormOfId) match {
+      case (Some(_), Some(_), true) => true
       case _ => false
     }
   }
