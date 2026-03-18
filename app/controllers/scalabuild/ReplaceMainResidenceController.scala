@@ -6,6 +6,7 @@
 package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.ReplaceMainResidenceFormProvider
+import navigation.scalabuild.Navigator
 import pages.scalabuild.ReplaceMainResidencePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -23,6 +24,7 @@ class ReplaceMainResidenceController @Inject() (
     view: ReplaceMainResidenceView,
     formProvider: ReplaceMainResidenceFormProvider,
     sessionRepository: SessionRepository,
+    navigator: Navigator,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     identify: IdentifierAction
@@ -39,6 +41,7 @@ class ReplaceMainResidenceController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    request.body
     val form: Form[Boolean] = formProvider()
     form
       .bindFromRequest()
@@ -50,7 +53,7 @@ class ReplaceMainResidenceController @Inject() (
               request.userAnswers.set(ReplaceMainResidencePage, value)
             )
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.scalabuild.routes.PurchasePriceController.onPageLoad().url)
+          } yield Redirect(navigator.nextPage(ReplaceMainResidencePage, request.userAnswers))
       )
   }
 }
