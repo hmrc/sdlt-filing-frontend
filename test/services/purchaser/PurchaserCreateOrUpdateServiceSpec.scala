@@ -101,7 +101,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
           "bank" -> "YES",
-          "buildingSociety" -> "NO",
+          "buildingAssociation" -> "NO",
           "centralGovernment" -> "NO",
           "individualOther" -> "NO",
           "insuranceAssurance" -> "NO",
@@ -165,7 +165,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
           "bank" -> "YES",
-          "buildingSociety" -> "NO",
+          "buildingAssociation" -> "NO",
           "centralGovernment" -> "NO",
           "individualOther" -> "NO",
           "insuranceAssurance" -> "NO",
@@ -229,7 +229,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
           "bank" -> "YES",
-          "buildingSociety" -> "NO",
+          "buildingAssociation" -> "NO",
           "centralGovernment" -> "NO",
           "individualOther" -> "NO",
           "insuranceAssurance" -> "NO",
@@ -292,7 +292,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
           "bank" -> "YES",
-          "buildingSociety" -> "NO",
+          "buildingAssociation" -> "NO",
           "centralGovernment" -> "NO",
           "individualOther" -> "NO",
           "insuranceAssurance" -> "NO",
@@ -403,7 +403,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 //        "purchaserFormOfIdCompany" -> JsNull,
 //        "purchaserTypeOfCompany" -> Json.obj(
 //          "bank" -> "YES",
-//          "buildingSociety" -> "NO",
+//          "buildingAssociation" -> "NO",
 //          "centralGovernment" -> "NO",
 //          "individualOther" -> "NO",
 //          "insuranceAssurance" -> "NO",

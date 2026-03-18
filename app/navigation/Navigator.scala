@@ -25,7 +25,6 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
-import pages.ukResidency.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -62,7 +61,6 @@ class Navigator @Inject()() {
 
     case purchaserPage if isPurchaserSection(purchaserPage) => purchaserRoutes(purchaserPage)
     case landPage if isLandSection(landPage) => landRoutes(landPage)
-    case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -163,32 +161,13 @@ class Navigator @Inject()() {
     case LandSelectMeasurementUnitPage =>
       _ => controllers.land.routes.AreaOfLandController.onPageLoad(NormalMode)
     case AreaOfLandPage =>
-      _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+      _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad() // TODO - DTR-2495 - SPRINT-10 Redirect to Land check your answers
     case LandSendingPlanByPostPage =>
       _ => controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
     case AgriculturalOrDevelopmentalLandPage =>
       _ => controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(NormalMode)
     case DoYouKnowTheAreaOfLandPage =>
       _ => controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
-
-    case _ => _ => routes.IndexController.onPageLoad()
-  }
-
-  private def isResidencySection(page: Page): Boolean = page match {
-
-    case NonUkResidentPurchaserPage | CloseCompanyPage | CrownEmploymentReliefPage  => true
-
-    case _ => false
-  }
-
-  private def residencyRoutes(page: Page): UserAnswers => Call = page match {
-    case NonUkResidentPurchaserPage =>
-      _ => controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode)
-    case CloseCompanyPage =>
-      _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
-
-    case CrownEmploymentReliefPage => //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
-      _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
 
     case _ => _ => routes.IndexController.onPageLoad()
   }
@@ -234,20 +213,15 @@ class Navigator @Inject()() {
     case PurchaserAgentReferencePage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case PurchaserAgentAuthorisedPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
 
-    case LandTypeOfPropertyPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LandInterestTransferredOrCreatedPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LandRegisteredHmRegistryPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LandTitleNumberPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LandAddNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LandNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case ConfirmLandOrPropertyAddressPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LocalAuthorityCodePage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case DoYouKnowTheAreaOfLandPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case AgriculturalOrDevelopmentalLandPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case AreaOfLandPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LandSendingPlanByPostPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LandMineralsOrMineralRightsPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-    case LandSelectMeasurementUnitPage => _ => controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
+    //TODO - DTR-2495 - SPRINT-19 - Add land check route here to be uncommented in CYA task
+    //    case LandTypeOfPropertyPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LandInterestTransferredOrCreatedPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LandRegisteredHmRegistryPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LandTitleNumberPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LandAddNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LandNlpgUprnPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case ConfirmLandOrPropertyAddressPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+    //    case LocalAuthorityCodePage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }

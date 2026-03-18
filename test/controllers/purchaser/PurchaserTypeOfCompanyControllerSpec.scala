@@ -104,7 +104,7 @@ class PurchaserTypeOfCompanyControllerSpec extends SpecBase with MockitoSugar {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = testUserAnswersCompany.set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-        buildingSociety = "YES",
+        buildingAssociation = "YES",
         centralGovernment = "NO",
         individualOther = "NO",
         insuranceAssurance = "NO",
@@ -129,7 +129,7 @@ class PurchaserTypeOfCompanyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(Set(PurchaserTypeOfCompany.Bank, PurchaserTypeOfCompany.BuildingSociety)), NormalMode, "John Middle Doe")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(Set(PurchaserTypeOfCompany.Bank, PurchaserTypeOfCompany.BuildingAssociation)), NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
 

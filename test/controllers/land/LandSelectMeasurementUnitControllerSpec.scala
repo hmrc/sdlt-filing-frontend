@@ -86,7 +86,8 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
       }
     }
-    
+
+    //TODO - DTR-2495 - SPRINT-10 - update redirect to CYA
     "redirect to CYA for a GET if property type is Residential" in {
 
       val userAnswers = emptyUserAnswers
@@ -101,10 +102,11 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
       }
     }
-    
+
+    //TODO - DTR-2495 - SPRINT-10 - update redirect to CYA
     "redirect to CYA for a GET if property type is Additional" in {
 
       val userAnswers = emptyUserAnswers
@@ -119,7 +121,7 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
       }
     }
 
@@ -232,40 +234,6 @@ class LandSelectMeasurementUnitControllerSpec extends SpecBase with MockitoSugar
         val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(uaCaptor.capture())
         uaCaptor.getValue.get(AreaOfLandPage).isDefined mustBe false
-      }
-    }
-
-    "must not clear land area and redirect to the next page when previous unit type was the same" in {
-
-      val userAnswers = emptyUserAnswers
-        .set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
-        .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
-        .set(AreaOfLandPage, "100.000").success.value
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, landSelectMeasurementUnitRoute)
-            .withFormUrlEncodedBody(("value", LandSelectMeasurementUnit.Sqms.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(mockSessionRepository).set(uaCaptor.capture())
-        uaCaptor.getValue.get(AreaOfLandPage).isDefined mustBe true
       }
     }
 

@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.land
 
 import base.SpecBase
 import models.CheckMode
-import pages.land.{LandRegisteredHmRegistryPage, LandTitleNumberPage}
+import pages.land.LandTitleNumberPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -36,19 +36,27 @@ class LandTitleNumberSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
+          val titleNumber = "AB123456"
+
           val userAnswers = emptyUserAnswers
-            .set(LandTitleNumberPage, "AB123456").success.value
+            .set(LandTitleNumberPage, titleNumber).success.value
 
-          val result = LandTitleNumberSummary.row(userAnswers).value
+          val result = LandTitleNumberSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.titleNumber.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual
+            msgs("land.titleNumber.checkYourAnswersLabel")
 
-          result.value.content.asHtml.toString() mustEqual "AB123456"
+          val valueHtml = result.value.content.asHtml.toString()
+          valueHtml mustEqual titleNumber
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.titleNumber.change.hidden")
+          result.actions.get.items.head.href mustEqual
+            controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(
+            msgs("site.change")
+          )
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual
+            msgs("land.titleNumber.change.hidden")
         }
       }
 
@@ -59,14 +67,18 @@ class LandTitleNumberSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(LandTitleNumberPage, "<script>alert('xss')</script>").success.value
+          val unsafeTitleNumber = "<script>alert('xss')</script>"
 
-          val result = LandTitleNumberSummary.row(userAnswers).value
+          val userAnswers = emptyUserAnswers
+            .set(LandTitleNumberPage, unsafeTitleNumber).success.value
+
+          val result = LandTitleNumberSummary.row(userAnswers)
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml must include("&lt;script&gt;")
+
           valueHtml must not include "<script>"
+          valueHtml must include("&amp;lt;script&amp;gt;")
+
         }
       }
 
@@ -80,60 +92,40 @@ class LandTitleNumberSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTitleNumberPage, "AB123456").success.value
 
-          val result = LandTitleNumberSummary.row(userAnswers).value
+          val result = LandTitleNumberSummary.row(userAnswers)
 
-          result.actions.get.items.head.href mustEqual controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual
+            controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
         }
       }
     }
 
     "when the land title number is not present" - {
 
-      "must return a summary list row with a missing link when land is registered" in {
+      "must return a summary list row with a link to add the title number" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(LandRegisteredHmRegistryPage, true).success.value
+          val result = LandTitleNumberSummary.row(emptyUserAnswers)
 
-          val result = LandTitleNumberSummary.row(userAnswers).value
+          result.key.content.asHtml.toString() mustEqual
+            msgs("land.titleNumber.checkYourAnswersLabel")
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.titleNumber.checkYourAnswersLabel")
+          val htmlContent =
+            result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.titleNumber.missing"))
+          htmlContent must include(
+            controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
+          )
+          htmlContent must include(
+            msgs("land.titleNumber.missing")
+          )
 
           result.actions mustBe None
-        }
-      }
-
-      "must return None when land is not registered" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val userAnswers = emptyUserAnswers
-            .set(LandRegisteredHmRegistryPage, false).success.value
-
-          LandTitleNumberSummary.row(userAnswers) mustBe None
-        }
-      }
-
-      "must return None when neither page is answered" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          LandTitleNumberSummary.row(emptyUserAnswers) mustBe None
         }
       }
     }

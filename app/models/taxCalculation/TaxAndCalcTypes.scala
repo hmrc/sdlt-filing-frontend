@@ -1,5 +1,5 @@
-@*
- * Copyright 2025 HM Revenue & Customs
+/*
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,25 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package models.taxCalculation
 
-@(
-        messageKey: String,
-        linkKey: String,
-        textKey: String,
-        bold: Boolean = false,
-        extraClasses: String = ""
-)(implicit messages: Messages)
+import play.api.libs.json._
 
-<p class="govuk-body @extraClasses @if(bold) {govuk-!-font-weight-bold}">
-@Html(
-    messages(
-        messageKey,
-        messages(linkKey),
-        messages(textKey)
-    )
-)
-</p>
-    
+object TaxTypes extends Enumeration {
+  val rent    = Value
+  val premium = Value
+
+  given Reads[Value] = Reads.enumNameReads(TaxTypes)
+}
+
+object CalcTypes extends Enumeration {
+  val slice = Value
+  val slab  = Value
+
+  given Reads[Value] = Reads.enumNameReads(CalcTypes)
+}

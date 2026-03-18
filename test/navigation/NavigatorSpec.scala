@@ -24,7 +24,6 @@ import pages.land.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import pages.vendor.*
 import pages.vendorAgent.*
 
@@ -117,23 +116,19 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserDateOfBirthPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(mode = NormalMode)
         }
 
-        "go from PurchaserFormOfIdIndividualPage to IsPurchaserActingAsTrustee" in {
+        "go from PurchaserFormOfIdIndividualPage to ReturnTaskList" in {
           navigator.nextPage(PurchaserFormOfIdIndividualPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
         }
 
         "go from addPhoneNumberPage to enterPhoneNumberPage" in {
-          navigator.nextPage(AddPurchaserPhoneNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(NormalMode)
-        }
-
-        "go from EnterPurchaserPhoneNumberPage to DoesPurchaserHaveNI page" in {
-          navigator.nextPage(EnterPurchaserPhoneNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode)
+          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
         }
 
         "go from PurchaserCorporationTaxUTRPage to PurchaserType Page" in {
           navigator.nextPage(PurchaserUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
-        "go from PurchaserTypePage to IsPurchaserActingAsTrustee" in {
+        "go from PurchaserTypePage to ReturnTaskList" in {
           navigator.nextPage(PurchaserTypeOfCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
         }
 
@@ -141,20 +136,16 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
-        "go from PurchaserAndVendorConnectedPage to PurchaserCheckYourAnswers" in {
+        "go from PurchaserCorporationTaxUTRPage to PurchaserCheckYourAnswers" in {
           navigator.nextPage(PurchaserAndVendorConnectedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         }
 
-        "go from IsPurchaserActingAsTrusteePage to PurchaserAndVendorConnected" in {
+        "go from IsPurchaserActingAsTrusteePage to Return Task List Controller" in {
           navigator.nextPage(IsPurchaserActingAsTrusteePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(NormalMode)
         }
 
         "go from ConfirmNameOfThePurchaserPage to PurchaserAddress page" in {
           navigator.nextPage(ConfirmNameOfThePurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
-        }
-
-        "go from RegistrationNumberPage to PurchaserTypeOfCompany page" in {
-          navigator.nextPage(RegistrationNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserAgentBeforeYouStartPage to SelectPurchaserAgentPage" in {
@@ -188,6 +179,7 @@ class NavigatorSpec extends SpecBase {
         "go from PurchaserAgentAuthorisedPage to PurchaserAgentCheckYourAnswers page" in {
           navigator.nextPage(PurchaserAgentAuthorisedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
         }
+
       }
 
       "land routes" - {
@@ -228,18 +220,18 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LocalAuthorityCodePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(NormalMode)
         }
 
-        "go from LandSelectMeasurementUnitPage to what is the area of land page" in {
+        "go from LandSelectMeasurementUnitPage to what is the are of land page" in {
           navigator.nextPage(LandSelectMeasurementUnitPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.AreaOfLandController.onPageLoad(NormalMode)
         }
 
-        "go from AreaOfLandPage to Land check your answers page" in {
-          navigator.nextPage(AreaOfLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
+        "go from AreaOfLandPage to Land check your answers page" in { // TODO - DTR-2495 - SPRINT-10 Redirect to Land check your answers
+          navigator.nextPage(AreaOfLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad()
         }
 
         "go from LandSendingPlanByPostPage to LandMineralsOrMineralRights page" in {
           navigator.nextPage(LandSendingPlanByPostPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode)
         }
-
+        
         "go from AgriculturalOrDevelopmentalLandPage to DoYouKnowTheAreaOfLand page" in {
           navigator.nextPage(AgriculturalOrDevelopmentalLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(NormalMode)
         }
@@ -247,30 +239,16 @@ class NavigatorSpec extends SpecBase {
         "go from DoYouKnowTheAreaOfLandPage to LandSelectMeasurementUnit page" in {
           navigator.nextPage(DoYouKnowTheAreaOfLandPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(NormalMode)
         }
-      }
 
-      "residency routes" - {
-
-        "go from NonUkResidentPurchaserPage to CloseCompany page" in {
-          navigator.nextPage(NonUkResidentPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode)
-        }
-
-        "go from CloseCompanyPage to CrownEmploymentRelief" in {
-          navigator.nextPage(CloseCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
-        }
-        "go from CrownEmplymentReliefPage to check your answers page" in { //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
-          navigator.nextPage(CrownEmploymentReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
-        }
       }
     }
 
     "in Check mode" - {
-
-      "must go from a page that doesn't exist in the edit route map to ReturnTaskList" in {
+      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
       }
 
-      "must go from any purchaser page to PurchaserCheckYourAnswers" in {
+      "must go from any purchaser page to CheckYourAnswers" in {
         navigator.nextPage(WhoIsMakingThePurchasePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         navigator.nextPage(NameOfPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         navigator.nextPage(AddPurchaserPhoneNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
@@ -314,28 +292,16 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(PurchaserAgentAuthorisedPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
       }
 
+      //TODO - DTR-2495 - SPRINT-10 - mopup implement all check routes for Land CYA
       "must go from any land page to LandCheckYourAnswers" in {
-        navigator.nextPage(LandTypeOfPropertyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LandInterestTransferredOrCreatedPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LandRegisteredHmRegistryPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LandTitleNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LandAddNlpgUprnPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LandNlpgUprnPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(ConfirmLandOrPropertyAddressPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LocalAuthorityCodePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(DoYouKnowTheAreaOfLandPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(AgriculturalOrDevelopmentalLandPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(AreaOfLandPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LandSendingPlanByPostPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LandMineralsOrMineralRightsPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(LandSelectMeasurementUnitPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
-      }
-
-      //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
-      "must go from any residency page to ResidencyCheckYourAnswers" in {
-        navigator.nextPage(NonUkResidentPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
-        navigator.nextPage(CloseCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
-        navigator.nextPage(CrownEmploymentReliefPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandTypeOfPropertyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandInterestTransferredOrCreatedPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandRegisteredHmRegistryPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandTitleNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandAddNlpgUprnPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LandNlpgUprnPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(ConfirmLandOrPropertyAddressPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+        navigator.nextPage(LocalAuthorityCodePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
       }
 
       "must go from any preliminary page to CheckYourAnswers" in {

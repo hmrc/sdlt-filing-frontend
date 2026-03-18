@@ -19,39 +19,28 @@ package viewmodels.checkAnswers.land
 import models.{CheckMode, UserAnswers}
 import pages.land.DoYouKnowTheAreaOfLandPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object DoYouKnowTheAreaOfLandSummary {
+object DoYouKnowTheAreaOfLandSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    val changeRoute = controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(CheckMode).url
-    answers.get(DoYouKnowTheAreaOfLandPage) match {
-      case Some(answer) =>
+    answers.get(DoYouKnowTheAreaOfLandPage).map {
+      answer =>
+
         val value = ValueViewModel(
           Text(messages(if (answer) "site.yes" else "site.no"))
         )
 
-        Some(SummaryListRowViewModel(
+        SummaryListRowViewModel(
           key     = "land.doYouKnowTheAreaOfLand.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
+            ActionItemViewModel("site.change", controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("land.doYouKnowTheAreaOfLand.change.hidden"))
           )
-        ))
-
-      case _ =>
-        val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("land.doYouKnowTheAreaOfLand.missing")}</a>""")
-      )
-        Some(SummaryListRowViewModel(
-          key = "land.doYouKnowTheAreaOfLand.checkYourAnswersLabel",
-          value = value
-        ))
+        )
     }
 }

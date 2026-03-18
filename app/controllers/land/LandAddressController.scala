@@ -90,7 +90,8 @@ class LandAddressController @Inject()(
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, LandAddressPage)
       } yield if (updated) {
-        Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+        //TODO - DTR-2495 - SPRINT-10 - change this when we have the check your answers page
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }

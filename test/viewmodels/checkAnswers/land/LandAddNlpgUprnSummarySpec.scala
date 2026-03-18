@@ -18,56 +18,81 @@ package viewmodels.checkAnswers.land
 
 import base.SpecBase
 import models.CheckMode
-import pages.land.LandNlpgUprnPage
+import pages.land.LandAddNlpgUprnPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
-class LandNlpgUprnSummarySpec extends SpecBase {
+class LandAddNlpgUprnSummarySpec extends SpecBase {
 
-  "LandNlpgUprnSummary" - {
+  "LandAddNlpgUprnSummary" - {
 
-    "when NLPG UPRN is present" - {
+    "when add NLPG UPRN is present" - {
 
-      "must return a SummaryListRow with the UPRN value and change link" in {
+      "must return a SummaryListRow with 'yes' text and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(LandNlpgUprnPage, "1234567890").success.value
+          val userAnswers = emptyUserAnswers.set(LandAddNlpgUprnPage, true).success.value
 
-          val result = LandNlpgUprnSummary.row(userAnswers).get
+          val result = LandAddNlpgUprnSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.nlpgUprn.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("land.addNlpgUprn.checkYourAnswersLabel")
 
-          val contentString = result.value.content.asHtml.toString()
-          contentString mustEqual "1234567890"
+          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+
+          contentString mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.land.routes.LandAddNlpgUprnController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.nlpgUprn.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.addNlpgUprn.change.hidden")
+        }
+      }
+
+      "must return a SummaryListRow with 'no' text and change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers.set(LandAddNlpgUprnPage, false).success.value
+
+          val result = LandAddNlpgUprnSummary.row(userAnswers)
+
+          result.key.content.asHtml.toString() mustEqual msgs("land.addNlpgUprn.checkYourAnswersLabel")
+
+          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+
+          contentString mustEqual msgs("site.no")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.land.routes.LandAddNlpgUprnController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.addNlpgUprn.change.hidden")
         }
       }
     }
 
-    "when NLPG UPRN is not present" - {
+    "when add NLPG UPRN is not present" - {
 
-      "must return a SummaryListRow with a missing link" in {
+      "must return a SummaryListRow with a link to if they want to add an NLPG UPRN" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = LandNlpgUprnSummary.row(emptyUserAnswers).get
+          val result = LandAddNlpgUprnSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.nlpgUprn.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("land.addNlpgUprn.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.nlpgUprn.missing"))
+          htmlContent must include(controllers.land.routes.LandAddNlpgUprnController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("land.addNlpgUprn.missing"))
 
           result.actions mustBe None
         }

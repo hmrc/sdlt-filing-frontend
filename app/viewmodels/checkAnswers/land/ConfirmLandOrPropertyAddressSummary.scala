@@ -17,37 +17,33 @@
 package viewmodels.checkAnswers.land
 
 import models.{CheckMode, UserAnswers}
-import pages.land.LandNlpgUprnPage
+import pages.land.ConfirmLandOrPropertyAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object LandNlpgUprnSummary {
+object ConfirmLandOrPropertyAddressSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    val changeRoute = controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url
-    val label = messages("land.nlpgUprn.checkYourAnswersLabel")
-    answers.get(LandNlpgUprnPage) match {
-      case Some(answer) =>
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("land.nlpgUprn.change.hidden"))
-          )
-        ))
-      case None =>
+    answers.get(ConfirmLandOrPropertyAddressPage).map {
+      answer =>
+
         val value = ValueViewModel(
           HtmlContent(
-            s"""<a href="$changeRoute" class="govuk-link">${messages("land.nlpgUprn.missing")}</a>""")
+            HtmlFormat.escape(messages(s"land.confirmLandOrPropertyAddress.$answer"))
+          )
         )
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = value
-        ))
+
+        SummaryListRowViewModel(
+          key     = "land.confirmLandOrPropertyAddress.checkYourAnswersLabel",
+          value   = value,
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("land.confirmLandOrPropertyAddress.change.hidden"))
+          )
+        )
     }
 }

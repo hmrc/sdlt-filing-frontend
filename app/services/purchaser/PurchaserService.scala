@@ -28,20 +28,6 @@ import viewmodels.checkAnswers.purchaser.*
 import scala.util.Try
 
 class PurchaserService {
-
-  def allPurchasers(userAnswers: UserAnswers): Seq[Purchaser] =
-    userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
-
-  def findById(purchasers: Seq[Purchaser], purchaserId: String): Option[Purchaser] =
-    purchasers.find(_.purchaserID.contains(purchaserId))
-
-  def isMainPurchaser(purchaserId: String, userAnswers: UserAnswers): Boolean = {
-    val mainPurchaserID: Option[String] = userAnswers.fullReturn
-      .flatMap(_.returnInfo)
-      .flatMap(_.mainPurchaserID)
-
-    mainPurchaserID.contains(purchaserId)
-  }
   
   def getMainPurchaser(userAnswers: UserAnswers): Option[Purchaser] = {
     userAnswers.fullReturn.flatMap { fullReturn =>

@@ -30,84 +30,77 @@ class AreaOfLandSummarySpec extends SpecBase {
 
     "when the area of land and unit type are present" - {
 
-      "must return a summary list row with value and change link when unit type is square metres" in {
+      "must return a summary list row with value and change link" - {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        "when unit type is square metres" in {
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-          val area = "100.000"
+          running(application) {
+            implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(AreaOfLandPage, area).success.value
-            .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
+            val area = "100.000"
 
-          val result = AreaOfLandSummary.row(userAnswers).getOrElse(fail("Failed to create summaryListRow"))
+            val userAnswers = emptyUserAnswers
+              .set(AreaOfLandPage, area).success.value
+              .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.areaOfLand.checkYourAnswersLabel")
+            val result = AreaOfLandSummary.row(userAnswers).getOrElse(fail("Failed to create summaryListRow"))
 
-          val valueHtml = result.value.content.asHtml.toString()
-          valueHtml mustEqual s"$area ${msgs("land.areaOfLand.SQMETRE.suffix")}"
+            result.key.content.asHtml.toString() mustEqual
+              msgs("land.areaOfLand.checkYourAnswersLabel")
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.areaOfLand.change.hidden")
+            val valueHtml = result.value.content.asHtml.toString()
+            valueHtml mustEqual s"$area ${msgs("land.areaOfLand.SQMETRE.suffix")}"
+
+            result.actions.get.items.size mustEqual 1
+            result.actions.get.items.head.href mustEqual
+              controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode).url
+            result.actions.get.items.head.content.asHtml.toString() must include(
+              msgs("site.change")
+            )
+            result.actions.get.items.head.visuallyHiddenText.value mustEqual
+              msgs("land.areaOfLand.change.hidden")
+          }
         }
-      }
 
-      "must return a summary list row with value and change link when unit type is hectares" in {
+        "when unit type is hectares" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+          running(application) {
+            implicit val msgs: Messages = messages(application)
 
-          val area = "100.000"
+            val area = "100.000"
 
-          val userAnswers = emptyUserAnswers
-            .set(AreaOfLandPage, area).success.value
-            .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Hectares).success.value
+            val userAnswers = emptyUserAnswers
+              .set(AreaOfLandPage, area).success.value
+              .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Hectares).success.value
 
-          val result = AreaOfLandSummary.row(userAnswers).getOrElse(fail("Failed to create summaryListRow"))
+            val result = AreaOfLandSummary.row(userAnswers).getOrElse(fail("Failed to create summaryListRow"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.areaOfLand.checkYourAnswersLabel")
+            result.key.content.asHtml.toString() mustEqual
+              msgs("land.areaOfLand.checkYourAnswersLabel")
 
-          val valueHtml = result.value.content.asHtml.toString()
-          valueHtml mustEqual s"$area ${msgs("land.areaOfLand.HECTARES.suffix")}"
+            val valueHtml = result.value.content.asHtml.toString()
+            valueHtml mustEqual s"$area ${msgs("land.areaOfLand.HECTARES.suffix")}"
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.areaOfLand.change.hidden")
+            result.actions.get.items.size mustEqual 1
+            result.actions.get.items.head.href mustEqual
+              controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode).url
+            result.actions.get.items.head.content.asHtml.toString() must include(
+              msgs("site.change")
+            )
+            result.actions.get.items.head.visuallyHiddenText.value mustEqual
+              msgs("land.areaOfLand.change.hidden")
+          }
         }
       }
     }
 
-    "when the area of land and unit type are not present" - {
+    "when only the unit type is present" - {
 
-      "must return a summary list row with a missing link" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val result = AreaOfLandSummary.row(emptyUserAnswers).getOrElse(fail("Failed to create summaryListRow"))
-
-          result.key.content.asHtml.toString() mustEqual msgs("land.areaOfLand.checkYourAnswersLabel")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.areaOfLand.missing"))
-
-          result.actions mustBe None
-        }
-      }
-
-      "must return a summary list row with a missing link when only area is present but unit type is missing" in {
+      "must return a summary list row with a link to add the area of land" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -115,14 +108,43 @@ class AreaOfLandSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(AreaOfLandPage, "100.000").success.value
+            .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
 
           val result = AreaOfLandSummary.row(userAnswers).getOrElse(fail("Failed to create summaryListRow"))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          result.key.content.asHtml.toString() mustEqual
+            msgs("land.areaOfLand.checkYourAnswersLabel")
+
+          val htmlContent =
+            result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+
           htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.areaOfLand.missing"))
+          htmlContent must include(
+            controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode).url
+          )
+          htmlContent must include(
+            msgs("land.areaOfLand.missing")
+          )
+
+          result.actions mustBe None
+        }
+      }
+    }
+
+    "when the unit type is not present" - {
+
+      "must return None" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+
+          val result = AreaOfLandSummary.row(userAnswers)
+
+          result mustBe None
         }
       }
     }

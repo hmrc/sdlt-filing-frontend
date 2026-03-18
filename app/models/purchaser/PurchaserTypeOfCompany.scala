@@ -22,61 +22,29 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import viewmodels.govuk.checkbox.*
 
-sealed trait PurchaserTypeOfCompany {
-  def order: Int
-}
+sealed trait PurchaserTypeOfCompany
 
 object PurchaserTypeOfCompany extends Enumerable.Implicits {
 
-  case object UnincorporatedBuilder extends WithName("unincorporatedBuilder") with PurchaserTypeOfCompany {
-    val order = 1
-  }
-  case object UnincorporatedSoleTrader extends WithName("unincorporatedSoleTrader") with PurchaserTypeOfCompany {
-    val order = 2
-  }
-  case object IndividualOther extends WithName("individualOther") with PurchaserTypeOfCompany {
-    val order = 3
-  }
-  case object Partnership extends WithName("partnership") with PurchaserTypeOfCompany {
-    val order = 4
-  }
-  case object LocalAuthority extends WithName("localAuthority") with PurchaserTypeOfCompany {
-    val order = 5
-  }
-  case object CentralGovernment extends WithName("centralGovernment") with PurchaserTypeOfCompany {
-    val order = 6
-  }
-  case object PublicCorporation extends WithName("publicCorporation") with PurchaserTypeOfCompany {
-    val order = 7
-  }
-  case object PropertyCompany extends WithName("propertyCompany") with PurchaserTypeOfCompany {
-    val order = 8
-  }
-  case object Bank extends WithName("bank") with PurchaserTypeOfCompany {
-    val order = 9
-  }
-  case object BuildingSociety extends WithName("buildingSociety") with PurchaserTypeOfCompany {
-    val order = 10
-  }
-  case object InsuranceAssurance extends WithName("insuranceAssurance") with PurchaserTypeOfCompany {
-    val order = 11
-  }
-  case object SuperannuationOrPensionFund extends WithName("superannuationOrPensionFund") with PurchaserTypeOfCompany {
-    val order = 12
-  }
-  case object OtherFinancialInstitute extends WithName("otherFinancialInstitute") with PurchaserTypeOfCompany {
-    val order = 13
-  }
-  case object OtherCompany extends WithName("otherCompany") with PurchaserTypeOfCompany {
-    val order = 14
-  }
-  case object OtherIncludingCharity extends WithName("otherIncludingCharity") with PurchaserTypeOfCompany {
-    val order = 15
-  }
+  case object Bank extends WithName("bank") with PurchaserTypeOfCompany
+  case object BuildingAssociation extends WithName("buildingAssociation") with PurchaserTypeOfCompany
+  case object CentralGovernment extends WithName("centralGovernment") with PurchaserTypeOfCompany
+  case object IndividualOther extends WithName("individualOther") with PurchaserTypeOfCompany
+  case object InsuranceAssurance extends WithName("insuranceAssurance") with PurchaserTypeOfCompany
+  case object LocalAuthority extends WithName("localAuthority") with PurchaserTypeOfCompany
+  case object Partnership extends WithName("partnership") with PurchaserTypeOfCompany
+  case object PropertyCompany extends WithName("propertyCompany") with PurchaserTypeOfCompany
+  case object PublicCorporation extends WithName("publicCorporation") with PurchaserTypeOfCompany
+  case object OtherCompany extends WithName("otherCompany") with PurchaserTypeOfCompany
+  case object OtherFinancialInstitute extends WithName("otherFinancialInstitute") with PurchaserTypeOfCompany
+  case object OtherIncludingCharity extends WithName("otherIncludingCharity") with PurchaserTypeOfCompany
+  case object SuperannuationOrPensionFund extends WithName("superannuationOrPensionFund") with PurchaserTypeOfCompany
+  case object UnincorporatedBuilder extends WithName("unincorporatedBuilder") with PurchaserTypeOfCompany
+  case object UnincorporatedSoleTrader extends WithName("unincorporatedSoleTrader") with PurchaserTypeOfCompany
 
   val values: Seq[PurchaserTypeOfCompany] = Seq(
     Bank,
-    BuildingSociety,
+    BuildingAssociation,
     CentralGovernment,
     IndividualOther,
     InsuranceAssurance,
@@ -90,7 +58,7 @@ object PurchaserTypeOfCompany extends Enumerable.Implicits {
     SuperannuationOrPensionFund,
     UnincorporatedBuilder,
     UnincorporatedSoleTrader
-  ).sortBy(_.order)
+  )
 
   def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] =
     values.zipWithIndex.map {

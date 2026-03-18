@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.land.AgriculturalOrDevelopmentalLandFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.land.{DoYouKnowTheAreaOfLandPage, AgriculturalOrDevelopmentalLandPage, AreaOfLandPage}
+import pages.land.AgriculturalOrDevelopmentalLandPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,7 +30,6 @@ import views.html.land.AgriculturalOrDevelopmentalLandView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
 class AgriculturalOrDevelopmentalLandController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -68,17 +67,11 @@ class AgriculturalOrDevelopmentalLandController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AgriculturalOrDevelopmentalLandPage, value))
-            finalAnswers <- Future.fromTry {
-              if !request.userAnswers.get(AgriculturalOrDevelopmentalLandPage).contains(value) then
-                updatedAnswers.remove(DoYouKnowTheAreaOfLandPage).flatMap(_.remove(AreaOfLandPage))
-              else
-                Success(updatedAnswers)
-            }
-            _ <- sessionRepository.set(finalAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield if (value) {
             Redirect(navigator.nextPage(AgriculturalOrDevelopmentalLandPage, mode, updatedAnswers))
-          } else {
-            Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+          } else { // TODO: DTR-2495 - redirect to Land CYA - SPRINT 10
+            Redirect(controllers.land.routes.LandBeforeYouStartController.onPageLoad())
           }
       )
   }

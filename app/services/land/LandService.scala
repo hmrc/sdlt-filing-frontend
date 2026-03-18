@@ -17,7 +17,7 @@
 package services.land
 
 import models.land.LandTypeOfProperty
-import models.{NormalMode, UserAnswers, Land}
+import models.{NormalMode, UserAnswers}
 import pages.land.LandTypeOfPropertyPage
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -33,25 +33,9 @@ class LandService {
       case None =>
         Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
 
-      case _ =>
-        Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+      case _ => //TODO - DTR-2495 - SPRINT-10 - Update to land CYA
+        Redirect(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode))
 
     }
-  }
-
-  def getMainLand(userAnswers: UserAnswers): Option[Land] = {
-    val mainLandId: Option[String] = userAnswers.fullReturn
-      .flatMap(_.returnInfo)
-      .flatMap(_.mainLandID)
-
-    userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(land => mainLandId.equals(land.landID))))
-  }
-
-  def isMainLand(userAnswers: UserAnswers, landId: String): Boolean = {
-    val mainLandId:Option[String] = userAnswers.fullReturn
-      .flatMap(_.returnInfo)
-      .flatMap(_.mainLandID)
-    
-    mainLandId.contains(landId)
   }
 }

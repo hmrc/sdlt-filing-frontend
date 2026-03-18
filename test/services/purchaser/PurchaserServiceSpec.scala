@@ -1119,7 +1119,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
+            buildingAssociation = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1152,7 +1152,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
+            buildingAssociation = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1185,7 +1185,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
+            buildingAssociation = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1215,7 +1215,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
+            buildingAssociation = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1245,7 +1245,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
+            buildingAssociation = "NO",
             centralGovernment = "NO",
             individualOther = "NO",
             insuranceAssurance = "NO",
@@ -1372,7 +1372,7 @@ class PurchaserServiceSpec extends SpecBase {
               purchaserTypeOfCompany = Some(
                 PurchaserTypeOfCompanyAnswers(
                   bank = "YES",
-                  buildingSociety = "NO",
+                  buildingAssociation = "NO",
                   centralGovernment = "NO",
                   individualOther = "NO",
                   insuranceAssurance = "NO",
@@ -1612,7 +1612,7 @@ class PurchaserServiceSpec extends SpecBase {
               purchaserTypeOfCompany = Some(
                 PurchaserTypeOfCompanyAnswers(
                   bank = "YES",
-                  buildingSociety = "NO",
+                  buildingAssociation = "NO",
                   centralGovernment = "NO",
                   individualOther = "NO",
                   insuranceAssurance = "NO",
@@ -1745,7 +1745,7 @@ class PurchaserServiceSpec extends SpecBase {
             val dataWithCompanyTypePresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
                 purchaserTypeOfCompany = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
-                  buildingSociety = "YES",
+                  buildingAssociation = "YES",
                   centralGovernment = "NO",
                   individualOther = "NO",
                   insuranceAssurance = "NO",
@@ -1883,7 +1883,7 @@ class PurchaserServiceSpec extends SpecBase {
             purchaserTypeOfCompany = Some(
               PurchaserTypeOfCompanyAnswers(
                 bank = "YES",
-                buildingSociety = "NO",
+                buildingAssociation = "NO",
                 centralGovernment = "NO",
                 individualOther = "NO",
                 insuranceAssurance = "NO",
@@ -2136,144 +2136,6 @@ class PurchaserServiceSpec extends SpecBase {
 
           service.isMainPurchaserComplete(userAnswers) mustBe false
         }
-      }
-    }
-
-    "isMainPurchaser" - {
-
-      "must return true when purchaserId matches mainPurchaserID" in {
-        val purchaserId = "PURCH001"
-        val returnInfo = ReturnInfo(mainPurchaserID = Some(purchaserId))
-        val fullReturn = emptyFullReturn.copy(returnInfo = Some(returnInfo))
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-
-        val result = service.isMainPurchaser(purchaserId, userAnswers)
-
-        result mustBe true
-      }
-
-      "must return false when purchaserId does not match mainPurchaserID" in {
-        val returnInfo = ReturnInfo(mainPurchaserID = Some("PURCH001"))
-        val fullReturn = emptyFullReturn.copy(returnInfo = Some(returnInfo))
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-
-        val result = service.isMainPurchaser("PURCH002", userAnswers)
-
-        result mustBe false
-      }
-
-      "must return false when mainPurchaserID is None" in {
-        val returnInfo = ReturnInfo(mainPurchaserID = None)
-        val fullReturn = emptyFullReturn.copy(returnInfo = Some(returnInfo))
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-
-        val result = service.isMainPurchaser("PURCH001", userAnswers)
-
-        result mustBe false
-      }
-
-      "must return false when returnInfo is None" in {
-        val fullReturn = emptyFullReturn.copy(returnInfo = None)
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-
-        val result = service.isMainPurchaser("PURCH001", userAnswers)
-
-        result mustBe false
-      }
-
-      "must return false when fullReturn is None" in {
-        val userAnswers = emptyUserAnswers.copy(fullReturn = None)
-
-        val result = service.isMainPurchaser("PURCH001", userAnswers)
-
-        result mustBe false
-      }
-    }
-
-    "allPurchasers" - {
-
-      "must return all purchasers when they exist" in {
-        val purchaser1 = Purchaser(
-          purchaserID = Some("PURCH001"),
-          isCompany = Some("NO"),
-          forename1 = Some("John"),
-          surname = Some("Smith"),
-          address1 = Some("123 Test Street"),
-          hasNino = Some("YES")
-        )
-        val purchaser2 = Purchaser(
-          purchaserID = Some("PURCH002"),
-          isCompany = Some("NO"),
-          forename1 = Some("Jane"),
-          surname = Some("Doe"),
-          address1 = Some("123 Test Street"),
-          hasNino = Some("YES")
-        )
-        val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser1, purchaser2)))
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-
-        val result = service.allPurchasers(userAnswers)
-
-        result mustBe Seq(purchaser1, purchaser2)
-      }
-
-      "must return empty sequence when no purchasers exist" in {
-        val fullReturn = emptyFullReturn.copy(purchaser = None)
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-
-        val result = service.allPurchasers(userAnswers)
-
-        result mustBe Seq.empty
-      }
-
-      "must return empty sequence when purchaser list is empty" in {
-        val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq.empty))
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-
-        val result = service.allPurchasers(userAnswers)
-
-        result mustBe Seq.empty
-      }
-
-      "must return empty sequence when fullReturn is None" in {
-        val userAnswers = emptyUserAnswers.copy(fullReturn = None)
-
-        val result = service.allPurchasers(userAnswers)
-
-        result mustBe Seq.empty
-      }
-    }
-
-    "findById" - {
-
-      "must return the purchaser with the matching ID" in {
-        val purchaser1 = Purchaser(purchaserID = Some("PURCH001"))
-        val purchaser2 = Purchaser(purchaserID = Some("PURCH002"))
-        val purchaser3 = Purchaser(purchaserID = Some("PURCH003"))
-        val purchasers = Seq(purchaser1, purchaser2, purchaser3)
-
-        val result = service.findById(purchasers, "PURCH002")
-
-        result mustBe Some(purchaser2)
-      }
-
-      "must return None if no purchaser has the matching ID" in {
-        val purchaser1 = Purchaser(purchaserID = Some("PURCH001"))
-        val purchaser2 = Purchaser(purchaserID = Some("PURCH002"))
-        val purchaser3 = Purchaser(purchaserID = Some("PURCH003"))
-        val purchasers = Seq(purchaser1, purchaser2, purchaser3)
-
-        val result = service.findById(purchasers, "PURCH004")
-
-        result mustBe None
-      }
-
-      "must return None if the purchaser list is empty" in {
-        val purchasers = Seq.empty[Purchaser]
-
-        val result = service.findById(purchasers, "PURCH001")
-
-        result mustBe None
       }
     }
   }

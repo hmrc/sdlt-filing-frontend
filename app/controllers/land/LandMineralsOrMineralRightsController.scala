@@ -83,7 +83,8 @@ class LandMineralsOrMineralRightsController @Inject()(
                   case LandTypeOfProperty.Mixed | LandTypeOfProperty.NonResidential =>
                     Redirect(navigator.nextPage(LandMineralsOrMineralRightsPage, mode, updatedAnswers))
                   case _ =>
-                  Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+                    // TODO DTR-2495: Redirect to CYA page
+                  Redirect(controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(NormalMode))
                 }
               }
           )

@@ -349,7 +349,7 @@ class LandAddressControllerSpec extends SpecBase with MockitoSugar {
 
     "addressLookupCallbackChangeLand" - {
 
-      "must redirect to Land CYA when address is successfully saved" in {
+      "must redirect to ReturnTaskList when address is successfully saved" in { // TODO Change this when have the check your answers page and change title of test
         val mockAddressLookupService = mock[AddressLookupService]
 
         when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
@@ -369,7 +369,7 @@ class LandAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -494,8 +494,8 @@ class LandAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-
-            redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+            //TODO - DTR-2495 - SPRINT-10 - change this when we have the check your answers page
+            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }

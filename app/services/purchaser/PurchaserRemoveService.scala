@@ -21,7 +21,6 @@ import models.purchaser.*
 import models.requests.DataRequest
 import models.{Mode, Purchaser, ReturnInfo, ReturnInfoRequest, ReturnVersionUpdateRequest, UserAnswers}
 import pages.purchaser.{PurchaserOverviewRemovePage, PurchaserRemovePage}
-import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Results.Redirect
@@ -38,7 +37,21 @@ class PurchaserRemoveService @Inject()(
                                         view: PurchaserRemoveView,
                                         backendConnector: StampDutyLandTaxConnector,
                                         purchaserService: PurchaserService
-                                      ) extends Logging {
+                                      ) {
+
+  def isMainPurchaser(purchaserId: String, userAnswers: UserAnswers): Boolean = {
+    val mainPurchaserID: Option[String] = userAnswers.fullReturn
+      .flatMap(_.returnInfo)
+      .flatMap(_.mainPurchaserID)
+
+    mainPurchaserID.contains(purchaserId)
+  }
+
+  def allPurchasersSeq(userAnswers: UserAnswers): Seq[Purchaser] = {
+    userAnswers.fullReturn
+      .flatMap(_.purchaser)
+      .getOrElse(Seq.empty)
+  }
 
   def purchaserRemoveView(
                            form: Form[PurchaserRemove],
@@ -46,8 +59,10 @@ class PurchaserRemoveService @Inject()(
                          )(implicit request: DataRequest[AnyContent], messages: Messages): Either[Result, Html] = {
 
     request.userAnswers.get(PurchaserOverviewRemovePage).map { purchaserRefs =>
-      val allPurchasers: Seq[Purchaser] = purchaserService.allPurchasers(request.userAnswers)
-      val purchaserToRemove: Option[Purchaser] = purchaserService.findById(allPurchasers, purchaserRefs.purchaserID)
+      val allPurchasers: Seq[Purchaser] = allPurchasersSeq(request.userAnswers)
+
+      val purchaserToRemove: Option[Purchaser] = allPurchasers
+        .find(_.purchaserID.contains(purchaserRefs.purchaserID))
 
       val purchaserToRemoveName: Option[String] = purchaserToRemove.flatMap { purchaser =>
         purchaser.companyName.orElse(
@@ -70,7 +85,7 @@ class PurchaserRemoveService @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val mainPurchaserCheck: Boolean = purchaserService.isMainPurchaser(purchaserRefs.purchaserID, request.userAnswers)
+      val mainPurchaserCheck: Boolean = isMainPurchaser(userAnswers = request.userAnswers, purchaserId = purchaserRefs.purchaserID)
 
       val effectiveCount = if (mainPurchaserCheck) {
         allPurchasers.length
@@ -92,44 +107,52 @@ class PurchaserRemoveService @Inject()(
   }
 
   private object PurchaserOps {
-        
+
+    def allPurchasers(userAnswers: UserAnswers): Seq[Purchaser] =
+      userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
+
+    def findById(purchasers: Seq[Purchaser], purchaserId: String): Option[Purchaser] =
+      purchasers.find(_.purchaserID.contains(purchaserId))
+
+    def findByNextId(purchasers: Seq[Purchaser], nextId: String): Option[Purchaser] =
+      purchasers.find(_.nextPurchaserID.contains(nextId))
+
     def journeyRecoveryRedirect: Result =
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
     def purchaserOverviewRedirect(removedPurchaser: Option[Purchaser] = None): Result = {
       removedPurchaser match {
-        case Some(purchaser) =>
+        case Some(purchaser) => {
           val maybePurchaserFullName: String = purchaserService.createPurchaserName(purchaser) match {
-            case Some(name) => name.fullName
+            case (Some(name)) => name.fullName
             case _ => ""
           }
           Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()).flashing("purchaserDeleted" -> maybePurchaserFullName)
+        }
         case _ => Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
       }
     }
 
-    def withNewVersion(
-                        userAnswers: UserAnswers,
-                        version: Option[Int] = None
-                      )(implicit hc: HeaderCarrier,
-                        ec: ExecutionContext,
-                        request: DataRequest[AnyContent]): Future[Int] =
-      logger.info(s"[PurchaserRemoveService][withNewVersion] version passed in: $version")
+    def withNewVersion[A](
+                           userAnswers: UserAnswers,
+                           version: Option[Long] = None
+                         )(f: Long => Future[A])(implicit hc: HeaderCarrier,
+                                                 ec: ExecutionContext,
+                                                 request: DataRequest[AnyContent]): Future[A] =
       for {
         updateReq <- ReturnVersionUpdateRequest.from(userAnswers, version)
         versionResponse <- backendConnector.updateReturnVersion(updateReq)
         newVersion <- versionResponse.newVersion match {
-          case Some(v) =>
-            logger.info(s"[PurchaserRemoveService][withNewVersion] update return version response version: $v")
-            Future.successful(v)
+          case Some(v) => Future.successful(v)
           case None => Future.failed(new IllegalStateException("Return version was not updated (newVersion missing)"))
         }
-      } yield newVersion
+        result <- f(newVersion)
+      } yield result
 
     def deletePurchaser(
                          userAnswers: UserAnswers,
                          purchaserIdSession: String
-                       )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
+                       )(implicit  request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
       for {
         req <- DeletePurchaserRequest.from(userAnswers, purchaserIdSession)
         _ <- backendConnector.deletePurchaser(req)
@@ -137,18 +160,26 @@ class PurchaserRemoveService @Inject()(
 
     def deleteCompanyDetailsIfPresent(
                                        userAnswers: UserAnswers,
-                                       isMainPurchaser: Boolean,
                                        companyDetailsIdInSession: Option[String]
                                      )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
       companyDetailsIdInSession match {
-        case Some(companyId) if isMainPurchaser =>
+        case Some(companyId) =>
           for {
             req <- DeleteCompanyDetailsRequest.from(userAnswers, companyId)
             _ <- backendConnector.deleteCompanyDetails(req)
           } yield ()
-        case _ =>
+        case None =>
           Future.successful(())
       }
+
+    def updatePurchaser(
+                         userAnswers: UserAnswers,
+                         purchaser: Purchaser
+                       )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
+      for {
+        req <- UpdatePurchaserRequest.from(userAnswers = userAnswers, purchaser = purchaser)
+        _ <- backendConnector.updatePurchaser(req)
+      } yield ()
 
     def updateReturnInfo(
                           userAnswers: UserAnswers,
@@ -158,29 +189,43 @@ class PurchaserRemoveService @Inject()(
         req <- ReturnInfoRequest.from(userAnswers = userAnswers, returnInfo = returnInfo)
         _ <- backendConnector.updateReturnInfo(req)
       } yield ()
+
+    def withReturnInfo[A](userAnswers: UserAnswers)(f: ReturnInfo => Future[A]): Future[A] =
+      userAnswers.fullReturn.flatMap(_.returnInfo) match {
+        case Some(ri) => f(ri)
+        case None => Future.failed(new IllegalStateException("Missing returnInfo"))
+      }
   }
 
   def handleRemoval(
                      removal: PurchaserRemove,
                      userAnswers: UserAnswers
                    )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+
+    val purchaserLength = allPurchasersSeq(userAnswers).length
+
     request.userAnswers.get(PurchaserOverviewRemovePage).map { purchaserRefs =>
       removal match {
+
         case PurchaserRemove.Remove(purchaserId) =>
-          val mainPurchaserCheck = purchaserService.isMainPurchaser(purchaserRefs.purchaserID, request.userAnswers)
+          val mainPurchaserCheck = isMainPurchaser(userAnswers = request.userAnswers, purchaserId = purchaserRefs.purchaserID)
           handleRemovePurchaser(
+            chosenPurchaserId = purchaserId,
             purchaserIdSession = purchaserRefs.purchaserID,
             companyDetailsIdInSession = purchaserRefs.companyDetailsID,
             isMainPurchaser = mainPurchaserCheck,
+            purchaserLength = purchaserLength,
             userAnswers = userAnswers
           )
-        case PurchaserRemove.SelectNewMain(newMainPurchaserID) =>
+
+        case PurchaserRemove.SelectNewMain(newmainPurchaserID) =>
           handleMultiplePurchasersWithNewMain(
-            chosenPurchaserId = newMainPurchaserID,
+            chosenPurchaserId = newmainPurchaserID,
             purchaserIdSession = purchaserRefs.purchaserID,
             companyDetailsIdInSession = purchaserRefs.companyDetailsID,
             userAnswers = userAnswers
           )
+
         case _ =>
           handleNoRemoval()
       }
@@ -191,70 +236,161 @@ class PurchaserRemoveService @Inject()(
     Future.successful(PurchaserOps.purchaserOverviewRedirect())
 
   private def handleRemovePurchaser(
+                                     chosenPurchaserId: String,
                                      purchaserIdSession: String,
                                      companyDetailsIdInSession: Option[String] = None,
                                      isMainPurchaser: Boolean,
+                                     purchaserLength: Int,
                                      userAnswers: UserAnswers
                                    )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-    val purchasers = purchaserService.allPurchasers(userAnswers)
-    val removedPurchaser = purchaserService.findById(purchasers, purchaserIdSession)
-    val promotingPurchaser = if purchasers.length == 2 && isMainPurchaser then purchasers.find(!_.purchaserID.contains(purchaserIdSession)) else None
-    val promotingPurchaserId = promotingPurchaser.flatMap(_.purchaserID)
+    val purchasers = PurchaserOps.allPurchasers(userAnswers)
+    val chosenPurchaser = PurchaserOps.findById(purchasers, chosenPurchaserId)
+    val removedPurchaser = PurchaserOps.findById(purchasers, purchaserIdSession)
+    val previousPurchaserInList = PurchaserOps.findByNextId(purchasers, chosenPurchaserId)
 
-    logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] purchaser in session to remove: $removedPurchaser")
-    logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] chosen purchaser to promote: $promotingPurchaser")
+    def changeNextIdOfPreviousPurchaser(): Future[Unit] = {
+      (previousPurchaserInList, chosenPurchaser) match {
+        case (Some(changeP), Some(chosenP)) if !isMainPurchaser && purchaserLength > 1 =>
+          PurchaserOps.updatePurchaser(userAnswers, changeP.copy(nextPurchaserID = chosenP.nextPurchaserID))
+        case _ =>
+          Future.successful(())
+      }
+    }
 
-      userAnswers.fullReturn.flatMap(_.returnInfo).map { returnInfo =>
-        (for {
-          version <- PurchaserOps.withNewVersion(userAnswers)
+    def updateChosenPurchaserIfNeeded(version: Option[Long] = None): Future[Option[Result]] =
+      chosenPurchaser match {
+        case Some(p) if isMainPurchaser && purchaserLength == 2 =>
+          updateChosenPurchaserDouble(chosenPurchaserId = chosenPurchaserId,
+            purchaser = p,
+            userAnswers = userAnswers,
+            removedPurchaser = removedPurchaser,
+            version = version)
+            .map(Some(_))
+        case _ =>
+          Future.successful(None)
+      }
+
+    PurchaserOps
+      .withNewVersion(userAnswers) { returnVersion =>
+        for {
           _ <- PurchaserOps.deletePurchaser(userAnswers, purchaserIdSession)
-          _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, isMainPurchaser, companyDetailsIdInSession)
-          result <- if (isMainPurchaser) {
-            for {
-              newVersion <- PurchaserOps.withNewVersion(userAnswers, Some(version))
-              _ <- PurchaserOps.updateReturnInfo(userAnswers, returnInfo.copy(mainPurchaserID = promotingPurchaserId))
-            } yield PurchaserOps.purchaserOverviewRedirect(removedPurchaser)
-          } else {
-            Future.successful(PurchaserOps.purchaserOverviewRedirect(removedPurchaser))
-          }
-        } yield result)
-          .recover {
-            case _ =>
-              logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] failed to delete purchaser. Redirecting to journey recovery")
-              PurchaserOps.journeyRecoveryRedirect
-          }
-      }.getOrElse(Future.successful(PurchaserOps.journeyRecoveryRedirect))
+          _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, companyDetailsIdInSession)
+          _ <- changeNextIdOfPreviousPurchaser()
+          maybeResult <- updateChosenPurchaserIfNeeded(Some(returnVersion))
+        } yield maybeResult.getOrElse(PurchaserOps.purchaserOverviewRedirect(removedPurchaser))
+      }
+      .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
   }
 
   private def handleMultiplePurchasersWithNewMain(
-                                                   chosenPurchaserId: String,
-                                                   purchaserIdSession: String,
-                                                   companyDetailsIdInSession: Option[String] = None,
-                                                   userAnswers: UserAnswers
-                                                 )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                                   chosenPurchaserId: String,
+                                   purchaserIdSession: String,
+                                   companyDetailsIdInSession: Option[String] = None,
+                                   userAnswers: UserAnswers,
+                                   version: Option[Long] = None
+                                 )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-    val purchasers = purchaserService.allPurchasers(userAnswers)
-    val removedPurchaser = purchaserService.findById(purchasers, purchaserIdSession)
+    val purchasers = PurchaserOps.allPurchasers(userAnswers)
+    val chosenPurchaser = PurchaserOps.findById(purchasers, chosenPurchaserId)
 
-    logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] purchaser in session to remove: $removedPurchaser")
-    logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] chosen purchaser ID to promote: $chosenPurchaserId")
+    def doUpdate(newVersion: Long): Future[Result] =
+      updateChosenPurchaserMulti(
+        chosenPurchaserId = chosenPurchaserId,
+        purchaserIdSession = purchaserIdSession,
+        userAnswers = userAnswers,
+        version = Some(newVersion)
+      )
 
-    userAnswers.fullReturn.flatMap(_.returnInfo).map { returnInfo =>
-      (for {
-        version <- PurchaserOps.withNewVersion(userAnswers)
-        _ <- PurchaserOps.deletePurchaser(userAnswers, purchaserIdSession)
-        _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, true, companyDetailsIdInSession)
-        newVersion <- PurchaserOps.withNewVersion(userAnswers, Some(version))
-        _ <- PurchaserOps.updateReturnInfo(userAnswers, returnInfo.copy(mainPurchaserID = Some(chosenPurchaserId)))
-      } yield {
-        PurchaserOps.purchaserOverviewRedirect(removedPurchaser)
-      })
-        .recover {
-          case _ =>
-            logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] redirecting to journey recovery")
-            PurchaserOps.journeyRecoveryRedirect
-        }
-      }.getOrElse(Future.successful(PurchaserOps.journeyRecoveryRedirect))
+    PurchaserOps
+      .withNewVersion(userAnswers, version) { newReturnVersion =>
+        for {
+          _ <- PurchaserOps.deletePurchaser(userAnswers, purchaserIdSession)
+          _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, companyDetailsIdInSession)
+          r <- chosenPurchaser match {
+            case Some(_) => doUpdate(newReturnVersion)
+            case None => Future.successful(PurchaserOps.purchaserOverviewRedirect())
+          }
+        } yield r
+      }
+      .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
   }
+
+  private def updateChosenPurchaserDouble(
+                                           chosenPurchaserId: String,
+                                           removedPurchaser: Option[Purchaser],
+                                           purchaser: Purchaser,
+                                           userAnswers: UserAnswers,
+                                           version: Option[Long] = None
+                                         )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+
+    PurchaserOps
+      .withReturnInfo(userAnswers) { returnInfo =>
+        PurchaserOps.withNewVersion(userAnswers, version) { newReturnVersion =>
+          for {
+            _ <- PurchaserOps.updatePurchaser(userAnswers, purchaser.copy(nextPurchaserID = None))
+            _ <- PurchaserOps.updateReturnInfo(
+              userAnswers,
+              returnInfo.copy(mainPurchaserID = Some(chosenPurchaserId),
+              version = Some(newReturnVersion.toString)))
+          } yield PurchaserOps.purchaserOverviewRedirect(removedPurchaser)
+        }
+      }
+      .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+  }
+
+  private def updateChosenPurchaserMulti(
+                                          chosenPurchaserId: String,
+                                          purchaserIdSession: String,
+                                          userAnswers: UserAnswers,
+                                          version: Option[Long] = None
+                                        )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+
+    val purchasers = allPurchasersSeq(userAnswers)
+    val newMainPurchaser = purchasers.find(_.purchaserID.contains(chosenPurchaserId))
+    val originalMainPurchaser = purchasers.find(_.purchaserID.contains(purchaserIdSession))
+    val previousPurchaserInList = purchasers.find(_.nextPurchaserID.contains(chosenPurchaserId))
+
+    PurchaserOps
+      .withReturnInfo(userAnswers) { returnInfo =>
+        (newMainPurchaser, originalMainPurchaser, previousPurchaserInList) match {
+          case (Some(newMainP), Some(mainP), Some(nextIdP)) =>
+            (newMainP.purchaserID, mainP.nextPurchaserID) match {
+
+              case (Some(newmainPurchaserID), Some(previousMainNextID)) if newmainPurchaserID == previousMainNextID =>
+                PurchaserOps
+                  .withNewVersion(userAnswers, version) { newReturnVersion =>
+                    for {
+                      _ <- PurchaserOps.updateReturnInfo(userAnswers,
+                        returnInfo.copy(mainPurchaserID = Some(newmainPurchaserID),
+                          version = Some(newReturnVersion.toString)))
+                    } yield PurchaserOps.purchaserOverviewRedirect(originalMainPurchaser)
+                  }
+                  .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+
+              case (Some(nextPId), Some(mainPId)) =>
+                PurchaserOps
+                  .withNewVersion(userAnswers, version) { newReturnVersion =>
+                    for {
+                      _ <- PurchaserOps.updatePurchaser(userAnswers, newMainP.copy(nextPurchaserID = Some(nextPId)))
+                      _ <- PurchaserOps.updatePurchaser(userAnswers, nextIdP.copy(nextPurchaserID = newMainP.nextPurchaserID))
+                      _ <- PurchaserOps.updateReturnInfo(userAnswers,
+                        returnInfo.copy(mainPurchaserID = Some(mainPId),
+                          version = Some(newReturnVersion.toString)))
+                    } yield PurchaserOps.purchaserOverviewRedirect(originalMainPurchaser)
+                  }
+                  .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+
+              case _ =>
+                Future.successful(PurchaserOps.purchaserOverviewRedirect())
+            }
+
+          case _ =>
+            Future.successful(PurchaserOps.journeyRecoveryRedirect)
+        }
+      }
+      .recover { case _ => PurchaserOps.journeyRecoveryRedirect }
+  }
+
+
 }

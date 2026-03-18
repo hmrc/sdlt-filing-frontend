@@ -47,7 +47,7 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
 
   val typeOfCompany = PurchaserTypeOfCompanyAnswers(
     bank = "YES",
-    buildingSociety = "NO",
+    buildingAssociation = "NO",
     centralGovernment = "NO",
     individualOther = "NO",
     insuranceAssurance = "NO",

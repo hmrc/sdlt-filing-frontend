@@ -16,12 +16,9 @@
 
 package models
 
-import models.purchaser.PurchaserConfirmIdentity.{AnotherFormOfID, CorporationTaxUTR, PartnershipUTR, VatRegistrationNumber}
-import models.land.LandSessionQuestions
 import models.vendor.VendorSessionQuestions
-import models.purchaser.{PurchaserConfirmIdentity, PurchaserSessionQuestions}
+import models.purchaser.PurchaserSessionQuestions
 import org.slf4j.Logger
-import pages.purchaser.PurchaserConfirmIdentityPage
 import play.api.libs.json.{Json, OFormat}
 import java.time.format.DateTimeFormatter
 
@@ -108,13 +105,6 @@ object Purchaser {
       existing <- purchasers.find(_.purchaserID.contains(purchaserId))
     } yield existing
 
-    val isUkCompany = {
-      userAnswers.flatMap(_.get(PurchaserConfirmIdentityPage)) match {
-        case Some(VatRegistrationNumber | PartnershipUTR | CorporationTaxUTR) => Some("yes")
-        case Some(AnotherFormOfID) => Some("no")
-        case _ => None
-      }
-    }
 
     logger.info(s"[Purchaser][from] existing purchaser found: \n $existingPurchaser")
 
@@ -153,7 +143,7 @@ object Purchaser {
           lMigrated  = existingPurchaser.flatMap(_.lMigrated),
           createDate  = existingPurchaser.flatMap(_.createDate),
           lastUpdateDate = existingPurchaser.flatMap(_.lastUpdateDate),
-          isUkCompany = isUkCompany,
+          isUkCompany = existingPurchaser.flatMap(_.isUkCompany),
           hasNino  = purchaserSessionQuestions.purchaserCurrent.doesPurchaserHaveNI.map(_.toString.toLowerCase),
           dateOfBirth  = purchaserSessionQuestions.purchaserCurrent.purchaserDateOfBirth.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
           registrationNumber = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
@@ -212,8 +202,7 @@ case class Vendor(
                    postcode: Option[String] = None,
                    isRepresentedByAgent: Option[String] = None,
                    vendorResourceRef: Option[String] = None,
-                   nextVendorID: Option[String] = None,
-                   lastUpdateDate: Option[String] = None
+                   nextVendorID: Option[String] = None
                  )
 
 
@@ -269,45 +258,11 @@ case class Land(
                  titleNumber: Option[String] = None,
                  landResourceRef: Option[String] = None,
                  nextLandID: Option[String] = None,
-                 DARPostcode: Option[String] = None,
-                 lastUpdateDate: Option[String] = None
+                 DARPostcode: Option[String] = None
                )
 
 object Land {
   implicit val format: OFormat[Land] = Json.format[Land]
-
-  def from(userAnswers: UserAnswers): Future[Land] = {
-    val landSessionQuestions: LandSessionQuestions = (userAnswers.data \ "landCurrent").as[LandSessionQuestions]
-
-    val existingLand = for {
-      fullReturn <- userAnswers.fullReturn
-      land <- fullReturn.land
-      landId <- landSessionQuestions.landId
-      existing <- land.find(_.landID.contains(landId))
-    } yield existing
-
-    Future.successful(Land(
-      landID = landSessionQuestions.landId,
-      returnID = userAnswers.returnId,
-      propertyType = landSessionQuestions.propertyType,
-      interestCreatedTransferred = landSessionQuestions.landInterestTransferredOrCreated,
-      houseNumber = landSessionQuestions.landAddress.houseNumber,
-      address1 = Some(landSessionQuestions.landAddress.line1),
-      address2 = landSessionQuestions.landAddress.line2,
-      address3 = landSessionQuestions.landAddress.line3,
-      address4 = landSessionQuestions.landAddress.line4,
-      postcode = Some(landSessionQuestions.landAddress.postcode),
-      landArea = landSessionQuestions.areaOfLand,
-      localAuthorityNumber = Some(landSessionQuestions.localAuthorityCode),
-      mineralRights = existingLand.map(_.mineralRights).getOrElse(Some("NO")),
-      NLPGUPRN = landSessionQuestions.landNlpgUprn,
-      willSendPlanByPost = existingLand.map(_.willSendPlanByPost).getOrElse(Some("NO")),
-      titleNumber = landSessionQuestions.titleNumber,
-      landResourceRef = existingLand.flatMap(_.landResourceRef),
-      nextLandID = existingLand.flatMap(_.nextLandID),
-      DARPostcode = existingLand.flatMap(_.DARPostcode)
-    ))
-  }
 }
 
 case class Transaction(

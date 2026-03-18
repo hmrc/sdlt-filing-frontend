@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.ukResidency
+package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.ukResidency.CloseCompanyPage
+import pages.land.LandNlpgUprnPage
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.govuk.summarylist._
+import viewmodels.implicits._
 
-object CloseCompanySummary  {
+object LandNlpgUprnSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(CloseCompanyPage).map {
+    answers.get(LandNlpgUprnPage).map {
       answer =>
 
-        val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRowViewModel(
-          key     = "ukResidency.closeCompany.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
+          key = "landNlpgUprn.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("ukResidency.closeCompany.change.hidden"))
+            ActionItemViewModel("site.change", controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("landNlpgUprn.change.hidden"))
           )
         )
     }

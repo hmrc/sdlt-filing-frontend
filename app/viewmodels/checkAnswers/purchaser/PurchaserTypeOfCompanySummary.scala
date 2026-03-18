@@ -32,8 +32,9 @@ object PurchaserTypeOfCompanySummary {
     answers.flatMap(_.get(PurchaserTypeOfCompanyPage)).map {
       answersObject =>
 
-        val selectedItems = PurchaserTypeOfCompanyAnswers.toSet(answersObject).toSeq.sortBy(_.order)
+        val selectedItems = PurchaserTypeOfCompanyAnswers.toSet(answersObject)
           .map(_.toString)
+          .toSeq.sorted
 
         val value = ValueViewModel(
           HtmlContent(

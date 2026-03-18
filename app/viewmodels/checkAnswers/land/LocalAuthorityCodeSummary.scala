@@ -27,8 +27,8 @@ import viewmodels.implicits.*
 
 object LocalAuthorityCodeSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    answers.get(LocalAuthorityCodePage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+    answers.flatMap(_.get(LocalAuthorityCodePage)).map {
       answer =>
 
         SummaryListRowViewModel(

@@ -28,7 +28,7 @@ import viewmodels.implicits.*
 object AreaOfLandSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    val changeRoute = controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url
+    val changeRoute = controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode).url
     val label = messages("land.areaOfLand.checkYourAnswersLabel")
     (answers.get(AreaOfLandPage), answers.get(LandSelectMeasurementUnitPage)) match {
       case (Some(areaOfLand), Some(unitType)) =>
@@ -42,7 +42,7 @@ object AreaOfLandSummary  {
               .withVisuallyHiddenText(messages("land.areaOfLand.change.hidden"))
           )
         ))
-      case _ =>
+      case (None, Some(unitType)) =>
         val value = ValueViewModel(
           HtmlContent(
             s"""<a href="$changeRoute" class="govuk-link">${messages("land.areaOfLand.missing")}</a>""")
@@ -51,5 +51,7 @@ object AreaOfLandSummary  {
           key = label,
           value = value
         ))
+      case _ =>
+        None
     }
 }

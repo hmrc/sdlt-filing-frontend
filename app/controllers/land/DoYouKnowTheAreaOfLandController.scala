@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.land.DoYouKnowTheAreaOfLandFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.land.{AreaOfLandPage, DoYouKnowTheAreaOfLandPage}
+import pages.land.DoYouKnowTheAreaOfLandPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,7 +30,6 @@ import views.html.land.DoYouKnowTheAreaOfLandView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
 class DoYouKnowTheAreaOfLandController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -68,18 +67,13 @@ class DoYouKnowTheAreaOfLandController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowTheAreaOfLandPage, value))
-            finalAnswers <- Future.fromTry {
-              if !request.userAnswers.get(DoYouKnowTheAreaOfLandPage).contains(value) then {
-                updatedAnswers.remove(AreaOfLandPage)
-              } else
-                Success(updatedAnswers)
-            }
-            _ <- sessionRepository.set(finalAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (value) {
               Redirect(navigator.nextPage(DoYouKnowTheAreaOfLandPage, mode, updatedAnswers))
             } else {
-              Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+              //TODO: Change to Land CYA - DTR-2495
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             }
           }
       )

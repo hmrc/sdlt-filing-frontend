@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.{AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandTypeOfPropertyPage}
+import pages.land.{DoYouKnowTheAreaOfLandPage, LandTypeOfPropertyPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -97,7 +97,7 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
       }
     }
 
@@ -114,7 +114,7 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
       }
     }
 
@@ -164,7 +164,7 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to LandCheckYourAnswers when valid data is submitted with value 'no'" in {
+    "must redirect to ReturnTaskList when valid data is submitted with value 'no'" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -185,66 +185,7 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
-      }
-    }
-
-    "must clear AreaOfLandPage and redirect to LandCheckYourAnswers when answer changes from yes to no" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = emptyUserAnswers
-        .set(DoYouKnowTheAreaOfLandPage, true).success.value
-        .set(AreaOfLandPage, "500").success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, doYouKnowTheAreaOfLandRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
-      }
-    }
-
-    "must redirect to the next page and not clear AreaOfLandPage when answer remains yes" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = emptyUserAnswers
-        .set(DoYouKnowTheAreaOfLandPage, true).success.value
-        .set(AreaOfLandPage, "500").success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, doYouKnowTheAreaOfLandRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
@@ -294,6 +235,7 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
