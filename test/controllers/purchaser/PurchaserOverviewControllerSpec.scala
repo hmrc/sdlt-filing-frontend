@@ -275,7 +275,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
         }
       }
 
-      "must redirect to ReturnTaskList when vendors missing PurchaserId" in {
+      "must redirect to ReturnTaskList when purchasers missing PurchaserId" in {
         val purchaserWithoutRef = Purchaser(purchaserID = None, surname = Some("Jones"))
         val fullReturnWithBadVendor = FullReturn(stornId = testStorn,
           returnResourceRef = testReturnRef, vendor = None, purchaser = Some(Seq(purchaserWithoutRef)))
@@ -432,7 +432,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
 
     "changePurchaser" - {
 
-      "must populate session and redirect to VendorCYA when vendor found" in {
+      "must populate session and redirect to PurchaserCYA when purchaser found" in {
         when(mockPopulatePurchaserService.populatePurchaserInSession(any(), any(), any()))
           .thenReturn(Success(testUserAnswers))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

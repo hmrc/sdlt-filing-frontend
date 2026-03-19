@@ -16,13 +16,14 @@
 
 package utils
 
-import models.Vendor
+import com.google.inject.Inject
+import models.{UserAnswers, Vendor}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 
-trait VendorPaginationHelper {
+class VendorPaginationHelper @Inject(sortService: SortService){
 
   private val ROWS_ON_PAGE = 15
 
@@ -48,10 +49,12 @@ trait VendorPaginationHelper {
       .size
 
 
-  def generateVendorSummary(paginationIndex: Int, vendors: Seq[Vendor])
+  def generateVendorSummary(paginationIndex: Int, vendors: Seq[Vendor], userAnswers: UserAnswers)
                            (implicit messages: Messages): Option[SummaryList] = {
 
-    val paged: Seq[Seq[Vendor]] = vendors.grouped(ROWS_ON_PAGE).toSeq
+    val mainVendorId = userAnswers.fullReturn.flatMap(_.returnInfo).flatMap(_.mainVendorID)
+    val sortedVendors: Seq[Vendor] = sortService.sortByMainObjectLastUpdateDate[Vendor](vendors, mainVendorId)(_.lastUpdateDate, _.vendorID)
+    val paged: Seq[Seq[Vendor]] = sortedVendors.grouped(ROWS_ON_PAGE).toSeq
     val currentPage: Option[Seq[Vendor]] = paged.lift(paginationIndex - 1)
 
     currentPage.flatMap { pageVendors =>

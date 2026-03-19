@@ -25,7 +25,9 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 
 import javax.inject.Inject
 
-class PurchaserPaginationHelper @Inject()(populatePurchaserService: PopulatePurchaserService) {
+class PurchaserPaginationHelper @Inject()(
+                                           populatePurchaserService: PopulatePurchaserService,
+                                           sortService: SortService) {
 
   private val ROWS_ON_PAGE = 15
 
@@ -56,10 +58,8 @@ class PurchaserPaginationHelper @Inject()(populatePurchaserService: PopulatePurc
   def generatePurchaserSummary(paginationIndex: Int, purchasers: Seq[Purchaser], userAnswers: UserAnswers)
                               (implicit messages: Messages): Option[SummaryList] = {
 
-    val sortedPurchasers = purchasers
-      .filter(_.purchaserID.isDefined)
-      .sortBy(p => !populatePurchaserService.isMainPurchaser(p.purchaserID.get, userAnswers))
-
+    val mainPurchaserId: Option[String] = userAnswers.fullReturn.flatMap(_.returnInfo).flatMap(_.mainPurchaserID)
+    val sortedPurchasers = sortService.sortByMainObjectLastUpdateDate[Purchaser](purchasers, mainPurchaserId)(_.lastUpdateDate, _.purchaserID).filter(_.purchaserID.isDefined)
     val paged: Seq[Seq[Purchaser]] = sortedPurchasers.grouped(ROWS_ON_PAGE).toSeq
     val currentPage: Option[Seq[Purchaser]] = paged.lift(paginationIndex - 1)
 
