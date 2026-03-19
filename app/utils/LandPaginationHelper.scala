@@ -18,14 +18,13 @@ package utils
 
 import models.{Land, UserAnswers}
 import play.api.i18n.Messages
-import services.land.LandService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 
 import javax.inject.Inject
 
-class LandPaginationHelper  @Inject(sortService: SortService, landService: LandService){
+class LandPaginationHelper  @Inject(sortService: SortService){
   private val ROWS_ON_PAGE = 15
 
   def getPaginationInfoText[A](paginationIndex: Int, itemList: Seq[A])
@@ -53,7 +52,7 @@ class LandPaginationHelper  @Inject(sortService: SortService, landService: LandS
   def generateLandSummary(paginationIndex: Int, lands: Seq[Land], userAnswers: UserAnswers)
                            (implicit messages: Messages): Option[SummaryList] = {
 
-    val mainLandId = landService.getMainLand(userAnswers).flatMap(_.landID)
+    val mainLandId = userAnswers.fullReturn.flatMap(_.returnInfo).flatMap(_.mainLandID)
     val sortedLands: Seq[Land] = sortService.sortByMainObjectLastUpdateDate[Land](lands, mainLandId)(_.lastUpdateDate, _.landID)
     val paged: Seq[Seq[Land]] = sortedLands.grouped(ROWS_ON_PAGE).toSeq
     val currentPage: Option[Seq[Land]] = paged.lift(paginationIndex - 1)

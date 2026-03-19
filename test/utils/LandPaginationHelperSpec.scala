@@ -21,14 +21,12 @@ import constants.FullReturnConstants
 import models.{FullReturn, Land, ReturnInfo}
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
-import services.land.LandService
 
 class LandPaginationHelperSpec extends SpecBase {
   private implicit val messages: Messages = stubMessages()
 
   val sortService = new SortService()
-  val landService = new LandService()
-  val helper = new LandPaginationHelper(sortService, landService)
+  val helper = new LandPaginationHelper(sortService)
 
   private def createLand(landId: String, address: Option[String] = None, landResourceRef: Option[String] = None): Land = {
     Land(

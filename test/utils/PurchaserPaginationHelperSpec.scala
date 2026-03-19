@@ -29,7 +29,8 @@ class PurchaserPaginationHelperSpec extends SpecBase {
 
   private implicit val messages: Messages = stubMessages()
   val service = new PopulatePurchaserService()
-  val helper = new PurchaserPaginationHelper(service)
+  val sortService = new SortService()
+  val helper = new PurchaserPaginationHelper(service, sortService)
 
   private val individualPurchaser = Purchaser(
     purchaserID = Some("PUR001"),

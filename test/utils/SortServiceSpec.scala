@@ -17,142 +17,115 @@
 package utils
 
 import base.SpecBase
-import models.Land
 
 class SortServiceSpec extends SpecBase {
   
   val service = new SortService()
-  
-  private def createLand(landId: Option[String], lastUpdatedDate: Option[String]): Land = {
-    Land(
-      landID = landId,
-      returnID = Some("RET123456789"),
-      propertyType = Some("01"),
-      interestCreatedTransferred = Some("FG"),
-      houseNumber = Some("123"),
-      address1 = Some("Baker Street"),
-      address2 = Some("Marylebone"),
-      address3 = Some("London"),
-      address4 = None,
-      postcode = Some("NW1 6XE"),
-      landArea = Some("250.5"),
-      areaUnit = Some("SQMETRE"),
-      localAuthorityNumber = Some("5900"),
-      mineralRights = Some("NO"),
-      NLPGUPRN = Some("10012345678"),
-      willSendPlanByPost = Some("NO"),
-      titleNumber = Some("TGL12456"),
-      landResourceRef = Some("LDN-REF-001"),
-      nextLandID = Some("LND002"),
-      DARPostcode = Some("NW1 6XE"),
-      lastUpdateDate = lastUpdatedDate
-    )
-  }
 
-  private def mainLandID: String = "LND001"
+  case class TestObject(objectId: Option[String], lastUpdateDate: Option[String])
+
+  private def mainObjectID: String = "LND001"
 
   "SortService" - {
     ".sortByLastUpdatedDate" - {
-      "when the object is Land" - {
-        "must sort a list with one item" in {
+      "must sort a list with one item" in {
           
-          val land1 = createLand(landId = Some("LND001"), lastUpdatedDate = Some("2025-11-09 19:53:34"))
-          val seqOfLands = Seq(land1)
+          val object1 = TestObject(objectId = Some("LND001"), lastUpdateDate = Some("2025-11-09 19:53:34"))
+          val seqOfObjects= Seq(object1)
           
-          val sortedLandList = Seq(land1)
+          val sortedObjectList = Seq(object1)
           
-          service.sortByMainObjectLastUpdateDate[Land](list = seqOfLands, Some(mainLandID))(_.lastUpdateDate, _.landID) mustBe sortedLandList
+          service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
         }
 
-        "must return the list as is when there is one item and lastUpdateDate is missing" in {
+      "must return the list as is when there is one item and lastUpdateDate is missing" in {
 
-          val land1 = createLand(landId = Some("LND001"), lastUpdatedDate = None)
-          val seqOfLands = Seq(land1)
+        val object1 = TestObject(objectId = Some("LND001"), lastUpdateDate = None)
+        val seqOfObjects = Seq(object1)
 
-          val sortedLandList = Seq(land1)
+        val sortedObjectList = Seq(object1)
 
-          service.sortByMainObjectLastUpdateDate[Land](list = seqOfLands, Some(mainLandID))(_.lastUpdateDate, _.landID) mustBe sortedLandList
-        }
+        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+      }
 
-        "must return the list as is when there is one item and mainLandID is missing" in {
+      "must return the list as is when there is one item and mainObjectID is missing" in {
 
-          val land1 = createLand(landId = Some("LND001"), lastUpdatedDate = Some("2025-11-09 19:53:34"))
-          val seqOfLands = Seq(land1)
+        val object1 = TestObject(objectId = Some("LND001"), lastUpdateDate = Some("2025-11-09 19:53:34"))
+        val seqOfObjects = Seq(object1)
 
-          val sortedLandList = Seq(land1)
+        val sortedObjectList = Seq(object1)
 
-          service.sortByMainObjectLastUpdateDate[Land](list = seqOfLands, mainObjectId = None)(_.lastUpdateDate, _.landID) mustBe sortedLandList
-        }
+        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+      }
 
-        "must return the list as is when there is one item and both lastUpdateDate and mainLandID are missing" in {
+      "must return the list as is when there is one item and both lastUpdateDate and mainObjectID are missing" in {
 
-          val land1 = createLand(landId = Some("LND001"), lastUpdatedDate = None)
-          val seqOfLands = Seq(land1)
+        val object1 = TestObject(objectId = Some("LND001"), lastUpdateDate = None)
+        val seqOfObjects = Seq(object1)
 
-          val sortedLandList = Seq(land1)
+        val sortedObjectList = Seq(object1)
 
-          service.sortByMainObjectLastUpdateDate[Land](list = seqOfLands, mainObjectId = None)(_.lastUpdateDate, _.landID) mustBe sortedLandList
-        }
+        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+      }
 
-        "must sort a list with multiple items" in {
+      "must sort a list with multiple items" in {
 
-          val land1 = createLand(landId = Some("LND001"), lastUpdatedDate = Some("2022-11-09 19:53:34"))
-          val land2 = createLand(landId = Some("LND002"), lastUpdatedDate = Some("2023-11-09 19:53:34"))
-          val land3 = createLand(landId = Some("LND003"), lastUpdatedDate = Some("2024-12-09 19:53:34"))
-          val land4 = createLand(landId = Some("LND004"), lastUpdatedDate = Some("2025-11-09 19:53:34"))
-          val land5 = createLand(landId = Some("LND005"), lastUpdatedDate = Some("2025-11-09 19:54:34"))
+        val object1 = TestObject(objectId = Some("LND001"), lastUpdateDate = Some("2022-11-09 19:53:34"))
+        val object2 = TestObject(objectId = Some("LND002"), lastUpdateDate = Some("2023-11-09 19:53:34"))
+        val object3 = TestObject(objectId = Some("LND003"), lastUpdateDate = Some("2024-12-09 19:53:34"))
+        val object4 = TestObject(objectId = Some("LND004"), lastUpdateDate = Some("2025-11-09 19:53:34"))
+        val object5 = TestObject(objectId = Some("LND005"), lastUpdateDate = Some("2025-11-09 19:54:34"))
 
-          val seqOfLands = Seq(land4, land2, land1, land5, land3)
+        val seqOfObjects = Seq(object4, object2, object1, object5, object3)
 
-          val sortedLandList = Seq(land1, land2, land3, land4, land5)
+        val sortedObjectList = Seq(object1, object2, object3, object4, object5)
 
-          service.sortByMainObjectLastUpdateDate[Land](list = seqOfLands, Some(mainLandID))(_.lastUpdateDate, _.landID) mustBe sortedLandList
-        }
+        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+      }
 
-        "must sort a list with multiple items when some lastUpdateDate are missing" in {
+      "must sort a list with multiple items when some lastUpdateDate are missing" in {
 
-          val land1 = createLand(landId = Some("LND001"), lastUpdatedDate = Some("2025-11-09 19:53:34"))
-          val land2 = createLand(landId = Some("LND002"), lastUpdatedDate = None)
-          val land3 = createLand(landId = Some("LND003"), lastUpdatedDate = None)
-          val land4 = createLand(landId = Some("LND004"), lastUpdatedDate = Some("2024-11-09 19:53:34"))
-          val land5 = createLand(landId = Some("LND005"), lastUpdatedDate = Some("2024-11-09 19:56:34"))
+        val object1 = TestObject(objectId = Some("LND001"), lastUpdateDate = Some("2022-11-09 19:53:34"))
+        val object2 = TestObject(objectId = Some("LND002"), lastUpdateDate = None)
+        val object3 = TestObject(objectId = Some("LND003"), lastUpdateDate = None)
+        val object4 = TestObject(objectId = Some("LND004"), lastUpdateDate = Some("2025-11-09 19:53:34"))
+        val object5 = TestObject(objectId = Some("LND005"), lastUpdateDate = Some("2025-11-09 19:54:34"))
 
-          val seqOfLands = Seq(land4, land2, land1, land5, land3)
+        val seqOfObjects = Seq(object4, object2, object1, object5, object3)
 
-          val sortedLandList = Seq(land1, land2, land3, land4, land5)
+        val sortedObjectList = Seq(object1, object2, object3, object4, object5)
 
-          service.sortByMainObjectLastUpdateDate[Land](list = seqOfLands, Some(mainLandID))(_.lastUpdateDate, _.landID) mustBe sortedLandList
-        }
+        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+      }
 
-        "must sort a list with multiple items when mainLandID is missing" in {
+      "must sort a list with multiple items when mainObjectID is missing" in {
 
-          val land1 = createLand(landId = Some("LND001"), lastUpdatedDate = Some("2022-11-09 19:53:34"))
-          val land2 = createLand(landId = Some("LND002"), lastUpdatedDate = Some("2023-11-09 19:53:34"))
-          val land3 = createLand(landId = Some("LND003"), lastUpdatedDate = Some("2024-12-09 19:53:34"))
-          val land4 = createLand(landId = Some("LND004"), lastUpdatedDate = Some("2025-11-09 19:53:34"))
-          val land5 = createLand(landId = Some("LND005"), lastUpdatedDate = Some("2025-11-09 19:54:34"))
+        val object1 = TestObject(objectId = Some("LND001"), lastUpdateDate = Some("2022-11-09 19:53:34"))
+        val object2 = TestObject(objectId = Some("LND002"), lastUpdateDate = Some("2023-11-09 19:53:34"))
+        val object3 = TestObject(objectId = Some("LND003"), lastUpdateDate = Some("2024-12-09 19:53:34"))
+        val object4 = TestObject(objectId = Some("LND004"), lastUpdateDate = Some("2025-11-09 19:53:34"))
+        val object5 = TestObject(objectId = Some("LND005"), lastUpdateDate = Some("2025-11-09 19:54:34"))
 
-          val seqOfLands = Seq(land4, land2, land1, land5, land3)
+        val seqOfObjects = Seq(object4, object2, object1, object5, object3)
 
-          val sortedLandList = Seq(land1, land2, land3, land4, land5)
+        val sortedObjectList = Seq(object1, object2, object3, object4, object5)
 
-          service.sortByMainObjectLastUpdateDate[Land](list = seqOfLands, mainObjectId = None)(_.lastUpdateDate, _.landID) mustBe sortedLandList
-        }
+        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+      }
 
-        "must return the list with multiple items as is when all lastUpdateDate and mainLandID are missing" in {
+      "must return the list with multiple items as is when all lastUpdateDate and mainObjectID are missing" in {
 
-          val land1 = createLand(landId = Some("LND001"), lastUpdatedDate = None)
-          val land2 = createLand(landId = Some("LND002"), lastUpdatedDate = None)
-          val land3 = createLand(landId = Some("LND003"), lastUpdatedDate = None)
-          val land4 = createLand(landId = Some("LND004"), lastUpdatedDate = None)
-          val land5 = createLand(landId = Some("LND005"), lastUpdatedDate = None)
+        val object1 = TestObject(objectId = Some("LND001"), lastUpdateDate = None)
+        val object2 = TestObject(objectId = Some("LND002"), lastUpdateDate = None)
+        val object3 = TestObject(objectId = Some("LND003"), lastUpdateDate = None)
+        val object4 = TestObject(objectId = Some("LND004"), lastUpdateDate = None)
+        val object5 = TestObject(objectId = Some("LND005"), lastUpdateDate = None)
 
-          val seqOfLands = Seq(land4, land2, land1, land5, land3)
+        val seqOfObjects = Seq(object4, object2, object1, object5, object3)
 
-          val sortedLandList = Seq(land4, land2, land1, land5, land3)
+        val sortedObjectList = Seq(object4, object2, object1, object5, object3)
 
-          service.sortByMainObjectLastUpdateDate[Land](list = seqOfLands, mainObjectId = None)(_.lastUpdateDate, _.landID) mustBe sortedLandList
-        }
+        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
     }
   }

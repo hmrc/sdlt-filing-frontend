@@ -45,9 +45,10 @@ class VendorOverviewController @Inject()(
                                           sessionRepository: SessionRepository,
                                           view: VendorOverview,
                                           formProvider: VendorOverviewFormProvider,
-                                          populateVendorService: PopulateVendorService
+                                          populateVendorService: PopulateVendorService,
+                                          vendorPaginationHelper: VendorPaginationHelper
                                         )(implicit executionContext: ExecutionContext)
-  extends FrontendBaseController with VendorPaginationHelper with I18nSupport with Logging {
+  extends FrontendBaseController with I18nSupport with Logging {
 
   val form: Form[Boolean] = formProvider()
 
@@ -72,13 +73,13 @@ class VendorOverviewController @Inject()(
               vendorList match {
                 case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
                 case vendors =>
-                  generateVendorSummary(paginationIndex, vendors)
+                  vendorPaginationHelper.generateVendorSummary(paginationIndex, vendors, userAnswers)
                     .fold(
                       Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
                     ) { summary =>
-                      val numberOfPages: Int = getNumberOfPages(vendors)
-                      val pagination: Option[Pagination] = generatePagination(paginationIndex, numberOfPages)
-                      val paginationText: Option[String] = getPaginationInfoText(paginationIndex, vendors)
+                      val numberOfPages: Int = vendorPaginationHelper.getNumberOfPages(vendors)
+                      val pagination: Option[Pagination] = vendorPaginationHelper.generatePagination(paginationIndex, numberOfPages)
+                      val paginationText: Option[String] = vendorPaginationHelper.getPaginationInfoText(paginationIndex, vendors)
 
                       Ok(view(Some(summary), pagination, paginationText, postAction, form, NormalMode, errorCalc))
                     }
@@ -106,10 +107,10 @@ class VendorOverviewController @Inject()(
             case Nil =>
               Future.successful(BadRequest(view(None, None, None, postAction, formWithErrors, mode, errorCalc)))
             case vendors =>
-              val summary = generateVendorSummary(1, vendors)
-              val numberOfPages = getNumberOfPages(vendors)
-              val pagination = generatePagination(1, numberOfPages)
-              val paginationText = getPaginationInfoText(1, vendors)
+              val summary = vendorPaginationHelper.generateVendorSummary(1, vendors, request.userAnswers)
+              val numberOfPages = vendorPaginationHelper.getNumberOfPages(vendors)
+              val pagination = vendorPaginationHelper.generatePagination(1, numberOfPages)
+              val paginationText = vendorPaginationHelper.getPaginationInfoText(1, vendors)
 
               Future.successful(BadRequest(view(summary, pagination, paginationText, postAction, formWithErrors, mode, errorCalc)))
           }

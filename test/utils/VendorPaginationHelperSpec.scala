@@ -17,13 +17,17 @@
 package utils
 
 import base.SpecBase
-import models.Vendor
+import constants.FullReturnConstants
+import models.{ReturnInfo, Vendor}
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
-class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
+class VendorPaginationHelperSpec extends SpecBase {
+
+  val sortService = SortService()
+  val helper = new VendorPaginationHelper(sortService)
 
   private implicit val messages: Messages = stubMessages()
 
@@ -42,53 +46,61 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
     )
   }
 
+
+  private val mainVendor = createVendor("VEN001")
+
+  private val fullReturnWithMainVendor = FullReturnConstants.emptyFullReturn
+    .copy(vendor = Some(Seq(mainVendor)), returnInfo = Some(ReturnInfo(mainVendorID = Some("VEN001"))))
+
+  private val UserAnswersWithVendor = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithMainVendor))
+
   "VendorPaginationHelper" - {
 
     "getPaginationInfoText" - {
 
       "must return None when item list is less than or equal to ROWS_ON_PAGE" in {
         val vendors = (1 to 10).map(i => createVendor(s"VEN$i"))
-        val result = getPaginationInfoText(1, vendors)
+        val result = helper.getPaginationInfoText(1, vendors)
         result mustBe None
       }
 
       "must return None when item list equals ROWS_ON_PAGE" in {
         val vendors = (1 to 15).map(i => createVendor(s"VEN$i"))
-        val result = getPaginationInfoText(1, vendors)
+        val result = helper.getPaginationInfoText(1, vendors)
         result mustBe None
       }
 
       "must return None when paginationIndex is 0 or less" in {
         val vendors = (1 to 20).map(i => createVendor(s"VEN$i"))
-        val result = getPaginationInfoText(0, vendors)
+        val result = helper.getPaginationInfoText(0, vendors)
         result mustBe None
       }
 
       "must return Some text for first page" in {
         implicit val messages: Messages = stubMessages()
         val vendors = (1 to 30).map(i => createVendor(s"VEN$i"))
-        val result = getPaginationInfoText(1, vendors)
+        val result = helper.getPaginationInfoText(1, vendors)
         result mustBe defined
       }
 
       "must return Some text for second page" in {
         implicit val messages: Messages = stubMessages()
         val vendors = (1 to 30).map(i => createVendor(s"VEN$i"))
-        val result = getPaginationInfoText(2, vendors)
+        val result = helper.getPaginationInfoText(2, vendors)
         result mustBe defined
       }
 
       "must return Some text for middle page" in {
         implicit val messages: Messages = stubMessages()
         val vendors = (1 to 45).map(i => createVendor(s"VEN$i"))
-        val result = getPaginationInfoText(2, vendors)
+        val result = helper.getPaginationInfoText(2, vendors)
         result mustBe defined
       }
 
       "must return Some text for last page with partial results" in {
         implicit val messages: Messages = stubMessages()
         val vendors = (1 to 37).map(i => createVendor(s"VEN$i"))
-        val result = getPaginationInfoText(3, vendors)
+        val result = helper.getPaginationInfoText(3, vendors)
         result mustBe defined
       }
     }
@@ -96,37 +108,37 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
     "getNumberOfPages" - {
 
       "must return 1 for empty list" in {
-        val result = getNumberOfPages(Seq.empty[Vendor])
+        val result = helper.getNumberOfPages(Seq.empty[Vendor])
         result mustBe 0
       }
 
       "must return 1 for items less than ROWS_ON_PAGE" in {
         val vendors = (1 to 10).map(i => createVendor(s"VEN$i"))
-        val result = getNumberOfPages(vendors)
+        val result = helper.getNumberOfPages(vendors)
         result mustBe 1
       }
 
       "must return 1 for exactly ROWS_ON_PAGE items" in {
         val vendors = (1 to 15).map(i => createVendor(s"VEN$i"))
-        val result = getNumberOfPages(vendors)
+        val result = helper.getNumberOfPages(vendors)
         result mustBe 1
       }
 
       "must return 2 for ROWS_ON_PAGE + 1 items" in {
         val vendors = (1 to 16).map(i => createVendor(s"VEN$i"))
-        val result = getNumberOfPages(vendors)
+        val result = helper.getNumberOfPages(vendors)
         result mustBe 2
       }
 
       "must return correct number for multiple pages" in {
         val vendors = (1 to 45).map(i => createVendor(s"VEN$i"))
-        val result = getNumberOfPages(vendors)
+        val result = helper.getNumberOfPages(vendors)
         result mustBe 3
       }
 
       "must return 7 for 99 vendors" in {
         val vendors = (1 to 99).map(i => createVendor(s"VEN$i"))
-        val result = getNumberOfPages(vendors)
+        val result = helper.getNumberOfPages(vendors)
         result mustBe 7
       }
     }
@@ -135,7 +147,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
 
       "must return None when pagination index is out of range" in {
         val vendors = (1 to 10).map(i => createVendor(s"VEN$i", name = Some(s"Vendor$i"), vendorResourceRef = Some(s"REF$i")))
-        val result = generateVendorSummary(5, vendors)
+        val result = helper.generateVendorSummary(5, vendors, UserAnswersWithVendor)
         result mustBe None
       }
 
@@ -145,7 +157,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
           createVendor("VEN2", name = Some("Jones"), vendorResourceRef = None),
           createVendor("VEN3", name = Some("Williams"), vendorResourceRef = Some("REF3"))
         )
-        val result = generateVendorSummary(1, vendors)
+        val result = helper.generateVendorSummary(1, vendors, UserAnswersWithVendor)
         result mustBe None
       }
 
@@ -154,7 +166,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
           createVendor("VEN1", forename1 = Some("John"), forename2 = Some("Michael"), name = Some("Smith"), vendorResourceRef = Some("REF1")),
           createVendor("VEN2", forename1 = Some("Jane"), forename2 = Some("Mary"), name = Some("Doe"), vendorResourceRef = Some("REF2"))
         )
-        val result = generateVendorSummary(1, vendors)
+        val result = helper.generateVendorSummary(1, vendors, UserAnswersWithVendor)
 
         result mustBe defined
         result.get.rows.length mustBe 2
@@ -166,7 +178,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
         val vendors = Seq(
           createVendor("VEN1", forename1 = Some("John"), forename2 = None, name = Some("Smith"), vendorResourceRef = Some("REF1"))
         )
-        val result = generateVendorSummary(1, vendors)
+        val result = helper.generateVendorSummary(1, vendors, UserAnswersWithVendor)
 
         result mustBe defined
         result.get.rows.length mustBe 1
@@ -177,7 +189,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
         val vendors = Seq(
           createVendor("VEN1", forename1 = None, forename2 = None, name = Some("Smith"), vendorResourceRef = Some("REF1"))
         )
-        val result = generateVendorSummary(1, vendors)
+        val result = helper.generateVendorSummary(1, vendors, UserAnswersWithVendor)
 
         result mustBe defined
         result.get.rows.length mustBe 1
@@ -190,7 +202,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
           createVendor("VEN2", name = None, vendorResourceRef = Some("REF2")),
           createVendor("VEN3", name = Some("Jones"), vendorResourceRef = Some("REF3"))
         )
-        val result = generateVendorSummary(1, vendors)
+        val result = helper.generateVendorSummary(1, vendors, UserAnswersWithVendor)
 
         result mustBe defined
         result.get.rows.length mustBe 2
@@ -200,7 +212,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
         val vendors = Seq(
           createVendor("VEN1", name = Some("Smith"), vendorResourceRef = Some("REF1"))
         )
-        val result = generateVendorSummary(1, vendors)
+        val result = helper.generateVendorSummary(1, vendors, UserAnswersWithVendor)
 
         result mustBe defined
         val actions = result.get.rows.head.actions.get.items
@@ -214,8 +226,8 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
           createVendor(s"VEN$i", name = Some(s"Vendor$i"), vendorResourceRef = Some(s"REF$i"))
         )
 
-        val page1 = generateVendorSummary(1, vendors)
-        val page2 = generateVendorSummary(2, vendors)
+        val page1 = helper.generateVendorSummary(1, vendors, UserAnswersWithVendor)
+        val page2 = helper.generateVendorSummary(2, vendors, UserAnswersWithVendor)
 
         page1 mustBe defined
         page2 mustBe defined
@@ -228,7 +240,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
           createVendor(s"VEN$i", name = Some(s"Vendor$i"), vendorResourceRef = Some(s"REF$i"))
         )
 
-        val page2 = generateVendorSummary(2, vendors)
+        val page2 = helper.generateVendorSummary(2, vendors, UserAnswersWithVendor)
 
         page2 mustBe defined
         page2.get.rows.length mustBe 5
@@ -238,7 +250,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
         val vendors = Seq(
           createVendor("VEN1", name = Some("John Smith"), vendorResourceRef = Some("REF1"))
         )
-        val result = generateVendorSummary(1, vendors)
+        val result = helper.generateVendorSummary(1, vendors, UserAnswersWithVendor)
 
         result mustBe defined
         val actions = result.get.rows.head.actions.get.items
@@ -250,17 +262,17 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
     "generatePagination" - {
 
       "must return None when numberOfPages is less than 2" in {
-        val result = generatePagination(1, 1)
+        val result = helper.generatePagination(1, 1)
         result mustBe None
       }
 
       "must return None when numberOfPages is 0" in {
-        val result = generatePagination(1, 0)
+        val result = helper.generatePagination(1, 0)
         result mustBe None
       }
 
       "must return Pagination with correct items for 2 pages" in {
-        val result = generatePagination(1, 2)
+        val result = helper.generatePagination(1, 2)
 
         result mustBe defined
         result.get.items.get.length mustBe 2
@@ -269,7 +281,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
       }
 
       "must return Pagination with correct items for multiple pages" in {
-        val result = generatePagination(2, 5)
+        val result = helper.generatePagination(2, 5)
 
         result mustBe defined
         result.get.items.get.length mustBe 5
@@ -277,7 +289,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
       }
 
       "must include previous link when not on first page" in {
-        val result = generatePagination(2, 3)
+        val result = helper.generatePagination(2, 3)
 
         result mustBe defined
         result.get.previous mustBe defined
@@ -285,14 +297,14 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
       }
 
       "must not include previous link when on first page" in {
-        val result = generatePagination(1, 3)
+        val result = helper.generatePagination(1, 3)
 
         result mustBe defined
         result.get.previous mustBe None
       }
 
       "must include next link when not on last page" in {
-        val result = generatePagination(1, 3)
+        val result = helper.generatePagination(1, 3)
 
         result mustBe defined
         result.get.next mustBe defined
@@ -300,7 +312,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
       }
 
       "must not include next link when on last page" in {
-        val result = generatePagination(3, 3)
+        val result = helper.generatePagination(3, 3)
 
         result mustBe defined
         result.get.next mustBe None
@@ -310,7 +322,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
     "generatePaginationItems" - {
 
       "must generate correct pagination items" in {
-        val result = generatePaginationItems(2, 5)
+        val result = helper.generatePaginationItems(2, 5)
 
         result.length mustBe 5
         result.head.number mustBe Some("1")
@@ -321,7 +333,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
       }
 
       "must generate single item for single page" in {
-        val result = generatePaginationItems(1, 1)
+        val result = helper.generatePaginationItems(1, 1)
 
         result.length mustBe 1
         result.head.number mustBe Some("1")
@@ -332,12 +344,12 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
     "generatePreviousLink" - {
 
       "must return None when on first page" in {
-        val result = generatePreviousLink(1, 5)
+        val result = helper.generatePreviousLink(1, 5)
         result mustBe None
       }
 
       "must return link to previous page when not on first page" in {
-        val result = generatePreviousLink(3, 5)
+        val result = helper.generatePreviousLink(3, 5)
 
         result mustBe defined
         result.get.href must include("vendor-overview")
@@ -346,7 +358,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
       }
 
       "must return link to page 1 when on page 2" in {
-        val result = generatePreviousLink(2, 5)
+        val result = helper.generatePreviousLink(2, 5)
 
         result mustBe defined
         result.get.href must include("/about-the-vendor/vendor-overview")
@@ -356,12 +368,12 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
     "generateNextLink" - {
 
       "must return None when on last page" in {
-        val result = generateNextLink(5, 5)
+        val result = helper.generateNextLink(5, 5)
         result mustBe None
       }
 
       "must return link to next page when not on last page" in {
-        val result = generateNextLink(2, 5)
+        val result = helper.generateNextLink(2, 5)
 
         result mustBe defined
         result.get.href must include("/about-the-vendor/vendor-overview?paginationIndex=3")
@@ -369,7 +381,7 @@ class VendorPaginationHelperSpec extends SpecBase with VendorPaginationHelper {
       }
 
       "must return link to page 2 when on page 1" in {
-        val result = generateNextLink(1, 5)
+        val result = helper.generateNextLink(1, 5)
 
         result mustBe defined
         result.get.href must include("/about-the-vendor/vendor-overview?paginationIndex=2")
