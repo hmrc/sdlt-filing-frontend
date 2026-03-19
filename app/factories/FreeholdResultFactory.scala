@@ -487,5 +487,4 @@ object FreeholdResultFactory {
       )
     )
   }
-
 }
