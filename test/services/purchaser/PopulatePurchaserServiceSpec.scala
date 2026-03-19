@@ -34,24 +34,42 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
 
   val service = new PopulatePurchaserService()
 
+  val typeOfCompany = PurchaserTypeOfCompanyAnswers(
+    bank = "no",
+    buildingSociety = "no",
+    centralGovernment = "no",
+    individualOther = "no",
+    insuranceAssurance = "no",
+    localAuthority = "no",
+    partnership = "no",
+    propertyCompany = "yes",
+    publicCorporation = "no",
+    otherCompany = "no",
+    otherFinancialInstitute = "no",
+    otherIncludingCharity = "no",
+    superannuationOrPensionFund = "no",
+    unincorporatedBuilder = "no",
+    unincorporatedSoleTrader = "no"
+  )
+
   val companyDetails = CompanyDetails(
     companyDetailsID = Some("COMP001"),
     VATReference = Some("VAT123"),
-    companyTypeBank = Some("NO"),
-    companyTypeBuildsoc = Some("NO"),
-    companyTypeCentgov = Some("NO"),
-    companyTypeIndividual = Some("NO"),
-    companyTypeInsurance = Some("NO"),
-    companyTypeLocalauth = Some("NO"),
-    companyTypePartnership = Some("NO"),
-    companyTypeProperty = Some("YES"),
-    companyTypePubliccorp = Some("NO"),
-    companyTypeOthercompany = Some("NO"),
-    companyTypeOtherfinancial = Some("NO"),
-    companyTypeOthercharity = Some("NO"),
-    companyTypePensionfund = Some("NO"),
-    companyTypeBuilder = Some("NO"),
-    companyTypeSoletrader = Some("NO")
+    companyTypeBank = Some("no"),
+    companyTypeBuildsoc = Some("no"),
+    companyTypeCentgov = Some("no"),
+    companyTypeIndividual = Some("no"),
+    companyTypeInsurance = Some("no"),
+    companyTypeLocalauth = Some("no"),
+    companyTypePartnership = Some("no"),
+    companyTypeProperty = Some("yes"),
+    companyTypePubliccorp = Some("no"),
+    companyTypeOthercompany = Some("no"),
+    companyTypeOtherfinancial = Some("no"),
+    companyTypeOthercharity = Some("no"),
+    companyTypePensionfund = Some("no"),
+    companyTypeBuilder = Some("no"),
+    companyTypeSoletrader = Some("no")
   )
 
   private val individualPurchaser = Purchaser(
@@ -570,25 +588,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             phone = Some("04012345678")
           )
 
-          val companyDetailsUTR = CompanyDetails(
-            companyDetailsID = Some("COMP002"),
-            UTR = Some("UTR456"),
-            companyTypeBank = Some("YES"),
-            companyTypeBuildsoc = Some("NO"),
-            companyTypeCentgov = Some("NO"),
-            companyTypeIndividual = Some("NO"),
-            companyTypeInsurance = Some("NO"),
-            companyTypeLocalauth = Some("NO"),
-            companyTypePartnership = Some("NO"),
-            companyTypeProperty = Some("NO"),
-            companyTypePubliccorp = Some("NO"),
-            companyTypeOthercompany = Some("NO"),
-            companyTypeOtherfinancial = Some("NO"),
-            companyTypeOthercharity = Some("NO"),
-            companyTypePensionfund = Some("NO"),
-            companyTypeBuilder = Some("NO"),
-            companyTypeSoletrader = Some("NO")
-          )
+          val companyDetailsUTR = companyDetails.copy(UTR = Some("UTR456"), VATReference = None)
 
           val fullReturnWithCompanyMainPurchaserUTR: FullReturn =
             emptyFullReturn.copy(purchaser = Some(Seq(purchaser)),
@@ -610,6 +610,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(PurchaserUTRPage) mustBe Some("UTR456")
           updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(IsPurchaserActingAsTrustee.No)
           updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(PurchaserAndVendorConnected.No)
+          updatedAnswers.get(PurchaserTypeOfCompanyPage) mustBe Some(typeOfCompany)
         }
 
         "must successfully populate session for main purchaser company with another form of ID" in {
@@ -624,24 +625,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             placeOfRegistration = Some("Birmingham")
           )
 
-          val companyDetailsFormId = CompanyDetails(
-            companyDetailsID = Some("COMP003"),
-            companyTypePartnership = Some("YES"),
-            companyTypeBank = Some("NO"),
-            companyTypeBuildsoc = Some("NO"),
-            companyTypeCentgov = Some("NO"),
-            companyTypeIndividual = Some("NO"),
-            companyTypeInsurance = Some("NO"),
-            companyTypeLocalauth = Some("NO"),
-            companyTypeProperty = Some("NO"),
-            companyTypePubliccorp = Some("NO"),
-            companyTypeOthercompany = Some("NO"),
-            companyTypeOtherfinancial = Some("NO"),
-            companyTypeOthercharity = Some("NO"),
-            companyTypePensionfund = Some("NO"),
-            companyTypeBuilder = Some("NO"),
-            companyTypeSoletrader = Some("NO")
-          )
+          val companyDetailsFormId = companyDetails.copy(UTR = None, VATReference = None)
 
           val fullReturnWithCompanyMainPurchaserUTR: FullReturn =
             emptyFullReturn.copy(purchaser = Some(Seq(purchaser)),

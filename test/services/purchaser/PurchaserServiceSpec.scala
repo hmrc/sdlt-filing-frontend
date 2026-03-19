@@ -53,6 +53,24 @@ class PurchaserServiceSpec extends SpecBase {
   private def userAnswersWithCompanyPurchaser: UserAnswers =
     emptyUserAnswers.set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
 
+  private val purchaserTypeOfCompanyAnswers =
+    PurchaserTypeOfCompanyAnswers(bank = "yes",
+      buildingSociety = "no",
+      centralGovernment = "no",
+      individualOther = "no",
+      insuranceAssurance = "no",
+      localAuthority = "no",
+      partnership = "no",
+      propertyCompany = "no",
+      publicCorporation = "no",
+      otherCompany = "no",
+      otherFinancialInstitute = "no",
+      otherIncludingCharity = "no",
+      superannuationOrPensionFund = "no",
+      unincorporatedBuilder = "no",
+      unincorporatedSoleTrader = "no"
+    )
+
   val continueRoute: Result = Ok("Continue route")
 
   "PurchaserService" - {
@@ -1118,21 +1136,7 @@ class PurchaserServiceSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
-          .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
-            centralGovernment = "NO",
-            individualOther = "NO",
-            insuranceAssurance = "NO",
-            localAuthority = "NO",
-            partnership = "NO",
-            propertyCompany = "NO",
-            publicCorporation = "NO",
-            otherCompany = "NO",
-            otherFinancialInstitute = "NO",
-            otherIncludingCharity = "NO",
-            superannuationOrPensionFund = "NO",
-            unincorporatedBuilder = "NO",
-            unincorporatedSoleTrader = "NO")).success.value
+          .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber).success.value
           .set(AddPurchaserPhoneNumberPage, true).success.value
           .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
@@ -1151,21 +1155,7 @@ class PurchaserServiceSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
-          .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
-            centralGovernment = "NO",
-            individualOther = "NO",
-            insuranceAssurance = "NO",
-            localAuthority = "NO",
-            partnership = "NO",
-            propertyCompany = "NO",
-            publicCorporation = "NO",
-            otherCompany = "NO",
-            otherFinancialInstitute = "NO",
-            otherIncludingCharity = "NO",
-            superannuationOrPensionFund = "NO",
-            unincorporatedBuilder = "NO",
-            unincorporatedSoleTrader = "NO")).success.value
+          .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.CorporationTaxUTR).success.value
           .set(AddPurchaserPhoneNumberPage, false).success.value
 
@@ -1184,21 +1174,7 @@ class PurchaserServiceSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
-          .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
-            centralGovernment = "NO",
-            individualOther = "NO",
-            insuranceAssurance = "NO",
-            localAuthority = "NO",
-            partnership = "NO",
-            propertyCompany = "NO",
-            publicCorporation = "NO",
-            otherCompany = "NO",
-            otherFinancialInstitute = "NO",
-            otherIncludingCharity = "NO",
-            superannuationOrPensionFund = "NO",
-            unincorporatedBuilder = "NO",
-            unincorporatedSoleTrader = "NO")).success.value
+          .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.PartnershipUTR).success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
@@ -1214,21 +1190,7 @@ class PurchaserServiceSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
-          .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
-            centralGovernment = "NO",
-            individualOther = "NO",
-            insuranceAssurance = "NO",
-            localAuthority = "NO",
-            partnership = "NO",
-            propertyCompany = "NO",
-            publicCorporation = "NO",
-            otherCompany = "NO",
-            otherFinancialInstitute = "NO",
-            otherIncludingCharity = "NO",
-            superannuationOrPensionFund = "NO",
-            unincorporatedBuilder = "NO",
-            unincorporatedSoleTrader = "NO")).success.value
+          .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.AnotherFormOfID).success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
@@ -1244,21 +1206,7 @@ class PurchaserServiceSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
-          .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-            buildingSociety = "NO",
-            centralGovernment = "NO",
-            individualOther = "NO",
-            insuranceAssurance = "NO",
-            localAuthority = "NO",
-            partnership = "NO",
-            propertyCompany = "NO",
-            publicCorporation = "NO",
-            otherCompany = "NO",
-            otherFinancialInstitute = "NO",
-            otherIncludingCharity = "NO",
-            superannuationOrPensionFund = "NO",
-            unincorporatedBuilder = "NO",
-            unincorporatedSoleTrader = "NO")).success.value
+          .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserUTRPage, "11111111").success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
@@ -1369,24 +1317,7 @@ class PurchaserServiceSpec extends SpecBase {
               registrationNumber = Some("VAT1234"),
               purchaserUTRPage = Some("UTR1234"),
               purchaserFormOfIdCompany = Some(CompanyFormOfId(referenceId = "ID12345", countryIssued = "country")),
-              purchaserTypeOfCompany = Some(
-                PurchaserTypeOfCompanyAnswers(
-                  bank = "YES",
-                  buildingSociety = "NO",
-                  centralGovernment = "NO",
-                  individualOther = "NO",
-                  insuranceAssurance = "NO",
-                  localAuthority = "NO",
-                  partnership = "NO",
-                  propertyCompany = "NO",
-                  publicCorporation = "NO",
-                  otherCompany = "NO",
-                  otherFinancialInstitute = "NO",
-                  otherIncludingCharity = "NO",
-                  superannuationOrPensionFund = "NO",
-                  unincorporatedBuilder = "NO",
-                  unincorporatedSoleTrader = "NO")
-              ),
+              purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
               isPurchaserActingAsTrustee = Some("yes"),
               purchaserAndVendorConnected = Some("yes"),
             ))
@@ -1609,24 +1540,7 @@ class PurchaserServiceSpec extends SpecBase {
               registrationNumber = Some("VAT1234"),
               purchaserUTRPage = Some("UTR1234"),
               purchaserFormOfIdCompany = Some(CompanyFormOfId(referenceId = "ID12345", countryIssued = "country")),
-              purchaserTypeOfCompany = Some(
-                PurchaserTypeOfCompanyAnswers(
-                  bank = "YES",
-                  buildingSociety = "NO",
-                  centralGovernment = "NO",
-                  individualOther = "NO",
-                  insuranceAssurance = "NO",
-                  localAuthority = "NO",
-                  partnership = "NO",
-                  propertyCompany = "NO",
-                  publicCorporation = "NO",
-                  otherCompany = "NO",
-                  otherFinancialInstitute = "NO",
-                  otherIncludingCharity = "NO",
-                  superannuationOrPensionFund = "NO",
-                  unincorporatedBuilder = "NO",
-                  unincorporatedSoleTrader = "NO")
-              ),
+              purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
               isPurchaserActingAsTrustee = Some("yes"),
               purchaserAndVendorConnected = Some("yes"),
             ))
@@ -1744,21 +1658,7 @@ class PurchaserServiceSpec extends SpecBase {
           "when company type" - {
             val dataWithCompanyTypePresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                purchaserTypeOfCompany = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
-                  buildingSociety = "YES",
-                  centralGovernment = "NO",
-                  individualOther = "NO",
-                  insuranceAssurance = "NO",
-                  localAuthority = "NO",
-                  partnership = "NO",
-                  propertyCompany = "NO",
-                  publicCorporation = "NO",
-                  otherCompany = "NO",
-                  otherFinancialInstitute = "NO",
-                  otherIncludingCharity = "NO",
-                  superannuationOrPensionFund = "NO",
-                  unincorporatedBuilder = "NO",
-                  unincorporatedSoleTrader = "NO")),
+                purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
               )
             )
             val dataWithCompanyTypeNotPresent = purchaserSessionQuestions.copy(
@@ -1880,24 +1780,7 @@ class PurchaserServiceSpec extends SpecBase {
             registrationNumber = Some("VAT1234"),
             purchaserUTRPage = Some("UTR1234"),
             purchaserFormOfIdCompany = Some(CompanyFormOfId(referenceId = "ID12345", countryIssued = "country")),
-            purchaserTypeOfCompany = Some(
-              PurchaserTypeOfCompanyAnswers(
-                bank = "YES",
-                buildingSociety = "NO",
-                centralGovernment = "NO",
-                individualOther = "NO",
-                insuranceAssurance = "NO",
-                localAuthority = "NO",
-                partnership = "NO",
-                propertyCompany = "NO",
-                publicCorporation = "NO",
-                otherCompany = "NO",
-                otherFinancialInstitute = "NO",
-                otherIncludingCharity = "NO",
-                superannuationOrPensionFund = "NO",
-                unincorporatedBuilder = "NO",
-                unincorporatedSoleTrader = "NO")
-            ),
+            purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
             isPurchaserActingAsTrustee = Some("yes"),
             purchaserAndVendorConnected = Some("yes"),
           ))

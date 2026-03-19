@@ -36,21 +36,21 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "YES",
-              buildingSociety = "NO",
-              centralGovernment = "NO",
-              individualOther = "NO",
-              insuranceAssurance = "NO",
-              localAuthority = "NO",
-              partnership = "NO",
-              propertyCompany = "NO",
-              publicCorporation = "NO",
-              otherCompany = "NO",
-              otherFinancialInstitute = "NO",
-              otherIncludingCharity = "NO",
-              superannuationOrPensionFund = "NO",
-              unincorporatedBuilder = "NO",
-              unincorporatedSoleTrader = "NO")).success.value
+            .set(PurchaserTypeOfCompanyPage, PurchaserTypeOfCompanyAnswers(bank = "yes",
+              buildingSociety = "no",
+              centralGovernment = "no",
+              individualOther = "no",
+              insuranceAssurance = "no",
+              localAuthority = "no",
+              partnership = "no",
+              propertyCompany = "no",
+              publicCorporation = "no",
+              otherCompany = "no",
+              otherFinancialInstitute = "no",
+              otherIncludingCharity = "no",
+              superannuationOrPensionFund = "no",
+              unincorporatedBuilder = "no",
+              unincorporatedSoleTrader = "no")).success.value
 
           val result = PurchaserTypeOfCompanySummary.row(Some(userAnswers))
 

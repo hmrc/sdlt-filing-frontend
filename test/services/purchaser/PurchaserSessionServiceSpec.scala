@@ -46,21 +46,21 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
   private val nextPageCall = Call("GET", "/next-page")
 
   val typeOfCompany = PurchaserTypeOfCompanyAnswers(
-    bank = "YES",
-    buildingSociety = "NO",
-    centralGovernment = "NO",
-    individualOther = "NO",
-    insuranceAssurance = "NO",
-    localAuthority = "NO",
-    partnership = "NO",
-    propertyCompany = "NO",
-    publicCorporation = "NO",
-    otherCompany = "NO",
-    otherFinancialInstitute = "NO",
-    otherIncludingCharity = "NO",
-    superannuationOrPensionFund = "NO",
-    unincorporatedBuilder = "NO",
-    unincorporatedSoleTrader = "NO"
+    bank = "yes",
+    buildingSociety = "no",
+    centralGovernment = "no",
+    individualOther = "no",
+    insuranceAssurance = "no",
+    localAuthority = "no",
+    partnership = "no",
+    propertyCompany = "no",
+    publicCorporation = "no",
+    otherCompany = "no",
+    otherFinancialInstitute = "no",
+    otherIncludingCharity = "no",
+    superannuationOrPensionFund = "no",
+    unincorporatedBuilder = "no",
+    unincorporatedSoleTrader = "no"
   )
 
   override def beforeEach(): Unit = {
