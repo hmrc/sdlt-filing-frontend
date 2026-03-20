@@ -59,5 +59,4 @@ object SlabRatesTables {
       Slab(threshold = 150000,  rate = 1)
     )
   )
-
 }
