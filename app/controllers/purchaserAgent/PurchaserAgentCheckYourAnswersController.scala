@@ -23,9 +23,10 @@ import models.purchaserAgent.PurchaserAgentSessionQuestions
 import models.{CreateReturnAgentRequest, NormalMode, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
 import pages.purchaserAgent.PurchaserAgentOverviewPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.libs.json.JsSuccess
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import repositories.SessionRepository
+import services.purchaserAgent.PurchaserAgentService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.purchaserAgent.*
 import viewmodels.govuk.all.SummaryListViewModel
@@ -43,7 +44,8 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
                                                           sessionRepository: SessionRepository,
                                                           backendConnector: StampDutyLandTaxConnector,
                                                           val controllerComponents: MessagesControllerComponents,
-                                                          view: PurchaserAgentCheckYourAnswersView
+                                                          view: PurchaserAgentCheckYourAnswersView,
+                                                          purchaserAgentService: PurchaserAgentService
                                                         )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -79,12 +81,12 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
     sessionRepository.get(request.userAnswers.id).flatMap {
       case Some(userAnswers) =>
         (userAnswers.data \ "purchaserAgentCurrent").validate[PurchaserAgentSessionQuestions] match {
-          case JsSuccess(sessionData, _) =>
+          case JsSuccess(sessionData, _) if purchaserAgentService.purchaserAgentSessionQuestionsValidation(sessionData) =>
             request.userAnswers.get(PurchaserAgentOverviewPage).map { returnAgentId =>
               updateReturnAgent(userAnswers)
             }.getOrElse(createReturnAgent(userAnswers))
 
-          case JsError(_) =>
+          case _ =>
             Future.successful(
               Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
             )

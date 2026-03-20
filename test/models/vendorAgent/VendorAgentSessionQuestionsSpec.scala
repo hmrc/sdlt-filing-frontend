@@ -41,10 +41,12 @@ class VendorAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eit
         ),
         "addressValidated" -> false
       ),
+      "addVendorAgentContactDetails" -> true,
       "vendorAgentContactDetails" -> Json.obj(
         "phoneNumber" -> "1234567890",
         "emailAddress" -> "test@example.com"
       ),
+      "vendorAgentsAddReference" -> true,
       "vendorAgentReference" -> "1234"
     )
 
@@ -62,6 +64,8 @@ class VendorAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eit
         "country" -> JsNull,
         "addressValidated" -> false
       ),
+      "addVendorAgentContactDetails" -> false,
+      "vendorAgentsAddReference" -> false,
       "vendorAgentAuthorised" -> "YES"
     )
   }
@@ -94,10 +98,12 @@ class VendorAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eit
               )),
               addressValidated = false
             ),
+            addVendorAgentContactDetails = true,
             vendorAgentContactDetails = Some(VendorAgentsContactDetails(
               phoneNumber = Some("1234567890"),
               emailAddress = Some("test@example.com")
             )),
+            vendorAgentsAddReference = true,
             vendorAgentReference = Some("1234")
           )
 
@@ -120,7 +126,9 @@ class VendorAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eit
               postcode = "W9 2NP",
               country = None,
               addressValidated = false
-            )
+            ),
+            addVendorAgentContactDetails = false,
+            vendorAgentsAddReference = false
           )
 
         result shouldBe expectedResult

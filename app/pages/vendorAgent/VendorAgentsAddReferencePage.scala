@@ -16,11 +16,10 @@
 
 package pages.vendorAgent
 
-import models.vendorAgent.VendorAgentsAddReference
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object VendorAgentsAddReferencePage extends QuestionPage[VendorAgentsAddReference] {
+case object VendorAgentsAddReferencePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ "vendorAgentCurrent" \ toString
 

@@ -18,7 +18,7 @@ package services.vendorAgent
 
 import base.SpecBase
 import models.address.Address
-import models.vendorAgent.{VendorAgentsAddReference, VendorAgentsContactDetails}
+import models.vendorAgent.{VendorAgentSessionAddress, VendorAgentSessionQuestions, VendorAgentsContactDetails}
 import models.{FullReturn, ReturnAgent, UserAnswers}
 import pages.vendorAgent.*
 
@@ -83,7 +83,7 @@ class VendorAgentServiceSpec extends SpecBase {
         updatedAnswers.get(AgentNamePage) mustBe Some("Assigned Vendor Agent")
         updatedAnswers.get(VendorAgentAddressPage) mustBe Some(expectedAddress)
         updatedAnswers.get(VendorAgentsContactDetailsPage) mustBe Some(expectedContactDetails)
-        updatedAnswers.get(VendorAgentsAddReferencePage) mustBe Some(VendorAgentsAddReference.Yes)
+        updatedAnswers.get(VendorAgentsAddReferencePage) mustBe Some(true)
         updatedAnswers.get(VendorAgentsReferencePage) mustBe Some("ABF1241")
       }
 
@@ -111,6 +111,99 @@ class VendorAgentServiceSpec extends SpecBase {
 
         result.isFailure mustBe true
         result.failed.get mustBe a[IllegalStateException]
+      }
+    }
+
+    "vendorAgentSessionQuestionsValidation" - {
+
+      "must return true for valid session data with no optional fields" in {
+        val sessionData = VendorAgentSessionQuestions(
+          vendorAgentName = "Agent name",
+          vendorAgentAddress = VendorAgentSessionAddress(
+            houseNumber = Some(1),
+            line1 = "Street 1",
+            line2 = None,
+            line3 = None,
+            line4 = None,
+            line5 = None,
+            postcode = "W9 2NP",
+            country = None,
+            addressValidated = false
+          ),
+          addVendorAgentContactDetails = false,
+          vendorAgentsAddReference = false
+        )
+
+        val result = service.vendorAgentSessionQuestionsValidation(sessionData)
+        result mustBe true
+      }
+
+      "must return true for valid session data with optional fields" in {
+        val sessionData = VendorAgentSessionQuestions(
+          vendorAgentName = "Agent name",
+          vendorAgentAddress = VendorAgentSessionAddress(
+            houseNumber = Some(1),
+            line1 = "Street 1",
+            line2 = None,
+            line3 = None,
+            line4 = None,
+            line5 = None,
+            postcode = "W9 2NP",
+            country = None,
+            addressValidated = false
+          ),
+          addVendorAgentContactDetails = true,
+          vendorAgentContactDetails = Some(VendorAgentsContactDetails(
+            phoneNumber = Some("1234567890"),
+            emailAddress = Some("test@email.com")
+          )),
+          vendorAgentsAddReference = true,
+          vendorAgentReference = Some("1234")
+        )
+        val result = service.vendorAgentSessionQuestionsValidation(sessionData)
+        result mustBe true
+      }
+
+      "must return false if addVendorAgentContactDetails is true but contact details are missing" in {
+        val sessionData = VendorAgentSessionQuestions(
+            vendorAgentName = "Agent name",
+            vendorAgentAddress = VendorAgentSessionAddress(
+              houseNumber = Some(1),
+              line1 = "Street 1",
+              line2 = None,
+              line3 = None,
+              line4 = None,
+              line5 = None,
+              postcode = "W9 2NP",
+              country = None,
+              addressValidated = false
+            ),
+            addVendorAgentContactDetails = true,
+            vendorAgentsAddReference = false
+          )
+          val result = service.vendorAgentSessionQuestionsValidation(sessionData)
+          result mustBe false
+      }
+
+      "must return false if vendorAgentsAddReference is true but reference number is missing" in {
+        val sessionData = VendorAgentSessionQuestions(
+          vendorAgentName = "Agent name",
+          vendorAgentAddress = VendorAgentSessionAddress(
+            houseNumber = Some(1),
+            line1 = "Street 1",
+            line2 = None,
+            line3 = None,
+            line4 = None,
+            line5 = None,
+            postcode = "W9 2NP",
+            country = None,
+            addressValidated = false
+          ),
+          addVendorAgentContactDetails = false,
+          vendorAgentsAddReference = true
+        )
+        val result = service.vendorAgentSessionQuestionsValidation(sessionData)
+        result mustBe false
       }
     }
   }

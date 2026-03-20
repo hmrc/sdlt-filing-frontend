@@ -18,7 +18,6 @@ package controllers.vendorAgent
 
 import controllers.actions.*
 import forms.vendorAgent.VendorAgentsAddReferenceFormProvider
-import models.vendorAgent.VendorAgentsAddReference
 import models.{Mode, NormalMode}
 import pages.vendorAgent.VendorAgentsReferencePage
 
@@ -84,12 +83,12 @@ class VendorAgentsAddReferenceController @Inject()(
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentsAddReferencePage, value))
                 finalAnswers <- Future.fromTry {
-                  if value == VendorAgentsAddReference.No then updatedAnswers.remove(VendorAgentsReferencePage)
+                  if !value then updatedAnswers.remove(VendorAgentsReferencePage)
                   else Success(updatedAnswers)
                 }
                 _ <- sessionRepository.set(finalAnswers)
               } yield {
-                if (value == VendorAgentsAddReference.No) {
+                if (!value) {
                   Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
                 } else {
                   Redirect(navigator.nextPage(VendorAgentsAddReferencePage, mode, updatedAnswers))

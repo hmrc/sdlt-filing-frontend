@@ -27,7 +27,7 @@ import org.mockito.Mockito.{atLeastOnce, reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import repositories.SessionRepository
-import pages.purchaserAgent.{PurchaserAgentAddressPage, PurchaserAgentAuthorisedPage, PurchaserAgentNamePage, PurchaserAgentOverviewPage}
+import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, AddPurchaserAgentReferenceNumberPage, PurchaserAgentAddressPage, PurchaserAgentAuthorisedPage, PurchaserAgentNamePage, PurchaserAgentOverviewPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -60,6 +60,8 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
       postcode = Some("AA1 1AA"),
       country = Some(Country(Some("GB"), Some("United Kingdom")))
     )).success.value
+    .set(AddContactDetailsForPurchaserAgentPage, false).success.value
+    .set(AddPurchaserAgentReferenceNumberPage, false).success.value
     .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
 
   private val userAnswersWithCompleteAnswers = emptyUserAnswers
@@ -76,6 +78,8 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
       postcode = Some("AA1 1AA"),
       country = Some(Country(Some("GB"), Some("United Kingdom")))
     )).success.value
+    .set(AddContactDetailsForPurchaserAgentPage, false).success.value
+    .set(AddPurchaserAgentReferenceNumberPage, false).success.value
     .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
 
   override def beforeEach(): Unit = {
@@ -191,6 +195,26 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
           redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
           verify(mockBackendConnector, atLeastOnce()).createReturnAgent(any[CreateReturnAgentRequest])(any(), any())
           flash(result).get("purchaserAgentCreated") mustBe Some("Agent name")
+        }
+      }
+
+      "must redirect to same page if mandatory data is missing" in {
+        val userAnswers = userAnswersWithCompleteAnswers
+          .set(AddContactDetailsForPurchaserAgentPage, true).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url
         }
       }
 

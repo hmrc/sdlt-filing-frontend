@@ -16,24 +16,28 @@
 
 package forms.vendorAgent
 
-import forms.behaviours.OptionFieldBehaviours
-import models.vendorAgent.VendorAgentsAddReference
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class VendorAgentsAddReferenceFormProviderSpec extends OptionFieldBehaviours {
+class VendorAgentsAddReferenceFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new VendorAgentsAddReferenceFormProvider()()
+  val requiredKey = "vendorAgent.VendorAgentsAddReference.error.required"
+  val invalidKey = "error.boolean"
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "vendorAgent.VendorAgentsAddReference.error.required"
 
-    behave like optionsField[VendorAgentsAddReference](
+    "must bind true and false values correctly" in {
+      form.bind(Map(fieldName -> "true")).get mustBe true
+      form.bind(Map(fieldName -> "false")).get mustBe false
+    }
+
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = VendorAgentsAddReference.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

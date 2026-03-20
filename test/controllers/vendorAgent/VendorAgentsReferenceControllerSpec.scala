@@ -54,7 +54,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       data = Json.obj(
         "vendorAgentCurrent" -> Json.obj(
           "vendorAgentName" -> "test",
-          "vendorAgentsAddReference" -> "yes"
+          "vendorAgentsAddReference" -> true
         )
         ),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None))
@@ -66,7 +66,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
       data = Json.obj(
         "vendorAgentCurrent" -> Json.obj(
           "vendorAgentName" -> "test",
-          "vendorAgentsAddReference" -> "no"
+          "vendorAgentsAddReference" -> false
         )),
       fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
     )

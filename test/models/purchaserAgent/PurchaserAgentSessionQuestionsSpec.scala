@@ -41,10 +41,12 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
         ),
         "addressValidated" -> false
       ),
+      "addContactDetailsForPurchaserAgent" -> true,
       "purchaserAgentContactDetails" -> Json.obj(
         "phoneNumber" -> "1234567890",
         "emailAddress" -> "test@example.com"
       ),
+      "addPurchaserAgentReferenceNumber" -> true,
       "purchaserAgentReference" -> "1234",
       "purchaserAgentAuthorised" -> "YES"
     )
@@ -63,6 +65,8 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
         "country" -> JsNull,
         "addressValidated" -> false
       ),
+      "addContactDetailsForPurchaserAgent" -> false,
+      "addPurchaserAgentReferenceNumber" -> false,
       "purchaserAgentAuthorised" -> "YES"
     )
   }
@@ -95,10 +99,12 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
               )),
               addressValidated = false
             ),
+            addContactDetailsForPurchaserAgent = true,
             purchaserAgentContactDetails = Some(PurchaserAgentsContactDetails(
               phoneNumber = Some("1234567890"),
               emailAddress = Some("test@example.com")
             )),
+            addPurchaserAgentReferenceNumber = true,
             purchaserAgentReference = Some("1234"),
             purchaserAgentAuthorised = "YES"
           )
@@ -123,6 +129,8 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
               country = None,
               addressValidated = false
             ),
+            addContactDetailsForPurchaserAgent = false,
+            addPurchaserAgentReferenceNumber = false,
             purchaserAgentAuthorised = "YES"
           )
 

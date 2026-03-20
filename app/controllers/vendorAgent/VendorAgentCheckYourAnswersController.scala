@@ -23,9 +23,10 @@ import models.vendorAgent.VendorAgentSessionQuestions
 import models.{CreateReturnAgentRequest, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
 import pages.vendorAgent.VendorAgentOverviewPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.libs.json.JsSuccess
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.vendorAgent.VendorAgentService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.vendorAgent.*
@@ -43,7 +44,8 @@ class VendorAgentCheckYourAnswersController @Inject()(
                                                        sessionRepository: SessionRepository,
                                                        backendConnector: StampDutyLandTaxConnector,
                                                        val controllerComponents: MessagesControllerComponents,
-                                                       view: VendorAgentCheckYourAnswersView
+                                                       view: VendorAgentCheckYourAnswersView,
+                                                       vendorAgentService: VendorAgentService
                                                      )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -79,12 +81,12 @@ class VendorAgentCheckYourAnswersController @Inject()(
     sessionRepository.get(request.userAnswers.id).flatMap {
       case Some(userAnswers) =>
         (userAnswers.data \ "vendorAgentCurrent").validate[VendorAgentSessionQuestions] match {
-          case JsSuccess(sessionData, _) =>
+          case JsSuccess(sessionData, _) if vendorAgentService.vendorAgentSessionQuestionsValidation(sessionData) =>
             request.userAnswers.get(VendorAgentOverviewPage).map { returnAgentId =>
               updateReturnAgent(userAnswers)
             }.getOrElse(createReturnAgent(userAnswers))
 
-          case JsError(_) =>
+          case _ =>
             Future.successful(
               Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
             )

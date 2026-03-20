@@ -21,7 +21,9 @@ import play.api.libs.json.{Json, Reads}
 case class PurchaserAgentSessionQuestions(
                                            purchaserAgentName: String,
                                            purchaserAgentAddress: PurchaserAgentSessionAddress,
+                                           addContactDetailsForPurchaserAgent: Boolean,
                                            purchaserAgentContactDetails: Option[PurchaserAgentsContactDetails] = None,
+                                           addPurchaserAgentReferenceNumber: Boolean,
                                            purchaserAgentReference: Option[String] = None,
                                            purchaserAgentAuthorised: String
                                          )

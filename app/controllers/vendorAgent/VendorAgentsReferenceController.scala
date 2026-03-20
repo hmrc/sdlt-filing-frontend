@@ -19,7 +19,6 @@ package controllers.vendorAgent
 import controllers.actions.*
 import forms.vendorAgent.VendorAgentsReferenceFormProvider
 import models.Mode
-import models.vendorAgent.VendorAgentsAddReference
 import navigation.Navigator
 import pages.vendorAgent.{AgentNamePage, VendorAgentsAddReferencePage, VendorAgentsReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -56,7 +55,7 @@ class VendorAgentsReferenceController @Inject()(
 
         case Some(agentName) =>
           userAnswers.get(VendorAgentsAddReferencePage) match {
-            case Some(value) if value == VendorAgentsAddReference.Yes =>
+            case Some(value) if value =>
               val form = formProvider(agentName)
 
               val preparedForm = request.userAnswers.get(VendorAgentsReferencePage) match {
