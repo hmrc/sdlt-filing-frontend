@@ -2422,7 +2422,53 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
       service.leaseholdAcquisitionTaxReliefRes(AcquisitionReliefTestRequest) shouldBe expectedRes
     }
   }
+  "leaseholdMixedNonResidentialRightToBuyBeforeMarch16" must {
+    "return 1000, 1 for purchase price of 100000, npv of 18995" in new PredefinedNPVSetup(18995) {
+      val leaseTaxDue = 0
+      val premRate = 1
+      val premTaxDue = 1000
+      val premium = 100000
 
+      val leaseSliceDetails = Seq(
+          SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+          SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 0)
+        )
+
+
+      private val res = leaseholdMixedNonResidentialRightToBuyBeforeMarch16Result(leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdMixedNonResidentialRightToBuyBeforeMarch16(leaseholdMixedNonResidentialRightToBuyBeforeMarch16Request(premium)) shouldBe res
+    }
+    "return 7500, 3 for purchase price of 250001, npv of 18995" in new PredefinedNPVSetup(18995) {
+      val leaseTaxDue = 0
+      val premTaxDue = 7500
+      val premRate = 3
+      val premium = 250001
+
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      private val res = leaseholdMixedNonResidentialRightToBuyBeforeMarch16Result( leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdMixedNonResidentialRightToBuyBeforeMarch16(leaseholdMixedNonResidentialRightToBuyBeforeMarch16Request(premium)) shouldBe res
+    }
+
+    "return 20000, 4 for purchase price of 500001, npv of 18995" in new PredefinedNPVSetup(18995) {
+      val leaseTaxDue = 0
+      val premTaxDue = 20000
+      val premRate = 4
+      val premium = 500001
+
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      private val res = leaseholdMixedNonResidentialRightToBuyBeforeMarch16Result( leaseTaxDue, leaseSliceDetails, premTaxDue, premRate, npv)
+      service.leaseholdMixedNonResidentialRightToBuyBeforeMarch16(leaseholdMixedNonResidentialRightToBuyBeforeMarch16Request(premium)) shouldBe res
+    }
+
+  }
   "leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016" must {
     def testRequest(premium: BigDecimal): Request = Request(
       holdingType = HoldingTypes.leasehold,

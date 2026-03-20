@@ -70,4 +70,48 @@ trait ResponseHelper {
       |}
       |""".stripMargin
   )
+
+  lazy val leaseholdMixedNonResidentialRightToBuyBeforeMarch16Response: JsValue = Json.parse(
+    """
+      |{
+      |  "result": [
+      |    {
+      |      "totalTax": 7500,
+      |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+      |      "npv": 18995,
+      |      "taxCalcs": [
+      |        {
+      |          "taxType": "rent",
+      |          "calcType": "slice",
+      |          "taxDue": 0,
+      |          "detailHeading": "This is a breakdown of how the amount of SDLT on the rent was calculated",
+      |          "bandHeading": "Rent bands (£)",
+      |          "detailFooter": "SDLT due on the rent",
+      |          "slices": [
+      |            {
+      |              "from": 0,
+      |              "to": 150000,
+      |              "rate": 0,
+      |              "taxDue": 0
+      |            },
+      |            {
+      |              "from": 150000,
+      |              "to": -1,
+      |              "rate": 1,
+      |              "taxDue": 0
+      |            }
+      |          ]
+      |        },
+      |        {
+      |          "taxType": "premium",
+      |          "calcType": "slab",
+      |          "taxDue": 7500,
+      |          "rate": 3
+      |        }
+      |      ]
+      |    }
+      |  ]
+      |}
+      |""".stripMargin
+  )
 }

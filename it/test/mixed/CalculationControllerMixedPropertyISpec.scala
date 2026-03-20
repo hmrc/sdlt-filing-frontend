@@ -11,9 +11,10 @@ import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSClient, WSResponse}
+import base.ResponseHelper
 import test.base.BaseSpec
 
-class CalculationControllerMixedPropertyISpec extends BaseSpec with GuiceOneServerPerSuite {
+class CalculationControllerMixedPropertyISpec extends BaseSpec with GuiceOneServerPerSuite with ResponseHelper {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .configure()
@@ -22,18 +23,6 @@ class CalculationControllerMixedPropertyISpec extends BaseSpec with GuiceOneServ
   lazy val calculateUrl = s"http://localhost:$port/calculate-stamp-duty-land-tax/calculate"
 
   lazy val ws: WSClient = app.injector.instanceOf[WSClient]
-
-  val selfAssessedResponse: JsValue = Json.parse(
-    """{
-      |  "result": [
-      |    {
-      |      "totalTax": 0,
-      |      "resultHeading": "Self-assessed",
-      |      "taxCalcs": []
-      |    }
-      |  ]
-      |}
-      |""".stripMargin)
 
   "Hitting the /calculate route" should {
 
@@ -105,6 +94,58 @@ class CalculationControllerMixedPropertyISpec extends BaseSpec with GuiceOneServ
 
           request.status shouldBe OK
           request.json shouldBe selfAssessedResponse
+        }
+      }
+
+      // SDLT - Tax Calc Case - 22
+      "TaxReliefCode is Right to Buy: 22" when {
+        "effective date is before 17/03/2016" when {
+          "the transaction is not linked" must {
+            "return the 4% premium rate when the premium is 500K" when {
+              "Property Type Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Leasehold",
+                        |  "propertyType": "Mixed",
+                        |  "effectiveDateDay": 16,
+                        |  "effectiveDateMonth": 3,
+                        |  "effectiveDateYear": 2015,
+                        |  "premium": 250001,
+                        |  "highestRent": 0,
+                        |  "leaseDetails": {
+                        |    "startDateDay": 16,
+                        |    "startDateMonth": 3,
+                        |    "startDateYear": 2015,
+                        |    "endDateDay": 16,
+                        |    "endDateMonth": 3,
+                        |    "endDateYear": 2016,
+                        |    "leaseTerm": {
+                        |      "years": 1,
+                        |      "days": 1,
+                        |      "daysInPartialYear": 365
+                        |    },
+                        |    "year1Rent": 9999,
+                        |    "year2Rent": 9999
+                        |  },
+                        |    "isLinked": false,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  },
+                        |  "relevantRentDetails": {
+                        |  "relevantRent": 1000
+                        | }
+                        |}""".stripMargin
+                    )
+                  )
+                request.status shouldBe OK
+                request.json shouldBe leaseholdMixedNonResidentialRightToBuyBeforeMarch16Response
+              }
+            }
+          }
         }
       }
 
