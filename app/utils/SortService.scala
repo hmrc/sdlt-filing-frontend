@@ -31,6 +31,9 @@ class SortService {
     getLastUpdateDate: ObjectType => Option[String],
     getObjectId: ObjectType => Option[String]
                       ): Seq[ObjectType] = {
+
+    implicit val dateOrdering: Ordering[Option[LocalDateTime]] =
+      Ordering.Option[LocalDateTime].reverse
     
     list.sortBy { obj =>
       (

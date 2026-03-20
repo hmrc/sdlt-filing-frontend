@@ -78,7 +78,7 @@ class SortServiceSpec extends SpecBase {
 
         val seqOfObjects = Seq(object4, object2, object1, object5, object3)
 
-        val sortedObjectList = Seq(object1, object2, object3, object4, object5)
+        val sortedObjectList = Seq(object1, object5, object4, object3, object2)
 
         service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
@@ -93,7 +93,7 @@ class SortServiceSpec extends SpecBase {
 
         val seqOfObjects = Seq(object4, object2, object1, object5, object3)
 
-        val sortedObjectList = Seq(object1, object2, object3, object4, object5)
+        val sortedObjectList = Seq(object1, object5, object4, object2, object3)
 
         service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
@@ -108,7 +108,7 @@ class SortServiceSpec extends SpecBase {
 
         val seqOfObjects = Seq(object4, object2, object1, object5, object3)
 
-        val sortedObjectList = Seq(object1, object2, object3, object4, object5)
+        val sortedObjectList = Seq(object5, object4, object3, object2, object1)
 
         service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
