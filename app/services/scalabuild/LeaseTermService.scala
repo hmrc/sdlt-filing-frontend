@@ -8,6 +8,7 @@ package services.scalabuild
 import models.LeaseTerm
 
 import java.time.LocalDate
+import scala.annotation.tailrec
 
 class LeaseTermService {
   def calculateTermOfLease(
@@ -16,50 +17,49 @@ class LeaseTermService {
                             leaseEnd: LocalDate
                           ): LeaseTerm = {
 
-    val start = if (effectiveDate.isAfter(leaseStart)) effectiveDate else leaseStart
+    val start =
+      if (effectiveDate.isAfter(leaseStart)) effectiveDate else leaseStart
 
     def is29Feb(d: LocalDate): Boolean =
       d.getMonthValue == 2 && d.getDayOfMonth == 29
 
-    var numYears = 1
-    var comparisonDate = start.plusYears(numYears).minusDays(1)
-    while (!comparisonDate.isAfter(leaseEnd)) {
-      numYears += 1
-      comparisonDate = start.plusYears(numYears).minusDays(1)
+    // Find number of full years
+    @tailrec
+    def fullYears(n: Int): Int = {
+      val comparisonDate = start.plusYears(n).minusDays(1)
+      if (comparisonDate.isAfter(leaseEnd)) n - 1
+      else fullYears(n + 1)
     }
-    // we went past the end date so need to go back 1 year
-    numYears -= 1
 
-    // count the number of partial days, i.e. keep adding 1 day till we get past the end date
-    var numDays = 1
-    comparisonDate = start.plusYears(numYears).minusDays(1)
+    val numYears = fullYears(1)
 
-    comparisonDate = comparisonDate.plusDays(1)
-
-    while (!comparisonDate.isAfter(leaseEnd)) {
-      numDays += 1
-      comparisonDate = comparisonDate.plusDays(1)
+    // Count remaining days after full years
+    def remainingDays(current: LocalDate, count: Int): Int = {
+      if (current.isAfter(leaseEnd)) count - 1
+      else remainingDays(current.plusDays(1), count + 1)
     }
-    // we went past the end date so need to go back 1 day
-    numDays -= 1
 
-    var numDaysInPartialYear = 0
-    // need to calculate number of days in partial year (is it 365 or 366)
-    if (numDays > 0) {
-      val partialYearEndDate = start.plusYears(numYears + 1).minusDays(1)
-      // set comparison date to end date of last full year in term
-      var comparisonDate =  start.plusYears(numYears)
-      numDaysInPartialYear = 1
+    val startOfPartial =
+      start.plusYears(numYears).minusDays(1).plusDays(1)
 
-      while (!comparisonDate.isAfter(partialYearEndDate)) {
-        numDaysInPartialYear += 1
-        comparisonDate = comparisonDate.plusDays(1)
-      }
-      numDaysInPartialYear -= 1
-      if(is29Feb(start)){
-        numDaysInPartialYear =365
-      }
-    }
+    val numDays =
+      remainingDays(startOfPartial, 1)
+
+    val numDaysInPartialYear =
+      if (numDays > 0) {
+        val partialYearEndDate =
+          start.plusYears(numYears + 1).minusDays(1)
+
+        def daysInYear(current: LocalDate, count: Int): Int = {
+          if (current.isAfter(partialYearEndDate)) count - 1
+          else daysInYear(current.plusDays(1), count + 1)
+        }
+
+        val calculated =
+          daysInYear(start.plusYears(numYears), 1)
+
+        if (is29Feb(start)) 365 else calculated
+      } else 0
 
     LeaseTerm(
       years = numYears,
