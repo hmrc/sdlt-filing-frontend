@@ -41,7 +41,6 @@ trait ScalaSpecBase extends TryValues with OptionValues with ScalaFutures with M
 
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
-      .configure("play.http.router" -> "scalabuild.Routes")
       .disable[PlayMongoModule]
       .overrides(
         bind[SessionRepository].toInstance(sessionRepositoryStub),
