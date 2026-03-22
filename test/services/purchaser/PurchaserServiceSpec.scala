@@ -1668,42 +1668,14 @@ class PurchaserServiceSpec extends SpecBase {
           "when company type" - {
             val dataWithCompanyTypePresentAndTypeKnownYes = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                purchaserTypeOfCompany = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
-                  buildingSociety = "YES",
-                  centralGovernment = "NO",
-                  individualOther = "NO",
-                  insuranceAssurance = "NO",
-                  localAuthority = "NO",
-                  partnership = "NO",
-                  propertyCompany = "NO",
-                  publicCorporation = "NO",
-                  otherCompany = "NO",
-                  otherFinancialInstitute = "NO",
-                  otherIncludingCharity = "NO",
-                  superannuationOrPensionFund = "NO",
-                  unincorporatedBuilder = "NO",
-                  unincorporatedSoleTrader = "NO")),
+                purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
                   purchaserCompanyTypeKnown = Some(true),
               )
             )
 
             val dataWithCompanyTypePresentAndTypeKnownNone = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                purchaserTypeOfCompany = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
-                  buildingSociety = "YES",
-                  centralGovernment = "NO",
-                  individualOther = "NO",
-                  insuranceAssurance = "NO",
-                  localAuthority = "NO",
-                  partnership = "NO",
-                  propertyCompany = "NO",
-                  publicCorporation = "NO",
-                  otherCompany = "NO",
-                  otherFinancialInstitute = "NO",
-                  otherIncludingCharity = "NO",
-                  superannuationOrPensionFund = "NO",
-                  unincorporatedBuilder = "NO",
-                  unincorporatedSoleTrader = "NO")),
+                purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
 
               )
             )
