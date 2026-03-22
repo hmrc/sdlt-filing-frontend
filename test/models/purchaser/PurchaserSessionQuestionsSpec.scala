@@ -87,6 +87,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
+        "purchaserCompanyTypeKnown" -> true,
         "isPurchaserActingAsTrustee" -> "yes",
         "purchaserAndVendorConnected" -> "yes",
       ))
@@ -123,6 +124,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
         "purchaserUTRPage" -> JsNull,
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> JsNull,
+        "purchaserCompanyTypeKnown" -> false,
         "isPurchaserActingAsTrustee" -> "yes",
         "purchaserAndVendorConnected" -> "yes",
       ))
@@ -186,6 +188,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
                   unincorporatedBuilder = "NO",
                   unincorporatedSoleTrader = "NO")
               ),
+              purchaserCompanyTypeKnown = Some(true),
               isPurchaserActingAsTrustee = Some("yes"),
               purchaserAndVendorConnected = Some("yes"),
             ))
@@ -224,6 +227,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
               purchaserUTRPage = None,
               purchaserFormOfIdCompany = None,
               purchaserTypeOfCompany = None,
+              purchaserCompanyTypeKnown = Some(false),
               isPurchaserActingAsTrustee = Some("yes"),
               purchaserAndVendorConnected = Some("yes"),
             ))

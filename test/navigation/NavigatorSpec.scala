@@ -131,7 +131,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from PurchaserCorporationTaxUTRPage to PurchaserType Page" in {
-          navigator.nextPage(PurchaserUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          navigator.nextPage(PurchaserUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserTypePage to IsPurchaserActingAsTrustee" in {
@@ -139,7 +139,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from CompanyFormOfIdPage to PurchaserType page" in {
-          navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserAndVendorConnectedPage to PurchaserCheckYourAnswers" in {
@@ -155,7 +155,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from RegistrationNumberPage to PurchaserTypeOfCompany page" in {
-          navigator.nextPage(RegistrationNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          navigator.nextPage(RegistrationNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserAgentBeforeYouStartPage to SelectPurchaserAgentPage" in {
@@ -362,7 +362,7 @@ class NavigatorSpec extends SpecBase {
           controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
         navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
-          controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
       }
 
       "must return false for non-purchaser section pages" in {

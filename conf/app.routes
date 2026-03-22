@@ -397,3 +397,8 @@ POST       /about-the-land/remove-land-or-property                              
 
 GET         /about-the-land/check-answers                                                            controllers.land.LandCheckYourAnswersController.onPageLoad()
 POST        /about-the-land/check-answers                                                            controllers.land.LandCheckYourAnswersController.onSubmit()
+
+GET        /about-the-purchaser/add-type-of-company                                                  controllers.purchaser.PurchaserCompanyTypeKnownController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-purchaser/add-type-of-company                                                  controllers.purchaser.PurchaserCompanyTypeKnownController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-purchaser/add-type-of-company/change                                           controllers.purchaser.PurchaserCompanyTypeKnownController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-purchaser/add-type-of-company/change                                           controllers.purchaser.PurchaserCompanyTypeKnownController.onSubmit(mode: Mode = CheckMode)

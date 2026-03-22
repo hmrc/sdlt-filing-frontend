@@ -41,6 +41,7 @@ case class PurchaserCurrent(purchaserAndCompanyId: Option[PurchaserAndCompanyId]
                             registrationNumber: Option[String] = None,
                             purchaserUTRPage: Option[String] = None,
                             purchaserFormOfIdCompany: Option[CompanyFormOfId] = None,
+                            purchaserCompanyTypeKnown: Option[Boolean] = None,
                             purchaserTypeOfCompany: Option[PurchaserTypeOfCompanyAnswers] = None,
                             isPurchaserActingAsTrustee: Option[String] = None,
                             purchaserAndVendorConnected: Option[String] = None

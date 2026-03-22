@@ -1140,12 +1140,14 @@ class PurchaserServiceSpec extends SpecBase {
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber).success.value
           .set(AddPurchaserPhoneNumberPage, true).success.value
           .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
+          .set(PurchaserCompanyTypeKnownPage, true).success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.registrationNumber.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.enterPhoneNumber.checkYourAnswersLabel")
       }
@@ -1158,6 +1160,7 @@ class PurchaserServiceSpec extends SpecBase {
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.CorporationTaxUTR).success.value
           .set(AddPurchaserPhoneNumberPage, false).success.value
+          .set(PurchaserCompanyTypeKnownPage, true).success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
 
@@ -1165,6 +1168,7 @@ class PurchaserServiceSpec extends SpecBase {
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.corporationTaxUTR.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.enterPhoneNumber.checkYourAnswersLabel")
 
       }
@@ -1176,12 +1180,14 @@ class PurchaserServiceSpec extends SpecBase {
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.PartnershipUTR).success.value
+          .set(PurchaserCompanyTypeKnownPage, true).success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.corporationTaxUTR.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
 
       }
 
@@ -1192,11 +1198,13 @@ class PurchaserServiceSpec extends SpecBase {
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.AnotherFormOfID).success.value
+          .set(PurchaserCompanyTypeKnownPage, true).success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.companyFormOfId.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
 
       }
@@ -1208,12 +1216,14 @@ class PurchaserServiceSpec extends SpecBase {
           .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserUTRPage, "11111111").success.value
+          .set(PurchaserCompanyTypeKnownPage, true).success.value
 
         val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.corporationTaxUTR.checkYourAnswersLabel")
         rows.map(_.value.content.asHtml.toString) must contain("11111111")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
       }
     }
@@ -1656,26 +1666,81 @@ class PurchaserServiceSpec extends SpecBase {
           }
 
           "when company type" - {
-            val dataWithCompanyTypePresent = purchaserSessionQuestions.copy(
+            val dataWithCompanyTypePresentAndTypeKnownYes = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
+                purchaserTypeOfCompany = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
+                  buildingSociety = "YES",
+                  centralGovernment = "NO",
+                  individualOther = "NO",
+                  insuranceAssurance = "NO",
+                  localAuthority = "NO",
+                  partnership = "NO",
+                  propertyCompany = "NO",
+                  publicCorporation = "NO",
+                  otherCompany = "NO",
+                  otherFinancialInstitute = "NO",
+                  otherIncludingCharity = "NO",
+                  superannuationOrPensionFund = "NO",
+                  unincorporatedBuilder = "NO",
+                  unincorporatedSoleTrader = "NO")),
+                  purchaserCompanyTypeKnown = Some(true),
+              )
+            )
+
+            val dataWithCompanyTypePresentAndTypeKnownNone = purchaserSessionQuestions.copy(
+              purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
+                purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers()),
+                purchaserTypeOfCompany = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
+                  buildingSociety = "YES",
+                  centralGovernment = "NO",
+                  individualOther = "NO",
+                  insuranceAssurance = "NO",
+                  localAuthority = "NO",
+                  partnership = "NO",
+                  propertyCompany = "NO",
+                  publicCorporation = "NO",
+                  otherCompany = "NO",
+                  otherFinancialInstitute = "NO",
+                  otherIncludingCharity = "NO",
+                  superannuationOrPensionFund = "NO",
+                  unincorporatedBuilder = "NO",
+                  unincorporatedSoleTrader = "NO")),
+
               )
             )
             val dataWithCompanyTypeNotPresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                purchaserTypeOfCompany = None
+                purchaserTypeOfCompany = None,
+
+              )
+            )
+
+            val dataWithCompanyTypeNotPresentAndTypeKnownNo = purchaserSessionQuestions.copy(
+              purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
+                purchaserTypeOfCompany = None,
+                purchaserCompanyTypeKnown = Some(false),
+              )
+            )
+
+            val dataWithCompanyTypeNotPresentAndTypeKnownYes = purchaserSessionQuestions.copy(
+              purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
+                purchaserTypeOfCompany = None,
+                purchaserCompanyTypeKnown = Some(true),
               )
             )
 
             val companyTypeCases = Table(
-              ("purchaserTypeOfCompany", "sessionData", "result"),
-              ("present", dataWithCompanyTypePresent, true),
-              ("not present", dataWithCompanyTypeNotPresent, false),
+              ("purchaserTypeKnown","purchaserTypeOfCompany", "sessionData", "result"),
+              ("yes", "present", dataWithCompanyTypePresentAndTypeKnownYes, true),
+              ("not present", "not present", dataWithCompanyTypeNotPresent, true),
+              ("no", "not present", dataWithCompanyTypeNotPresentAndTypeKnownNo, true),
+              ("not present", "present", dataWithCompanyTypePresentAndTypeKnownNone, true),
+              ("yes", "not present", dataWithCompanyTypeNotPresentAndTypeKnownYes, false),
             )
 
-            forAll(companyTypeCases) { (purchaserTypeOfCompany, sessionData, result) =>
+            forAll(companyTypeCases) { (purchaserTypeKnown, purchaserTypeOfCompany, sessionData, result) =>
 
-              s"when purchaser or vendor connected answer is $purchaserTypeOfCompany" - {
+              s"when purchaser or vendor connected with answers are  $purchaserTypeKnown and $purchaserTypeOfCompany" - {
                 s"must return $result" in {
                   service.purchaserSessionOptionalQuestionsValidation(
                     sessionData = sessionData,

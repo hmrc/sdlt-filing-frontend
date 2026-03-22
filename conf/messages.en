@@ -1098,6 +1098,13 @@ land.removeLand.heading                                                        =
 land.removeLand.error.required                                                 = Select yes if remove Land
 land.removeLand.change.hidden                                                  = Are you sure you want to remove the land or property?
 
-land.address.checkYourAnswersLabel                                        = Property Address
-land.address.change.hidden                                                = Land address
-land.checkYourAnswers.address.missing                                        = Enter land address
+land.address.checkYourAnswersLabel                                             = Property Address
+land.address.change.hidden                                                     = Land address
+land.checkYourAnswers.address.missing                                          = Enter land address
+
+purchaser.purchaserCompanyTypeKnown.title                                   = Do you know what type of company the purchaser is?
+purchaser.purchaserCompanyTypeKnown.heading                                 = Do you know what type of company {0} is?
+purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel                   = Do you know what type of company {0} is?
+purchaser.purchaserCompanyTypeKnown.error.required                          = Select yes if know purchaser Company Type
+purchaser.purchaserCompanyTypeKnown.change.hidden                           = Do you know what type of company the purchaser is?
+purchaser.purchaserCompanyTypeKnown.missing                                 = Select yes or no
