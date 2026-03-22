@@ -1689,7 +1689,6 @@ class PurchaserServiceSpec extends SpecBase {
 
             val dataWithCompanyTypePresentAndTypeKnownNone = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers()),
                 purchaserTypeOfCompany = Some(PurchaserTypeOfCompanyAnswers(bank = "YES",
                   buildingSociety = "YES",
                   centralGovernment = "NO",
