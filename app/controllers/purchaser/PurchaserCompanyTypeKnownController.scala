@@ -19,6 +19,7 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.PurchaserCompanyTypeKnownFormProvider
 import models.{Mode, NormalMode}
+import navigation.Navigator
 import pages.purchaser.PurchaserTypeOfCompanyPage
 import pages.purchaser.{NameOfPurchaserPage, PurchaserCompanyTypeKnownPage}
 import play.api.data.Form
@@ -35,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PurchaserCompanyTypeKnownController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
+                                         navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
@@ -83,7 +85,7 @@ class PurchaserCompanyTypeKnownController @Inject()(
                 _ <- sessionRepository.set(removeCompanyType)
               } yield (value, mode) match {
 
-                case (true, NormalMode) => Redirect(controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(mode))
+                case (true, NormalMode) => Redirect(navigator.nextPage(PurchaserCompanyTypeKnownPage, mode, removeCompanyType))
                 case (false, NormalMode) => Redirect(controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(mode))
                 case (_,_) => Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
 

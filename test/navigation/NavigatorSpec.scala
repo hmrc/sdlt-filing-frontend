@@ -194,6 +194,10 @@ class NavigatorSpec extends SpecBase {
         "go from ChangePurchaserOnePage to ChangePurchaserOne page" in {
           navigator.nextPage(ChangePurchaserOnePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()
         }
+
+        "go from PurchaserCompanyTypeKnownPage to PurchaserTypeOfCompanyController page" in {
+          navigator.nextPage(PurchaserCompanyTypeKnownPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+        }
       }
 
       "land routes" - {
@@ -293,6 +297,7 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(PurchaserNationalInsurancePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         navigator.nextPage(PurchaserTypeOfCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         navigator.nextPage(RegistrationNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserCompanyTypeKnownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
       }
 
       "must go from any vendor page to VendorCheckYourAnswers" in {

@@ -172,21 +172,31 @@ class PopulatePurchaserService {
   private def companyPagesUpdate(previousPages: UserAnswers,
                                  purchaser: Purchaser
                                 ) = {
+
+    def checkCompanyType(ua: UserAnswers): Boolean =
+      ua.get(PurchaserTypeOfCompanyPage).exists { a =>
+        a.productIterator.collect { case s: String => s }
+          .exists(_.trim.equalsIgnoreCase("yes"))
+      }
+
     val availableCompanyDetails: Option[CompanyDetails] = previousPages.fullReturn.flatMap(_.companyDetails)
     availableCompanyDetails match {
       case Some(availableCompanyDetails) if availableCompanyDetails.VATReference.isDefined => for {
         withPurchaserConfirmIdentity <- previousPages.set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber)
         withRegistrationNumber <- withPurchaserConfirmIdentity.set(RegistrationNumberPage, availableCompanyDetails.VATReference.get)
-        finalAnswers <- withRegistrationNumber.set(PurchaserTypeOfCompanyPage, generateCompanyTypeDetails(availableCompanyDetails))
+        withPurchaserTypeOfCompany <- withRegistrationNumber.set(PurchaserTypeOfCompanyPage, generateCompanyTypeDetails(availableCompanyDetails))
+        finalAnswers <- withPurchaserTypeOfCompany.set(PurchaserCompanyTypeKnownPage, checkCompanyType(withPurchaserTypeOfCompany))
       } yield finalAnswers
       case Some(availableCompanyDetails) if availableCompanyDetails.UTR.isDefined => for {
         withUtr <- previousPages.set(PurchaserUTRPage, availableCompanyDetails.UTR.get)
-        finalAnswers <- withUtr.set(PurchaserTypeOfCompanyPage, generateCompanyTypeDetails(availableCompanyDetails))
+        withPurchaserTypeOfCompany <- withUtr.set(PurchaserTypeOfCompanyPage, generateCompanyTypeDetails(availableCompanyDetails))
+        finalAnswers <- withPurchaserTypeOfCompany.set(PurchaserCompanyTypeKnownPage, checkCompanyType(withPurchaserTypeOfCompany))
       } yield finalAnswers
       case Some(availableCompanyDetails) if purchaser.registrationNumber.isDefined && purchaser.placeOfRegistration.isDefined => for {
         withPurchaserConfirmIdentity <- previousPages.set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.AnotherFormOfID)
         withFormOfId <- withPurchaserConfirmIdentity.set(CompanyFormOfIdPage, CompanyFormOfId(purchaser.registrationNumber.get, purchaser.placeOfRegistration.get))
-        finalAnswers <- withFormOfId.set(PurchaserTypeOfCompanyPage, generateCompanyTypeDetails(availableCompanyDetails))
+        withPurchaserTypeOfCompany <- withFormOfId.set(PurchaserTypeOfCompanyPage, generateCompanyTypeDetails(availableCompanyDetails))
+        finalAnswers <- withPurchaserTypeOfCompany.set(PurchaserCompanyTypeKnownPage, checkCompanyType(withPurchaserTypeOfCompany))
       } yield finalAnswers
       case _ => Try(previousPages)
     }

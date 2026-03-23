@@ -45,7 +45,8 @@ class PurchaserSessionService @Inject()(sessionRepository: SessionRepository,
     PurchaserUTRPage,
     PurchaserTypeOfCompanyPage,
     RegistrationNumberPage,
-    NameOfPurchaserPage
+    NameOfPurchaserPage,
+    PurchaserCompanyTypeKnownPage
   )
 
   def companyOrIndividualPurchaserRemoveFromSession(userAnswers: UserAnswers,

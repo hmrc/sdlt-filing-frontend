@@ -75,7 +75,7 @@ class Navigator @Inject()() {
          | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage | ConfirmNameOfThePurchaserPage
          | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage
          | PurchaserAgentReferencePage | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage
-         | PurchaserAgentBeforeYouStartPage | PurchaserAgentAuthorisedPage | ChangePurchaserOnePage => true
+         | PurchaserAgentBeforeYouStartPage | PurchaserAgentAuthorisedPage | ChangePurchaserOnePage | PurchaserCompanyTypeKnownPage => true
 
     case _ => false
   }
@@ -114,6 +114,9 @@ class Navigator @Inject()() {
     //TODO DTR-3997 - SPRINT 11 - update to Are you sure you want to change purchaser 1
     case ChangePurchaserOnePage =>
       _ => controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()
+    case PurchaserCompanyTypeKnownPage =>
+      _=> controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+
 
     case PurchaserAgentBeforeYouStartPage =>
       _ => controllers.purchaserAgent.routes.SelectPurchaserAgentController.onPageLoad(NormalMode)
