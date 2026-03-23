@@ -18,7 +18,7 @@ package services.taxCalculation
 
 import connectors.SdltCalculationConnector
 import models.land.{LandInterestTransferredOrCreated, LandTypeOfProperty}
-import models.{FullReturn, Lease, UserAnswers}
+import models.{FullReturn, UserAnswers}
 import models.taxCalculation.*
 import org.slf4j.{Logger, LoggerFactory}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -112,67 +112,57 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
     }
 
   private def buildLeaseDetails(interestCode: String, fullReturn: FullReturn, effectiveDate: LocalDate): Option[LeaseDetails] =
-    fullReturn.lease
-      .filter(_ => toHoldingType(interestCode) == HoldingTypes.leasehold)
-      .flatMap(toLeaseDetails(_, effectiveDate))
+    for {
+      lease             <- fullReturn.lease.filter(_ => toHoldingType(interestCode) == HoldingTypes.leasehold)
+      start             <- lease.contractStartDate
+      end               <- lease.contractEndDate
+      rent              <- lease.startingRent
+      startDate         <- Try(LocalDate.parse(start)).toOption
+      endDate           <- Try(LocalDate.parse(end)).toOption
+      rent              <- Try(BigDecimal(rent)).toOption
+      selectDate        = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
+      years             = Period.between(selectDate, endDate.plusDays(1)).getYears
+      partialStart      = selectDate.plusYears(years)
+      days              = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
+      daysInPartialYear = if (days > 0) ChronoUnit.DAYS.between(partialStart, partialStart.plusYears(1)).toInt else 0
+      yearsRequired     = if (years < 5 && daysInPartialYear > 0) years + 1 else years
+    } yield LeaseDetails(
+      startDateDay    = startDate.getDayOfMonth,
+      startDateMonth  = startDate.getMonthValue,
+      startDateYear   = startDate.getYear,
+      endDateDay      = endDate.getDayOfMonth,
+      endDateMonth    = endDate.getMonthValue,
+      endDateYear     = endDate.getYear,
+      leaseTerm       = LeaseTerm(years = years, days = daysInPartialYear, daysInPartialYear = daysInPartialYear),
+      year1Rent       = rent,
+      year2Rent       = Option.when(yearsRequired >= 2)(rent),
+      year3Rent       = Option.when(yearsRequired >= 3)(rent),
+      year4Rent       = Option.when(yearsRequired >= 4)(rent),
+      year5Rent       = Option.when(yearsRequired >= 5)(rent)
+    )
 
-  private def buildRelevantRentDetails(
-    propertyCode:  String,
-    interestCode:  String,
-    fullReturn:    FullReturn,
-    effectiveDate: LocalDate
-  ): Option[RelevantRentDetails] = {
+  private def buildRelevantRentDetails(propertyCode: String,
+                                       interestCode: String,
+                                       fullReturn: FullReturn,
+                                       effectiveDate: LocalDate
+                                      ): Option[RelevantRentDetails] =
 
     Option.when(isMixedOrNonResidentialLeasehold(propertyCode, interestCode))(
       RelevantRentDetails(
         contractPre201603        = Option.unless(effectiveDate.isBefore(march2016NonResidentialDate))("Yes"),
         contractVariedPost201603 = Option.unless(effectiveDate.isBefore(march2016NonResidentialDate))("No"),
-        relevantRent             = Some(relevantRentAmount(fullReturn))
+        relevantRent             = Some(BigDecimal(
+          if (fullReturn.lease.exists(_.isAnnualRentOver1000.contains("true"))) 1000
+          else 0
+        ))
       )
-    )
-  }
-
-  private def toLeaseDetails(lease: Lease, effectiveDate: LocalDate): Option[LeaseDetails] =
-    for {
-      startStr          <- lease.contractStartDate
-      endStr            <- lease.contractEndDate
-      rentStr           <- lease.startingRent
-      startDate         <- Try(LocalDate.parse(startStr)).toOption
-      endDate           <- Try(LocalDate.parse(endStr)).toOption
-      rent              <- Try(BigDecimal(rentStr)).toOption
-      selectDate        = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
-      years             = Period.between(selectDate, endDate.plusDays(1)).getYears
-      partialStart      = selectDate.plusYears(years)
-      daysInPartialYear = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
-      yearsRequired     = if (years < 5 && daysInPartialYear > 0) years + 1 else years
-    } yield {
-      LeaseDetails(
-        startDateDay    = startDate.getDayOfMonth,
-        startDateMonth  = startDate.getMonthValue,
-        startDateYear   = startDate.getYear,
-        endDateDay      = endDate.getDayOfMonth,
-        endDateMonth    = endDate.getMonthValue,
-        endDateYear     = endDate.getYear,
-        leaseTerm       = LeaseTerm(years = years, days = daysInPartialYear, daysInPartialYear = daysInPartialYear),
-        year1Rent       = rent,
-        year2Rent       = Option.when(yearsRequired >= 2)(rent),
-        year3Rent       = Option.when(yearsRequired >= 3)(rent),
-        year4Rent       = Option.when(yearsRequired >= 4)(rent),
-        year5Rent       = Option.when(yearsRequired >= 5)(rent)
-      )
-    }
-
-  private val relevantRentAmount: FullReturn => BigDecimal = fullReturn =>
-    BigDecimal(
-      if (fullReturn.lease.exists(_.isAnnualRentOver1000.contains("true"))) 1000
-      else 0
     )
 
   private val isMixedOrNonResidentialLeasehold: (String, String) => Boolean = (propertyCode, interestCode) =>
     (toPropertyType(propertyCode) == PropertyTypes.nonResidential ||
       toPropertyType(propertyCode) == PropertyTypes.mixed) &&
       toHoldingType(interestCode) == HoldingTypes.leasehold
-  
+
   private val isIndividual: FullReturn => Boolean =
     _.purchaser
       .flatMap(_.headOption)
