@@ -44,6 +44,17 @@ trait TestObjects {
         |""".stripMargin).as[JsObject],
     lastUpdated = clock
   )
+  val uaFreeNonRes: UserAnswers = UserAnswers(
+    id = "user-123",
+    data = Json.parse(
+      """
+        |{
+        |"holdingType":"Freehold",
+        |"propertyType":"NonResidential"
+        |}
+        |""".stripMargin).as[JsObject],
+    lastUpdated = clock
+  )
 
   val uaFreeResBefore2016: UserAnswers = UserAnswers(
     id = "user-123",

@@ -8,8 +8,9 @@ package controllers.scalabuild
 import base.ScalaSpecBase
 import fixtures.scalabuild.TestObjects
 import forms.scalabuild.EffectiveDateFormProvider
-import org.scalatest.freespec.AnyFreeSpec
+import models.scalabuild.PropertyType.{NonResidential, Residential}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import pages.scalabuild.EffectiveDatePage
 import play.api.data.Form
@@ -21,39 +22,60 @@ import views.html.scalabuild.EffectiveDateView
 
 import java.time.LocalDate
 
-class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with MockitoSugar with TestObjects {
+class EffectiveDateControllerSpec extends AnyWordSpec with ScalaSpecBase with MockitoSugar with TestObjects {
 
   def onwardRoute: Call = Call("GET", "/calculate-stamp-duty-land-tax/non-uk-resident")
 
   val formProvider = new EffectiveDateFormProvider()
-  val form: Form[LocalDate] = formProvider()
+  val formForResidential: Form[LocalDate] = formProvider(Residential)
+  val formForNonResidential: Form[LocalDate] = formProvider(NonResidential)
   val thisYear = LocalDate.now().getYear
   val validEffectiveDate = LocalDate.of(thisYear, 1, 1)
 
   lazy val effectiveDateControllerRoute: String = controllers.scalabuild.routes.EffectiveDateController.onPageLoad().url
 
-  "Effective Date Controller" - {
+  "Effective Date Controller" should {
 
-    "must return OK and the correct view for a GET when saved user Details are fetched" in {
+    "must return OK and the correct view for a GET when saved user Details are fetched" when {
+      "property is Residential" in {
+        val userAnswers = uaFreeRes
 
-      val application =
-        applicationBuilder()
+        val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
           .build()
 
       running(application) {
-        val request = FakeRequest(GET, effectiveDateControllerRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+          val request = FakeRequest(GET, effectiveDateControllerRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        val view = application.injector.instanceOf[EffectiveDateView]
+          val view = application.injector.instanceOf[EffectiveDateView]
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form)(request, messages(application)).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(formForResidential)(request, messages(application)).toString
+        }
+      }
+      "property is Non-Residential" in {
+        val userAnswers = uaFreeRes
+        val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .build()
+
+      running(application) {
+          val request = FakeRequest(GET, effectiveDateControllerRoute).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[EffectiveDateView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(formForNonResidential)(request, messages(application)).toString
+        }
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = emptyUserAnswers2
+      val userAnswers = uaFreeRes
         .set(EffectiveDatePage, validEffectiveDate).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       running(application) {
@@ -62,7 +84,7 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
         val view = application.injector.instanceOf[EffectiveDateView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validEffectiveDate))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formForResidential.fill(validEffectiveDate))(request, messages(application)).toString
       }
     }
 
@@ -88,7 +110,7 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder().build()
+      val application = applicationBuilder(userAnswers = Some(uaFreeRes)).build()
 
       running(application) {
         val request =
@@ -99,7 +121,7 @@ class EffectiveDateControllerSpec extends AnyFreeSpec with ScalaSpecBase with Mo
               "effectiveDate.year" -> "2022"
             ).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 
-        val boundForm = form.bind(Map(
+        val boundForm = formForResidential.bind(Map(
           "effectiveDate.day" -> "invalidData",
           "effectiveDate.month" -> "2",
           "effectiveDate.year" -> "2022"

@@ -16,7 +16,7 @@ private[mappings] class LocalDateFormatter(
     allRequiredKey: String,
     twoRequiredKey: String,
     requiredKey: String,
-    yearMinDigitKey: String,
+    yearNotFourDigitsKey: String,
     args: Seq[String] = Seq.empty
 ) extends Formatter[LocalDate]
     with Formatters {
@@ -52,15 +52,15 @@ private[mappings] class LocalDateFormatter(
       day <- int.bind(s"$key.day", data)
       month <- int.bind(s"$key.month", data)
       year <- int.bind(s"$key.year", data)
-      year <- yearMinFourDigits(year)
+      year <- yearNotFourDigits(year)
       date <- toDate(key, day, month, year)
     } yield date
   }
 
-  private def yearMinFourDigits(year: Int) = {
+  private def yearNotFourDigits(year: Int) = {
     year.toString match {
-      case s if s.length < 4 =>
-        Left(Seq(FormError("year", yearMinDigitKey, args)))
+      case s if s.length != 4 =>
+        Left(Seq(FormError("year", yearNotFourDigitsKey, args)))
       case _ => Right(year)
     }
   }

@@ -4,6 +4,7 @@
  */
 
 package views.scalabuild
+import models.scalabuild.PropertyType.Residential
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.html.scalabuild.EffectiveDateView
@@ -11,7 +12,7 @@ import views.html.scalabuild.EffectiveDateView
 
 class EffectiveDateViewSpec extends ViewTestFixture {
   val view: EffectiveDateView = app.injector.instanceOf[views.html.scalabuild.EffectiveDateView]
-  val form: Form[_] = app.injector.instanceOf[forms.scalabuild.EffectiveDateFormProvider].apply()
+  val form: Form[_] = app.injector.instanceOf[forms.scalabuild.EffectiveDateFormProvider].apply(Residential)
   override val htmlContent: HtmlFormat.Appendable = view.apply(form)(fakeRequest, messages)
 
   "EffectiveDateView" must {

@@ -13,7 +13,7 @@ class PurchasePriceFormProvider  extends Mappings {
   def apply(): Form[BigDecimal] =
     Form(
       "premium" -> currency(
-        "purchasePrice.error.twoDecimalPlaces",
+        "purchasePrice.error.nonNumeric",
         "purchasePrice.error.nonNumeric")
     )
 }

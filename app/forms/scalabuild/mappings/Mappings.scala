@@ -8,23 +8,10 @@ package forms.scalabuild.mappings
 import models.scalabuild.Enumerable
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
+
 import java.time.LocalDate
 
 trait Mappings extends Formatters with Constraints {
-
-  protected def text(
-      errorKey: String = "error.required",
-      args: Seq[String] = Seq.empty
-  ): FieldMapping[String] =
-    of(stringFormatter(errorKey, args))
-
-  protected def int(
-      requiredKey: String = "error.required",
-      wholeNumberKey: String = "error.wholeNumber",
-      nonNumericKey: String = "error.nonNumeric",
-      args: Seq[String] = Seq.empty
-  ): FieldMapping[Int] =
-    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, args))
 
   protected def enumerable[A](
       requiredKey: String = "error.required",
@@ -45,7 +32,7 @@ trait Mappings extends Formatters with Constraints {
       allRequiredKey: String,
       twoRequiredKey: String,
       requiredKey: String,
-      yearMinDigitKey: String = "error.year.invalid",
+      yearNotFourDigitsKey: String = "error.year.invalid",
       args: Seq[String] = Seq.empty
   ): FieldMapping[LocalDate] =
     of(
@@ -54,13 +41,13 @@ trait Mappings extends Formatters with Constraints {
         allRequiredKey,
         twoRequiredKey,
         requiredKey,
-        yearMinDigitKey,
+        yearNotFourDigitsKey,
         args
       )
     )
 
   protected def currency(requiredKey: String = "error.required",
-                         twoDecimalPlacesKey: String = "error.twoDecimalPlaces",
+                         twoDecimalPlacesKey: String = "error.nonNumeric",
                          nonNumericKey: String = "error.nonNumeric",
                          args: Seq[String] = Seq.empty) : FieldMapping[BigDecimal] =
     of(currencyFormatter(requiredKey, twoDecimalPlacesKey, nonNumericKey, args))

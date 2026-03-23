@@ -8,7 +8,7 @@ package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.scalabuild.EffectiveDateFormProvider
 import navigation.scalabuild.Navigator
-import pages.scalabuild.EffectiveDatePage
+import pages.scalabuild.{EffectiveDatePage, ResidentialOrNonResidentialPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,18 +33,27 @@ class EffectiveDateController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val form = formProvider()
-    val dateFromForm = request.userAnswers.get(EffectiveDatePage)
-    val preparedForm = dateFromForm match {
-      case None        => form
-      case Some(value) => form.fillAndValidate(value)
-    }
-    Ok(view(preparedForm))
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    request.userAnswers
+      .get(ResidentialOrNonResidentialPage)
+      .fold(Future.successful(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))) {
+        PropertyType =>
+          val form = formProvider(PropertyType)
+          val dateFromForm = request.userAnswers.get(EffectiveDatePage)
+          val preparedForm = dateFromForm match {
+            case None        => form
+            case Some(value) => form.fillAndValidate(value)
+          }
+          Future.successful(Ok(view(preparedForm)))
+      }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val form: Form[LocalDate] = formProvider()
+    request.userAnswers
+      .get(ResidentialOrNonResidentialPage)
+      .fold(Future.successful(Redirect(controllers.scalabuild.routes.JourneyRecoveryController.onPageLoad()))) {
+        PropertyType =>
+        val form: Form[LocalDate] = formProvider(PropertyType)
     form
       .bindFromRequest()
       .fold(
@@ -55,6 +64,6 @@ class EffectiveDateController @Inject() (
               .fromTry(request.userAnswers.set(EffectiveDatePage, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(EffectiveDatePage, updatedAnswers))
-      )
+      )}
   }
 }
