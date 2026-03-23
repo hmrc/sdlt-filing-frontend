@@ -25,7 +25,7 @@ class ChangePurchaserOneFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("changePurchaserOne.error.required")
+      "value" -> text("purchaser.changePurchaserOne.error.required")
         .verifying(_.nonEmpty)
     )
 }

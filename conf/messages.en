@@ -732,7 +732,7 @@ purchaser.changePurchaserOne.title                                              
 purchaser.changePurchaserOne.heading                                                = Change purchaser 1
 purchaser.changePurchaserOne.subheading                                             = Who do you want to select as purchaser 1?
 purchaser.changePurchaserOne.paragraph                                              = Purchaser 1 is currently {0}. If you select a new purchaser 1, you will need to update their details.
-purchaser.changePurchaserOne.error.required                                         = Select changePurchaserOne
+purchaser.changePurchaserOne.error.required                                         = Please select a purchaser
 
 # Purchaser Agent
 purchaserAgent.overview.title                                                       = Purchaser’s agent overview - About the purchaser’s agent

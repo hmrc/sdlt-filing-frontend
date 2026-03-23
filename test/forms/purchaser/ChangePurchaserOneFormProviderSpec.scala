@@ -26,7 +26,7 @@ class ChangePurchaserOneFormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "changePurchaserOne.error.required"
+    val requiredKey = "purchaser.changePurchaserOne.error.required"
 
     "must not bind empty strings" in {
       val result = form.bind(

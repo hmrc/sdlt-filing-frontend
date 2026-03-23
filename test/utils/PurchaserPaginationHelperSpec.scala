@@ -48,8 +48,29 @@ class PurchaserPaginationHelperSpec extends SpecBase {
     dateOfBirth = Some("1985-03-15")
   )
 
+  private val companyPurchaser = Purchaser(
+    purchaserID = Some("PUR001"),
+    forename1 = None,
+    forename2 = None,
+    surname = None,
+    companyName = Some("ACME Ltd"),
+    address1 = Some("20 Test Road"),
+    address2 = None,
+    address3 = None,
+    address4 = None,
+    postcode = Some("L1 1AA"),
+    isCompany = Some("YES"),
+    phone = Some("07123456789"),
+    nino = None,
+    dateOfBirth = Some("1985-03-15")
+  )
+
   private val fullReturnWithIndividualPurchaser: FullReturn =
     emptyFullReturn.copy(purchaser = Some(Seq(individualPurchaser)),
+      returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))))
+
+  private val fullReturnWithCompanyPurchaser: FullReturn =
+    emptyFullReturn.copy(purchaser = Some(Seq(companyPurchaser)),
       returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))))
 
 
@@ -63,6 +84,7 @@ class PurchaserPaginationHelperSpec extends SpecBase {
       forename1 = forename1,
       forename2 = forename2,
       surname = name,
+      companyName = companyName,
       address1 = Some("123 Street")
     )
   }
@@ -275,6 +297,48 @@ class PurchaserPaginationHelperSpec extends SpecBase {
         val actions = result.get.rows.head.actions.get.items
         actions.head.visuallyHiddenText mustBe Some("John Smith")
         actions(1).visuallyHiddenText mustBe Some("John Smith")
+      }
+
+      "must use company name with main purchaser label when main purchaser is true" in {
+        val purchasers = Seq(
+          createPurchaser(
+            "PUR001",
+            forename1 = None,
+            forename2 = None,
+            name = None ,
+            companyName = Some("ACME Ltd")
+          )
+        )
+
+        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+          .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
+
+        val result = helper.generatePurchaserSummary(1, purchasers, userAnswers)
+
+        result mustBe defined
+        result.get.rows.head.key.content.asHtml.body must include("ACME Ltd")
+        result.get.rows.head.key.content.asHtml.body must include("purchaser.purchaserOverview.purchaser1")
+      }
+
+      "must use company name with main purchaser label when main purchaser is false" in {
+        val purchasers = Seq(
+          createPurchaser(
+            "PUR002",
+            forename1 = None,
+            forename2 = None,
+            name = None,
+            companyName = Some("ACME Ltd")
+          )
+        )
+
+        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+          .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
+
+        val result = helper.generatePurchaserSummary(1, purchasers, userAnswers)
+
+        result mustBe defined
+        result.get.rows.head.key.content.asHtml.body must include("ACME Ltd")
+        result.get.rows.head.key.content.asHtml.body must not include("purchaser.purchaserOverview.purchaser1")
       }
     }
 
