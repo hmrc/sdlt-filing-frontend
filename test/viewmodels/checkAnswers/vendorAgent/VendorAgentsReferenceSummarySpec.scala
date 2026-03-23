@@ -18,7 +18,6 @@ package viewmodels.checkAnswers.vendorAgent
 
 import base.SpecBase
 import models.CheckMode
-import models.vendorAgent.VendorAgentsAddReference
 import pages.vendorAgent.{VendorAgentsAddReferencePage, VendorAgentsReferencePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
@@ -71,7 +70,7 @@ class VendorAgentsReferenceSummarySpec extends SpecBase {
     }
 
     "must return a SummaryListRow with a link to enter reference number when add reference number is true" in {
-      val userAnswers = emptyUserAnswers.set(VendorAgentsAddReferencePage, VendorAgentsAddReference.Yes).success.value
+      val userAnswers = emptyUserAnswers.set(VendorAgentsAddReferencePage, true).success.value
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -91,7 +90,7 @@ class VendorAgentsReferenceSummarySpec extends SpecBase {
     }
 
     "must return None when add reference number is false" in {
-      val userAnswers = emptyUserAnswers.set(VendorAgentsAddReferencePage, VendorAgentsAddReference.No).success.value
+      val userAnswers = emptyUserAnswers.set(VendorAgentsAddReferencePage, false).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {

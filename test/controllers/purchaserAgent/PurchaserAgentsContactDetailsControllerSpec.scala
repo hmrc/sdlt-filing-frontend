@@ -26,9 +26,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaserAgent.{PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage}
+import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage}
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -53,27 +52,14 @@ class PurchaserAgentsContactDetailsControllerSpec extends SpecBase with MockitoS
 
   lazy val purchaserAgentsContactDetailsRoute: String = controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode).url
 
-  val userAnswersNoAgentName: UserAnswers = UserAnswers(
-    id = userAnswersId,
-    storn = "ST0005",
-    data = Json.obj(
-      PurchaserAgentsContactDetailsPage.toString -> Json.obj(
-        "phoneNumber" -> "07564736483",
-        "emailAddress" -> "test@test.com"
-      )
-    )
-  )
+  val userAnswersNoAgentName: UserAnswers = emptyUserAnswers
 
-  val userAnswersWithAgentName: UserAnswers = UserAnswers(
-    id = userAnswersId,
-    storn = "ST0005",
-    data = Json.obj(
-      PurchaserAgentsContactDetailsPage.toString -> Json.obj(
-        "phoneNumber" -> "07564736483",
-        "emailAddress" -> "test@test.com"
-      )
-    )
-  ).set(PurchaserAgentNamePage, "Bob the Agent").success.value
+  val userAnswersWithAgentName: UserAnswers = userAnswersNoAgentName
+    .set(PurchaserAgentNamePage, "Bob the Agent").success.value
+    .set(AddContactDetailsForPurchaserAgentPage, true).success.value
+
+  val userAnswersWithNoAddContactDetails: UserAnswers = userAnswersWithAgentName
+    .set(AddContactDetailsForPurchaserAgentPage, false).success.value
 
 
   "PurchaserAgentsContactDetails Controller" - {
@@ -112,13 +98,29 @@ class PurchaserAgentsContactDetailsControllerSpec extends SpecBase with MockitoS
       }
     }
 
+    "must redirect to check your answers when add agent contact details is 'no' for a GET" in {
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoAddContactDetails)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, purchaserAgentsContactDetailsRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswersWithData =
-        emptyUserAnswers
-          .set(PurchaserAgentNamePage, "Bob the Agent").success.value
+      val userAnswersWithData = userAnswersWithAgentName
           .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(
-            Some("07564738493"), Some("test@test.com"))).success.value
+            Some("07564738493"), Some("test@test.com"))
+          ).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithData)).build()
 

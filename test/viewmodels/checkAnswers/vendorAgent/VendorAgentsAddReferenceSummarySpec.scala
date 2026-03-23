@@ -18,7 +18,6 @@ package viewmodels.checkAnswers.vendorAgent
 
 import base.SpecBase
 import models.CheckMode
-import models.vendorAgent.VendorAgentsAddReference
 import pages.vendorAgent.VendorAgentsAddReferencePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
@@ -35,7 +34,7 @@ class VendorAgentsAddReferenceSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(VendorAgentsAddReferencePage, VendorAgentsAddReference.Yes).success.value
+            .set(VendorAgentsAddReferencePage, true).success.value
 
           val result = VendorAgentsAddReferenceSummary.row(userAnswers)
 

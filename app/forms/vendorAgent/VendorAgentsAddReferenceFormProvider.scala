@@ -17,15 +17,14 @@
 package forms.vendorAgent
 
 import forms.mappings.Mappings
-import models.vendorAgent.VendorAgentsAddReference
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class VendorAgentsAddReferenceFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[VendorAgentsAddReference] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[VendorAgentsAddReference]("vendorAgent.VendorAgentsAddReference.error.required")
+      "value" -> boolean("vendorAgent.VendorAgentsAddReference.error.required")
     )
 }

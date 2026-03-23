@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaserAgent.{PurchaserAgentNamePage, PurchaserAgentReferencePage}
+import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentNamePage, PurchaserAgentReferencePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -43,7 +43,13 @@ class PurchaserAgentReferenceControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val purchaserAgentReferenceRoute = controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(NormalMode).url
 
-  val userAnswersWithAgentName: UserAnswers = emptyUserAnswers.set(PurchaserAgentNamePage, "Agent Name").success.value
+  val userAnswersWithAgentName: UserAnswers = emptyUserAnswers
+    .set(PurchaserAgentNamePage, "Agent Name").success.value
+    .set(AddPurchaserAgentReferenceNumberPage, true).success.value
+
+  val userAnswersWithNoAddReferenceNumber: UserAnswers = emptyUserAnswers
+    .set(PurchaserAgentNamePage, "Agent Name").success.value
+    .set(AddPurchaserAgentReferenceNumberPage, false).success.value
 
   "PurchaserAgentReference Controller" - {
 
@@ -74,6 +80,20 @@ class PurchaserAgentReferenceControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to check your answers if add agent reference number is 'no' for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNoAddReferenceNumber)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, purchaserAgentReferenceRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url
       }
     }
 

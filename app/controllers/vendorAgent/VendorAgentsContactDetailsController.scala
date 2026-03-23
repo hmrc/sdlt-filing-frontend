@@ -21,7 +21,7 @@ import forms.vendorAgent.VendorAgentsContactDetailsFormProvider
 import models.{Mode, NormalMode}
 import models.vendorAgent.VendorAgentsContactDetails
 import navigation.Navigator
-import pages.vendorAgent.{AgentNamePage, VendorAgentsContactDetailsPage}
+import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorAgentsContactDetailsPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -59,12 +59,17 @@ class VendorAgentsContactDetailsController @Inject()(
           Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode))
 
         case Some(agentName) =>
-          val preparedForm = request.userAnswers.get(VendorAgentsContactDetailsPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
+          request.userAnswers.get(AddVendorAgentContactDetailsPage) match {
+            case Some(addContactDetails) if addContactDetails =>
+              val preparedForm = request.userAnswers.get(VendorAgentsContactDetailsPage) match {
+                case None => form
+                case Some(value) => form.fill(value)
+              }
+              val continueRoute = Ok(view(preparedForm, mode, agentName))
+              agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute, mode)
+            case _ =>
+              Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
           }
-          val continueRoute = Ok(view(preparedForm, mode, agentName))
-          agentChecksService.vendorAgentExistsCheck(request.userAnswers, continueRoute, mode)
       }
   }
 

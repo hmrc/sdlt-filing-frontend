@@ -58,7 +58,7 @@ class VendorAgentService {
           withContact <- withAddress.set(AddVendorAgentContactDetailsPage, hasContactDetails)
           withDetails <- if (hasContactDetails) withContact.set(VendorAgentsContactDetailsPage, vendorAgentsContactDetails)
           else Try(withContact)
-          withAddRef <- withDetails.set(VendorAgentsAddReferencePage, if (hasReference) VendorAgentsAddReference.Yes else VendorAgentsAddReference.No)
+          withAddRef <- withDetails.set(VendorAgentsAddReferencePage, hasReference)
           finalAnswers <- returnAgent.reference match {
             case Some(ref) => withAddRef.set(VendorAgentsReferencePage, ref)
             case None => Try(withAddRef)
@@ -69,5 +69,10 @@ class VendorAgentService {
         Try(throw new IllegalStateException(s"ReturnAgent is missing a returnAgentID"))
     }
   }
+
+  def vendorAgentSessionQuestionsValidation(sessionData: VendorAgentSessionQuestions): Boolean =
+    val validContactDetailsAnswers = if sessionData.addVendorAgentContactDetails then sessionData.vendorAgentContactDetails.isDefined else true
+    val validReferenceNumberAnswers = if sessionData.vendorAgentsAddReference then sessionData.vendorAgentReference.isDefined else true
+    validContactDetailsAnswers && validReferenceNumberAnswers
   
 }

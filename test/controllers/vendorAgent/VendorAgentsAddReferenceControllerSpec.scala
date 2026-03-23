@@ -20,7 +20,6 @@ import base.SpecBase
 import constants.FullReturnConstants
 import controllers.routes
 import forms.vendorAgent.VendorAgentsAddReferenceFormProvider
-import models.vendorAgent.VendorAgentsAddReference
 import models.{FullReturn, NormalMode, ReturnAgent, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -66,7 +65,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
 
   val agentName = "test"
   val formProvider = new VendorAgentsAddReferenceFormProvider()
-  val form: Form[VendorAgentsAddReference] = formProvider()
+  val form: Form[Boolean] = formProvider()
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
 
@@ -94,7 +93,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
           data = Json.obj(
             "vendorAgentCurrent" -> Json.obj(
               "vendorAgentName" -> "test",
-              "vendorAgentsAddReference" -> "yes"
+              "vendorAgentsAddReference" -> true
             )
           )
         )
@@ -109,7 +108,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
           val result = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) mustEqual
-            view(form.fill(VendorAgentsAddReference.Yes), NormalMode, agentName)(request, customMessages(application, request)).toString
+            view(form.fill(true), NormalMode, agentName)(request, customMessages(application, request)).toString
 
         }
       }
@@ -171,7 +170,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
         running(application) {
           val request =
             FakeRequest(POST, vendorAgentsAddReferenceRoutePost)
-              .withFormUrlEncodedBody(("value", VendorAgentsAddReference.Yes.toString))
+              .withFormUrlEncodedBody(("value", "true"))
 
           val result = route(application, request).value
 
@@ -194,7 +193,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
         running(application) {
           val request =
             FakeRequest(POST, vendorAgentsAddReferenceRoutePost)
-              .withFormUrlEncodedBody(("value", VendorAgentsAddReference.No.toString))
+              .withFormUrlEncodedBody(("value", "false"))
 
           val result = route(application, request).value
 
@@ -210,7 +209,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
         running(application) {
           val request =
             FakeRequest(POST, vendorAgentsAddReferenceRoutePost)
-              .withFormUrlEncodedBody(("value", VendorAgentsAddReference.Yes.toString))
+              .withFormUrlEncodedBody(("value", "true"))
 
           val result = route(application, request).value
 
@@ -245,7 +244,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
         running(application) {
           val request =
             FakeRequest(POST, vendorAgentsAddReferenceRoutePost)
-              .withFormUrlEncodedBody(("value", VendorAgentsAddReference.Yes.toString))
+              .withFormUrlEncodedBody(("value", "true"))
 
           val result = route(application, request).value
 

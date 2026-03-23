@@ -59,6 +59,8 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       postcode = Some("AA1 1AA"),
       country = Some(Country(Some("GB"), Some("United Kingdom")))
     )).success.value
+    .set(AddVendorAgentContactDetailsPage, false).success.value
+    .set(VendorAgentsAddReferencePage, false).success.value
 
   private val userAnswersWithCompleteAnswers = emptyUserAnswers
     .copy(
@@ -74,6 +76,8 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       postcode = Some("AA1 1AA"),
       country = Some(Country(Some("GB"), Some("United Kingdom")))
     )).success.value
+    .set(AddVendorAgentContactDetailsPage, false).success.value
+    .set(VendorAgentsAddReferencePage, false).success.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -187,6 +191,27 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
           verify(mockBackendConnector, atLeastOnce()).createReturnAgent(any[CreateReturnAgentRequest])(any(), any())
           flash(result).get("vendorAgentCreated") mustBe Some("Agent name")
+        }
+      }
+
+      "must redirect to same page if mandatory data is missing" in {
+        val userAnswers = userAnswersWithCompleteAnswers
+          .set(AddVendorAgentContactDetailsPage, true).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
         }
       }
 

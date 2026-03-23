@@ -21,7 +21,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import models.Agent
 import models.address.*
-import models.purchaserAgent.{PurchaserAgentAuthorised, PurchaserAgentsContactDetails, SelectPurchaserAgent}
+import models.purchaserAgent.{PurchaserAgentAuthorised, PurchaserAgentSessionQuestions, PurchaserAgentsContactDetails, SelectPurchaserAgent}
 import navigation.Navigator
 import pages.purchaserAgent.*
 import repositories.SessionRepository
@@ -180,5 +180,9 @@ class PurchaserAgentService @Inject(
         Try(throw new IllegalStateException(s"ReturnAgent is missing a returnAgentID"))
     }
   }
-
+  
+  def purchaserAgentSessionQuestionsValidation(sessionData: PurchaserAgentSessionQuestions): Boolean =
+    val validContactDetailsAnswers = if sessionData.addContactDetailsForPurchaserAgent then sessionData.purchaserAgentContactDetails.isDefined else true
+    val validReferenceNumberAnswers = if sessionData.addPurchaserAgentReferenceNumber then sessionData.purchaserAgentReference.isDefined else true
+    validContactDetailsAnswers && validReferenceNumberAnswers
 }

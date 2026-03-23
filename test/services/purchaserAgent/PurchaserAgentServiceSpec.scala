@@ -18,8 +18,8 @@ package services.purchaserAgent
 
 import base.SpecBase
 import models.address.Address
-import models.purchaserAgent.{PurchaserAgentsContactDetails, SelectPurchaserAgent}
-import models.{FullReturn, NormalMode, ReturnAgent, UserAnswers, Agent}
+import models.purchaserAgent.{PurchaserAgentSessionAddress, PurchaserAgentSessionQuestions, PurchaserAgentsContactDetails, SelectPurchaserAgent}
+import models.{Agent, FullReturn, NormalMode, ReturnAgent, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
@@ -526,6 +526,108 @@ class PurchaserAgentServiceSpec extends SpecBase {
 
         result.isFailure mustBe true
         result.failed.get mustBe a[IllegalStateException]
+      }
+    }
+
+    "purchaserAgentSessionQuestionsValidation" - {
+
+      "must return true for valid session data with no optional fields" in {
+        val sessionData = PurchaserAgentSessionQuestions(
+          purchaserAgentName = "Agent Name",
+          purchaserAgentAddress = PurchaserAgentSessionAddress(
+            houseNumber = Some(1),
+            line1 = "Street 1",
+            line2 = None,
+            line3 = None,
+            line4 = None,
+            line5 = None,
+            postcode = "W9 2NP",
+            country = None,
+            addressValidated = false
+          ),
+          addContactDetailsForPurchaserAgent = false,
+          addPurchaserAgentReferenceNumber = false,
+          purchaserAgentAuthorised = "YES"
+        )
+
+        val result = service.purchaserAgentSessionQuestionsValidation(sessionData)
+        result mustBe true
+      }
+
+      "must return true for valid session data with optional fields" in {
+        val sessionData = PurchaserAgentSessionQuestions(
+          purchaserAgentName = "Agent Name",
+          purchaserAgentAddress = PurchaserAgentSessionAddress(
+            houseNumber = Some(1),
+            line1 = "Street 1",
+            line2 = None,
+            line3 = None,
+            line4 = None,
+            line5 = None,
+            postcode = "W9 2NP",
+            country = None,
+            addressValidated = false
+          ),
+          addContactDetailsForPurchaserAgent = true,
+          purchaserAgentContactDetails = Some(PurchaserAgentsContactDetails(
+            phoneNumber = Some("1234567890"),
+            emailAddress = Some("test@email.com")
+          )),
+          addPurchaserAgentReferenceNumber = true,
+          purchaserAgentReference = Some("1234"),
+          purchaserAgentAuthorised = "YES"
+        )
+
+        val result = service.purchaserAgentSessionQuestionsValidation(sessionData)
+        result mustBe true
+      }
+
+      "must return false if addContactDetailsForPurchaserAgent is true but contact details are missing" in {
+        val sessionData = PurchaserAgentSessionQuestions(
+          purchaserAgentName = "Agent Name",
+          purchaserAgentAddress = PurchaserAgentSessionAddress(
+            houseNumber = Some(1),
+            line1 = "Street 1",
+            line2 = None,
+            line3 = None,
+            line4 = None,
+            line5 = None,
+            postcode = "W9 2NP",
+            country = None,
+            addressValidated = false
+          ),
+          addContactDetailsForPurchaserAgent = true,
+          purchaserAgentContactDetails = None,
+          addPurchaserAgentReferenceNumber = false,
+          purchaserAgentAuthorised = "YES"
+        )
+
+        val result = service.purchaserAgentSessionQuestionsValidation(sessionData)
+        result mustBe false
+      }
+
+      "must return false if addPurchaserAgentReferenceNumber is true but reference number is missing" in {
+        val sessionData = PurchaserAgentSessionQuestions(
+          purchaserAgentName = "Agent Name",
+          purchaserAgentAddress = PurchaserAgentSessionAddress(
+            houseNumber = Some(1),
+            line1 = "Street 1",
+            line2 = None,
+            line3 = None,
+            line4 = None,
+            line5 = None,
+            postcode = "W9 2NP",
+            country = None,
+            addressValidated = false
+          ),
+          addContactDetailsForPurchaserAgent = false,
+          addPurchaserAgentReferenceNumber = true,
+          purchaserAgentReference = None,
+          purchaserAgentAuthorised = "YES"
+        )
+
+        val result = service.purchaserAgentSessionQuestionsValidation(sessionData)
+        result mustBe false
       }
     }
   }

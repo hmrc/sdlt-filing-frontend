@@ -50,6 +50,10 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
     .set(AgentNamePage, "Jones & Co, Leeds").success.value
     .set(AddVendorAgentContactDetailsPage, true).success.value
 
+  val userAnswersWithNoAddContactDetails: UserAnswers = emptyUserAnswers
+    .set(AgentNamePage, "Jones & Co, Leeds").success.value
+    .set(AddVendorAgentContactDetailsPage, false).success.value
+
   val agentName = "Jones & Co, Leeds"
 
   val userAnswersMissingAgentName: UserAnswers = emptyUserAnswers
@@ -174,6 +178,22 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to check your answers if add contact details is 'no' for a GET" in {
+
+      val userAnswers = userAnswersWithNoAddContactDetails
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, vendorAgentsContactDetailsRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
       }
     }
 

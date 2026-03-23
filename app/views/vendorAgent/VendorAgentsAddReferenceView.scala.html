@@ -16,7 +16,6 @@
 
 @import viewmodels.LegendSize.Large
 @import views.html.components.Caption
-@import models.vendorAgent.VendorAgentsAddReference
 
 @this(
     layout: templates.Layout,
@@ -34,7 +33,7 @@
     @formHelper(action = controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @caption(messages("site.vendorAgent.caption"))
@@ -43,7 +42,16 @@
             RadiosViewModel(
                 field  = form("value"),
                 legend = LegendViewModel(messages("vendorAgent.VendorAgentsAddReference.heading")).asPageHeading(size = Large),
-                items  = VendorAgentsAddReference.options
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
             ).withHint(HintViewModel(HtmlContent(Html(messages("vendorAgent.VendorAgentsAddReference.hint", agentName)))))
          )
 

@@ -515,6 +515,8 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
               postcode = Some("AA1 1AA"),
               country = Some(Country(Some("GB"), Some("United Kingdom")))
             )).success.value
+            .set(AddContactDetailsForPurchaserAgentPage, false).success.value
+            .set(AddPurchaserAgentReferenceNumberPage, false).success.value
             .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
 
           val createReturnAgentRequest = CreateReturnAgentRequest(
@@ -550,6 +552,8 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
               postcode = Some("AA1 1AA"),
               country = Some(Country(Some("GB"), Some("United Kingdom")))
             )).success.value
+            .set(AddContactDetailsForPurchaserAgentPage, true).success.value
+            .set(AddPurchaserAgentReferenceNumberPage, true).success.value
             .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
             .set(PurchaserAgentReferencePage, "AGT-REF-001").success.value
             .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
@@ -609,6 +613,8 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
               postcode = Some("AA1 1AA"),
               country = Some(Country(Some("GB"), Some("United Kingdom")))
             )).success.value
+            .set(AddVendorAgentContactDetailsPage, false).success.value
+            .set(VendorAgentsAddReferencePage, false).success.value
 
           val createReturnAgentRequest = CreateReturnAgentRequest(
             stornId = "TESTSTORN",
@@ -643,6 +649,8 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
               postcode = Some("AA1 1AA"),
               country = Some(Country(Some("GB"), Some("United Kingdom")))
             )).success.value
+            .set(AddVendorAgentContactDetailsPage, true).success.value
+            .set(VendorAgentsAddReferencePage, true).success.value
             .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
             .set(VendorAgentsReferencePage, "AGT-REF-001").success.value
 
@@ -1232,6 +1240,8 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
               postcode = Some("AA1 1AA"),
               country = Some(Country(Some("GB"), Some("United Kingdom")))
             )).success.value
+            .set(AddContactDetailsForPurchaserAgentPage, false).success.value
+            .set(AddPurchaserAgentReferenceNumberPage, false).success.value
             .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
 
           val updateReturnAgentRequest = UpdateReturnAgentRequest(
@@ -1267,6 +1277,8 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
               postcode = Some("AA1 1AA"),
               country = Some(Country(Some("GB"), Some("United Kingdom")))
             )).success.value
+            .set(AddContactDetailsForPurchaserAgentPage, true).success.value
+            .set(AddPurchaserAgentReferenceNumberPage, true).success.value
             .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
             .set(PurchaserAgentReferencePage, "AGT-REF-001").success.value
             .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
@@ -1326,6 +1338,8 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
               postcode = Some("AA1 1AA"),
               country = Some(Country(Some("GB"), Some("United Kingdom")))
             )).success.value
+            .set(AddVendorAgentContactDetailsPage, false).success.value
+            .set(VendorAgentsAddReferencePage, false).success.value
 
           val updateReturnAgentRequest = UpdateReturnAgentRequest(
             stornId = "TESTSTORN",
@@ -1360,6 +1374,8 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
               postcode = Some("AA1 1AA"),
               country = Some(Country(Some("GB"), Some("United Kingdom")))
             )).success.value
+            .set(AddVendorAgentContactDetailsPage, true).success.value
+            .set(VendorAgentsAddReferencePage, true).success.value
             .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
             .set(VendorAgentsReferencePage, "AGT-REF-001").success.value
 
