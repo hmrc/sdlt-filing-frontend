@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package services
+package services.taxCalculation
 
 import connectors.SdltCalculationConnector
+import models.land.{LandInterestTransferredOrCreated, LandTypeOfProperty}
 import models.{FullReturn, Lease, Transaction, UserAnswers}
 import models.taxCalculation.*
 import org.slf4j.{Logger, LoggerFactory}
@@ -52,8 +53,8 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       interestCode       <- land.interestCreatedTransferred.toRight("interestCreatedTransferred not found in Land")
       propertyCode       <- land.propertyType.toRight("propertyType not found in Land")
       effectiveDate      <- transaction.effectiveDate.toRight("effectiveDate not found in Transaction")
-      dateTuple          <- parseEffectiveDate(effectiveDate).toRight("Failed to parse effectiveDate")
-      (day, month, year)  = dateTuple
+      dateTuple          <- Try(LocalDate.parse(effectiveDate)).toOption.toRight("Failed to parse effectiveDate")
+      (day, month, year)  = (dateTuple.getDayOfMonth, dateTuple.getMonthValue, dateTuple.getYear)
       parsedDate          = LocalDate.of(year, month, day)
       premium            <- transaction.totalConsideration.toRight("totalConsideration not found in Transaction")
     } yield SdltCalculationRequest(
@@ -69,24 +70,30 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       leaseDetails        = buildLeaseDetails(interestCode, fullReturn, parsedDate),
       relevantRentDetails = buildRelevantRentDetails(propertyCode, interestCode, transaction, fullReturn, parsedDate),
       firstTimeBuyer      = None,
-      isLinked            = toIsLinked(transaction),
+      isLinked            = transaction.isLinked.map(_.toUpperCase == "YES"),
       interestTransferred = Some(interestCode),
       taxReliefDetails    = None,
       isMultipleLand      = fullReturn.land.map(_.size > 1)
     )
 
-  private def toHoldingType(interestCode: String): HoldingTypes.Value =
-    if (interestCode.startsWith("F")) HoldingTypes.freehold else HoldingTypes.leasehold
+  private def toHoldingType(interestCode: String): HoldingTypes.Value = interestCode match {
+    case LandInterestTransferredOrCreated.FG.toString => HoldingTypes.freehold
+    case LandInterestTransferredOrCreated.FP.toString => HoldingTypes.freehold
+    case LandInterestTransferredOrCreated.FT.toString => HoldingTypes.freehold
+    case LandInterestTransferredOrCreated.LG.toString => HoldingTypes.leasehold
+    case LandInterestTransferredOrCreated.LP.toString => HoldingTypes.leasehold
+    case LandInterestTransferredOrCreated.LT.toString => HoldingTypes.leasehold
+  }
 
   private def toPropertyType(propertyCode: String): PropertyTypes.Value = propertyCode match {
-    case "01" | "04" => PropertyTypes.residential
-    case "02"        => PropertyTypes.mixed
-    case "03"        => PropertyTypes.nonResidential
+    case LandTypeOfProperty.Residential.toString | LandTypeOfProperty.Additional.toString => PropertyTypes.residential
+    case LandTypeOfProperty.Mixed.toString                                                => PropertyTypes.mixed
+    case LandTypeOfProperty.NonResidential.toString                                       => PropertyTypes.nonResidential
   }
 
   private def buildPropertyDetails(propertyCode: String, fullReturn: FullReturn): Option[PropertyDetails] =
     propertyCode match {
-      case "04" =>
+      case LandTypeOfProperty.Additional.toString =>
         Some(PropertyDetails(
           individual           = "Yes",
           twoOrMoreProperties  = Some("Yes"),
@@ -94,13 +101,9 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
           sharedOwnership      = None,
           currentValue         = None
         ))
-      case "01" =>
-        val isIndividual = fullReturn.purchaser
-          .flatMap(_.headOption)
-          .flatMap(_.isCompany)
-          .exists(_.toUpperCase == "NO")
+      case LandTypeOfProperty.Residential.toString =>
         Some(PropertyDetails(
-          individual           = if (isIndividual) "Yes" else "No",
+          individual           = if (isIndividual(fullReturn)) "Yes" else "No",
           twoOrMoreProperties  = None,
           replaceMainResidence = None,
           sharedOwnership      = None,
@@ -108,14 +111,6 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
         ))
       case _ => None
     }
-
-  private def parseEffectiveDate(date: String): Option[(Int, Int, Int)] =
-    Try(LocalDate.parse(date))
-      .toOption
-      .map(d => (d.getDayOfMonth, d.getMonthValue, d.getYear))
-
-  private def toIsLinked(transaction: Transaction): Option[Boolean] =
-    transaction.isLinked.map(_.toUpperCase == "YES")
 
   private def buildLeaseDetails(interestCode: String, fullReturn: FullReturn, effectiveDate: LocalDate): Option[LeaseDetails] =
     fullReturn.lease
@@ -129,55 +124,31 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
     fullReturn:    FullReturn,
     effectiveDate: LocalDate
   ): Option[RelevantRentDetails] = {
-    val isApplicableLeasehold =
-      (toPropertyType(propertyCode) == PropertyTypes.nonResidential || toPropertyType(propertyCode) == PropertyTypes.mixed) &&
-      toHoldingType(interestCode) == HoldingTypes.leasehold
 
-    if (!isApplicableLeasehold) { None }
-    else {
-
-      val rent = fullReturn.lease.flatMap(_.startingRent).flatMap(r => Try(BigDecimal(r)).toOption)
-
-      val annualRentIs1000OrMore = fullReturn.lease.exists(_.isAnnualRentOver1000.contains(true))
-
-      if (effectiveDate.isBefore(march2016NonResidentialDate)) {
-        // Before 17 March 2016: only relevantRent is required
-        rent.map(r => RelevantRentDetails(
-          contractPre201603        = None,
-          contractVariedPost201603 = None,
-          relevantRent             = Some(if (annualRentIs1000OrMore) 1000 else 0)
-        ))
-      } else {
-        // On/after 17 March 2016: contractPre201603 is required
-        transaction.contractDate
-          .flatMap(d => Try(LocalDate.parse(d)).toOption)
-          .map { contractDate =>
-            val contractBefore = contractDate.isBefore(march2016NonResidentialDate)
-            RelevantRentDetails(
-              contractPre201603        = Some(if (contractBefore) "Yes" else "No"),
-              contractVariedPost201603 = None, // not captured in current data model; only valid when contractBefore = false
-              relevantRent             = Some(if (annualRentIs1000OrMore) 1000 else 0)
-            )
-          }
-      }
-    }
+    for {
+      contractPre201603 <- deriveContractPre201603(transaction, effectiveDate)
+      if isMixedOrNonResidentialLeasehold(propertyCode, interestCode)
+    } yield RelevantRentDetails(
+      contractPre201603        = Some(contractPre201603),
+      contractVariedPost201603 = None, // not captured in current data model; only valid when contractPre201603 = "No"
+      relevantRent             = Some(relevantRentAmount(fullReturn))
+    )
   }
 
   private def toLeaseDetails(lease: Lease, effectiveDate: LocalDate): Option[LeaseDetails] =
     for {
-      startStr  <- lease.contractStartDate
-      endStr    <- lease.contractEndDate
-      rentStr   <- lease.startingRent
-      startDate <- Try(LocalDate.parse(startStr)).toOption
-      endDate   <- Try(LocalDate.parse(endStr)).toOption
-      rent      <- Try(BigDecimal(rentStr)).toOption
+      startStr          <- lease.contractStartDate
+      endStr            <- lease.contractEndDate
+      rentStr           <- lease.startingRent
+      startDate         <- Try(LocalDate.parse(startStr)).toOption
+      endDate           <- Try(LocalDate.parse(endStr)).toOption
+      rent              <- Try(BigDecimal(rentStr)).toOption
+      selectDate        = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
+      years             = Period.between(selectDate, endDate.plusDays(1)).getYears
+      partialStart      = selectDate.plusYears(years)
+      daysInPartialYear = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
+      yearsRequired     = if (years < 5 && daysInPartialYear > 0) years + 1 else years
     } yield {
-      val selectDate        = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
-      val years             = Period.between(selectDate, endDate.plusDays(1)).getYears
-      val partialStart      = selectDate.plusYears(years)
-      val daysInPartialYear = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
-      val yearsRequired     = if (years < 5 && daysInPartialYear > 0) years + 1 else years
-
       LeaseDetails(
         startDateDay    = startDate.getDayOfMonth,
         startDateMonth  = startDate.getMonthValue,
@@ -193,4 +164,33 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
         year5Rent       = Option.when(yearsRequired >= 5)(rent)
       )
     }
+
+  private val deriveContractPre201603: (Transaction, LocalDate) => Option[String] =
+    (transaction, effectiveDate) =>
+      if (effectiveDate.isBefore(march2016NonResidentialDate)) {
+        None
+      } else {
+        transaction.contractDate
+          .flatMap(d => Try(LocalDate.parse(d)).toOption)
+          .map(d => if (d.isBefore(march2016NonResidentialDate)) "Yes" else "No")
+      }
+
+  private val relevantRentAmount: FullReturn => BigDecimal = fullReturn =>
+    BigDecimal(if (annualRentIs1000OrMore(fullReturn)) 1000 else 0)
+
+  private val annualRentIs1000OrMore: FullReturn => Boolean =
+    _.lease.exists(
+      _.isAnnualRentOver1000.contains("true")
+    )
+
+  private val isMixedOrNonResidentialLeasehold: (String, String) => Boolean = (propertyCode, interestCode) =>
+    (toPropertyType(propertyCode) == PropertyTypes.nonResidential ||
+      toPropertyType(propertyCode) == PropertyTypes.mixed) &&
+      toHoldingType(interestCode) == HoldingTypes.leasehold
+  
+  private val isIndividual: FullReturn => Boolean =
+    _.purchaser
+      .flatMap(_.headOption)
+      .flatMap(_.isCompany)
+      .exists(_.toUpperCase == "NO")
 }
