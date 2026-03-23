@@ -53,9 +53,8 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       interestCode       <- land.interestCreatedTransferred.toRight("interestCreatedTransferred not found in Land")
       propertyCode       <- land.propertyType.toRight("propertyType not found in Land")
       effectiveDate      <- transaction.effectiveDate.toRight("effectiveDate not found in Transaction")
-      dateTuple          <- Try(LocalDate.parse(effectiveDate)).toOption.toRight("Failed to parse effectiveDate")
-      (day, month, year)  = (dateTuple.getDayOfMonth, dateTuple.getMonthValue, dateTuple.getYear)
-      parsedDate          = LocalDate.of(year, month, day)
+      parsedDate         <- Try(LocalDate.parse(effectiveDate)).toOption.toRight("Failed to parse effectiveDate")
+      (day, month, year)  = (parsedDate.getDayOfMonth, parsedDate.getMonthValue, parsedDate.getYear)
       premium            <- transaction.totalConsideration.toRight("totalConsideration not found in Transaction")
     } yield SdltCalculationRequest(
       holdingType         = toHoldingType(interestCode),
@@ -125,14 +124,24 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
     effectiveDate: LocalDate
   ): Option[RelevantRentDetails] = {
 
-    for {
-      contractPre201603 <- deriveContractPre201603(transaction, effectiveDate)
-      if isMixedOrNonResidentialLeasehold(propertyCode, interestCode)
-    } yield RelevantRentDetails(
-      contractPre201603        = Some(contractPre201603),
-      contractVariedPost201603 = None, // not captured in current data model; only valid when contractPre201603 = "No"
-      relevantRent             = Some(relevantRentAmount(fullReturn))
-    )
+    if (!isMixedOrNonResidentialLeasehold(propertyCode, interestCode)) { // relevantRentDetails only applies to mixed or non-residential leasehold properties
+      None
+    } else if (effectiveDate.isBefore(march2016NonResidentialDate)) { // only relevantRent is required
+      Some(RelevantRentDetails(
+        contractPre201603        = None,
+        contractVariedPost201603 = None,
+        relevantRent             = Some(relevantRentAmount(fullReturn))
+      ))
+    } else { // contractPre201603 is also required
+      for {
+        contractDate       <- transaction.contractDate
+        parsedContractDate <- Try(LocalDate.parse(contractDate)).toOption
+      } yield RelevantRentDetails(
+        contractPre201603        = Some(if (parsedContractDate.isBefore(march2016NonResidentialDate)) "Yes" else "No"),
+        contractVariedPost201603 = None, // not captured in current data model; only valid when contractPre201603 = "No"
+        relevantRent             = Some(relevantRentAmount(fullReturn))
+      )
+    }
   }
 
   private def toLeaseDetails(lease: Lease, effectiveDate: LocalDate): Option[LeaseDetails] =
@@ -165,22 +174,10 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       )
     }
 
-  private val deriveContractPre201603: (Transaction, LocalDate) => Option[String] =
-    (transaction, effectiveDate) =>
-      if (effectiveDate.isBefore(march2016NonResidentialDate)) {
-        None
-      } else {
-        transaction.contractDate
-          .flatMap(d => Try(LocalDate.parse(d)).toOption)
-          .map(d => if (d.isBefore(march2016NonResidentialDate)) "Yes" else "No")
-      }
-
   private val relevantRentAmount: FullReturn => BigDecimal = fullReturn =>
-    BigDecimal(if (annualRentIs1000OrMore(fullReturn)) 1000 else 0)
-
-  private val annualRentIs1000OrMore: FullReturn => Boolean =
-    _.lease.exists(
-      _.isAnnualRentOver1000.contains("true")
+    BigDecimal(
+      if (fullReturn.lease.exists(_.isAnnualRentOver1000.contains("true"))) 1000
+      else 0
     )
 
   private val isMixedOrNonResidentialLeasehold: (String, String) => Boolean = (propertyCode, interestCode) =>
