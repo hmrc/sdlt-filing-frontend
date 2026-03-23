@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.purchaserAgent.PurchaserAgentReferenceFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.purchaserAgent.{PurchaserAgentNamePage, PurchaserAgentReferencePage}
+import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentNamePage, PurchaserAgentReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -50,13 +50,17 @@ class PurchaserAgentReferenceController @Inject()(
         case None =>
           Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode))
         case Some(agentName) =>
+          request.userAnswers.get(AddPurchaserAgentReferenceNumberPage) match {
+            case Some(addReferenceNumber) if addReferenceNumber =>
+              val preparedForm = request.userAnswers.get(PurchaserAgentReferencePage) match {
+                case None => form
+                case Some(value) => form.fill(value)
+              }
 
-          val preparedForm = request.userAnswers.get(PurchaserAgentReferencePage) match {
-            case None => form
-            case Some(value) => form.fill(value)
+              Ok(view(preparedForm, agentName, mode))
+            case _ =>
+              Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
           }
-
-          Ok(view(preparedForm, agentName, mode))
       }
   }
 

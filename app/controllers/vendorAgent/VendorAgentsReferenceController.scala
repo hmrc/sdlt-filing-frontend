@@ -55,7 +55,7 @@ class VendorAgentsReferenceController @Inject()(
 
         case Some(agentName) =>
           userAnswers.get(VendorAgentsAddReferencePage) match {
-            case Some(value) if value =>
+            case Some(addReferenceNumber) if addReferenceNumber =>
               val form = formProvider(agentName)
 
               val preparedForm = request.userAnswers.get(VendorAgentsReferencePage) match {
