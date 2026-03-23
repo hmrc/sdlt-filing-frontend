@@ -56,6 +56,7 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       parsedDate         <- Try(LocalDate.parse(effectiveDate)).toOption.toRight("Failed to parse effectiveDate")
       (day, month, year)  = (parsedDate.getDayOfMonth, parsedDate.getMonthValue, parsedDate.getYear)
       premium            <- transaction.totalConsideration.toRight("totalConsideration not found in Transaction")
+      leaseDetails       <- buildLeaseDetails(interestCode, fullReturn, parsedDate)
     } yield SdltCalculationRequest(
       holdingType         = toHoldingType(interestCode),
       propertyType        = toPropertyType(propertyCode),
@@ -64,9 +65,9 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       effectiveDateYear   = year,
       nonUKResident       = fullReturn.residency.flatMap(_.isNonUkResidents),
       premium             = premium,
-      highestRent         = fullReturn.lease.flatMap(_.startingRent).map(BigDecimal(_)).getOrElse(BigDecimal(0)),
+      highestRent         = fullReturn.lease.flatMap(_.startingRent).flatMap(r => Try(BigDecimal(r)).toOption).getOrElse(BigDecimal(0)),
       propertyDetails     = buildPropertyDetails(propertyCode, fullReturn),
-      leaseDetails        = buildLeaseDetails(interestCode, fullReturn, parsedDate),
+      leaseDetails        = leaseDetails,
       relevantRentDetails = buildRelevantRentDetails(propertyCode, interestCode, fullReturn, parsedDate),
       firstTimeBuyer      = None,
       isLinked            = transaction.isLinked.map(_.toUpperCase == "YES"),
@@ -111,35 +112,38 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       case _ => None
     }
 
-  private def buildLeaseDetails(interestCode: String, fullReturn: FullReturn, effectiveDate: LocalDate): Option[LeaseDetails] =
-    for {
-      lease             <- fullReturn.lease.filter(_ => toHoldingType(interestCode) == HoldingTypes.leasehold)
-      start             <- lease.contractStartDate
-      end               <- lease.contractEndDate
-      rent              <- lease.startingRent
-      startDate         <- Try(LocalDate.parse(start)).toOption
-      endDate           <- Try(LocalDate.parse(end)).toOption
-      rent              <- Try(BigDecimal(rent)).toOption
-      selectDate        = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
-      years             = Period.between(selectDate, endDate.plusDays(1)).getYears
-      partialStart      = selectDate.plusYears(years)
-      days              = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
-      daysInPartialYear = if (days > 0) ChronoUnit.DAYS.between(partialStart, partialStart.plusYears(1)).toInt else 0
-      yearsRequired     = if (years < 5 && daysInPartialYear > 0) years + 1 else years
-    } yield LeaseDetails(
-      startDateDay    = startDate.getDayOfMonth,
-      startDateMonth  = startDate.getMonthValue,
-      startDateYear   = startDate.getYear,
-      endDateDay      = endDate.getDayOfMonth,
-      endDateMonth    = endDate.getMonthValue,
-      endDateYear     = endDate.getYear,
-      leaseTerm       = LeaseTerm(years = years, days = daysInPartialYear, daysInPartialYear = daysInPartialYear),
-      year1Rent       = rent,
-      year2Rent       = Option.when(yearsRequired >= 2)(rent),
-      year3Rent       = Option.when(yearsRequired >= 3)(rent),
-      year4Rent       = Option.when(yearsRequired >= 4)(rent),
-      year5Rent       = Option.when(yearsRequired >= 5)(rent)
-    )
+  private def buildLeaseDetails(interestCode: String, fullReturn: FullReturn, effectiveDate: LocalDate): Either[String, Option[LeaseDetails]] =
+    if (toHoldingType(interestCode) != HoldingTypes.leasehold) { Right(None) }
+    else {
+      for {
+        lease             <- fullReturn.lease.toRight("Lease not found for leasehold property")
+        contractStartDate <- lease.contractStartDate.toRight("contractStartDate not found in Lease")
+        contractEndDate   <- lease.contractEndDate.toRight("contractEndDate not found in Lease")
+        startingRent      <- lease.startingRent.toRight("startingRent not found in Lease")
+        startDate         <- Try(LocalDate.parse(contractStartDate)).toOption.toRight("Failed to parse contractStartDate")
+        endDate           <- Try(LocalDate.parse(contractEndDate)).toOption.toRight("Failed to parse contractEndDate")
+        rent              <- Try(BigDecimal(startingRent)).toOption.toRight("Failed to parse startingRent")
+        selectDate        = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
+        years             = Period.between(selectDate, endDate.plusDays(1)).getYears
+        partialStart      = selectDate.plusYears(years)
+        days              = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
+        daysInPartialYear = if (days > 0) ChronoUnit.DAYS.between(partialStart, partialStart.plusYears(1)).toInt else 0
+        yearsRequired     = if (years < 5 && days > 0) years + 1 else years
+      } yield Some(LeaseDetails(
+        startDateDay    = startDate.getDayOfMonth,
+        startDateMonth  = startDate.getMonthValue,
+        startDateYear   = startDate.getYear,
+        endDateDay      = endDate.getDayOfMonth,
+        endDateMonth    = endDate.getMonthValue,
+        endDateYear     = endDate.getYear,
+        leaseTerm       = LeaseTerm(years = years, days = days, daysInPartialYear = daysInPartialYear),
+        year1Rent       = rent,
+        year2Rent       = Option.when(yearsRequired >= 2)(rent),
+        year3Rent       = Option.when(yearsRequired >= 3)(rent),
+        year4Rent       = Option.when(yearsRequired >= 4)(rent),
+        year5Rent       = Option.when(yearsRequired >= 5)(rent)
+      ))
+    }
 
   private def buildRelevantRentDetails(propertyCode: String,
                                        interestCode: String,
