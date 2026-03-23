@@ -124,21 +124,21 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
     effectiveDate: LocalDate
   ): Option[RelevantRentDetails] = {
 
-    if (!isMixedOrNonResidentialLeasehold(propertyCode, interestCode)) { // relevantRentDetails only applies to mixed or non-residential leasehold properties
+    if (!isMixedOrNonResidentialLeasehold(propertyCode, interestCode)) { // relevantRentDetails only required for mixed or non-residential leasehold properties
       None
-    } else if (effectiveDate.isBefore(march2016NonResidentialDate)) { // only relevantRent is required
+    } else if (effectiveDate.isBefore(march2016NonResidentialDate)) { // only relevantRent entry required
       Some(RelevantRentDetails(
         contractPre201603        = None,
         contractVariedPost201603 = None,
         relevantRent             = Some(relevantRentAmount(fullReturn))
       ))
-    } else { // contractPre201603 is also required
+    } else { // contractPre201603 & contractVariedPost201603 entries are also required
       for {
         contractDate       <- transaction.contractDate
         parsedContractDate <- Try(LocalDate.parse(contractDate)).toOption
       } yield RelevantRentDetails(
         contractPre201603        = Some(if (parsedContractDate.isBefore(march2016NonResidentialDate)) "Yes" else "No"),
-        contractVariedPost201603 = None, // not captured in current data model; only valid when contractPre201603 = "No"
+        contractVariedPost201603 = Some("No"),
         relevantRent             = Some(relevantRentAmount(fullReturn))
       )
     }
