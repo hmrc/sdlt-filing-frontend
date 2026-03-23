@@ -398,5 +398,31 @@ class PurchaserService {
 
     true
   }
+  
+  def splitPurchasers(userAnswers: UserAnswers): (Option[Purchaser], Option[NameOfPurchaser], Seq[(Purchaser, String)]) = {
+    val purchasers = userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
+    
+    val maybePurchaserOneId = userAnswers.fullReturn.flatMap(_.returnInfo).flatMap(_.mainPurchaserID)
+
+    val maybePurchaserOne =   maybePurchaserOneId.flatMap(id =>
+      purchasers.find(_.purchaserID.contains(id))
+    )
+
+    val maybePurchaserOneName = mainPurchaserName(userAnswers)
+    
+    val otherPurchasers: Seq[Purchaser] =   purchasers.filterNot(p =>
+      maybePurchaserOneId.contains(p.purchaserID.getOrElse(""))
+    )
+
+    val otherPurchasersWithNames: Seq[(Purchaser, String)] = otherPurchasers.map { p =>
+      val fullName = createPurchaserName(p).map(_.fullName)
+        .getOrElse(
+          s"${p.forename1.getOrElse("")} ${p.forename2.getOrElse("")} ${p.surname.getOrElse("")}".trim
+        )
+      (p, fullName)
+    }
+
+    (maybePurchaserOne, maybePurchaserOneName, otherPurchasersWithNames)
+  }
 
 }

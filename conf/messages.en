@@ -699,12 +699,12 @@ purchaser.purchaserRemove.change.hidden                                         
 purchaser.purchaserRemove.double.heading                                            = Removing {0}
 purchaser.purchaserRemove.double.keep                                               = Keep {0}
 purchaser.purchaserRemove.double.remove                                             = Remove {0} and update {1}
-purchaser.purchaserRemove.double.hint                                               = If you remove {0}, then {1} will become the lead purchaser for this return. You will then need to update {1}’s details.
+purchaser.purchaserRemove.double.hint                                               = If you remove {0}, then {1} will become the purchaser 1 for this return. You will then need to update {1}’s details.
 purchaser.purchaserRemove.double.subheading                                         = What would you like to do?
 purchaser.purchaserRemove.multi.heading                                             = Removing {0}
 purchaser.purchaserRemove.multi.keep                                                = Keep {0}
 purchaser.purchaserRemove.multi.remove                                              = Remove {0} and update {1}
-purchaser.purchaserRemove.multi.hint                                                = If you remove {0}, you will need to select a new lead purchaser and update their details.
+purchaser.purchaserRemove.multi.hint                                                = If you remove {0}, you will need to select a new purchaser 1 and update their details.
 purchaser.purchaserRemove.multi.subheading                                          = What would you like to do?
 
 purchaser.isPurchaserActingAsTrustee.title                                          = Is the purchaser acting as a trustee? - About the purchaser
@@ -724,6 +724,15 @@ purchaser.purchaserOverview.summaryInfo.text                                    
 purchaser.purchaserOverview.noPurchaser.p1                                          = You have no purchasers listed. You must add a purchaser to complete this return.
 purchaser.purchaserOverview.mainPurchaserIncomplete.part1                           = You need to
 purchaser.purchaserOverview.mainPurchaserIncomplete.part2                           = update {0}’s details
+purchaser.purchaserOverview.purchaser1                                              = (purchaser 1)
+purchaser.purchaserOverview.hint.link                                               = /stamp-duty-land-tax-filing/about-the-purchaser/change-purchaser-1
+purchaser.purchaserOverview.hint.suffix                                             = Change Purchaser 1
+
+purchaser.changePurchaserOne.title                                                  = Change purchaser 1 - About the purchaser
+purchaser.changePurchaserOne.heading                                                = Change purchaser 1
+purchaser.changePurchaserOne.subheading                                             = Who do you want to select as purchaser 1?
+purchaser.changePurchaserOne.paragraph                                              = Purchaser 1 is currently {0}. If you select a new purchaser 1, you will need to update their details.
+purchaser.changePurchaserOne.error.required                                         = Select changePurchaserOne
 
 # Purchaser Agent
 purchaserAgent.overview.title                                                       = Purchaser’s agent overview - About the purchaser’s agent
@@ -951,7 +960,7 @@ land.confirmLandOrPropertyAddress.isThisTheLand                                 
 land.confirmLandOrPropertyAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
 land.confirmLandOrPropertyAddress.error.required                                    = Select Yes or No
 land.confirmLandOrPropertyAddress.change.hidden                                     = ConfirmLandOrPropertyAddress
-land.confirmLandOrPropertyAddress.missing                                     = Enter land or property address
+land.confirmLandOrPropertyAddress.missing                                           = Enter land or property address
 
 
 land.localAuthorityCode.title                                                       = What is the local authority code? - About the land
@@ -974,7 +983,7 @@ land.nlpgUprn.checkYourAnswersLabel                                             
 land.nlpgUprn.error.required                                                        = Enter Land NLPG UPRN
 land.nlpgUprn.error.length                                                          = The NLPG UPRN must be 14 characters or less
 land.nlpgUprn.change.hidden                                                         = Land NLPG UPRN
-land.nlpgUprn.missing                                                         = Enter Land NLPG UPRN
+land.nlpgUprn.missing                                                               = Enter Land NLPG UPRN
 land.nlpgUprn.error.format                                                          = The NLPG UPRN must only contain the prefix NI or numerical characters
 
 land.landMineralsOrMineralRights.title                                              = Minerals or mineral rights
