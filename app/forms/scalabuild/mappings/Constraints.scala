@@ -5,6 +5,8 @@
 
 package forms.scalabuild.mappings
 
+import models.scalabuild.PropertyType
+import models.scalabuild.PropertyType.NonResidential
 import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.voa.play.form.{ConditionalMapping, MandatoryOptionalMapping}
@@ -18,6 +20,19 @@ trait Constraints {
         Valid
       } else {
         Invalid(errorKey, maximum)
+      }
+    }
+
+  protected def earliestDateIfFreehold[A](dateCutoff: A, propertyType: PropertyType, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+    Constraint { input =>
+      import ev._
+
+      if (propertyType == NonResidential) {
+        Valid
+      } else if (input >= dateCutoff){
+        Valid
+      } else {
+        Invalid(errorKey, dateCutoff)
       }
     }
 
