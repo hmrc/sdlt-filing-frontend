@@ -18,7 +18,7 @@ package services.taxCalculation
 
 import connectors.SdltCalculationConnector
 import models.land.{LandInterestTransferredOrCreated, LandTypeOfProperty}
-import models.{FullReturn, Lease, Transaction, UserAnswers}
+import models.{FullReturn, Lease, UserAnswers}
 import models.taxCalculation.*
 import org.slf4j.{Logger, LoggerFactory}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -67,7 +67,7 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       highestRent         = fullReturn.lease.flatMap(_.startingRent).map(BigDecimal(_)).getOrElse(BigDecimal(0)),
       propertyDetails     = buildPropertyDetails(propertyCode, fullReturn),
       leaseDetails        = buildLeaseDetails(interestCode, fullReturn, parsedDate),
-      relevantRentDetails = buildRelevantRentDetails(propertyCode, interestCode, transaction, fullReturn, parsedDate),
+      relevantRentDetails = buildRelevantRentDetails(propertyCode, interestCode, fullReturn, parsedDate),
       firstTimeBuyer      = None,
       isLinked            = transaction.isLinked.map(_.toUpperCase == "YES"),
       interestTransferred = Some(interestCode),
@@ -119,29 +119,17 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
   private def buildRelevantRentDetails(
     propertyCode:  String,
     interestCode:  String,
-    transaction:   Transaction,
     fullReturn:    FullReturn,
     effectiveDate: LocalDate
   ): Option[RelevantRentDetails] = {
 
-    if (!isMixedOrNonResidentialLeasehold(propertyCode, interestCode)) { // relevantRentDetails only required for mixed or non-residential leasehold properties
-      None
-    } else if (effectiveDate.isBefore(march2016NonResidentialDate)) { // only relevantRent entry required
-      Some(RelevantRentDetails(
-        contractPre201603        = None,
-        contractVariedPost201603 = None,
-        relevantRent             = Some(relevantRentAmount(fullReturn))
-      ))
-    } else { // contractPre201603 & contractVariedPost201603 entries are also required
-      for {
-        contractDate       <- transaction.contractDate
-        parsedContractDate <- Try(LocalDate.parse(contractDate)).toOption
-      } yield RelevantRentDetails(
-        contractPre201603        = Some(if (parsedContractDate.isBefore(march2016NonResidentialDate)) "Yes" else "No"),
-        contractVariedPost201603 = Some("No"),
+    Option.when(isMixedOrNonResidentialLeasehold(propertyCode, interestCode))(
+      RelevantRentDetails(
+        contractPre201603        = Option.unless(effectiveDate.isBefore(march2016NonResidentialDate))("Yes"),
+        contractVariedPost201603 = Option.unless(effectiveDate.isBefore(march2016NonResidentialDate))("No"),
         relevantRent             = Some(relevantRentAmount(fullReturn))
       )
-    }
+    )
   }
 
   private def toLeaseDetails(lease: Lease, effectiveDate: LocalDate): Option[LeaseDetails] =
