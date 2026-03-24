@@ -6,6 +6,7 @@
 package utils
 
 import data.Dates
+import models.RelevantRentDetails
 
 import java.time.LocalDate
 
@@ -87,5 +88,10 @@ object CalculationUtils extends DateUtil {
 
   def isAfterNov2017AndBeforeJul20(date: LocalDate): Boolean = {
     date.onOrAfter(Dates.NOV2017_RESIDENTIAL_DATE) && date.isBefore(Dates.JULY2020_RESIDENTIAL_DATE)
+  }
+
+  def averageRentIsBelowThreshold(rentDetails: RelevantRentDetails): Boolean = {
+    val averageRentThreshold1K: BigDecimal = BigDecimal(1000)
+    rentDetails.relevantRent.exists(_ < averageRentThreshold1K)
   }
 }

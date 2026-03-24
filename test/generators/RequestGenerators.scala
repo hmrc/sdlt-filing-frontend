@@ -10,7 +10,7 @@ import enums.PropertyTypes.{mixed, nonResidential}
 import enums.sdltRebuild._
 import enums.{HoldingTypes, PropertyTypes}
 import models.sdltRebuild.TaxReliefDetails
-import models.{LeaseDetails, LeaseTerm, PropertyDetails, Request}
+import models.{LeaseDetails, LeaseTerm, PropertyDetails, RelevantRentDetails, Request}
 import org.scalacheck.Gen
 
 import java.time.LocalDate
@@ -462,4 +462,13 @@ trait RequestGenerators {
   val generateTrueOrFalse : Gen[Boolean] = Gen.oneOf(false , true)
   val generateMixedAndNonResidentialPropertyTypes : Gen[enums.PropertyTypes.Value] = Gen.oneOf(mixed, nonResidential)
 
+  val generateRelevantRentDetailsWithRentLess100k : Gen[RelevantRentDetails] = for {
+    amount <- Gen.oneOf(1 to 999)
+  } yield RelevantRentDetails(
+    exchangedContractsBeforeMar16 = None,
+    contractChangedSinceMar16 = None,
+    relevantRent = Some(
+      BigDecimal(amount)
+    )
+  )
 }

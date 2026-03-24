@@ -89,6 +89,25 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       Seq(LeaseholdResultFactory.leaseholdNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv))
   }
 
+  def leaseholdMixedNonResBeforeMarch2016(request: Request): Result = {
+    val npv = getNPV("leaseholdMixedNonResidentialBeforeMarch2016", request.leaseDetails)
+
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(
+      request.premium,
+      SlabRatesTables.leaseholdMixedNonResidentialBeforeMarch172016Rates.slabs
+    )
+
+    val leasedResult = baseCalculationService.calculateTaxDueSlab(
+      npv,
+      SlabRatesTables.leaseholdMixedNonResidentialBeforeMarch172016NPVRates.slabs
+    )
+
+    LeaseholdResultFactory.leaseholdAddMixedLogic(
+      premiumResult = premiumResult,
+      leaseResult = leasedResult,
+      npv)
+  }
+
   //HRAD
 
   def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
@@ -863,6 +882,5 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     val calculatedNpv = Some(getNPV("leaseholdMixedNonResPropStandardZeroRelief", leaseDetails).toInt)
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
   }
-
 
 }
