@@ -40,6 +40,7 @@
         mode: Mode,
         errorCalc: Boolean,
         isMainPurchaserComplete: Boolean,
+        showChangeLink: Boolean = true,
         mainPurchaserId: Option[String] = None,
         mainPurchaserName: Option[String] = None
 )(
@@ -145,6 +146,10 @@
                 @govukSummaryList(summary)
 
                 @pagination.map(govukPagination(_))
+
+                @if(showChangeLink) {
+                    @Html(s"""<div class="govuk-hint"><a href="${messages("purchaser.purchaserOverview.hint.link")}" class="govuk-link" rel="noopener noreferrer">${messages("purchaser.purchaserOverview.hint.suffix")}</a></div>""")
+                }
 
                 @if(!errorCalc) {
                     @govukRadios(

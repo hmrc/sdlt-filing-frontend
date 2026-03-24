@@ -72,6 +72,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
               val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
               val isMainPurchaserComplete = purchaserService.isMainPurchaserComplete(userAnswers)
 
+
               purchaserList match {
                 case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc, isMainPurchaserComplete))
                 case purchasers =>
@@ -85,8 +86,9 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
 
                       val mainPurchaserId = purchaserService.getMainPurchaser(userAnswers).flatMap(_.purchaserID)
                       val mainPurchaserName = purchaserService.mainPurchaserName(userAnswers).map(_.fullName)
+                      val showChangeLink = !(purchaserList.size == 1 && mainPurchaserId.isDefined)
                       Ok(view(Some(summary), pagination, paginationText, postAction, form,
-                        NormalMode, errorCalc, isMainPurchaserComplete, mainPurchaserId, mainPurchaserName))
+                        NormalMode, errorCalc, isMainPurchaserComplete, showChangeLink, mainPurchaserId, mainPurchaserName))
                     }
               }
             }
@@ -106,19 +108,20 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
       val purchaserList = request.userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
       val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
       val isMainPurchaserComplete = purchaserService.isMainPurchaserComplete(request.userAnswers)
+      val mainPurchaserId = purchaserService.getMainPurchaser(request.userAnswers).flatMap(_.purchaserID)
+      val showChangeLink = !(purchaserList.size == 1 && mainPurchaserId.isDefined)
 
       form.bindFromRequest().fold(
         formWithErrors => {
           purchaserList match {
             case Nil =>
-              Future.successful(BadRequest(view(None, None, None, postAction, formWithErrors, mode, errorCalc, isMainPurchaserComplete)))
+              Future.successful(BadRequest(view(None, None, None, postAction, formWithErrors, mode, errorCalc, isMainPurchaserComplete, showChangeLink)))
             case purchasers =>
               val summary = purchaserPaginationHelper.generatePurchaserSummary(1, purchasers, request.userAnswers)
               val numberOfPages = purchaserPaginationHelper.getNumberOfPages(purchasers)
               val pagination = purchaserPaginationHelper.generatePagination(1, numberOfPages)
               val paginationText = purchaserPaginationHelper.getPaginationInfoText(1, purchasers)
-
-              Future.successful(BadRequest(view(summary, pagination, paginationText, postAction, formWithErrors, mode, errorCalc, isMainPurchaserComplete)))
+              Future.successful(BadRequest(view(summary, pagination, paginationText, postAction, formWithErrors, mode, errorCalc, isMainPurchaserComplete, showChangeLink)))
           }
         },
         value =>

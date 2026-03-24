@@ -2227,5 +2227,97 @@ class PurchaserServiceSpec extends SpecBase {
         result mustBe None
       }
     }
+
+    "splitPurchasers" - {
+
+      val purchaserOne = Purchaser(
+        purchaserID = Some("PUR001"),
+        forename1 = Some("John"),
+        forename2 = Some("David"),
+        surname = Some("Smith")
+      )
+
+      val purchaserTwo = Purchaser(
+        purchaserID = Some("PUR002"),
+        forename1 = Some("Sarah"),
+        forename2 = Some("Anne"),
+        surname = Some("Jones")
+      )
+
+      val purchaserThree = Purchaser(
+        purchaserID = Some("PUR003"),
+        forename1 = Some("Matthew"),
+        forename2 = None,
+        surname = Some("Brown")
+      )
+
+      val purchaserOneName: NameOfPurchaser = NameOfPurchaser(
+        forename1 = Some("John"),
+        forename2 = Some("David"),
+        name = "Smith"
+      )
+
+      val otherPurchasersWithNames: Seq[(Purchaser, String)] = Seq(
+        (purchaserTwo, "Sarah Anne Jones"),
+        (purchaserThree, "Matthew Brown")
+      )
+
+      "must return empty Seq if no purchasers present" in {
+        val userAnswers = emptyUserAnswers
+
+        val result = service.splitPurchasers(userAnswers)
+
+        result mustBe (None, None, Seq.empty)
+      }
+
+      "must return Purchaser One if present in return info" in {
+        val testReturnInfo = ReturnInfo(mainPurchaserID = Some("PUR001"))
+
+        val testFullReturn = FullReturn(
+          stornId = "123456",
+          returnResourceRef = "REF001",
+          returnInfo = Some(testReturnInfo),
+          purchaser = Some(Seq(
+            purchaserOne, purchaserTwo, purchaserThree
+          ))
+        )
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(testFullReturn))
+
+        val result = service.splitPurchasers(userAnswers)
+
+        result mustBe(Some(purchaserOne), Some(purchaserOneName), otherPurchasersWithNames)
+      }
+
+      "must use fallback name when createPurchaserName returns None" in {
+
+        val secondPurchaser = Purchaser(
+        purchaserID = Some("PUR998"),
+        forename1 = Some("Steve"),
+        forename2 = None,
+        surname = None,
+        companyName = None
+        )
+
+        val testReturnInfo = ReturnInfo(mainPurchaserID = Some("PUR001"))
+
+        val testFullReturn = FullReturn(
+          stornId = "123456",
+          returnResourceRef = "REF001",
+          returnInfo = Some(testReturnInfo),
+          purchaser = Some(Seq(
+            purchaserOne, secondPurchaser
+          ))
+        )
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
+        val result = service.splitPurchasers(userAnswers)
+
+        val otherPurchasersWithNames = Seq((secondPurchaser, "Steve"))
+
+        result mustBe(Some(purchaserOne), Some(purchaserOneName), otherPurchasersWithNames)
+      }
+    }
   }
 }

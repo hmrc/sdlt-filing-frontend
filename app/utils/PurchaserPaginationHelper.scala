@@ -70,9 +70,9 @@ class PurchaserPaginationHelper @Inject()(
             val mainPurchaserIDCheck = populatePurchaserService.isMainPurchaser(purchaserDetails.purchaserID.get, userAnswers)
 
             val maybeName: Option[String] = (purchaserDetails.surname, purchaserDetails.companyName, mainPurchaserIDCheck) match {
-              case (Some(name), _, true) => Some(FullName.fullName(purchaserDetails.forename1, purchaserDetails.forename2, name) + " (lead purchaser)")
+              case (Some(name), _, true) => Some(FullName.fullName(purchaserDetails.forename1, purchaserDetails.forename2, name) + " " + messages("purchaser.purchaserOverview.purchaser1"))
               case (Some(name), _, false) => Some(FullName.fullName(purchaserDetails.forename1, purchaserDetails.forename2, name))
-              case (_, Some(name), true) => Some(name + " (lead purchaser)")
+              case (_, Some(name), true) => Some(name + " " + messages("purchaser.purchaserOverview.purchaser1"))
               case (_, Some(name), false) => Some(name)
               case _ => None
             }
