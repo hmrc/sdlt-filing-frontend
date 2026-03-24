@@ -97,9 +97,9 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       SlabRatesTables.leaseholdMixedNonResidentialBeforeMarch172016Rates.slabs
     )
 
-    val leasedResult = baseCalculationService.calculateTaxDueSlab(
+    val leasedResult = baseCalculationService.calculateTaxDueSlice(
       npv,
-      SlabRatesTables.leaseholdMixedNonResidentialBeforeMarch172016NPVRates.slabs
+      leaseholdMixedAfterMarch172016.slices
     )
 
     LeaseholdResultFactory.leaseholdAddMixedLogic(

@@ -3038,9 +3038,21 @@ class CalculationControllerLeaseholdApril21ISpec extends BaseSpec with GuiceOneS
               |        },
               |        {
               |          "taxType": "rent",
-              |          "calcType": "slab",
+              |          "calcType": "slice",
               |          "taxDue": 0,
-              |          "rate": 0
+              |          "slices" : [
+              |            { "from":0,
+              |              "to":150000,
+              |              "rate":0,
+              |              "taxDue":0
+              |              },
+              |              {
+              |               "from":150000,
+              |               "to":-1,
+              |               "rate":1,
+              |               "taxDue":0
+              |               }
+              |             ]
               |        }
               |      ]
               |    }
@@ -3107,9 +3119,21 @@ class CalculationControllerLeaseholdApril21ISpec extends BaseSpec with GuiceOneS
               |        },
               |        {
               |          "taxType": "rent",
-              |          "calcType": "slab",
+              |          "calcType": "slice",
               |          "taxDue": 0,
-              |          "rate": 0
+              |          "slices" : [
+              |            { "from":0,
+              |              "to":150000,
+              |              "rate":0,
+              |              "taxDue":0
+              |              },
+              |              {
+              |               "from":150000,
+              |               "to":-1,
+              |               "rate":1,
+              |               "taxDue":0
+              |               }
+              |             ]
               |        }
               |      ]
               |    }
@@ -3176,9 +3200,21 @@ class CalculationControllerLeaseholdApril21ISpec extends BaseSpec with GuiceOneS
               |        },
               |        {
               |          "taxType": "rent",
-              |          "calcType": "slab",
+              |          "calcType": "slice",
               |          "taxDue": 0,
-              |          "rate": 0
+              |          "slices" : [
+              |            { "from":0,
+              |              "to":150000,
+              |              "rate":0,
+              |              "taxDue":0
+              |              },
+              |              {
+              |               "from":150000,
+              |               "to":-1,
+              |               "rate":1,
+              |               "taxDue":0
+              |               }
+              |             ]
               |        }
               |      ]
               |    }
@@ -3245,9 +3281,21 @@ class CalculationControllerLeaseholdApril21ISpec extends BaseSpec with GuiceOneS
               |        },
               |        {
               |          "taxType": "rent",
-              |          "calcType": "slab",
+              |          "calcType": "slice",
               |          "taxDue": 0,
-              |          "rate": 0
+              |          "slices" : [
+              |            { "from":0,
+              |              "to":150000,
+              |              "rate":0,
+              |              "taxDue":0
+              |              },
+              |              {
+              |               "from":150000,
+              |               "to":-1,
+              |               "rate":1,
+              |               "taxDue":0
+              |               }
+              |             ]
               |        }
               |      ]
               |    }
@@ -3305,7 +3353,7 @@ class CalculationControllerLeaseholdApril21ISpec extends BaseSpec with GuiceOneS
               |{
               |"result":[
               |  {
-              |   "totalTax":85172,
+              |   "totalTax":83672,
               |   "resultHeading":"Results of calculation based on SDLT rules for the effective date entered",
               |   "npv":4517275,
               |      "taxCalcs": [
@@ -3317,9 +3365,20 @@ class CalculationControllerLeaseholdApril21ISpec extends BaseSpec with GuiceOneS
               |        },
               |        {
               |          "taxType": "rent",
-              |          "calcType": "slab",
-              |          "taxDue": 45172,
-              |          "rate": 1
+              |          "calcType": "slice",
+              |          "taxDue": 43672,
+              |          "slices" : [
+              |            { "from":0,
+              |              "to":150000,
+              |              "rate":0,
+              |              "taxDue":0
+              |              },
+              |              {
+              |               "from":150000,
+              |               "to":-1,"rate":1,
+              |               "taxDue":43672
+              |               }
+              |             ]
               |        }
               |      ]
               |    }

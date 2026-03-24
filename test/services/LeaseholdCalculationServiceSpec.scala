@@ -2161,6 +2161,34 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
     }
   }
 
+  "leaseholdMixedNonResBeforeMarch2016" must {
+    "return zero tax for premium of 12000 and npv of 0" in new PredefinedNPVSetup(predefinedNPV = 0) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      private val res = leaseholdMixedNonResBeforeMarch2016Result(
+        leaseTaxDue = 0, leaseSliceDetails = leaseSliceDetails,
+        premTaxDue = 0, premRate = 0, npv = 0)
+      service.leaseholdMixedNonResBeforeMarch2016(
+        leaseholdMixedNonResBeforeMarch2016Request(12000)) shouldBe res
+    }
+    "return someTax for premium of 70000 and npv of 0" in new PredefinedNPVSetup(predefinedNPV = 150000) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      private val res = leaseholdMixedNonResBeforeMarch2016Result(
+        leaseTaxDue = 0, leaseSliceDetails = leaseSliceDetails,
+        premTaxDue = 0, premRate = 0, npv = 150000)
+
+      service.leaseholdMixedNonResBeforeMarch2016(
+        leaseholdMixedNonResBeforeMarch2016Request(70000)) shouldBe res
+    }
+  }
+
   "eligibleForZeroRate" must {
 
     def testRequest(

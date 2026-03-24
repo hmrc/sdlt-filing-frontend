@@ -482,7 +482,8 @@ object LeaseholdResultFactory {
     )
   }
 
-  def leaseholdAddMixedLogic(premiumResult: SlabResult, leaseResult: SlabResult, npv: BigDecimal): Result = {
+  def leaseholdAddMixedLogic(premiumResult: SlabResult,
+                             leaseResult: SliceResult, npv: BigDecimal): Result = {
 
     val premiumCalcDetails = CalculationDetails(
       taxType = TaxTypes.premium,
@@ -498,14 +499,13 @@ object LeaseholdResultFactory {
 
     val leasedCalcDetails = CalculationDetails(
       taxType = TaxTypes.rent,
-      calcType = CalcTypes.slab,
+      calcType = CalcTypes.slice,
       detailHeading = None,
       bandHeading = None,
       detailFooter = None,
       taxDue = leaseResult.taxDue.toInt,
-      rate = Some(leaseResult.rate.toInt),
       rateFraction = None,
-      slices = None
+      slices = Some(leaseResult.slices)
     )
 
     Result(

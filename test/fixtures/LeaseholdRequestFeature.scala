@@ -6,7 +6,7 @@
 package fixtures
 
 import enums.{HoldingTypes, PropertyTypes}
-import models.{LeaseDetails, PropertyDetails, RelevantRentDetails, Request}
+import models.{LeaseDetails, LeaseTerm, PropertyDetails, RelevantRentDetails, Request}
 
 import java.time.LocalDate
 
@@ -395,6 +395,44 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
+
+  def leaseholdMixedNonResBeforeMarch2016Request(premium: BigDecimal): Request = {
+    Request(
+      holdingType = HoldingTypes.leasehold,
+      propertyType = PropertyTypes.mixed,
+      effectiveDate = LocalDate.of(2016, 1, 1),
+      nonUKResident = Some(false),
+      premium = premium,
+      highestRent = BigDecimal(0),
+      leaseDetails = Some(LeaseDetails(
+        startDate = LocalDate.of(2014, 3, 24),
+        endDate = LocalDate.of(2015, 3, 24),
+        leaseTerm = LeaseTerm(
+          years = 1,
+          days = 1,
+          daysInPartialYear = 365
+        ),
+        year1Rent = BigDecimal(999),
+        year2Rent = Some(BigDecimal(999)),
+        year3Rent = None,
+        year4Rent = None,
+        year5Rent = None
+      )),
+      isLinked = Some(false),
+      propertyDetails = None,
+
+      relevantRentDetails = Some(
+        RelevantRentDetails(
+          exchangedContractsBeforeMar16 = None,
+          contractChangedSinceMar16 = None,
+          relevantRent = Some(BigDecimal(999))
+        )
+      ),
+      firstTimeBuyer = None,
+      interestTransferred = None,
+      taxReliefDetails = None
+    )
+  }
 
   def leaseholdResidentialAddPropOct24BeforeApril25RequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
