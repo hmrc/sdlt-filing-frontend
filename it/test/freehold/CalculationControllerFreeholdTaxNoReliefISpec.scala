@@ -345,6 +345,95 @@ class CalculationControllerFreeholdTaxNoReliefISpec extends BaseSpec with GuiceO
           }
         }
       }
+
+      // 2016 budget no relief non leased - Add Mixed logic
+      "with no taxReliefDetails" when {
+        "transaction is not linked" when {
+          "date is on or after 17th March 2016" must {
+            "return a valid result" when {
+              "Property type is Mixed" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        | "holdingType": "Freehold",
+                        | "propertyType": "Mixed",
+                        | "effectiveDateDay": 17,
+                        | "effectiveDateMonth": 3,
+                        | "effectiveDateYear": 2016,
+                        | "premium": 1000000,
+                        | "highestRent": 0,
+                        | "isLinked": false
+                        |}
+                        |""".stripMargin
+                    )
+                  )
+
+                val responseJson = Json.parse(
+                  """
+                    |{
+                    |  "result": [
+                    |    {
+                    |      "totalTax": 39500,
+                    |      "resultHeading": "Results based on SDLT rules from 17 March 2016",
+                    |      "taxCalcs": [
+                    |        {
+                    |          "taxType": "premium",
+                    |          "calcType": "slice",
+                    |          "taxDue": 39500,
+                    |          "detailHeading": "This is a breakdown of how the total amount of SDLT was calculated based on the rules from 17 March 2016",
+                    |          "bandHeading": "Purchase price bands (£)",
+                    |          "detailFooter": "Total SDLT due",
+                    |          "slices": [
+                    |            {
+                    |              "from": 0,
+                    |              "to": 150000,
+                    |              "rate": 0,
+                    |              "taxDue": 0
+                    |            },
+                    |            {
+                    |              "from": 150000,
+                    |              "to": 250000,
+                    |              "rate": 2,
+                    |              "taxDue": 2000
+                    |            },
+                    |            {
+                    |              "from": 250000,
+                    |              "to": -1,
+                    |              "rate": 5,
+                    |              "taxDue": 37500
+                    |            }
+                    |          ]
+                    |        }
+                    |      ]
+                    |    },
+                    |    {
+                    |      "totalTax": 40000,
+                    |      "resultHeading": "Results based on SDLT rules before 17 March 2016",
+                    |      "resultHint": "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 17 March 2016.",
+                    |      "taxCalcs": [
+                    |        {
+                    |          "taxType": "premium",
+                    |          "calcType": "slab",
+                    |          "taxDue": 40000,
+                    |          "rate": 4
+                    |        }
+                    |      ]
+                    |    }
+                    |  ]
+                    |}
+                    |""".stripMargin
+                )
+
+                request.status shouldBe OK
+                request.json shouldBe responseJson
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

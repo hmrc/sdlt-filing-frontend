@@ -619,14 +619,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
       case (`freehold`, Mixed | NonResidential, Some(false))
         if date.isBefore(MARCH2016_NON_RESIDENTIAL_DATE) =>
         calculateBaseTax(request)
+      case (`freehold`, Mixed | NonResidential, Some(false))
+        if date.onOrAfter(MARCH2016_NON_RESIDENTIAL_DATE) =>
+        calculateBaseTax(request)
       /* ------------- LeaseHoldCases--------------------------- */
       case (`leasehold`, _, Some(true))
         if date.onOrAfter(NOV2017_EFFECTIVE_DATE) =>
-        CalculationResponse(Seq(
-          leaseCalculationService.leaseholdNov17Onwards
-        ))
-      case (`leasehold`, _, Some(true))
-        if date.onOrAfter(NOV2017_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdNov17Onwards
         ))
