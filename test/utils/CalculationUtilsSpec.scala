@@ -9,7 +9,7 @@ import generators.RequestGenerators
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import utils.CalculationUtils.{leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScope, premiumIsGreaterThan500K, maximumThreshold}
+import utils.CalculationUtils.{averageRentIsBelowThreshold, leaseholdNRSDLTInScopeForLeaseOrPremium, leaseholdNRSDLTOutOfScope, maximumThreshold, premiumIsGreaterThan500K}
 
 class CalculationUtilsSpec extends PlaySpec with ScalaCheckPropertyChecks with RequestGenerators {
 
@@ -106,4 +106,24 @@ class CalculationUtilsSpec extends PlaySpec with ScalaCheckPropertyChecks with R
       }
     }
   }
+
+  ".averageRentIsBelowThreshold" must {
+    "return true when relevantRent < 1000" in {
+      forAll(generateRelevantRentDetailsWithRentLess100k) {
+        rentDetails  => {
+          averageRentIsBelowThreshold(rentDetails) shouldBe true
+        }
+      }
+    }
+
+    "return false when relevantRent >= 1000" in {
+      forAll(generateRelevantRentDetailsWithRentLess100k) {
+        rentDetails  => {
+          val actualRentDetails = rentDetails.copy(relevantRent = rentDetails.relevantRent.map(_ + BigDecimal(1000)))
+          averageRentIsBelowThreshold(actualRentDetails) shouldBe false
+        }
+      }
+    }
+  }
+
 }

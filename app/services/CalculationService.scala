@@ -16,7 +16,7 @@ import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.EffectivePropertyType._
 import models.sdltRebuild.{Mixed, NonResidential, Residential, ResidentialAdditionalProperty}
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, premiumIsGreaterThan500K, maximumThreshold}
+import utils.CalculationUtils.{averageRentIsBelowThreshold, duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, maximumThreshold, premiumIsGreaterThan500K}
 import utils.DateUtil
 import utils.LoggerUtil._
 import data.Premium.MAX_PREMIUM_FTB
@@ -587,7 +587,6 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
   }
 
   def calculateTaxNoRelief(request: Request): CalculationResponse = {
-
     val date = request.effectiveDate
 
     (request.holdingType, effectivePropertyType(request), request.isLinked) match {
@@ -631,11 +630,19 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdNov17Onwards
         ))
+
+      case (`leasehold`, Mixed | NonResidential, Some(false))
+        if request.effectiveDate.isBefore(Dates.MARCH_17_2016_DATE) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
+          CalculationResponse(Seq(
+            leaseCalculationService.leaseholdMixedNonResBeforeMarch2016(request)
+          ))
+
       case (`leasehold`, Mixed, _)
         if isAfterMar2008AndBeforeMar2016(date) =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdMixedPropMar08BeforeMar16
         ))
+
       case _ =>
         logWarn(s"Falling back to Standard tax cases as Non-TaxRelief logic not yet implemented for " +
           s"holdingType: ${request.holdingType}, propertyType: ${effectivePropertyType(request)}, isLinked: ${request.isLinked}")

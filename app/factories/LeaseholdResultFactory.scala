@@ -444,8 +444,7 @@ object LeaseholdResultFactory {
     )
   }
 
-  def
-  leaseholdAcquisitionTaxReliefRes(premiumResult: SlabResult, leaseResult: SlabResult, npv: BigDecimal): Result = {
+  def leaseholdAcquisitionTaxReliefRes(premiumResult: SlabResult, leaseResult: SlabResult, npv: BigDecimal): Result = {
 
     val premiumCalcDetails = CalculationDetails(
       taxType = TaxTypes.premium,
@@ -482,6 +481,45 @@ object LeaseholdResultFactory {
       )
     )
   }
+
+  def leaseholdAddMixedLogic(premiumResult: SlabResult, leaseResult: SlabResult, npv: BigDecimal): Result = {
+
+    val premiumCalcDetails = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slab,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = premiumResult.taxDue.toInt,
+      rate = Some(premiumResult.rate.toInt),
+      rateFraction = None,
+      slices = None
+    )
+
+    val leasedCalcDetails = CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slab,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = leaseResult.taxDue.toInt,
+      rate = Some(leaseResult.rate.toInt),
+      rateFraction = None,
+      slices = None
+    )
+
+    Result(
+      totalTax = premiumCalcDetails.taxDue + leasedCalcDetails.taxDue,
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+      resultHint = None,
+      npv = Some(npv.toInt),
+      taxCalcs = Seq(
+        premiumCalcDetails,
+        leasedCalcDetails
+      )
+    )
+  }
+
 
   val leaseholdSelfAssessedResult: Result = {
     Result(

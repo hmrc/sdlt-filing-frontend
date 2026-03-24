@@ -95,7 +95,13 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         )
       ),
       leaseDetails = None,
-      relevantRentDetails = None,
+      relevantRentDetails = Some(
+        RelevantRentDetails(
+          exchangedContractsBeforeMar16 = None,
+          contractChangedSinceMar16 = None,
+          relevantRent = Some(BigDecimal(1000)) // Fix existing UTs failures
+        )
+      ),
       interestTransferred = None,
       isLinked = isLinked,
       taxReliefDetails = taxReliefCode.map(trc =>
@@ -2972,6 +2978,75 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
       }
     }
+
+    //SDLT - Case 16 - Add Mixed Logic
+    "select the leaseholdMixedNonResBeforeMarch2016 function" when {
+      val leaseHoldCalcRequestMixed = Request(
+        holdingType = HoldingTypes.leasehold,
+        propertyType = PropertyTypes.mixed,
+        effectiveDate = LocalDate.of(2016, 1, 1),
+        nonUKResident = Some(false),
+        premium = 100000,
+        highestRent = BigDecimal(0),
+        leaseDetails = Some(LeaseDetails(
+          startDate = LocalDate.of(2014, 3, 24),
+          endDate = LocalDate.of(2015, 3, 24),
+          leaseTerm = LeaseTerm(
+            years = 1,
+            days = 1,
+            daysInPartialYear = 365
+          ),
+          year1Rent = BigDecimal(999),
+          year2Rent = Some(BigDecimal(999)),
+          year3Rent = None,
+          year4Rent = None,
+          year5Rent = None
+        )),
+        isLinked = Some(false),
+        propertyDetails = None,
+
+        relevantRentDetails = Some(
+          RelevantRentDetails(
+            exchangedContractsBeforeMar16 = None,
+            contractChangedSinceMar16 = None,
+            relevantRent = Some(BigDecimal(999)) // required test this case
+          )
+        ),
+        firstTimeBuyer = None,
+        interestTransferred = None,
+        taxReliefDetails = None
+      )
+
+      "Mixed property type" in {
+
+        val result = createResult("leaseholdMixedNonResBeforeMarch2016")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedNonResBeforeMarch2016(leaseHoldCalcRequestMixed)).thenReturn(result)
+
+        testCalculationService.calculateTax(leaseHoldCalcRequestMixed).result shouldBe Seq(result)
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResBeforeMarch2016(leaseHoldCalcRequestMixed)
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+
+      "Non-residential property type" in {
+
+        val leaseHoldCalcRequestNonResidential = leaseHoldCalcRequestMixed.copy(propertyType = PropertyTypes.nonResidential)
+
+        val result = createResult("leaseholdMixedNonResBeforeMarch2016")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedNonResBeforeMarch2016(leaseHoldCalcRequestNonResidential)).thenReturn(result)
+
+        testCalculationService.calculateTax(leaseHoldCalcRequestNonResidential).result shouldBe Seq(result)
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResBeforeMarch2016(leaseHoldCalcRequestNonResidential)
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+
+      }
+    }
+
   }
 
   "checkFTB" must {
