@@ -184,7 +184,7 @@ prelim.transactionType.conveyanceTransferLease                                  
 prelim.transactionType.otherTransaction                                             = O - Other
 prelim.transactionType.checkYourAnswersLabel                                        = Type of transaction
 prelim.transactionType.error.required                                               = Select the type of transaction
-prelim.transactionType.change.hidden                                                = Change type of transaction
+prelim.transactionType.change.hidden                                                = transaction type
 prelim.transactionType.link.message                                                 = Enter type of transaction
 
 # Address Lookup
