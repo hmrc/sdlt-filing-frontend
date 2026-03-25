@@ -7,6 +7,7 @@ package services
 
 import data.LeaseholdSliceRatesTables._
 import data.SignificantAmounts._
+import data.SlabRatesTables._
 import data.{Dates, SlabRatesTables}
 import exceptions.RequiredValueNotDefinedException
 import factories.LeaseholdResultFactory
@@ -883,4 +884,19 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
   }
 
+  def leaseholdMixedNonResBeforeMar08(request: Request): Result = {
+    val npv = getNPV("leaseholdMixedNonResBeforeMar08", request.leaseDetails)
+
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(
+      request.premium,
+      leaseholdMixedNonResBeforeMar08Rates.slabs
+    )
+
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(
+      npv,
+      leaseholdMixedNonResBeforeMar08RentRates.slices
+    )
+
+    LeaseholdResultFactory.leaseholdMixedNonResBeforeMar08Result(leaseResult, premiumResult, npv)
+  }
 }

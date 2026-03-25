@@ -628,13 +628,16 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdNov17Onwards
         ))
-
+      case (`leasehold`, Mixed | NonResidential, Some(false))
+        if date.isBefore(MIN_MIXED_PROPERTY_DATE) && !request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdMixedNonResBeforeMar08(request)
+        ))
       case (`leasehold`, Mixed | NonResidential, Some(false))
         if request.effectiveDate.isBefore(Dates.MARCH_17_2016_DATE) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
           CalculationResponse(Seq(
             leaseCalculationService.leaseholdMixedNonResBeforeMarch2016(request)
           ))
-
       case (`leasehold`, Mixed, _)
         if isAfterMar2008AndBeforeMar2016(date) =>
         CalculationResponse(Seq(
