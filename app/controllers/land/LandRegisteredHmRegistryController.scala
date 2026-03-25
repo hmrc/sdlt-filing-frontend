@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.land.LandRegisteredHmRegistryFormProvider
 import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.land.LandRegisteredHmRegistryPage
+import pages.land.{LandRegisteredHmRegistryPage, LandTitleNumberPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,6 +30,7 @@ import views.html.land.LandRegisteredHmRegistryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class LandRegisteredHmRegistryController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -66,9 +67,13 @@ class LandRegisteredHmRegistryController @Inject()(
         value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(LandRegisteredHmRegistryPage, value))
-              _ <- sessionRepository.set(updatedAnswers)
+              finalAnswers <- Future.fromTry {
+                if !value then updatedAnswers.remove(LandTitleNumberPage)
+                else Success(updatedAnswers)
+              }
+              _ <- sessionRepository.set(finalAnswers)
             } yield {
-              (value) match {
+              value match {
                 case true =>
                   Redirect(navigator.nextPage(LandRegisteredHmRegistryPage, mode, updatedAnswers))
                 case _ =>

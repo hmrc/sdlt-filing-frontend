@@ -29,7 +29,8 @@ case class LandSessionQuestions(
                                  landSendingPlanByPost: Boolean,
                                  landMineralsOrMineralRights: Boolean,
                                  agriculturalOrDevelopmentalLand: Option[Boolean] = None,
-                                 areaOfLand: Option[String] = None
+                                 areaOfLand: Option[String] = None,
+                                 areaUnit: Option[String] = None
                                )
 
 object LandSessionQuestions {

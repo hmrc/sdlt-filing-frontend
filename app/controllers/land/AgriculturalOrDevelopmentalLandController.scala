@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.land.AgriculturalOrDevelopmentalLandFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.land.{DoYouKnowTheAreaOfLandPage, AgriculturalOrDevelopmentalLandPage, AreaOfLandPage}
+import pages.land.{AgriculturalOrDevelopmentalLandPage, AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandSelectMeasurementUnitPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -69,8 +69,11 @@ class AgriculturalOrDevelopmentalLandController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AgriculturalOrDevelopmentalLandPage, value))
             finalAnswers <- Future.fromTry {
-              if !request.userAnswers.get(AgriculturalOrDevelopmentalLandPage).contains(value) then
-                updatedAnswers.remove(DoYouKnowTheAreaOfLandPage).flatMap(_.remove(AreaOfLandPage))
+              if !value then
+                updatedAnswers
+                  .remove(DoYouKnowTheAreaOfLandPage)
+                  .flatMap(_.remove(AreaOfLandPage))
+                  .flatMap(_.remove(LandSelectMeasurementUnitPage))
               else
                 Success(updatedAnswers)
             }

@@ -264,7 +264,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
     "when unit type is square metres" - {
 
-      val unitType = "SQMETRE"
+      val unitType = "SquareMetres"
 
       val testForm: Form[String] =
         Form(
@@ -329,7 +329,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
     "when unit type is hectares" - {
 
-      val unitType = "HECTARES"
+      val unitType = "Hectares"
 
       val testForm: Form[String] =
         Form(

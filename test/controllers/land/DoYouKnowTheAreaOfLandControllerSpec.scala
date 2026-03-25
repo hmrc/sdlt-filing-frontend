@@ -19,13 +19,14 @@ package controllers.land
 import base.SpecBase
 import controllers.routes
 import forms.land.DoYouKnowTheAreaOfLandFormProvider
-import models.land.LandTypeOfProperty
-import models.NormalMode
+import models.land.{LandSelectMeasurementUnit, LandTypeOfProperty}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.{AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandTypeOfPropertyPage}
+import pages.land.{AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandSelectMeasurementUnitPage, LandTypeOfPropertyPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -189,7 +190,7 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must clear AreaOfLandPage and redirect to LandCheckYourAnswers when answer changes from yes to no" in {
+    "must clear area of land and area unit answers and redirect to LandCheckYourAnswers when answer changes from yes to no" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -197,6 +198,7 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = emptyUserAnswers
         .set(DoYouKnowTheAreaOfLandPage, true).success.value
+        .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
         .set(AreaOfLandPage, "500").success.value
 
       val application =
@@ -215,6 +217,10 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(LandSelectMeasurementUnitPage).isDefined mustBe false
+        uaCaptor.getValue.get(AreaOfLandPage).isDefined mustBe false
       }
     }
 
@@ -226,6 +232,7 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = emptyUserAnswers
         .set(DoYouKnowTheAreaOfLandPage, true).success.value
+        .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
         .set(AreaOfLandPage, "500").success.value
 
       val application =
@@ -245,6 +252,10 @@ class DoYouKnowTheAreaOfLandControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(LandSelectMeasurementUnitPage) mustBe Some(LandSelectMeasurementUnit.Sqms)
+        uaCaptor.getValue.get(AreaOfLandPage) mustBe Some("500")
       }
     }
 

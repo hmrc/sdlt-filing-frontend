@@ -48,7 +48,7 @@ class AreaOfLandSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("land.areaOfLand.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml mustEqual s"$area ${msgs("land.areaOfLand.SQMETRE.suffix")}"
+          valueHtml mustEqual s"$area ${msgs("land.areaOfLand.SquareMetres.suffix")}"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url
@@ -75,7 +75,7 @@ class AreaOfLandSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("land.areaOfLand.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml mustEqual s"$area ${msgs("land.areaOfLand.HECTARES.suffix")}"
+          valueHtml mustEqual s"$area ${msgs("land.areaOfLand.Hectares.suffix")}"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url

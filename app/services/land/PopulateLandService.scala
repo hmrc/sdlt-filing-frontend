@@ -80,7 +80,7 @@ class PopulateLandService {
     (land.areaUnit, land.landArea) match {
       case (Some(areaUnit), Some(area)) =>
         val unit: LandSelectMeasurementUnit =
-          if (areaUnit.equals(LandSelectMeasurementUnit.Sqms.toString))
+          if (areaUnit.equalsIgnoreCase(LandSelectMeasurementUnit.Sqms.toString))
             LandSelectMeasurementUnit.Sqms
           else
             LandSelectMeasurementUnit.Hectares
@@ -140,13 +140,13 @@ class PopulateLandService {
   }
 
   private def sendingPlanByPostPage(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val willSendPlanByPost = land.willSendPlanByPost.contains("YES")
+    val willSendPlanByPost = land.willSendPlanByPost.exists(_.equalsIgnoreCase("YES"))
 
     userAnswers.set(LandSendingPlanByPostPage, willSendPlanByPost)
   }
 
   private def mineralsOrMineralRightsPage(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val mineralRights = land.mineralRights.contains("YES")
+    val mineralRights = land.mineralRights.exists(_.equalsIgnoreCase("YES"))
 
     userAnswers.set(LandMineralsOrMineralRightsPage, mineralRights)
   }

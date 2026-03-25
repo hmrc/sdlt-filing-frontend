@@ -25,8 +25,8 @@ sealed trait LandSelectMeasurementUnit
 
 object LandSelectMeasurementUnit extends Enumerable.Implicits {
 
-  case object Hectares extends WithName("HECTARES") with LandSelectMeasurementUnit
-  case object Sqms extends WithName("SQMETRE") with LandSelectMeasurementUnit
+  case object Hectares extends WithName("Hectares") with LandSelectMeasurementUnit
+  case object Sqms extends WithName("SquareMetres") with LandSelectMeasurementUnit
 
   val values: Seq[LandSelectMeasurementUnit] = Seq(
     Hectares, Sqms
