@@ -190,9 +190,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserAgentAuthorisedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
         }
 
-        //TODO DTR-3997 - SPRINT 11 - update to Are you sure you want to change purchaser 1
-        "go from ChangePurchaserOnePage to ChangePurchaserOne page" in {
-          navigator.nextPage(ChangePurchaserOnePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()
+        "go from ChangePurchaserOnePage to ConfirmChangeOfMainPurchaser page" in {
+          navigator.nextPage(ChangePurchaserOnePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.ConfirmChangeOfMainPurchaserController.onPageLoad()
         }
 
         "go from PurchaserCompanyTypeKnownPage to PurchaserTypeOfCompanyController page" in {

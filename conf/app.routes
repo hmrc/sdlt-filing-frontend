@@ -205,6 +205,9 @@ POST        /about-the-purchaser/purchaser-overview                             
 GET         /about-the-purchaser/purchaser-overview/change-purchaser/:purchaserId                    controllers.purchaser.PurchaserOverviewController.changePurchaser(purchaserId: String)
 GET         /about-the-purchaser/purchaser-overview/remove-purchaser/:purchaserId                    controllers.purchaser.PurchaserOverviewController.removePurchaser(purchaserId: String)
 
+GET         /about-the-purchaser/confirm-changing-purchaser-1                                        controllers.purchaser.ConfirmChangeOfMainPurchaserController.onPageLoad()
+POST        /about-the-purchaser/confirm-changing-purchaser-1                                        controllers.purchaser.ConfirmChangeOfMainPurchaserController.onSubmit()
+
 GET         /about-the-purchasers-agent/agent-address-lookup                                         controllers.purchaserAgent.PurchaserAgentAddressController.redirectToAddressLookupPurchaserAgent(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
 GET         /about-the-purchasers-agent/agent-address-return                                         controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackPurchaserAgent(id: String ?= "", mode: Mode = NormalMode)
 GET         /about-the-purchasers-agent/agent-address-return/change                                  controllers.purchaserAgent.PurchaserAgentAddressController.addressLookupCallbackChangePurchaserAgent(id: String ?= "", mode: Mode = NormalMode)

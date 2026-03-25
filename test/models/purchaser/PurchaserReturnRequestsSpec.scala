@@ -16,12 +16,13 @@
 
 package models.purchaser
 
-import models.UserAnswers
+import constants.FullReturnConstants
+import models.{FullReturn, Purchaser, UserAnswers}
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json.*
-import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 
 import java.time.Instant
 
@@ -421,6 +422,44 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
       )),
     lastUpdated = Instant.now)
 
+  val userAnswers = UserAnswers(id = "12345",
+    storn = "STORN123456",
+    returnId = Some("RRF-2024-001"),
+    data = Json.obj(),
+    fullReturn = Some(FullReturnConstants.emptyFullReturn),
+    lastUpdated = Instant.now)
+
+  val purchaserToBeChanged = Purchaser(
+    purchaserID = Some("PUR001"),
+    returnID = Some("returnId"),
+    isCompany = Some("YES"),
+    isTrustee = Some("YES"),
+    isConnectedToVendor = Some("YES"),
+    isRepresentedByAgent = Some("YES"),
+    title = None,
+    surname = None,
+    forename1 = None,
+    forename2 = None,
+    companyName = Some("COmpany name"),
+    houseNumber = None,
+    address1 = Some("Tyndall street"),
+    address2 = None,
+    address3 = None,
+    address4 = None,
+    postcode = Some("W2 1NB"),
+    phone = Some("99338838"),
+    nino = Some("12345678"),
+    purchaserResourceRef = Some("REF"),
+    nextPurchaserID = None,
+    lMigrated = None,
+    createDate = None,
+    lastUpdateDate = None,
+    isUkCompany = None,
+    hasNino = Some("YES"),
+    dateOfBirth = Some("2022-01-02"),
+    registrationNumber = Some("123456778"),
+    placeOfRegistration = Some("123456778"))
+
   "CreatePurchaserRequest" - {
 
     ".reads" - {
@@ -766,6 +805,40 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
         val modified = minimalUpdatePurchaserRequest.copy(nextPurchaserId = Some("PID-999"))
 
         modified.nextPurchaserId mustBe Some("PID-999")
+      }
+    }
+
+    ".fromMainToEssential" - {
+      "must create UpdatePurchaserRequest with the essential data" in {
+        UpdatePurchaserRequest.fromMainToEssential(userAnswers, purchaserToBeChanged).futureValue mustBe
+          UpdatePurchaserRequest(
+          stornId = "STORN123456",
+          returnResourceRef = "RRF-2024-001",
+          purchaserResourceRef = "REF",
+          isCompany = Some("YES"),
+          isTrustee = Some("YES"),
+          isConnectedToVendor = Some("YES"),
+          isRepresentedByAgent = Some("YES"),
+          title = None,
+          surname = None,
+          forename1 = None,
+          forename2 = None,
+          companyName = Some("COmpany name"),
+          houseNumber = None,
+          address1 = Some("Tyndall street"),
+          address2 = None,
+          address3 = None,
+          address4 = None,
+          postcode = Some("W2 1NB"),
+          phone = None,
+          nino = None,
+          nextPurchaserId = None,
+          isUkCompany = None,
+          hasNino = None,
+          dateOfBirth = None,
+          registrationNumber = None,
+          placeOfRegistration = None
+        )
       }
     }
   }

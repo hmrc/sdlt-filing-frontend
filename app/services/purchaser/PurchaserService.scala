@@ -42,6 +42,16 @@ class PurchaserService {
 
     mainPurchaserID.contains(purchaserId)
   }
+
+  def isMainPurchaserCompany(purchaser: Purchaser): Boolean = {
+    purchaser.isCompany.exists(_.equalsIgnoreCase("yes"))
+  }
+
+  def getPurchaserNameById(userAnswers: UserAnswers, purchaserId: String): Option[String] = {
+    val purchasers = userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
+    
+    findById(purchasers, purchaserId).flatMap(createPurchaserName).map(_.fullName)
+  }
   
   def getMainPurchaser(userAnswers: UserAnswers): Option[Purchaser] = {
     userAnswers.fullReturn.flatMap { fullReturn =>
