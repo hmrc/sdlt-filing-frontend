@@ -8,11 +8,11 @@ package controllers.scalabuild
 import controllers.scalabuild.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.scalabuild.HoldingTypes.{Freehold, Leasehold}
 import models.scalabuild.{PrintDisplayTable, UserAnswers}
-import pages.scalabuild.{HoldingPage, RequestGroup}
+import pages.scalabuild.{CurrentValuePage, EffectiveDatePage, HoldingPage, RequestGroup}
 import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.scalabuild.ResultService
+import services.scalabuild.{FtbLimitService, ResultService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.scalabuild.checkanswerssummary._
 import viewmodels.scalabuild.govuk.summarylist.SummaryListViewModel
@@ -23,6 +23,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class PrintController @Inject() (
     val controllerComponents: MessagesControllerComponents,
+    service: FtbLimitService,
     view: PrintView,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
@@ -54,40 +55,46 @@ class PrintController @Inject() (
 
   }
 
-  private def toSummaryList(ua: UserAnswers, withAction: Boolean)(implicit messages: Messages) = {
-    val premiumOrPriceSummaryRow = ua.get(HoldingPage) match {
-      case Some(Freehold) => PurchasePriceSummary.row(ua, withAction = withAction)
-      case Some(Leasehold) => PremiumSummary.row(ua, withAction = withAction)
+  private def toSummaryList(userAnswers: UserAnswers, withAction: Boolean)(implicit messages: Messages) = {
+    val premiumOrPriceSummaryRow = userAnswers.get(HoldingPage) match {
+      case Some(Freehold) => PurchasePriceSummary.row(userAnswers, withAction = withAction)
+      case Some(Leasehold) => PremiumSummary.row(userAnswers, withAction = withAction)
       case None        => None
     }
+    val threshold: Option[(Int, Boolean)] =
+      for {
+        effectiveDate <- userAnswers.get(EffectiveDatePage)
+        currentValue <- userAnswers.get(CurrentValuePage)
+        threshold = service.ftbLimit(effectiveDate)
+      } yield (threshold, currentValue)
 
     SummaryListViewModel(
       rows = Seq(
-        HoldingSummary.row(ua, withAction = withAction),
-        PropertySummary.row(ua, withAction = withAction),
-        EffectiveDateSummary.row(ua, withAction = withAction),
-        IsAdditionalPropertySummary.row(ua, withAction = withAction),
-        MainResidenceSummary.row(ua, withAction = withAction),
-        NonUkResidentSummary.row(ua, withAction = withAction),
-        OwnsOtherPropertiesSummary.row(ua, withAction = withAction),
+        HoldingSummary.row(userAnswers, withAction = withAction),
+        PropertySummary.row(userAnswers, withAction = withAction),
+        EffectiveDateSummary.row(userAnswers, withAction = withAction),
+        NonUkResidentSummary.row(userAnswers, withAction = withAction),
+        IsPurchaserIndividualSummary.row(userAnswers, withAction = withAction),
+        IsAdditionalPropertySummary.row(userAnswers, withAction = withAction),
+        OwnsOtherPropertiesSummary.row(userAnswers, withAction = withAction),
+        MainResidenceSummary.row(userAnswers, withAction = withAction),
+        ReplaceMainResidenceSummary.row(userAnswers, withAction = withAction),
+        SharedOwnershipSummary.row(userAnswers, withAction = withAction),
+        CurrentValueSummary.row(userAnswers, withAction = withAction, threshold),
+        PaySdltSummary.row(userAnswers, withAction = withAction),
+        LeaseStartDateSummary.row(userAnswers, withAction = withAction),
+        LeaseEndDateSummary.row(userAnswers, withAction = withAction),
+        LeaseTermSummary.row(userAnswers),
         premiumOrPriceSummaryRow,
-        IsPurchaserIndividualSummary.row(ua, withAction = withAction),
-        ReplaceMainResidenceSummary.row(ua, withAction = withAction),
-        SharedOwnershipSummary.row(ua, withAction = withAction),
-        CurrentValueSummary.row(ua, withAction = withAction),
-        PaySdltSummary.row(ua, withAction = withAction),
-        LeaseStartDateSummary.row(ua, withAction = withAction),
-        LeaseEndDateSummary.row(ua, withAction = withAction),
-        LeaseTermSummary.row(ua),
-        Year1RentSummary.row(ua, withAction = withAction),
-        Year2RentSummary.row(ua, withAction = withAction),
-        Year3RentSummary.row(ua, withAction = withAction),
-        Year4RentSummary.row(ua, withAction = withAction),
-        Year5RentSummary.row(ua, withAction = withAction),
-        HighestRentSummary.row(ua),
-        ExchangeContractPreMarch2016Summary.row(ua, withAction = withAction),
-        ContractPostMarch2016Summary.row(ua, withAction = withAction),
-        RelevantRentSummary.row(ua, withAction = withAction)
+        Year1RentSummary.row(userAnswers, withAction = withAction),
+        Year2RentSummary.row(userAnswers, withAction = withAction),
+        Year3RentSummary.row(userAnswers, withAction = withAction),
+        Year4RentSummary.row(userAnswers, withAction = withAction),
+        Year5RentSummary.row(userAnswers, withAction = withAction),
+        HighestRentSummary.row(userAnswers),
+        ExchangeContractPreMarch2016Summary.row(userAnswers, withAction = withAction),
+        ContractPostMarch2016Summary.row(userAnswers, withAction = withAction),
+        RelevantRentSummary.row(userAnswers, withAction = withAction)
       ).flatten
     )
   }
