@@ -21,7 +21,8 @@ import play.api.libs.json.*
 case class CalculationResponse(result: Seq[Result])
 
 object CalculationResponse {
-  implicit val reads: Reads[CalculationResponse] = Json.reads[CalculationResponse]
+  implicit val reads:  Reads[CalculationResponse]  = Json.reads[CalculationResponse]
+  implicit val writes: OWrites[CalculationResponse] = Json.writes[CalculationResponse]
 }
 
 case class Result(
@@ -33,7 +34,8 @@ case class Result(
                  )
 
 object Result {
-  implicit val reads: Reads[Result] = Json.reads[Result]
+  implicit val reads:  Reads[Result]  = Json.reads[Result]
+  implicit val writes: OWrites[Result] = Json.writes[Result]
 }
 
 case class CalculationDetails(
@@ -49,7 +51,8 @@ case class CalculationDetails(
                              )
 
 object CalculationDetails {
-  implicit val reads: Reads[CalculationDetails] = Json.reads[CalculationDetails]
+  implicit val reads:  Reads[CalculationDetails]  = Json.reads[CalculationDetails]
+  implicit val writes: OWrites[CalculationDetails] = Json.writes[CalculationDetails]
 }
 
 case class SliceDetails(
@@ -60,5 +63,6 @@ case class SliceDetails(
                        )
 
 object SliceDetails {
-  implicit val reads: Reads[SliceDetails] = Json.reads[SliceDetails]
+  implicit val reads:  Reads[SliceDetails]  = Json.reads[SliceDetails]
+  implicit val writes: OWrites[SliceDetails] = Json.writes[SliceDetails]
 }

@@ -1,0 +1,183 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukSelect: GovukSelect,
+    govukButton: GovukButton
+)
+
+@(form: Form[_])(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = "SDLT Tax Calculation Test", showBackLink = false, showSignOut = false) {
+
+    <h1 class="govuk-heading-l">SDLT Tax Calculation Test</h1>
+    <p class="govuk-body">Use this form to test the SDLT calculation service with custom user answers.</p>
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary(
+            title = Text("There is a problem"),
+            errorList = form.errors.map(e => ErrorLink(
+                href = Some(s"#${e.key}"),
+                content = Text(e.message)
+            ))
+        ))
+    }
+
+    @formHelper(action = controllers.routes.TaxCalculationTestController.onSubmit(), Symbol("novalidate") -> "novalidate") {
+
+        <h2 class="govuk-heading-m">Land details</h2>
+
+        @govukSelect(Select(
+            id = "propertyType",
+            name = "propertyType",
+            label = Label(content = Text("Property type")),
+            items = Seq(
+                SelectItem(value = Some(""), text = "Select...", selected = form("propertyType").value.isEmpty),
+                SelectItem(value = Some("01"), text = "01 - Residential",    selected = form("propertyType").value.contains("01")),
+                SelectItem(value = Some("02"), text = "02 - Mixed",          selected = form("propertyType").value.contains("02")),
+                SelectItem(value = Some("03"), text = "03 - Non-residential", selected = form("propertyType").value.contains("03")),
+                SelectItem(value = Some("04"), text = "04 - Additional",     selected = form("propertyType").value.contains("04"))
+            ),
+            errorMessage = form("propertyType").error.map(e => ErrorMessage(content = Text(e.message)))
+        ))
+
+        @govukSelect(Select(
+            id = "interestCode",
+            name = "interestCode",
+            label = Label(content = Text("Interest created/transferred")),
+            items = Seq(
+                SelectItem(value = Some(""), text = "Select...", selected = form("interestCode").value.isEmpty),
+                SelectItem(value = Some("FG"), text = "FG - Freehold granted",     selected = form("interestCode").value.contains("FG")),
+                SelectItem(value = Some("FP"), text = "FP - Freehold purchased",   selected = form("interestCode").value.contains("FP")),
+                SelectItem(value = Some("FT"), text = "FT - Freehold transferred", selected = form("interestCode").value.contains("FT")),
+                SelectItem(value = Some("LG"), text = "LG - Leasehold granted",     selected = form("interestCode").value.contains("LG")),
+                SelectItem(value = Some("LP"), text = "LP - Leasehold purchased",   selected = form("interestCode").value.contains("LP")),
+                SelectItem(value = Some("LT"), text = "LT - Leasehold transferred", selected = form("interestCode").value.contains("LT"))
+            ),
+            errorMessage = form("interestCode").error.map(e => ErrorMessage(content = Text(e.message)))
+        ))
+
+        <h2 class="govuk-heading-m">Transaction details</h2>
+
+        @govukInput(Input(
+            id = "effectiveDate",
+            name = "effectiveDate",
+            label = Label(content = Text("Effective date")),
+            hint = Some(Hint(content = Text("Format: yyyy-MM-dd, e.g. 2024-04-01"))),
+            value = form("effectiveDate").value,
+            errorMessage = form("effectiveDate").error.map(e => ErrorMessage(content = Text(e.message)))
+        ))
+
+        @govukInput(Input(
+            id = "totalConsideration",
+            name = "totalConsideration",
+            label = Label(content = Text("Total consideration (£)")),
+            hint = Some(Hint(content = Text("Enter amount in pounds, e.g. 250000"))),
+            value = form("totalConsideration").value,
+            inputmode = Some("decimal"),
+            errorMessage = form("totalConsideration").error.map(e => ErrorMessage(content = Text(e.message)))
+        ))
+
+        @govukSelect(Select(
+            id = "isLinked",
+            name = "isLinked",
+            label = Label(content = Text("Is this a linked transaction?")),
+            items = Seq(
+                SelectItem(value = Some(""), text = "Not specified", selected = form("isLinked").value.isEmpty),
+                SelectItem(value = Some("YES"), text = "YES", selected = form("isLinked").value.contains("YES")),
+                SelectItem(value = Some("NO"),  text = "NO",  selected = form("isLinked").value.contains("NO"))
+            )
+        ))
+
+        <h2 class="govuk-heading-m">Purchaser details</h2>
+
+        @govukSelect(Select(
+            id = "purchaserIsCompany",
+            name = "purchaserIsCompany",
+            label = Label(content = Text("Is the purchaser a company?")),
+            hint = Some(Hint(content = Text("Used to determine 'individual' flag for residential properties"))),
+            items = Seq(
+                SelectItem(value = Some(""), text = "Not specified", selected = form("purchaserIsCompany").value.isEmpty),
+                SelectItem(value = Some("YES"), text = "YES", selected = form("purchaserIsCompany").value.contains("YES")),
+                SelectItem(value = Some("NO"),  text = "NO",  selected = form("purchaserIsCompany").value.contains("NO"))
+            )
+        ))
+
+        <h2 class="govuk-heading-m">Residency</h2>
+
+        @govukSelect(Select(
+            id = "isNonUkResident",
+            name = "isNonUkResident",
+            label = Label(content = Text("Is a non-UK resident involved?")),
+            items = Seq(
+                SelectItem(value = Some(""), text = "Not specified", selected = form("isNonUkResident").value.isEmpty),
+                SelectItem(value = Some("YES"), text = "YES", selected = form("isNonUkResident").value.contains("YES")),
+                SelectItem(value = Some("NO"),  text = "NO",  selected = form("isNonUkResident").value.contains("NO"))
+            )
+        ))
+
+        <h2 class="govuk-heading-m">Lease details (leasehold only)</h2>
+        <p class="govuk-body">Required when interest code is LG, LP or LT.</p>
+
+        @govukInput(Input(
+            id = "contractStartDate",
+            name = "contractStartDate",
+            label = Label(content = Text("Lease contract start date")),
+            hint = Some(Hint(content = Text("Format: yyyy-MM-dd, e.g. 2024-01-01"))),
+            value = form("contractStartDate").value,
+            errorMessage = form("contractStartDate").error.map(e => ErrorMessage(content = Text(e.message)))
+        ))
+
+        @govukInput(Input(
+            id = "contractEndDate",
+            name = "contractEndDate",
+            label = Label(content = Text("Lease contract end date")),
+            hint = Some(Hint(content = Text("Format: yyyy-MM-dd, e.g. 2034-01-01"))),
+            value = form("contractEndDate").value,
+            errorMessage = form("contractEndDate").error.map(e => ErrorMessage(content = Text(e.message)))
+        ))
+
+        @govukInput(Input(
+            id = "startingRent",
+            name = "startingRent",
+            label = Label(content = Text("Starting rent (£)")),
+            hint = Some(Hint(content = Text("Annual rent amount, e.g. 12000"))),
+            value = form("startingRent").value,
+            inputmode = Some("decimal"),
+            errorMessage = form("startingRent").error.map(e => ErrorMessage(content = Text(e.message)))
+        ))
+
+        @govukSelect(Select(
+            id = "isAnnualRentOver1000",
+            name = "isAnnualRentOver1000",
+            label = Label(content = Text("Is annual rent over £1,000?")),
+            hint = Some(Hint(content = Text("Used for mixed/non-residential leasehold"))),
+            items = Seq(
+                SelectItem(value = Some(""), text = "Not specified", selected = form("isAnnualRentOver1000").value.isEmpty),
+                SelectItem(value = Some("true"),  text = "Yes", selected = form("isAnnualRentOver1000").value.contains("true")),
+                SelectItem(value = Some("false"), text = "No",  selected = form("isAnnualRentOver1000").value.contains("false"))
+            )
+        ))
+
+        @govukButton(Button(content = Text("Calculate SDLT")))
+    }
+}

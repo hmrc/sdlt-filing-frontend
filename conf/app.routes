@@ -4,6 +4,9 @@
 
 GET         /                                                                                        controllers.IndexController.onPageLoad(returnId: Option[String] ?= None)
 
+GET         /test/tax-calculation                                                                     controllers.TaxCalculationTestController.onPageLoad()
+POST        /test/tax-calculation                                                                     controllers.TaxCalculationTestController.onSubmit()
+
 GET         /assets/*file                                                                            controllers.Assets.versioned(path="/public", file: Asset)
 
 GET         /language/:lang                                                                          controllers.LanguageSwitchController.switchToLanguage(lang: String)

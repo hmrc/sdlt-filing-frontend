@@ -1,0 +1,190 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.taxCalculation.{CalculationResponse, SliceDetails, TaxTypes}
+@import controllers.TaxCalcTestFormData
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@this(
+    layout: templates.Layout,
+    govukSummaryList: GovukSummaryList,
+    govukTable: GovukTable
+)
+
+@(response: CalculationResponse, input: TaxCalcTestFormData, requestJson: String, responseJson: String)(implicit request: Request[_], messages: Messages)
+
+@formatAmount(amount: Int) = @{ s"£${"%,d".format(amount)}" }
+
+@sliceDescription(slice: SliceDetails, isFirst: Boolean) = @{
+    if (isFirst && slice.from == 0)
+        slice.to.map(t => s"Up to ${formatAmount(t)}").getOrElse(s"Up to no limit")
+    else
+        slice.to.map(t => s"Above ${formatAmount(slice.from)} and up to ${formatAmount(t)}")
+              .getOrElse(s"Above ${formatAmount(slice.from)}+")
+}
+
+@propertyTypeLabel(code: String) = @{ code match {
+    case "01" => "01 - Residential"
+    case "02" => "02 - Mixed"
+    case "03" => "03 - Non-residential"
+    case "04" => "04 - Additional"
+    case other => other
+}}
+
+@interestCodeLabel(code: String) = @{ code match {
+    case "FG" => "FG - Freehold granted"
+    case "FP" => "FP - Freehold purchased"
+    case "FT" => "FT - Freehold transferred"
+    case "LG" => "LG - Leasehold granted"
+    case "LP" => "LP - Leasehold purchased"
+    case "LT" => "LT - Leasehold transferred"
+    case other => other
+}}
+
+@result = @{ response.result.headOption }
+@premiumCalcs = @{ result.toSeq.flatMap(_.taxCalcs.filter(_.taxType == TaxTypes.premium)) }
+@rentCalcs = @{ result.toSeq.flatMap(_.taxCalcs.filter(_.taxType == TaxTypes.rent)) }
+@premiumTaxDue = @{ premiumCalcs.map(_.taxDue).sum }
+@npvTaxDue = @{ result.flatMap(_.npv).getOrElse(rentCalcs.map(_.taxDue).sum) }
+@totalTax = @{ result.map(_.totalTax).getOrElse(0) }
+
+@layout(pageTitle = "Tax calculation", showBackLink = false, showSignOut = false) {
+
+    <details class="govuk-details" style="background:#f3f2f1; border-left:4px solid #1d70b8; padding:1rem; margin-bottom:2rem;">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text" style="font-family:monospace; font-weight:bold;">
+                🔍 Debug: request &amp; response JSON
+            </span>
+        </summary>
+        <div class="govuk-details__text" style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
+            <div style="flex:1; min-width:300px;">
+                <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Request (SdltCalculationRequest)</p>
+                <pre style="background:#0b0c0c; color:#f3f2f1; padding:1rem; overflow:auto; font-size:0.8rem; border-radius:4px; max-height:400px;">@requestJson</pre>
+            </div>
+            <div style="flex:1; min-width:300px;">
+                <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Response (CalculationResponse)</p>
+                <pre style="background:#0b0c0c; color:#f3f2f1; padding:1rem; overflow:auto; font-size:0.8rem; border-radius:4px; max-height:400px;">@responseJson</pre>
+            </div>
+        </div>
+    </details>
+
+    <span class="govuk-caption-l">Tax calculation</span>
+    <h1 class="govuk-heading-l">Calculated SDLT due is @formatAmount(totalTax)</h1>
+    <p class="govuk-body">The amount of SDLT due is based on the information you have entered when filing this return.</p>
+
+    <h2 class="govuk-heading-m">Tax calculation</h2>
+
+    @govukSummaryList(SummaryList(rows = Seq(
+        SummaryListRow(
+            key   = Key(Text("Effective date of transaction")),
+            value = Value(Text(input.effectiveDate))
+        ),
+        SummaryListRow(
+            key   = Key(Text("Tax due on total premium payable")),
+            value = Value(Text(formatAmount(premiumTaxDue)))
+        ),
+        SummaryListRow(
+            key   = Key(Text("Tax due on NPV")),
+            value = Value(Text(formatAmount(npvTaxDue)))
+        ),
+        SummaryListRow(
+            key   = Key(Text("Relief claimed?")),
+            value = Value(Text("No"))
+        ),
+        SummaryListRow(
+            key   = Key(Text("SDLT due")),
+            value = Value(Text(formatAmount(totalTax)))
+        )
+    )))
+
+    <h2 class="govuk-heading-m">Rate card</h2>
+
+    @govukSummaryList(SummaryList(rows = Seq(
+        SummaryListRow(
+            key   = Key(Text("Type of transaction")),
+            value = Value(Text(interestCodeLabel(input.interestCode)))
+        ),
+        SummaryListRow(
+            key   = Key(Text("Are you claiming relief?")),
+            value = Value(Text("No"))
+        ),
+        SummaryListRow(
+            key   = Key(Text("Type of property")),
+            value = Value(Text(propertyTypeLabel(input.propertyType)))
+        ),
+        SummaryListRow(
+            key   = Key(Text("Is this transaction linked to any others?")),
+            value = Value(Text(input.isLinked.getOrElse("No")))
+        )
+    )))
+
+    @if(premiumCalcs.exists(_.slices.exists(_.nonEmpty))) {
+        <h2 class="govuk-heading-m">National payable SDLT rates</h2>
+
+        @for(calc <- premiumCalcs; slices <- calc.slices if slices.nonEmpty) {
+            @govukTable(Table(
+                head = Some(Seq(
+                    HeadCell(content = Text("Description")),
+                    HeadCell(content = Text("Rate")),
+                    HeadCell(content = Text("SDLT due"))
+                )),
+                rows = slices.zipWithIndex.map { case (slice, idx) =>
+                    Seq(
+                        TableRow(content = Text(sliceDescription(slice, idx == 0))),
+                        TableRow(content = Text(s"${slice.rate}%")),
+                        TableRow(content = Text(formatAmount(slice.taxDue)))
+                    )
+                } :+ Seq(
+                    TableRow(content = Text("Total SDLT due on the premium"), classes = "govuk-!-font-weight-bold"),
+                    TableRow(content = Text("")),
+                    TableRow(content = Text(formatAmount(calc.taxDue)), classes = "govuk-!-font-weight-bold")
+                )
+            ))
+        }
+    }
+
+    @if(rentCalcs.exists(_.slices.exists(_.nonEmpty))) {
+        <h2 class="govuk-heading-m">NPV SDLT rates</h2>
+
+        @for(calc <- rentCalcs; slices <- calc.slices if slices.nonEmpty) {
+            @govukTable(Table(
+                head = Some(Seq(
+                    HeadCell(content = Text("Description")),
+                    HeadCell(content = Text("Rate")),
+                    HeadCell(content = Text("SDLT due"))
+                )),
+                rows = slices.zipWithIndex.map { case (slice, idx) =>
+                    Seq(
+                        TableRow(content = Text(sliceDescription(slice, idx == 0))),
+                        TableRow(content = Text(s"${slice.rate}%")),
+                        TableRow(content = Text(formatAmount(slice.taxDue)))
+                    )
+                } :+ Seq(
+                    TableRow(content = Text("Total SDLT due on the NPV"), classes = "govuk-!-font-weight-bold"),
+                    TableRow(content = Text("")),
+                    TableRow(content = Text(formatAmount(calc.taxDue)), classes = "govuk-!-font-weight-bold")
+                )
+            ))
+        }
+    }
+
+    <p class="govuk-body govuk-!-font-weight-bold">Total SDLT due</p>
+    <p class="govuk-body">@formatAmount(totalTax)</p>
+
+    <p class="govuk-body">
+        <a href="@controllers.routes.TaxCalculationTestController.onPageLoad()" class="govuk-link">Return to tax calculation</a>
+    </p>
+}

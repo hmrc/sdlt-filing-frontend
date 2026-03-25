@@ -35,6 +35,9 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
 
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
+  def buildCalculationRequest(userAnswers: UserAnswers): Either[String, SdltCalculationRequest] =
+    buildRequest(userAnswers)
+
   def calculateStampDutyLandTax(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[CalculationResponse] =
     buildRequest(userAnswers) match {
       case Right(request) =>
@@ -63,7 +66,7 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       effectiveDateDay    = day,
       effectiveDateMonth  = month,
       effectiveDateYear   = year,
-      nonUKResident       = fullReturn.residency.flatMap(_.isNonUkResidents),
+      nonUKResident       = fullReturn.residency.flatMap(_.isNonUkResidents).map(v => if (v.toUpperCase == "YES") "Yes" else "No"),
       premium             = premium,
       highestRent         = fullReturn.lease.flatMap(_.startingRent).flatMap(r => Try(BigDecimal(r)).toOption).getOrElse(BigDecimal(0)),
       propertyDetails     = buildPropertyDetails(propertyCode, fullReturn),
