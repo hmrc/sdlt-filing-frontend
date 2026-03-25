@@ -22,7 +22,6 @@ import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.PurchaserTypeOfCompanyPage
 import pages.purchaser.{NameOfPurchaserPage, PurchaserCompanyTypeKnownPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,8 +44,6 @@ class PurchaserCompanyTypeKnownController @Inject()(
                                          view: PurchaserCompanyTypeKnownView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -54,6 +51,7 @@ class PurchaserCompanyTypeKnownController @Inject()(
         case None =>
           Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
         case Some(purchaser) =>
+          val form = formProvider(purchaser.fullName)
           val preparedForm = request.userAnswers.get(PurchaserCompanyTypeKnownPage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -70,7 +68,7 @@ class PurchaserCompanyTypeKnownController @Inject()(
         case None =>
           Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
         case Some(purchaser) =>
-
+          val form = formProvider(purchaser.fullName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, purchaser.fullName))),

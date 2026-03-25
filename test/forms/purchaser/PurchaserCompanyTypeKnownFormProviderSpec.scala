@@ -18,13 +18,17 @@ package forms.purchaser
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
-
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 class PurchaserCompanyTypeKnownFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "purchaser.purchaserCompanyTypeKnown.error.required"
   val invalidKey = "error.boolean"
+  val purchaserName = "Test"
 
-  val form = new PurchaserCompanyTypeKnownFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  
+  val form = new PurchaserCompanyTypeKnownFormProvider()(purchaserName)
 
   ".value" - {
 

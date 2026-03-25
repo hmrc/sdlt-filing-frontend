@@ -29,10 +29,12 @@ import pages.purchaser.{NameOfPurchaserPage, PurchaserCompanyTypeKnownPage, WhoI
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.purchaser.PurchaserCompanyTypeKnownView
+import play.api.Application
 
 import scala.concurrent.Future
 
@@ -48,7 +50,7 @@ class PurchaserCompanyTypeKnownControllerSpec extends SpecBase with MockitoSugar
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PurchaserCompanyTypeKnownFormProvider()
-  val form: Form[Boolean] = formProvider()
+
   private val testStorn = "TESTSTORN"
 
   lazy val purchaserCompanyTypeKnownRoute: String = controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode).url
@@ -95,6 +97,8 @@ class PurchaserCompanyTypeKnownControllerSpec extends SpecBase with MockitoSugar
     def toNameOfPurchaser = models.purchaser.NameOfPurchaser(p.forename1, p.forename2, p.surname.orElse(p.companyName).getOrElse(""))
   }
 
+  def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
+
   "purchaserCompanyTypeKnown Controller" - {
 
     "GET Method Operations" - {
@@ -107,13 +111,20 @@ class PurchaserCompanyTypeKnownControllerSpec extends SpecBase with MockitoSugar
           .build()
 
         running(application) {
+
           val request = FakeRequest(GET, purchaserCompanyTypeKnownRoute)
+          implicit val messages: Messages =
+            application.injector.instanceOf[MessagesApi].preferred(request)
+
+          val purchaserName = userAnswersWithCompanyAndName.get(NameOfPurchaserPage).get
+          val form: Form[Boolean] = formProvider(purchaserName.fullName)
+
           val view = application.injector.instanceOf[PurchaserCompanyTypeKnownView]
 
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, NormalMode, "ACME Corporation")(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, NormalMode, "ACME Corporation")(request, customMessages(application, request)).toString
         }
       }
 
@@ -142,12 +153,19 @@ class PurchaserCompanyTypeKnownControllerSpec extends SpecBase with MockitoSugar
         running(application) {
           val request = FakeRequest(GET, purchaserCompanyTypeKnownRoute)
 
+          implicit val messages: Messages =
+            application.injector.instanceOf[MessagesApi].preferred(request)
+
+          val purchaserName = userAnswersWithCompanyPurchaser.get(NameOfPurchaserPage).get
+          val form: Form[Boolean] = formProvider(purchaserName.fullName)
+
+
           val view = application.injector.instanceOf[PurchaserCompanyTypeKnownView]
 
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(true), NormalMode, "ACME Corporation")(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form.fill(true), NormalMode, "ACME Corporation")(request, customMessages(application, request)).toString
         }
       }
     }
@@ -256,13 +274,19 @@ class PurchaserCompanyTypeKnownControllerSpec extends SpecBase with MockitoSugar
           val request = FakeRequest(POST, purchaserCompanyTypeKnownRoute)
             .withFormUrlEncodedBody(("value", "invalid"))
 
+          implicit val messages: Messages =
+            application.injector.instanceOf[MessagesApi].preferred(request)
+
+          val purchaserName = userAnswersWithCompanyPurchaser.get(NameOfPurchaserPage).get
+          val form: Form[Boolean] = formProvider(purchaserName.fullName)
+
           val boundForm = form.bind(Map("value" -> "invalid"))
           val view = application.injector.instanceOf[PurchaserCompanyTypeKnownView]
 
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, NormalMode, "ACME Corporation")(request, messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, NormalMode, "ACME Corporation")(request, customMessages(application, request)).toString
         }
       }
 
