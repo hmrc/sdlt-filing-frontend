@@ -132,7 +132,7 @@
     )))
 
     @if(premiumCalcs.exists(_.slices.exists(_.nonEmpty))) {
-        <h2 class="govuk-heading-m">National payable SDLT rates</h2>
+        <h2 class="govuk-heading-m">Total premium payable SDLT rates</h2>
 
         @for(calc <- premiumCalcs; slices <- calc.slices if slices.nonEmpty) {
             @govukTable(Table(
