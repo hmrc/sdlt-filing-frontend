@@ -8,7 +8,7 @@ package viewmodels.scalabuild.checkanswerssummary
 import models.scalabuild.UserAnswers
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.scalabuild.FormatUtils.{bigDecimalFormat, keyCssClass, valueCssClass}
+import viewmodels.scalabuild.FormatUtils.{keyCssClass, valueCssClass}
 import viewmodels.scalabuild.govuk.summarylist.{
   ActionItemViewModel,
   FluentActionItem,
@@ -24,7 +24,7 @@ object CurrentValueSummary {
 
   def row(answers: UserAnswers, withAction: Boolean, threshold: Option[(Int, Boolean)] = None)(implicit messages: Messages): Option[SummaryListRow] =
     threshold.map { answer =>
-      val value = if (answer._2) s"${bigDecimalFormat(answer._1)} or less" else "No"
+      val value = if (answer._2) messages("currentValue.aboveThreshold", answer._1) else messages("currentValue.aboveThreshold", answer._1)
         if (withAction) {
           SummaryListRowViewModel(
             key = KeyViewModel("currentValue.checkYourAnswersLabel").withCssClass(keyCssClass),

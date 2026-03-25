@@ -27,7 +27,7 @@ object PaySdltSummary {
       if (withAction) {
         SummaryListRowViewModel(
           key = KeyViewModel("marketValue.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel.withId(text = s"$answer.displayCya",id = "td2_marketValue"),
+          value = ValueViewModel.withId(text = s"${answer.displayCya}",id = "td2_marketValue"),
           actions = Seq(
             ActionItemViewModel(
               "site.change",
@@ -40,7 +40,7 @@ object PaySdltSummary {
       } else {
         SummaryListRowViewModel(
           key = KeyViewModel("marketValue.checkYourAnswersLabel").withCssClass(keyCssClass),
-          value = ValueViewModel.withId(text = s"$answer.displayCya",id = "td2_marketValue"),
+          value = ValueViewModel.withId(text = s"${answer.displayCya}",id = "td2_marketValue"),
         )
       }
     }
