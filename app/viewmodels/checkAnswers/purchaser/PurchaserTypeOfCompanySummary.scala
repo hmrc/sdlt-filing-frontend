@@ -40,7 +40,7 @@ object PurchaserTypeOfCompanySummary {
             selectedItems.map {
                 answer => HtmlFormat.escape(messages(s"purchaser.purchaserTypeOfCompany.$answer")).toString
               }
-              .mkString(",<br>")
+              .mkString("<br>")
           )
         )
 
