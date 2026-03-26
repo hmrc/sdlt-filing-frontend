@@ -151,8 +151,8 @@ class PurchaserUpdateMainPurchaserService @Inject()(
               Future.successful(Redirect(controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()))
           }
         }.recover {
-          case _ =>
-            logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] failed to update main purchaser. Redirecting to journey recovery")
+          case e: Throwable =>
+            logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] failed to update main purchaser: ${e.getMessage}. Redirecting to journey recovery")
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         }
   }

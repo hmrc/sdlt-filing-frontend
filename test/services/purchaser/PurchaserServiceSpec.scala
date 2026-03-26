@@ -2413,7 +2413,16 @@ class PurchaserServiceSpec extends SpecBase {
 
         service.getPurchaserNameById(userAnswers, purchaserId = "1011") mustBe None
       }
-    }
 
+      "must return None when fullReturn has no purchaser" in {
+        val fullReturn = emptyFullReturn.copy(
+          purchaser = None)
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(fullReturn))
+
+        service.getPurchaserNameById(userAnswers, purchaserId = "1011") mustBe None
+      }
+    }
   }
 }

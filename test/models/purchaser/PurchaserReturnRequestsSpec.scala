@@ -840,6 +840,24 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
           placeOfRegistration = None
         )
       }
+
+      "must throw an exception when fullReturn is None" in {
+        val result =
+          UpdatePurchaserRequest.fromMainToEssential(userAnswers.copy(fullReturn = None), purchaserToBeChanged)
+
+        val ex = result.failed.futureValue
+        ex mustBe a[NoSuchElementException]
+        ex.getMessage mustBe "Full return not found"
+      }
+
+      "must throw an exception when purchaserResourceRef is None" in {
+        val result =
+          UpdatePurchaserRequest.fromMainToEssential(userAnswers, purchaserToBeChanged.copy(purchaserResourceRef = None))
+
+        val ex = result.failed.futureValue
+        ex mustBe a[NoSuchElementException]
+        ex.getMessage mustBe "Purchaser mandatory Resources not found"
+      }
     }
   }
 

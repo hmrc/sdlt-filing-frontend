@@ -225,7 +225,7 @@ class ConfirmChangeOfMainPurchaserControllerSpec extends SpecBase with MockitoSu
 
       when(
         mockPurchaserUpdateMainPurchaserService
-          .updateMainPurchaser(eqTo(userAnswers))(any(), any(), any())
+          .updateMainPurchaser(any())(any(), any(), any())
       ).thenReturn(Future.successful(Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())))
 
       when(mockPurchaserService.getPurchaserNameById(any(), any()))
