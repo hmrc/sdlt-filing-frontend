@@ -131,7 +131,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from PurchaserCorporationTaxUTRPage to PurchaserType Page" in {
-          navigator.nextPage(PurchaserUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          navigator.nextPage(PurchaserUTRPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserTypePage to IsPurchaserActingAsTrustee" in {
@@ -139,7 +139,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from CompanyFormOfIdPage to PurchaserType page" in {
-          navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          navigator.nextPage(CompanyFormOfIdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserAndVendorConnectedPage to PurchaserCheckYourAnswers" in {
@@ -155,7 +155,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from RegistrationNumberPage to PurchaserTypeOfCompany page" in {
-          navigator.nextPage(RegistrationNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          navigator.nextPage(RegistrationNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
         }
 
         "go from PurchaserAgentBeforeYouStartPage to SelectPurchaserAgentPage" in {
@@ -193,6 +193,10 @@ class NavigatorSpec extends SpecBase {
         //TODO DTR-3997 - SPRINT 11 - update to Are you sure you want to change purchaser 1
         "go from ChangePurchaserOnePage to ChangePurchaserOne page" in {
           navigator.nextPage(ChangePurchaserOnePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()
+        }
+
+        "go from PurchaserCompanyTypeKnownPage to PurchaserTypeOfCompanyController page" in {
+          navigator.nextPage(PurchaserCompanyTypeKnownPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
       }
 
@@ -293,6 +297,7 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(PurchaserNationalInsurancePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         navigator.nextPage(PurchaserTypeOfCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
         navigator.nextPage(RegistrationNumberPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserCompanyTypeKnownPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
       }
 
       "must go from any vendor page to VendorCheckYourAnswers" in {
@@ -362,7 +367,7 @@ class NavigatorSpec extends SpecBase {
           controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
 
         navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
-          controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+          controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
       }
 
       "must return false for non-purchaser section pages" in {

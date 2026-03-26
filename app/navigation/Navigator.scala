@@ -75,7 +75,7 @@ class Navigator @Inject()() {
          | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage | ConfirmNameOfThePurchaserPage
          | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage
          | PurchaserAgentReferencePage | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage
-         | PurchaserAgentBeforeYouStartPage | PurchaserAgentAuthorisedPage | ChangePurchaserOnePage => true
+         | PurchaserAgentBeforeYouStartPage | PurchaserAgentAuthorisedPage | ChangePurchaserOnePage | PurchaserCompanyTypeKnownPage => true
 
     case _ => false
   }
@@ -98,15 +98,15 @@ class Navigator @Inject()() {
     case PurchaserFormOfIdIndividualPage =>
       _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
     case PurchaserUTRPage =>
-      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+      _ => controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
     case RegistrationNumberPage =>
-      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+      _ => controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
     case IsPurchaserActingAsTrusteePage =>
       _ => controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(NormalMode)
     case PurchaserTypeOfCompanyPage =>
       _ => controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode)
     case CompanyFormOfIdPage =>
-      _ => controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+      _ => controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
     case PurchaserAndVendorConnectedPage =>
       _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case ConfirmNameOfThePurchaserPage =>
@@ -114,6 +114,9 @@ class Navigator @Inject()() {
     //TODO DTR-3997 - SPRINT 11 - update to Are you sure you want to change purchaser 1
     case ChangePurchaserOnePage =>
       _ => controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()
+    case PurchaserCompanyTypeKnownPage =>
+      _=> controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
+
 
     case PurchaserAgentBeforeYouStartPage =>
       _ => controllers.purchaserAgent.routes.SelectPurchaserAgentController.onPageLoad(NormalMode)
@@ -213,6 +216,7 @@ class Navigator @Inject()() {
     case PurchaserNationalInsurancePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case PurchaserTypeOfCompanyPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case RegistrationNumberPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+    case PurchaserCompanyTypeKnownPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
 
     case VendorOrCompanyNamePage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()
     case WhoIsTheVendorPage => _ => controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad()

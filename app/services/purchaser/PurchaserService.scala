@@ -272,7 +272,12 @@ class PurchaserService {
   def companyConditionalSummaryRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
     userAnswers.get(WhoIsMakingThePurchasePage) match {
       case Some(WhoIsMakingThePurchase.Company) =>
-        val typeOfCompany = Seq(PurchaserTypeOfCompanySummary.row(Some(userAnswers)))
+        val typeOfCompany = if (userAnswers.get(PurchaserCompanyTypeKnownPage).contains(true)) {
+          Seq(PurchaserCompanyTypeKnownSummary.row(Some(userAnswers)),
+            PurchaserTypeOfCompanySummary.row(Some(userAnswers)))
+        } else {
+          Seq(PurchaserCompanyTypeKnownSummary.row(Some(userAnswers)))
+        }
         val purchaserConfirmIdentity = Seq(PurchaserConfirmIdentitySummary.row(Some(userAnswers)))
         val extraRows = userAnswers.get(PurchaserConfirmIdentityPage) match {
           case Some(PurchaserConfirmIdentity.VatRegistrationNumber) =>
@@ -388,13 +393,14 @@ class PurchaserService {
     val isUTRPresent = sessionData.purchaserCurrent.purchaserUTRPage.isDefined
     val isVATPresent = sessionData.purchaserCurrent.registrationNumber.isDefined
     val isAnotherFormOfIdPresent = sessionData.purchaserCurrent.purchaserFormOfIdCompany.isDefined
+    val isPurchaserCompanyTypeKnown = sessionData.purchaserCurrent.purchaserCompanyTypeKnown.contains(true)
     val isTypeOfCompanyPresent = sessionData.purchaserCurrent.purchaserTypeOfCompany.isDefined
     val isPurchaserActingAsTrusteePresent = sessionData.purchaserCurrent.isPurchaserActingAsTrustee.isDefined
     val isPurchaserAndVendorConnectedPresent = sessionData.purchaserCurrent.purchaserAndVendorConnected.isDefined
 
     if (isPhoneNumberYes && !isPhoneNumberPresent) return false
     if (!isUTRPresent && !isVATPresent && !isAnotherFormOfIdPresent) return false
-    if (!isTypeOfCompanyPresent || !isPurchaserActingAsTrusteePresent || !isPurchaserAndVendorConnectedPresent) return false
+    if ((isPurchaserCompanyTypeKnown && !isTypeOfCompanyPresent) || !isPurchaserActingAsTrusteePresent || !isPurchaserAndVendorConnectedPresent) return false
 
     true
   }

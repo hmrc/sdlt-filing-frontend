@@ -82,6 +82,7 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
             .set(NameOfPurchaserPage, NameOfPurchaser(Some("fore"), Some("forename"), name = "name")).success.value
             .set(RegistrationNumberPage, "UTR123567").success.value
             .set(PurchaserTypeOfCompanyPage, typeOfCompany).success.value
+            .set(PurchaserCompanyTypeKnownPage, true).success.value
 
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
           when(mockNavigator.nextPage(eqTo(WhoIsMakingThePurchasePage), eqTo(NormalMode), any()))
@@ -108,6 +109,7 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
           capturedAnswers.get(PurchaserTypeOfCompanyPage) mustBe None
           capturedAnswers.get(NameOfPurchaserPage) mustBe None
           capturedAnswers.get(RegistrationNumberPage) mustBe None
+          capturedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe None
         }
 
         "must preserve individual pages when removing company pages" in {
@@ -118,6 +120,7 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
             .set(PurchaserNationalInsurancePage, "AB123456C").success.value
             .set(CompanyFormOfIdPage, CompanyFormOfId("REG123", "London")).success.value
             .set(PurchaserUTRPage, "UTR123").success.value
+            .set(PurchaserCompanyTypeKnownPage, false).success.value
 
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
           when(mockNavigator.nextPage(eqTo(WhoIsMakingThePurchasePage), eqTo(NormalMode), any()))
@@ -143,6 +146,7 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
           capturedAnswers.get(PurchaserNationalInsurancePage) mustBe Some("AB123456C")
           capturedAnswers.get(CompanyFormOfIdPage) mustBe None
           capturedAnswers.get(PurchaserUTRPage) mustBe None
+          capturedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe None
         }
 
         "must work correctly in CheckMode" in {
@@ -210,6 +214,7 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
             .set(CompanyFormOfIdPage, CompanyFormOfId("COMP123", "Birmingham")).success.value
             .set(PurchaserUTRPage, "UTR456").success.value
             .set(PurchaserTypeOfCompanyPage, typeOfCompany).success.value
+            .set(PurchaserCompanyTypeKnownPage, true).success.value
             .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
             .set(PurchaserNationalInsurancePage, "AB123456C").success.value
 
@@ -235,6 +240,7 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
           capturedAnswers.get(CompanyFormOfIdPage) mustBe Some(CompanyFormOfId("COMP123", "Birmingham"))
           capturedAnswers.get(PurchaserUTRPage) mustBe Some("UTR456")
           capturedAnswers.get(PurchaserTypeOfCompanyPage) mustBe Some(typeOfCompany)
+          capturedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe Some(true)
           capturedAnswers.get(NameOfPurchaserPage) mustBe None
           capturedAnswers.get(PurchaserNationalInsurancePage) mustBe None
         }

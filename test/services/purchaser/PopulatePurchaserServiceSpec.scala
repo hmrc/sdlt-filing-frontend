@@ -303,6 +303,54 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(RegistrationNumberPage) mustBe Some("VAT123")
           updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(IsPurchaserActingAsTrustee.No)
           updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(PurchaserAndVendorConnected.No)
+          updatedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe Some(true)
+        }
+
+        "must successfully populate session for main purchaser company with company types" in {
+
+          val purchaser = Purchaser(
+            purchaserID = Some("PUR005"),
+            companyName = Some("Bank Company Ltd"),
+            address1 = Some("70 Financial Street"),
+            isCompany = Some("YES"),
+            phone = Some("04012345678")
+          )
+
+          val companyDetailsUTR = companyDetails.copy(UTR = Some("UTR456"), VATReference = None)
+          val fullReturnWithCompanyMainPurchaserUTR: FullReturn =
+            emptyFullReturn.copy(purchaser = Some(Seq(purchaser)),
+              returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR005"))),
+              companyDetails = Some(companyDetailsUTR))
+
+          val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+            .copy(fullReturn = Some(fullReturnWithCompanyMainPurchaserUTR))
+
+          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+          val result = service.populatePurchaserInSession(companyPurchaser, "PUR005", userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
+          updatedAnswers.get(NameOfPurchaserPage) mustBe Some(NameOfPurchaser(
+            forename1 = None,
+            forename2 = None,
+            name = "Test Company Ltd"
+          ))
+          updatedAnswers.get(PurchaserAddressPage) mustBe Some(Address(
+            line1 = "10 Test Street",
+            line2 = Some("Floor 2"),
+            line3 = Some("Manchester"),
+            line4 = Some("Greater Manchester"),
+            postcode = Some("M1 1AA")
+          ))
+          updatedAnswers.get(PurchaserUTRPage) mustBe Some("UTR456")
+          updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR005", Some("COMP001")))
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(IsPurchaserActingAsTrustee.No)
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(PurchaserAndVendorConnected.No)
+          updatedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe Some(true)
         }
 
         "must successfully populate session for main purchaser individual without phone number" in {
@@ -611,6 +659,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(IsPurchaserActingAsTrustee.No)
           updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(PurchaserAndVendorConnected.No)
           updatedAnswers.get(PurchaserTypeOfCompanyPage) mustBe Some(typeOfCompany)
+          updatedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe Some(true)
         }
 
         "must successfully populate session for main purchaser company with another form of ID" in {
