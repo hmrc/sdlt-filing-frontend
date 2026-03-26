@@ -19,13 +19,14 @@ package controllers.land
 import base.SpecBase
 import controllers.routes
 import forms.land.LandTypeOfPropertyFormProvider
-import models.land.LandTypeOfProperty
+import models.land.{LandSelectMeasurementUnit, LandTypeOfProperty}
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.LandTypeOfPropertyPage
+import pages.land.{AgriculturalOrDevelopmentalLandPage, AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandSelectMeasurementUnitPage, LandTypeOfPropertyPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -109,6 +110,84 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must clear land area answers when answer changes from non residential to residential" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
+        .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+        .set(DoYouKnowTheAreaOfLandPage, true).success.value
+        .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
+        .set(AreaOfLandPage, "500").success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, landTypeOfPropertyRoute)
+            .withFormUrlEncodedBody(("value", LandTypeOfProperty.Residential.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(AgriculturalOrDevelopmentalLandPage).isDefined mustBe false
+        uaCaptor.getValue.get(DoYouKnowTheAreaOfLandPage).isDefined mustBe false
+        uaCaptor.getValue.get(LandSelectMeasurementUnitPage).isDefined mustBe false
+        uaCaptor.getValue.get(AreaOfLandPage).isDefined mustBe false
+      }
+    }
+
+    "must not clear land area answers when answer remains non residential" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
+        .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+        .set(DoYouKnowTheAreaOfLandPage, true).success.value
+        .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
+        .set(AreaOfLandPage, "500").success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, landTypeOfPropertyRoute)
+            .withFormUrlEncodedBody(("value", LandTypeOfProperty.NonResidential.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(AgriculturalOrDevelopmentalLandPage) mustBe Some(true)
+        uaCaptor.getValue.get(DoYouKnowTheAreaOfLandPage) mustBe Some(true)
+        uaCaptor.getValue.get(LandSelectMeasurementUnitPage) mustBe Some(LandSelectMeasurementUnit.Sqms)
+        uaCaptor.getValue.get(AreaOfLandPage) mustBe Some("500")
       }
     }
 
