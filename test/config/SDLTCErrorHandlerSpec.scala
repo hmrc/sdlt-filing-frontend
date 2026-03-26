@@ -30,8 +30,9 @@ class SDLTCErrorHandlerSpec extends AnyWordSpec with ScalaSpecBase with Injectin
     "retrieve the correct messages" in {
       implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
       val errorTemplate: error_template = inject[error_template]
+      val startAgainTemplate = inject[views.html.scalabuild.JourneyRecoveryStartAgainView]
       val ec = inject[ExecutionContext]
-      val errorHandler = new SDLTCErrorHandler(mcc.messagesApi, errorTemplate, appConf, ec)
+      val errorHandler = new SDLTCErrorHandler(mcc.messagesApi, errorTemplate, startAgainTemplate, appConf, ec)
       val futureResult = errorHandler.internalServerErrorTemplate
       val htmlContent = Await.result(futureResult, 5.seconds)
       val document = Jsoup.parse(contentAsString(htmlContent))

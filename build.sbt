@@ -11,7 +11,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "sdltc-frontend"
 
-ThisBuild / majorVersion := 5
+ThisBuild / majorVersion := 6
 ThisBuild / scalaVersion := "2.13.18"
 
 lazy val playSettings: Seq[Setting[?]] = Seq(
@@ -22,7 +22,7 @@ lazy val playSettings: Seq[Setting[?]] = Seq(
     "uk.gov.hmrc.govukfrontend.views.html.components._",
     "viewmodels.scalabuild.govuk.all._"
   ),
-) ++ JavaScriptBuild.javaScriptUiSettings
+)
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtDistributablesPlugin, SbtWeb)
 lazy val appDependencies: Seq[ModuleID] = AppDependencies()
