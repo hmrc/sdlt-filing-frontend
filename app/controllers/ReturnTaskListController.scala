@@ -22,6 +22,7 @@ import models.{GetReturnByRefRequest, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.pdf.PDFGenerationService
 import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.PropertyTypeHelper.isResidentialProperty
@@ -38,22 +39,23 @@ class ReturnTaskListController @Inject()(
                                           getData: DataRetrievalAction,
                                           val controllerComponents: MessagesControllerComponents,
                                           view: ReturnTaskListView,
-                                          sessionRepository: SessionRepository
-                                        )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                          sessionRepository: SessionRepository,
+                                          pdfGenerationService: PDFGenerationService
+                                        )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(returnId: Option[String] = None): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-
       val effectiveReturnId = returnId.orElse(request.userAnswers.flatMap(_.returnId))
       effectiveReturnId.fold(
         Future.successful(Redirect(controllers.routes.NoReturnReferenceController.onPageLoad()))
       ) { id =>
         for {
-          fullReturn <- fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.storn))
-          userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
-          _ <- sessionRepository.set(userAnswers)
+          fullReturn  <- fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.storn))
+          userAnswers  = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
+          _           <- sessionRepository.set(userAnswers)
         } yield {
-
           val sections = List(
             Some(PrelimTaskList.build(fullReturn)),
             Some(VendorTaskList.build(fullReturn)),
@@ -65,6 +67,32 @@ class ReturnTaskListController @Inject()(
           ).flatten
           Ok(view(sections: _*))
         }
+      }
+  }
+
+  def downloadPdf: Action[AnyContent] = (identify andThen getData).async {
+    implicit request =>
+      request.userAnswers.flatMap(_.fullReturn) match {
+        case None =>
+          Future.successful(Redirect(controllers.routes.NoReturnReferenceController.onPageLoad()))
+
+        case Some(fullReturn) =>
+          val returnId = fullReturn.returnInfo.flatMap(_.returnID).getOrElse("sdlt-return")
+          pdfGenerationService.generatePdf(fullReturn)
+            .map { pdfBytes =>
+              Ok(pdfBytes)
+                .as("application/pdf")
+                .withHeaders(
+                  "Content-Disposition" -> s"""attachment; filename="sdlt-return-$returnId.pdf"""",
+                  "Content-Length"      -> pdfBytes.length.toString,
+                  "Cache-Control"       -> "",
+                  "Pragma"              -> ""
+                )
+            }
+            .recover {
+              case ex =>
+                InternalServerError(s"Failed to generate PDF: ${ex.getMessage}")
+            }
       }
   }
 }
