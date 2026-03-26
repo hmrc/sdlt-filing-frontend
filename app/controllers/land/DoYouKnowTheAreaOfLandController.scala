@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.land.DoYouKnowTheAreaOfLandFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.land.{AreaOfLandPage, DoYouKnowTheAreaOfLandPage}
+import pages.land.{AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandSelectMeasurementUnitPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -69,10 +69,8 @@ class DoYouKnowTheAreaOfLandController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouKnowTheAreaOfLandPage, value))
             finalAnswers <- Future.fromTry {
-              if !request.userAnswers.get(DoYouKnowTheAreaOfLandPage).contains(value) then {
-                updatedAnswers.remove(AreaOfLandPage)
-              } else
-                Success(updatedAnswers)
+              if !value then updatedAnswers.remove(AreaOfLandPage).flatMap(_.remove(LandSelectMeasurementUnitPage))
+              else Success(updatedAnswers)
             }
             _ <- sessionRepository.set(finalAnswers)
           } yield {

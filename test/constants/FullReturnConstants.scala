@@ -248,7 +248,7 @@ object FullReturnConstants {
     address4 = None,
     postcode = Some("NW1 6XE"),
     landArea = Some("250.5"),
-    areaUnit = Some("SQMETRE"),
+    areaUnit = Some("SquareMetres"),
     localAuthorityNumber = Some("5900"),
     mineralRights = Some("false"),
     NLPGUPRN = Some("10012345678"),

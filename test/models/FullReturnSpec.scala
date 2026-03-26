@@ -16,7 +16,7 @@
 
 package models
 
-import constants.FullReturnConstants.{completeFullReturn, completeVendorWithNextId}
+import constants.FullReturnConstants.{completeFullReturn, completeLand, completeVendorWithNextId}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.should.Matchers.shouldBe
@@ -587,6 +587,112 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       )),
     lastUpdated = Instant.now)
 
+  private val userAnswersLandCurrent = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = None,
+    data = Json.obj(
+      "landCurrent" -> Json.obj(
+        "propertyType" -> "03",
+        "landInterestTransferredOrCreated" -> "FG",
+        "landAddress" -> Json.obj(
+          "houseNumber" -> "1",
+          "line1" -> "1 Test Street",
+          "line2" -> "Test Area",
+          "line3" -> "Test Town",
+          "line4" -> "Test Region",
+          "postcode" -> "AB1 2CD",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        ),
+        "localAuthorityCode" -> "1234",
+        "titleNumber" -> "TN123456",
+        "landNlpgUprn" -> "100012345678",
+        "landSendingPlanByPost" -> true,
+        "landMineralsOrMineralRights" -> true,
+        "agriculturalOrDevelopmentalLand" -> true,
+        "areaOfLand" -> "500.123",
+        "areaUnit" -> "Hectares"
+      )
+    ),
+    lastUpdated = Instant.now
+  )
+
+  private val userAnswersLandCurrentAndExisting = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLand)))),
+    data = Json.obj(
+      "landCurrent" -> Json.obj(
+        "landId" -> "LND001",
+        "propertyType" -> "03",
+        "landInterestTransferredOrCreated" -> "FG",
+        "landAddress" -> Json.obj(
+          "houseNumber" -> "1",
+          "line1" -> "1 Test Street",
+          "line2" -> "Test Area",
+          "line3" -> "Test Town",
+          "line4" -> "Test Region",
+          "postcode" -> "AB1 2CD",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        ),
+        "localAuthorityCode" -> "1234",
+        "titleNumber" -> "TN123456",
+        "landNlpgUprn" -> "100012345678",
+        "landSendingPlanByPost" -> true,
+        "landMineralsOrMineralRights" -> true,
+        "agriculturalOrDevelopmentalLand" -> true,
+        "areaOfLand" -> "500.123",
+        "areaUnit" -> "Hectares"
+      )
+    ),
+    lastUpdated = Instant.now
+  )
+
+  private val userAnswersLandDataMissing = UserAnswers(
+    id = "test-session-id",
+    storn = "test-storn-123",
+    returnId = Some("12345"),
+    fullReturn = None,
+    data = Json.obj(
+      "landCurrent" -> Json.obj(
+        "propertyType" -> "03",
+        "landInterestTransferredOrCreated" -> "FG",
+        "landAddress" -> Json.obj(
+          "houseNumber" -> "1",
+          "line1" -> "1 Test Street",
+          "line2" -> "Test Area",
+          "line3" -> "Test Town",
+          "line4" -> "Test Region",
+          "postcode" -> "AB1 2CD",
+          "country" -> Json.obj(
+            "code" -> "GB",
+            "name" -> "UK"
+          ),
+          "addressValidated" -> true
+        ),
+        "localAuthorityCode" -> JsNull,
+        "titleNumber" -> "TN123456",
+        "landNlpgUprn" -> "100012345678",
+        "landSendingPlanByPost" -> true,
+        "landMineralsOrMineralRights" -> true,
+        "agriculturalOrDevelopmentalLand" -> true,
+        "areaOfLand" -> "500.123",
+        "areaUnit" -> "Hectares"
+      )
+    ),
+    lastUpdated = Instant.now
+  )
+
   private val validVendorJson = Json.obj(
     "vendorID" -> "VEN001",
     "returnID" -> "RET123456789",
@@ -1011,6 +1117,69 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         val result = Json.fromJson[Land](json).asEither.value
 
         result mustEqual land
+      }
+    }
+
+    ".from" - {
+
+      "must create Land from UserAnswers" in {
+        val userAnswers = userAnswersLandCurrent
+        val result = Land.from(userAnswers).futureValue
+        val expected = Land(
+          returnID = Some("12345"),
+          propertyType = Some("03"),
+          interestCreatedTransferred = Some("FG"),
+          houseNumber = Some("1"),
+          address1 = Some("1 Test Street"),
+          address2 = Some("Test Area"),
+          address3 = Some("Test Town"),
+          address4 = Some("Test Region"),
+          postcode = Some("AB1 2CD"),
+          landArea = Some("500.123"),
+          areaUnit = Some("Hectares"),
+          localAuthorityNumber = Some("1234"),
+          titleNumber = Some("TN123456"),
+          mineralRights = Some("yes"),
+          NLPGUPRN = Some("100012345678"),
+          willSendPlanByPost = Some("yes")
+        )
+        result shouldBe expected
+      }
+
+      "must create Land from UserAnswers and existing land" in {
+        val userAnswers = userAnswersLandCurrentAndExisting
+        val result = Land.from(userAnswers).futureValue
+        val expected = Land(
+          landID = Some("LND001"),
+          returnID = Some("12345"),
+          propertyType = Some("03"),
+          interestCreatedTransferred = Some("FG"),
+          houseNumber = Some("1"),
+          address1 = Some("1 Test Street"),
+          address2 = Some("Test Area"),
+          address3 = Some("Test Town"),
+          address4 = Some("Test Region"),
+          postcode = Some("AB1 2CD"),
+          landArea = Some("500.123"),
+          areaUnit = Some("Hectares"),
+          localAuthorityNumber = Some("1234"),
+          titleNumber = Some("TN123456"),
+          mineralRights = Some("yes"),
+          NLPGUPRN = Some("100012345678"),
+          willSendPlanByPost = Some("yes"),
+          landResourceRef = Some("LND-REF-001"),
+          nextLandID = None,
+          DARPostcode = Some("NW1 6XE")
+        )
+        result shouldBe expected
+      }
+
+      "must fail to create Land when mandatory data is missing from UserAnswers" in {
+        val userAnswers = userAnswersLandDataMissing
+        val result = intercept[JsResultException] {
+          await(Land.from(userAnswers))
+        }
+        result.errors must not be empty
       }
     }
   }

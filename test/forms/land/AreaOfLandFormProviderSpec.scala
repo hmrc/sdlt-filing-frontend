@@ -26,8 +26,8 @@ class AreaOfLandFormProviderSpec extends StringFieldBehaviours {
   val invalidKey = "land.areaOfLand.error.invalid"
   val maxLength = 14
 
-  val squareMetresUnit = "SQMETRE"
-  val hectaresUnit = "HECTARES"
+  val squareMetresUnit = "SquareMetres"
+  val hectaresUnit = "Hectares"
 
   ".value" - {
 

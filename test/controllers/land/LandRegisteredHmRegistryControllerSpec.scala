@@ -21,10 +21,11 @@ import controllers.routes
 import forms.land.LandRegisteredHmRegistryFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.LandRegisteredHmRegistryPage
+import pages.land.{LandRegisteredHmRegistryPage, LandTitleNumberPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -133,6 +134,72 @@ class LandRegisteredHmRegistryControllerSpec extends SpecBase with MockitoSugar 
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must clear title number answer when yes is changed to a no" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+
+      val userAnswers = emptyUserAnswers
+        .set(LandTitleNumberPage, "12345").success.value
+        .set(LandRegisteredHmRegistryPage, true).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, landRegisteredHmRegistryRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.land.routes.LandAddNlpgUprnController.onPageLoad(NormalMode).url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(LandTitleNumberPage).isDefined mustBe false
+      }
+    }
+
+    "must not clear title number answer when answers remains yes" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+
+      val userAnswers = emptyUserAnswers
+        .set(LandTitleNumberPage, "12345").success.value
+        .set(LandRegisteredHmRegistryPage, true).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, landRegisteredHmRegistryRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(LandTitleNumberPage) mustBe Some("12345")
       }
     }
 

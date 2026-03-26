@@ -156,7 +156,7 @@ trait Formatters {
       val hectaresRegexp = """^[0-9]+(?:\.[0-9]{0,3})?$"""
       
       val maxStringLength = 14
-      val validRegex: String = if (unitType.equalsIgnoreCase("HECTARES")) hectaresRegexp else squareMetresRegexp
+      val validRegex: String = if (unitType.equalsIgnoreCase("Hectares")) hectaresRegexp else squareMetresRegexp
 
       private val baseFormatter = stringFormatter(requiredKey, args)
 

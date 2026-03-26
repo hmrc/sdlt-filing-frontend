@@ -19,8 +19,9 @@ package controllers.land
 import controllers.actions.*
 import forms.land.LandTypeOfPropertyFormProvider
 import models.Mode
+import models.land.LandTypeOfProperty.{Additional, Residential}
 import navigation.Navigator
-import pages.land.LandTypeOfPropertyPage
+import pages.land.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +30,7 @@ import views.html.land.LandTypeOfPropertyView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class LandTypeOfPropertyController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -65,7 +67,17 @@ class LandTypeOfPropertyController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(LandTypeOfPropertyPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers <- Future.fromTry {
+              if value == Residential || value == Additional then
+                updatedAnswers
+                  .remove(AgriculturalOrDevelopmentalLandPage)
+                  .flatMap(_.remove(DoYouKnowTheAreaOfLandPage))
+                  .flatMap(_.remove(AreaOfLandPage))
+                  .flatMap(_.remove(LandSelectMeasurementUnitPage))
+              else
+                Success(updatedAnswers)
+            }
+            _              <- sessionRepository.set(finalAnswers)
           } yield Redirect(navigator.nextPage(LandTypeOfPropertyPage, mode, updatedAnswers))
       )
   }

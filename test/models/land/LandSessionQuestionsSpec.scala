@@ -50,7 +50,8 @@ class LandSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherValu
         "landSendingPlanByPost"            -> false,
         "landMineralsOrMineralRights"      -> false,
         "agriculturalOrDevelopmentalLand"  -> true,
-        "areaOfLand"                       -> "500"
+        "areaOfLand"                       -> "500",
+        "areaUnit"                         -> "SquareMetres"
       )
     )
 
@@ -76,7 +77,8 @@ class LandSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherValu
         "landSendingPlanByPost"           -> false,
         "landMineralsOrMineralRights"     -> false,
         "agriculturalOrDevelopmentalLand" -> JsNull,
-        "areaOfLand"                      -> JsNull
+        "areaOfLand"                      -> JsNull,
+        "areaUnit"                        -> JsNull
       )
     )
   }
@@ -114,7 +116,8 @@ class LandSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherValu
           landSendingPlanByPost           = false,
           landMineralsOrMineralRights     = false,
           agriculturalOrDevelopmentalLand = Some(true),
-          areaOfLand                      = Some("500")
+          areaOfLand                      = Some("500"),
+          areaUnit                        = Some("SquareMetres")
         )
 
         result shouldBe expectedResult
@@ -145,7 +148,8 @@ class LandSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherValu
           landSendingPlanByPost           = false,
           landMineralsOrMineralRights     = false,
           agriculturalOrDevelopmentalLand = None,
-          areaOfLand                      = None
+          areaOfLand                      = None,
+          areaUnit                        = None
         )
 
         result shouldBe expectedResult

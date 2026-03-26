@@ -46,7 +46,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             address4 = None,
             postcode = Some("NW1 6XE"),
             landArea = Some("250.5"),
-            areaUnit = Some("SQMETRE"),
+            areaUnit = Some("SquareMetres"),
             localAuthorityNumber = Some("5900"),
             mineralRights = Some("NO"),
             NLPGUPRN = Some("10012345678"),
@@ -162,7 +162,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             address4 = None,
             postcode = Some("NW1 6XE"),
             landArea = Some("250.5"),
-            areaUnit = Some("HECTARES"),
+            areaUnit = Some("Hectares"),
             localAuthorityNumber = Some("5900"),
             mineralRights = Some("NO"),
             NLPGUPRN = Some("10012345678"),
@@ -550,8 +550,8 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
     "must populate areaUnit correctly" - {
       val cases = Table(
         ("typeOfUnit", "value"),
-        ("HECTARES", LandSelectMeasurementUnit.Hectares),
-        ("SQMETRE", LandSelectMeasurementUnit.Sqms)
+        ("Hectares", LandSelectMeasurementUnit.Hectares),
+        ("SquareMetres", LandSelectMeasurementUnit.Sqms)
       )
       
       forAll(cases) { (typeOfUnit, value) =>

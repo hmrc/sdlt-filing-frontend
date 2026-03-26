@@ -997,8 +997,8 @@ land.landMineralsOrMineralRights.missing                                        
 
 land.landSelectMeasurementUnit.title                                                = Select one unit of measurement for the area of land
 land.landSelectMeasurementUnit.heading                                              = Select one unit of measurement for the area of land
-land.landSelectMeasurementUnit.HECTARES                                             = Hectares
-land.landSelectMeasurementUnit.SQMETRE                                              = Square metres
+land.landSelectMeasurementUnit.Hectares                                             = Hectares
+land.landSelectMeasurementUnit.SquareMetres                                         = Square metres
 land.landSelectMeasurementUnit.error.required                                       = Please select a unit of measurement
 
 ukResidency.BeforeYouStart.p1                                                       = In this section, you need to tell us about the purchaser’s residency status.
@@ -1015,12 +1015,12 @@ land.areaOfLand.error.required                                                  
 land.areaOfLand.error.length                                                        = Area of land must be 14 characters or less
 land.areaOfLand.error.invalid                                                       = Invalid error
 land.areaOfLand.change.hidden                                                       = Area of land
-land.areaOfLand.hint.SQMETRE                                                        = Enter the measurement in whole numbers
-land.areaOfLand.hint.HECTARES                                                       = Enter the measurement to 3 decimal places
-land.areaOfLand.SQMETRE.suffix                                                      = m²
-land.areaOfLand.HECTARES.suffix                                                     = ha
-land.areaOfLand.SQMETRE                                                             = square metres
-land.areaOfLand.HECTARES                                                            = hectares
+land.areaOfLand.hint.SquareMetres                                                   = Enter the measurement in whole numbers
+land.areaOfLand.hint.Hectares                                                       = Enter the measurement to 3 decimal places
+land.areaOfLand.SquareMetres.suffix                                                 = m²
+land.areaOfLand.Hectares.suffix                                                     = ha
+land.areaOfLand.SquareMetres                                                        = square metres
+land.areaOfLand.Hectares                                                            = hectares
 land.areaOfLand.missing                                                             = Enter the area of land
 
 land.landSendingPlanByPost.title                                                    = Sending a plan by post - About the land
