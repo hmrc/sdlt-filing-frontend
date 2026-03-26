@@ -158,7 +158,7 @@ class PurchaserTypeOfCompanyAnswersSpec extends AnyFreeSpec with Matchers with E
       }
 
       "must omit invalid values and treat them as 'no'" in {
-        val invalidAnswers = someTypesOfCompanyAnswers.copy(bank = "YES")
+        val invalidAnswers = someTypesOfCompanyAnswers.copy(bank = "true")
         val typesOfCompanySet = PurchaserTypeOfCompanyAnswers.toSet(invalidAnswers)
         typesOfCompanySet mustEqual (someTypesOfCompanySet - Bank)
       }

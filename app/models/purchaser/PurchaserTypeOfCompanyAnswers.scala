@@ -81,7 +81,7 @@ object PurchaserTypeOfCompanyAnswers {
     )
 
     allValues.collect {
-      case (key, "yes") => key
+      case (key, value) if value.trim.equalsIgnoreCase("yes") => key
     }.toSet
   }
 
