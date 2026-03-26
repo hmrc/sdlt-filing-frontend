@@ -373,6 +373,13 @@ object LeaseholdSliceRatesTables {
     )
   )
 
+  val leaseHoldMixedNonResidentialReliefFrom15PercentAfterApril013AndBeforeMarch2016: SliceTable = SliceTable(
+    slices = Seq(
+      Slice(from = 0, to = Some(150000), rate = 0),
+      Slice(from = 150000, to = None, rate = 1)
+    )
+  )
+
   val leaseholdMixedNonResBeforeMar08RentRates: SliceTable = SliceTable(
     slices = Seq(
       Slice(from = 0,      to = Some(150000), rate = 0),

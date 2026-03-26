@@ -2423,6 +2423,87 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
     }
   }
 
+  "leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016" must {
+    def testRequest(premium: BigDecimal): Request = Request(
+      holdingType = HoldingTypes.leasehold,
+      propertyType = PropertyTypes.nonResidential,
+      effectiveDate = LocalDate.of(2013, 12, 1),
+      nonUKResident = None,
+      premium = premium,
+      highestRent = 0,
+      propertyDetails = None,
+      leaseDetails = Some(testLeaseDetails),
+      relevantRentDetails = None,
+      firstTimeBuyer = None,
+      isLinked = Some(false),
+      interestTransferred = None,
+      taxReliefDetails = None
+    )
+
+    def expectedResult(leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails], premTaxDue: Int, premRate: Int, npv: Int): Result =
+      Result(
+        totalTax = leaseTaxDue + premTaxDue,
+        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+        resultHint = None,
+        npv = Some(npv),
+        taxCalcs = Seq(
+          CalculationDetails(
+            taxType = TaxTypes.premium,
+            calcType = CalcTypes.slab,
+            detailHeading = None,
+            bandHeading = None,
+            detailFooter = None,
+            taxDue = premTaxDue,
+            rate = Some(premRate),
+            slices = None
+          ),
+          CalculationDetails(
+            taxType = TaxTypes.rent,
+            calcType = CalcTypes.slice,
+            detailHeading = None,
+            bandHeading = None,
+            detailFooter = None,
+            taxDue = leaseTaxDue,
+            slices = Some(leaseSliceDetails)
+          )
+        )
+      )
+
+    "return lease taxDue 0, premium taxDue 0 for npv of 150000 and premium of 100000" in new PredefinedNPVSetup(150000) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None, rate = 1, taxDue = 0)
+      )
+      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(testRequest(100000)) shouldBe
+        expectedResult(leaseTaxDue = 0, leaseSliceDetails, premTaxDue = 0, premRate = 0, npv)
+    }
+    "return lease taxDue 55, premium taxDue 1500 for npv of 155521 and premium of 200000" in new PredefinedNPVSetup(155521) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None, rate = 1, taxDue = 55)
+      )
+      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(testRequest(200000)) shouldBe
+        expectedResult(leaseTaxDue = 55, leaseSliceDetails, premTaxDue = 2000, premRate = 1, npv)
+    }
+    "return lease taxDue 7204, premium taxDue 9000 for npv of 870497 and premium of 300000" in new PredefinedNPVSetup(870497) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None, rate = 1, taxDue = 7204)
+      )
+      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(testRequest(300000)) shouldBe
+        expectedResult(leaseTaxDue = 7204, leaseSliceDetails, premTaxDue = 9000, premRate = 3, npv)
+    }
+    "return lease taxDue 8171, premium taxDue 24000 for npv of 967116 and premium of 600000" in new PredefinedNPVSetup(967116) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None, rate = 1, taxDue = 8171)
+      )
+      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(testRequest(600000)) shouldBe
+        expectedResult(leaseTaxDue = 8171, leaseSliceDetails, premTaxDue = 24000, premRate = 4, npv)
+    }
+  }
+
+
   "leaseholdMixedNonResBeforeMar08" must {
     def testRequest(premium: BigDecimal): Request = Request(
       holdingType = HoldingTypes.leasehold,

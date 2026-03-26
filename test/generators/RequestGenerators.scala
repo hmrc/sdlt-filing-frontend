@@ -455,6 +455,8 @@ trait RequestGenerators {
 
 
   val generatePremium : Gen[BigDecimal] = Gen.choose(1, 9999999).map(BigDecimal(_))
+  val generateRelevantRentLessThan1K : Gen[BigDecimal] = Gen.choose(1, 999).map(BigDecimal(_))
+  val generateRelevantGreaterOrEqualTo1K : Gen[BigDecimal] = Gen.choose(1000, 9999999 ).map(BigDecimal(_))
   val generateIsLinkedFalseAndNoneValue :Gen[Option[Boolean]] = Gen.oneOf(None, Some(false))
   val generateIsLinkedAllPossibleValues : Gen[Option[Boolean]] = Gen.oneOf(None, Some(false), Some(true))
   val generateMinimumThresholdGreaterThan500K : Gen[BigDecimal] = Gen.choose(500001, 50000000).map(BigDecimal(_))

@@ -78,7 +78,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       createResult(msg)
     )
 
-    def createRequest(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, taxReliefCode: Option[TaxReliefCode] = None, isLinked: Option[Boolean] = None, isAddProp: Boolean = false, isPartialRelief: Option[Boolean] = None, isMultipleLand: Option[Boolean] = None) =  Request(
+    def createRequest(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, taxReliefCode: Option[TaxReliefCode] = None, isLinked: Option[Boolean] = None, isAddProp: Boolean = false, isPartialRelief: Option[Boolean] = None, isMultipleLand: Option[Boolean] = None, relevantRent:Option[BigDecimal]=None, leaseDetails:Option[LeaseDetails] = None) =  Request(
       holdingType = hType,
       propertyType = pType,
       effectiveDate = eDate,
@@ -99,7 +99,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         RelevantRentDetails(
           exchangedContractsBeforeMar16 = None,
           contractChangedSinceMar16 = None,
-          relevantRent = Some(BigDecimal(1000)) // Fix existing UTs failures
+          relevantRent = relevantRent // Fix existing UTs failures
         )
       ),
       interestTransferred = None,
@@ -3047,6 +3047,37 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
     }
 
+    //SDLT - Tax Calc Case - Case 52 - Add Mixed Logic
+    "select the leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016 function" when {
+      "LeaseHold, mixed, ReliefFrom15Percentage, isLinked = false, relevantRentDetails < 1000 and date is on 6thApril2013 " in {
+        val testRequest = createRequest(leasehold, mixed, LocalDate.of(2013, 4, 6), Some(ReliefFrom15PercentRate), isLinked = Some(false), relevantRent = Some(BigDecimal(999)))
+
+        val result = createResult("leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016")
+
+        when(mockLeaseholdCalculationService.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest).result mustBe Seq(result)
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(any())
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+
+      }
+      "LeaseHold, NonResidential, ReliefFrom15Percentage, isLinked = false, relevantRentDetails < 1000 and date is is on 16/03/2016" in {
+        val testRequest = createRequest(leasehold, nonResidential, LocalDate.of(2016, 3, 16), Some(ReliefFrom15PercentRate), isLinked = Some(false),relevantRent = Some(BigDecimal(800)))
+
+        val result = createResult("leaseholdNonResidentialMar12toMar16")
+
+        when(mockLeaseholdCalculationService.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest).result mustBe Seq(result)
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(any())
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+
+      }
+
     // Case 11 - Add Mixed Logic
     "select the leaseholdMixedNonResBeforeMar08 function" when {
       "property type is Non-residential, effective date is before 12/3/2008, transaction is not linked, & relevant rent is >= 1000" in {
@@ -3087,6 +3118,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       }
     }
 
+    }
   }
 
   "checkFTB" must {

@@ -7,6 +7,7 @@ package services
 
 import data.Dates
 import data.Dates._
+import data.Premium.MAX_PREMIUM_FTB
 import enums.HoldingTypes._
 import enums.PropertyTypes._
 import enums.sdltRebuild.TaxReliefCode.{selfAssessedFreeHoldReliefCodes, selfAssessedLeaseHoldReliefCodes, standardZeroRateFreeholdReliefCodes, standardZeroRateLeaseholdReliefCodes}
@@ -16,10 +17,9 @@ import exceptions.{InvalidDateException, RequiredValueNotDefinedException}
 import models.sdltRebuild.EffectivePropertyType._
 import models.sdltRebuild.{Mixed, NonResidential, Residential, ResidentialAdditionalProperty}
 import models.{CalculationResponse, LeaseDetails, PropertyDetails, Request}
-import utils.CalculationUtils.{averageRentIsBelowThreshold, duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, maximumThreshold, premiumIsGreaterThan500K}
+import utils.CalculationUtils.{averageRentIsBelowThreshold, duringNRB250HolidayPeriod, duringNRB500HolidayPeriod, freeholdNRSDLTOutOfScope, isAfter22Mar2012AndBefore25Mar2012, isAfterApr2013AndBeforeDec2014, isAfterApril013AndBeforeMarch2016, isAfterMar2008AndBeforeMar2016, isAfterMar2010AndBeforeMar2012, isAfterMar2012AndBeforeDec2014, isAfterNov2017AndBeforeJul20, isAfterOct2024AndBeforeApril2025, isAfterSep2022AndBeforeOct24, isAfterSept2022AndBeforeApril2025, leaseholdNRSDLTOutOfScope, maximumThreshold, premiumIsGreaterThan500K}
 import utils.DateUtil
 import utils.LoggerUtil._
-import data.Premium.MAX_PREMIUM_FTB
 
 import javax.inject.{Inject, Singleton}
 
@@ -489,7 +489,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               freeCalculationService.freeholdStandardSelfAssessedReliefBeforeDec14
             ))
           case (`freehold`, _, taxReliefCode, Some(true))
-            if selfAssessedFreeHoldReliefCodes.contains(taxReliefCode) && date.onOrAfter(DECEMBER2014_ANY_PROP_DATE) =>
+            if selfAssessedFreeHoldReliefCodes.contains(taxReliefCode) && date.onOrAfter(DECEMBER2014_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
               freeCalculationService.freeholdSelfAssessedOnOrAfterDecember2014
             ))
@@ -558,6 +558,13 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdPreCompletionTransactionApr2013Onwards(request.leaseDetails)
             ))
+
+          case (`leasehold`, Mixed | NonResidential, ReliefFrom15PercentRate, Some(false))
+            if isAfterApril013AndBeforeMarch2016(request.effectiveDate) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
+            CalculationResponse(Seq(
+              leaseCalculationService.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(request)
+            ))
+
           case (`leasehold`, Mixed | NonResidential, _, Some(false))
             if standardZeroRateLeaseholdReliefCodes.contains(taxReliefDetails.taxReliefCode) =>
             CalculationResponse(Seq(
@@ -624,7 +631,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         calculateBaseTax(request)
       /* ------------- LeaseHoldCases--------------------------- */
       case (`leasehold`, _, Some(true))
-        if date.onOrAfter(NOV2017_EFFECTIVE_DATE) =>
+        if date.onOrAfter(NOV2017_RESIDENTIAL_DATE) =>
         CalculationResponse(Seq(
           leaseCalculationService.leaseholdNov17Onwards
         ))
@@ -634,7 +641,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           leaseCalculationService.leaseholdMixedNonResBeforeMar08(request)
         ))
       case (`leasehold`, Mixed | NonResidential, Some(false))
-        if request.effectiveDate.isBefore(Dates.MARCH_17_2016_DATE) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
+        if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
           CalculationResponse(Seq(
             leaseCalculationService.leaseholdMixedNonResBeforeMarch2016(request)
           ))
