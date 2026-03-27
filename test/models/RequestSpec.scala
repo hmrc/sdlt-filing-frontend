@@ -5,8 +5,11 @@
 
 package models
 
+import enums.sdltRebuild.RightToBuy
+
 import java.time.LocalDate
 import enums.{HoldingTypes, PropertyTypes}
+import models.sdltRebuild.TaxReliefDetails
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsSuccess, Json}
@@ -487,6 +490,65 @@ class RequestSpec extends PlaySpec {
         interestTransferred = None,
         taxReliefDetails = None,
         firstTimeBuyer = Some(true)
+      )
+
+      Json.fromJson[Request](testJson) shouldBe JsSuccess(model)
+    }
+
+    "read from Json with complex fields" in {
+      val testJson = Json.parse(
+        """
+          |{
+          |  "holdingType": "Freehold",
+          |  "propertyType": "Residential",
+          |  "effectiveDateDay": 13,
+          |  "effectiveDateMonth": 12,
+          |  "effectiveDateYear": 2017,
+          |  "premium": 500000,
+          |  "highestRent": 50000,
+          |  "propertyDetails": {
+          |    "individual": "Yes",
+          |    "twoOrMoreProperties": "No",
+          |    "replaceMainResidence": "No",
+          |    "sharedOwnership": "Yes",
+          |    "currentValue": "Yes"
+          |  },
+          |  "isLinked": true,
+          |  "interestTransferred": "FG",
+          |  "taxReliefDetails": {
+          |    "taxReliefCode": 22,
+          |    "isPartialRelief": false
+          |  },
+          |  "isMultipleLand": false,
+          |  "declaredNpv": 2000
+          |}
+        """.stripMargin)
+
+      val model = Request(
+        holdingType = HoldingTypes.freehold,
+        propertyType = PropertyTypes.residential,
+        effectiveDate = LocalDate.of(2017, 12, 13),
+        nonUKResident = None,
+        premium = 500000,
+        highestRent = 50000,
+        propertyDetails = Some(PropertyDetails(
+          individual = true,
+          twoOrMoreProperties = Some(false),
+          replaceMainResidence = Some(false),
+          sharedOwnership = Some(true),
+          currentValue = Some(true)
+        )),
+        leaseDetails = None,
+        relevantRentDetails = None,
+        isLinked = Some(true),
+        interestTransferred = Some("FG"),
+        taxReliefDetails = Some(TaxReliefDetails(
+          taxReliefCode = RightToBuy,
+          isPartialRelief = Some(false)
+        )),
+        isMultipleLand = Some(false),
+        declaredNpv = Some(2000),
+        firstTimeBuyer = None
       )
 
       Json.fromJson[Request](testJson) shouldBe JsSuccess(model)

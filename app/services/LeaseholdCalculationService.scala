@@ -27,7 +27,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   //STANDARD RESIDENTIAL
 
   def leaseholdResidentialMar12toDec14(request: Request): Result = {
-    val npv = getNPV("leaseholdResidentialMar12toDec14", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialMar12toDec14", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialMar12toDec14LeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlab(request.premium, SlabRatesTables.leaseholdResidentialMar12toDec14PremiumRates.slabs)
 
@@ -35,7 +35,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialDec14Onwards(request: Request, asPreviousResult: Boolean = false, preCalculatedNPV: Option[BigDecimal] = None, nonUKRes: Boolean = false): Result = {
-    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialDec14Onwards", request.leaseDetails))
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialDec14Onwards", request))
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialDec14OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialDec14OnwardsPremiumRates.slices)
     val effectiveDateAfter31March2020: Boolean = request.effectiveDate.isAfter(Dates.MAR2021_RESIDENTIAL_DATE)
@@ -46,7 +46,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialJuly20Onwards(request: Request, asPreviousResult: Boolean = false, preCalculatedNPV: Option[BigDecimal] = None): Result = {
-    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly20Onwards", request.leaseDetails))
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly20Onwards", request))
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialJuly20OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialJuly20OnwardsPremiumRates.slices)
 
@@ -54,7 +54,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialJuly21Onwards(request: Request, asPreviousResult: Boolean = false, preCalculatedNPV: Option[BigDecimal] = None): Result = {
-    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly21Onwards", request.leaseDetails))
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly21Onwards", request))
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialJuly21OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialJuly21OnwardsPremiumRates.slices)
 
@@ -64,7 +64,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   //NON-RESIDENTIAL
 
   def leaseholdNonResidentialMar12toMar16(request: Request, asPrevResult: Boolean = false, preCalculatedNPV: Option[BigDecimal] = None): Result = {
-    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdNonResidentialMar12toMar16", request.leaseDetails))
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdNonResidentialMar12toMar16", request))
 
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdNonResidentialMar12toMar16LeaseRates.slices)
     val premiumResult = if(eligibleForZeroRate(request)) {
@@ -77,7 +77,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdNonResidentialMar16Onwards(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdNonResidentialMar16Onwards", request.leaseDetails)
+    val npv = getNPV("leaseholdNonResidentialMar16Onwards", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdNonResidentialMar16OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdNonResidentialMar16OnwardsPremiumRates.slices)
 
@@ -91,7 +91,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdMixedNonResBeforeMarch2016(request: Request): Result = {
-    val npv = getNPV("leaseholdMixedNonResidentialBeforeMarch2016", request.leaseDetails)
+    val npv = getNPV("leaseholdMixedNonResidentialBeforeMarch2016", request)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
@@ -110,7 +110,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdMixedNonResApr2013toMar2016(request: Request): Result = {
-    val npv = getNPV("leaseholdMixedNonResApr2013toMar2016", request.leaseDetails)
+    val npv = getNPV("leaseholdMixedNonResApr2013toMar2016", request)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
@@ -130,7 +130,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   //HRAD
 
   def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropApr16Onwards", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropApr16Onwards", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialAddPropApr16OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
@@ -155,7 +155,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialAddPropJuly20Onwards(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropJuly20Onwards", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropJuly20Onwards", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialJuly20OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
@@ -176,7 +176,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialAddPropJuly21Onwards(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropJuly21Onwards", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropJuly21Onwards", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialJuly21OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
@@ -198,7 +198,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   // Additional property changes from Oct24 before Apr25
   def leaseholdResidentialAddPropOct24BeforeApril25(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropOct24Onwards", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropOct24Onwards", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialJuly21OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
@@ -220,7 +220,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   // Additional property changes Apr25 onwards
   def leaseholdResidentialAddPropApril25Onwards(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropApril25Onwards", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropApril25Onwards", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialAddPropApr16OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
       request.premium,
@@ -241,7 +241,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
    def leaseholdResidentialAddPropApr25OnwardsPrevResult(request: Request, preCalculatedNPV: Option[BigDecimal] = None): Result = {
-    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly21Onwards", request.leaseDetails))
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly21Onwards", request))
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialOct21OnwardsLeaseRates.slices)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialOct21OnwardsPremiumRates.slices)
 
@@ -252,7 +252,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   def leaseholdResidentialNov17OnwardsFTB(request: Request): Result = {
     val sliceRateTable = if(checkIfShared(request.propertyDetails)) leaseholdResidentialNov17FTBSharedLeaseRates.slices else leaseholdResidentialNov17FTBLeaseRates.slices
-    val npv = getNPV("leaseholdResidentialNov17Onwards", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialNov17Onwards", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
 
@@ -261,7 +261,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   def leaseholdResidentialJuly21OnwardsFTB(request: Request): Result = {
     val sliceRateTable = if(checkIfShared(request.propertyDetails)) leaseholdResidentialJuly21FTBSharedLeaseRates.slices else leaseholdResidentialJuly21FTBLeaseRates.slices
-    val npv = getNPV("leaseholdResidentialJuly21OnwardsFTB", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialJuly21OnwardsFTB", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialNov17OnwardsFTBPremiumRates.slices)
 
@@ -270,7 +270,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   def leaseholdResidentialSept22OnwardsFTB(request: Request): Result = {
     val sliceRateTable = if(checkIfShared(request.propertyDetails)) leaseholdResidentialJuly21FTBSharedLeaseRates.slices else leaseholdResidentialJuly21FTBLeaseRates.slices
-    val npv = getNPV("leaseholdResidentialJuly21OnwardsFTB", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialJuly21OnwardsFTB", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, sliceRateTable)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialSep22OnwardsFTBRates.slices)
 
@@ -280,7 +280,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   //NRSDLT
 
   def leaseholdResidentialApr21OnwardsNonUKRes(request: Request, preCalculatedNPV: Option[BigDecimal] = None): Seq[Result] = {
-    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialApril21OnwardsNonUKRes", request.leaseDetails))
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialApril21OnwardsNonUKRes", request))
 
     val prevLeaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialJuly20OnwardsLeaseRates.slices)
     val prevPremiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialJuly20OnwardsPremiumRates.slices)
@@ -304,7 +304,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialJuly21OnwardsNonUKRes(request: Request, preCalculatedNPV: Option[BigDecimal] = None): Seq[Result] = {
-    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly21OnwardsNonUKRes", request.leaseDetails))
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialJuly21OnwardsNonUKRes", request))
 
     val prevLeaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialJuly21OnwardsLeaseRates.slices)
     val prevPremiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialJuly21OnwardsPremiumRates.slices)
@@ -328,7 +328,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialOct21OnwardsNonUKRes(request: Request, preCalculatedNPV: Option[BigDecimal] = None): Seq[Result] = {
-    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialOct21OnwardsNonUKRes", request.leaseDetails))
+    val npv = preCalculatedNPV.getOrElse(getNPV("leaseholdResidentialOct21OnwardsNonUKRes", request))
 
     val prevLeaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdResidentialOct21OnwardsLeaseRates.slices)
     val prevPremiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdResidentialOct21OnwardsPremiumRates.slices)
@@ -363,7 +363,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       leaseholdResidentialJuly21FTBNonUKResLeaseRates.slices
     }
 
-    val npv = getNPV("leaseholdResidentialJuly21OnwardsFTBNonUKRes", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialJuly21OnwardsFTBNonUKRes", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseSlices)
 
     val premiumSlices: Seq[Slice] = leaseholdResidentialJuly21OnwardsFTBNonUKResPremiumRates.slices
@@ -399,7 +399,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       leaseholdResidentialJuly21FTBNonUKResLeaseRates.slices
     }
 
-    val npv = getNPV("leaseholdResidentialJuly21OnwardsFTBNonUKRes", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialJuly21OnwardsFTBNonUKRes", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseSlices)
 
     val premiumSlices: Seq[Slice] = leaseholdResidentialSep22OnwardsFTBNonUKResRates.slices
@@ -485,7 +485,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       leaseholdResidentialOct21FTBNonUKResLeaseRates.slices
     }
 
-    val npv = getNPV("leaseholdResidentialOct21OnwardsFTBNonUKRes", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialOct21OnwardsFTBNonUKRes", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseSlices)
 
     val premiumSlices: Seq[Slice] = leaseholdResidentialOct21OnwardsFTBNonUKResPremiumRates.slices
@@ -535,7 +535,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   //NRSDLT + HRAD
 
   def leaseholdResidentialApr21OnwardsNonUKResAddProp(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropApril21OnwardsNonUKRes", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropApril21OnwardsNonUKRes", request)
     val leaseRates = leaseRatesToUse(request.premium, request.effectiveDate, request.leaseDetails.get.leaseTerm.years, request.highestRent)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseRates)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
@@ -575,7 +575,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
   def leaseholdResidentialJuly21OnwardsNonUKResAddProp(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropJuly21OnwardsNonUKRes", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropJuly21OnwardsNonUKRes", request)
     val leaseRates = leaseRatesToUse(request.premium, request.effectiveDate, request.leaseDetails.get.leaseTerm.years, request.highestRent)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseRates)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
@@ -616,7 +616,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   // non UK resident additional property changes from Oct24 before Apr25
   def leaseholdResidentialOct24BeforeApr25NonUKResAddProp(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropOct24BeforeApr25NonUKRes", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropOct24BeforeApr25NonUKRes", request)
     val leaseRates = leaseRatesToUse(request.premium, request.effectiveDate, request.leaseDetails.get.leaseTerm.years, request.highestRent)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseRates)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
@@ -657,7 +657,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   // non UK resident additional property changes after Apr25
   def leaseholdResidentialApr25OnwardsNonUKResAddProp(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropOct24BeforeApr25NonUKRes", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropOct24BeforeApr25NonUKRes", request)
     val leaseRates = leaseRatesToUse(request.premium, request.effectiveDate, request.leaseDetails.get.leaseTerm.years, request.highestRent)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseRates)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
@@ -694,7 +694,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
 
   def leaseholdResidentialOct21OnwardsNonUKResAddProp(request: Request): Seq[Result] = {
-    val npv = getNPV("leaseholdResidentialAddPropOct21OnwardsNonUKRes", request.leaseDetails)
+    val npv = getNPV("leaseholdResidentialAddPropOct21OnwardsNonUKRes", request)
     val leaseRates = leaseRatesToUse(request.premium, request.effectiveDate, request.leaseDetails.get.leaseTerm.years, request.highestRent)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseRates)
     val premiumResult = baseCalculationService.calculateTaxDueSlice(
@@ -761,12 +761,12 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     propertyDetails.exists(propDetails => propDetails.sharedOwnership.getOrElse(false))
   }
 
-  private[services] def getNPV(func: String, oLeaseDetails: Option[LeaseDetails]): BigDecimal = {
-    baseCalculationService.calculateNPV(
-      oLeaseDetails.getOrElse{throw new RequiredValueNotDefinedException(
+  private[services] def getNPV(func: String, request: Request): BigDecimal = {
+    request.declaredNpv.getOrElse(baseCalculationService.calculateNPV(
+      request.leaseDetails.getOrElse{throw new RequiredValueNotDefinedException(
         s"[LeaseholdCalculationService] [$func] Lease details not defined when required"
       )}
-    )
+    ))
   }
 
   private[services] def eligibleForZeroRate(request: Request): Boolean = {
@@ -807,14 +807,14 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
       }
   }
 
-  def leaseholdZeroRateTaxReliefRes(leaseDetails: Option[LeaseDetails]): Result = {
-    val calculatedNpv = Some(getNPV("leaseHoldZeroRateTaxRelief", leaseDetails).toInt)
+  def leaseholdZeroRateTaxReliefRes(request: Request): Result = {
+    val calculatedNpv = Some(getNPV("leaseHoldZeroRateTaxRelief", request).toInt)
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
   }
 
   def leaseholdAcquisitionTaxReliefRes(request: Request): Result ={
 
-    val npv = getNPV("leaseholdAcquisitionTaxRelief", request.leaseDetails)
+    val npv = getNPV("leaseholdAcquisitionTaxRelief", request)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
@@ -831,7 +831,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
   def leaseholdMixedNonResidentialRightToBuyBeforeMarch16(request: Request): Result ={
 
-    val npv = getNPV("leaseholdMixedNonResidentialRightToBuyBeforeMarch16", request.leaseDetails)
+    val npv = getNPV("leaseholdMixedNonResidentialRightToBuyBeforeMarch16", request)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
@@ -900,28 +900,28 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
 
 
-  def leaseholdFreeportRelief(leaseDetails: Option[LeaseDetails]): Result = {
-    val calculatedNpv = Some(getNPV("leaseholdFreeportRelief", leaseDetails).toInt)
+  def leaseholdFreeportRelief(request: Request): Result = {
+    val calculatedNpv = Some(getNPV("leaseholdFreeportRelief", request).toInt)
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
   }
 
-  def leaseholdResAddPropPreCompletionTransactionApr2016Onwards(leaseDetails: Option[LeaseDetails]): Result = {
-    val calculatedNpv = Some(getNPV("leaseholdResAddPropPreCompletionTransactionAfterApr2016", leaseDetails).toInt)
+  def leaseholdResAddPropPreCompletionTransactionApr2016Onwards(request: Request): Result = {
+    val calculatedNpv = Some(getNPV("leaseholdResAddPropPreCompletionTransactionAfterApr2016", request).toInt)
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
   }
 
-  def leaseholdPreCompletionTransactionApr2013Onwards(leaseDetails: Option[LeaseDetails]): Result = {
-    val calculatedNpv = Some(getNPV("leaseholdPreCompletionTransactionAfterApr2013", leaseDetails).toInt)
+  def leaseholdPreCompletionTransactionApr2013Onwards(request: Request): Result = {
+    val calculatedNpv = Some(getNPV("leaseholdPreCompletionTransactionAfterApr2013", request).toInt)
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
   }
 
-  def leaseholdMixedNonResPropStandardZeroRelief(leaseDetails: Option[LeaseDetails]): Result = {
-    val calculatedNpv = Some(getNPV("leaseholdMixedNonResPropStandardZeroRelief", leaseDetails).toInt)
+  def leaseholdMixedNonResPropStandardZeroRelief(request: Request): Result = {
+    val calculatedNpv = Some(getNPV("leaseholdMixedNonResPropStandardZeroRelief", request).toInt)
     LeaseholdResultFactory.leaseHoldZeroRateTaxRelief(calculatedNpv)
   }
 
   def leaseholdMixedNonResBeforeMar08(request: Request): Result = {
-    val npv = getNPV("leaseholdMixedNonResBeforeMar08", request.leaseDetails)
+    val npv = getNPV("leaseholdMixedNonResBeforeMar08", request)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,
@@ -937,7 +937,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
   }
   def leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016(request: Request): Result ={
 
-    val npv = getNPV("leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016", request.leaseDetails)
+    val npv = getNPV("leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016", request)
 
     val premiumResult = baseCalculationService.calculateTaxDueSlab(
       request.premium,

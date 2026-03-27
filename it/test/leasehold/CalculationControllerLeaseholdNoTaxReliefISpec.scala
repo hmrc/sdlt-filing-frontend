@@ -259,6 +259,95 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
         }
 
       }
+      "NPV is supplied in the Request" must {
+        "return a calculation result with the supplied NPV" in {
+          def request: WSResponse = ws.url(
+              calculateUrl)
+            .post(
+              Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Residential",
+                  |  "effectiveDateDay": 22,
+                  |  "effectiveDateMonth": 11,
+                  |  "effectiveDateYear": 2012,
+                  |  "premium": 1000000,
+                  |  "highestRent": 0,
+                  |  "leaseDetails": {
+                  |    "startDateDay": 22,
+                  |    "startDateMonth": 11,
+                  |    "startDateYear": 2012,
+                  |    "endDateDay": 22,
+                  |    "endDateMonth": 11,
+                  |    "endDateYear": 2013,
+                  |    "leaseTerm": {
+                  |      "years": 1,
+                  |      "days": 1,
+                  |      "daysInPartialYear": 365
+                  |    },
+                  |    "year1Rent": 999,
+                  |    "year2Rent": 999
+                  |  },
+                  |  "declaredNpv": 150900,
+                  |  "propertyDetails": {
+                  |   "individual": "No",
+                  |   "twoOrMoreProperties": "No",
+                  |   "replaceMainResidence": "No"
+                  | },
+                  |    "isLinked": true
+                  |}
+                  |""".stripMargin
+              )
+            )
+
+          val result = Json.parse(
+            """
+              |{
+              |  "result": [
+              |    {
+              |      "totalTax": 40259,
+              |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+              |      "npv": 150900,
+              |      "taxCalcs": [
+              |        {
+              |          "taxType": "rent",
+              |          "calcType": "slice",
+              |          "taxDue": 259,
+              |          "detailHeading": "This is a breakdown of how the amount of SDLT on the rent was calculated",
+              |          "bandHeading": "Rent bands (£)",
+              |          "detailFooter": "SDLT due on the rent",
+              |          "slices": [
+              |            {
+              |              "from": 0,
+              |              "to": 125000,
+              |              "rate": 0,
+              |              "taxDue": 0
+              |            },
+              |            {
+              |              "from": 125000,
+              |              "to": -1,
+              |              "rate": 1,
+              |              "taxDue": 259
+              |            }
+              |          ]
+              |        },
+              |        {
+              |          "taxType": "premium",
+              |          "calcType": "slab",
+              |          "taxDue": 40000,
+              |          "rate": 4
+              |        }
+              |      ]
+              |    }
+              |  ]
+              |}""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe result
+        }
+      }
+
       // SDLT - Tax Calc Case - 11 - Add Mixed Logic
       "transaction is not linked and relevantRent >= 1000" when {
         "date is before 12th March 2008" must {

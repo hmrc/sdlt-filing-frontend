@@ -1661,7 +1661,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         val testRequest = createRequest(leasehold, residential, LocalDate.of(2017, 11, 22), Some(FreeportsTaxSiteRelief), isLinked = Some(false), isPartialRelief = Some(false))
         val result = createResult("leaseholdFreeportRelief")
 
-        when(mockLeaseholdCalculationService.leaseholdFreeportRelief(testRequest.leaseDetails)).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdFreeportRelief(testRequest)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
@@ -1693,7 +1693,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         val testRequest = createRequest(leasehold, nonResidential, LocalDate.of(2017, 11, 22), Some(FreeportsTaxSiteRelief), isLinked = Some(false), isPartialRelief = Some(false))
         val result = createResult("leaseholdFreeportRelief")
 
-        when(mockLeaseholdCalculationService.leaseholdFreeportRelief(testRequest.leaseDetails)).thenReturn(result)
+        when(mockLeaseholdCalculationService.leaseholdFreeportRelief(testRequest)).thenReturn(result)
 
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
