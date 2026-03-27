@@ -259,7 +259,6 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
         }
 
       }
-
       // SDLT - Tax Calc Case - 11 - Add Mixed Logic
       "transaction is not linked and relevantRent >= 1000" when {
         "date is before 12th March 2008" must {
@@ -598,7 +597,6 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
           }
         }
       }
-
     }
   }
 }

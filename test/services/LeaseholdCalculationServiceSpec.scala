@@ -2189,6 +2189,34 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
     }
   }
 
+  "leaseholdMixedNonResApr2013toMar2016" must {
+    "return zero tax for premium of 90" in new PredefinedNPVSetup(predefinedNPV = 0) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      private val res = leaseholdMixedNonResApr2013toMar2016Result(
+        leaseTaxDue = 0, leaseSliceDetails = leaseSliceDetails,
+        premTaxDue = 0, premRate = 1, npv = 0)
+      service.leaseholdMixedNonResApr2013toMar2016(
+        leaseholdMixedNonResApr2013toMar2016Request(90)) shouldBe res
+    }
+    "return some tax for premium of 90000" in new PredefinedNPVSetup(predefinedNPV = 150000) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      private val res = leaseholdMixedNonResApr2013toMar2016Result(
+        leaseTaxDue = 0, leaseSliceDetails = leaseSliceDetails,
+        premTaxDue = 900, premRate = 1, npv = 150000)
+
+      service.leaseholdMixedNonResApr2013toMar2016(
+        leaseholdMixedNonResApr2013toMar2016Request(90000)) shouldBe res
+    }
+  }
+
   "eligibleForZeroRate" must {
 
     def testRequest(
@@ -2469,7 +2497,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
     }
 
   }
-  "leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016" must {
+  "leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016" must {
     def testRequest(premium: BigDecimal): Request = Request(
       holdingType = HoldingTypes.leasehold,
       propertyType = PropertyTypes.nonResidential,
@@ -2520,7 +2548,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
         SliceDetails(from = 150000, to = None, rate = 1, taxDue = 0)
       )
-      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(testRequest(100000)) shouldBe
+      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016(testRequest(100000)) shouldBe
         expectedResult(leaseTaxDue = 0, leaseSliceDetails, premTaxDue = 0, premRate = 0, npv)
     }
     "return lease taxDue 55, premium taxDue 1500 for npv of 155521 and premium of 200000" in new PredefinedNPVSetup(155521) {
@@ -2528,7 +2556,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
         SliceDetails(from = 150000, to = None, rate = 1, taxDue = 55)
       )
-      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(testRequest(200000)) shouldBe
+      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016(testRequest(200000)) shouldBe
         expectedResult(leaseTaxDue = 55, leaseSliceDetails, premTaxDue = 2000, premRate = 1, npv)
     }
     "return lease taxDue 7204, premium taxDue 9000 for npv of 870497 and premium of 300000" in new PredefinedNPVSetup(870497) {
@@ -2536,7 +2564,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
         SliceDetails(from = 150000, to = None, rate = 1, taxDue = 7204)
       )
-      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(testRequest(300000)) shouldBe
+      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016(testRequest(300000)) shouldBe
         expectedResult(leaseTaxDue = 7204, leaseSliceDetails, premTaxDue = 9000, premRate = 3, npv)
     }
     "return lease taxDue 8171, premium taxDue 24000 for npv of 967116 and premium of 600000" in new PredefinedNPVSetup(967116) {
@@ -2544,7 +2572,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
         SliceDetails(from = 150000, to = None, rate = 1, taxDue = 8171)
       )
-      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril013AndBeforeMarch2016(testRequest(600000)) shouldBe
+      service.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016(testRequest(600000)) shouldBe
         expectedResult(leaseTaxDue = 8171, leaseSliceDetails, premTaxDue = 24000, premRate = 4, npv)
     }
   }

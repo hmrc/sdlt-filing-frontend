@@ -30,5 +30,4 @@ object Dates {
   val SEPT2022_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2022, 9, 23)
   val APRIL2025_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2025, 4, 1)
   val OCT2024_RESIDENTIAL_DATE: LocalDate = LocalDate.of(2024, 10, 31)
-
 }
