@@ -151,10 +151,10 @@ prelim.purchaserIsIndividual.error.invalid                                      
 prelim.purchaserIsIndividual.change.hidden                                          = Type of purchaser
 prelim.purchaserIsIndividual.link.message                                           = Enter type of purchaser
 
-prelim.purchaser.individual.title                                                   = What is the purchaser’s surname? - Preliminary questions
-prelim.purchaser.individual.heading                                                 = What is the purchaser’s surname?
-prelim.purchaser.individual.surname                                                 = Surname
-prelim.purchaser.individual.checkYourAnswersLabel                                   = What is the purchaser’s surname?
+prelim.purchaser.individual.title                                                   = What is the purchaser’s last name? - Preliminary questions
+prelim.purchaser.individual.heading                                                 = What is the purchaser’s last name?
+prelim.purchaser.individual.surname                                                 = Purchaser last name
+prelim.purchaser.individual.checkYourAnswersLabel                                   = What is the purchaser’s last name?
 
 prelim.purchaser.company.title                                                      = What is the company’s name? - Preliminary questions
 prelim.purchaser.company.heading                                                    = What is the company’s name?
@@ -163,17 +163,17 @@ prelim.purchaser.name.checkYourAnswersLabel.purchaser                           
 prelim.purchaser.name.checkYourAnswersLabel.company                                 = Company name
 prelim.purchaser.name.checkYourAnswersLabel.default                                 = Purchaser / Company name
 prelim.purchaser.name.link.message                                                  = Enter purchaser name
-prelim.purchaser.name.change.hidden                                                 = Purchaser surname or company name
+prelim.purchaser.name.change.hidden                                                 = Purchaser last name or company name
 
 prelim.purchaser.name.form.regex.error                                              = Invalid Error
 prelim.purchaser.name.form.no.input.error                                           = Nothing has been added
 prelim.purchaser.name.form.maxLength.error                                          = Max length
-prelim.purchaser.name.form.maxLength.error.individual                               = The purchaser’s surname must be 56 characters or less
+prelim.purchaser.name.form.maxLength.error.individual                               = The purchaser’s last name must be 56 characters or less
 prelim.purchaser.name.form.maxLength.error.company                                  = The company’s name must be 56 characters or less
-prelim.purchaser.name.form.regex.error.individual                                   = The purchaser’s surname must only include letters a to z, and special characters such as hyphens, spaces and apostrophes
-prelim.purchaser.name.form.regex.error.company                                      = The company’s name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
+prelim.purchaser.name.form.regex.error.individual                                   = The purchaser’s last name must only include letters a to z, apostrophes, hyphens and spaces
+prelim.purchaser.name.form.regex.error.company                                      = The company’s name must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 prelim.purchaser.name.form.no.input.error                                           = Nothing has been added
-prelim.purchaser.name.form.no.input.error.individual                                = Enter the purchaser’s surname
+prelim.purchaser.name.form.no.input.error.individual                                = Enter the purchaser’s last name
 prelim.purchaser.name.form.no.input.error.company                                   = Enter the company’s name
 
 prelim.transactionType.title                                                        = What type of transaction is this? - Preliminary questions
