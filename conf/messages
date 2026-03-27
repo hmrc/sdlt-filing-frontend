@@ -80,7 +80,7 @@ effectiveDate.error.required.all = You must complete the effective date field
 effectiveDate.error.required.two = Effective Date must include {0} and {1}
 effectiveDate.error.required = Effective Date must include {0}
 effectiveDate.error.invalid = Please enter a valid date
-effectiveDate.error.residentialMinDate = Date can't be earlier than 22/3/2012
+effectiveDate.error.residentialMinDate = Date cannot be earlier than 22/3/2012
 
 nonUkResident.heading = Are any of the purchasers non-UK resident?
 nonUkResident.checkYourAnswersLabel = Non-UK resident

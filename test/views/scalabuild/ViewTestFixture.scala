@@ -29,7 +29,6 @@ abstract class ViewTestFixture extends PlaySpec
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .configure("play.http.router" -> "scalabuild.Routes")
       .disable[PlayMongoModule]
       .overrides(bind[SessionRepository].toInstance(sessionRepositoryStub))
       .build()

@@ -18,7 +18,7 @@ class StartGuidanceControllerSpec extends AnyFreeSpec with ScalaSpecBase {
 
   "must return OK and the correct view for a GET" in {
 
-    val application = applicationBuilder().configure("play.http.router" -> "scalabuild.Routes").build()
+    val application = applicationBuilder().build()
     running(application) {
       val request = FakeRequest(GET, routes.StartGuidanceController.onPageLoad().url).addAttr(RequestAttrKey.CSPNonce, "fake-nonce")
 

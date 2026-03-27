@@ -7,8 +7,9 @@ package controllers.scalabuild
 
 import base.ScalaSpecBase
 import forms.scalabuild.ReplaceMainResidenceFormProvider
+import models.scalabuild.HoldingTypes.Freehold
 import org.scalatest.freespec.AnyFreeSpec
-import pages.scalabuild.ReplaceMainResidencePage
+import pages.scalabuild.{HoldingPage, ReplaceMainResidencePage}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.mvc.request.RequestAttrKey
@@ -52,8 +53,9 @@ class ReplaceMainResidenceControllerSpec extends AnyFreeSpec with ScalaSpecBase 
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val application = applicationBuilder().build()
+      val userAnswers = emptyUserAnswers
+        .set(HoldingPage, Freehold).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
