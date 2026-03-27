@@ -37,7 +37,7 @@
         mode: Mode
 )(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("vendorAgent.overview.title"), section = Some(messages("site.vendorAgent.caption")))) {
+@layout(pageTitle = title(form, messages("vendorAgent.overview.title"), section = Some(messages("site.vendorAgent.caption"))) , showBackLink = false) {
 
     @request.flash.get("vendorAgentDeleted").map { vendorAgentName =>
         @govukNotificationBanner(
