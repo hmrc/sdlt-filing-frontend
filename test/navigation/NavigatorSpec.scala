@@ -198,6 +198,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(ChangePurchaserOnePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.ConfirmChangeOfMainPurchaserController.onPageLoad()
         }
 
+        "go from ConfirmChangeOfMainPurchaser to PurchaserAgentCheckYourAnswers page" in {
+          navigator.nextPage(ConfirmChangeOfMainPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
+        }
+
         "go from PurchaserCompanyTypeKnownPage to PurchaserTypeOfCompanyController page" in {
           navigator.nextPage(PurchaserCompanyTypeKnownPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
         }
