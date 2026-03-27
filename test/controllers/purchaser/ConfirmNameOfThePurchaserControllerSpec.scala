@@ -257,7 +257,7 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser().url
+            controllers.purchaser.routes.ConfirmPurchaserAddressController.onPageLoad(NormalMode).url
         }
       }
 
