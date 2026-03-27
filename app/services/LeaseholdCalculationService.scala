@@ -811,6 +811,24 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory.leaseholdAcquisitionTaxReliefRes(premiumResult, leasedResult, npv)
   }
 
+  def leaseholdMixedNonResidentialRightToBuyBeforeMarch16(request: Request): Result ={
+
+    val npv = getNPV("leaseholdMixedNonResidentialRightToBuyBeforeMarch16", request.leaseDetails)
+
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(
+      request.premium,
+      SlabRatesTables.leaseholdMixedNonResidentialRightToBuyBeforeMarch2016Rates.slabs
+    )
+
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(
+      npv,
+      LeaseholdSliceRatesTables.leaseholdMixedNonResidentialRightToBuyBeforeMarch2016Rates.slices
+    )
+
+    LeaseholdResultFactory.leaseholdMixedNonResidentialRightToBuyBeforeMarch16Result(leaseResult, premiumResult, npv)
+
+  }
+
 
   val leaseholdCollectiveEnfranchisementByLeaseholdersApr09Onwards: Result =
     LeaseholdResultFactory

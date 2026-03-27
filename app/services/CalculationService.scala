@@ -7,7 +7,7 @@ package services
 
 import data.Dates
 import data.Dates._
-import data.Premium.MAX_PREMIUM_FTB
+import data.SignificantAmounts.MAX_PREMIUM_FTB
 import enums.HoldingTypes._
 import enums.PropertyTypes._
 import enums.sdltRebuild.TaxReliefCode.{selfAssessedFreeHoldReliefCodes, selfAssessedLeaseHoldReliefCodes, standardZeroRateFreeholdReliefCodes, standardZeroRateLeaseholdReliefCodes}
@@ -585,6 +585,13 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdResFTBAfterNov17AndBeforeJul20greaterThan500k
             ))
+          case (`leasehold`, Mixed | NonResidential, RightToBuy, Some(false))
+            if (date.isBefore(MARCH2016_NON_RESIDENTIAL_DATE) && !request.relevantRentDetails.exists(averageRentIsBelowThreshold)) =>
+                CalculationResponse(Seq(
+                  leaseCalculationService
+                    .leaseholdMixedNonResidentialRightToBuyBeforeMarch16(request)
+                ))
+
           case (holdingType, _, taxReliefCode, isLinked) =>
             logWarn(s"Falling back to Non-Tax Relief cases as TaxRelief logic not yet implemented for " +
               s"$taxReliefCode, holdingType: $holdingType, propertyType: ${effectivePropertyType(request)}, isLinked: $isLinked")

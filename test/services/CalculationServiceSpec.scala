@@ -113,7 +113,6 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       firstTimeBuyer = None,
       isMultipleLand = isMultipleLand
     )
-
     def createRequestWithPropDetails(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, premiumAmount: BigDecimal= 0, nonUKResident: Option[Boolean] = None) =  Request(
       holdingType = hType,
       propertyType = pType,
@@ -1597,6 +1596,23 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdNonResidentialMar12toMar16(any(), any(), any())
       }
+
+      "given relief code RightToBuy(22) and effective date before 17/03/2016 " in {
+        val testRequest = createRequest(
+          leasehold,
+          nonResidential,
+          LocalDate.of(2015, 3, 16),
+          Some(RightToBuy),
+          isLinked = Some(false))
+
+        val result = createResult("leaseholdMixedNonResidentialRightToBuyBeforeMarch16")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedNonResidentialRightToBuyBeforeMarch16(testRequest)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResidentialRightToBuyBeforeMarch16(testRequest)
+      }
     }
 
     "select leasehold / mixed property with tax relief code" when {
@@ -1620,6 +1636,23 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedPropMar08BeforeMar16
+      }
+
+      "given relief code RightToBuy(22) and effective date before 17/03/2016 " in {
+        val testRequest = createRequest(
+          leasehold,
+          mixed,
+          LocalDate.of(2015, 3, 16),
+          Some(RightToBuy),
+          isLinked = Some(false))
+
+        val result = createResult("leaseholdMixedNonResidentialRightToBuyBeforeMarch16")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedNonResidentialRightToBuyBeforeMarch16(testRequest)).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResidentialRightToBuyBeforeMarch16(testRequest)
       }
     }
 

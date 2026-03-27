@@ -5,8 +5,10 @@
 
 package fixtures
 
+import enums.sdltRebuild.RightToBuy
 import enums.{HoldingTypes, PropertyTypes}
 import models.{LeaseDetails, LeaseTerm, PropertyDetails, RelevantRentDetails, Request}
+import models.sdltRebuild.TaxReliefDetails
 
 import java.time.LocalDate
 
@@ -529,4 +531,32 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     taxReliefDetails = None,
     firstTimeBuyer = None
   )
+
+  def leaseholdMixedNonResidentialRightToBuyBeforeMarch16Request(premium: BigDecimal): Request = Request(
+    holdingType = HoldingTypes.leasehold,
+    propertyType = PropertyTypes.nonResidential,
+    effectiveDate = LocalDate.of(2016, 3, 16),
+    nonUKResident = None,
+    premium = premium,
+    highestRent = 0,
+    leaseDetails = Some(testLeaseDetailMixedNonResidentialRightToBuyBeforeMarch16),
+    propertyDetails = Some(
+      PropertyDetails(
+        individual = true,
+        twoOrMoreProperties = Some(true),
+        replaceMainResidence = Some(false),
+        sharedOwnership = None,
+        currentValue = None
+      )
+    ),
+    relevantRentDetails = None,
+    isLinked = Some(false),
+    interestTransferred = None,
+    taxReliefDetails = Some( TaxReliefDetails(
+      taxReliefCode = RightToBuy,
+      isPartialRelief = None
+    )),
+    firstTimeBuyer = None
+  )
+
 }

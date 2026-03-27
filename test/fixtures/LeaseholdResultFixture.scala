@@ -506,5 +506,20 @@ trait LeaseholdResultFixture {
       rate = Some(premRate)
     )
   }
+  def leaseholdMixedNonResidentialRightToBuyBeforeMarch16Result(
+                                                 leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
+                                                 premTaxDue:  Int, premRate: Int,
+                                                 npv: Int): Result =
+    Result(
+      totalTax = leaseTaxDue + premTaxDue,
+      resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+      resultHint = None,
+      npv = Some(npv),
+      taxCalcs = Seq(
+        baseLeaseSliceDetails(leaseTaxDue, leaseSliceDetails),
+        basePremSlabDetails(premTaxDue, premRate)
+      )
+    )
+
 
 }

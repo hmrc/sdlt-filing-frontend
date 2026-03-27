@@ -2166,6 +2166,58 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
         }
       }
 
+      // SDLT - Tax Calc Case - 22
+      "TaxReliefCode is Right to Buy: 22" when {
+        "effective date is before 17/03/2016" when {
+          "the transaction is not linked" must {
+            "return the 4% premium rate when the premium is 500K" when {
+              "Property Type Non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Leasehold",
+                        |  "propertyType": "Non-residential",
+                        |  "effectiveDateDay": 16,
+                        |  "effectiveDateMonth": 3,
+                        |  "effectiveDateYear": 2015,
+                        |  "premium": 250001,
+                        |  "highestRent": 0,
+                        |  "leaseDetails": {
+                        |    "startDateDay": 16,
+                        |    "startDateMonth": 3,
+                        |    "startDateYear": 2015,
+                        |    "endDateDay": 16,
+                        |    "endDateMonth": 3,
+                        |    "endDateYear": 2016,
+                        |    "leaseTerm": {
+                        |      "years": 1,
+                        |      "days": 1,
+                        |      "daysInPartialYear": 365
+                        |    },
+                        |    "year1Rent": 9999,
+                        |    "year2Rent": 9999
+                        |  },
+                        |    "isLinked": false,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  },
+                        |  "relevantRentDetails": {
+                        |  "relevantRent": 1000
+                        | }
+                        |}""".stripMargin
+                    )
+                  )
+                request.status shouldBe OK
+                request.json shouldBe leaseholdMixedNonResidentialRightToBuyBeforeMarch16Response
+              }
+            }
+          }
+        }
+      }
+
       //SDLT - Tax Calc Case - Case 52 - Add Mixed Logic
       "TaxRelief code is ReliefFrom15PercentRate(35) and Property type is Mixed or Non-residential, isLinked = false, relevantRent < 1000 and between 2013/04/06 and 2016/03/17" must {
         "return the result with 0% Tax on premium and 0 % on rent when premium <= 150000 and npv <= 150000" in {
