@@ -527,7 +527,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           case (`leasehold`, _, FreeportsTaxSiteRelief | InvestmentZonesTaxSiteRelief, Some(false))
             if taxReliefDetails.isPartialRelief.contains(false) =>
             CalculationResponse(Seq(
-              leaseCalculationService.leaseholdFreeportRelief(request.leaseDetails)
+              leaseCalculationService.leaseholdFreeportRelief(request)
             ))
           case (`leasehold`, Residential, FirstTimeBuyersRelief, Some(true))
             if isAfterNov2017AndBeforeJul20(date) && request.isMultipleLand.contains(true) =>
@@ -551,12 +551,12 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           case (`leasehold`, ResidentialAdditionalProperty, PreCompletionTransaction, Some(false))
             if date.onOrAfter(APRIL2016_RESIDENTIAL_DATE) =>
             CalculationResponse(Seq(
-              leaseCalculationService.leaseholdResAddPropPreCompletionTransactionApr2016Onwards(request.leaseDetails)
+              leaseCalculationService.leaseholdResAddPropPreCompletionTransactionApr2016Onwards(request)
             ))
           case (`leasehold`, Residential | NonResidential | Mixed, PreCompletionTransaction, Some(false))
             if date.onOrAfter(APRIL2013_TAX_YEAR_START_DATE) =>
             CalculationResponse(Seq(
-              leaseCalculationService.leaseholdPreCompletionTransactionApr2013Onwards(request.leaseDetails)
+              leaseCalculationService.leaseholdPreCompletionTransactionApr2013Onwards(request)
             ))
 
           case (`leasehold`, Mixed | NonResidential, ReliefFrom15PercentRate, Some(false))
@@ -568,7 +568,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
           case (`leasehold`, Mixed | NonResidential, _, Some(false))
             if standardZeroRateLeaseholdReliefCodes.contains(taxReliefDetails.taxReliefCode) =>
             CalculationResponse(Seq(
-              leaseCalculationService.leaseholdMixedNonResPropStandardZeroRelief(request.leaseDetails)
+              leaseCalculationService.leaseholdMixedNonResPropStandardZeroRelief(request)
             ))
           case (`leasehold`, _, taxReliefCode, Some(true))
             if selfAssessedLeaseHoldReliefCodes.contains(taxReliefCode) && date.onOrAfter(NOV2017_RESIDENTIAL_DATE) =>

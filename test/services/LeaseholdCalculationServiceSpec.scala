@@ -44,12 +44,15 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
   }
 
   "getNPV" must {
+    "skip calculating the NPV if it is supplied in the Request" in new PredefinedNPVSetup(999) {
+      service.getNPV("getNPVTestFunction", leaseholdResidentialDec14OnwardsRequest(100000, april2021EffectiveEndDate).copy(declaredNpv = Some(10000))) shouldBe 10000
+    }
     "provide the NPV when the lease details are defined" in new PredefinedNPVSetup(1000) {
-      service.getNPV("getNPVTestFunction", Some(testLeaseDetails)) shouldBe 1000
+      service.getNPV("getNPVTestFunction", leaseholdResidentialDec14OnwardsRequest(100000, april2021EffectiveEndDate)) shouldBe 1000
     }
     "throw the correct exception when the lease details are not defined" in new PredefinedNPVSetup(1000) {
       the[RequiredValueNotDefinedException] thrownBy
-        service.getNPV("getNPVTestFunction", None) must have message
+        service.getNPV("getNPVTestFunction", leaseholdResidentialDec14OnwardsRequest(100000, april2021EffectiveEndDate).copy(leaseDetails = None)) must have message
         "[LeaseholdCalculationService] [getNPVTestFunction] Lease details not defined when required"
     }
   }

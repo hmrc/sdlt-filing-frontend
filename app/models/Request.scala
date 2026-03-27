@@ -66,7 +66,8 @@ object Request {
     (__ \ "isLinked").readNullable[Boolean] and
     (__ \ "interestTransferred").readNullable[String] and
     (__ \ "taxReliefDetails").readNullable[TaxReliefDetails] and
-    (__ \ "isMultipleLand").readNullable[Boolean]
+    (__ \ "isMultipleLand").readNullable[Boolean] and
+    (__ \ "declaredNpv").readNullable[BigDecimal]
   )(Request.apply _)
 }
 
@@ -84,7 +85,8 @@ case class Request(
                   isLinked: Option[Boolean],
                   interestTransferred: Option[String],
                   taxReliefDetails: Option[TaxReliefDetails],
-                  isMultipleLand: Option[Boolean] = None
+                  isMultipleLand: Option[Boolean] = None,
+                  declaredNpv: Option[BigDecimal] = None
                   )
 
 case class PropertyDetails(
