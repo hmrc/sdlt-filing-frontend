@@ -71,6 +71,28 @@ class PurchaserServiceSpec extends SpecBase {
       unincorporatedSoleTrader = "no"
     )
 
+  private def createPurchaser(
+                             id: Option[String] = Some("1234"),
+                             isCompany: Option[String] = Some("NO")
+                             ): Purchaser = Purchaser(
+    purchaserID = id,
+    forename1 = Some("forename1"),
+    forename2 = Some("forename2"),
+    surname = Some("surname"),
+    companyName = None,
+    isCompany = isCompany,
+    nextPurchaserID = Some("nextPurchaserID"),
+    isTrustee = Some("YES"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("NO"),
+    address1 = Some("123 Test Street"),
+    address2 = None,
+    address3 = None,
+    address4 = None,
+    postcode = None,
+    purchaserResourceRef = Some("purchaserRef")
+  )
+
   val continueRoute: Result = Ok("Continue route")
 
   "PurchaserService" - {
@@ -2353,6 +2375,53 @@ class PurchaserServiceSpec extends SpecBase {
         val otherPurchasersWithNames = Seq((secondPurchaser, "Steve"))
 
         result mustBe(Some(purchaserOne), Some(purchaserOneName), otherPurchasersWithNames)
+      }
+    }
+
+    "isMainPurchaserCompany" - {
+      "must return true if main purchaser is Company" in {
+        val purchaser = createPurchaser(isCompany = Some("YES"))
+        service.isMainPurchaserCompany(purchaser) mustBe true
+      }
+      "must return false if main purchaser is Individual" in {
+        val purchaser = createPurchaser(isCompany = Some("NO"))
+        service.isMainPurchaserCompany(purchaser) mustBe false
+      }
+    }
+
+    "getPurchaserNameById" - {
+      "must return purchaser name when purchaser exists" in {
+        val purchaser1 = createPurchaser(id = Some("1111"))
+
+        val fullReturn = emptyFullReturn.copy(
+          purchaser = Some(Seq(purchaser1)))
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(fullReturn))
+
+        service.getPurchaserNameById(userAnswers, purchaserId = "1111") mustBe Some("forename1 forename2 surname")
+      }
+
+      "must return None when purchaser does not exists" in {
+        val purchaser1 = createPurchaser(id = Some("1111"))
+
+        val fullReturn = emptyFullReturn.copy(
+          purchaser = Some(Seq(purchaser1)))
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(fullReturn))
+
+        service.getPurchaserNameById(userAnswers, purchaserId = "1011") mustBe None
+      }
+
+      "must return None when fullReturn has no purchaser" in {
+        val fullReturn = emptyFullReturn.copy(
+          purchaser = None)
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(fullReturn))
+
+        service.getPurchaserNameById(userAnswers, purchaserId = "1011") mustBe None
       }
     }
   }

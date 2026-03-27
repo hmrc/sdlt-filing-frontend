@@ -713,6 +713,11 @@ purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                      
 purchaser.isPurchaserActingAsTrustee.error.required                                 = Please select Yes or No
 purchaser.isPurchaserActingAsTrustee.change.hidden                                  = Purchaser acting as trustee yes or no
 
+confirmChangeOfMainPurchaser.title = Are you sure you want to change purchaser 1? - About the purchaser
+confirmChangeOfMainPurchaser.heading = Are you sure you want to select {0} as purchaser 1?
+confirmChangeOfMainPurchaser.error.required = Select yes or no
+confirmChangeOfMainPurchaser.change.hidden = Are you sure you want to change purchaser 1?
+
 # Purchaser Overview
 purchaser.purchaserOverview.title                                                   = Purchaser overview - About the purchaser
 purchaser.purchaserOverview.heading                                                 = Purchaser Overview

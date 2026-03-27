@@ -111,12 +111,10 @@ class Navigator @Inject()() {
       _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case ConfirmNameOfThePurchaserPage =>
       _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
-    //TODO DTR-3997 - SPRINT 11 - update to Are you sure you want to change purchaser 1
     case ChangePurchaserOnePage =>
-      _ => controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()
+      _ => controllers.purchaser.routes.ConfirmChangeOfMainPurchaserController.onPageLoad()
     case PurchaserCompanyTypeKnownPage =>
       _=> controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(NormalMode)
-
 
     case PurchaserAgentBeforeYouStartPage =>
       _ => controllers.purchaserAgent.routes.SelectPurchaserAgentController.onPageLoad(NormalMode)
