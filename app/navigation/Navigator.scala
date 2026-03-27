@@ -75,7 +75,8 @@ class Navigator @Inject()() {
          | PurchaserAndVendorConnectedPage | IsPurchaserActingAsTrusteePage | ConfirmNameOfThePurchaserPage
          | PurchaserAgentsContactDetailsPage | PurchaserAgentNamePage | AddPurchaserAgentReferenceNumberPage
          | PurchaserAgentReferencePage | AddContactDetailsForPurchaserAgentPage | SelectPurchaserAgentPage
-         | PurchaserAgentBeforeYouStartPage | PurchaserAgentAuthorisedPage | ChangePurchaserOnePage | PurchaserCompanyTypeKnownPage => true
+         | PurchaserAgentBeforeYouStartPage | PurchaserAgentAuthorisedPage | ChangePurchaserOnePage
+         | PurchaserCompanyTypeKnownPage | ConfirmPurchaserAddressPage => true
 
     case _ => false
   }
@@ -84,7 +85,7 @@ class Navigator @Inject()() {
     case WhoIsMakingThePurchasePage =>
       _ => controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
     case NameOfPurchaserPage =>
-      _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+      _ => controllers.purchaser.routes.ConfirmPurchaserAddressController.onPageLoad(NormalMode)
     case AddPurchaserPhoneNumberPage =>
       _ => controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(NormalMode)
     case EnterPurchaserPhoneNumberPage =>
@@ -110,7 +111,10 @@ class Navigator @Inject()() {
     case PurchaserAndVendorConnectedPage =>
       _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case ConfirmNameOfThePurchaserPage =>
-      _ => controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+      _ => controllers.purchaser.routes.ConfirmPurchaserAddressController.onPageLoad(NormalMode)
+    case ConfirmPurchaserAddressPage =>
+      _ => controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode)
+    //TODO DTR-3997 - SPRINT 11 - update to Are you sure you want to change purchaser 1
     case ChangePurchaserOnePage =>
       _ => controllers.purchaser.routes.ConfirmChangeOfMainPurchaserController.onPageLoad()
     case PurchaserCompanyTypeKnownPage =>

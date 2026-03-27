@@ -405,3 +405,10 @@ GET        /about-the-purchaser/add-type-of-company                             
 POST       /about-the-purchaser/add-type-of-company                                                  controllers.purchaser.PurchaserCompanyTypeKnownController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-purchaser/add-type-of-company/change                                           controllers.purchaser.PurchaserCompanyTypeKnownController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-purchaser/add-type-of-company/change                                           controllers.purchaser.PurchaserCompanyTypeKnownController.onSubmit(mode: Mode = CheckMode)
+
+
+GET         /about-the-purchaser/confirm-purchasers-address                                         controllers.purchaser.ConfirmPurchaserAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/confirm-purchasers-address                                        controllers.purchaser.ConfirmPurchaserAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/confirm-purchasers-address/change                                  controllers.purchaser.ConfirmPurchaserAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/confirm-purchasers-address/change                                  controllers.purchaser.ConfirmPurchaserAddressController.onSubmit(mode: Mode = CheckMode)
+

@@ -718,6 +718,15 @@ confirmChangeOfMainPurchaser.heading = Are you sure you want to select {0} as pu
 confirmChangeOfMainPurchaser.error.required = Select yes or no
 confirmChangeOfMainPurchaser.change.hidden = Are you sure you want to change purchaser 1?
 
+purchaser.confirmPurchaserAddress.title                                             = Confirm the purchaser’s address - About the purchaser
+purchaser.confirmPurchaserAddress.heading                                           = Confirm {0}’s address
+purchaser.confirmPurchaserAddress.confirmAddress                                    = Confirm address
+purchaser.confirmPurchaserAddress.isThisTheLand                                     = Is this {0}’s address?
+purchaser.confirmPurchaserAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
+purchaser.confirmPurchaserAddress.error.required                                    = Select Yes or No
+purchaser.confirmPurchaserAddress.change.hidden                                     = confirmPurchaserAddress
+purchaser.confirmPurchaserAddress.missing                                           = Enter purchaser's address
+
 # Purchaser Overview
 purchaser.purchaserOverview.title                                                   = Purchaser overview - About the purchaser
 purchaser.purchaserOverview.heading                                                 = Purchaser Overview

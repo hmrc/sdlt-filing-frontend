@@ -102,8 +102,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(WhoIsMakingThePurchasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode = NormalMode)
         }
 
-        "go from NameOfPurchaserPage to address lookup" in {
-          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        "go from NameOfPurchaserPage to ConfirmPurchaserAddress page" in {
+          navigator.nextPage(NameOfPurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.ConfirmPurchaserAddressController.onPageLoad(NormalMode)
         }
 
         "go from DoesPurchaserHaveNIPage to PurchaserNationalInsurancePage" in {
@@ -150,8 +150,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(IsPurchaserActingAsTrusteePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(NormalMode)
         }
 
-        "go from ConfirmNameOfThePurchaserPage to PurchaserAddress page" in {
-          navigator.nextPage(ConfirmNameOfThePurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+        "go from ConfirmNameOfThePurchaserPage to ConfirmPurchaserAddress page" in {
+          navigator.nextPage(ConfirmNameOfThePurchaserPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.ConfirmPurchaserAddressController.onPageLoad(NormalMode)
+        }
+
+        "go from ConfirmPurchaserAddress to AddPurchaserPhoneNumber page" in {
+          navigator.nextPage(ConfirmPurchaserAddressPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode)
         }
 
         "go from RegistrationNumberPage to PurchaserTypeOfCompany page" in {
@@ -363,7 +367,7 @@ class NavigatorSpec extends SpecBase {
           controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)
 
         navigator.nextPage(NameOfPurchaserPage, NormalMode, userAnswers) mustBe
-          controllers.purchaser.routes.PurchaserAddressController.redirectToAddressLookupPurchaser()
+          controllers.purchaser.routes.ConfirmPurchaserAddressController.onPageLoad(NormalMode)
 
         navigator.nextPage(RegistrationNumberPage, NormalMode, userAnswers) mustBe
           controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(NormalMode)
