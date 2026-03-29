@@ -59,6 +59,7 @@ class VendorAgentCheckYourAnswersController @Inject()(
 
         if (isDataEmpty) {
           Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
+            
         } else {
           val summaryList = SummaryListViewModel(
             rows = Seq(

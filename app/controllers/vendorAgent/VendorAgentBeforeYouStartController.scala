@@ -18,9 +18,10 @@ package controllers.vendorAgent
 
 import controllers.actions.*
 import forms.vendorAgent.VendorAgentBeforeYouStartFormProvider
-import models.NormalMode
+import models.Mode
 import navigation.Navigator
 import pages.vendorAgent.VendorAgentBeforeYouStartPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -42,25 +43,35 @@ class VendorAgentBeforeYouStartController @Inject()(
                                                      view: VendorAgentBeforeYouStartView
                                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(VendorAgentBeforeYouStartPage) match {
+      val userAnswers = request.userAnswers
+
+      val preparedForm = userAnswers.get(VendorAgentBeforeYouStartPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-
-      Ok(view(preparedForm))
+      
+      userAnswers.fullReturn match {
+        case Some(fullReturn) =>
+          if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))) {
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          } else {
+            Ok(view(preparedForm, mode))
+          }
+        case _ => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      }
   }
-
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors))),
+          Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
@@ -68,7 +79,7 @@ class VendorAgentBeforeYouStartController @Inject()(
             _ <- sessionRepository.set(updatedAnswers)
           } yield {
             if (value) {
-              Redirect(navigator.nextPage(VendorAgentBeforeYouStartPage, NormalMode, updatedAnswers))
+              Redirect(navigator.nextPage(VendorAgentBeforeYouStartPage, mode, updatedAnswers))
             } else {
               Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             }

@@ -17,12 +17,23 @@
 package controllers.preliminary
 
 import base.SpecBase
+import models.UserAnswers
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.preliminary.BeforeStartReturnView
 
+import java.time.Instant
+
 class BeforeStartReturnControllerSpec extends SpecBase {
 
+
+  val userAnswers = UserAnswers(
+    id = "12345",
+    returnId = Some("RE12345"),
+    storn = "TESTSTORN",
+    data = Json.obj()
+  )
   "BeforeStartReturn Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -38,6 +49,20 @@ class BeforeStartReturnControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
+      }
+    }
+
+    "must return returnTaskList when returnId exist in userAnswers for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value  mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
   }

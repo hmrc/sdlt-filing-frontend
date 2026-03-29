@@ -17,11 +17,20 @@
 package controllers.land
 
 import base.SpecBase
+import models.UserAnswers
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.land.LandBeforeYouStartView
+import play.api.libs.json.Json
 
 class LandBeforeYouStartControllerSpec extends SpecBase {
+
+  val userAnswers = UserAnswers(
+    id = "12345",
+    returnId = Some("RE12345"),
+    storn = "TESTSTORN",
+    data = Json.obj()
+  )
 
   "LandBeforeYouStart Controller" - {
 
@@ -38,6 +47,20 @@ class LandBeforeYouStartControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
+      }
+    }
+
+    "must return returnTaskList when returnId exist in userAnswers for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.land.routes.LandBeforeYouStartController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
   }
