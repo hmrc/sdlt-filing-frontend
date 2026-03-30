@@ -76,12 +76,6 @@ object SlabRatesTables {
     )
   )
 
-  val leaseholdMixedNonResidentialBeforeMarch172016NPVRates  = SlabTable(
-    slabs = Seq(
-      Slab(threshold = 150000, rate = 1)
-    )
-  )
-
   val leaseholdMixedNonResBeforeMar08Rates = SlabTable(
     slabs = Seq(
       Slab(threshold = 500000, rate = 4),

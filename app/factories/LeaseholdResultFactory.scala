@@ -702,4 +702,36 @@ object LeaseholdResultFactory {
       )
     )
   }
+
+  def leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016Res(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal): Result = {
+    val leaseCalcDetails = CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT_FROM_MAR_2016),
+      bandHeading = Some(DETAIL_COL_HEADER_RENT),
+      detailFooter = Some(DETAIL_FOOTER_RENT),
+      taxDue = leaseResult.taxDue.toInt,
+      slices = Some(leaseResult.slices)
+    )
+    val premiumCalcDetails = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_PREM_FROM_MAR_2016),
+      bandHeading = Some(DETAIL_COL_HEADER_PREM),
+      detailFooter = Some(DETAIL_FOOTER_PREM),
+      taxDue = premiumResult.taxDue.toInt,
+      slices = Some(premiumResult.slices)
+    )
+
+    Result(
+      totalTax = leaseCalcDetails.taxDue + premiumCalcDetails.taxDue,
+      resultHeading = Some(RESULT_HEADING_FROM_MAR_2016),
+      resultHint = None,
+      npv = Some(npv.toInt),
+      taxCalcs = Seq(
+        leaseCalcDetails,
+        premiumCalcDetails
+      )
+    )
+  }
 }

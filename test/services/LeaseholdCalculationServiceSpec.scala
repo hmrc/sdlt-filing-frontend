@@ -5,14 +5,16 @@
 
 package services
 
+import data.ResultText._
 import enums.sdltRebuild.AcquisitionRelief
 import enums.{CalcTypes, HoldingTypes, PropertyTypes, TaxTypes}
 import exceptions.RequiredValueNotDefinedException
 import fixtures.{LeaseholdRequestFeature, LeaseholdResultFixture}
-import models.sdltRebuild.TaxReliefDetails
 import models._
+import models.sdltRebuild.TaxReliefDetails
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.play.PlaySpec
+
 import java.time.LocalDate
 
 class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeature with LeaseholdResultFixture {
@@ -2652,6 +2654,103 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
       )
       service.leaseholdMixedNonResBeforeMar08(testRequest(600000)) shouldBe
         expectedResult(leaseTaxDue = 4500, leaseSliceDetails, premTaxDue = 24000, premRate = 4, npv)
+    }
+  }
+  "leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016" must {
+    def testRequest(premium: BigDecimal): Request = Request(
+      holdingType = HoldingTypes.leasehold,
+      propertyType = PropertyTypes.mixed,
+      effectiveDate = LocalDate.of(2018, 1, 1),
+      nonUKResident = None,
+      premium = premium,
+      highestRent = 0,
+      propertyDetails = None,
+      leaseDetails = Some(testLeaseDetails),
+      relevantRentDetails = None,
+      firstTimeBuyer = None,
+      isLinked = Some(false),
+      interestTransferred = None,
+      taxReliefDetails = None
+    )
+
+    def expectedResult(leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails], premiumSliceDetails:Seq[SliceDetails], premTaxDue: Int, npv: Int): Result =
+      Result(
+        totalTax = leaseTaxDue + premTaxDue,
+        resultHeading = Some(RESULT_HEADING_FROM_MAR_2016),
+        resultHint = None,
+        npv = Some(npv),
+        taxCalcs = Seq(
+          CalculationDetails(
+            taxType = TaxTypes.rent,
+            calcType = CalcTypes.slice,
+            detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT_FROM_MAR_2016),
+            bandHeading = Some(DETAIL_COL_HEADER_RENT),
+            detailFooter = Some(DETAIL_FOOTER_RENT),
+            taxDue = leaseTaxDue,
+            slices = Some(leaseSliceDetails)
+          ),
+          CalculationDetails(
+            taxType = TaxTypes.premium,
+            calcType = CalcTypes.slice,
+            detailHeading = Some(DETAIL_HEADING_SDLT_ON_PREM_FROM_MAR_2016),
+            bandHeading = Some(DETAIL_COL_HEADER_PREM),
+            detailFooter = Some(DETAIL_FOOTER_PREM),
+            taxDue = premTaxDue,
+            slices = Some(premiumSliceDetails)
+          )
+        )
+      )
+
+    "return lease taxDue of 0, premium taxDue of 0 for npv of 150000 and premium of 150000" in new PredefinedNPVSetup(150000) {
+      val leaseSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(5000000),  rate = 1, taxDue = 0),
+        SliceDetails(from = 5000000,  to = None,           rate = 2, taxDue = 0)
+      )
+
+      val premiumSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(250000),   rate = 2, taxDue = 0),
+        SliceDetails(from = 250000,   to = None,           rate = 5, taxDue = 0)
+      )
+
+      service.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(testRequest(150000)) shouldBe
+        expectedResult(leaseTaxDue = 0, leaseSliceDetails = leaseSliceDetails, premiumSliceDetails = premiumSliceDetails, premTaxDue = 0, npv)
+
+    }
+    "return lease taxDue of 46809,  premium taxDue of 2000  for npv of 5000000 and premium of 250000" in new PredefinedNPVSetup(4830917) {
+      val leaseSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(5000000),  rate = 1, taxDue = 46809),
+        SliceDetails(from = 5000000,  to = None,           rate = 2, taxDue = 0)
+      )
+
+      val premiumSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(250000),   rate = 2, taxDue = 2000),
+        SliceDetails(from = 250000,   to = None,           rate = 5, taxDue = 0)
+      )
+
+      service.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(testRequest(250000)) shouldBe
+        expectedResult(leaseTaxDue = 46809, leaseSliceDetails = leaseSliceDetails, premiumSliceDetails = premiumSliceDetails, premTaxDue = 2000, npv)
+
+    }
+    "return lease taxDue of 64442, premium taxDue of 24500 for npv of 5797101 and premium of 700000" in new PredefinedNPVSetup(5797101) {
+      val leaseSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(5000000),  rate = 1, taxDue = 48500),
+        SliceDetails(from = 5000000,  to = None,           rate = 2, taxDue = 15942)
+      )
+
+      val premiumSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(250000),   rate = 2, taxDue = 2000),
+        SliceDetails(from = 250000,   to = None,           rate = 5, taxDue = 22500)
+      )
+
+      service.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(testRequest(700000)) shouldBe
+        expectedResult(leaseTaxDue = 64442, leaseSliceDetails = leaseSliceDetails, premiumSliceDetails = premiumSliceDetails, premTaxDue = 24500, npv)
+
     }
   }
 

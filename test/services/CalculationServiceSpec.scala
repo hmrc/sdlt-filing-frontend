@@ -3253,6 +3253,42 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verifyNoMoreInteractions(mockLeaseholdCalculationService)
       }
     }
+
+    //SDLT - Tax Calc - 2016 budget relief reasons without tax relief - Add Mixed Logic
+    "select different functions based on property Mixed or Non-residential property types " when {
+      "select leaseholdReliefFrom15PercentRateRightToBuyMixedAndNonResOnOrAfterMarch2016" when{
+        "property type is Mixed,LeaseHold ReliefFrom15Percentage or RightToBuy , isLinked = false, relevantRentDetails < 1000 and date is on 17thMarch2023" in {
+          val testRequest = createRequest(leasehold, mixed, LocalDate.of(2016, 3, 17), Some(ReliefFrom15PercentRate), isLinked = Some(false), relevantRent = Some(BigDecimal(999)))
+
+          val result = createResult("leaseholdReliefFrom15PercentRateRightToBuyMixedAndNonResOnOrAfterMarch2016")
+
+          when(mockLeaseholdCalculationService.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(any())).thenReturn(result)
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockLeaseholdCalculationService, times(1)).leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(any())
+
+          verifyNoMoreInteractions(mockLeaseholdCalculationService)
+        }
+        "property type Mixed, LeaseHold ReliefFrom15Percentage or RightToBuy , isLinked = false, relevantRentDetails < 1000 and date is after 17thMarch2023" in {
+
+          val testRequest = createRequest(leasehold, mixed, LocalDate.of(2019, 3, 17), Some(RightToBuy), isLinked = Some(false), relevantRent = Some(BigDecimal(800)))
+
+          val result = createResult("leaseholdReliefFrom15PercentRateRightToBuyMixedAndNonResOnOrAfterMarch2016")
+
+          when(mockLeaseholdCalculationService.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(any())).thenReturn(result)
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockLeaseholdCalculationService, times(1)).leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(any())
+
+          verifyNoMoreInteractions(mockLeaseholdCalculationService)
+
+        }
+      }
+
+    }
+
   }
 
   "checkFTB" must {
