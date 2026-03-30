@@ -18,10 +18,9 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.ConfirmChangeOfMainPurchaserFormProvider
-import pages.purchaser.{ChangePurchaserOnePage, ConfirmChangeOfMainPurchaserPage}
+import pages.purchaser.ChangePurchaserOnePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import services.purchaser.{PurchaserService, PurchaserUpdateMainPurchaserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.ConfirmChangeOfMainPurchaserView
@@ -38,8 +37,7 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ConfirmChangeOfMainPurchaserView,
                                          purchaserUpdateMainPurchaserService: PurchaserUpdateMainPurchaserService,
-                                         purchaserService: PurchaserService,
-                                         sessionRepository: SessionRepository
+                                         purchaserService: PurchaserService
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -53,17 +51,12 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
         case Some(purchaserId) =>
           purchaserService.getPurchaserNameById(request.userAnswers, purchaserId) match {
             case Some(name) =>
-              val preparedForm = request.userAnswers.get(ConfirmChangeOfMainPurchaserPage) match {
-                case None => form
-                case Some(value) => form.fill(value)
-              }
-              Ok(view(preparedForm, name))
-
+              Ok(view(form, name))
             case None =>
               Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
           }
         case None =>
-          Redirect(controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad())
+          Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
       }
   }
 
@@ -81,24 +74,17 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
                   Future.successful(BadRequest(view(formWithErrors, name))),
 
                 value =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmChangeOfMainPurchaserPage, value))
-                    _ <- sessionRepository.set(updatedAnswers)
-                    result <-
-                      (
-                        if (value) {
-                          purchaserUpdateMainPurchaserService.updateMainPurchaser(updatedAnswers)
-                        } else {
-                          Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
-                        }
-                      )
-                  } yield result
+                  if (value) {
+                    purchaserUpdateMainPurchaserService.updateMainPurchaser(request.userAnswers)
+                  } else {
+                    Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
+                  }
               )
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
           }
         case None =>
-          Future.successful(Redirect(controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()))
+          Future.successful(Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
       }
   }
 }

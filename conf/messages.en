@@ -715,7 +715,7 @@ purchaser.isPurchaserActingAsTrustee.change.hidden                              
 
 confirmChangeOfMainPurchaser.title = Are you sure you want to change purchaser 1? - About the purchaser
 confirmChangeOfMainPurchaser.heading = Are you sure you want to select {0} as purchaser 1?
-confirmChangeOfMainPurchaser.error.required = Select yes or no
+confirmChangeOfMainPurchaser.error.required = Select Yes or No
 confirmChangeOfMainPurchaser.change.hidden = Are you sure you want to change purchaser 1?
 
 purchaser.confirmPurchaserAddress.title                                             = Confirm the purchaser’s address - About the purchaser

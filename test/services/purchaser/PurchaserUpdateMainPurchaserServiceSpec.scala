@@ -21,17 +21,19 @@ import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.{completeReturnInfo, emptyFullReturn}
 import models.purchaser.{DeleteCompanyDetailsReturn, UpdatePurchaserReturn}
 import models.requests.DataRequest
-import models.{CompanyDetails, Purchaser, ReturnInfo, ReturnInfoReturn, ReturnVersionUpdateReturn}
+import models.{CompanyDetails, NormalMode, Purchaser, ReturnInfo, ReturnInfoReturn, ReturnVersionUpdateReturn}
+import navigation.Navigator
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.ChangePurchaserOnePage
+import pages.purchaser.{ChangePurchaserOnePage, ConfirmChangeOfMainPurchaserPage}
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.AnyContent
+import play.api.mvc.{AnyContent, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import repositories.SessionRepository
+import services.FullReturnService
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,12 +48,18 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
   private val mockPurchaserService = mock[PurchaserService]
   private val mockSessionRepository = mock[SessionRepository]
   private val mockPopulatePurchaserService = mock[PopulatePurchaserService]
+  private val mockFullReturnService = mock[FullReturnService]
+  private val mockNavigatorService = mock[Navigator]
+
+  private val nextPageCall = Call("GET", controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
 
   private def service = new PurchaserUpdateMainPurchaserService(
     mockBackendConnector,
     mockPurchaserService,
     mockPopulatePurchaserService,
-    mockSessionRepository
+    mockSessionRepository,
+    mockFullReturnService,
+    mockNavigatorService
   )
 
   private def createPurchaser(
@@ -98,6 +106,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
           returnInfo = Some(returnInfoWithOldMainPurchaser))
 
         val userAnswers = emptyUserAnswers
+          .copy(returnId = Some("return-id"))
           .copy(fullReturn = Some(fullReturn))
           .set(ChangePurchaserOnePage, newMainPurchaserId).success.value
 
@@ -108,6 +117,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
           returnInfo = Some(returnInfoWithNewMainPurchaser))
 
         val userAnswersWithNewMainPurch = emptyUserAnswers
+          .copy(returnId = Some("return-id"))
           .copy(fullReturn = Some(fullReturnWithNewMainPurch))
 
         implicit val request: DataRequest[AnyContent] = DataRequest(
@@ -126,9 +136,13 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
           .thenReturn(Future.successful(UpdatePurchaserReturn(true)))
         when(mockPurchaserService.isMainPurchaserCompany(eqTo(purchaser1)))
           .thenReturn(false)
-        when(mockPopulatePurchaserService.populatePurchaserInSession(any(), any(), eqTo(userAnswers)))
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(fullReturnWithNewMainPurch))
+        when(mockPopulatePurchaserService.populatePurchaserInSession(any(), any(), any()))
           .thenReturn(Success(userAnswersWithNewMainPurch))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockNavigatorService.nextPage(eqTo(ConfirmChangeOfMainPurchaserPage), eqTo(NormalMode), any()))
+          .thenReturn(nextPageCall)
 
         val result = service.updateMainPurchaser(userAnswers)
 
@@ -154,6 +168,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         )
 
         val userAnswers = emptyUserAnswers
+          .copy(returnId = Some("return-id"))
           .copy(fullReturn = Some(fullReturn))
           .set(ChangePurchaserOnePage, newMainPurchaserId).success.value
 
@@ -166,6 +181,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         )
 
         val userAnswersWithNewMainPurchNoCompanyDetails = emptyUserAnswers
+          .copy(returnId = Some("return-id"))
           .copy(fullReturn = Some(fullReturnWithNewMainPurchNoCompanyDetails))
 
         implicit val request: DataRequest[AnyContent] = DataRequest(
@@ -186,9 +202,13 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
           .thenReturn(true)
         when(mockBackendConnector.deleteCompanyDetails(any())(any(), any()))
           .thenReturn(Future.successful(DeleteCompanyDetailsReturn(true)))
-        when(mockPopulatePurchaserService.populatePurchaserInSession(any(), any(), eqTo(userAnswers)))
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(fullReturnWithNewMainPurchNoCompanyDetails))
+        when(mockPopulatePurchaserService.populatePurchaserInSession(any(), any(), any()))
           .thenReturn(Success(userAnswersWithNewMainPurchNoCompanyDetails))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockNavigatorService.nextPage(eqTo(ConfirmChangeOfMainPurchaserPage), eqTo(NormalMode), any()))
+          .thenReturn(nextPageCall)
 
         val result = service.updateMainPurchaser(userAnswers)
 

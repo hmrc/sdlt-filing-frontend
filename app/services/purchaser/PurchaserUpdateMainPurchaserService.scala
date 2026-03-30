@@ -20,12 +20,14 @@ import com.google.inject.Inject
 import connectors.StampDutyLandTaxConnector
 import models.purchaser.{DeleteCompanyDetailsRequest, UpdatePurchaserRequest}
 import models.requests.DataRequest
-import models.{ReturnInfo, ReturnInfoRequest, ReturnVersionUpdateRequest, UserAnswers}
-import pages.purchaser.ChangePurchaserOnePage
+import models.{GetReturnByRefRequest, NormalMode, ReturnInfo, ReturnInfoRequest, ReturnVersionUpdateRequest, UserAnswers}
+import navigation.Navigator
+import pages.purchaser.{ChangePurchaserOnePage, ConfirmChangeOfMainPurchaserPage}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 import repositories.SessionRepository
+import services.FullReturnService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +36,10 @@ class PurchaserUpdateMainPurchaserService @Inject()(
                                                      backendConnector: StampDutyLandTaxConnector,
                                                      purchaserService: PurchaserService,
                                                      populatePurchaserService: PopulatePurchaserService,
-                                                     sessionRepository: SessionRepository) extends Logging {
+                                                     sessionRepository: SessionRepository,
+                                                     fullReturnService: FullReturnService,
+                                                     navigator: Navigator
+                                                   ) extends Logging {
 
   private def updateNewVersion(
                                 userAnswers: UserAnswers,
@@ -108,21 +113,25 @@ class PurchaserUpdateMainPurchaserService @Inject()(
     }
   }
 
-  private def populatePurchaser(userAnswers: UserAnswers, purchaserId: String)(implicit ec: ExecutionContext): Future[Result] = {
+  private def populatePurchaser(userAnswers: UserAnswers, purchaserId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[Result] = {
     val maybePurchaser = userAnswers.fullReturn
       .flatMap(_.purchaser)
       .flatMap(_.find(_.purchaserID.contains(purchaserId)))
 
-    maybePurchaser match {
-      case Some(purchaser) =>
+    val maybeReturnId:Option[String] = userAnswers.returnId
+
+    (maybePurchaser, maybeReturnId) match {
+      case (Some(purchaser), Some(id)) =>
         for {
+          fullReturn <- fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = userAnswers.storn))
+          updatedUserAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = userAnswers.storn)
           updatedAnswers <- Future.fromTry(
             populatePurchaserService.populatePurchaserInSession(purchaser,
-              purchaserId, userAnswers))
+              purchaserId, updatedUserAnswers))
           _ <- sessionRepository.set(updatedAnswers)
-        } yield Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
+        } yield Redirect(navigator.nextPage(ConfirmChangeOfMainPurchaserPage, NormalMode, updatedAnswers))
 
-      case None =>
+      case _ =>
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }

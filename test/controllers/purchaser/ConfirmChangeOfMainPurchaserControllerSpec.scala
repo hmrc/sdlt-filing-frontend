@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.{ChangePurchaserOnePage, ConfirmChangeOfMainPurchaserPage}
+import pages.purchaser.ChangePurchaserOnePage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
@@ -110,7 +110,7 @@ class ConfirmChangeOfMainPurchaserControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "must redirect to Change Purchaser One when the purchaser id is missing from the session for a GET" in {
+    "must redirect to Purchaser Overview page when the purchaser id is missing from the session for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
@@ -120,11 +120,11 @@ class ConfirmChangeOfMainPurchaserControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
       }
     }
 
-    "must redirect to Change Purchaser One when the purchaser id is missing from the session for a POST" in {
+    "must redirect to Purchaser Overview page when the purchaser id is missing from the session for a POST" in {
 
       val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
@@ -134,7 +134,7 @@ class ConfirmChangeOfMainPurchaserControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
       }
     }
 
@@ -189,26 +189,6 @@ class ConfirmChangeOfMainPurchaserControllerSpec extends SpecBase with MockitoSu
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = testUserAnswers
-        .set(ChangePurchaserOnePage, "PUR002").success.value
-        .set(ConfirmChangeOfMainPurchaserPage, true).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, confirmChangeOfMainPurchaserRoute)
-
-        val view = application.injector.instanceOf[ConfirmChangeOfMainPurchaserView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), "John")(request, messages(application)).toString
       }
     }
 
