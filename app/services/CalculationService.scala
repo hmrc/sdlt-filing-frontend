@@ -558,13 +558,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdPreCompletionTransactionApr2013Onwards(request)
             ))
-
           case (`leasehold`, Mixed | NonResidential, ReliefFrom15PercentRate, Some(false))
             if isAfterApr2013AndBeforeMar16(request.effectiveDate) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdReliefFrom15PercentRateMixedAndNonResAfterApril2013AndBeforeMarch2016(request)
             ))
-
           case (`leasehold`, Mixed | NonResidential, _, Some(false))
             if standardZeroRateLeaseholdReliefCodes.contains(taxReliefDetails.taxReliefCode) =>
             CalculationResponse(Seq(
@@ -653,9 +651,14 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
         ))
       case (`leasehold`, Mixed | NonResidential, Some(false))
         if request.effectiveDate.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
-          CalculationResponse(Seq(
-            leaseCalculationService.leaseholdMixedNonResBeforeMarch2016(request)
-          ))
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdMixedNonResBeforeMarch2016(request)
+        ))
+      case (`leasehold`, Mixed | NonResidential, Some(false))
+        if date.onOrAfter(MARCH2016_NON_RESIDENTIAL_DATE) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
+        CalculationResponse(Seq(
+          leaseCalculationService.leaseholdMixedOrNonResidentialMar16Onwards(request)
+        ))
       case (`leasehold`, Mixed, _)
         if isAfterMar2008AndBeforeMar2016(date) =>
         CalculationResponse(Seq(
