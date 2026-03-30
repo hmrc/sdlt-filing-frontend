@@ -508,6 +508,9 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               CalculationResponse(Seq(
                 freeCalculationService.freeholdSelfAssessedResidentialFirstTimeBuyer500kMax
               ))
+          case (`freehold`, Mixed | NonResidential, RightToBuy | ReliefFrom15PercentRate , Some(false))
+            if date.onOrAfter(MARCH2016_NON_RESIDENTIAL_DATE) =>
+            calculateBaseTax(request)
 
           /* ------------- LeaseHoldCases--------------------------- */
           case (`leasehold`, _, MultipleDwellingRelief, _) =>
