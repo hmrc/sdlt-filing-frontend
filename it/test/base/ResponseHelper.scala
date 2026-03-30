@@ -114,4 +114,60 @@ trait ResponseHelper {
       |}
       |""".stripMargin
   )
+
+  lazy val budgetReliefReasonsWithoutTaxReliefNonLeased2016Response: JsValue = Json.parse(
+    """
+      |{
+      |  "result": [
+      |    {
+      |      "totalTax": 1000,
+      |      "resultHeading": "Results based on SDLT rules from 17 March 2016",
+      |      "taxCalcs": [
+      |        {
+      |          "taxType": "premium",
+      |          "calcType": "slice",
+      |          "taxDue": 1000,
+      |          "detailHeading": "This is a breakdown of how the total amount of SDLT was calculated based on the rules from 17 March 2016",
+      |          "bandHeading": "Purchase price bands (£)",
+      |          "detailFooter": "Total SDLT due",
+      |          "slices": [
+      |            {
+      |              "from": 0,
+      |              "to": 150000,
+      |              "rate": 0,
+      |              "taxDue": 0
+      |            },
+      |            {
+      |              "from": 150000,
+      |              "to": 250000,
+      |              "rate": 2,
+      |              "taxDue": 1000
+      |            },
+      |            {
+      |              "from": 250000,
+      |              "to": -1,
+      |              "rate": 5,
+      |              "taxDue": 0
+      |            }
+      |          ]
+      |        }
+      |      ]
+      |    },
+      |    {
+      |      "totalTax": 2000,
+      |      "resultHeading": "Results based on SDLT rules before 17 March 2016",
+      |      "resultHint": "You may be entitled to pay SDLT using the old rules if you exchanged contracts before 17 March 2016.",
+      |      "taxCalcs": [
+      |        {
+      |          "taxType": "premium",
+      |          "calcType": "slab",
+      |          "taxDue": 2000,
+      |          "rate": 1
+      |        }
+      |      ]
+      |    }
+      |  ]
+      |}
+      |""".stripMargin
+  )
 }

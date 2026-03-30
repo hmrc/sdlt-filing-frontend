@@ -3375,6 +3375,74 @@ class CalculationControllerFreeholdTaxReliefISpec extends BaseSpec with GuiceOne
           }
         }
       }
+
+
+      // SDLT - Tax Calc Case - 2016 budget relief reasons without tax relief non leased
+      "TaxReliefCode is Right to buy: 22 " when {
+        "effective date is on or after 17/03/2016" when {
+          "the transaction is not linked" must {
+            "return a slice response" when {
+              "Property Type non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Non-residential",
+                        |  "effectiveDateDay": 24,
+                        |  "effectiveDateMonth": 3,
+                        |  "effectiveDateYear": 2018,
+                        |  "premium": 200000,
+                        |  "highestRent": 0,
+                        |    "isLinked": false,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 22
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+                request.status shouldBe OK
+                request.json shouldBe budgetReliefReasonsWithoutTaxReliefNonLeased2016Response
+              }
+            }
+          }
+        }
+      }
+      "TaxReliefCode is Right to buy: 35 " when {
+        "effective date is on or after 17/03/2016" when {
+          "the transaction is not linked" must {
+            "return a slice response" when {
+              "Property Type non-residential" in {
+                val request: WSResponse = ws
+                  .url(calculateUrl)
+                  .post(
+                    Json.parse(
+                      """
+                        |{
+                        |  "holdingType": "Freehold",
+                        |  "propertyType": "Non-residential",
+                        |  "effectiveDateDay": 24,
+                        |  "effectiveDateMonth": 3,
+                        |  "effectiveDateYear": 2018,
+                        |  "premium": 200000,
+                        |  "highestRent": 0,
+                        |    "isLinked": false,
+                        |  "taxReliefDetails": {
+                        |    "taxReliefCode": 35
+                        |  }
+                        |}""".stripMargin
+                    )
+                  )
+                request.status shouldBe OK
+                request.json shouldBe budgetReliefReasonsWithoutTaxReliefNonLeased2016Response
+              }
+            }
+          }
+        }
+      }
+
     }
   }
 }
