@@ -18,7 +18,7 @@ package controllers.land
 
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
-import constants.FullReturnConstants.incompleteFullReturn
+import constants.FullReturnConstants.{emptyFullReturn, incompleteFullReturn}
 import models.land.{CreateLandReturn, LandTypeOfProperty, UpdateLandRequest, UpdateLandReturn}
 import models.{Land, ReturnInfo, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -167,6 +167,63 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must redirect to ReturnTaskList when data is empty for GET" in {
+
+        val userAnswers = UserAnswers(id = "", storn = "TESTSTORN", returnId = Some("AB2346")).copy(fullReturn = Some(emptyFullReturn))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "must redirect to ReturnTaskList when data is empty in GET" in {
+
+        val userAnswers = UserAnswers(id = "12345", storn = "TESTSTORN", returnId = None, data = Json.obj())
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "must redirect to BeforeStartReturnController when data is null for GET" in {
+
+        val userAnswers = UserAnswers(id = "12345", storn = "TESTSTORN", returnId = Some("AB2346"), data = Json.obj())
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
         }
       }
 

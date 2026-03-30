@@ -28,8 +28,7 @@ import java.time.Instant
 class BeforeStartReturnControllerSpec extends SpecBase {
 
 
-  val userAnswers = UserAnswers(
-    id = "12345",
+  val userAnswers = UserAnswers(id = "12345",
     returnId = Some("RE12345"),
     storn = "TESTSTORN",
     data = Json.obj()
