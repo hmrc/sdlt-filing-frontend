@@ -3216,6 +3216,43 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verifyNoMoreInteractions(mockLeaseholdCalculationService)
       }
     }
+    // SDLT - Tax Calc Case - 2016 budget no relief leased - Add Mixed Logic
+    "select the leaseholdMixedOrNonResidentialMar16Onwards function" when {
+      "property type is NonResidential & effectiveDate is 17/3/2016 & the transaction is not linked & relevantRent is less than 1000" in {
+        val testRequest = createRequest(leasehold, nonResidential, LocalDate.of(2016, 3, 17), isLinked = Some(false)).copy(
+          relevantRentDetails = Some(RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(true),
+            contractChangedSinceMar16 = Some(false),
+            relevantRent = Some(0)
+          ))
+        )
+        val result = createResult("leaseholdMixedOrNonResidentialMar16Onwards")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedOrNonResidentialMar16Onwards(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedOrNonResidentialMar16Onwards(any())
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+      "property type is Mixed & effectiveDate is 17/3/2016 & the transaction is not linked & relevantRent is less than 1000" in {
+        val testRequest = createRequest(leasehold, mixed, LocalDate.of(2016, 3, 17), isLinked = Some(false)).copy(
+          relevantRentDetails = Some(RelevantRentDetails(
+            exchangedContractsBeforeMar16 = Some(true),
+            contractChangedSinceMar16 = Some(false),
+            relevantRent = Some(0)
+          ))
+        )
+        val result = createResult("leaseholdMixedOrNonResidentialMar16Onwards")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedOrNonResidentialMar16Onwards(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedOrNonResidentialMar16Onwards(any())
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+    }
   }
 
   "checkFTB" must {

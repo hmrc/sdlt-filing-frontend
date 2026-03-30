@@ -259,6 +259,7 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
         }
 
       }
+
       "NPV is supplied in the Request" must {
         "return a calculation result with the supplied NPV" in {
           def request: WSResponse = ws.url(
@@ -345,6 +346,184 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
 
           request.status shouldBe OK
           request.json shouldBe result
+        }
+      }
+
+      // SDLT - Tax Calc Case - 2016 budget no relief leased - Add Mixed Logic
+      "transaction is not linked" when {
+        "date is on or after 17th March 2016" when {
+          "property type is Non-residential" must {
+            "return 0 lease tax and 0 premium tax when npv is 280 and premium is 100000" in {
+              def request: WSResponse = ws.url(calculateUrl).post(Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Non-residential",
+                  |  "effectiveDateDay": 17,
+                  |  "effectiveDateMonth": 3,
+                  |  "effectiveDateYear": 2016,
+                  |  "premium": 100000,
+                  |  "highestRent": 0,
+                  |  "leaseDetails": {
+                  |    "startDateDay": 17,
+                  |    "startDateMonth": 3,
+                  |    "startDateYear": 2016,
+                  |    "endDateDay": 16,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2019,
+                  |    "leaseTerm": {
+                  |      "years": 3,
+                  |      "days": 0,
+                  |      "daysInPartialYear": 0
+                  |    },
+                  |    "year1Rent": 100,
+                  |    "year2Rent": 100,
+                  |    "year3Rent": 100
+                  |  },
+                  |  "isLinked": false,
+                  |  "relevantRentDetails": {
+                  |    "contractPre201603": "Yes",
+                  |    "contractVariedPost201603": "No",
+                  |    "relevantRent": 0
+                  |  }
+                  |}
+                  |""".stripMargin))
+
+              request.status shouldBe OK
+              request.json shouldBe Json.parse(
+                """
+                  |{
+                  |  "result": [
+                  |    {
+                  |      "totalTax": 0,
+                  |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                  |      "npv": 280,
+                  |      "taxCalcs": [
+                  |        {
+                  |          "taxType": "rent",
+                  |          "calcType": "slice",
+                  |          "taxDue": 0,
+                  |          "slices": [
+                  |            {
+                  |              "from": 0,
+                  |              "to": 150000,
+                  |              "rate": 0,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 150000,
+                  |              "to": 500000,
+                  |              "rate": 1,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 500000,
+                  |              "to": -1,
+                  |              "rate": 2,
+                  |              "taxDue": 0
+                  |            }
+                  |          ]
+                  |        },
+                  |        {
+                  |          "taxType": "premium",
+                  |          "calcType": "slab",
+                  |          "taxDue": 0,
+                  |          "rate": 0
+                  |        }
+                  |      ]
+                  |    }
+                  |  ]
+                  |}
+                  |""".stripMargin
+              )
+            }
+          }
+          "property type is Mixed" must {
+            "return 0 lease tax and 0 premium tax when npv is 280 and premium is 100000" in {
+              def request: WSResponse = ws.url(calculateUrl).post(Json.parse(
+                """
+                  |{
+                  |  "holdingType": "Leasehold",
+                  |  "propertyType": "Mixed",
+                  |  "effectiveDateDay": 17,
+                  |  "effectiveDateMonth": 3,
+                  |  "effectiveDateYear": 2016,
+                  |  "premium": 100000,
+                  |  "highestRent": 0,
+                  |  "leaseDetails": {
+                  |    "startDateDay": 17,
+                  |    "startDateMonth": 3,
+                  |    "startDateYear": 2016,
+                  |    "endDateDay": 16,
+                  |    "endDateMonth": 3,
+                  |    "endDateYear": 2019,
+                  |    "leaseTerm": {
+                  |      "years": 3,
+                  |      "days": 0,
+                  |      "daysInPartialYear": 0
+                  |    },
+                  |    "year1Rent": 100,
+                  |    "year2Rent": 100,
+                  |    "year3Rent": 100
+                  |  },
+                  |  "isLinked": false,
+                  |  "relevantRentDetails": {
+                  |    "contractPre201603": "Yes",
+                  |    "contractVariedPost201603": "No",
+                  |    "relevantRent": 0
+                  |  }
+                  |}
+                  |""".stripMargin))
+
+              request.status shouldBe OK
+              request.json shouldBe Json.parse(
+                """
+                  |{
+                  |  "result": [
+                  |    {
+                  |      "totalTax": 0,
+                  |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                  |      "npv": 280,
+                  |      "taxCalcs": [
+                  |        {
+                  |          "taxType": "rent",
+                  |          "calcType": "slice",
+                  |          "taxDue": 0,
+                  |          "slices": [
+                  |            {
+                  |              "from": 0,
+                  |              "to": 150000,
+                  |              "rate": 0,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 150000,
+                  |              "to": 500000,
+                  |              "rate": 1,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 500000,
+                  |              "to": -1,
+                  |              "rate": 2,
+                  |              "taxDue": 0
+                  |            }
+                  |          ]
+                  |        },
+                  |        {
+                  |          "taxType": "premium",
+                  |          "calcType": "slab",
+                  |          "taxDue": 0,
+                  |          "rate": 0
+                  |        }
+                  |      ]
+                  |    }
+                  |  ]
+                  |}
+                  |""".stripMargin
+              )
+            }
+          }
         }
       }
 

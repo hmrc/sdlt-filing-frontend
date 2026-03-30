@@ -268,6 +268,15 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory.leaseholdResidentialNov17OnwardsFTBResult(leaseResult, premiumResult, npv)
   }
 
+  def leaseholdMixedOrNonResidentialMar16Onwards(request: Request): Result = {
+
+    val npv = getNPV("leaseholdMixedOrNonResidentialMar16Onwards", request)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdMixedOrNonResidentialMar16OnwardsLeaseRates.slices)
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(request.premium, SlabRatesTables.leaseholdMixedOrNonResidentialMar16OnwardsPremiumRates.slabs)
+
+    LeaseholdResultFactory.leaseholdMixedOrNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv)
+  }
+
   def leaseholdResidentialSept22OnwardsFTB(request: Request): Result = {
     val sliceRateTable = if(checkIfShared(request.propertyDetails)) leaseholdResidentialJuly21FTBSharedLeaseRates.slices else leaseholdResidentialJuly21FTBLeaseRates.slices
     val npv = getNPV("leaseholdResidentialJuly21OnwardsFTB", request)

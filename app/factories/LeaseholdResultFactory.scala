@@ -412,6 +412,40 @@ object LeaseholdResultFactory {
     )
   }
 
+  def leaseholdMixedOrNonResidentialMar16OnwardsResult(leaseResult: SliceResult, premiumResult: SlabResult,
+                                                npv: BigDecimal): Result = {
+    val leaseCalcDetails = CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slice,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = leaseResult.taxDue.toInt,
+      slices = Some(leaseResult.slices)
+    )
+    val premiumCalcDetails = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slab,
+      detailHeading = None,
+      bandHeading = None,
+      detailFooter = None,
+      taxDue = premiumResult.taxDue.toInt,
+      slices = None,
+      rate = Some(premiumResult.rate.toInt)
+    )
+
+    Result(
+      totalTax = leaseCalcDetails.taxDue + premiumCalcDetails.taxDue,
+      resultHeading = Some(RESULT_HEADING_GENERIC),
+      resultHint = None,
+      npv = Some(npv.toInt),
+      taxCalcs = Seq(
+        leaseCalcDetails,
+        premiumCalcDetails
+      )
+    )
+  }
+
 
   def leaseHoldZeroRateTaxRelief(calculatedNpv:Option[Int]): Result = {
     Result(
