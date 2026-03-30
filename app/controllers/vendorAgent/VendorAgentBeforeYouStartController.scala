@@ -18,7 +18,7 @@ package controllers.vendorAgent
 
 import controllers.actions.*
 import forms.vendorAgent.VendorAgentBeforeYouStartFormProvider
-import models.Mode
+import models.{AgentType, Mode}
 import navigation.Navigator
 import pages.vendorAgent.VendorAgentBeforeYouStartPage
 import play.api.data.Form
@@ -57,7 +57,7 @@ class VendorAgentBeforeYouStartController @Inject()(
       
       userAnswers.fullReturn match {
         case Some(fullReturn) =>
-          if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains("VENDOR")))) {
+          if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))) {
             Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           } else {
             Ok(view(preparedForm, mode))
