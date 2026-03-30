@@ -44,7 +44,7 @@
         messages: Messages
 )
 
-@layout(pageTitle = titleNoForm(messages("vendor.vendorOverview.title"))) {
+@layout(pageTitle = titleNoForm(messages("vendor.vendorOverview.title")), showBackLink = false) {
 
     @request.flash.get("vendorLimitReached").map { _ =>
         @govukErrorSummary(

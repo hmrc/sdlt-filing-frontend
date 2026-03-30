@@ -17,11 +17,20 @@
 package controllers.land
 
 import base.SpecBase
+import models.UserAnswers
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.land.LandBeforeYouStartView
+import play.api.libs.json.Json
 
 class LandBeforeYouStartControllerSpec extends SpecBase {
+
+  val userAnswers = UserAnswers(
+    id = "12345",
+    returnId = Some("RE12345"),
+    storn = "TESTSTORN",
+    data = Json.obj()
+  )
 
   "LandBeforeYouStart Controller" - {
 

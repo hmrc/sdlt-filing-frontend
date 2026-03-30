@@ -51,12 +51,18 @@ class LandCheckYourAnswersController @Inject()(
         result <- sessionRepository.get(request.userAnswers.id)
       } yield {
 
+        val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
         val isDataEmpty = result.exists(_.data.value.isEmpty)
 
-        if (isDataEmpty) {
-          Redirect(controllers.land.routes.LandBeforeYouStartController.onPageLoad())
+        if (isReturnIdEmpty) {
+          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         } else {
-          Ok(view(buildSummaryList(request.userAnswers)))
+          (isDataEmpty, result) match {
+            case (true, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+            case (_, Some(userAnswers)) =>
+              Ok(view(buildSummaryList(request.userAnswers)))
+            case (false, None) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          }
         }
       }
   }

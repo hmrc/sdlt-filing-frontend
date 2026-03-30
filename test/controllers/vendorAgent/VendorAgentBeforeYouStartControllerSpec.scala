@@ -17,8 +17,10 @@
 package controllers.vendorAgent
 
 import base.SpecBase
+import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.vendorAgent.VendorAgentBeforeYouStartFormProvider
+import models.{FullReturn, NormalMode, ReturnAgent, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.vendorAgent.VendorAgentBeforeYouStartView
-import navigation.{Navigator, FakeNavigator}
+import navigation.{FakeNavigator, Navigator}
 
 import scala.concurrent.Future
 
@@ -44,9 +46,36 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
 
   "VendorAgentBeforeYouStart Controller" - {
 
+    val returnAgent  = ReturnAgent(
+      returnAgentID =  Some("RA001"),
+      returnID = Some("RET123456789"),
+      agentType = None,
+      name =  Some("Smith & Partners LLP")
+    )
+
+    val returnAgentWithAgentType = ReturnAgent(
+      returnAgentID = Some("RA001"),
+      returnID = Some("RET123456789"),
+      agentType = Some("VENDOR"),
+      name = Some("Smith & Partners LLP")
+    )
+
+    val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = Some(Seq(returnAgent)))
+    val fullReturnWithAgentType: FullReturn = completeFullReturn.copy(returnAgent = Some(Seq(returnAgentWithAgentType)))
+
+
+    val userAnswersWithIndividualPurchaser: UserAnswers =
+      UserAnswers(userAnswersId, storn = "test-storn")
+        .copy(fullReturn = Some(fullReturn))
+
+    val userAnswersWithgentType: UserAnswers =
+        UserAnswers(userAnswersId, storn = "test-storn")
+          .copy(fullReturn = Some(fullReturnWithAgentType))
+
+
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithIndividualPurchaser)).build()
 
       running(application) {
         val request = FakeRequest(GET, vendorAgentBeforeYouStartRoute)
@@ -56,13 +85,13 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
         val view = application.injector.instanceOf[VendorAgentBeforeYouStartView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(VendorAgentBeforeYouStartPage, true).success.value
+      val userAnswers = userAnswersWithIndividualPurchaser.set(VendorAgentBeforeYouStartPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -74,7 +103,51 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to returnTaskList when userAnswers is empty for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, vendorAgentBeforeYouStartRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to returnTaskList when agentType is 'VENDOR' for a GET" in {
+
+      val userAnswers = userAnswersWithgentType.set(VendorAgentBeforeYouStartPage, true).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, vendorAgentBeforeYouStartRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, vendorAgentBeforeYouStartRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -145,21 +218,7 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, vendorAgentBeforeYouStartRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        contentAsString(result) mustEqual view(boundForm, NormalMode )(request, messages(application)).toString
       }
     }
 

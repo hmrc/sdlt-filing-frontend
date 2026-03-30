@@ -35,6 +35,10 @@ class BeforeStartReturnController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view())
+
+      request.userAnswers.returnId match {
+        case Some(id) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        case _ =>  Ok(view())
+      }
   }
 }

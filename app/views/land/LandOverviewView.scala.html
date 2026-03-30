@@ -44,7 +44,7 @@
         messages: Messages
 )
 
-@layout(pageTitle = titleNoForm(messages("land.landOverview.title"))) {
+@layout(pageTitle = titleNoForm(messages("land.landOverview.title")), showBackLink = false) {
 
     @request.flash.get("landCreated").map { landAddress =>
         @govukNotificationBanner(
