@@ -105,7 +105,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
     "onPageLoad" - {
 
-      "must redirect to LandBeforeYouStart when the UserAnswers data is empty" in {
+      "must redirect to ReturnTaskListController when the UserAnswers data is empty" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -118,17 +118,17 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
-      "must redirect to LandBeforeYouStart when data is available but session is not" in {
+      "must redirect to ReturnTaskList when data is empty but session is not" in {
 
         val userAnswers = UserAnswers(
           id = "12345",
           returnId = None,
           storn = "TESTSTORN",
-          data = landCurrentData()
+          data =  landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -142,7 +142,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 

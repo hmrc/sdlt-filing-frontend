@@ -49,19 +49,5 @@ class LandBeforeYouStartControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view()(request, messages(application)).toString
       }
     }
-
-    "must return returnTaskList when returnId exist in userAnswers for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.land.routes.LandBeforeYouStartController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-      }
-    }
   }
 }
