@@ -35,6 +35,9 @@ class PurchaserBeforeYouStartController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view())
+      request.userAnswers.fullReturn
+        .flatMap(_.purchaser)
+        .filter(_.size > 1)
+        .fold(Ok(view()))(_ => Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad()))
   }
 }

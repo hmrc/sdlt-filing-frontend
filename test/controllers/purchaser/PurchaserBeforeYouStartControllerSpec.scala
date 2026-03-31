@@ -17,11 +17,28 @@
 package controllers.purchaser
 
 import base.SpecBase
+import models.{FullReturn, Purchaser}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.purchaser.PurchaserBeforeYouStartView
 
 class PurchaserBeforeYouStartControllerSpec extends SpecBase {
+
+  val incompletePurchaserOne = Purchaser(
+    purchaserID = Some("PUR001"),
+    surname = Some("Smith"),
+  )
+
+  val incompletePurchaserTwo = Purchaser(
+    purchaserID = Some("PUR002"),
+    surname = Some("Smith"),
+  )
+
+  val testFullReturn: FullReturn = FullReturn(
+    stornId = "123456",
+    returnResourceRef = "REF001",
+    purchaser = Some(Seq(incompletePurchaserOne, incompletePurchaserTwo))
+  )
 
   "PurchaserBeforeYouStart Controller" - {
 
@@ -38,6 +55,21 @@ class PurchaserBeforeYouStartControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Purchaser Overview page when more than one purchasers exist" in {
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
       }
     }
   }
