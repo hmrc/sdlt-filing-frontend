@@ -150,7 +150,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         redirectLocation(result) mustBe Some(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
       }
 
-      "must update new version, update Return Info and update old main purchaser details and company details successfully when type is Company" in {
+      "must update new version, update Return Info and update old main purchaser details and company details successfully when type is Company and company details exist" in {
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
@@ -202,6 +202,68 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
           .thenReturn(true)
         when(mockBackendConnector.deleteCompanyDetails(any())(any(), any()))
           .thenReturn(Future.successful(DeleteCompanyDetailsReturn(true)))
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(fullReturnWithNewMainPurchNoCompanyDetails))
+        when(mockPopulatePurchaserService.populatePurchaserInSession(any(), any(), any()))
+          .thenReturn(Success(userAnswersWithNewMainPurchNoCompanyDetails))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockNavigatorService.nextPage(eqTo(ConfirmChangeOfMainPurchaserPage), eqTo(NormalMode), any()))
+          .thenReturn(nextPageCall)
+
+        val result = service.updateMainPurchaser(userAnswers)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+      }
+
+      "must update new version, update Return Info and update old main purchaser details successfully when type is Company and company details do not exist" in {
+        val oldMainPurchaserId = "PUR001"
+        val newMainPurchaserId = "PUR002"
+
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
+
+        val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
+
+        val fullReturnWithoutCompanyDetails = emptyFullReturn.copy(
+          purchaser = Some(Seq(purchaser1, purchaser2)),
+          returnInfo = Some(returnInfoWithOldMainPurchaser),
+          companyDetails = None
+        )
+
+        val userAnswers = emptyUserAnswers
+          .copy(returnId = Some("return-id"))
+          .copy(fullReturn = Some(fullReturnWithoutCompanyDetails))
+          .set(ChangePurchaserOnePage, newMainPurchaserId).success.value
+
+        val returnInfoWithNewMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(newMainPurchaserId))
+
+        val fullReturnWithNewMainPurchNoCompanyDetails = emptyFullReturn.copy(
+          purchaser = Some(Seq(purchaser1, purchaser2)),
+          returnInfo = Some(returnInfoWithNewMainPurchaser),
+          companyDetails = None
+        )
+
+        val userAnswersWithNewMainPurchNoCompanyDetails = emptyUserAnswers
+          .copy(returnId = Some("return-id"))
+          .copy(fullReturn = Some(fullReturnWithNewMainPurchNoCompanyDetails))
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(
+          FakeRequest(),
+          "id",
+          userAnswers
+        )
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
+        when(mockBackendConnector.updateReturnInfo(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnInfoReturn(true)))
+        when(mockPurchaserService.findById(eqTo(Seq(purchaser1, purchaser2)), eqTo(oldMainPurchaserId)))
+          .thenReturn(Some(purchaser1))
+        when(mockBackendConnector.updatePurchaser(any())(any(), any()))
+          .thenReturn(Future.successful(UpdatePurchaserReturn(true)))
+        when(mockPurchaserService.isMainPurchaserCompany(eqTo(purchaser1)))
+          .thenReturn(true)
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(fullReturnWithNewMainPurchNoCompanyDetails))
         when(mockPopulatePurchaserService.populatePurchaserInSession(any(), any(), any()))
