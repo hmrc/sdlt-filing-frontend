@@ -3285,6 +3285,32 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
           verifyNoMoreInteractions(mockLeaseholdCalculationService)
 
         }
+        "property type is NonResidential, LeaseHold ReliefFrom15Percentage, isLinked = false, relevantRentDetails < 1000 and date is on 17thMarch2016" in {
+          val testRequest = createRequest(leasehold, nonResidential, LocalDate.of(2016, 3, 17), Some(ReliefFrom15PercentRate), isLinked = Some(false), relevantRent = Some(BigDecimal(999)))
+
+          val result = createResult("leaseholdReliefFrom15PercentRateRightToBuyMixedAndNonResOnOrAfterMarch2016")
+
+          when(mockLeaseholdCalculationService.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(any())).thenReturn(result)
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockLeaseholdCalculationService, times(1)).leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(any())
+
+          verifyNoMoreInteractions(mockLeaseholdCalculationService)
+        }
+        "property type is NonResidential, LeaseHold RightToBuy, isLinked = false, relevantRentDetails < 1000 and date is on 17thMarch2016" in {
+          val testRequest = createRequest(leasehold, nonResidential, LocalDate.of(2016, 3, 17), Some(RightToBuy), isLinked = Some(false), relevantRent = Some(BigDecimal(999)))
+
+          val result = createResult("leaseholdReliefFrom15PercentRateRightToBuyMixedAndNonResOnOrAfterMarch2016")
+
+          when(mockLeaseholdCalculationService.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(any())).thenReturn(result)
+
+          testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+          verify(mockLeaseholdCalculationService, times(1)).leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(any())
+
+          verifyNoMoreInteractions(mockLeaseholdCalculationService)
+        }
       }
 
     }
