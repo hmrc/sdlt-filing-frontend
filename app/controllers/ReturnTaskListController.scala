@@ -63,7 +63,8 @@ class ReturnTaskListController @Inject()(
             Some(PurchaserTaskList.build(fullReturn)),
             Some(PurchaserAgentTaskList.build(fullReturn)),
             Some(LandTaskList.build(fullReturn)),
-            if (isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None
+            if (isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
+            Some(TransactionTaskList.build(fullReturn))
           ).flatten
           Ok(view(sections: _*))
         }

@@ -41,6 +41,7 @@ site.purchaserAgent.beforeStart.caption                                         
 site.vendorAgent.caption                                                            = About the vendor’s agent
 site.land.caption                                                                   = About the land
 site.ukResidency.caption                                                            = About UK residency
+site.transaction.caption                                                            = About the transaction
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -122,7 +123,8 @@ tasklist.inProgress                                                             
 tasklist.cannotStartYet                                                             = Can not Start
 tasklist.failed                                                                     = Failed
 tasklist.optional                                                                   = Optional
-
+tasklist.transactionQuestion.details                                                = Transaction Questions
+tasklist.transactionQuestion.heading                                                = Transaction Questions
 
 # Check Your Answers
 site.checkYourAnswers.heading                                                       = Check your answers
@@ -1122,3 +1124,27 @@ purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel                   = Do
 purchaser.purchaserCompanyTypeKnown.error.required                          = Select yes if you know what type of company {0} is
 purchaser.purchaserCompanyTypeKnown.change.hidden                           = Do you know what type of company the purchaser is?
 purchaser.purchaserCompanyTypeKnown.missing                                 = Select yes or no
+
+
+transaction.beforeStart.title                                                         = Before you start - About the transaction
+transaction.beforeStart.p1                                                            = In this section, you need to tell us about the transaction.
+transaction.beforeStart.p2                                                            = We will ask for:
+transaction.beforeStart.bullet1                                                       = the type of transaction
+transaction.beforeStart.bullet2                                                       = the effective date of the transaction
+transaction.beforeStart.bullet3                                                       = the total consideration in money or money’s worth
+transaction.beforeStart.bullet4                                                       = the forms of consideration
+transaction.beforeStart.bullet5                                                       = any considerations affected by uncertain future events
+transaction.beforeStart.bullet6                                                       = whether the transaction is pursuant to a previous option agreement
+transaction.beforeStart.p3                                                            = You can also provide:
+transaction.beforeStart.bullet7                                                       = the date of contract or conclusion of missives
+transaction.beforeStart.bullet8                                                       = the amount of VAT included in the total consideration
+transaction.beforeStart.bullet9                                                       = if this transaction is linked to another
+transaction.beforeStart.bullet10                                                       = the total consideration of all linked transactions
+transaction.beforeStart.bullet11                                                      = the purchaser’s eligibility and reason for claiming relief
+transaction.beforeStart.bullet12                                                       = how much partial relief the purchaser is claiming
+transaction.beforeStart.bullet13                                                       = whether the purchaser is applying for a deferment
+transaction.beforeStart.bullet14                                                       = how the land or property will be used
+transaction.beforeStart.bullet15                                                       = the details and total consideration if the transaction is part of the sale of a business
+transaction.beforeStart.bullet16                                                       = whether a CAP1 or NSBC application has been made and followed
+transaction.beforeStart.bullet17                                                       = any restrictions, covenants or conditions affecting the transaction
+transaction.beforeStart.bullet18                                                       = the address of any land or property being exchanged or part exchanged

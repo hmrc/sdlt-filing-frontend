@@ -888,6 +888,33 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           content must include("Purchaser Agent Questions")
         }
       }
+
+      "must render view with Transaction section" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Transaction Questions")
+        }
+      }
     }
   }
 }

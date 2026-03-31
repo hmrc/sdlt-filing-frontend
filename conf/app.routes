@@ -412,3 +412,4 @@ POST        /about-the-purchaser/confirm-purchasers-address                     
 GET         /about-the-purchaser/confirm-purchasers-address/change                                  controllers.purchaser.ConfirmPurchaserAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-purchaser/confirm-purchasers-address/change                                  controllers.purchaser.ConfirmPurchaserAddressController.onSubmit(mode: Mode = CheckMode)
 
+GET         /about-the-transaction/before-you-start                                                  controllers.transaction.TransactionBeforeYouStartController.onPageLoad()
