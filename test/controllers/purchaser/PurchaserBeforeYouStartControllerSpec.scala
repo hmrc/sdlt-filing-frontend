@@ -24,15 +24,20 @@ import views.html.purchaser.PurchaserBeforeYouStartView
 
 class PurchaserBeforeYouStartControllerSpec extends SpecBase {
 
-  val incompletePurchaser = Purchaser(
+  val incompletePurchaserOne = Purchaser(
     purchaserID = Some("PUR001"),
+    surname = Some("Smith"),
+  )
+
+  val incompletePurchaserTwo = Purchaser(
+    purchaserID = Some("PUR002"),
     surname = Some("Smith"),
   )
 
   val testFullReturn: FullReturn = FullReturn(
     stornId = "123456",
     returnResourceRef = "REF001",
-    purchaser = Some(Seq(incompletePurchaser))
+    purchaser = Some(Seq(incompletePurchaserOne, incompletePurchaserTwo))
   )
 
   "PurchaserBeforeYouStart Controller" - {
@@ -53,7 +58,7 @@ class PurchaserBeforeYouStartControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Purchaser Overview page when one or more purchasers exist" in {
+    "must redirect to Purchaser Overview page when more than one purchasers exist" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
