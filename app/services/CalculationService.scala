@@ -562,7 +562,7 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
               leaseCalculationService.leaseholdPreCompletionTransactionApr2013Onwards(request)
             ))
 
-          case (`leasehold`, Mixed, ReliefFrom15PercentRate | RightToBuy, Some(false))
+          case (`leasehold`, Mixed | NonResidential, ReliefFrom15PercentRate | RightToBuy, Some(false))
             if date.onOrAfter(MARCH2016_NON_RESIDENTIAL_DATE) && request.relevantRentDetails.exists(averageRentIsBelowThreshold) =>
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016(request)
