@@ -85,11 +85,13 @@ class PurchaserUpdateMainPurchaserService @Inject()(
       val purchasers = userAnswers.fullReturn.flatMap(_.purchaser).getOrElse(Seq.empty)
       purchaserService.findById(purchasers, purchaserId) match {
         case Some(purchaserToBeUpdated) =>
+          val isCompanyDetailsDefined = userAnswers.fullReturn.flatMap(_.companyDetails).isDefined
+          
           for {
             updateRequest <- UpdatePurchaserRequest.fromMainToEssential(userAnswers, purchaserToBeUpdated)
             updateResponse <- backendConnector.updatePurchaser(updateRequest)
             _ <- (
-              if (purchaserService.isMainPurchaserCompany(purchaserToBeUpdated)) {
+              if (purchaserService.isMainPurchaserCompany(purchaserToBeUpdated) && isCompanyDetailsDefined) {
                 for {
                   deleteCompanyDetailsRequest <- DeleteCompanyDetailsRequest.from(userAnswers)
                   deleteCompanyDetailsReturn <- backendConnector.deleteCompanyDetails(deleteCompanyDetailsRequest)
