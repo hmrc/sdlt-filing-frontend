@@ -40,6 +40,7 @@ object PurchaserTaskList {
     val mainPurchaserID = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
 
     val url = fullReturn.purchaser match {
+      case Some(list) if list.length >1 => controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
       case Some(list) if list.exists( x => x.purchaserID == mainPurchaserID && x.address1.isEmpty)
       => controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
       case Some(list) if list.nonEmpty => controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url

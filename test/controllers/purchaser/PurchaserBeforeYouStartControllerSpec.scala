@@ -57,20 +57,5 @@ class PurchaserBeforeYouStartControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view()(request, messages(application)).toString
       }
     }
-
-    "must redirect to Purchaser Overview page when more than one purchasers exist" in {
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-      }
-    }
   }
 }
