@@ -25,7 +25,7 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
-import pages.transaction.TypeOfTransactionPage
+import pages.transaction.*
 import pages.ukResidency.*
 import play.api.mvc.Call
 
@@ -206,12 +206,15 @@ class Navigator @Inject()() {
 
   private def isTransactionSection(page: Page): Boolean = page match {
 
-    case TypeOfTransactionPage => true
+    case TypeOfTransactionPage | ConfirmTypeOfTransactionPage => true
 
     case _ => false
   }
 
   private def transactionRoutes(page: Page): UserAnswers => Call = page match {
+    case ConfirmTypeOfTransactionPage =>
+      // TODO DTR-2909: Redirect to Effective Date of the Transaction tr-2
+      _ => controllers.transaction.routes.ConfirmTypeOfTransactionController.onPageLoad()
     case TypeOfTransactionPage =>
       _ => controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)
 

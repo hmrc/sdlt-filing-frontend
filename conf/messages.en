@@ -1153,3 +1153,10 @@ transaction.typeOfTransaction.title                                             
 transaction.typeOfTransaction.heading                                               = What type of transaction is this?
 transaction.typeOfTransaction.checkYourAnswersLabel                                 = What type of transaction is this?
 transaction.typeOfTransaction.error.required                                        = Select the type of transaction
+
+transaction.confirmTypeOfTransaction.title                                          = Confirm the type of transaction - About the transaction
+transaction.confirmTypeOfTransaction.heading                                        = Confirm the type of transaction
+transaction.confirmTypeOfTransaction.subHeading                                     = Is this the correct type of transaction?
+transaction.confirmTypeOfTransaction.p                                              = This was your answer when creating this return.
+transaction.confirmTypeOfTransaction.error.required                                 = Select Yes or No
+transaction.confirmTypeOfTransaction.change.hidden                                  = Confirm Type Of Transaction

@@ -60,5 +60,28 @@ class TransactionTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
           Json.toJson(transactionType) mustEqual JsString(transactionType.toString)
       }
     }
+
+    "parse" - {
+      "must return a TransactionType when a valid string is parsed" in {
+        val gen = Gen.oneOf(TransactionType.values)
+
+        forAll(gen) {
+          transactionType =>
+
+            TransactionType.parse(Some(transactionType.toString)) mustBe Some(transactionType)
+        }
+      }
+
+      "must return None when an invalid string is parsed" in {
+        val invalidTransactionString: Option[String] = Some("randomType")
+
+        TransactionType.parse(invalidTransactionString) mustBe None
+      }
+
+      "must return None when no string is parsed" in {
+
+        TransactionType.parse(None) mustBe None
+      }
+    }
   }
 }
