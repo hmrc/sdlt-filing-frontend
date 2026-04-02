@@ -25,6 +25,7 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
+import pages.transaction.TypeOfTransactionPage
 import pages.ukResidency.*
 import play.api.mvc.Call
 
@@ -63,6 +64,7 @@ class Navigator @Inject()() {
     case purchaserPage if isPurchaserSection(purchaserPage) => purchaserRoutes(purchaserPage)
     case landPage if isLandSection(landPage) => landRoutes(landPage)
     case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
+    case transactionPage if isTransactionSection(transactionPage) => transactionRoutes(transactionPage)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -198,6 +200,20 @@ class Navigator @Inject()() {
 
     case CrownEmploymentReliefPage => //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
       _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
+
+    case _ => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def isTransactionSection(page: Page): Boolean = page match {
+
+    case TypeOfTransactionPage => true
+
+    case _ => false
+  }
+
+  private def transactionRoutes(page: Page): UserAnswers => Call = page match {
+    case TypeOfTransactionPage =>
+      _ => controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)
 
     case _ => _ => routes.IndexController.onPageLoad()
   }

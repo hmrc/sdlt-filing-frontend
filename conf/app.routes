@@ -407,9 +407,14 @@ GET        /about-the-purchaser/add-type-of-company/change                      
 POST       /about-the-purchaser/add-type-of-company/change                                           controllers.purchaser.PurchaserCompanyTypeKnownController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /about-the-purchaser/confirm-purchasers-address                                         controllers.purchaser.ConfirmPurchaserAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-purchaser/confirm-purchasers-address                                        controllers.purchaser.ConfirmPurchaserAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-purchaser/confirm-purchasers-address/change                                  controllers.purchaser.ConfirmPurchaserAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-purchaser/confirm-purchasers-address/change                                  controllers.purchaser.ConfirmPurchaserAddressController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-purchaser/confirm-purchasers-address                                          controllers.purchaser.ConfirmPurchaserAddressController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-purchaser/confirm-purchasers-address                                          controllers.purchaser.ConfirmPurchaserAddressController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-purchaser/confirm-purchasers-address/change                                   controllers.purchaser.ConfirmPurchaserAddressController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-purchaser/confirm-purchasers-address/change                                   controllers.purchaser.ConfirmPurchaserAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET         /about-the-transaction/before-you-start                                                  controllers.transaction.TransactionBeforeYouStartController.onPageLoad()
+
+GET        /about-the-transaction/type-of-transaction                                                controllers.transaction.TypeOfTransactionController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/type-of-transaction                                                controllers.transaction.TypeOfTransactionController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/type-of-transaction/change                                         controllers.transaction.TypeOfTransactionController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/type-of-transaction/change                                         controllers.transaction.TypeOfTransactionController.onSubmit(mode: Mode = CheckMode)
