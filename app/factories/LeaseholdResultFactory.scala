@@ -769,6 +769,37 @@ object LeaseholdResultFactory {
       )
     )
   }
+  def leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(leaseResult: SliceResult, premiumResult: SliceResult, npv: BigDecimal): Result = {
+    val leaseCalcDetails = CalculationDetails(
+      taxType = TaxTypes.rent,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_RENT),
+      bandHeading = Some(DETAIL_COL_HEADER_RENT),
+      detailFooter = Some(DETAIL_FOOTER_RENT),
+      taxDue = leaseResult.taxDue.toInt,
+      slices = Some(leaseResult.slices)
+    )
+    val premiumCalcDetails = CalculationDetails(
+      taxType = TaxTypes.premium,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(DETAIL_HEADING_SDLT_ON_PREM),
+      bandHeading = Some(DETAIL_COL_HEADER_PREM),
+      detailFooter = Some(DETAIL_FOOTER_PREM),
+      taxDue = premiumResult.taxDue.toInt,
+      slices = Some(premiumResult.slices)
+    )
+
+    Result(
+      totalTax = leaseCalcDetails.taxDue + premiumCalcDetails.taxDue,
+      resultHeading = Some(RESULT_HEADING_TAX_RELIEF),
+      resultHint = None,
+      npv = Some(npv.toInt),
+      taxCalcs = Seq(
+        leaseCalcDetails,
+        premiumCalcDetails
+      )
+    )
+  }
 
   def leaseholdRightToBuyBelow1kRentRes(premiumResult: SlabResult, leaseResult: SliceResult, npv: BigDecimal): Result = {
     val premiumCalcDetails = CalculationDetails(

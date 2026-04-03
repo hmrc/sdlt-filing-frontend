@@ -5296,6 +5296,258 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
           }
         }
       }
+
+      //SDLT - Tax Calc Case - Case 58
+      "TaxRelief code is FirstTimeBuyersRelief, isLinked = false, property type is Leasehold and Residential, isMultipleLand = true and date is between 22/11/2017 - 08/07/2020" must {
+        "return 0% tax on premium and 0% tax on rent when premium <= 125000 and npv <= 125000 and date is on 22/11/2017" in {
+          val request: WSResponse = ws
+            .url(calculateUrl)
+            .post(
+              Json.parse(
+                s"""
+                   |{
+                   |  "holdingType": "Leasehold",
+                   |  "propertyType": "Residential",
+                   |  "effectiveDateDay": 22,
+                   |  "effectiveDateMonth": 11,
+                   |  "effectiveDateYear": 2017,
+                   |  "premium":125000,
+                   |  "highestRent": 0,
+                   |  "leaseDetails": {
+                   |    "startDateDay": 22,
+                   |    "startDateMonth": 11,
+                   |    "startDateYear": 2017,
+                   |    "endDateDay": 5,
+                   |    "endDateMonth": 11,
+                   |    "endDateYear": 2018,
+                   |    "leaseTerm": {
+                   |      "years": 0,
+                   |      "days": 349,
+                   |      "daysInPartialYear": 365
+                   |    },
+                   |    "year1Rent": 0
+                   |  },
+                   |    "propertyDetails": {
+                   |    "individual": "Yes",
+                   |    "twoOrMoreProperties": "No"
+                   |  },
+                   |  "firstTimeBuyer": "Yes",
+                   |  "isMultipleLand": true,
+                   |  "isLinked": false,
+                   |  "taxReliefDetails": {
+                   |   "taxReliefCode": 32
+                   | },
+                   |  "declaredNpv": 90000
+                   |}
+                   |
+                   |""".stripMargin
+              )
+            )
+          val expectedResponse:JsValue = Json.parse(
+            s"""
+               |{
+               |  "result": [
+               |    {
+               |      "totalTax": 0,
+               |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+               |      "npv": 90000,
+               |      "taxCalcs": [
+               |        {
+               |          "taxType": "rent",
+               |          "calcType": "slice",
+               |          "taxDue": 0,
+               |          "detailHeading": "This is a breakdown of how the amount of SDLT on the rent was calculated",
+               |          "bandHeading": "Rent bands (£)",
+               |          "detailFooter": "SDLT due on the rent",
+               |          "slices": [
+               |            {
+               |              "from": 0,
+               |              "to": 125000,
+               |              "rate": 0,
+               |              "taxDue": 0
+               |            },
+               |            {
+               |              "from": 125000,
+               |              "to": -1,
+               |              "rate": 1,
+               |              "taxDue": 0
+               |            }
+               |          ]
+               |        },
+               |        {
+               |          "taxType": "premium",
+               |          "calcType": "slice",
+               |          "taxDue": 0,
+               |          "detailHeading": "This is a breakdown of how the amount of SDLT on the premium was calculated",
+               |          "bandHeading": "Premium bands (£)",
+               |          "detailFooter": "SDLT due on the premium",
+               |          "slices": [
+               |            {
+               |              "from": 0,
+               |              "to": 125000,
+               |              "rate": 0,
+               |              "taxDue": 0
+               |            },
+               |            {
+               |              "from": 125000,
+               |              "to": 250000,
+               |              "rate": 2,
+               |              "taxDue": 0
+               |            },
+               |            {
+               |              "from": 250000,
+               |              "to": 925000,
+               |              "rate": 5,
+               |              "taxDue": 0
+               |            },
+               |            {
+               |              "from": 925000,
+               |              "to": 1500000,
+               |              "rate": 10,
+               |              "taxDue": 0
+               |            },
+               |            {
+               |              "from": 1500000,
+               |              "to": -1,
+               |              "rate": 12,
+               |              "taxDue": 0
+               |            }
+               |          ]
+               |        }
+               |      ]
+               |    }
+               |  ]
+               |}
+               |""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe expectedResponse
+        }
+        "return 12% tax on premium and 1% tax on rent when premium > 1500000 and npv > 125000 and date is on 08/06/2020" in {
+          val request: WSResponse = ws
+            .url(calculateUrl)
+            .post(
+              Json.parse(
+                s"""
+                   |{
+                   |  "holdingType": "Leasehold",
+                   |  "propertyType": "Residential",
+                   |  "effectiveDateDay": 7,
+                   |  "effectiveDateMonth": 6,
+                   |  "effectiveDateYear": 2020,
+                   |  "premium":2000000,
+                   |  "highestRent": 0,
+                   |  "leaseDetails": {
+                   |    "startDateDay": 7,
+                   |    "startDateMonth": 6,
+                   |    "startDateYear": 2020,
+                   |    "endDateDay": 6,
+                   |    "endDateMonth": 6,
+                   |    "endDateYear": 2021,
+                   |    "leaseTerm": {
+                   |      "years": 0,
+                   |      "days": 365,
+                   |      "daysInPartialYear": 365
+                   |    },
+                   |    "year1Rent": 0
+                   |  },
+                   |    "propertyDetails": {
+                   |    "individual": "Yes",
+                   |    "twoOrMoreProperties": "No"
+                   |  },
+                   |  "firstTimeBuyer": "Yes",
+                   |  "isMultipleLand": true,
+                   |  "isLinked": false,
+                   |  "taxReliefDetails": {
+                   |   "taxReliefCode": 32
+                   | },
+                   |  "declaredNpv": 1000000
+                   |}
+                   |
+                   |""".stripMargin
+              )
+            )
+          val expectedResponse:JsValue = Json.parse(
+            s"""
+               |{
+               |  "result": [
+               |    {
+               |      "totalTax": 162500,
+               |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+               |      "npv": 1000000,
+               |      "taxCalcs": [
+               |        {
+               |          "taxType": "rent",
+               |          "calcType": "slice",
+               |          "taxDue": 8750,
+               |          "detailHeading": "This is a breakdown of how the amount of SDLT on the rent was calculated",
+               |          "bandHeading": "Rent bands (£)",
+               |          "detailFooter": "SDLT due on the rent",
+               |          "slices": [
+               |            {
+               |              "from": 0,
+               |              "to": 125000,
+               |              "rate": 0,
+               |              "taxDue": 0
+               |            },
+               |            {
+               |              "from": 125000,
+               |              "to": -1,
+               |              "rate": 1,
+               |              "taxDue": 8750
+               |            }
+               |          ]
+               |        },
+               |        {
+               |          "taxType": "premium",
+               |          "calcType": "slice",
+               |          "taxDue": 153750,
+               |          "detailHeading": "This is a breakdown of how the amount of SDLT on the premium was calculated",
+               |          "bandHeading": "Premium bands (£)",
+               |          "detailFooter": "SDLT due on the premium",
+               |          "slices": [
+               |            {
+               |              "from": 0,
+               |              "to": 125000,
+               |              "rate": 0,
+               |              "taxDue": 0
+               |            },
+               |            {
+               |              "from": 125000,
+               |              "to": 250000,
+               |              "rate": 2,
+               |              "taxDue": 2500
+               |            },
+               |            {
+               |              "from": 250000,
+               |              "to": 925000,
+               |              "rate": 5,
+               |              "taxDue": 33750
+               |            },
+               |            {
+               |              "from": 925000,
+               |              "to": 1500000,
+               |              "rate": 10,
+               |              "taxDue": 57500
+               |            },
+               |            {
+               |              "from": 1500000,
+               |              "to": -1,
+               |              "rate": 12,
+               |              "taxDue": 60000
+               |            }
+               |          ]
+               |        }
+               |      ]
+               |    }
+               |  ]
+               |}
+               |""".stripMargin)
+
+          request.status shouldBe OK
+          request.json shouldBe expectedResponse
+        }
+      }
     }
   }
 }
