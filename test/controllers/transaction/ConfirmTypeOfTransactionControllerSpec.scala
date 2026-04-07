@@ -20,7 +20,7 @@ import base.SpecBase
 import constants.FullReturnConstants.*
 import controllers.routes
 import forms.transaction.ConfirmTypeOfTransactionFormProvider
-import models.{FullReturn, UserAnswers}
+import models.{FullReturn, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -78,7 +78,7 @@ class ConfirmTypeOfTransactionControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when the value is 'Yes'" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -103,12 +103,50 @@ class ConfirmTypeOfTransactionControllerSpec extends SpecBase with MockitoSugar 
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
+    "must redirect to Type Of Transaction Page when the value is 'No'" in {
 
-    "must redirect to Journey Recovery Page when transaction type is missing from full return" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersWithTransactionType))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, confirmTypeOfTransactionRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to Journey Recovery Page when transaction type is missing from full return for a GET" in {
       val application = applicationBuilder(userAnswers = Some(userAnswersWithoutTransactionType)).build()
 
       running(application) {
         val request = FakeRequest(GET, confirmTypeOfTransactionRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery Page when transaction type is missing from full return for a POST" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithoutTransactionType)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, confirmTypeOfTransactionRoute)
 
         val result = route(application, request).value
 

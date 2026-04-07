@@ -83,8 +83,7 @@ class ConfirmTypeOfTransactionController @Inject()(
                   // TODO DTR-2909: Redirect to Effective Date of the Transaction
                   Redirect(navigator.nextPage(ConfirmTypeOfTransactionPage, NormalMode, updatedAnswers))
               } else {
-                // TODO DTR-2905: Redirect to What type of transaction is this?
-                Future.successful(Redirect(controllers.transaction.routes.ConfirmTypeOfTransactionController.onPageLoad()))
+                Future.successful(Redirect(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)))
               }
 
           )
