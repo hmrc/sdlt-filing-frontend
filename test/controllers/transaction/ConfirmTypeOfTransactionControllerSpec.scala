@@ -46,7 +46,7 @@ class ConfirmTypeOfTransactionControllerSpec extends SpecBase with MockitoSugar 
   val fullReturnWithTransactionType: FullReturn =
     completeFullReturn.copy(
       transaction = Some(completeTransaction.copy(
-        transactionDescription = Some("conveyanceTransfer"))))
+        transactionDescription = Some("F"))))
 
   val userAnswersWithTransactionType: UserAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithTransactionType))
 

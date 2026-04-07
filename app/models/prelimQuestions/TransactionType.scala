@@ -43,8 +43,14 @@ object TransactionType extends Enumerable.Implicits {
       )
   }
 
-  def parse(s: Option[String]): Option[TransactionType] = s.flatMap(enumerable.withName)
-
+  def parse(s: Option[String]): Option[TransactionType] = s.flatMap {
+    case "F" => Some(ConveyanceTransfer)
+    case "L" => Some(GrantOfLease)
+    case "A" => Some(ConveyanceTransferLease)
+    case "O" => Some(OtherTransaction)
+    case _ => None
+  }
+  
   implicit val enumerable: Enumerable[TransactionType] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }
