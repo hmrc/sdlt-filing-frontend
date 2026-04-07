@@ -186,7 +186,7 @@ prelim.transactionType.conveyanceTransferLease                                  
 prelim.transactionType.otherTransaction                                             = O - Other
 prelim.transactionType.checkYourAnswersLabel                                        = Type of transaction
 prelim.transactionType.error.required                                               = Select the type of transaction
-prelim.transactionType.change.hidden                                                = transaction type
+prelim.transactionType.change.hidden                                                = Transaction type
 prelim.transactionType.link.message                                                 = Enter type of transaction
 
 # Address Lookup
@@ -1069,28 +1069,28 @@ land.doYouKnowTheAreaOfLand.error.required                                      
 land.doYouKnowTheAreaOfLand.change.hidden                                           = DoYouKnowTheAreaOfLand
 land.doYouKnowTheAreaOfLand.missing                                                 = Select yes or no
 
-land.landOverview.title                                                        = Land or property overview - About the land
-land.landOverview.heading                                                      = Land or property overview
-land.landOverview.limitReached                                                 = To add a new land, you must remove one.
-land.landOverview.no-lands                                                     = You do not have any vendors added.
-land.landOverview.land-list                                                    = You do not have any vendors added.
-land.landOverview.noLand.subHeadingWithLands                                   = Do you want to add another area of land or property?
-land.landOverview.noLand.subHeadingNoLands                                     = Do you want to add another area of land or property?
-land.landOverview.summaryInfo.text                                             = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
-land.landOverview.noLand.p1                                                    = You have no land or properties listed. You must add the land or property to complete this return.
-land.landOverview.noLand.button                                                = Add the land or property
-land.landOverview.error.required                                               = Please select an option
+land.landOverview.title                                                             = Land or property overview - About the land
+land.landOverview.heading                                                           = Land or property overview
+land.landOverview.limitReached                                                      = To add a new land, you must remove one.
+land.landOverview.no-lands                                                          = You do not have any vendors added.
+land.landOverview.land-list                                                         = You do not have any vendors added.
+land.landOverview.noLand.subHeadingWithLands                                        = Do you want to add another area of land or property?
+land.landOverview.noLand.subHeadingNoLands                                          = Do you want to add another area of land or property?
+land.landOverview.summaryInfo.text                                                  = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
+land.landOverview.noLand.p1                                                         = You have no land or properties listed. You must add the land or property to complete this return.
+land.landOverview.noLand.button                                                     = Add the land or property
+land.landOverview.error.required                                                    = Please select an option
 
-ukResidency.nonUkResidentPurchaser.title                                         = Residency status
-ukResidency.nonUkResidentPurchaser.heading                                       = Residency status
-ukResidency.nonUkResidentPurchaser.subheading                                    = Are any of the purchasers non-UK residents?
-ukResidency.nonUkResidentPurchaser.p1                                            = A purchaser is considered a non-UK resident for the purposes of SDLT if they spent fewer than 183 days in the UK during the 12 months before the effective date of the transaction.
-ukResidency.nonUkResidentPurchaser.p2                                            = Read the latest <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-ukResidency.nonUkResidentPurchaser.hint.link                                     = https://www.gov.uk/guidance/rates-of-stamp-duty-land-tax-for-non-uk-residents
-ukResidency.nonUkResidentPurchaser.hint.suffix                                   = HMRC guidance on residence status for SDLT (opens in a new tab)
-ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel                         = Non-UK Resident Purchaser
-ukResidency.nonUkResidentPurchaser.error.required                                = Select yes if nonUkResidentPurchaser
-ukResidency.nonUkResidentPurchaser.change.hidden                                 = Non-UK Resident Purchaser
+ukResidency.nonUkResidentPurchaser.title                                            = Residency status
+ukResidency.nonUkResidentPurchaser.heading                                          = Residency status
+ukResidency.nonUkResidentPurchaser.subheading                                       = Are any of the purchasers non-UK residents?
+ukResidency.nonUkResidentPurchaser.p1                                               = A purchaser is considered a non-UK resident for the purposes of SDLT if they spent fewer than 183 days in the UK during the 12 months before the effective date of the transaction.
+ukResidency.nonUkResidentPurchaser.p2                                               = Read the latest <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+ukResidency.nonUkResidentPurchaser.hint.link                                        = https://www.gov.uk/guidance/rates-of-stamp-duty-land-tax-for-non-uk-residents
+ukResidency.nonUkResidentPurchaser.hint.suffix                                      = HMRC guidance on residence status for SDLT (opens in a new tab)
+ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel                            = Non-UK Resident Purchaser
+ukResidency.nonUkResidentPurchaser.error.required                                   = Select yes if nonUkResidentPurchaser
+ukResidency.nonUkResidentPurchaser.change.hidden                                    = Non-UK Resident Purchaser
 
 ukResidency.crownEmploymentRelief.title                                             = Crown employment relief
 ukResidency.crownEmploymentRelief.heading                                           = Crown employment relief
@@ -1109,42 +1109,47 @@ ukResidency.closeCompany.checkYourAnswersLabel                                  
 ukResidency.closeCompany.error.required                                             = Select yes if any of the purchasers are a UK resident close company controlled directly or non-directly by non-UK residents
 ukResidency.closeCompany.change.hidden                                              = Close company
 
-land.removeLand.title                                                          = Are you sure you want to remove the land or property?
-land.removeLand.heading                                                        = Are you sure you want to remove {0}?
-land.removeLand.error.required                                                 = Select yes if remove Land
-land.removeLand.change.hidden                                                  = Are you sure you want to remove the land or property?
+land.removeLand.title                                                               = Are you sure you want to remove the land or property?
+land.removeLand.heading                                                             = Are you sure you want to remove {0}?
+land.removeLand.error.required                                                      = Select yes if remove Land
+land.removeLand.change.hidden                                                       = Are you sure you want to remove the land or property?
 
-land.address.checkYourAnswersLabel                                             = Property Address
-land.address.change.hidden                                                     = Land address
-land.checkYourAnswers.address.missing                                          = Enter land address
+land.address.checkYourAnswersLabel                                                  = Property Address
+land.address.change.hidden                                                          = Land address
+land.checkYourAnswers.address.missing                                               = Enter land address
 
-purchaser.purchaserCompanyTypeKnown.title                                   = Do you know what type of company the purchaser is? - About the purchaser
-purchaser.purchaserCompanyTypeKnown.heading                                 = Do you know what type of company {0} is?
-purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel                   = Do you know what type of company {0} is?
-purchaser.purchaserCompanyTypeKnown.error.required                          = Select yes if you know what type of company {0} is
-purchaser.purchaserCompanyTypeKnown.change.hidden                           = Do you know what type of company the purchaser is?
-purchaser.purchaserCompanyTypeKnown.missing                                 = Select yes or no
+purchaser.purchaserCompanyTypeKnown.title                                           = Do you know what type of company the purchaser is? - About the purchaser
+purchaser.purchaserCompanyTypeKnown.heading                                         = Do you know what type of company {0} is?
+purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel                           = Do you know what type of company {0} is?
+purchaser.purchaserCompanyTypeKnown.error.required                                  = Select yes if you know what type of company {0} is
+purchaser.purchaserCompanyTypeKnown.change.hidden                                   = Do you know what type of company the purchaser is?
+purchaser.purchaserCompanyTypeKnown.missing                                         = Select yes or no
 
 
-transaction.beforeStart.title                                                         = Before you start - About the transaction
-transaction.beforeStart.p1                                                            = In this section, you need to tell us about the transaction.
-transaction.beforeStart.p2                                                            = We will ask for:
-transaction.beforeStart.bullet1                                                       = the type of transaction
-transaction.beforeStart.bullet2                                                       = the effective date of the transaction
-transaction.beforeStart.bullet3                                                       = the total consideration in money or money’s worth
-transaction.beforeStart.bullet4                                                       = the forms of consideration
-transaction.beforeStart.bullet5                                                       = any considerations affected by uncertain future events
-transaction.beforeStart.bullet6                                                       = whether the transaction is pursuant to a previous option agreement
-transaction.beforeStart.p3                                                            = You can also provide:
-transaction.beforeStart.bullet7                                                       = the date of contract or conclusion of missives
-transaction.beforeStart.bullet8                                                       = the amount of VAT included in the total consideration
-transaction.beforeStart.bullet9                                                       = if this transaction is linked to another
-transaction.beforeStart.bullet10                                                       = the total consideration of all linked transactions
-transaction.beforeStart.bullet11                                                      = the purchaser’s eligibility and reason for claiming relief
-transaction.beforeStart.bullet12                                                       = how much partial relief the purchaser is claiming
-transaction.beforeStart.bullet13                                                       = whether the purchaser is applying for a deferment
-transaction.beforeStart.bullet14                                                       = how the land or property will be used
-transaction.beforeStart.bullet15                                                       = the details and total consideration if the transaction is part of the sale of a business
-transaction.beforeStart.bullet16                                                       = whether a CAP1 or NSBC application has been made and followed
-transaction.beforeStart.bullet17                                                       = any restrictions, covenants or conditions affecting the transaction
-transaction.beforeStart.bullet18                                                       = the address of any land or property being exchanged or part exchanged
+transaction.beforeStart.title                                                       = Before you start - About the transaction
+transaction.beforeStart.p1                                                          = In this section, you need to tell us about the transaction.
+transaction.beforeStart.p2                                                          = We will ask for:
+transaction.beforeStart.bullet1                                                     = the type of transaction
+transaction.beforeStart.bullet2                                                     = the effective date of the transaction
+transaction.beforeStart.bullet3                                                     = the total consideration in money or money’s worth
+transaction.beforeStart.bullet4                                                     = the forms of consideration
+transaction.beforeStart.bullet5                                                     = any considerations affected by uncertain future events
+transaction.beforeStart.bullet6                                                     = whether the transaction is pursuant to a previous option agreement
+transaction.beforeStart.p3                                                          = You can also provide:
+transaction.beforeStart.bullet7                                                     = the date of contract or conclusion of missives
+transaction.beforeStart.bullet8                                                     = the amount of VAT included in the total consideration
+transaction.beforeStart.bullet9                                                     = if this transaction is linked to another
+transaction.beforeStart.bullet10                                                    = the total consideration of all linked transactions
+transaction.beforeStart.bullet11                                                    = the purchaser’s eligibility and reason for claiming relief
+transaction.beforeStart.bullet12                                                    = how much partial relief the purchaser is claiming
+transaction.beforeStart.bullet13                                                    = whether the purchaser is applying for a deferment
+transaction.beforeStart.bullet14                                                    = how the land or property will be used
+transaction.beforeStart.bullet15                                                    = the details and total consideration if the transaction is part of the sale of a business
+transaction.beforeStart.bullet16                                                    = whether a CAP1 or NSBC application has been made and followed
+transaction.beforeStart.bullet17                                                    = any restrictions, covenants or conditions affecting the transaction
+transaction.beforeStart.bullet18                                                    = the address of any land or property being exchanged or part exchanged
+
+transaction.typeOfTransaction.title                                                 = What type of transaction is this?
+transaction.typeOfTransaction.heading                                               = What type of transaction is this?
+transaction.typeOfTransaction.checkYourAnswersLabel                                 = What type of transaction is this?
+transaction.typeOfTransaction.error.required                                        = Select the type of transaction

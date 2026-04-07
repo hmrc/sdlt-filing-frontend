@@ -24,6 +24,7 @@ import pages.land.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
+import pages.transaction.TypeOfTransactionPage
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import pages.vendor.*
 import pages.vendorAgent.*
@@ -275,8 +276,15 @@ class NavigatorSpec extends SpecBase {
         "go from CloseCompanyPage to CrownEmploymentRelief" in {
           navigator.nextPage(CloseCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
         }
-        "go from CrownEmplymentReliefPage to check your answers page" in { //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
+        "go from CrownEmploymentReliefPage to check your answers page" in { //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
           navigator.nextPage(CrownEmploymentReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
+        }
+      }
+
+      "transaction routes" - {
+
+        "go from TypeOfTransactionPage to Are you sure you want to change the transaction type page" in { //TODO - DTR-2994 - SPRINT 12
+          navigator.nextPage(TypeOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)
         }
       }
     }
