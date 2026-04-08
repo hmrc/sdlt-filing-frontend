@@ -24,7 +24,7 @@ import pages.land.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.transaction.{TypeOfTransactionPage, TransactionEffectiveDatePage}
+import pages.transaction.*
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import pages.vendor.*
 import pages.vendorAgent.*
@@ -287,8 +287,13 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TypeOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)
         }
 
-        "go from TransactionTypePage to contract or conclusion of missives page" in { // TODO DTR-2917 - Sprint 12 - configure routing to tr-3 page
-          navigator.nextPage(TransactionEffectiveDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
+        "go from TransactionTypePage to contract or conclusion of missives page" in {
+          navigator.nextPage(TransactionEffectiveDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode)
+        }
+
+        // TODO - DTR-2920 - change to redirect to TransactionEnterDateOfContract
+        "go from TransactionAddContractDatePage to TransactionEnterDateOfContract page" in {
+          navigator.nextPage(TransactionAddDateOfContractPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode)
         }
       }
     }
