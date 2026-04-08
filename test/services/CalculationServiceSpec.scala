@@ -3315,6 +3315,48 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
 
     }
 
+    // SDLT - Tax Calc Case - 32 - Leased
+    "select the leaseholdMixedNonResidentialRightToBuyBeforeMarch08 function" when {
+      "property type is Non-residential, taxReliefCode is RightToBuy(22), effective date is before 12/03/2008, isLinked = false, & relevantRent is < 1000" in {
+        val testRequest = createRequest(
+          leasehold,
+          nonResidential,
+          LocalDate.of(2008, 3, 11),
+          Some(RightToBuy),
+          isLinked = Some(false),
+          relevantRent = Some(BigDecimal(999))
+        )
+
+        val result = createResult("leaseholdMixedNonResidentialRightToBuyBeforeMarch08")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedNonResidentialRightToBuyBeforeMarch08(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResidentialRightToBuyBeforeMarch08(any())
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+      "property type is Mixed, taxReliefCode is RightToBuy(22), effective date is before 12/03/2008, isLinked = false, & relevantRent is < 1000" in {
+        val testRequest = createRequest(
+          leasehold,
+          mixed,
+          LocalDate.of(2008, 3, 11),
+          Some(RightToBuy),
+          isLinked = Some(false),
+          relevantRent = Some(BigDecimal(999))
+        )
+
+        val result = createResult("leaseholdMixedNonResidentialRightToBuyBeforeMarch08")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedNonResidentialRightToBuyBeforeMarch08(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResidentialRightToBuyBeforeMarch08(any())
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+    }
+
   }
 
   "checkFTB" must {

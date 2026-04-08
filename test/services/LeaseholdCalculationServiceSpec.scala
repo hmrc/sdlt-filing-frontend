@@ -2842,4 +2842,85 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
         expectedResult(leaseTaxDue = 5500, leaseSliceDetails, premTaxDue = 0, premRate = 0, npv)
     }
   }
+
+  // SDLT - Tax Calc Case - 32 - Leased
+  "leaseholdMixedNonResidentialRightToBuyBeforeMarch08" must {
+    def testRequest(premium: BigDecimal): Request = Request(
+      holdingType = HoldingTypes.leasehold,
+      propertyType = PropertyTypes.mixed,
+      effectiveDate = LocalDate.of(2008, 3, 11),
+      nonUKResident = None,
+      premium = premium,
+      highestRent = 0,
+      propertyDetails = None,
+      leaseDetails = Some(testLeaseDetails),
+      relevantRentDetails = None,
+      firstTimeBuyer = None,
+      isLinked = Some(false),
+      interestTransferred = None,
+      taxReliefDetails = None
+    )
+
+    def expectedResult(leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails], premTaxDue: Int, premRate: Int, npv: Int): Result =
+      Result(
+        totalTax = leaseTaxDue + premTaxDue,
+        resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+        resultHint = None,
+        npv = Some(npv),
+        taxCalcs = Seq(
+          CalculationDetails(
+            taxType = TaxTypes.rent,
+            calcType = CalcTypes.slice,
+            detailHeading = None,
+            bandHeading = None,
+            detailFooter = None,
+            taxDue = leaseTaxDue,
+            slices = Some(leaseSliceDetails)
+          ),
+          CalculationDetails(
+            taxType = TaxTypes.premium,
+            calcType = CalcTypes.slab,
+            detailHeading = None,
+            bandHeading = None,
+            detailFooter = None,
+            taxDue = premTaxDue,
+            rate = Some(premRate),
+            slices = None
+          )
+        )
+      )
+
+    "return lease taxDue 0, premium taxDue 0 for npv of 150000 and premium of 150000" in new PredefinedNPVSetup(150000) {
+      val leaseSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None, rate = 1, taxDue = 0)
+      )
+      service.leaseholdMixedNonResidentialRightToBuyBeforeMarch08(testRequest(150000)) shouldBe
+        expectedResult(leaseTaxDue = 0, leaseSliceDetails, premTaxDue = 0, premRate = 0, npv)
+    }
+    "return lease taxDue 1000, premium taxDue 2500 for npv of 250000 and premium of 250000" in new PredefinedNPVSetup(250000) {
+      val leaseSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None, rate = 1, taxDue = 1000)
+      )
+      service.leaseholdMixedNonResidentialRightToBuyBeforeMarch08(testRequest(250000)) shouldBe
+        expectedResult(leaseTaxDue = 1000, leaseSliceDetails, premTaxDue = 2500, premRate = 1, npv)
+    }
+    "return lease taxDue 3500, premium taxDue 15000 for npv of 500000 and premium of 500000" in new PredefinedNPVSetup(500000) {
+      val leaseSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None, rate = 1, taxDue = 3500)
+      )
+      service.leaseholdMixedNonResidentialRightToBuyBeforeMarch08(testRequest(500000)) shouldBe
+        expectedResult(leaseTaxDue = 3500, leaseSliceDetails, premTaxDue = 15000, premRate = 3, npv)
+    }
+    "return lease taxDue 6000, premium taxDue 20000 for npv of 750000 and premium of 750000" in new PredefinedNPVSetup(750000) {
+      val leaseSliceDetails: Seq[SliceDetails] = Seq(
+        SliceDetails(from = 0, to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None, rate = 1, taxDue = 6000)
+      )
+      service.leaseholdMixedNonResidentialRightToBuyBeforeMarch08(testRequest(750000)) shouldBe
+        expectedResult(leaseTaxDue = 6000, leaseSliceDetails, premTaxDue = 30000, premRate = 4, npv)
+    }
+  }
 }

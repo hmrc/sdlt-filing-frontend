@@ -3936,6 +3936,692 @@ class CalculationControllerLeaseholdTaxReliefISpec extends BaseSpec with GuiceOn
         }
 
       }
+
+      // SDLT - Tax Calc Case - 32 - Leased
+      "TaxRelief Code is RightToBuy(22), isLinked = false, relevantRent < 1000, and date is before 12/03/08" must {
+        "return tax relief response" when {
+          "Property type is Non-residential & premium is £150000" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Non-residential",
+                     | "effectiveDateDay": 11,
+                     | "effectiveDateMonth": 3,
+                     | "effectiveDateYear": 2008,
+                     | "premium": 150000,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     | "startDateDay": 11,
+                     | "startDateMonth": 3,
+                     | "startDateYear": 2008,
+                     | "endDateDay": 11,
+                     | "endDateMonth": 3,
+                     | "endDateYear": 2009,
+                     | "leaseTerm": {
+                     | "years": 1,
+                     | "days": 1,
+                     | "daysInPartialYear": 365
+                     | },
+                     | "year1Rent": 999,
+                     | "year2Rent": 999
+                     | },
+                     | "isLinked": false,
+                     | "taxReliefDetails": {
+                     | "taxReliefCode": 22
+                     | },
+                     | "relevantRentDetails" : {
+                     | "relevantRent": 999
+                     | }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            val expectedResponse: JsValue = Json.parse(
+              s"""
+                 |{
+                 |  "result": [
+                 |    {
+                 |      "totalTax": 0,
+                 |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                 |      "npv": 1897,
+                 |      "taxCalcs": [
+                 |        {
+                 |          "taxType": "rent",
+                 |          "calcType": "slice",
+                 |          "taxDue": 0,
+                 |          "slices": [
+                 |            {
+                 |              "from": 0,
+                 |              "to": 150000,
+                 |              "rate": 0,
+                 |              "taxDue": 0
+                 |            },
+                 |            {
+                 |              "from": 150000,
+                 |              "to": -1,
+                 |              "rate": 1,
+                 |              "taxDue": 0
+                 |            }
+                 |          ]
+                 |        },
+                 |        {
+                 |          "taxType": "premium",
+                 |          "calcType": "slab",
+                 |          "taxDue": 0,
+                 |          "rate": 0
+                 |        }
+                 |      ]
+                 |    }
+                 |  ]
+                 |}
+                 |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe expectedResponse
+          }
+          "Property type is Non-residential & premium is £250000" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Non-residential",
+                     | "effectiveDateDay": 11,
+                     | "effectiveDateMonth": 3,
+                     | "effectiveDateYear": 2008,
+                     | "premium": 250000,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     | "startDateDay": 11,
+                     | "startDateMonth": 3,
+                     | "startDateYear": 2008,
+                     | "endDateDay": 11,
+                     | "endDateMonth": 3,
+                     | "endDateYear": 2009,
+                     | "leaseTerm": {
+                     | "years": 1,
+                     | "days": 1,
+                     | "daysInPartialYear": 365
+                     | },
+                     | "year1Rent": 999,
+                     | "year2Rent": 999
+                     | },
+                     | "isLinked": false,
+                     | "taxReliefDetails": {
+                     | "taxReliefCode": 22
+                     | },
+                     | "relevantRentDetails" : {
+                     | "relevantRent": 999
+                     | }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            val expectedResponse: JsValue = Json.parse(
+              s"""
+                 |{
+                 |  "result": [
+                 |    {
+                 |      "totalTax": 2500,
+                 |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                 |      "npv": 1897,
+                 |      "taxCalcs": [
+                 |        {
+                 |          "taxType": "rent",
+                 |          "calcType": "slice",
+                 |          "taxDue": 0,
+                 |          "slices": [
+                 |            {
+                 |              "from": 0,
+                 |              "to": 150000,
+                 |              "rate": 0,
+                 |              "taxDue": 0
+                 |            },
+                 |            {
+                 |              "from": 150000,
+                 |              "to": -1,
+                 |              "rate": 1,
+                 |              "taxDue": 0
+                 |            }
+                 |          ]
+                 |        },
+                 |        {
+                 |          "taxType": "premium",
+                 |          "calcType": "slab",
+                 |          "taxDue": 2500,
+                 |          "rate": 1
+                 |        }
+                 |      ]
+                 |    }
+                 |  ]
+                 |}
+                 |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe expectedResponse
+          }
+          "Property type is Non-residential & premium is £500000" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Non-residential",
+                     | "effectiveDateDay": 11,
+                     | "effectiveDateMonth": 3,
+                     | "effectiveDateYear": 2008,
+                     | "premium": 500000,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     | "startDateDay": 11,
+                     | "startDateMonth": 3,
+                     | "startDateYear": 2008,
+                     | "endDateDay": 11,
+                     | "endDateMonth": 3,
+                     | "endDateYear": 2009,
+                     | "leaseTerm": {
+                     | "years": 1,
+                     | "days": 1,
+                     | "daysInPartialYear": 365
+                     | },
+                     | "year1Rent": 999,
+                     | "year2Rent": 999
+                     | },
+                     | "isLinked": false,
+                     | "taxReliefDetails": {
+                     | "taxReliefCode": 22
+                     | },
+                     | "relevantRentDetails" : {
+                     | "relevantRent": 999
+                     | }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            val expectedResponse: JsValue = Json.parse(
+              s"""
+                 |{
+                 |  "result": [
+                 |    {
+                 |      "totalTax": 15000,
+                 |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                 |      "npv": 1897,
+                 |      "taxCalcs": [
+                 |        {
+                 |          "taxType": "rent",
+                 |          "calcType": "slice",
+                 |          "taxDue": 0,
+                 |          "slices": [
+                 |            {
+                 |              "from": 0,
+                 |              "to": 150000,
+                 |              "rate": 0,
+                 |              "taxDue": 0
+                 |            },
+                 |            {
+                 |              "from": 150000,
+                 |              "to": -1,
+                 |              "rate": 1,
+                 |              "taxDue": 0
+                 |            }
+                 |          ]
+                 |        },
+                 |        {
+                 |          "taxType": "premium",
+                 |          "calcType": "slab",
+                 |          "taxDue": 15000,
+                 |          "rate": 3
+                 |        }
+                 |      ]
+                 |    }
+                 |  ]
+                 |}
+                 |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe expectedResponse
+          }
+          "Property type is Non-residential & premium is £500001" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Non-residential",
+                     | "effectiveDateDay": 11,
+                     | "effectiveDateMonth": 3,
+                     | "effectiveDateYear": 2008,
+                     | "premium": 500001,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     | "startDateDay": 11,
+                     | "startDateMonth": 3,
+                     | "startDateYear": 2008,
+                     | "endDateDay": 11,
+                     | "endDateMonth": 3,
+                     | "endDateYear": 2009,
+                     | "leaseTerm": {
+                     | "years": 1,
+                     | "days": 1,
+                     | "daysInPartialYear": 365
+                     | },
+                     | "year1Rent": 999,
+                     | "year2Rent": 999
+                     | },
+                     | "isLinked": false,
+                     | "taxReliefDetails": {
+                     | "taxReliefCode": 22
+                     | },
+                     | "relevantRentDetails" : {
+                     | "relevantRent": 999
+                     | }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            val expectedResponse: JsValue = Json.parse(
+              s"""
+                 |{
+                 |  "result": [
+                 |    {
+                 |      "totalTax": 20000,
+                 |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                 |      "npv": 1897,
+                 |      "taxCalcs": [
+                 |        {
+                 |          "taxType": "rent",
+                 |          "calcType": "slice",
+                 |          "taxDue": 0,
+                 |          "slices": [
+                 |            {
+                 |              "from": 0,
+                 |              "to": 150000,
+                 |              "rate": 0,
+                 |              "taxDue": 0
+                 |            },
+                 |            {
+                 |              "from": 150000,
+                 |              "to": -1,
+                 |              "rate": 1,
+                 |              "taxDue": 0
+                 |            }
+                 |          ]
+                 |        },
+                 |        {
+                 |          "taxType": "premium",
+                 |          "calcType": "slab",
+                 |          "taxDue": 20000,
+                 |          "rate": 4
+                 |        }
+                 |      ]
+                 |    }
+                 |  ]
+                 |}
+                 |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe expectedResponse
+          }
+          "Property type is Mixed & premium is £150000" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Mixed",
+                     | "effectiveDateDay": 11,
+                     | "effectiveDateMonth": 3,
+                     | "effectiveDateYear": 2008,
+                     | "premium": 150000,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     | "startDateDay": 11,
+                     | "startDateMonth": 3,
+                     | "startDateYear": 2008,
+                     | "endDateDay": 11,
+                     | "endDateMonth": 3,
+                     | "endDateYear": 2009,
+                     | "leaseTerm": {
+                     | "years": 1,
+                     | "days": 1,
+                     | "daysInPartialYear": 365
+                     | },
+                     | "year1Rent": 999,
+                     | "year2Rent": 999
+                     | },
+                     | "isLinked": false,
+                     | "taxReliefDetails": {
+                     | "taxReliefCode": 22
+                     | },
+                     | "relevantRentDetails" : {
+                     | "relevantRent": 999
+                     | }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            val expectedResponse: JsValue = Json.parse(
+              s"""
+                 |{
+                 |  "result": [
+                 |    {
+                 |      "totalTax": 0,
+                 |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                 |      "npv": 1897,
+                 |      "taxCalcs": [
+                 |        {
+                 |          "taxType": "rent",
+                 |          "calcType": "slice",
+                 |          "taxDue": 0,
+                 |          "slices": [
+                 |            {
+                 |              "from": 0,
+                 |              "to": 150000,
+                 |              "rate": 0,
+                 |              "taxDue": 0
+                 |            },
+                 |            {
+                 |              "from": 150000,
+                 |              "to": -1,
+                 |              "rate": 1,
+                 |              "taxDue": 0
+                 |            }
+                 |          ]
+                 |        },
+                 |        {
+                 |          "taxType": "premium",
+                 |          "calcType": "slab",
+                 |          "taxDue": 0,
+                 |          "rate": 0
+                 |        }
+                 |      ]
+                 |    }
+                 |  ]
+                 |}
+                 |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe expectedResponse
+          }
+          "Property type is Mixed & premium is £250000" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Mixed",
+                     | "effectiveDateDay": 11,
+                     | "effectiveDateMonth": 3,
+                     | "effectiveDateYear": 2008,
+                     | "premium": 250000,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     | "startDateDay": 11,
+                     | "startDateMonth": 3,
+                     | "startDateYear": 2008,
+                     | "endDateDay": 11,
+                     | "endDateMonth": 3,
+                     | "endDateYear": 2009,
+                     | "leaseTerm": {
+                     | "years": 1,
+                     | "days": 1,
+                     | "daysInPartialYear": 365
+                     | },
+                     | "year1Rent": 999,
+                     | "year2Rent": 999
+                     | },
+                     | "isLinked": false,
+                     | "taxReliefDetails": {
+                     | "taxReliefCode": 22
+                     | },
+                     | "relevantRentDetails" : {
+                     | "relevantRent": 999
+                     | }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            val expectedResponse: JsValue = Json.parse(
+              s"""
+                 |{
+                 |  "result": [
+                 |    {
+                 |      "totalTax": 2500,
+                 |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                 |      "npv": 1897,
+                 |      "taxCalcs": [
+                 |        {
+                 |          "taxType": "rent",
+                 |          "calcType": "slice",
+                 |          "taxDue": 0,
+                 |          "slices": [
+                 |            {
+                 |              "from": 0,
+                 |              "to": 150000,
+                 |              "rate": 0,
+                 |              "taxDue": 0
+                 |            },
+                 |            {
+                 |              "from": 150000,
+                 |              "to": -1,
+                 |              "rate": 1,
+                 |              "taxDue": 0
+                 |            }
+                 |          ]
+                 |        },
+                 |        {
+                 |          "taxType": "premium",
+                 |          "calcType": "slab",
+                 |          "taxDue": 2500,
+                 |          "rate": 1
+                 |        }
+                 |      ]
+                 |    }
+                 |  ]
+                 |}
+                 |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe expectedResponse
+          }
+          "Property type is Mixed & premium is £500000" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Mixed",
+                     | "effectiveDateDay": 11,
+                     | "effectiveDateMonth": 3,
+                     | "effectiveDateYear": 2008,
+                     | "premium": 500000,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     | "startDateDay": 11,
+                     | "startDateMonth": 3,
+                     | "startDateYear": 2008,
+                     | "endDateDay": 11,
+                     | "endDateMonth": 3,
+                     | "endDateYear": 2009,
+                     | "leaseTerm": {
+                     | "years": 1,
+                     | "days": 1,
+                     | "daysInPartialYear": 365
+                     | },
+                     | "year1Rent": 999,
+                     | "year2Rent": 999
+                     | },
+                     | "isLinked": false,
+                     | "taxReliefDetails": {
+                     | "taxReliefCode": 22
+                     | },
+                     | "relevantRentDetails" : {
+                     | "relevantRent": 999
+                     | }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            val expectedResponse: JsValue = Json.parse(
+              s"""
+                 |{
+                 |  "result": [
+                 |    {
+                 |      "totalTax": 15000,
+                 |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                 |      "npv": 1897,
+                 |      "taxCalcs": [
+                 |        {
+                 |          "taxType": "rent",
+                 |          "calcType": "slice",
+                 |          "taxDue": 0,
+                 |          "slices": [
+                 |            {
+                 |              "from": 0,
+                 |              "to": 150000,
+                 |              "rate": 0,
+                 |              "taxDue": 0
+                 |            },
+                 |            {
+                 |              "from": 150000,
+                 |              "to": -1,
+                 |              "rate": 1,
+                 |              "taxDue": 0
+                 |            }
+                 |          ]
+                 |        },
+                 |        {
+                 |          "taxType": "premium",
+                 |          "calcType": "slab",
+                 |          "taxDue": 15000,
+                 |          "rate": 3
+                 |        }
+                 |      ]
+                 |    }
+                 |  ]
+                 |}
+                 |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe expectedResponse
+          }
+          "Property type is Mixed & premium is £500001" in {
+            val request: WSResponse = ws
+              .url(calculateUrl)
+              .post(
+                Json.parse(
+                  s"""
+                     |{
+                     | "holdingType": "Leasehold",
+                     | "propertyType": "Mixed",
+                     | "effectiveDateDay": 11,
+                     | "effectiveDateMonth": 3,
+                     | "effectiveDateYear": 2008,
+                     | "premium": 500001,
+                     | "highestRent": 0,
+                     | "leaseDetails": {
+                     | "startDateDay": 11,
+                     | "startDateMonth": 3,
+                     | "startDateYear": 2008,
+                     | "endDateDay": 11,
+                     | "endDateMonth": 3,
+                     | "endDateYear": 2009,
+                     | "leaseTerm": {
+                     | "years": 1,
+                     | "days": 1,
+                     | "daysInPartialYear": 365
+                     | },
+                     | "year1Rent": 999,
+                     | "year2Rent": 999
+                     | },
+                     | "isLinked": false,
+                     | "taxReliefDetails": {
+                     | "taxReliefCode": 22
+                     | },
+                     | "relevantRentDetails" : {
+                     | "relevantRent": 999
+                     | }
+                     |}
+                     |""".stripMargin
+                )
+              )
+
+            val expectedResponse: JsValue = Json.parse(
+              s"""
+                 |{
+                 |  "result": [
+                 |    {
+                 |      "totalTax": 20000,
+                 |      "resultHeading": "Results of calculation based on SDLT rules for the effective date entered",
+                 |      "npv": 1897,
+                 |      "taxCalcs": [
+                 |        {
+                 |          "taxType": "rent",
+                 |          "calcType": "slice",
+                 |          "taxDue": 0,
+                 |          "slices": [
+                 |            {
+                 |              "from": 0,
+                 |              "to": 150000,
+                 |              "rate": 0,
+                 |              "taxDue": 0
+                 |            },
+                 |            {
+                 |              "from": 150000,
+                 |              "to": -1,
+                 |              "rate": 1,
+                 |              "taxDue": 0
+                 |            }
+                 |          ]
+                 |        },
+                 |        {
+                 |          "taxType": "premium",
+                 |          "calcType": "slab",
+                 |          "taxDue": 20000,
+                 |          "rate": 4
+                 |        }
+                 |      ]
+                 |    }
+                 |  ]
+                 |}
+                 |""".stripMargin
+            )
+
+            request.status shouldBe OK
+            request.json shouldBe expectedResponse
+          }
+        }
+      }
     }
   }
 }
