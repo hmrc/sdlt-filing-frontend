@@ -110,7 +110,7 @@ class TransactionEffectiveDateControllerSpec extends SpecBase {
         val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode).url // TODO DTR-2917 - Sprint 12 - configure routing to tr-3 page
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode).url
       }
     }
 
