@@ -427,3 +427,8 @@ POST       /about-the-transaction/effective-date-of-transaction/change          
 
 GET        /about-the-transaction/confirm-type-of-transaction                                        controllers.transaction.ConfirmTypeOfTransactionController.onPageLoad()
 POST       /about-the-transaction/confirm-type-of-transaction                                        controllers.transaction.ConfirmTypeOfTransactionController.onSubmit()
+
+GET        /about-the-transaction/add-date-of-contract                                               controllers.transaction.TransactionAddDateOfContractController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/add-date-of-contract                                               controllers.transaction.TransactionAddDateOfContractController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/add-date-of-contract/change                                        controllers.transaction.TransactionAddDateOfContractController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/add-date-of-contract/change                                        controllers.transaction.TransactionAddDateOfContractController.onSubmit(mode: Mode = CheckMode)
