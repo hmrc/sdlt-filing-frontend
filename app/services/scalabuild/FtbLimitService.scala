@@ -5,8 +5,7 @@
 
 package services.scalabuild
 
-import config.scalabuild.FrontendAppConfig
-
+import config.FrontendAppConfig
 import java.time.LocalDate
 import javax.inject.Inject
 

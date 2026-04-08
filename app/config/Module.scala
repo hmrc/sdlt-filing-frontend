@@ -3,7 +3,7 @@
  *
  */
 
-package config.scalabuild
+package config
 
 import com.google.inject.AbstractModule
 import controllers.scalabuild.actions._
