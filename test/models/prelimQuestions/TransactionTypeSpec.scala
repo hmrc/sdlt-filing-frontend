@@ -63,13 +63,16 @@ class TransactionTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
     "parse" - {
       "must return a TransactionType when a valid string is parsed" in {
-        val gen = Gen.oneOf(TransactionType.values)
+        val listOfValues = Map[Option[String], TransactionType](
+          Some("F") -> TransactionType.ConveyanceTransfer,
+          Some("L") -> TransactionType.GrantOfLease,
+          Some("A") -> TransactionType.ConveyanceTransferLease,
+          Some("O") -> TransactionType.OtherTransaction
+        )
 
-        forAll(gen) {
-          transactionType =>
-
-            TransactionType.parse(Some(transactionType.toString)) mustBe Some(transactionType)
-        }
+        listOfValues.forall { case (code, expectedType) =>
+          TransactionType.parse(code).contains(expectedType)
+        } mustBe true
       }
 
       "must return None when an invalid string is parsed" in {

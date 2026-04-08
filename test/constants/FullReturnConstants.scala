@@ -339,7 +339,7 @@ object FullReturnConstants {
     usedAsWarehouse = Some("false"),
     contractDate = Some("2024-09-15"),
     isDependantOnFutureEvent = Some("false"),
-    transactionDescription = Some("conveyanceTransfer"),
+    transactionDescription = Some("F"),
     newTransactionDescription = None,
     effectiveDate = Some("2024-10-01"),
     isLandExchanged = Some("false"),
