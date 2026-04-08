@@ -12,7 +12,7 @@ import play.api.Application
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Content
-import views.html.error_template
+import views.html.scalabuild.error_template
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext}

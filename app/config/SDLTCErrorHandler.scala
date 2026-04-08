@@ -15,7 +15,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SDLTCErrorHandler @Inject()(val messagesApi: MessagesApi,
-                                  val templateError: views.html.error_template,
+                                  val templateError: views.html.scalabuild.error_template,
                                   startAgainView: JourneyRecoveryStartAgainView,
 implicit val configuration: FrontendAppConfig, val ec: ExecutionContext) extends FrontendErrorHandler {
 
