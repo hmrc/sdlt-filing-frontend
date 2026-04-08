@@ -39,6 +39,7 @@ object LandTaskList {
     val mainLandID = fullReturn.returnInfo.flatMap(_.mainLandID)
 
     val url = fullReturn.land match {
+      case Some(list) if list.length > 1 => controllers.land.routes.LandOverviewController.onPageLoad().url
       case Some(list) if list.exists(x => x.landID == mainLandID && x.mineralRights.isEmpty)
       => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
       case Some(list) if list.nonEmpty
