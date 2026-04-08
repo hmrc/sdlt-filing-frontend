@@ -18,7 +18,9 @@ package services.taxCalculation
 
 import connectors.SdltCalculationConnector
 import models.land.{LandInterestTransferredOrCreated, LandTypeOfProperty}
-import models.{FullReturn, UserAnswers}
+import models.prelimQuestions.TransactionType
+import models.prelimQuestions.TransactionType.{ConveyanceTransfer, ConveyanceTransferLease, GrantOfLease, OtherTransaction}
+import models.{FullReturn, Lease, Transaction, UserAnswers}
 import models.taxCalculation.*
 import org.slf4j.{Logger, LoggerFactory}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -56,34 +58,34 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       parsedDate         <- Try(LocalDate.parse(effectiveDate)).toOption.toRight("Failed to parse effectiveDate")
       (day, month, year)  = (parsedDate.getDayOfMonth, parsedDate.getMonthValue, parsedDate.getYear)
       premium            <- transaction.totalConsideration.toRight("totalConsideration not found in Transaction")
-      leaseDetails       <- buildLeaseDetails(interestCode, fullReturn, parsedDate)
+      holdingType        <- transaction.transactionDescription.flatMap(toHoldingType).toRight("Unknown transaction type")
     } yield SdltCalculationRequest(
-      holdingType         = toHoldingType(interestCode),
+      holdingType         = holdingType,
       propertyType        = toPropertyType(propertyCode),
       effectiveDateDay    = day,
       effectiveDateMonth  = month,
       effectiveDateYear   = year,
       nonUKResident       = fullReturn.residency.flatMap(_.isNonUkResidents),
       premium             = premium,
-      highestRent         = fullReturn.lease.flatMap(_.startingRent).flatMap(r => Try(BigDecimal(r)).toOption).getOrElse(BigDecimal(0)),
+      highestRent         = BigDecimal(0),
       propertyDetails     = buildPropertyDetails(propertyCode, fullReturn),
-      leaseDetails        = leaseDetails,
-      relevantRentDetails = buildRelevantRentDetails(propertyCode, interestCode, fullReturn, parsedDate),
-      firstTimeBuyer      = None,
+      leaseDetails        = fullReturn.lease.map(l => buildLeaseDetails(l, parsedDate)),
+      relevantRentDetails = Some(buildRelevantRentDetails(leaseDetails)),
+      firstTimeBuyer      = None,                                             // TODO: TO BE IMPLEMENTED - journey not built
       isLinked            = transaction.isLinked.map(_.toUpperCase == "YES"),
       interestTransferred = Some(interestCode),
-      taxReliefDetails    = None,
-      isMultipleLand      = fullReturn.land.map(_.size > 1)
+      taxReliefDetails    = None,                                             // TODO: TO BE IMPLEMENTED - journey not built
+      isMultipleLand      = fullReturn.land.map(_.size > 1),
+      declaredNpv         = Some(1000) // TODO: TO BE IMPLEMENTED - journey not built
     )
 
-  private def toHoldingType(interestCode: String): HoldingTypes.Value = interestCode match {
-    case LandInterestTransferredOrCreated.FG.toString => HoldingTypes.freehold
-    case LandInterestTransferredOrCreated.FP.toString => HoldingTypes.freehold
-    case LandInterestTransferredOrCreated.FT.toString => HoldingTypes.freehold
-    case LandInterestTransferredOrCreated.LG.toString => HoldingTypes.leasehold
-    case LandInterestTransferredOrCreated.LP.toString => HoldingTypes.leasehold
-    case LandInterestTransferredOrCreated.LT.toString => HoldingTypes.leasehold
-  }
+  private def toHoldingType(transactionDesc: String): Option[HoldingTypes.Value] =
+    TransactionType.parse(Some(transactionDesc)).map {
+      case GrantOfLease            => HoldingTypes.leasehold
+      case ConveyanceTransfer      => HoldingTypes.freehold
+      case ConveyanceTransferLease => HoldingTypes.freehold
+      case OtherTransaction        => HoldingTypes.freehold
+    }
 
   private def toPropertyType(propertyCode: String): PropertyTypes.Value = propertyCode match {
     case LandTypeOfProperty.Residential.toString | LandTypeOfProperty.Additional.toString => PropertyTypes.residential
@@ -101,34 +103,28 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
           sharedOwnership      = None,
           currentValue         = None
         ))
-      case LandTypeOfProperty.Residential.toString =>
+      case _ =>
         Some(PropertyDetails(
-          individual           = if (isIndividual(fullReturn)) "Yes" else "No",
-          twoOrMoreProperties  = None,
+          individual           = "Yes",
+          twoOrMoreProperties  = Some("No"),
           replaceMainResidence = None,
           sharedOwnership      = None,
           currentValue         = None
         ))
-      case _ => None
     }
 
-  private def buildLeaseDetails(interestCode: String, fullReturn: FullReturn, effectiveDate: LocalDate): Either[String, Option[LeaseDetails]] =
-    if (toHoldingType(interestCode) != HoldingTypes.leasehold) { Right(None) }
-    else {
+  private def buildLeaseDetails(lease: Lease, transaction: Transaction, effectiveDate: LocalDate): Either[String, Option[LeaseDetails]] =
+    Option.when(transaction.transactionDescription.contains("L"))(
       for {
-        lease             <- fullReturn.lease.toRight("Lease not found for leasehold property")
-        contractStartDate <- lease.contractStartDate.toRight("contractStartDate not found in Lease")
-        contractEndDate   <- lease.contractEndDate.toRight("contractEndDate not found in Lease")
-        startingRent      <- lease.startingRent.toRight("startingRent not found in Lease")
-        startDate         <- Try(LocalDate.parse(contractStartDate)).toOption.toRight("Failed to parse contractStartDate")
-        endDate           <- Try(LocalDate.parse(contractEndDate)).toOption.toRight("Failed to parse contractEndDate")
-        rent              <- Try(BigDecimal(startingRent)).toOption.toRight("Failed to parse startingRent")
-        selectDate        = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
-        years             = Period.between(selectDate, endDate.plusDays(1)).getYears
-        partialStart      = selectDate.plusYears(years)
-        days              = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
-        daysInPartialYear = if (days > 0) ChronoUnit.DAYS.between(partialStart, partialStart.plusYears(1)).toInt else 0
-        yearsRequired     = if (years < 5 && days > 0) years + 1 else years
+        contractStartDate   <- lease.contractStartDate.toRight("contractStartDate not found in Lease")
+        contractEndDate     <- lease.contractEndDate.toRight("contractEndDate not found in Lease")
+        startDate           <- Try(LocalDate.parse(contractStartDate)).toOption.toRight("Failed to parse contractStartDate")
+        endDate             <- Try(LocalDate.parse(contractEndDate)).toOption.toRight("Failed to parse contractEndDate")
+        calculationStartDate = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
+        years                = Period.between(calculationStartDate, endDate.plusDays(1)).getYears
+        partialStart         = selectDate.plusYears(years)
+        days                 = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
+        yearsRequired        = if (years < 5 && days > 0) years + 1 else years
       } yield Some(LeaseDetails(
         startDateDay    = startDate.getDayOfMonth,
         startDateMonth  = startDate.getMonthValue,
@@ -136,40 +132,30 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
         endDateDay      = endDate.getDayOfMonth,
         endDateMonth    = endDate.getMonthValue,
         endDateYear     = endDate.getYear,
-        leaseTerm       = LeaseTerm(years = years, days = days, daysInPartialYear = daysInPartialYear),
-        year1Rent       = rent,
-        year2Rent       = Option.when(yearsRequired >= 2)(rent),
-        year3Rent       = Option.when(yearsRequired >= 3)(rent),
-        year4Rent       = Option.when(yearsRequired >= 4)(rent),
-        year5Rent       = Option.when(yearsRequired >= 5)(rent)
+        leaseTerm       = LeaseTerm(
+          years = years,
+          days = days,
+          daysInPartialYear = 0
+        ),
+        year1Rent = 0,
+        year2Rent = Option.when(yearsRequired >= 2)(0),
+        year3Rent = Option.when(yearsRequired >= 3)(0),
+        year4Rent = Option.when(yearsRequired >= 4)(0),
+        year5Rent = Option.when(yearsRequired >= 5)(0)
       ))
-    }
-
-  private def buildRelevantRentDetails(propertyCode: String,
-                                       interestCode: String,
-                                       fullReturn: FullReturn,
-                                       effectiveDate: LocalDate
-                                      ): Option[RelevantRentDetails] =
-
-    Option.when(isMixedOrNonResidentialLeasehold(propertyCode, interestCode))(
-      RelevantRentDetails(
-        contractPre201603        = Option.unless(effectiveDate.isBefore(march2016NonResidentialDate))("Yes"),
-        contractVariedPost201603 = Option.unless(effectiveDate.isBefore(march2016NonResidentialDate))("No"),
-        relevantRent             = Some(BigDecimal(
-          if (fullReturn.lease.exists(_.isAnnualRentOver1000.contains("true"))) 1000
-          else 0
-        ))
-      )
     )
 
-  private val isMixedOrNonResidentialLeasehold: (String, String) => Boolean = (propertyCode, interestCode) =>
-    (toPropertyType(propertyCode) == PropertyTypes.nonResidential ||
-      toPropertyType(propertyCode) == PropertyTypes.mixed) &&
-      toHoldingType(interestCode) == HoldingTypes.leasehold
-
-  private val isIndividual: FullReturn => Boolean =
-    _.purchaser
-      .flatMap(_.headOption)
-      .flatMap(_.isCompany)
-      .exists(_.toUpperCase == "NO")
+  private def buildRelevantRentDetails(leaseDetails: LeaseDetails): Option[RelevantRentDetails] =
+    RelevantRentDetails(
+      contractPre201603        = Some("Yes"),
+      contractVariedPost201603 = Some("No"),
+      relevantRent             =
+        if (leaseDetails.exists(_.isAnnualRentOver1000.exists("true"))) {
+          Some(BigDecimal(ANNUAL_RENT_THRESHOLD))
+        } else {
+          Some(BigDecimal(0))
+        }
+      )
+      
+  private val ANNUAL_RENT_THRESHOLD: BigDecimal = 1000
 }

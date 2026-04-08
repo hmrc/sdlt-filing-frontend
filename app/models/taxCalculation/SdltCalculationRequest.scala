@@ -34,7 +34,8 @@ case class SdltCalculationRequest(
                                    isLinked:            Option[Boolean],
                                    interestTransferred: Option[String],
                                    taxReliefDetails:    Option[TaxReliefDetails],
-                                   isMultipleLand:      Option[Boolean]
+                                   isMultipleLand:      Option[Boolean],
+                                   declaredNpv:         Option[BigDecimal]
 )
 
 object SdltCalculationRequest {
