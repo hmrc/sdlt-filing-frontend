@@ -1178,8 +1178,8 @@ transaction.confirmTypeOfTransaction.p                                          
 transaction.confirmTypeOfTransaction.error.required                                 = Select Yes or No
 transaction.confirmTypeOfTransaction.change.hidden                                  = Confirm Type Of Transaction
 
-transaction.addDateOfContract.title                                                 = Date of contract or conclusion of missives
-transaction.addDateOfContract.heading                                               = Date of contract or conclusion of missives
+transaction.addDateOfContract.title                                                 = Date of contract
+transaction.addDateOfContract.heading                                               = Date of contract
 transaction.addDateOfContract.h2                                                    = Do you know the date of contract or conclusion of missives?
 transaction.addDateOfContract.p1                                                    = The date of contract (or conclusion of missives) is when the agreement of sale becomes a binding contract between the purchaser and vendor, usually through the exchange of contracts. Typically, this is not the same day as the effective date of transaction.
 transaction.addDateOfContract.checkYourAnswersLabel                                 = Do you know the date of contract or conclusion of missives?
