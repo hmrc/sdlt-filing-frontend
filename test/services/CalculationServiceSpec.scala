@@ -3193,7 +3193,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         ))
       )
 
-      "given a request where property type is Mixed, is before 17/03/2016 and isLinked = false" in {
+      "given a request where property type is Mixed, is before 17/03/2016, average rent > 1000 and isLinked = false" in {
         val result = createResult("leaseholdMixedNonResApr2013toMar2016")
 
         when(mockLeaseholdCalculationService.leaseholdMixedNonResApr2013toMar2016(any())).thenReturn(result)
@@ -3203,7 +3203,7 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResApr2013toMar2016(any())
         verifyNoMoreInteractions(mockLeaseholdCalculationService)
       }
-      "given a request where property type is Non-residential, is before 17/03/2016 and isLinked = false" in {
+      "given a request where property type is Non-residential, is before 17/03/2016, average rent > 1000 and isLinked = false" in {
         val nonResTestRequest = testRequest.copy(propertyType = PropertyTypes.nonResidential)
 
         val result = createResult("leaseholdMixedNonResApr2013toMar2016")
@@ -3313,6 +3313,37 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         }
       }
 
+    }
+    //SDLT - Tax Calc Case - Case 32c
+    "select the leaseholdMixedNonResMar2008toMar2016 function" when {
+      "LeaseHold, mixed, RightToBuy, isLinked = false, relevantRentDetails < 1000 and date is between 12/03/2008 and 17/03/2016" in {
+        val testRequest = createRequest(leasehold, mixed, LocalDate.of(2008, 3, 12), Some(RightToBuy), isLinked = Some(false), relevantRent = Some(BigDecimal(999)))
+
+        val result = createResult("leaseholdMixedNonResMar2008toMar2016")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedNonResMar2008toMar2016(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest).result mustBe Seq(result)
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResMar2008toMar2016(any())
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+
+      }
+      "LeaseHold, NonResidential, RightToBuy, isLinked = false, relevantRentDetails < 1000 and date is between 12/03/2008 and 17/03/2016" in {
+        val testRequest = createRequest(leasehold, nonResidential, LocalDate.of(2008, 3, 12), Some(RightToBuy), isLinked = Some(false), relevantRent = Some(BigDecimal(999)))
+
+        val result = createResult("leaseholdMixedNonResMar2008toMar2016")
+
+        when(mockLeaseholdCalculationService.leaseholdMixedNonResMar2008toMar2016(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest).result mustBe Seq(result)
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResMar2008toMar2016(any())
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+
+      }
     }
 
     // SDLT - Tax Calc Case - 32 - Leased

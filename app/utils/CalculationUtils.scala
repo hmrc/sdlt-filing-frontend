@@ -94,6 +94,10 @@ object CalculationUtils extends DateUtil {
     date.onOrAfter(Dates.APRIL2013_TAX_YEAR_START_DATE) && date.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE)
   }
 
+  def isAfterMar2008AndBeforeMar16(date: LocalDate): Boolean = {
+    date.onOrAfter(Dates.MIN_MIXED_PROPERTY_DATE) && date.isBefore(Dates.MARCH2016_NON_RESIDENTIAL_DATE)
+  }
+
   def averageRentIsBelowThreshold(rentDetails: RelevantRentDetails): Boolean = {
     val averageRentThreshold1K: BigDecimal = BigDecimal(1000)
     rentDetails.relevantRent.exists(_ < averageRentThreshold1K)

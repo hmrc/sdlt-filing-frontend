@@ -477,6 +477,47 @@ trait LeaseholdRequestFeature extends LeaseDetailsFixture {
     )
   }
 
+  def leaseholdMixedNonResMar2008toMar2016Request(premium: BigDecimal): Request = {
+    Request(
+      holdingType = HoldingTypes.leasehold,
+      propertyType = PropertyTypes.mixed,
+      effectiveDate = LocalDate.of(2014, 1, 1),
+      nonUKResident = None,
+      premium = premium,
+      highestRent = BigDecimal(0),
+      leaseDetails = Some(LeaseDetails(
+        startDate = LocalDate.of(2014, 1, 1),
+        endDate = LocalDate.of(2015, 1, 1),
+        leaseTerm = LeaseTerm(
+          years = 1,
+          days = 1,
+          daysInPartialYear = 365
+        ),
+        year1Rent = BigDecimal(999),
+        year2Rent = Some(BigDecimal(999)),
+        year3Rent = None,
+        year4Rent = None,
+        year5Rent = None
+      )),
+      isLinked = Some(false),
+      propertyDetails = None,
+
+      relevantRentDetails = Some(
+        RelevantRentDetails(
+          exchangedContractsBeforeMar16 = None,
+          contractChangedSinceMar16 = None,
+          relevantRent = Some(BigDecimal(999))
+        )
+      ),
+      firstTimeBuyer = None,
+      interestTransferred = None,
+      taxReliefDetails = Some(TaxReliefDetails(
+        taxReliefCode = RightToBuy,
+        isPartialRelief = None
+      ))
+    )
+  }
+
   def leaseholdResidentialAddPropOct24BeforeApril25RequestIsIndividual(premium: BigDecimal, effectiveDate: LocalDate): Request = Request(
     holdingType = HoldingTypes.leasehold,
     propertyType = PropertyTypes.residential,

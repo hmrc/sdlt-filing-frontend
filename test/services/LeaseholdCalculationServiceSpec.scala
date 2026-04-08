@@ -2222,6 +2222,60 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
     }
   }
 
+  "leaseholdMixedNonResMar2008toMar2016" must {
+    "return zero tax for premium of 150000 and for npv of 150000" in new PredefinedNPVSetup(predefinedNPV = 150000) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 0)
+      )
+
+      private val res = leaseholdMixedNonResMar2008toMar2016Result(
+        leaseTaxDue = 0, leaseSliceDetails = leaseSliceDetails,
+        premTaxDue = 0, premRate = 0, npv = 150000)
+      service.leaseholdMixedNonResMar2008toMar2016(
+        leaseholdMixedNonResMar2008toMar2016Request(150000)) shouldBe res
+    }
+    "return correct tax for premium of 250000 and for npv 300000" in new PredefinedNPVSetup(predefinedNPV = 300000) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 1500)
+      )
+
+      private val res = leaseholdMixedNonResMar2008toMar2016Result(
+        leaseTaxDue = 1500, leaseSliceDetails = leaseSliceDetails,
+        premTaxDue = 2500, premRate = 1, npv = 300000)
+
+      service.leaseholdMixedNonResMar2008toMar2016(
+        leaseholdMixedNonResMar2008toMar2016Request(250000)) shouldBe res
+    }
+    "return correct tax for premium of 500000 and for npv 300000" in new PredefinedNPVSetup(predefinedNPV = 300000) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 1500)
+      )
+
+      private val res = leaseholdMixedNonResMar2008toMar2016Result(
+        leaseTaxDue = 1500, leaseSliceDetails = leaseSliceDetails,
+        premTaxDue = 15000, premRate = 3, npv = 300000)
+
+      service.leaseholdMixedNonResMar2008toMar2016(
+        leaseholdMixedNonResMar2008toMar2016Request(500000)) shouldBe res
+    }
+    "return correct tax for premium of 1000000 and for npv 300000" in new PredefinedNPVSetup(predefinedNPV = 300000) {
+      val leaseSliceDetails = Seq(
+        SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
+        SliceDetails(from = 150000, to = None,         rate = 1, taxDue = 1500)
+      )
+
+      private val res = leaseholdMixedNonResMar2008toMar2016Result(
+        leaseTaxDue = 1500, leaseSliceDetails = leaseSliceDetails,
+        premTaxDue = 40000, premRate = 4, npv = 300000)
+
+      service.leaseholdMixedNonResMar2008toMar2016(
+        leaseholdMixedNonResMar2008toMar2016Request(1000000)) shouldBe res
+    }
+  }
+
   "eligibleForZeroRate" must {
 
     def testRequest(
