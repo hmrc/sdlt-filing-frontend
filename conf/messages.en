@@ -1101,3 +1101,8 @@ land.removeLand.change.hidden                                                  =
 land.address.checkYourAnswersLabel                                        = Property Address
 land.address.change.hidden                                                = Land address
 land.checkYourAnswers.address.missing                                        = Enter land address
+
+taxCalcTest.effectiveDate.error.invalid                                             = The effective date must be a real date
+taxCalcTest.effectiveDate.error.required.all                                        = Enter the effective date
+taxCalcTest.effectiveDate.error.required.two                                        = The effective date must include a {0} and {1}
+taxCalcTest.effectiveDate.error.required                                            = The effective date must include a {0}

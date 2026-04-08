@@ -14,48 +14,61 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.taxCalculation.TaxCalcTestFormData
+@import views.html.components._
 
 @this(
     layout: templates.Layout,
+    h1: h1,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukSelect: GovukSelect,
+    govukDateInput: GovukDateInput,
+    govukRadios: GovukRadios,
     govukButton: GovukButton
 )
 
-@(form: Form[_])(implicit request: Request[_], messages: Messages)
+@(form: Form[TaxCalcTestFormData])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = "SDLT Tax Calculation Test", showBackLink = false, showSignOut = false) {
+@optionalLeaseDate(prefix: String, legendText: String) = {
+    @govukDateInput(DateInput(
+        id = s"lease-$prefix",
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(content = Text(legendText), classes = "govuk-fieldset__legend"))
+        )),
+        hint = Some(Hint(content = Text("For example, 27 3 2024"))),
+        items = Seq(
+            InputItem(id = s"lease.${prefix}Day",   name = s"lease.${prefix}Day",   label = Some("Day"),   classes = "govuk-input--width-2", value = form(s"lease.${prefix}Day").value),
+            InputItem(id = s"lease.${prefix}Month", name = s"lease.${prefix}Month", label = Some("Month"), classes = "govuk-input--width-2", value = form(s"lease.${prefix}Month").value),
+            InputItem(id = s"lease.${prefix}Year",  name = s"lease.${prefix}Year",  label = Some("Year"),  classes = "govuk-input--width-4", value = form(s"lease.${prefix}Year").value)
+        )
+    ))
+}
+
+@layout(pageTitle = title(form, "SDLT Tax Calculation Test"), showBackLink = false, showSignOut = false) {
 
     <h1 class="govuk-heading-l">SDLT Tax Calculation Test</h1>
-    <p class="govuk-body">Use this form to test the SDLT calculation service with custom user answers.</p>
+    <p class="govuk-body">Use this form to test the SDLT calculation service with custom inputs.</p>
 
     @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummary(
-            title = Text("There is a problem"),
-            errorList = form.errors.map(e => ErrorLink(
-                href = Some(s"#${e.key}"),
-                content = Text(e.message)
-            ))
-        ))
+        @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("effectiveDate" -> "effectiveDate.day")))
     }
 
-    @formHelper(action = controllers.routes.TaxCalculationTestController.onSubmit(), Symbol("novalidate") -> "novalidate") {
+    @formHelper(action = controllers.routes.TaxCalculationTestController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         <h2 class="govuk-heading-m">Land details</h2>
 
         @govukSelect(Select(
             id = "propertyType",
             name = "propertyType",
-            label = Label(content = Text("Property type")),
+            label = Label(content = Text("Property type")).asPageHeading(),
             items = Seq(
                 SelectItem(value = Some(""), text = "Select...", selected = form("propertyType").value.isEmpty),
-                SelectItem(value = Some("01"), text = "01 - Residential",    selected = form("propertyType").value.contains("01")),
-                SelectItem(value = Some("02"), text = "02 - Mixed",          selected = form("propertyType").value.contains("02")),
+                SelectItem(value = Some("01"), text = "01 - Residential",     selected = form("propertyType").value.contains("01")),
+                SelectItem(value = Some("02"), text = "02 - Mixed",           selected = form("propertyType").value.contains("02")),
                 SelectItem(value = Some("03"), text = "03 - Non-residential", selected = form("propertyType").value.contains("03")),
-                SelectItem(value = Some("04"), text = "04 - Additional",     selected = form("propertyType").value.contains("04"))
+                SelectItem(value = Some("04"), text = "04 - Additional",      selected = form("propertyType").value.contains("04"))
             ),
             errorMessage = form("propertyType").error.map(e => ErrorMessage(content = Text(e.message)))
         ))
@@ -66,9 +79,9 @@
             label = Label(content = Text("Interest created/transferred")),
             items = Seq(
                 SelectItem(value = Some(""), text = "Select...", selected = form("interestCode").value.isEmpty),
-                SelectItem(value = Some("FG"), text = "FG - Freehold granted",     selected = form("interestCode").value.contains("FG")),
-                SelectItem(value = Some("FP"), text = "FP - Freehold purchased",   selected = form("interestCode").value.contains("FP")),
-                SelectItem(value = Some("FT"), text = "FT - Freehold transferred", selected = form("interestCode").value.contains("FT")),
+                SelectItem(value = Some("FG"), text = "FG - Freehold granted",      selected = form("interestCode").value.contains("FG")),
+                SelectItem(value = Some("FP"), text = "FP - Freehold purchased",    selected = form("interestCode").value.contains("FP")),
+                SelectItem(value = Some("FT"), text = "FT - Freehold transferred",  selected = form("interestCode").value.contains("FT")),
                 SelectItem(value = Some("LG"), text = "LG - Leasehold granted",     selected = form("interestCode").value.contains("LG")),
                 SelectItem(value = Some("LP"), text = "LP - Leasehold purchased",   selected = form("interestCode").value.contains("LP")),
                 SelectItem(value = Some("LT"), text = "LT - Leasehold transferred", selected = form("interestCode").value.contains("LT"))
@@ -78,14 +91,13 @@
 
         <h2 class="govuk-heading-m">Transaction details</h2>
 
-        @govukInput(Input(
-            id = "effectiveDate",
-            name = "effectiveDate",
-            label = Label(content = Text("Effective date")),
-            hint = Some(Hint(content = Text("Format: yyyy-MM-dd, e.g. 2024-04-01"))),
-            value = form("effectiveDate").value,
-            errorMessage = form("effectiveDate").error.map(e => ErrorMessage(content = Text(e.message)))
-        ))
+        @govukDateInput(
+            DateViewModel(
+                field  = form("effectiveDate"),
+                legend = LegendViewModel("Effective date")
+            )
+            .withHint(HintViewModel("For example, 27 3 2024"))
+        )
 
         @govukInput(Input(
             id = "totalConsideration",
@@ -94,90 +106,133 @@
             hint = Some(Hint(content = Text("Enter amount in pounds, e.g. 250000"))),
             value = form("totalConsideration").value,
             inputmode = Some("decimal"),
+            prefix = Some(PrefixOrSuffix(content = Text("£"))),
             errorMessage = form("totalConsideration").error.map(e => ErrorMessage(content = Text(e.message)))
         ))
 
-        @govukSelect(Select(
-            id = "isLinked",
-            name = "isLinked",
-            label = Label(content = Text("Is this a linked transaction?")),
-            items = Seq(
-                SelectItem(value = Some(""), text = "Not specified", selected = form("isLinked").value.isEmpty),
-                SelectItem(value = Some("YES"), text = "YES", selected = form("isLinked").value.contains("YES")),
-                SelectItem(value = Some("NO"),  text = "NO",  selected = form("isLinked").value.contains("NO"))
-            )
-        ))
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("isLinked"),
+                legend = LegendViewModel("Is this a linked transaction?"),
+                items  = Seq(
+                    RadioItem(value = Some("Yes"), content = Text("Yes"), checked = form("isLinked").value.contains("Yes")),
+                    RadioItem(value = Some("No"),  content = Text("No"),  checked = form("isLinked").value.contains("No"))
+                )
+            ).withCssClass("govuk-radios--inline")
+        )
+
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("isMultipleLand"),
+                legend = LegendViewModel("Is this transaction over multiple land parcels?"),
+                items  = Seq(
+                    RadioItem(value = Some("Yes"), content = Text("Yes"), checked = form("isMultipleLand").value.contains("Yes")),
+                    RadioItem(value = Some("No"),  content = Text("No"),  checked = form("isMultipleLand").value.contains("No"))
+                )
+            ).withCssClass("govuk-radios--inline")
+        )
 
         <h2 class="govuk-heading-m">Purchaser details</h2>
 
-        @govukSelect(Select(
-            id = "purchaserIsCompany",
-            name = "purchaserIsCompany",
-            label = Label(content = Text("Is the purchaser a company?")),
-            hint = Some(Hint(content = Text("Used to determine 'individual' flag for residential properties"))),
-            items = Seq(
-                SelectItem(value = Some(""), text = "Not specified", selected = form("purchaserIsCompany").value.isEmpty),
-                SelectItem(value = Some("YES"), text = "YES", selected = form("purchaserIsCompany").value.contains("YES")),
-                SelectItem(value = Some("NO"),  text = "NO",  selected = form("purchaserIsCompany").value.contains("NO"))
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("purchaserIsCompany"),
+                legend = LegendViewModel("Is the purchaser a company?"),
+                items  = Seq(
+                    RadioItem(value = Some("Yes"), content = Text("Yes"), checked = form("purchaserIsCompany").value.contains("Yes")),
+                    RadioItem(value = Some("No"),  content = Text("No"),  checked = form("purchaserIsCompany").value.contains("No"))
+                )
+            ).withCssClass("govuk-radios--inline")
+        )
+
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("firstTimeBuyer"),
+                legend = LegendViewModel("First time buyer?"),
+                items  = Seq(
+                    RadioItem(value = Some("Yes"), content = Text("Yes"), checked = form("firstTimeBuyer").value.contains("Yes")),
+                    RadioItem(value = Some("No"),  content = Text("No"),  checked = form("firstTimeBuyer").value.contains("No"))
+                )
+            ).withCssClass("govuk-radios--inline")
+        )
+
+        @h1("About UK residency")
+
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("isNonUkResident"),
+                legend = LegendViewModel("Are any of the purchasers non-UK residents?").asPageSubHeading(),
+                items  = Seq(
+                    RadioItem(value = Some("Yes"), content = Text("Yes"), checked = form("isNonUkResident").value.contains("Yes")),
+                    RadioItem(value = Some("No"),  content = Text("No"),  checked = form("isNonUkResident").value.contains("No"))
+                )
             )
+        )
+
+        <h2 class="govuk-heading-m">Tax relief</h2>
+
+        @govukInput(Input(
+            id = "taxReliefCode",
+            name = "taxReliefCode",
+            label = Label(content = Text("Tax relief code")),
+            hint = Some(Hint(content = Text("Leave blank if no relief is claimed"))),
+            value = form("taxReliefCode").value,
+            inputmode = Some("numeric"),
+            classes = "govuk-input--width-4",
+            errorMessage = form("taxReliefCode").error.map(e => ErrorMessage(content = Text(e.message)))
         ))
 
-        <h2 class="govuk-heading-m">Residency</h2>
-
-        @govukSelect(Select(
-            id = "isNonUkResident",
-            name = "isNonUkResident",
-            label = Label(content = Text("Is a non-UK resident involved?")),
-            items = Seq(
-                SelectItem(value = Some(""), text = "Not specified", selected = form("isNonUkResident").value.isEmpty),
-                SelectItem(value = Some("YES"), text = "YES", selected = form("isNonUkResident").value.contains("YES")),
-                SelectItem(value = Some("NO"),  text = "NO",  selected = form("isNonUkResident").value.contains("NO"))
-            )
-        ))
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("isPartialRelief"),
+                legend = LegendViewModel("Is this partial relief?"),
+                items  = Seq(
+                    RadioItem(value = Some("Yes"), content = Text("Yes"), checked = form("isPartialRelief").value.contains("Yes")),
+                    RadioItem(value = Some("No"),  content = Text("No"),  checked = form("isPartialRelief").value.contains("No"))
+                )
+            ).withCssClass("govuk-radios--inline")
+        )
 
         <h2 class="govuk-heading-m">Lease details (leasehold only)</h2>
         <p class="govuk-body">Required when interest code is LG, LP or LT.</p>
 
-        @govukInput(Input(
-            id = "contractStartDate",
-            name = "contractStartDate",
-            label = Label(content = Text("Lease contract start date")),
-            hint = Some(Hint(content = Text("Format: yyyy-MM-dd, e.g. 2024-01-01"))),
-            value = form("contractStartDate").value,
-            errorMessage = form("contractStartDate").error.map(e => ErrorMessage(content = Text(e.message)))
-        ))
+        @optionalLeaseDate("contractStartDate", "Lease contract start date")
+
+        @optionalLeaseDate("contractEndDate", "Lease contract end date")
 
         @govukInput(Input(
-            id = "contractEndDate",
-            name = "contractEndDate",
-            label = Label(content = Text("Lease contract end date")),
-            hint = Some(Hint(content = Text("Format: yyyy-MM-dd, e.g. 2034-01-01"))),
-            value = form("contractEndDate").value,
-            errorMessage = form("contractEndDate").error.map(e => ErrorMessage(content = Text(e.message)))
-        ))
-
-        @govukInput(Input(
-            id = "startingRent",
-            name = "startingRent",
-            label = Label(content = Text("Starting rent (£)")),
+            id = "lease.startingRent",
+            name = "lease.startingRent",
+            label = Label(content = Text("Starting rent / highest rent (£)")),
             hint = Some(Hint(content = Text("Annual rent amount, e.g. 12000"))),
-            value = form("startingRent").value,
+            value = form("lease.startingRent").value,
             inputmode = Some("decimal"),
-            errorMessage = form("startingRent").error.map(e => ErrorMessage(content = Text(e.message)))
+            prefix = Some(PrefixOrSuffix(content = Text("£"))),
+            errorMessage = form("lease.startingRent").error.map(e => ErrorMessage(content = Text(e.message)))
         ))
 
-        @govukSelect(Select(
-            id = "isAnnualRentOver1000",
-            name = "isAnnualRentOver1000",
-            label = Label(content = Text("Is annual rent over £1,000?")),
-            hint = Some(Hint(content = Text("Used for mixed/non-residential leasehold"))),
-            items = Seq(
-                SelectItem(value = Some(""), text = "Not specified", selected = form("isAnnualRentOver1000").value.isEmpty),
-                SelectItem(value = Some("true"),  text = "Yes", selected = form("isAnnualRentOver1000").value.contains("true")),
-                SelectItem(value = Some("false"), text = "No",  selected = form("isAnnualRentOver1000").value.contains("false"))
-            )
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("lease.isAnnualRentOver1000"),
+                legend = LegendViewModel("Is annual rent over £1,000?"),
+                items  = Seq(
+                    RadioItem(value = Some("true"),  content = Text("Yes"), checked = form("lease.isAnnualRentOver1000").value.contains("true")),
+                    RadioItem(value = Some("false"), content = Text("No"),  checked = form("lease.isAnnualRentOver1000").value.contains("false"))
+                )
+            ).withCssClass("govuk-radios--inline")
+        )
+
+        @govukInput(Input(
+            id = "lease.declaredNpv",
+            name = "lease.declaredNpv",
+            label = Label(content = Text("Declared NPV (£)")),
+            hint = Some(Hint(content = Text("Net present value of the lease, e.g. 150000"))),
+            value = form("lease.declaredNpv").value,
+            inputmode = Some("decimal"),
+            prefix = Some(PrefixOrSuffix(content = Text("£"))),
+            errorMessage = form("lease.declaredNpv").error.map(e => ErrorMessage(content = Text(e.message)))
         ))
 
-        @govukButton(Button(content = Text("Calculate SDLT")))
+        @govukButton(ButtonViewModel("Calculate SDLT"))
     }
 }

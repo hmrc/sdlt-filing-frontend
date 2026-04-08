@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
-@import models.taxCalculation.{CalculationResponse, SliceDetails, TaxTypes}
-@import controllers.TaxCalcTestFormData
+@import models.taxCalculation.SliceDetails
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import viewmodels.taxCalculation.TaxCalcResultViewModel
 
 @this(
     layout: templates.Layout,
@@ -24,7 +24,7 @@
     govukTable: GovukTable
 )
 
-@(response: CalculationResponse, input: TaxCalcTestFormData, requestJson: String, responseJson: String)(implicit request: Request[_], messages: Messages)
+@(viewModel: TaxCalcResultViewModel)(implicit request: Request[_], messages: Messages)
 
 @formatAmount(amount: Int) = @{ s"£${"%,d".format(amount)}" }
 
@@ -36,53 +36,28 @@
               .getOrElse(s"Above ${formatAmount(slice.from)}+")
 }
 
-@propertyTypeLabel(code: String) = @{ code match {
-    case "01" => "01 - Residential"
-    case "02" => "02 - Mixed"
-    case "03" => "03 - Non-residential"
-    case "04" => "04 - Additional"
-    case other => other
-}}
-
-@interestCodeLabel(code: String) = @{ code match {
-    case "FG" => "FG - Freehold granted"
-    case "FP" => "FP - Freehold purchased"
-    case "FT" => "FT - Freehold transferred"
-    case "LG" => "LG - Leasehold granted"
-    case "LP" => "LP - Leasehold purchased"
-    case "LT" => "LT - Leasehold transferred"
-    case other => other
-}}
-
-@result = @{ response.result.headOption }
-@premiumCalcs = @{ result.toSeq.flatMap(_.taxCalcs.filter(_.taxType == TaxTypes.premium)) }
-@rentCalcs = @{ result.toSeq.flatMap(_.taxCalcs.filter(_.taxType == TaxTypes.rent)) }
-@premiumTaxDue = @{ premiumCalcs.map(_.taxDue).sum }
-@npvTaxDue = @{ result.flatMap(_.npv).getOrElse(rentCalcs.map(_.taxDue).sum) }
-@totalTax = @{ result.map(_.totalTax).getOrElse(0) }
-
 @layout(pageTitle = "Tax calculation", showBackLink = false, showSignOut = false) {
 
     <details class="govuk-details" style="background:#f3f2f1; border-left:4px solid #1d70b8; padding:1rem; margin-bottom:2rem;">
         <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text" style="font-family:monospace; font-weight:bold;">
-                🔍 Debug: request &amp; response JSON
+                Debug: request &amp; response JSON
             </span>
         </summary>
         <div class="govuk-details__text" style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
             <div style="flex:1; min-width:300px;">
                 <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Request (SdltCalculationRequest)</p>
-                <pre style="background:#0b0c0c; color:#f3f2f1; padding:1rem; overflow:auto; font-size:0.8rem; border-radius:4px; max-height:400px;">@requestJson</pre>
+                <pre style="background:#0b0c0c; color:#f3f2f1; padding:1rem; overflow:auto; font-size:0.8rem; border-radius:4px; max-height:400px;">@viewModel.requestJson</pre>
             </div>
             <div style="flex:1; min-width:300px;">
                 <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Response (CalculationResponse)</p>
-                <pre style="background:#0b0c0c; color:#f3f2f1; padding:1rem; overflow:auto; font-size:0.8rem; border-radius:4px; max-height:400px;">@responseJson</pre>
+                <pre style="background:#0b0c0c; color:#f3f2f1; padding:1rem; overflow:auto; font-size:0.8rem; border-radius:4px; max-height:400px;">@viewModel.responseJson</pre>
             </div>
         </div>
     </details>
 
     <span class="govuk-caption-l">Tax calculation</span>
-    <h1 class="govuk-heading-l">Calculated SDLT due is @formatAmount(totalTax)</h1>
+    <h1 class="govuk-heading-l">Calculated SDLT due is @formatAmount(viewModel.totalTax)</h1>
     <p class="govuk-body">The amount of SDLT due is based on the information you have entered when filing this return.</p>
 
     <h2 class="govuk-heading-m">Tax calculation</h2>
@@ -90,15 +65,15 @@
     @govukSummaryList(SummaryList(rows = Seq(
         SummaryListRow(
             key   = Key(Text("Effective date of transaction")),
-            value = Value(Text(input.effectiveDate))
+            value = Value(Text(viewModel.effectiveDate))
         ),
         SummaryListRow(
             key   = Key(Text("Tax due on total premium payable")),
-            value = Value(Text(formatAmount(premiumTaxDue)))
+            value = Value(Text(formatAmount(viewModel.premiumTaxDue)))
         ),
         SummaryListRow(
             key   = Key(Text("Tax due on NPV")),
-            value = Value(Text(formatAmount(npvTaxDue)))
+            value = Value(Text(formatAmount(viewModel.npvTaxDue)))
         ),
         SummaryListRow(
             key   = Key(Text("Relief claimed?")),
@@ -106,7 +81,7 @@
         ),
         SummaryListRow(
             key   = Key(Text("SDLT due")),
-            value = Value(Text(formatAmount(totalTax)))
+            value = Value(Text(formatAmount(viewModel.totalTax)))
         )
     )))
 
@@ -115,7 +90,7 @@
     @govukSummaryList(SummaryList(rows = Seq(
         SummaryListRow(
             key   = Key(Text("Type of transaction")),
-            value = Value(Text(interestCodeLabel(input.interestCode)))
+            value = Value(Text(viewModel.interestCodeLabel))
         ),
         SummaryListRow(
             key   = Key(Text("Are you claiming relief?")),
@@ -123,18 +98,18 @@
         ),
         SummaryListRow(
             key   = Key(Text("Type of property")),
-            value = Value(Text(propertyTypeLabel(input.propertyType)))
+            value = Value(Text(viewModel.propertyTypeLabel))
         ),
         SummaryListRow(
             key   = Key(Text("Is this transaction linked to any others?")),
-            value = Value(Text(input.isLinked.getOrElse("No")))
+            value = Value(Text(viewModel.isLinked))
         )
     )))
 
-    @if(premiumCalcs.exists(_.slices.exists(_.nonEmpty))) {
+    @if(viewModel.premiumCalcs.exists(_.slices.exists(_.nonEmpty))) {
         <h2 class="govuk-heading-m">Total premium payable SDLT rates</h2>
 
-        @for(calc <- premiumCalcs; slices <- calc.slices if slices.nonEmpty) {
+        @for(calc <- viewModel.premiumCalcs; slices <- calc.slices if slices.nonEmpty) {
             @govukTable(Table(
                 head = Some(Seq(
                     HeadCell(content = Text("Description")),
@@ -156,10 +131,10 @@
         }
     }
 
-    @if(rentCalcs.exists(_.slices.exists(_.nonEmpty))) {
+    @if(viewModel.rentCalcs.exists(_.slices.exists(_.nonEmpty))) {
         <h2 class="govuk-heading-m">NPV SDLT rates</h2>
 
-        @for(calc <- rentCalcs; slices <- calc.slices if slices.nonEmpty) {
+        @for(calc <- viewModel.rentCalcs; slices <- calc.slices if slices.nonEmpty) {
             @govukTable(Table(
                 head = Some(Seq(
                     HeadCell(content = Text("Description")),
@@ -182,7 +157,7 @@
     }
 
     <p class="govuk-body govuk-!-font-weight-bold">Total SDLT due</p>
-    <p class="govuk-body">@formatAmount(totalTax)</p>
+    <p class="govuk-body">@formatAmount(viewModel.totalTax)</p>
 
     <p class="govuk-body">
         <a href="@controllers.routes.TaxCalculationTestController.onPageLoad()" class="govuk-link">Return to tax calculation</a>
