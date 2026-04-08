@@ -446,6 +446,22 @@ trait LeaseholdResultFixture {
       )
     )
 
+  def leaseholdMixedNonResMar2008toMar2016Result(
+                                                  leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],
+                                                  premTaxDue:  Int, premRate: Int,
+                                                  npv: Int): Result =
+    Result(
+      totalTax = leaseTaxDue + premTaxDue,
+      resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
+      resultHint = None,
+      npv = Some(npv),
+      taxCalcs = Seq(
+        basePremSlabDetails(premTaxDue, premRate),
+        baseLeaseSliceDetails(leaseTaxDue, leaseSliceDetails)
+          .copy(bandHeading = None, detailFooter = None, detailHeading = None)
+      )
+    )
+
 
   def leaseholdNonResidentialMar12toMar16PrevResult(
                                                  leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails],

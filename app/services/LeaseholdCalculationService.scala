@@ -127,6 +127,24 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     )
   }
 
+  def leaseholdMixedNonResMar2008toMar2016(request: Request): Result = {
+    val npv = getNPV("leaseholdMixedNonResMar2008toMar2016", request)
+
+    val premiumResult = baseCalculationService.calculateTaxDueSlab(
+      request.premium,
+      leaseholdMixedNonResMar2008toMar2016Below1kRentRates.slabs
+    )
+
+    val leasedResult = baseCalculationService.calculateTaxDueSlice(
+      npv,
+      leaseholdMixedNonResMar2008toMar2016Below1kRentNPVRates.slices
+    )
+
+    LeaseholdResultFactory.leaseholdRightToBuyBelow1kRentRes(
+      premiumResult = premiumResult, leaseResult = leasedResult, npv
+    )
+  }
+
   //HRAD
 
   def leaseholdResidentialAddPropApr16Onwards(request: Request): Seq[Result] = {
