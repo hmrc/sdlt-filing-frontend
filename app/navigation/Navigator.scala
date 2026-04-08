@@ -206,7 +206,7 @@ class Navigator @Inject()() {
 
   private def isTransactionSection(page: Page): Boolean = page match {
 
-    case TypeOfTransactionPage | ConfirmTypeOfTransactionPage => true
+    case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage => true
 
     case _ => false
   }
@@ -217,6 +217,9 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.ConfirmTypeOfTransactionController.onPageLoad()
     case TypeOfTransactionPage =>
       _ => controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)
+
+    case TransactionEffectiveDatePage =>
+      _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode) // TODO DTR-2917 - Sprint 12 - configure routing to tr-3 page
 
     case _ => _ => routes.IndexController.onPageLoad()
   }

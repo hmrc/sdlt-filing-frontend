@@ -1154,6 +1154,23 @@ transaction.typeOfTransaction.heading                                           
 transaction.typeOfTransaction.checkYourAnswersLabel                                 = What type of transaction is this?
 transaction.typeOfTransaction.error.required                                        = Select the type of transaction
 
+transaction.transactionEffectiveDate.title                                           = Effective date of the transaction - About the transaction
+transaction.transactionEffectiveDate.heading                                         = Effective date of the transaction
+transaction.transactionEffectiveDate.subheading                                      = What is the effective date of the transaction?
+transaction.transactionEffectiveDate.details.summary                                 = About substantial performance
+transaction.transactionEffectiveDate.details.content                                 = The effective date of transaction can be brought forward if the contract is substantially performed prior to completion. Substantial performance occurs when the purchaser pays 90% or more of the total price, occupies 90% or more of the property, or pays any rent.
+transaction.transactionEffectiveDate.p                                               = This is typically the date when the transaction is legally completed. This means the land or property has changed ownership and the purchaser becomes liable to pay SDLT.
+transaction.transactionEffectiveDate.hint                                            = For example, 27 3 2023
+transaction.transactionEffectiveDate.checkYourAnswersLabel                           = Effective date of the transaction
+transaction.transactionEffectiveDate.error.required.all                              = Enter the effective date of the transaction
+transaction.transactionEffectiveDate.error.required.two                              = The effective date of transaction must include {0} and {1}
+transaction.transactionEffectiveDate.error.required                                  = The effective date of the transaction must include a {0}
+transaction.transactionEffectiveDate.error.invalid                                   = The effective date of the transaction must be a real date
+transaction.transactionEffectiveDate.change.hidden                                   = Effective date of the transaction
+transaction.transactionEffectiveDate.error.date.range.min                            = The effective date of transaction must be the same as or after 1 11 2003
+transaction.transactionEffectiveDate.error.date.range.max                            = The effective date of the transaction cannot be in the future
+transaction.transactionEffectiveDate.missing                                         = Provide Effective Date
+
 transaction.confirmTypeOfTransaction.title                                          = Confirm the type of transaction - About the transaction
 transaction.confirmTypeOfTransaction.heading                                        = Confirm the type of transaction
 transaction.confirmTypeOfTransaction.subHeading                                     = Is this the correct type of transaction?

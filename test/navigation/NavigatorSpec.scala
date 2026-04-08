@@ -24,7 +24,7 @@ import pages.land.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.transaction.TypeOfTransactionPage
+import pages.transaction.{TypeOfTransactionPage, TransactionEffectiveDatePage}
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import pages.vendor.*
 import pages.vendorAgent.*
@@ -285,6 +285,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from TypeOfTransactionPage to Are you sure you want to change the transaction type page" in { //TODO - DTR-2994 - SPRINT 12
           navigator.nextPage(TypeOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)
+        }
+
+        "go from TransactionTypePage to contract or conclusion of missives page" in { // TODO DTR-2917 - Sprint 12 - configure routing to tr-3 page
+          navigator.nextPage(TransactionEffectiveDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
         }
       }
     }
