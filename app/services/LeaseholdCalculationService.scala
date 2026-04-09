@@ -1003,4 +1003,11 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
     LeaseholdResultFactory.leaseholdReliefFrom15PercentRateRightToBuyMixedOnOrAfterMarch2016Res(leaseResult, premiumResult, npv)
   }
 
+  def leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(request: Request): Result = {
+    val npv = getNPV("leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20", request)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20PremiumRates.slices)
+    val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20NPVRates.slices)
+    LeaseholdResultFactory.leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(leaseResult, premiumResult, npv)
+  }
+
 }

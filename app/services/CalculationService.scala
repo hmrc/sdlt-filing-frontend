@@ -537,6 +537,11 @@ class CalculationService @Inject()(val leaseCalculationService: LeaseholdCalcula
             CalculationResponse(Seq(
               leaseCalculationService.leaseholdResidentialFTBWithMultipleLands
             ))
+          case (`leasehold`, Residential, FirstTimeBuyersRelief, Some(false))
+            if isAfterNov2017AndBeforeJul20(date) && request.isMultipleLand.contains(true) =>
+             CalculationResponse(Seq(
+               leaseCalculationService.leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(request)
+             ))
           case (`leasehold`, Residential, FirstTimeBuyersRelief, _)
             if isAfterMar2010AndBeforeMar2012(date) =>
             CalculationResponse(Seq(

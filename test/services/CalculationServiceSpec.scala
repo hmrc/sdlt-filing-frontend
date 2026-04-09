@@ -78,7 +78,10 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
       createResult(msg)
     )
 
-    def createRequest(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, taxReliefCode: Option[TaxReliefCode] = None, isLinked: Option[Boolean] = None, isAddProp: Boolean = false, isPartialRelief: Option[Boolean] = None, isMultipleLand: Option[Boolean] = None, relevantRent:Option[BigDecimal]=None, leaseDetails:Option[LeaseDetails] = None) =  Request(
+    def createRequest(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, taxReliefCode: Option[TaxReliefCode] = None,
+                      isLinked: Option[Boolean] = None, isAddProp: Boolean = false, isPartialRelief: Option[Boolean] = None,
+                      isMultipleLand: Option[Boolean] = None, relevantRent:Option[BigDecimal]=None,
+                      leaseDetails:Option[LeaseDetails] = None, declaredNpv: Option[BigDecimal] = None) =  Request(
       holdingType = hType,
       propertyType = pType,
       effectiveDate = eDate,
@@ -111,7 +114,8 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         )
       ),
       firstTimeBuyer = None,
-      isMultipleLand = isMultipleLand
+      isMultipleLand = isMultipleLand,
+      declaredNpv = declaredNpv
     )
     def createRequestWithPropDetails(hType: HoldingTypes.Value, pType: PropertyTypes.Value, eDate: LocalDate, premiumAmount: BigDecimal= 0, nonUKResident: Option[Boolean] = None) =  Request(
       holdingType = hType,
@@ -3340,6 +3344,50 @@ class CalculationServiceSpec extends PlaySpec with MockitoSugar with BeforeAndAf
         testCalculationService.calculateTax(testRequest).result mustBe Seq(result)
 
         verify(mockLeaseholdCalculationService, times(1)).leaseholdMixedNonResMar2008toMar2016(any())
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+
+      }
+    }
+
+    //SDLT - Tax Calc Case - Case 58
+    "select leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20 function" when {
+      "property type is Residential,LeaseHold, isMultipleLand = true, FirstTimeBuyersRelief , isLinked = false, and effective date is on 22ndNovember2017" in {
+        val testRequest = createRequest(leasehold, residential, LocalDate.of(2017, 11, 22), Some(FirstTimeBuyersRelief), isLinked = Some(false), isMultipleLand = Some(true))
+
+        val result = createResult("leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20")
+
+        when(mockLeaseholdCalculationService.leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(any())
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+      "property type is Residential,LeaseHold, isMultipleLand = true, FirstTimeBuyersRelief , isLinked = false, and effective date is on 11thMarch2019" in {
+        val testRequest = createRequest(leasehold, residential, LocalDate.of(2019, 3, 11), Some(FirstTimeBuyersRelief), isLinked = Some(false), isMultipleLand = Some(true))
+
+        val result = createResult("leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20")
+
+        when(mockLeaseholdCalculationService.leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(any())
+
+        verifyNoMoreInteractions(mockLeaseholdCalculationService)
+      }
+      "property type is Residential,LeaseHold, isMultipleLand = true, FirstTimeBuyersRelief , isLinked = false, and effective date is on 7thJuly2020" in {
+        val testRequest = createRequest(leasehold, residential, LocalDate.of(2020,7,7), Some(FirstTimeBuyersRelief), isLinked = Some(false), isMultipleLand = Some(true))
+
+        val result = createResult("leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20")
+
+        when(mockLeaseholdCalculationService.leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(any())).thenReturn(result)
+
+        testCalculationService.calculateTax(testRequest) shouldBe CalculationResponse(Seq(result))
+
+        verify(mockLeaseholdCalculationService, times(1)).leaseHoldResidentialFirstTimeBuyerReliefAfterNov2017AndBeforeJul20(any())
 
         verifyNoMoreInteractions(mockLeaseholdCalculationService)
 
