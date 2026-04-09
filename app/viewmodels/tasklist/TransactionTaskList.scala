@@ -31,11 +31,11 @@ object TransactionTaskList {
     TaskListSection(
       heading = messages("tasklist.transactionQuestion.heading"),
       rows = Seq(
-        buildTransactionRow(fullReturn)
+        buildTransactionRow(fullReturn).build(fullReturn)
       )
     )
 
-  def buildTransactionRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildTransactionRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
     
     val url = controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
     
@@ -51,7 +51,7 @@ object TransactionTaskList {
       tagId = "transactionQuestionDetailRow",
       checks = scheme => Seq(fullReturn.transaction.isDefined),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
 
 }

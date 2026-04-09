@@ -31,11 +31,11 @@ object LandTaskList {
     TaskListSection(
       heading = messages("tasklist.landQuestion.heading"),
       rows = Seq(
-        buildLandRow(fullReturn)
+        buildLandRow(fullReturn).build(fullReturn)
       )
     )
 
-  def buildLandRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildLandRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
     val mainLandID = fullReturn.returnInfo.flatMap(_.mainLandID)
 
     val url = fullReturn.land match {
@@ -58,7 +58,7 @@ object LandTaskList {
       tagId = "landQuestionDetailRow",
       checks = scheme => Seq(fullReturn.land.exists(_.nonEmpty)),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
 
 }

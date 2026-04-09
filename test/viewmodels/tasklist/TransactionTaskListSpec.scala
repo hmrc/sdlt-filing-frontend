@@ -78,7 +78,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete).build(fullReturnComplete)
 
           result mustBe a[TaskListSectionRow]
         }
@@ -103,7 +103,7 @@ class TransactionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete).build(fullReturnComplete)
 
           messagesInstance(result.messageKey) mustBe messagesInstance("tasklist.transactionQuestion.details")
         }
@@ -116,7 +116,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete).build(fullReturnComplete)
 
           result.status mustBe TLCompleted
         }
@@ -128,7 +128,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn)
+          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn).build(emptyFullReturn)
 
           result.status mustBe TLCannotStart
         }

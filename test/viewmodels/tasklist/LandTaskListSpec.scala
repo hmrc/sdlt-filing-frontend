@@ -85,7 +85,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnComplete)
+          val result = LandTaskList.buildLandRow(fullReturnComplete).build(fullReturnComplete)
 
           result mustBe a[TaskListSectionRow]
         }
@@ -110,7 +110,7 @@ class LandTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnComplete)
+          val result = LandTaskList.buildLandRow(fullReturnComplete).build(fullReturnComplete)
 
           messagesInstance(result.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
         }
@@ -122,7 +122,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnMissingLand)
+          val result = LandTaskList.buildLandRow(fullReturnMissingLand).build(fullReturnMissingLand)
 
           result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
@@ -134,7 +134,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnIncompleteLand)
+          val result = LandTaskList.buildLandRow(fullReturnIncompleteLand).build(fullReturnIncompleteLand)
 
           result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
@@ -146,7 +146,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand)
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand).build(fullReturnCompleteWithOneMainLand)
 
           result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
         }
@@ -158,7 +158,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnCompleteWithMultipleLands)
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithMultipleLands).build(fullReturnCompleteWithMultipleLands)
 
           result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
         }
@@ -170,7 +170,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnComplete)
+          val result = LandTaskList.buildLandRow(fullReturnComplete).build(fullReturnComplete)
 
           result.status mustBe TLCompleted
         }
@@ -182,7 +182,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(emptyFullReturn)
+          val result = LandTaskList.buildLandRow(emptyFullReturn).build(emptyFullReturn)
 
           result.status mustBe TLCannotStart
         }
