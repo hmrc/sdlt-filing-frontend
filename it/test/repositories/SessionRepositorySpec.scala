@@ -4,8 +4,7 @@
  */
 
 package repositories
-
-import config.scalabuild.FrontendAppConfig
+import config.FrontendAppConfig
 import models.scalabuild.UserAnswers
 import org.mockito.Mockito.when
 import org.mongodb.scala.model.Filters

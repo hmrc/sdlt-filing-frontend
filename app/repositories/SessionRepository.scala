@@ -4,8 +4,7 @@
  */
 
 package repositories
-
-import config.scalabuild.FrontendAppConfig
+import config.FrontendAppConfig
 import models.scalabuild.UserAnswers
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._

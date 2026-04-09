@@ -5,7 +5,7 @@
 
 package services.scalabuild
 
-import Errors.{ResultServiceError, ServiceError}
+import errors.{ResultServiceError, ServiceError}
 import controllers.scalabuild.routes
 import enums.TaxTypes.{premium, rent}
 import enums.{CalcTypes, TaxTypes}

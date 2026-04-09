@@ -4,7 +4,7 @@
  */
 
 package services.scalabuild
-import Errors.{ResultServiceError, ServiceError}
+import errors.{ResultServiceError, ServiceError}
 import enums.{CalcTypes, TaxTypes}
 import jakarta.inject.Singleton
 import models.CalculationDetails
