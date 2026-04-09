@@ -21,14 +21,12 @@ import constants.FullReturnConstants
 import controllers.routes
 import forms.ukResidency.CloseCompanyFormProvider
 import models.{FullReturn, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ukResidency.CloseCompanyPage
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
@@ -37,8 +35,6 @@ import views.html.ukResidency.CloseCompanyView
 import scala.concurrent.Future
 
 class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new CloseCompanyFormProvider()
   val form = formProvider()
@@ -115,22 +111,21 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.routes.JourneyRecoveryController.onPageLoad().url
+          controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to CrownEmploymentRelief when yes is submitted and non-UK resident is yes" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      val userAnswers = emptyUserAnswers.set(pages.ukResidency.NonUkResidentPurchaserPage, true).success.value
+
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -141,24 +136,49 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
         val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(uaCaptor.capture())
         uaCaptor.getValue.get(CloseCompanyPage) mustBe Some(true)
       }
     }
 
-    "must redirect to ReturnTaskList when no is submitted" in {
+    "must redirect to CYA when yes is submitted and non-UK resident is no" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      val userAnswers = emptyUserAnswers.set(pages.ukResidency.NonUkResidentPurchaserPage, false).success.value
+
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, closeCompanyRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must redirect to CrownEmploymentRelief when no is submitted and non-UK resident is yes" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers.set(pages.ukResidency.NonUkResidentPurchaserPage, true).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
@@ -169,10 +189,35 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
         val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(uaCaptor.capture())
         uaCaptor.getValue.get(CloseCompanyPage) mustBe Some(false)
+      }
+    }
+
+    "must redirect to CYA when no is submitted and non-UK resident is no" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers.set(pages.ukResidency.NonUkResidentPurchaserPage, false).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, closeCompanyRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 

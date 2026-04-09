@@ -21,15 +21,13 @@ import constants.FullReturnConstants
 import constants.FullReturnConstants.minimalFullReturn
 import controllers.routes
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
-import models.{FullReturn, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{CheckMode, FullReturn, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ukResidency.NonUkResidentPurchaserPage
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
@@ -38,8 +36,6 @@ import views.html.ukResidency.NonUkResidentPurchaserView
 import scala.concurrent.Future
 
 class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
-
-  def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new NonUkResidentPurchaserFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -112,11 +108,11 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url // TODO - DTR-2511 - SPRINT-12 - change to residency CYA page
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 
-    "must redirect to Journey Recovery on a GET when fullReturn is None" in {
+    "must redirect to Residency CYA on a GET when fullReturn is None" in {
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -128,7 +124,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -211,7 +207,6 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -224,7 +219,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url // TODO - DTR-2511 - SPRINT-12 - change to residency CYA page
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -250,6 +245,60 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to Crown Employment Relief in CheckMode when yes is submitted for company purchaser" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val checkModeRoute = controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, checkModeRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to CYA in CheckMode when no is submitted for company purchaser" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val checkModeRoute = controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, checkModeRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 
