@@ -18,10 +18,9 @@ package controllers.ukResidency
 
 import controllers.actions.*
 import forms.ukResidency.CloseCompanyFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import play.api.data.Form
-import navigation.Navigator
-import pages.ukResidency.CloseCompanyPage
+import pages.ukResidency.{CloseCompanyPage, NonUkResidentPurchaserPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -34,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class CloseCompanyController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
-                                         navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
@@ -58,7 +56,7 @@ class CloseCompanyController @Inject()(
         }
         Ok(view(preparedForm, mode))
       } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO - DTR-2511 - change to residency CYA page
+        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
       }
   }
 
@@ -74,10 +72,11 @@ class CloseCompanyController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CloseCompanyPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value)
-              Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
+            val isNonUkResident = updatedAnswers.get(NonUkResidentPurchaserPage).contains(true)
+            if (mode == NormalMode && isNonUkResident)
+              Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode))
             else
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2511 - change to residency CYA page
+              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
           }
       )
   }

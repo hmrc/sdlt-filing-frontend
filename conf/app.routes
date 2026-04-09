@@ -395,6 +395,9 @@ POST        /about-UK-residency/close-companies                                 
 GET         /about-UK-residency/close-companies/change                                               controllers.ukResidency.CloseCompanyController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-UK-residency/close-companies/change                                               controllers.ukResidency.CloseCompanyController.onSubmit(mode: Mode = CheckMode)
 
+GET         /about-UK-residency/check-answers                                                        controllers.ukResidency.UkResidencyCheckYourAnswersController.onPageLoad()
+POST        /about-UK-residency/check-answers                                                        controllers.ukResidency.UkResidencyCheckYourAnswersController.onSubmit()
+
 GET        /about-the-land/remove-land-or-property                                                   controllers.land.RemoveLandController.onPageLoad()
 POST       /about-the-land/remove-land-or-property                                                   controllers.land.RemoveLandController.onSubmit()
 
