@@ -294,9 +294,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionEffectiveDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode)
         }
 
-        // TODO - DTR-2920 - change to redirect to TransactionEnterDateOfContract
-        "go from TransactionAddContractDatePage to TransactionEnterDateOfContract page" in {
-          navigator.nextPage(TransactionAddDateOfContractPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode)
+        "go from TransactionAddContractDatePage to TransactionDateOfContractPage page" in {
+          navigator.nextPage(TransactionAddDateOfContractPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(NormalMode)
+        }
+        // TODO DTR-2923: Redirect to total consideration of transaction tr-4
+        "go from TransactionDateOfContractPage to total consideration of transaction page" in {
+          navigator.nextPage(TransactionDateOfContractPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(NormalMode)
         }
 
         "go from TransactionVatIncludedPage to tr-5a Amount of VAT page" in { //TODO - DTR-2942 - SPRINT 13 - What is the amount of VAT update route
