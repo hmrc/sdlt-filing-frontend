@@ -114,44 +114,43 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
     }
 
   private def buildLeaseDetails(lease: Lease, transaction: Transaction, effectiveDate: LocalDate): Either[String, Option[LeaseDetails]] =
-    Option.when(transaction.transactionDescription.contains("L"))(
-      for {
-        contractStartDate   <- lease.contractStartDate.toRight("contractStartDate not found in Lease")
-        contractEndDate     <- lease.contractEndDate.toRight("contractEndDate not found in Lease")
-        startDate           <- Try(LocalDate.parse(contractStartDate)).toOption.toRight("Failed to parse contractStartDate")
-        endDate             <- Try(LocalDate.parse(contractEndDate)).toOption.toRight("Failed to parse contractEndDate")
-        calculationStartDate = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
-        years                = Period.between(calculationStartDate, endDate.plusDays(1)).getYears
-        partialStart         = selectDate.plusYears(years)
-        days                 = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
-        yearsRequired        = if (years < 5 && days > 0) years + 1 else years
-      } yield Some(LeaseDetails(
-        startDateDay    = startDate.getDayOfMonth,
-        startDateMonth  = startDate.getMonthValue,
-        startDateYear   = startDate.getYear,
-        endDateDay      = endDate.getDayOfMonth,
-        endDateMonth    = endDate.getMonthValue,
-        endDateYear     = endDate.getYear,
-        leaseTerm       = LeaseTerm(
-          years = years,
-          days = days,
-          daysInPartialYear = 0
-        ),
-        year1Rent = 0,
-        year2Rent = Option.when(yearsRequired >= 2)(0),
-        year3Rent = Option.when(yearsRequired >= 3)(0),
-        year4Rent = Option.when(yearsRequired >= 4)(0),
-        year5Rent = Option.when(yearsRequired >= 5)(0)
-      ))
-    )
+    for {
+      contractStartDate   <- lease.contractStartDate.toRight("contractStartDate not found in Lease")
+      contractEndDate     <- lease.contractEndDate.toRight("contractEndDate not found in Lease")
+      startDate           <- Try(LocalDate.parse(contractStartDate)).toOption.toRight("Failed to parse contractStartDate")
+      endDate             <- Try(LocalDate.parse(contractEndDate)).toOption.toRight("Failed to parse contractEndDate")
+      calculationStartDate = if (effectiveDate.isAfter(startDate)) effectiveDate else startDate
+      years                = Period.between(calculationStartDate, endDate.plusDays(1)).getYears
+      partialStart         = calculationStartDate.plusYears(years)
+      days                 = ChronoUnit.DAYS.between(partialStart, endDate.plusDays(1)).toInt
+      yearsRequired        = if (years < 5 && days > 0) years + 1 else years
+      if transaction.transactionDescription.contains("L")
+    } yield Some(LeaseDetails(
+      startDateDay    = startDate.getDayOfMonth,
+      startDateMonth  = startDate.getMonthValue,
+      startDateYear   = startDate.getYear,
+      endDateDay      = endDate.getDayOfMonth,
+      endDateMonth    = endDate.getMonthValue,
+      endDateYear     = endDate.getYear,
+      leaseTerm       = LeaseTerm(
+        years = years,
+        days = days,
+        daysInPartialYear = 0
+      ),
+      year1Rent = 0,
+      year2Rent = Option.when(yearsRequired >= 2)(0),
+      year3Rent = Option.when(yearsRequired >= 3)(0),
+      year4Rent = Option.when(yearsRequired >= 4)(0),
+      year5Rent = Option.when(yearsRequired >= 5)(0)
+    ))
 
-  private def buildRelevantRentDetails(leaseDetails: LeaseDetails): Option[RelevantRentDetails] =
+  private def buildRelevantRentDetails(lease: Lease): RelevantRentDetails =
     RelevantRentDetails(
       contractPre201603        = Some("Yes"),
       contractVariedPost201603 = Some("No"),
       relevantRent             =
-        if (leaseDetails.exists(_.isAnnualRentOver1000.exists("true"))) {
-          Some(BigDecimal(ANNUAL_RENT_THRESHOLD))
+        if (lease.isAnnualRentOver1000.equals("true")) {
+          Some(ANNUAL_RENT_THRESHOLD)
         } else {
           Some(BigDecimal(0))
         }
