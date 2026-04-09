@@ -418,3 +418,5 @@ GET        /about-the-transaction/type-of-transaction                           
 POST       /about-the-transaction/type-of-transaction                                                controllers.transaction.TypeOfTransactionController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/type-of-transaction/change                                         controllers.transaction.TypeOfTransactionController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/type-of-transaction/change                                         controllers.transaction.TypeOfTransactionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /tax-calculation/before-you-start                                                         controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
