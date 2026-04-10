@@ -18,7 +18,8 @@ package controllers.ukResidency
 
 import controllers.actions.*
 import forms.ukResidency.CloseCompanyFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
+import navigation.Navigator
 import play.api.data.Form
 import pages.ukResidency.{CloseCompanyPage, NonUkResidentPurchaserPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CloseCompanyController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
+                                         navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
@@ -73,8 +75,8 @@ class CloseCompanyController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             val isNonUkResident = updatedAnswers.get(NonUkResidentPurchaserPage).contains(true)
-            if (mode == NormalMode && isNonUkResident)
-              Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode))
+            if (isNonUkResident)
+              Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
             else
               Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
           }
