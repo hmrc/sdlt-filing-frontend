@@ -38,7 +38,8 @@ class SdltCalculationRequestSpec extends AnyFreeSpec with Matchers {
     isLinked            = None,
     interestTransferred = None,
     taxReliefDetails    = None,
-    isMultipleLand      = None
+    isMultipleLand      = None,
+    declaredNpv         = None
   )
 
   private val minimalJson = Json.obj(

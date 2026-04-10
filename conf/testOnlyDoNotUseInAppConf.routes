@@ -11,3 +11,6 @@
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
+
+GET         /stamp-duty-land-tax-filing/test-only/tax-calculation      controllers.taxCalculation.TaxCalculationTestController.onPageLoad()
+POST        /stamp-duty-land-tax-filing/test-only/tax-calculation      controllers.taxCalculation.TaxCalculationTestController.onSubmit()

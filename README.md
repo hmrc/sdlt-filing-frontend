@@ -17,7 +17,7 @@ Run the command: `sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes`
 This allows access to the following test routes:
 
 ```
-
+/stamp-duty-land-tax-filing/test-only/tax-calculation
 ```
 
 ## Adding New Pages
