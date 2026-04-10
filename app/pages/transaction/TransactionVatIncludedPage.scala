@@ -21,7 +21,7 @@ import play.api.libs.json.JsPath
 
 case object TransactionVatIncludedPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "transactionCurrent" \ toString
 
   override def toString: String = "transactionVatIncluded"
 }

@@ -27,7 +27,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("transaction.transactionVatIncluded.title"))) {
+@layout(pageTitle = title(form, messages("transaction.transactionVatIncluded.title"), section = Some((messages("site.transaction.caption"))))) {
 
     @formHelper(action = controllers.transaction.routes.TransactionVatIncludedController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
