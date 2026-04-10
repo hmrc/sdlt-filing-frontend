@@ -276,8 +276,8 @@ class NavigatorSpec extends SpecBase {
         "go from CloseCompanyPage to CrownEmploymentRelief" in {
           navigator.nextPage(CloseCompanyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
         }
-        "go from CrownEmploymentReliefPage to check your answers page" in { //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
-          navigator.nextPage(CrownEmploymentReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
+        "go from CrownEmploymentReliefPage to UkResidencyCheckYourAnswers page" in {
+          navigator.nextPage(CrownEmploymentReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -366,11 +366,10 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(LandSelectMeasurementUnitPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
       }
 
-      //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
-      "must go from any residency page to ResidencyCheckYourAnswers" in {
-        navigator.nextPage(NonUkResidentPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
-        navigator.nextPage(CloseCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
-        navigator.nextPage(CrownEmploymentReliefPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.ReturnTaskListController.onPageLoad()
+      "must go from any residency page to UkResidencyCheckYourAnswers" in {
+        navigator.nextPage(NonUkResidentPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(CloseCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(CrownEmploymentReliefPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
       }
 
       "must go from any preliminary page to CheckYourAnswers" in {

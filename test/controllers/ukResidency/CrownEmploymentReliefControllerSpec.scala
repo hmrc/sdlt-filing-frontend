@@ -176,7 +176,6 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
     "must redirect to UK Residency CYA for a GET when land property type is 'Non-residential'" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturnNonResidential))
 
@@ -188,11 +187,10 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 
-    //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
     "must redirect to UK Residency CYA for a GET when land property type is 'Mixed'" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturnMixed))
 
@@ -204,11 +202,11 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 
-    "must redirect to Journey Recovery when land is missing" in {
+    "must redirect to UK Residency CYA when land is missing" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturnNoLand))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -219,7 +217,7 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       }
     }
 

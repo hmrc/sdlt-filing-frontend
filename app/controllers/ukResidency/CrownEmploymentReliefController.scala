@@ -64,8 +64,7 @@ class CrownEmploymentReliefController @Inject()(
         case Some(LandTypeOfProperty.Residential | LandTypeOfProperty.Additional) =>
           Ok(view(preparedForm, mode))
 
-        //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
-        case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        case _ => Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
       }
   }
 

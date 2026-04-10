@@ -19,9 +19,9 @@ package controllers.ukResidency
 import controllers.actions.*
 import forms.ukResidency.CloseCompanyFormProvider
 import models.Mode
-import play.api.data.Form
 import navigation.Navigator
-import pages.ukResidency.CloseCompanyPage
+import play.api.data.Form
+import pages.ukResidency.{CloseCompanyPage, NonUkResidentPurchaserPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -58,7 +58,7 @@ class CloseCompanyController @Inject()(
         }
         Ok(view(preparedForm, mode))
       } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO - DTR-2511 - change to residency CYA page
+        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
       }
   }
 
@@ -74,10 +74,11 @@ class CloseCompanyController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CloseCompanyPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value)
+            val isNonUkResident = updatedAnswers.get(NonUkResidentPurchaserPage).contains(true)
+            if (isNonUkResident)
               Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
             else
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2511 - change to residency CYA page
+              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
           }
       )
   }

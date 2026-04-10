@@ -198,8 +198,8 @@ class Navigator @Inject()() {
     case CloseCompanyPage =>
       _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
 
-    case CrownEmploymentReliefPage => //TODO - DTR-2511 - SPRINT 12 - update to UK residency check your answers
-      _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
+    case CrownEmploymentReliefPage =>
+      _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
 
     case _ => _ => routes.IndexController.onPageLoad()
   }
@@ -268,6 +268,10 @@ class Navigator @Inject()() {
     case AddPurchaserAgentReferenceNumberPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case PurchaserAgentReferencePage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case PurchaserAgentAuthorisedPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
+
+    case NonUkResidentPurchaserPage => _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
+    case CloseCompanyPage => _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
+    case CrownEmploymentReliefPage => _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
 
     case LandTypeOfPropertyPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     case LandInterestTransferredOrCreatedPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
