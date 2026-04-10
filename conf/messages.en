@@ -1178,6 +1178,19 @@ transaction.confirmTypeOfTransaction.p                                          
 transaction.confirmTypeOfTransaction.error.required                                 = Select Yes or No
 transaction.confirmTypeOfTransaction.change.hidden                                  = Confirm Type Of Transaction
 
+transaction.changeTypeOfTransaction.title                                                   = Changing the type of transaction - About the transaction
+transaction.changeTypeOfTransaction.heading                                                 = Changing the transaction type
+transaction.changeTypeOfTransaction.subHeading                                              = Are you sure you need to change the transaction type?
+transaction.changeTypeOfTransaction.hint.option1                                            = By changing the type of transaction, the amount of SDLT due may change. All information about the lease will be deleted from this return.
+transaction.changeTypeOfTransaction.hint.option2                                            = By changing the type of transaction, the amount of SDLT due may change. All information about the total consideration of the transaction will be deleted from this return.
+transaction.changeTypeOfTransaction.hint.option3                                            = By changing the type of transaction, the amount of SDLT due may change. All information about the total premium payable and the net present value will be deleted from this return. You will now need to enter all information about the total consideration of the transaction.
+transaction.changeTypeOfTransaction.hint.option4                                            = By changing the type of transaction, the amount of SDLT due may change. All information you have entered about the total consideration of the transaction will be deleted. You will now need to enter the total premium payable and the net present value.
+transaction.changeTypeOfTransaction.checkYourAnswersLabel                                   = Changing the transaction type
+transaction.changeTypeOfTransaction.error.required                                          = Select changeTypeOfTransaction
+transaction.changeTypeOfTransaction.change.hidden                                           = ChangeTypeOfTransaction
+transaction.changeTypeOfTransaction.missing                                                 = Select yes or no
+
+
 transaction.addDateOfContract.title                                                 = Date of contract
 transaction.addDateOfContract.heading                                               = Date of contract
 transaction.addDateOfContract.h2                                                    = Do you know the date of contract or conclusion of missives?

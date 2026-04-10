@@ -206,7 +206,8 @@ class Navigator @Inject()() {
 
   private def isTransactionSection(page: Page): Boolean = page match {
 
-    case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage | TransactionVatIncludedPage => true
+    case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage
+         | TransactionAddDateOfContractPage | TransactionVatIncludedPage | ChangeTypeOfTransactionPage => true
 
     case _ => false
   }
@@ -214,12 +215,14 @@ class Navigator @Inject()() {
   private def transactionRoutes(page: Page): UserAnswers => Call = page match {
     case ConfirmTypeOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
-    case TypeOfTransactionPage => //TODO - DTR-2996 - SPRINT 12 - update to are you sure you want to change tr-1b
-      _ => controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)
+    case TypeOfTransactionPage =>
+      _ => controllers.transaction.routes.ChangeTypeOfTransactionController.onPageLoad(NormalMode)
     case TransactionEffectiveDatePage =>
       _ => controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode)
     case TransactionAddDateOfContractPage => // TODO DTR-2920: Redirect to Enter date of contract tr-3a
       _ => controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode)
+    case ChangeTypeOfTransactionPage =>
+      _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
     case TransactionVatIncludedPage => //TODO - DTR-2942 - SPRINT 13 update to What is the amount of VAT included in the total consideration? - tr-5a
       _ => controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
 
