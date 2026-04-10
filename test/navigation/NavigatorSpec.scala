@@ -282,18 +282,25 @@ class NavigatorSpec extends SpecBase {
       }
 
       "transaction routes" - {
+        "go from ConfirmTypeOfTransactionPage to TransactionEffectiveDatePage" in {
+          navigator.nextPage(ConfirmTypeOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
+        }
 
         "go from TypeOfTransactionPage to Are you sure you want to change the transaction type page" in { //TODO - DTR-2994 - SPRINT 12
           navigator.nextPage(TypeOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TypeOfTransactionController.onPageLoad(NormalMode)
         }
 
-        "go from TransactionTypePage to contract or conclusion of missives page" in {
+        "go from TransactionEffectiveDatePage to contract or conclusion of missives page" in {
           navigator.nextPage(TransactionEffectiveDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode)
         }
 
         // TODO - DTR-2920 - change to redirect to TransactionEnterDateOfContract
         "go from TransactionAddContractDatePage to TransactionEnterDateOfContract page" in {
           navigator.nextPage(TransactionAddDateOfContractPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(NormalMode)
+        }
+
+        "go from TransactionVatIncludedPage to tr-5a Amount of VAT page" in { //TODO - DTR-2942 - SPRINT 13 - What is the amount of VAT update route
+          navigator.nextPage(TransactionVatIncludedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
         }
       }
     }

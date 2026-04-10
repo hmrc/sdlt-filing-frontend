@@ -1186,3 +1186,11 @@ transaction.addDateOfContract.checkYourAnswersLabel                             
 transaction.addDateOfContract.error.required                                        = Select yes if you know the date of contract or conclusion of missives
 transaction.addDateOfContract.change.hidden                                         = Do you know the date of contract or conclusion of missives?
 transaction.addDateOfContract.missing                                               = Select if you know the date of contract or conclusion of missives
+
+transaction.transactionVatIncluded.title                                            = Is VAT included in the total consideration?
+transaction.transactionVatIncluded.heading                                          = Is VAT included in the total consideration?
+transaction.transactionVatIncluded.checkYourAnswersLabel                            = Is VAT included in the total consideration?
+transaction.transactionVatIncluded.error.required                                   = Select yes if VAT is included in the total consideration
+transaction.transactionVatIncluded.change.hidden                                    = Is VAT included in the total consideration?
+transaction.transactionVatIncluded.hint                                             = Any VAT payable on the transaction must be included in the total consideration for SDLT purposes
+transaction.transactionVatIncluded.missing                                          = Please select if VAT is included in the total consideration
