@@ -1194,3 +1194,15 @@ transaction.transactionVatIncluded.error.required                               
 transaction.transactionVatIncluded.change.hidden                                    = Is VAT included in the total consideration?
 transaction.transactionVatIncluded.hint                                             = Any VAT payable on the transaction must be included in the total consideration for SDLT purposes
 transaction.transactionVatIncluded.missing                                          = Please select if VAT is included in the total consideration
+
+transaction.transactionDateOfContract.title                                         = What is the date of contract or conclusion of missives?
+transaction.transactionDateOfContract.heading                                       = What is the date of contract or conclusion of missives?
+transaction.transactionDateOfContract.hint                                          = For example, 27 3 2023
+transaction.transactionDateOfContract.checkYourAnswersLabel                         = Contract date or conclusion of missives
+transaction.transactionDateOfContract.error.required.all                            = Enter the date of contract
+transaction.transactionDateOfContract.error.required.two                            = The date of contract must include {0} and {1}
+transaction.transactionDateOfContract.error.required                                = The date of contract must include {0}
+transaction.transactionDateOfContract.error.invalid                                 = The date of contract must be a real date
+transaction.transactionDateOfContract.change.hidden                                 = Contract date or conclusion of missives
+transaction.transactionDateOfContract.error.date.range.min                          = The date of contract must be the same as or after 01 01 1900
+transaction.transactionDateOfContract.error.date.range.max                          = The date of contract cannot be in the future

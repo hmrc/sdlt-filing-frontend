@@ -433,8 +433,12 @@ POST       /about-the-transaction/add-date-of-contract                          
 GET        /about-the-transaction/add-date-of-contract/change                                        controllers.transaction.TransactionAddDateOfContractController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/add-date-of-contract/change                                        controllers.transaction.TransactionAddDateOfContractController.onSubmit(mode: Mode = CheckMode)
 
-
 GET        /about-the-transaction/is-VAT-included                                                    controllers.transaction.TransactionVatIncludedController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/is-VAT-included                                                    controllers.transaction.TransactionVatIncludedController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/is-VAT-included/change                                             controllers.transaction.TransactionVatIncludedController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/is-VAT-included/change                                             controllers.transaction.TransactionVatIncludedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/enter-date-of-contract                                             controllers.transaction.TransactionDateOfContractController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/enter-date-of-contract                                             controllers.transaction.TransactionDateOfContractController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/enter-date-of-contract/change                                      controllers.transaction.TransactionDateOfContractController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/enter-date-of-contract/change                                      controllers.transaction.TransactionDateOfContractController.onSubmit(mode: Mode = CheckMode)
