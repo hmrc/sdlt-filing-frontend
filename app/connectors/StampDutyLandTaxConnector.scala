@@ -21,6 +21,7 @@ import models.*
 import models.land.*
 import models.prelimQuestions.PrelimReturn
 import models.purchaser.*
+import models.ukResidency.*
 import models.vendor.*
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.Json
@@ -407,6 +408,61 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       }
       .recover {
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteLand]")
+      }
+  }
+
+
+  def createResidency(createResidencyRequest: CreateResidencyRequest)(implicit hc: HeaderCarrier,
+                                                                      request: Request[_]): Future[CreateResidencyReturn] = {
+    http.post(url"$activeBase/filing/create/residency")
+      .withBody(Json.toJson(createResidencyRequest))
+      .execute[Either[UpstreamErrorResponse, CreateResidencyReturn]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][createResidency] create residency request: $createResidencyRequest, response: $resp")
+          Future.successful(resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][createResidency]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][createResidency]")
+      }
+  }
+
+  def updateResidency(updateResidencyRequest: UpdateResidencyRequest)(implicit hc: HeaderCarrier,
+                                                                      request: Request[_]): Future[UpdateResidencyReturn] = {
+    http.put(url"$activeBase/filing/update/residency")
+      .withBody(Json.toJson(updateResidencyRequest))
+      .execute[Either[UpstreamErrorResponse, UpdateResidencyReturn]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][updateResidency] update residency request: $updateResidencyRequest, response: $resp")
+          Future.successful(resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateResidency]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateResidency]")
+      }
+  }
+
+  def deleteResidency(deleteResidencyRequest: DeleteResidencyRequest)(implicit hc: HeaderCarrier,
+                                                                      request: Request[_]): Future[DeleteResidencyReturn] = {
+    http.delete(url"$activeBase/filing/delete/residency")
+      .withBody(Json.toJson(deleteResidencyRequest))
+      .execute[Either[UpstreamErrorResponse, DeleteResidencyReturn]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][deleteResidency] delete residency request: $deleteResidencyRequest, response: $resp")
+          Future.successful(resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][deleteResidency]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteResidency]")
       }
   }
   
