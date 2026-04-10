@@ -31,12 +31,12 @@ object UkResidencyTaskList {
     TaskListSection(
       heading = messages("tasklist.ukResidencyQuestion.heading"),
       rows = Seq(
-        buildUkResidencyRow(fullReturn)
+        buildUkResidencyRow(fullReturn).build(fullReturn)
       )
     )
 
-  private def buildUkResidencyRow(fullReturn: FullReturn)
-                                 (implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildUkResidencyRow(fullReturn: FullReturn)
+                                 (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
     val residency = fullReturn.residency
 
@@ -69,6 +69,6 @@ object UkResidencyTaskList {
         Seq(
           PrelimTaskList.buildPrelimRow(fullReturn)
         )
-    ).build(fullReturn)
+    )
   }
 }

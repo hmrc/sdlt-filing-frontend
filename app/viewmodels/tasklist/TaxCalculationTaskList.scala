@@ -36,7 +36,8 @@ object TaxCalculationTaskList {
     )
 
   def buildTaxCalculationRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
-    
+
+    // TODO: pattern match between BYS pages & CYA page
     val url = controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad().url
     
     TaskListRowBuilder(
@@ -50,12 +51,19 @@ object TaxCalculationTaskList {
       },
       tagId = "taxCalculationQuestionDetailRow",
       checks = scheme => Seq(fullReturn.taxCalculation.isDefined),
-      prerequisites = _ => Seq(
-        PrelimTaskList.buildPrelimRow(fullReturn),
-        LandTaskList.buildLandRow(fullReturn),
-        TransactionTaskList.buildTransactionRow(fullReturn)
-      )
+      prerequisites = _ => generatePrerequisites(fullReturn)
     ).build(fullReturn)
   }
 
+  def generatePrerequisites(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): Seq[TaskListRowBuilder] = {
+    val ukResidencyPropertyTypes = Set("Residential", "Residential Additional Property") // TODO: check property type inputs
+    val hasUkResCheck = fullReturn.land.exists(_.exists(_.propertyType.contains(ukResidencyPropertyTypes)))
+
+    Seq(
+      Some(LandTaskList.buildLandRow(fullReturn)),
+      Some(TransactionTaskList.buildTransactionRow(fullReturn)),
+      if (hasUkResCheck) Some(UkResidencyTaskList.buildUkResidencyRow(fullReturn)) else None
+      // TODO: Add lease when tasklist built
+    ).flatten
+  }
 }
