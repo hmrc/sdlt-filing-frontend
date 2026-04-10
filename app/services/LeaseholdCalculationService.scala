@@ -290,7 +290,7 @@ class LeaseholdCalculationService @Inject()(val baseCalculationService: BaseCalc
 
     val npv = getNPV("leaseholdMixedOrNonResidentialMar16Onwards", request)
     val leaseResult = baseCalculationService.calculateTaxDueSlice(npv, leaseholdMixedOrNonResidentialMar16OnwardsLeaseRates.slices)
-    val premiumResult = baseCalculationService.calculateTaxDueSlab(request.premium, SlabRatesTables.leaseholdMixedOrNonResidentialMar16OnwardsPremiumRates.slabs)
+    val premiumResult = baseCalculationService.calculateTaxDueSlice(request.premium, leaseholdMixedOrNonResidentialMar16OnwardsLeasePremRates.slices)
 
     LeaseholdResultFactory.leaseholdMixedOrNonResidentialMar16OnwardsResult(leaseResult, premiumResult, npv)
   }

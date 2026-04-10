@@ -2827,7 +2827,7 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
       taxReliefDetails = None
     )
 
-    def expectedResult(leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails], premTaxDue: Int, premRate: Int, npv: Int): Result =
+    def expectedResult(leaseTaxDue: Int, leaseSliceDetails: Seq[SliceDetails], premiumSliceDetails:Seq[SliceDetails], premTaxDue: Int, npv: Int): Result =
       Result(
         totalTax = leaseTaxDue + premTaxDue,
         resultHeading = Some("Results of calculation based on SDLT rules for the effective date entered"),
@@ -2837,21 +2837,20 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
           CalculationDetails(
             taxType = TaxTypes.rent,
             calcType = CalcTypes.slice,
-            detailHeading = None,
-            bandHeading = None,
-            detailFooter = None,
+            detailHeading = Some(RESULT_HEADING_FROM_MAR_2016),
+            bandHeading = Some(DETAIL_COL_HEADER_RENT),
+            detailFooter =  Some(DETAIL_FOOTER_RENT),
             taxDue = leaseTaxDue,
             slices = Some(leaseSliceDetails)
           ),
           CalculationDetails(
             taxType = TaxTypes.premium,
-            calcType = CalcTypes.slab,
-            detailHeading = None,
-            bandHeading = None,
-            detailFooter = None,
+            calcType = CalcTypes.slice,
+            detailHeading = Some(RESULT_HEADING_FROM_MAR_2016),
+            bandHeading = Some(DETAIL_COL_HEADER_PREM),
+            detailFooter = Some(DETAIL_FOOTER_PREM),
             taxDue = premTaxDue,
-            rate = Some(premRate),
-            slices = None
+            slices = Some(premiumSliceDetails)
           )
         )
       )
@@ -2859,41 +2858,61 @@ class LeaseholdCalculationServiceSpec extends PlaySpec with LeaseholdRequestFeat
     "return lease taxDue 0, premium taxDue 0 for npv of 150000 and premium of 100000" in new PredefinedNPVSetup(150000) {
       val leaseSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
-        SliceDetails(from = 150000, to = Some(500000), rate = 1, taxDue = 0),
-        SliceDetails(from = 500000, to = None,         rate = 2, taxDue = 0)
+        SliceDetails(from = 150000, to = Some(5000000), rate = 1, taxDue = 0),
+        SliceDetails(from = 5000000, to = None,         rate = 2, taxDue = 0)
+      )
+      val premiumSliceDetails = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(250000),   rate = 2, taxDue = 0),
+        SliceDetails(from = 250000,   to = None,           rate = 5, taxDue = 0)
       )
       service.leaseholdMixedOrNonResidentialMar16Onwards(testRequest(100000)) shouldBe
-        expectedResult(leaseTaxDue = 0, leaseSliceDetails, premTaxDue = 0, premRate = 0, npv)
+        expectedResult(leaseTaxDue = 0, leaseSliceDetails, premiumSliceDetails = premiumSliceDetails, premTaxDue = 0, npv)
     }
 
-    "return lease taxDue 500, premium taxDue 4000 for npv of 200000 and premium of 200000" in new PredefinedNPVSetup(200000) {
+    "return lease taxDue 500, premium taxDue 1000 for npv of 200000 and premium of 200000" in new PredefinedNPVSetup(200000) {
       val leaseSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
-        SliceDetails(from = 150000, to = Some(500000), rate = 1, taxDue = 500),
-        SliceDetails(from = 500000, to = None,         rate = 2, taxDue = 0)
+        SliceDetails(from = 150000, to = Some(5000000), rate = 1, taxDue = 500),
+        SliceDetails(from = 5000000, to = None,         rate = 2, taxDue = 0)
+      )
+      val premiumSliceDetails = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(250000),   rate = 2, taxDue = 1000),
+        SliceDetails(from = 250000,   to = None,           rate = 5, taxDue = 0)
       )
       service.leaseholdMixedOrNonResidentialMar16Onwards(testRequest(200000)) shouldBe
-        expectedResult(leaseTaxDue = 500, leaseSliceDetails, premTaxDue = 4000, premRate = 2, npv)
+        expectedResult(leaseTaxDue = 500, leaseSliceDetails, premiumSliceDetails = premiumSliceDetails, premTaxDue = 1000, npv)
     }
 
-    "return lease taxDue 1500, premium taxDue 15000 for npv of 300000 and premium of 300000" in new PredefinedNPVSetup(300000) {
+    "return lease taxDue 1500, premium taxDue 4500 for npv of 300000 and premium of 300000" in new PredefinedNPVSetup(300000) {
       val leaseSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
-        SliceDetails(from = 150000, to = Some(500000), rate = 1, taxDue = 1500),
-        SliceDetails(from = 500000, to = None,         rate = 2, taxDue = 0)
+        SliceDetails(from = 150000, to = Some(5000000), rate = 1, taxDue = 1500),
+        SliceDetails(from = 5000000, to = None,         rate = 2, taxDue = 0)
+      )
+      val premiumSliceDetails = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(250000),   rate = 2, taxDue = 2000),
+        SliceDetails(from = 250000,   to = None,           rate = 5, taxDue = 2500)
       )
       service.leaseholdMixedOrNonResidentialMar16Onwards(testRequest(300000)) shouldBe
-        expectedResult(leaseTaxDue = 1500, leaseSliceDetails, premTaxDue = 15000, premRate = 5, npv)
+        expectedResult(leaseTaxDue = 1500, leaseSliceDetails, premiumSliceDetails = premiumSliceDetails, premTaxDue = 4500, npv)
     }
 
-    "return lease taxDue 5500, premium taxDue 0 for npv of 600000 and premium of 100000" in new PredefinedNPVSetup(600000) {
+    "return lease taxDue 5500, premium taxDue 0 for npv of 6000000 and premium of 6000000" in new PredefinedNPVSetup(6000000) {
       val leaseSliceDetails = Seq(
         SliceDetails(from = 0,      to = Some(150000), rate = 0, taxDue = 0),
-        SliceDetails(from = 150000, to = Some(500000), rate = 1, taxDue = 3500),
-        SliceDetails(from = 500000, to = None,         rate = 2, taxDue = 2000)
+        SliceDetails(from = 150000, to = Some(5000000), rate = 1, taxDue = 48500),
+        SliceDetails(from = 5000000, to = None,         rate = 2, taxDue = 20000)
       )
-      service.leaseholdMixedOrNonResidentialMar16Onwards(testRequest(100000)) shouldBe
-        expectedResult(leaseTaxDue = 5500, leaseSliceDetails, premTaxDue = 0, premRate = 0, npv)
+      val premiumSliceDetails = Seq(
+        SliceDetails(from = 0,        to = Some(150000),   rate = 0, taxDue = 0),
+        SliceDetails(from = 150000,   to = Some(250000),   rate = 2, taxDue = 2000),
+        SliceDetails(from = 250000,   to = None,           rate = 5, taxDue = 287500)
+      )
+      service.leaseholdMixedOrNonResidentialMar16Onwards(testRequest(6000000)) shouldBe
+        expectedResult(leaseTaxDue = 68500, leaseSliceDetails, premiumSliceDetails = premiumSliceDetails, premTaxDue = 289500, npv)
     }
   }
 

@@ -412,26 +412,25 @@ object LeaseholdResultFactory {
     )
   }
 
-  def leaseholdMixedOrNonResidentialMar16OnwardsResult(leaseResult: SliceResult, premiumResult: SlabResult,
+  def leaseholdMixedOrNonResidentialMar16OnwardsResult(leaseResult: SliceResult, premiumResult: SliceResult,
                                                 npv: BigDecimal): Result = {
     val leaseCalcDetails = CalculationDetails(
       taxType = TaxTypes.rent,
       calcType = CalcTypes.slice,
-      detailHeading = None,
-      bandHeading = None,
-      detailFooter = None,
+      detailHeading = Some(RESULT_HEADING_FROM_MAR_2016),
+      bandHeading = Some(DETAIL_COL_HEADER_RENT),
+      detailFooter =  Some(DETAIL_FOOTER_RENT),
       taxDue = leaseResult.taxDue.toInt,
       slices = Some(leaseResult.slices)
     )
     val premiumCalcDetails = CalculationDetails(
       taxType = TaxTypes.premium,
-      calcType = CalcTypes.slab,
-      detailHeading = None,
-      bandHeading = None,
-      detailFooter = None,
+      calcType = CalcTypes.slice,
+      detailHeading = Some(RESULT_HEADING_FROM_MAR_2016),
+      bandHeading = Some(DETAIL_COL_HEADER_PREM),
+      detailFooter = Some(DETAIL_FOOTER_PREM),
       taxDue = premiumResult.taxDue.toInt,
-      slices = None,
-      rate = Some(premiumResult.rate.toInt)
+      slices = Some(premiumResult.slices)
     )
 
     Result(

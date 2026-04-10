@@ -392,7 +392,7 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
               request.status shouldBe OK
               request.json shouldBe Json.parse(
                 """
-                  |{
+                  {
                   |  "result": [
                   |    {
                   |      "totalTax": 0,
@@ -403,6 +403,9 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
                   |          "taxType": "rent",
                   |          "calcType": "slice",
                   |          "taxDue": 0,
+                  |          "detailHeading": "Results based on SDLT rules from 17 March 2016",
+                  |          "bandHeading": "Rent bands (£)",
+                  |          "detailFooter": "SDLT due on the rent",
                   |          "slices": [
                   |            {
                   |              "from": 0,
@@ -412,12 +415,12 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
                   |            },
                   |            {
                   |              "from": 150000,
-                  |              "to": 500000,
+                  |              "to": 5000000,
                   |              "rate": 1,
                   |              "taxDue": 0
                   |            },
                   |            {
-                  |              "from": 500000,
+                  |              "from": 5000000,
                   |              "to": -1,
                   |              "rate": 2,
                   |              "taxDue": 0
@@ -426,9 +429,31 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
                   |        },
                   |        {
                   |          "taxType": "premium",
-                  |          "calcType": "slab",
+                  |          "calcType": "slice",
                   |          "taxDue": 0,
-                  |          "rate": 0
+                  |          "detailHeading": "Results based on SDLT rules from 17 March 2016",
+                  |          "bandHeading": "Premium bands (£)",
+                  |          "detailFooter": "SDLT due on the premium",
+                  |          "slices": [
+                  |            {
+                  |              "from": 0,
+                  |              "to": 150000,
+                  |              "rate": 0,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 150000,
+                  |              "to": 250000,
+                  |              "rate": 2,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 250000,
+                  |              "to": -1,
+                  |              "rate": 5,
+                  |              "taxDue": 0
+                  |            }
+                  |          ]
                   |        }
                   |      ]
                   |    }
@@ -478,7 +503,7 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
               request.status shouldBe OK
               request.json shouldBe Json.parse(
                 """
-                  |{
+                  {
                   |  "result": [
                   |    {
                   |      "totalTax": 0,
@@ -489,6 +514,9 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
                   |          "taxType": "rent",
                   |          "calcType": "slice",
                   |          "taxDue": 0,
+                  |          "detailHeading": "Results based on SDLT rules from 17 March 2016",
+                  |          "bandHeading": "Rent bands (£)",
+                  |          "detailFooter": "SDLT due on the rent",
                   |          "slices": [
                   |            {
                   |              "from": 0,
@@ -498,12 +526,12 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
                   |            },
                   |            {
                   |              "from": 150000,
-                  |              "to": 500000,
+                  |              "to": 5000000,
                   |              "rate": 1,
                   |              "taxDue": 0
                   |            },
                   |            {
-                  |              "from": 500000,
+                  |              "from": 5000000,
                   |              "to": -1,
                   |              "rate": 2,
                   |              "taxDue": 0
@@ -512,9 +540,31 @@ class CalculationControllerLeaseholdNoTaxReliefISpec extends BaseSpec with Guice
                   |        },
                   |        {
                   |          "taxType": "premium",
-                  |          "calcType": "slab",
+                  |          "calcType": "slice",
                   |          "taxDue": 0,
-                  |          "rate": 0
+                  |          "detailHeading": "Results based on SDLT rules from 17 March 2016",
+                  |          "bandHeading": "Premium bands (£)",
+                  |          "detailFooter": "SDLT due on the premium",
+                  |          "slices": [
+                  |            {
+                  |              "from": 0,
+                  |              "to": 150000,
+                  |              "rate": 0,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 150000,
+                  |              "to": 250000,
+                  |              "rate": 2,
+                  |              "taxDue": 0
+                  |            },
+                  |            {
+                  |              "from": 250000,
+                  |              "to": -1,
+                  |              "rate": 5,
+                  |              "taxDue": 0
+                  |            }
+                  |          ]
                   |        }
                   |      ]
                   |    }
