@@ -86,7 +86,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
         }
       }
 
@@ -120,7 +120,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
         }
       }
 
-      "must redirect to JourneyRecovery when property type is not residential or additional" in {
+      "must redirect to ReturnTaskList when property type is not residential or additional" in {
         val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", data = ukResidencyData())
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -134,11 +134,11 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
-      "must redirect to JourneyRecovery when property type is NonResidential" in {
+      "must redirect to ReturnTaskList when property type is NonResidential" in {
         val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLandNonResidential)))), data = ukResidencyData())
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -152,7 +152,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 

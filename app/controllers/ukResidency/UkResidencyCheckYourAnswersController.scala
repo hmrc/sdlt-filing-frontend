@@ -56,13 +56,13 @@ class UkResidencyCheckYourAnswersController @Inject()(
           } yield {
             val isDataEmpty = result.exists(_.data.value.isEmpty)
             if (isDataEmpty) {
-              Redirect(controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad())
+              Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
             } else {
               Ok(view(buildSummaryList(request.userAnswers)))
             }
           }
         case _ =>
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
   }
 
