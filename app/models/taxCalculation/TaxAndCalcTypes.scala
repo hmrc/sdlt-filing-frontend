@@ -23,7 +23,7 @@ object TaxTypes extends Enumeration {
   val premium = Value
 
   given Reads[Value] = Reads.enumNameReads(TaxTypes)
-  given Writes[Value] = Writes.enumNameWrites
+  given Writes[Value] = (v: Value) => JsString(v.toString)
 }
 
 object CalcTypes extends Enumeration {
@@ -31,5 +31,5 @@ object CalcTypes extends Enumeration {
   val slab  = Value
 
   given Reads[Value] = Reads.enumNameReads(CalcTypes)
-  given Writes[Value] = Writes.enumNameWrites
+  given Writes[Value] = (v: Value) => JsString(v.toString)
 }
