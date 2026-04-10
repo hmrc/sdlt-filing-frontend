@@ -101,8 +101,8 @@ object UpdateVendorRequest {
   def from(userAnswers: UserAnswers, vendor: Vendor): Future[UpdateVendorRequest] =
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
-        (vendor.name, vendor.address1, vendor.vendorResourceRef, vendor.isRepresentedByAgent) match {
-          case (Some(name), Some(address1), Some(vendorResourceRef), Some(isRepresentedByAgent)) =>
+        (vendor.name, vendor.address1, vendor.vendorResourceRef) match {
+          case (Some(name), Some(address1), Some(vendorResourceRef)) =>
             Future.successful(UpdateVendorRequest(
               stornId = userAnswers.storn,
               returnResourceRef = fullReturn.returnResourceRef,
@@ -116,7 +116,7 @@ object UpdateVendorRequest {
               addressLine3 = vendor.address3,
               addressLine4 = vendor.address4,
               postcode = vendor.postcode,
-              isRepresentedByAgent = isRepresentedByAgent,
+              isRepresentedByAgent = vendor.isRepresentedByAgent.getOrElse("NO"),
               vendorResourceRef = vendorResourceRef,
               nextVendorId = vendor.nextVendorID
             ))
