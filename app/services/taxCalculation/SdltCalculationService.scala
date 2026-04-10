@@ -134,7 +134,7 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       contractStartDate   <- lease.contractStartDate.toRight("contractStartDate not found in Lease")                            // LEASE.CONTRACT_START_DATE - (1.17) Start date as specified in lease
       contractEndDate     <- lease.contractEndDate.toRight("contractEndDate not found in Lease")                                // LEASE.CONTRACT_END_DATE - (1.18) End date as specified in lease
       validStartDate      <- validateDate(contractStartDate).toRight(s"Failed to parse contractStartDate: $contractStartDate")
-      validEndDate        <- validateDate(contractEndDate).toRight(s"Failed to parse contractEndDate: $contractStartDate")
+      validEndDate        <- validateDate(contractEndDate).toRight(s"Failed to parse contractEndDate: $contractEndDate")
       calculationStartDate = if (effectiveDate.isAfter(validStartDate)) effectiveDate else validStartDate
       years                = Period.between(calculationStartDate, validEndDate.plusDays(1)).getYears
       partialStart         = calculationStartDate.plusYears(years)
