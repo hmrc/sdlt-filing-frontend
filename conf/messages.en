@@ -929,8 +929,8 @@ land.landInterestTransferredOrCreated.p1                                        
 land.landInterestTransferredOrCreated.p2                                            = Interest is created when a new right or share in the property is established for a new party, like the grant of a new lease, taking on a debt, or the creation of an easement such as right of way.
 land.landInterestTransferredOrCreated.subheading                                    = Which option best describes the transaction?
 land.landInterestTransferredOrCreated.FG                                            = FG - Freehold (in Scotland ownership) subject to one or more leases each reserving a ground or nominal rent
-land.landInterestTransferredOrCreated.FP                                            = FP - Freehold with vacant possession
-land.landInterestTransferredOrCreated.FP.hintText                                   = In Scotland owner’s interest with vacant possession
+land.landInterestTransferredOrCreated.FPF                                           = FP - Freehold with vacant possession
+land.landInterestTransferredOrCreated.FPF.hintText                                  = In Scotland owner’s interest with vacant possession
 land.landInterestTransferredOrCreated.FT                                            = FT - Freehold subject to a lease or tenancy
 land.landInterestTransferredOrCreated.FT.hintText                                   = In Scotland owner’s interest subject to tenancy
 land.landInterestTransferredOrCreated.LG                                            = LG - Long leasehold at a ground or nominal rent with vacant possession

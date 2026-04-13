@@ -63,7 +63,7 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
 
           val interestTransferredOrCreatedValues = Seq(
             LandInterestTransferredOrCreated.FG,
-            LandInterestTransferredOrCreated.FP,
+            LandInterestTransferredOrCreated.FPF,
             LandInterestTransferredOrCreated.FT,
             LandInterestTransferredOrCreated.LG
           )

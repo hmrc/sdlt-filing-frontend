@@ -500,7 +500,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
       val cases = Table(
         ("typeOfInterestTransferredOrCreated", "value"),
         ("FG", LandInterestTransferredOrCreated.FG),
-        ("FP", LandInterestTransferredOrCreated.FP),
+        ("FPF", LandInterestTransferredOrCreated.FPF),
         ("FT", LandInterestTransferredOrCreated.FT),
         ("LG", LandInterestTransferredOrCreated.LG),
         ("LP", LandInterestTransferredOrCreated.LP),
@@ -561,7 +561,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("02"), // Mixed
-            interestCreatedTransferred = Some("FP"),
+            interestCreatedTransferred = Some("FPF"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -607,7 +607,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("02"), // Mixed
-            interestCreatedTransferred = Some("FP"),
+            interestCreatedTransferred = Some("FPF"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -653,7 +653,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("02"), // Mixed
-            interestCreatedTransferred = Some("FP"),
+            interestCreatedTransferred = Some("FPF"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
