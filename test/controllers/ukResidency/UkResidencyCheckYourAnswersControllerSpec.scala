@@ -17,10 +17,12 @@
 package controllers.ukResidency
 
 import base.SpecBase
+import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.{completeFullReturn, completeLandAdditional, completeLandNonResidential}
 import models.UserAnswers
+import models.ukResidency.{CreateResidencyReturn, UpdateResidencyReturn}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
@@ -29,16 +31,24 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
+import viewmodels.govuk.SummaryListFluency
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
+class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
 
   private val mockSessionRepository = mock[SessionRepository]
+  private val mockBackendConnector  = mock[StampDutyLandTaxConnector]
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val request: FakeRequest[_] = FakeRequest()
+  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSessionRepository)
+    reset(mockBackendConnector)
   }
 
   private def ukResidencyData(nonUkResident: Boolean = true, closeCompany: Boolean = false, crownEmployment: Boolean = false) =
@@ -55,7 +65,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
     "onPageLoad" - {
 
       "must return OK and the correct view when session has data" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn), data = ukResidencyData())
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData())
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -72,8 +82,27 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
         }
       }
 
-      "must redirect to UkResidencyBeforeYouStart when session data is empty" in {
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn))
+      "must pre-populate from fullReturn.residency and render CYA when session data is empty but residency exists" in {
+        val userAnswers = emptyUserAnswers.copy(returnId = Some("12345"), fullReturn = Some(completeFullReturn))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must redirect to UkResidencyBeforeYouStart when session data is empty and no residency exists in fullReturn" in {
+        val userAnswers = emptyUserAnswers.copy(returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(residency = None)))
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -86,7 +115,25 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must redirect to ReturnTaskList when returnId is not set" in {
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn), data = ukResidencyData())
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
@@ -103,7 +150,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
       }
 
       "must return OK when property type is Additional" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLandAdditional)))), data = ukResidencyData())
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLandAdditional)))), data = ukResidencyData())
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -157,7 +204,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
       }
 
       "must include crown employment relief row when non-UK resident is yes" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn), data = ukResidencyData(crownEmployment = true))
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(crownEmployment = true))
           .set(NonUkResidentPurchaserPage, true).success.value
           .set(CrownEmploymentReliefPage, true).success.value
 
@@ -177,7 +224,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
       }
 
       "must not include crown employment relief row when non-UK resident is no" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn), data = ukResidencyData(nonUkResident = false))
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(nonUkResident = false))
           .set(NonUkResidentPurchaserPage, false).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -196,7 +243,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
       }
 
       "must always include non-UK resident purchaser row" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn), data = ukResidencyData(nonUkResident = false))
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(nonUkResident = false))
           .set(NonUkResidentPurchaserPage, false).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -215,7 +262,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
       }
 
       "must include close company row when close company answer is present" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn), data = ukResidencyData(closeCompany = true))
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(closeCompany = true))
           .set(CloseCompanyPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -235,7 +282,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
 
       "must not include close company row when close company page has not been answered" in {
         val dataWithoutCloseCompany = Json.obj("ukResidencyCurrent" -> Json.obj("nonUkResidentPurchaser" -> false))
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn), data = dataWithoutCloseCompany)
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = dataWithoutCloseCompany)
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -255,10 +302,24 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
 
     "onSubmit" - {
 
-      "must redirect to ReturnTaskList on submit" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", data = ukResidencyData())
+      "must call createResidency and redirect to ReturnTaskList when no residencyID exists" in {
+        val userAnswers = UserAnswers(
+          id         = userAnswersId,
+          storn      = "TESTSTORN",
+          returnId   = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(residency = None)),
+          data       = ukResidencyData(nonUkResident = true, crownEmployment = true)
+        ).set(NonUkResidentPurchaserPage, true).success.value
+          .set(CrownEmploymentReliefPage, true).success.value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.createResidency(any())(any(), any()))
+          .thenReturn(Future.successful(CreateResidencyReturn(residencyResourceRef = "RES-001", residencyId = "1")))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
 
         running(application) {
           val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
@@ -266,6 +327,132 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with MockitoSug
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          verify(mockBackendConnector, times(1)).createResidency(any())(any(), any())
+        }
+      }
+
+      "must call updateResidency and redirect to ReturnTaskList when residencyID already exists" in {
+        val userAnswers = UserAnswers(
+          id         = userAnswersId,
+          storn      = "TESTSTORN",
+          returnId   = Some("12345"),
+          fullReturn = Some(completeFullReturn),
+          data       = ukResidencyData(nonUkResident = true, crownEmployment = true)
+        ).set(NonUkResidentPurchaserPage, true).success.value
+          .set(CrownEmploymentReliefPage, true).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateResidency(any())(any(), any()))
+          .thenReturn(Future.successful(UpdateResidencyReturn(updated = true)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          verify(mockBackendConnector, times(1)).updateResidency(any())(any(), any())
+        }
+      }
+
+      "must redirect back to UkResidencyCheckYourAnswers when createResidency returns empty residencyId" in {
+        val userAnswers = UserAnswers(
+          id         = userAnswersId,
+          storn      = "TESTSTORN",
+          returnId   = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(residency = None)),
+          data       = ukResidencyData()
+        ).set(NonUkResidentPurchaserPage, true).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.createResidency(any())(any(), any()))
+          .thenReturn(Future.successful(CreateResidencyReturn(residencyResourceRef = "RES-001", residencyId = "")))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must redirect back to UkResidencyCheckYourAnswers when updateResidency returns false" in {
+        val userAnswers = UserAnswers(
+          id         = userAnswersId,
+          storn      = "TESTSTORN",
+          returnId   = Some("12345"),
+          fullReturn = Some(completeFullReturn),
+          data       = ukResidencyData()
+        ).set(NonUkResidentPurchaserPage, true).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateResidency(any())(any(), any()))
+          .thenReturn(Future.successful(UpdateResidencyReturn(updated = false)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must redirect back to UkResidencyCheckYourAnswers when NonUkResidentPurchaserPage is not in session data" in {
+        val userAnswers = UserAnswers(
+          id         = userAnswersId,
+          storn      = "TESTSTORN",
+          returnId   = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(residency = None)),
+          data       = Json.obj()
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must redirect to JourneyRecovery when returnId is not set" in {
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", data = ukResidencyData())
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 

@@ -16,17 +16,36 @@
 
 package models.ukResidency
 
+import models.UserAnswers
+import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.libs.json.{Json, OFormat}
+
+import scala.concurrent.Future
 
 
 case class CreateResidencyRequest(
-                                   storn: String,
+                                   stornId: String,
                                    returnResourceRef: String,
                                    residency: ResidencyPayload
                                  )
 
 object CreateResidencyRequest {
   implicit val format: OFormat[CreateResidencyRequest] = Json.format[CreateResidencyRequest]
+
+  def from(userAnswers: UserAnswers): Future[CreateResidencyRequest] =
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        Future.successful(CreateResidencyRequest(
+          stornId           = fullReturn.stornId,
+          returnResourceRef = fullReturn.returnResourceRef,
+          residency = ResidencyPayload(
+            isNonUkResidents = if (userAnswers.get(NonUkResidentPurchaserPage).contains(true)) "YES" else "NO",
+            isCompany        = if (userAnswers.get(CloseCompanyPage).contains(true)) "YES" else "NO",
+            isCrownRelief    = if (userAnswers.get(CrownEmploymentReliefPage).contains(true)) "YES" else "NO"
+          )
+        ))
+      case None => Future.failed(new NoSuchElementException("Full return not found"))
+    }
 }
 
 case class CreateResidencyReturn(
@@ -39,13 +58,28 @@ object CreateResidencyReturn {
 }
 
 case class UpdateResidencyRequest(
-                                   storn: String,
+                                   stornId: String,
                                    returnResourceRef: String,
                                    residency: ResidencyPayload
                                  )
 
 object UpdateResidencyRequest {
   implicit val format: OFormat[UpdateResidencyRequest] = Json.format[UpdateResidencyRequest]
+
+  def from(userAnswers: UserAnswers): Future[UpdateResidencyRequest] =
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+        Future.successful(UpdateResidencyRequest(
+          stornId           = fullReturn.stornId,
+          returnResourceRef = fullReturn.returnResourceRef,
+          residency = ResidencyPayload(
+            isNonUkResidents = if (userAnswers.get(NonUkResidentPurchaserPage).contains(true)) "YES" else "NO",
+            isCompany        = if (userAnswers.get(CloseCompanyPage).contains(true)) "YES" else "NO",
+            isCrownRelief    = if (userAnswers.get(CrownEmploymentReliefPage).contains(true)) "YES" else "NO"
+          )
+        ))
+      case None => Future.failed(new NoSuchElementException("Full return not found"))
+    }
 }
 
 case class UpdateResidencyReturn(

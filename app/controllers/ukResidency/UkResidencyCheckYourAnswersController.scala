@@ -16,13 +16,16 @@
 
 package controllers.ukResidency
 
+import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.UserAnswers
 import models.land.LandTypeOfProperty
-import pages.ukResidency.NonUkResidentPurchaserPage
+import models.ukResidency.{CreateResidencyRequest, UpdateResidencyRequest}
+import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ukResidency.{CloseCompanySummary, CrownEmploymentReliefSummary, NonUkResidentPurchaserSummary}
 import viewmodels.govuk.summarylist.*
@@ -30,6 +33,7 @@ import views.html.ukResidency.UkResidencyCheckYourAnswersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class UkResidencyCheckYourAnswersController @Inject()(
   override val messagesApi: MessagesApi,
@@ -37,6 +41,7 @@ class UkResidencyCheckYourAnswersController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   sessionRepository: SessionRepository,
+  backendConnector: StampDutyLandTaxConnector,
   val controllerComponents: MessagesControllerComponents,
   view: UkResidencyCheckYourAnswersView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -51,24 +56,79 @@ class UkResidencyCheckYourAnswersController @Inject()(
 
       propertyType match {
         case Some(LandTypeOfProperty.Residential | LandTypeOfProperty.Additional) =>
-          for {
-            result <- sessionRepository.get(request.userAnswers.id)
-          } yield {
-            val isDataEmpty = result.exists(_.data.value.isEmpty)
-            if (isDataEmpty) {
-              Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-            } else {
-              Ok(view(buildSummaryList(request.userAnswers)))
-            }
-          }
+          sessionRepository.get(request.userAnswers.id).flatMap(handleSessionResult)
         case _ =>
           Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
   }
 
+  private def handleSessionResult(result: Option[UserAnswers])(implicit request: Request[_]): Future[Result] =
+    result match {
+      case Some(userAnswers) if userAnswers.returnId.isEmpty   => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+      case Some(userAnswers) if userAnswers.data.value.isEmpty => populateFromResidency(userAnswers)
+      case Some(userAnswers)                                   => Future.successful(Ok(view(buildSummaryList(userAnswers))))
+      case None                                                => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+    }
+
+  private def populateFromResidency(userAnswers: UserAnswers)(implicit request: Request[_]): Future[Result] =
+    userAnswers.fullReturn.flatMap(_.residency) match {
+      case None =>
+        Future.successful(Redirect(controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad()))
+      case Some(residency) =>
+        val isCompany = userAnswers.fullReturn.flatMap(_.purchaser).flatMap(_.headOption).flatMap(_.isCompany).contains("YES")
+        (for {
+          ua  <- userAnswers.set(NonUkResidentPurchaserPage, residency.isNonUkResidents.contains("YES"))
+          ua2 <- if (isCompany) ua.set(CloseCompanyPage, residency.isCloseCompany.contains("YES")) else Success(ua)
+          ua3 <- ua2.set(CrownEmploymentReliefPage, residency.isCrownRelief.contains("YES"))
+        } yield ua3) match {
+          case Success(populated) =>
+            sessionRepository.set(populated).map(_ => Ok(view(buildSummaryList(populated))))
+          case Failure(_) =>
+            Future.successful(Redirect(controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad()))
+        }
+    }
+
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+      sessionRepository.get(request.userAnswers.id).flatMap {
+        case Some(userAnswers) if userAnswers.returnId.isDefined =>
+          userAnswers.get(NonUkResidentPurchaserPage) match {
+            case Some(_) =>
+              val hasResidencyId = userAnswers.fullReturn.flatMap(_.residency).flatMap(_.residencyID).isDefined
+              if (hasResidencyId) updateResidency(userAnswers)
+              else createResidency(userAnswers)
+            case None =>
+              Future.successful(Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()))
+          }
+        case _ =>
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+  }
+
+  private def createResidency(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+    for {
+      createResidencyRequest <- CreateResidencyRequest.from(userAnswers)
+      createResidencyReturn  <- backendConnector.createResidency(createResidencyRequest)
+    } yield {
+      if (createResidencyReturn.residencyId.nonEmpty) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } else {
+        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+      }
+    }
+  }
+
+  private def updateResidency(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+    for {
+      updateResidencyRequest <- UpdateResidencyRequest.from(userAnswers)
+      updateResidencyReturn  <- backendConnector.updateResidency(updateResidencyRequest)
+    } yield {
+      if (updateResidencyReturn.updated) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } else {
+        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+      }
+    }
   }
 
   private def buildSummaryList(userAnswers: UserAnswers)(implicit request: RequestHeader) = {

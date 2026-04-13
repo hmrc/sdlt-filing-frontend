@@ -3804,7 +3804,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
     "createResidency" - {
 
       val testRequest = models.ukResidency.CreateResidencyRequest(
-        storn = "12345",
+        stornId = "12345",
         returnResourceRef = "RRF-2024-001",
         residency = models.ukResidency.ResidencyPayload(
           isNonUkResidents = "YES",
@@ -4047,7 +4047,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
     "updateResidency" - {
 
       val testRequest = models.ukResidency.UpdateResidencyRequest(
-        storn = "12345",
+        stornId = "12345",
         returnResourceRef = "RRF-2024-001",
         residency = models.ukResidency.ResidencyPayload(
           isNonUkResidents = "NO",
@@ -4065,7 +4065,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4086,7 +4086,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Left(upstreamError)))
@@ -4107,7 +4107,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Left(upstreamError)))
@@ -4128,7 +4128,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Left(upstreamError)))
@@ -4149,7 +4149,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.failed(runtimeException))
@@ -4161,7 +4161,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           exception.getMessage mustBe "Connection failed"
         }
 
-        verify(mockHttpClient, times(1)).put(any())(any())
+        verify(mockHttpClient, times(1)).post(any())(any())
       }
 
       "must use stub URL when stubBool is true" in {
@@ -4172,7 +4172,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(true)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4180,7 +4180,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
         connector.updateResidency(testRequest).futureValue
 
-        verify(mockHttpClient, times(1)).put(any())(any())
+        verify(mockHttpClient, times(1)).post(any())(any())
       }
 
       "must pass implicit HeaderCarrier to http client" in {
@@ -4192,7 +4192,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4200,7 +4200,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
         connector.updateResidency(testRequest)(customHc, request).futureValue
 
-        verify(mockHttpClient, times(1)).put(any())(any())
+        verify(mockHttpClient, times(1)).post(any())(any())
       }
 
       "must call withBody on request builder with correct JSON" in {
@@ -4211,7 +4211,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4231,7 +4231,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.put(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.UpdateResidencyReturn]](any(), any()))
           .thenReturn(Future.failed(timeoutException))
@@ -4261,7 +4261,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4282,7 +4282,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Left(upstreamError)))
@@ -4303,7 +4303,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Left(upstreamError)))
@@ -4324,7 +4324,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Left(upstreamError)))
@@ -4345,7 +4345,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.failed(runtimeException))
@@ -4357,7 +4357,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           exception.getMessage mustBe "Connection failed"
         }
 
-        verify(mockHttpClient, times(1)).delete(any())(any())
+        verify(mockHttpClient, times(1)).post(any())(any())
       }
 
       "must use stub URL when stubBool is true" in {
@@ -4368,7 +4368,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(true)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4376,7 +4376,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
         connector.deleteResidency(testRequest).futureValue
 
-        verify(mockHttpClient, times(1)).delete(any())(any())
+        verify(mockHttpClient, times(1)).post(any())(any())
       }
 
       "must pass implicit HeaderCarrier to http client" in {
@@ -4388,7 +4388,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4396,7 +4396,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
         connector.deleteResidency(testRequest)(customHc, request).futureValue
 
-        verify(mockHttpClient, times(1)).delete(any())(any())
+        verify(mockHttpClient, times(1)).post(any())(any())
       }
 
       "must call withBody on request builder with correct JSON" in {
@@ -4407,7 +4407,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4426,7 +4426,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.successful(Right(expectedResult)))
@@ -4446,7 +4446,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
         when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
         when(mockConfig.stubBool).thenReturn(false)
-        when(mockHttpClient.delete(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.execute[Either[uk.gov.hmrc.http.UpstreamErrorResponse, models.ukResidency.DeleteResidencyReturn]](any(), any()))
           .thenReturn(Future.failed(timeoutException))
