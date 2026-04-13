@@ -207,7 +207,7 @@ class Navigator @Inject()() {
   private def isTransactionSection(page: Page): Boolean = page match {
 
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
-         | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage => true
+         | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage => true
 
     case _ => false
   }
@@ -222,12 +222,13 @@ class Navigator @Inject()() {
     case TransactionAddDateOfContractPage =>
       _ => controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(NormalMode)
     case TransactionDateOfContractPage =>
-    // TODO - DTR-2923 - What is the total consideration in money or money's worth? - tr-4
-      _ => controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(NormalMode)
+      _ => controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(NormalMode)
     case TransactionVatIncludedPage => //TODO - DTR-2942 - SPRINT 13 update to What is the amount of VAT included in the total consideration? - tr-5a
       _ => controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
     case ChangeTypeOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
+    case TotalConsiderationOfTransactionPage =>
+      _ => controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

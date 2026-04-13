@@ -297,9 +297,9 @@ class NavigatorSpec extends SpecBase {
         "go from TransactionAddContractDatePage to TransactionDateOfContractPage page" in {
           navigator.nextPage(TransactionAddDateOfContractPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(NormalMode)
         }
-        // TODO DTR-2923: Redirect to total consideration of transaction tr-4
+
         "go from TransactionDateOfContractPage to total consideration of transaction page" in {
-          navigator.nextPage(TransactionDateOfContractPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(NormalMode)
+          navigator.nextPage(TransactionDateOfContractPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(NormalMode)
         }
 
         "go from ChangeTypeTransactionTypePage to TransactionEffectiveDatePage" in {
