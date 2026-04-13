@@ -20,12 +20,12 @@ import base.SpecBase
 import constants.FullReturnConstants
 import controllers.routes
 import forms.ukResidency.CloseCompanyFormProvider
-import models.{FullReturn, NormalMode, UserAnswers}
+import models.{CheckMode, FullReturn, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ukResidency.CloseCompanyPage
+import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -115,16 +115,14 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to CrownEmploymentRelief when yes is submitted and non-UK resident is yes" in {
+    "must redirect to CrownEmploymentRelief when yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val userAnswers = emptyUserAnswers.set(pages.ukResidency.NonUkResidentPurchaserPage, true).success.value
-
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -143,38 +141,38 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to CYA when yes is submitted and non-UK resident is no" in {
+    "must redirect to CrownEmploymentRelief in CheckMode when yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val userAnswers = emptyUserAnswers.set(pages.ukResidency.NonUkResidentPurchaserPage, false).success.value
+      val checkModeRoute = controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, closeCompanyRoute)
+          FakeRequest(POST, checkModeRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url
       }
     }
 
-    "must redirect to CrownEmploymentRelief when no is submitted and non-UK resident is yes" in {
+    "must redirect to CYA and remove CrownEmploymentReliefPage when no is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val userAnswers = emptyUserAnswers.set(pages.ukResidency.NonUkResidentPurchaserPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(CrownEmploymentReliefPage, true).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -189,20 +187,22 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
         val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(uaCaptor.capture())
-        uaCaptor.getValue.get(CloseCompanyPage) mustBe Some(false)
+        uaCaptor.getValue.get(CrownEmploymentReliefPage) mustBe None
       }
     }
 
-    "must redirect to CYA when no is submitted and non-UK resident is no" in {
+    "must redirect to CYA and remove CrownEmploymentReliefPage in CheckMode when no is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val userAnswers = emptyUserAnswers.set(pages.ukResidency.NonUkResidentPurchaserPage, false).success.value
+      val checkModeRoute = controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
+
+      val userAnswers = emptyUserAnswers.set(CrownEmploymentReliefPage, true).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -211,13 +211,16 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, closeCompanyRoute)
+          FakeRequest(POST, checkModeRoute)
             .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(CrownEmploymentReliefPage) mustBe None
       }
     }
 

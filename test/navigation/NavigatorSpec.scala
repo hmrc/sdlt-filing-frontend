@@ -380,9 +380,15 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(LandSelectMeasurementUnitPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
       }
 
-      "must go from any residency page to UkResidencyCheckYourAnswers" in {
-        navigator.nextPage(NonUkResidentPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
-        navigator.nextPage(CloseCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
+      "must go from NonUkResidentPurchaserPage to CloseCompany in CheckMode" in {
+        navigator.nextPage(NonUkResidentPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode)
+      }
+
+      "must go from CloseCompanyPage to CrownEmploymentRelief in CheckMode" in {
+        navigator.nextPage(CloseCompanyPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode)
+      }
+
+      "must go from CrownEmploymentReliefPage to UkResidencyCheckYourAnswers in CheckMode" in {
         navigator.nextPage(CrownEmploymentReliefPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
       }
 

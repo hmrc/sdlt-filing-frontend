@@ -18,13 +18,15 @@ package controllers.ukResidency
 
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
-import models.UserAnswers
+import models.{ReturnVersionUpdateRequest, UserAnswers}
 import models.land.LandTypeOfProperty
 import models.ukResidency.{CreateResidencyRequest, UpdateResidencyRequest}
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.land.LandService
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ukResidency.{CloseCompanySummary, CrownEmploymentReliefSummary, NonUkResidentPurchaserSummary}
@@ -42,15 +44,15 @@ class UkResidencyCheckYourAnswersController @Inject()(
   requireData: DataRequiredAction,
   sessionRepository: SessionRepository,
   backendConnector: StampDutyLandTaxConnector,
+  landService: LandService,
+  purchaserService: PurchaserService,
   val controllerComponents: MessagesControllerComponents,
   view: UkResidencyCheckYourAnswersView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val propertyType = request.userAnswers.fullReturn
-        .flatMap(_.land)
-        .flatMap(_.headOption)
+      val propertyType = landService.getMainLand(request.userAnswers)
         .flatMap(_.propertyType)
         .flatMap(LandTypeOfProperty.enumerable.withName)
 
@@ -75,11 +77,11 @@ class UkResidencyCheckYourAnswersController @Inject()(
       case None =>
         Future.successful(Redirect(controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad()))
       case Some(residency) =>
-        val isCompany = userAnswers.fullReturn.flatMap(_.purchaser).flatMap(_.headOption).flatMap(_.isCompany).contains("YES")
+        val isCompany = purchaserService.getMainPurchaser(userAnswers).flatMap(_.isCompany).exists(_.equalsIgnoreCase("YES"))
         (for {
-          ua  <- userAnswers.set(NonUkResidentPurchaserPage, residency.isNonUkResidents.contains("YES"))
-          ua2 <- if (isCompany) ua.set(CloseCompanyPage, residency.isCloseCompany.contains("YES")) else Success(ua)
-          ua3 <- ua2.set(CrownEmploymentReliefPage, residency.isCrownRelief.contains("YES"))
+          ua  <- userAnswers.set(NonUkResidentPurchaserPage, residency.isNonUkResidents.exists(_.equalsIgnoreCase("YES")))
+          ua2 <- if (isCompany) ua.set(CloseCompanyPage, residency.isCloseCompany.exists(_.equalsIgnoreCase("YES"))) else Success(ua)
+          ua3 <- ua2.set(CrownEmploymentReliefPage, residency.isCrownRelief.exists(_.equalsIgnoreCase("YES")))
         } yield ua3) match {
           case Success(populated) =>
             sessionRepository.set(populated).map(_ => Ok(view(buildSummaryList(populated))))
@@ -120,8 +122,10 @@ class UkResidencyCheckYourAnswersController @Inject()(
 
   private def updateResidency(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
-      updateResidencyRequest <- UpdateResidencyRequest.from(userAnswers)
-      updateResidencyReturn  <- backendConnector.updateResidency(updateResidencyRequest)
+      updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
+      updateReturnVersionReturn  <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      updateResidencyRequest     <- UpdateResidencyRequest.from(userAnswers) if updateReturnVersionReturn.newVersion.isDefined
+      updateResidencyReturn      <- backendConnector.updateResidency(updateResidencyRequest) if updateReturnVersionReturn.newVersion.isDefined
     } yield {
       if (updateResidencyReturn.updated) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
@@ -131,15 +135,12 @@ class UkResidencyCheckYourAnswersController @Inject()(
     }
   }
 
-  private def buildSummaryList(userAnswers: UserAnswers)(implicit request: RequestHeader) = {
-    val isNonUkResident = userAnswers.get(NonUkResidentPurchaserPage).contains(true)
-
+  private def buildSummaryList(userAnswers: UserAnswers)(implicit request: RequestHeader) =
     SummaryListViewModel(
       rows = Seq(
         NonUkResidentPurchaserSummary.row(userAnswers),
         CloseCompanySummary.row(userAnswers),
-        Option.when(isNonUkResident)(CrownEmploymentReliefSummary.row(userAnswers))
+        CrownEmploymentReliefSummary.row(userAnswers)
       ).flatten
     )
-  }
 }

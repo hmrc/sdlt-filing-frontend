@@ -21,7 +21,8 @@ import forms.ukResidency.CloseCompanyFormProvider
 import models.Mode
 import navigation.Navigator
 import play.api.data.Form
-import pages.ukResidency.{CloseCompanyPage, NonUkResidentPurchaserPage}
+import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage}
+import scala.util.Success
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -70,12 +71,16 @@ class CloseCompanyController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
+          val cleanedAnswers =
+            if !value then request.userAnswers.remove(CrownEmploymentReliefPage)
+            else Success(request.userAnswers)
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(CloseCompanyPage, value))
+            cleaned        <- Future.fromTry(cleanedAnswers)
+            updatedAnswers <- Future.fromTry(cleaned.set(CloseCompanyPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            val isNonUkResident = updatedAnswers.get(NonUkResidentPurchaserPage).contains(true)
-            if (isNonUkResident)
+            if (value)
               Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
             else
               Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())

@@ -21,7 +21,6 @@ import models.CheckMode
 import pages.ukResidency.CrownEmploymentReliefPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class CrownEmploymentReliefSummarySpec extends SpecBase {
@@ -38,7 +37,7 @@ class CrownEmploymentReliefSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(CrownEmploymentReliefPage, true).success.value
 
-          val result = CrownEmploymentReliefSummary.row(userAnswers)
+          val result = CrownEmploymentReliefSummary.row(userAnswers).value
 
           result.key.content.asHtml.toString() mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
 
@@ -61,7 +60,7 @@ class CrownEmploymentReliefSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(CrownEmploymentReliefPage, false).success.value
 
-          val result = CrownEmploymentReliefSummary.row(userAnswers)
+          val result = CrownEmploymentReliefSummary.row(userAnswers).value
 
           result.key.content.asHtml.toString() mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
 
@@ -79,22 +78,13 @@ class CrownEmploymentReliefSummarySpec extends SpecBase {
 
     "when CrownEmploymentRelief has not been answered" - {
 
-      "must return a SummaryListRow with a link to if they want to add an CrownEmploymentRelief" in {
+      "must return None" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = CrownEmploymentReliefSummary.row(emptyUserAnswers)
-
-          result.key.content.asHtml.toString() mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("ukResidency.crownEmploymentRelief.missing"))
-
-          result.actions mustBe None
+          CrownEmploymentReliefSummary.row(emptyUserAnswers) mustBe None
         }
       }
     }

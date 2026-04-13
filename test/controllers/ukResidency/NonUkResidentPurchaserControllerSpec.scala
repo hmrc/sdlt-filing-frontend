@@ -25,7 +25,7 @@ import models.{CheckMode, FullReturn, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.ukResidency.NonUkResidentPurchaserPage
+import pages.ukResidency.{CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -248,7 +248,7 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Crown Employment Relief in CheckMode when yes is submitted for company purchaser" in {
+    "must redirect to CloseCompany in CheckMode when yes is submitted for company purchaser" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -271,11 +271,11 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
       }
     }
 
-    "must redirect to CYA in CheckMode when no is submitted for company purchaser" in {
+    "must redirect to CloseCompany in CheckMode when no is submitted for company purchaser" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -298,7 +298,66 @@ class NonUkResidentPurchaserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
+      }
+    }
+
+    "must redirect to CrownEmploymentRelief in CheckMode when yes is submitted for individual purchaser" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val checkModeRoute = controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, checkModeRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url
+      }
+    }
+
+    "must redirect to CYA and remove CrownEmploymentReliefPage in CheckMode when no is submitted for individual purchaser" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val checkModeRoute = controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url
+
+      val userAnswers = userAnswersResidentialIndividual.set(CrownEmploymentReliefPage, true).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, checkModeRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        val uaCaptor: org.mockito.ArgumentCaptor[UserAnswers] = org.mockito.ArgumentCaptor.forClass(classOf[UserAnswers])
+        org.mockito.Mockito.verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(CrownEmploymentReliefPage) mustBe None
       }
     }
 

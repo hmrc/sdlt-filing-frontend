@@ -19,7 +19,7 @@ package controllers.ukResidency
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.{completeFullReturn, completeLandAdditional, completeLandNonResidential}
-import models.UserAnswers
+import models.{ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
 import models.ukResidency.{CreateResidencyReturn, UpdateResidencyReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -203,7 +203,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
-      "must include crown employment relief row when non-UK resident is yes" in {
+      "must include crown employment relief row when CrownEmploymentReliefPage is answered" in {
         val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(crownEmployment = true))
           .set(NonUkResidentPurchaserPage, true).success.value
           .set(CrownEmploymentReliefPage, true).success.value
@@ -223,8 +223,9 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
-      "must not include crown employment relief row when non-UK resident is no" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(nonUkResident = false))
+      "must not include crown employment relief row when CrownEmploymentReliefPage has not been answered" in {
+        val dataWithoutCrownRelief = Json.obj("ukResidencyCurrent" -> Json.obj("nonUkResidentPurchaser" -> false))
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = dataWithoutCrownRelief)
           .set(NonUkResidentPurchaserPage, false).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -342,6 +343,8 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           .set(CrownEmploymentReliefPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(newVersion = Some(2))))
         when(mockBackendConnector.updateResidency(any())(any(), any()))
           .thenReturn(Future.successful(UpdateResidencyReturn(updated = true)))
 
@@ -397,6 +400,8 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         ).set(NonUkResidentPurchaserPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(newVersion = Some(2))))
         when(mockBackendConnector.updateResidency(any())(any(), any()))
           .thenReturn(Future.successful(UpdateResidencyReturn(updated = false)))
 
