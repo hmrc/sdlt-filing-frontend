@@ -448,3 +448,8 @@ GET        /about-the-transaction/enter-date-of-contract                        
 POST       /about-the-transaction/enter-date-of-contract                                             controllers.transaction.TransactionDateOfContractController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/enter-date-of-contract/change                                      controllers.transaction.TransactionDateOfContractController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/enter-date-of-contract/change                                      controllers.transaction.TransactionDateOfContractController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/total-consideration-of-transaction                                 controllers.transaction.TotalConsiderationOfTransactionController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/total-consideration-of-transaction                                 controllers.transaction.TotalConsiderationOfTransactionController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/total-consideration-of-transaction/change                          controllers.transaction.TotalConsiderationOfTransactionController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/total-consideration-of-transaction/change                          controllers.transaction.TotalConsiderationOfTransactionController.onSubmit(mode: Mode = CheckMode)

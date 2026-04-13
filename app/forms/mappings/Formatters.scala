@@ -143,6 +143,43 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
+  private[mappings] def wholeNumberCurrencyFormatter(
+                                           requiredKey: String,
+                                           invalidNumericKey: String,
+                                           invalidWholeNumberKey: String,
+                                           maxValueKey: String,
+                                           maxValue: BigDecimal,
+                                           args: Seq[String] = Seq.empty
+                                         ): Formatter[String] =
+    new Formatter[String] {
+      val isNumeric = """^[0-9,]*(\.[0-9]+)?$"""
+      val validWholeNumber = """^[0-9,]+[.]{0,1}[0]{0,2}"""
+
+      private val baseFormatter = stringFormatter(requiredKey, args)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(",", "").replace(" ", "").replace("£", ""))
+          .flatMap {
+            case s if !s.matches(isNumeric) =>
+              Left(Seq(FormError(key, invalidNumericKey, args)))
+            case s if !s.matches(validWholeNumber) =>
+              Left(Seq(FormError(key, invalidWholeNumberKey, args)))
+            case s if BigDecimal(s) > maxValue =>
+              Left(Seq(FormError(key, maxValueKey, args)))
+            case s =>
+              nonFatalCatch
+                .either(
+                  BigDecimal(s).setScale(2, BigDecimal.RoundingMode.HALF_UP).toString
+                )
+                .left.map(_ => Seq(FormError(key, invalidNumericKey, args)))
+          }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        baseFormatter.unbind(key, value)
+    }
+
   private[mappings] def areaOfLandFormatter(
                                              unitType: String,
                                              requiredKey: String,

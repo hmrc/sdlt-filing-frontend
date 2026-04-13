@@ -62,6 +62,14 @@ trait Mappings extends Formatters with Constraints {
                          args: Seq[String] = Seq.empty): FieldMapping[BigDecimal] =
     of(currencyFormatter(requiredKey, invalidNumeric, nonNumericKey, args))
 
+  protected def wholeNumberCurrency(requiredKey: String = "error.required",
+                                    invalidNumericKey: String = "error.invalidNumeric",
+                                    invalidWholeNumberKey: String = "error.invalidWholeNumber",
+                                    maxValueKey: String = "error.maximum",
+                                    maxValue: BigDecimal = BigDecimal(9999999999L),
+                                    args: Seq[String] = Seq.empty): FieldMapping[String] =
+    of(wholeNumberCurrencyFormatter(requiredKey, invalidNumericKey, invalidWholeNumberKey, maxValueKey, maxValue, args))
+
   protected def areaOfLand(unitType: String,
                            requiredKey: String = "land.areaOfLand.error.required",
                            invalidKey: String = "land.areaOfLand.error.invalid",

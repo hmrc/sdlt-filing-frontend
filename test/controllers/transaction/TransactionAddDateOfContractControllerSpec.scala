@@ -161,7 +161,7 @@ class TransactionAddDateOfContractControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(NormalMode).url
       }
     }
 

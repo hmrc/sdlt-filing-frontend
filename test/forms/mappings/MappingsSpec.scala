@@ -260,6 +260,38 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     }
   }
 
+  "wholeNumberCurrency" - {
+    val testForm: Form[String] =
+      Form(
+        "value" -> wholeNumberCurrency()
+      )
+
+    "must bind a valid integer" in {
+      val result = testForm.bind(Map("value" -> "1"))
+      result.get mustEqual "1.00"
+    }
+
+    "must bind a valid integer with commas, spaces and pound sign" in {
+      val result = testForm.bind(Map("value" -> "£1,2 34"))
+      result.get mustEqual "1234.00"
+    }
+
+    "must not bind a valid decimal with 1 or 2 decimal places" in {
+      val result = testForm.bind(Map("value" -> "1.23"))
+      result.errors must contain only FormError("value", "error.invalidWholeNumber")
+    }
+
+    "must not bind a valid integer that is above the maximum value" in {
+      val result = testForm.bind(Map("value" -> "10000000000"))
+      result.errors must contain only FormError("value", "error.maximum")
+    }
+
+    "must not bind values with non-numeric characters except commas, spaces and `£`s" in {
+      val result = testForm.bind(Map("value" -> "abc"))
+      result.errors must contain only FormError("value", "error.invalidNumeric")
+    }
+  }
+
   "areaOfLand" - {
 
     "when unit type is square metres" - {

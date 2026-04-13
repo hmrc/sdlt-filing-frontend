@@ -26,6 +26,16 @@ import scala.util.{Failure, Success, Try}
 
 trait Constraints {
 
+  protected def isPredicateTrue[A](predicate: A => Boolean, errorKey: String): Constraint[A] =
+    Constraint { input =>
+      if (predicate(input)) {
+        Valid
+      }
+      else {
+        Invalid(errorKey)
+      }
+    }
+
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
       input =>

@@ -133,6 +133,35 @@ class FormatterSpec extends AnyFreeSpec with Matchers with Formatters {
       }
     }
 
+    "wholeNumberCurrencyFormatter" - {
+
+      val wholeNumberCurrencyFmt = wholeNumberCurrencyFormatter("required", "invalidNumeric", "invalidWholeNumber", "maxValue", BigDecimal(9999999999L))
+
+      "must bind valid whole number currency string" in {
+        wholeNumberCurrencyFmt.bind("key", Map("key" -> "123")) mustEqual Right("123.00")
+      }
+
+      "must bind valid whole number with 0s after decimal point" in {
+        wholeNumberCurrencyFmt.bind("key", Map("key" -> "123.00")) mustEqual Right("123.00")
+      }
+
+      "must bind valid whole number currency string with pound sign" in {
+        wholeNumberCurrencyFmt.bind("key", Map("key" -> "£123")) mustEqual Right("123.00")
+      }
+
+      "must return error for decimals" in {
+        wholeNumberCurrencyFmt.bind("key", Map("key" -> "12.3")) mustEqual Left(Seq(FormError("key", "invalidWholeNumber", Seq.empty)))
+      }
+
+      "must return error for non-numeric" in {
+        wholeNumberCurrencyFmt.bind("key", Map("key" -> "abc")) mustEqual Left(Seq(FormError("key", "invalidNumeric", Seq.empty)))
+      }
+
+      "must return error for value exceeding max limit" in {
+        wholeNumberCurrencyFmt.bind("key", Map("key" -> "10000000000")) mustEqual Left(Seq(FormError("key", "maxValue", Seq.empty)))
+      }
+    }
+
     "areaOfLandFormatter" - {
 
       "when unit type is square metres" - {

@@ -74,7 +74,7 @@ class TransactionAddDateOfContractController @Inject()(
               case (false, Some(GrantOfLease)) =>
                 Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2953 - change to is transaction linked to another tr-7
               case (false, Some(_)) =>
-                Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2923 - change to total consideration of transaction tr-4
+                Redirect(controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(mode))
               case _ =>
                 Redirect(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(mode))
             }
