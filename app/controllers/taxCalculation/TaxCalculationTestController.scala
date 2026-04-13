@@ -17,6 +17,7 @@
 package controllers.taxCalculation
 
 import models.*
+import viewmodels.taxCalculation.CalculationResultHelper
 import play.api.data.Form
 import play.api.data.Forms.*
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -73,21 +74,23 @@ class TaxCalculationTestController @Inject()(
     )
 
   def onPageLoad(): Action[AnyContent] = Action { implicit request =>
-    Ok(view(form, defaultJson, ""))
+    Ok(view(form, defaultJson, None, None))
   }
 
   def onSubmit(): Action[AnyContent] = Action.async { implicit request =>
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     form.bindFromRequest().fold(
-      _ => Future.successful(BadRequest(view(form, "", "Invalid form submission"))),
+      _ => Future.successful(BadRequest(view(form, "", None, Some("Invalid form submission")))),
       jsonStr => {
         Json.parse(jsonStr).validate[FullReturn].fold(
-          errors => Future.successful(Ok(view(form, jsonStr, s"JSON parse error: $errors"))),
+          errors => Future.successful(Ok(view(form, jsonStr, None, Some(s"JSON parse error: $errors")))),
           fullReturn => {
             val userAnswers = UserAnswers(id = "test-user", storn = fullReturn.stornId, fullReturn = Some(fullReturn))
             calculationService.calculateStampDutyLandTax(userAnswers).map { response =>
-              Ok(view(form, jsonStr, Json.prettyPrint(Json.toJson(response))))
+              Ok(view(form, jsonStr, Some(CalculationResultHelper.toViewModel(response)), None))
+            }.recover {
+              case ex: Exception => Ok(view(form, jsonStr, None, Some(ex.getMessage)))
             }
           }
         )

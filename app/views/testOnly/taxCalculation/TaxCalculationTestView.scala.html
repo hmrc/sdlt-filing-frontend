@@ -14,15 +14,21 @@
  * limitations under the License.
  *@
 
+@import viewmodels.taxCalculation.CalculationResultViewModel
+@import views.html.components._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukTextarea: GovukTextarea,
+    govukErrorSummary: GovukErrorSummary,
+    h1: h1,
     govukButton: GovukButton,
-    govukDetails: GovukDetails
+    govukDetails: GovukDetails,
+    govukTable: GovukTable
 )
 
-@(form: Form[String], jsonInput: String, result: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[String], jsonInput: String, result: Option[CalculationResultViewModel], error: Option[String])(implicit request: Request[_], messages: Messages)
 
 @validValuesContent = {
 <pre style="font-family: monospace; font-size: 13px;">
@@ -86,9 +92,9 @@ contractEndDate       YYYY-MM-DD
 </pre>
 }
 
-@layout(pageTitle = titleNoForm("SDLT Calc Test")) {
+@layout(pageTitle = titleNoForm("SDLT Tax Calculation Test")) {
 
-    <h1 class="govuk-heading-l">SDLT Tax Calculation Test</h1>
+    @h1("SDLT Tax Calculation Test")
 
     @formHelper(action = controllers.taxCalculation.routes.TaxCalculationTestController.onSubmit()) {
 
@@ -108,14 +114,18 @@ contractEndDate       YYYY-MM-DD
         @govukButton(ButtonViewModel("Calculate Tax"))
     }
 
-    @if(result.nonEmpty) {
-        @govukTextarea(Textarea(
-            id = "result",
-            name = "result",
-            rows = 20,
-            value = Some(result),
-            label = Label(content = Text("Response"), classes = "govuk-label--m"),
-            attributes = Map("style" -> "font-family: monospace; font-size: 13px;")
+    @error.map { err =>
+        @govukErrorSummary(ErrorSummary(
+            title = Text("Calculation failed"),
+            errorList = Seq(ErrorLink(content = Text(err)))
         ))
+    }
+
+    @result.map { vm =>
+        @for(table <- vm.tables) {
+            @govukTable(table)
+        }
+
+        @govukTable(vm.totalTax)
     }
 }
