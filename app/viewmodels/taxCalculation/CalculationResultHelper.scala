@@ -17,7 +17,7 @@
 package viewmodels.taxCalculation
 
 import config.CurrencyFormatter
-import models.taxCalculation.{CalculationResponse, SliceDetails, TaxTypes}
+import models.taxCalculation.{Result, SliceDetails, TaxTypes}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Empty
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
@@ -42,10 +42,7 @@ object CalculationResultHelper extends CurrencyFormatter {
     case _                => "Total SDLT due"
   }
 
-  def toViewModel(response: CalculationResponse): CalculationResultViewModel = {
-    val result = response.result.headOption.getOrElse(
-      throw new IllegalStateException("Calculation response contained no results")
-    )
+  def toViewModel(result: Result): CalculationResultViewModel = {
     val tables = result.taxCalcs.sortBy(_.taxType == TaxTypes.rent).map { calc =>
       val dataRows = calc.slices match {
         case Some(slices) => slices.map { slice =>

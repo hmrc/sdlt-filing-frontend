@@ -42,11 +42,13 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
 
   val APR2021_RESIDENTIAL_DATE = LocalDate.of(2021, 4, 1)
 
-  def calculateStampDutyLandTax(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[CalculationResponse] =
+  def calculateStampDutyLandTax(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: scala.concurrent.ExecutionContext): Future[Result] =
     buildRequest(userAnswers) match {
       case Right(request) =>
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")
-        connector.calculateStampDutyLandTax(request)
+        connector.calculateStampDutyLandTax(request).map(_.result.headOption.getOrElse(
+          throw new IllegalStateException("Calculation response contained no results")
+        ))
       case Left(error) =>
         logger.error(s"[SdltCalculationService][calculateStampDutyLandTax] failed to build request: $error")
         Future.failed(new IllegalStateException(error))
