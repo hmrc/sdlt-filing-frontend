@@ -18,7 +18,7 @@ package controllers.ukResidency
 
 import controllers.actions.*
 import forms.ukResidency.CloseCompanyFormProvider
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
 import play.api.data.Form
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage}
@@ -80,9 +80,12 @@ class CloseCompanyController @Inject()(
             updatedAnswers <- Future.fromTry(cleaned.set(CloseCompanyPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value)
-              Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
-            else
+            if (value) {
+              if (mode == CheckMode && updatedAnswers.get(CrownEmploymentReliefPage).isEmpty)
+                Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode))
+              else
+                Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
+            } else
               Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
           }
       )

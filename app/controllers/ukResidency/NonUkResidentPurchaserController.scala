@@ -19,9 +19,9 @@ package controllers.ukResidency
 import controllers.actions.*
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
 import models.land.LandTypeOfProperty
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.ukResidency.{CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
+import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import scala.util.Success
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -95,7 +95,10 @@ class NonUkResidentPurchaserController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (isCompany) {
-              Redirect(navigator.nextPage(NonUkResidentPurchaserPage, mode, updatedAnswers))
+              if (mode == CheckMode && updatedAnswers.get(CloseCompanyPage).isEmpty)
+                Redirect(controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode))
+              else
+                Redirect(navigator.nextPage(NonUkResidentPurchaserPage, mode, updatedAnswers))
             } else if (value) {
               Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(mode))
             } else {

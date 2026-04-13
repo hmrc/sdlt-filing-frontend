@@ -274,8 +274,8 @@ class Navigator @Inject()() {
     case PurchaserAgentReferencePage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
     case PurchaserAgentAuthorisedPage => _ => controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad()
 
-    case NonUkResidentPurchaserPage => _ => controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode)
-    case CloseCompanyPage => _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode)
+    case NonUkResidentPurchaserPage => _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
+    case CloseCompanyPage => _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
     case CrownEmploymentReliefPage => _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
 
     case LandTypeOfPropertyPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
