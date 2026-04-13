@@ -28,15 +28,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.*
 import java.time.temporal.ChronoUnit
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import scala.util.Try
 
+@Singleton
 class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
 
   // TODO: REMOVE EXPLANATORY COMMENTS
+  // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
   
   val logger: Logger = LoggerFactory.getLogger(getClass)
+
+  val APR2021_RESIDENTIAL_DATE = LocalDate.of(2021, 4, 1)
 
   def calculateStampDutyLandTax(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[CalculationResponse] =
     buildRequest(userAnswers) match {
@@ -61,14 +65,14 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
       transDesc     <- transaction.transactionDescription.toRight("transactionDescription not found in Transaction")          // TRANSACTION.TRANSACTION_DESCRIPTION - (1.2) Description of transaction
       holdingType   <- getHoldingType(transDesc)
       leaseDetails  <- fullReturn.lease.fold(Right(None))(buildLeaseDetails(_, transaction, parsedDate))                      // LEASE
-      propertyType  <- getPropertyType(propertyCode)                                                                          // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
+      propertyType  <- getPropertyType(propertyCode)
     } yield SdltCalculationRequest(
       holdingType         = holdingType,
       propertyType        = propertyType,
       effectiveDateDay    = parsedDate.getDayOfMonth,
       effectiveDateMonth  = parsedDate.getMonthValue,
       effectiveDateYear   = parsedDate.getYear,
-      nonUKResident       = fullReturn.residency.flatMap(_.isNonUkResidents.map(_.capitalize)),                               // RESIDENCY.IS_NON_UK_RESIDENTS - Non-UK resident purchaser?
+      nonUKResident       = fullReturn.residency.flatMap(_.isNonUkResidents.flatMap(handleNonUkResident(parsedDate, propertyType, _))),     // RESIDENCY.IS_NON_UK_RESIDENTS - Non-UK resident purchaser?
       premium             = premium,
       highestRent         = BigDecimal(0),                                                                                    // Rent values are bypassed - declaredNpv is used for leasehold calculation
       propertyDetails     = buildPropertyDetails(propertyCode),
@@ -100,14 +104,19 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) {
 
   private def getTaxReliefDetails(transaction: Transaction): Option[TaxReliefDetails] =
     for {
-      claimingRelief <- transaction.claimingRelief                                          // TRANSACTION.CLAIMING_RELIEF - (1.9) Are you claiming relief?
+      claimingRelief <- transaction.claimingRelief                     // TRANSACTION.CLAIMING_RELIEF - (1.9) Are you claiming relief?
       if claimingRelief.toUpperCase == "YES"
-      reliefReason   <- transaction.reliefReason                                            // TRANSACTION.RELIEF_REASON - (1.9) If 'yes', please show the reason
+      reliefReason   <- transaction.reliefReason                       // TRANSACTION.RELIEF_REASON - (1.9) If 'yes', please show the reason
       reliefCode     <- Try(reliefReason.toInt).toOption
     } yield TaxReliefDetails(
       taxReliefCode   = reliefCode,
-      isPartialRelief = Some(transaction.reliefAmount.isDefined)                            // TRANSACTION.RELIEF_AMOUNT - (1.9) ... amount remaining chargeable (whole pounds only)
+      isPartialRelief = Some(transaction.reliefAmount.isDefined)       // TRANSACTION.RELIEF_AMOUNT - (1.9) ... amount remaining chargeable (whole pounds only)
     )
+
+  private def handleNonUkResident(effectiveDate: LocalDate, propertyType: PropertyTypes.Value, isNonUkResident: String): Option[String] = {
+    if (effectiveDate.isBefore(APR2021_RESIDENTIAL_DATE) && propertyType == PropertyTypes.residential) { None }
+    else                                                  { Some(isNonUkResident.capitalize) }
+  }
   
   private def buildPropertyDetails(propertyCode: String): Option[PropertyDetails] =
     propertyCode match {
