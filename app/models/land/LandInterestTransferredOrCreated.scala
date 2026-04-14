@@ -33,6 +33,7 @@ object LandInterestTransferredOrCreated extends Enumerable.Implicits {
   case object LP extends WithName("LP") with LandInterestTransferredOrCreated
   case object LT extends WithName("LT") with LandInterestTransferredOrCreated
   case object OT extends WithName("OT") with LandInterestTransferredOrCreated
+  case object ER extends WithName("ER") with LandInterestTransferredOrCreated
 
   val values: Seq[LandInterestTransferredOrCreated] = Seq(
     FG, FPF, FT, LG, LP, LT, OT

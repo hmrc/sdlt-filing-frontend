@@ -109,10 +109,13 @@ class PopulateLandService {
       case Some("LP") => LandInterestTransferredOrCreated.LP
       case Some("LT") => LandInterestTransferredOrCreated.LT
       case Some("OT") => LandInterestTransferredOrCreated.OT
-      case _ => throw new IllegalStateException(s"Land ${land.landID} is missing interestCreatedTransferred")
+      case _ => LandInterestTransferredOrCreated.ER
     }
-
-    userAnswers.set(LandInterestTransferredOrCreatedPage, interestCreatedTransferred)
+    if (!interestCreatedTransferred.eq(LandInterestTransferredOrCreated.ER)) {
+      userAnswers.set(LandInterestTransferredOrCreatedPage, interestCreatedTransferred)
+    } else {
+      userAnswers.remove(LandInterestTransferredOrCreatedPage)
+    }
   }
 
   private def titleNumberPages(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
