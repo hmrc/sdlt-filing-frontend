@@ -19,39 +19,22 @@ package viewmodels.checkAnswers.ukResidency
 import models.{CheckMode, UserAnswers}
 import pages.ukResidency.CrownEmploymentReliefPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object CrownEmploymentReliefSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-
-    val changeRoute = controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url
-    val label = messages("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
-    
-    answers.get(CrownEmploymentReliefPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = label,
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("ukResidency.crownEmploymentRelief.change.hidden"))
-          )
-        )
-    }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("ukResidency.crownEmploymentRelief.missing")}</a>""")
-        )
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(CrownEmploymentReliefPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
-        key = label,
-        value = value      
+        key     = "ukResidency.crownEmploymentRelief.checkYourAnswersLabel",
+        value   = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("ukResidency.crownEmploymentRelief.change.hidden"))
+        )
       )
     }
 }

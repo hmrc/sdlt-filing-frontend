@@ -2993,7 +2993,7 @@ class StampDutyLandTaxConnectorISpec
     "createResidency()" - {
 
       val createResidencyRequestJson = Json.obj(
-        "storn" -> "STORN12345",
+        "stornId" -> "STORN12345",
         "returnResourceRef" -> "RRF-2024-001",
         "residency" -> Json.obj(
           "isNonUkResidents" -> "YES",
@@ -3045,7 +3045,7 @@ class StampDutyLandTaxConnectorISpec
 
         server.verify(
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/residency"))
-            .withRequestBody(matchingJsonPath("$.storn", equalTo("STORN12345")))
+            .withRequestBody(matchingJsonPath("$.stornId", equalTo("STORN12345")))
             .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
             .withRequestBody(matchingJsonPath("$.residency.isNonUkResidents", equalTo("YES")))
             .withRequestBody(matchingJsonPath("$.residency.isCompany", equalTo("NO")))
@@ -3180,7 +3180,7 @@ class StampDutyLandTaxConnectorISpec
     "updateResidency()" - {
 
       val updateResidencyRequestJson = Json.obj(
-        "storn" -> "STORN12345",
+        "stornId" -> "STORN12345",
         "returnResourceRef" -> "RRF-2024-001",
         "residency" -> Json.obj(
           "isNonUkResidents" -> "NO",
@@ -3193,7 +3193,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must return UpdateResidencyReturn when the stub returns 200 OK" in {
         server.stubFor(
-          put(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -3208,13 +3208,13 @@ class StampDutyLandTaxConnectorISpec
         result.updated mustBe true
 
         server.verify(
-          putRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
         )
       }
 
       "must send correct request body with nested residency fields" in {
         server.stubFor(
-          put(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -3227,8 +3227,8 @@ class StampDutyLandTaxConnectorISpec
         connector.updateResidency(request).futureValue
 
         server.verify(
-          putRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
-            .withRequestBody(matchingJsonPath("$.storn", equalTo("STORN12345")))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+            .withRequestBody(matchingJsonPath("$.stornId", equalTo("STORN12345")))
             .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
             .withRequestBody(matchingJsonPath("$.residency.isNonUkResidents", equalTo("NO")))
             .withRequestBody(matchingJsonPath("$.residency.isCompany", equalTo("YES")))
@@ -3238,7 +3238,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
         server.stubFor(
-          put(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
             .willReturn(
               aResponse()
                 .withStatus(400)
@@ -3255,7 +3255,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
         server.stubFor(
-          put(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -3272,7 +3272,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
         server.stubFor(
-          put(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
             .willReturn(
               aResponse()
                 .withStatus(500)
@@ -3287,9 +3287,9 @@ class StampDutyLandTaxConnectorISpec
         result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
       }
 
-      "must make PUT request to correct endpoint" in {
+      "must make POST request to correct endpoint" in {
         server.stubFor(
-          put(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -3303,13 +3303,13 @@ class StampDutyLandTaxConnectorISpec
 
         server.verify(
           1,
-          putRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
         )
       }
 
       "must handle connection errors when service is unavailable" in {
         server.stubFor(
-          put(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
             .willReturn(
               aResponse()
                 .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
@@ -3324,7 +3324,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must handle malformed JSON response" in {
         server.stubFor(
-          put(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/residency"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -3351,7 +3351,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must return DeleteResidencyReturn when the stub returns 200 OK" in {
         server.stubFor(
-          delete(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -3366,13 +3366,13 @@ class StampDutyLandTaxConnectorISpec
         result.deleted mustBe true
 
         server.verify(
-          deleteRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
         )
       }
 
       "must send correct request body with storn and returnResourceRef" in {
         server.stubFor(
-          delete(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -3385,7 +3385,7 @@ class StampDutyLandTaxConnectorISpec
         connector.deleteResidency(request).futureValue
 
         server.verify(
-          deleteRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .withRequestBody(matchingJsonPath("$.storn", equalTo("STORN12345")))
             .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
         )
@@ -3393,7 +3393,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
         server.stubFor(
-          delete(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .willReturn(
               aResponse()
                 .withStatus(400)
@@ -3410,7 +3410,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
         server.stubFor(
-          delete(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -3427,7 +3427,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
         server.stubFor(
-          delete(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .willReturn(
               aResponse()
                 .withStatus(500)
@@ -3442,9 +3442,9 @@ class StampDutyLandTaxConnectorISpec
         result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
       }
 
-      "must make DELETE request to correct endpoint" in {
+      "must make POST request to correct endpoint" in {
         server.stubFor(
-          delete(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -3458,13 +3458,13 @@ class StampDutyLandTaxConnectorISpec
 
         server.verify(
           1,
-          deleteRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
         )
       }
 
       "must handle connection errors when service is unavailable" in {
         server.stubFor(
-          delete(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .willReturn(
               aResponse()
                 .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
@@ -3479,7 +3479,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must handle malformed JSON response" in {
         server.stubFor(
-          delete(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/residency"))
             .willReturn(
               aResponse()
                 .withStatus(200)

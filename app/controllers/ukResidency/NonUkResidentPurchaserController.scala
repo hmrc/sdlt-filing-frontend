@@ -19,9 +19,10 @@ package controllers.ukResidency
 import controllers.actions.*
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
 import models.land.LandTypeOfProperty
-import models.{Mode, NormalMode}
+import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.ukResidency.NonUkResidentPurchaserPage
+import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
+import scala.util.Success
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -65,12 +66,11 @@ class NonUkResidentPurchaserController @Inject()(
             Ok(view(preparedForm, mode))
 
           case _ =>
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad() // TODO - DTR-2511 - SPRINT-12 - change to residency CYA page
-            )
+            Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
         }
 
       case None =>
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO - DTR-2511 - SPRINT-12 - change to residency CYA page
+        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
     }
   }
 
@@ -85,16 +85,24 @@ class NonUkResidentPurchaserController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
+          val cleanedAnswers =
+            if !isCompany && !value then request.userAnswers.remove(CrownEmploymentReliefPage)
+            else Success(request.userAnswers)
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUkResidentPurchaserPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            cleaned        <- Future.fromTry(cleanedAnswers)
+            updatedAnswers <- Future.fromTry(cleaned.set(NonUkResidentPurchaserPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (isCompany) {
-              Redirect(navigator.nextPage(NonUkResidentPurchaserPage, mode, updatedAnswers))
+              if (mode == CheckMode && updatedAnswers.get(CloseCompanyPage).isEmpty)
+                Redirect(controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode))
+              else
+                Redirect(navigator.nextPage(NonUkResidentPurchaserPage, mode, updatedAnswers))
             } else if (value) {
-              Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode))
+              Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(mode))
             } else {
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2511 - SPRINT-12 - change to residency CYA page
+              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
             }
           }
       )

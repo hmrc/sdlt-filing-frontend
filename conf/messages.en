@@ -1088,7 +1088,7 @@ ukResidency.nonUkResidentPurchaser.p1                                           
 ukResidency.nonUkResidentPurchaser.p2                                               = Read the latest <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
 ukResidency.nonUkResidentPurchaser.hint.link                                        = https://www.gov.uk/guidance/rates-of-stamp-duty-land-tax-for-non-uk-residents
 ukResidency.nonUkResidentPurchaser.hint.suffix                                      = HMRC guidance on residence status for SDLT (opens in a new tab)
-ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel                            = Non-UK Resident Purchaser
+ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel                            = Are any of the purchasers non-UK residents?
 ukResidency.nonUkResidentPurchaser.error.required                                   = Select yes if nonUkResidentPurchaser
 ukResidency.nonUkResidentPurchaser.change.hidden                                    = Non-UK Resident Purchaser
 
@@ -1096,7 +1096,7 @@ ukResidency.crownEmploymentRelief.title                                         
 ukResidency.crownEmploymentRelief.heading                                           = Crown employment relief
 ukResidency.crownEmploymentRelief.subheading                                        = Are any of the purchasers claiming Crown employment relief?
 ukResidency.crownEmploymentRelief.p1                                                = Relief from the non-UK surcharge is available if purchasers are not resident in the UK due to holding an office or employment under the Crown, such as a member of the UK armed forces, a civil servant or a diplomat. This relief is extended to the spouse or civil partner of a crown servant, provided they are not separated.
-ukResidency.crownEmploymentRelief.checkYourAnswersLabel                             = crownEmploymentRelief
+ukResidency.crownEmploymentRelief.checkYourAnswersLabel                             = Are any of the purchasers claiming Crown employment relief?
 ukResidency.crownEmploymentRelief.missing                                           = Select if any purchasers are claiming Crown employment relief
 ukResidency.crownEmploymentRelief.error.required                                    = Please select an option
 ukResidency.crownEmploymentRelief.change.hidden                                     = CrownEmploymentRelief
@@ -1105,7 +1105,7 @@ ukResidency.closeCompany.title                                                  
 ukResidency.closeCompany.heading                                                    = Close companies
 ukResidency.closeCompany.subheading                                                 = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
 ukResidency.closeCompany.p1                                                         = A close company is broadly defined as a company controlled by five or fewer participators (usually shareholders), or where any number of directors are also shareholders. If the company is controlled by non-UK residents, then it will be treated as a non-UK resident for the purposes of SDLT.
-ukResidency.closeCompany.checkYourAnswersLabel                                      = Close company
+ukResidency.closeCompany.checkYourAnswersLabel                                      = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
 ukResidency.closeCompany.error.required                                             = Select yes if any of the purchasers are a UK resident close company controlled directly or non-directly by non-UK residents
 ukResidency.closeCompany.change.hidden                                              = Close company
 

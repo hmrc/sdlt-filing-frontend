@@ -18,10 +18,11 @@ package controllers.ukResidency
 
 import controllers.actions.*
 import forms.ukResidency.CloseCompanyFormProvider
-import models.Mode
-import play.api.data.Form
+import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.ukResidency.CloseCompanyPage
+import play.api.data.Form
+import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage}
+import scala.util.Success
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -58,7 +59,7 @@ class CloseCompanyController @Inject()(
         }
         Ok(view(preparedForm, mode))
       } else {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()) // TODO - DTR-2511 - change to residency CYA page
+        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
       }
   }
 
@@ -70,14 +71,22 @@ class CloseCompanyController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
+          val cleanedAnswers =
+            if !value then request.userAnswers.remove(CrownEmploymentReliefPage)
+            else Success(request.userAnswers)
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(CloseCompanyPage, value))
+            cleaned        <- Future.fromTry(cleanedAnswers)
+            updatedAnswers <- Future.fromTry(cleaned.set(CloseCompanyPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value)
-              Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
-            else
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2511 - change to residency CYA page
+            if (value) {
+              if (mode == CheckMode && updatedAnswers.get(CrownEmploymentReliefPage).isEmpty)
+                Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode))
+              else
+                Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
+            } else
+              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
           }
       )
   }

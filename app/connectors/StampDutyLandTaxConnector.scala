@@ -432,7 +432,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
 
   def updateResidency(updateResidencyRequest: UpdateResidencyRequest)(implicit hc: HeaderCarrier,
                                                                       request: Request[_]): Future[UpdateResidencyReturn] = {
-    http.put(url"$activeBase/filing/update/residency")
+    http.post(url"$activeBase/filing/update/residency")
       .withBody(Json.toJson(updateResidencyRequest))
       .execute[Either[UpstreamErrorResponse, UpdateResidencyReturn]]
       .flatMap {
@@ -450,7 +450,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
 
   def deleteResidency(deleteResidencyRequest: DeleteResidencyRequest)(implicit hc: HeaderCarrier,
                                                                       request: Request[_]): Future[DeleteResidencyReturn] = {
-    http.delete(url"$activeBase/filing/delete/residency")
+    http.post(url"$activeBase/filing/delete/residency")
       .withBody(Json.toJson(deleteResidencyRequest))
       .execute[Either[UpstreamErrorResponse, DeleteResidencyReturn]]
       .flatMap {
