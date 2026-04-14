@@ -813,12 +813,12 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
       result.failed.get mustBe an[IllegalStateException]
     }
 
-    "must fail when interestTransferredOrCreated is missing" in {
+    "must return success response when interestTransferredOrCreated value is none" in {
       val land = Land(
         landID = Some("LDN001"),
         returnID = Some("RET123456789"),
         propertyType = Some("04"), // Additional
-        interestCreatedTransferred = None,
+        interestCreatedTransferred = Some("TYY"),
         houseNumber = Some("123"),
         address1 = Some("Baker Street"),
         address2 = Some("Marylebone"),
@@ -841,8 +841,40 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
       val result = service.populateLandInSession(land, userAnswers)
 
-      result mustBe a[Failure[_]]
-      result.failed.get mustBe an[IllegalStateException]
+      result mustBe a[Success[_]]
+      result.success.value.get(LandInterestTransferredOrCreatedPage) mustBe None
+    }
+
+    "must return success response with empty value for interestTransferredOrCreated when value is invalid " in {
+      val land = Land(
+        landID = Some("LDN001"),
+        returnID = Some("RET123456789"),
+        propertyType = Some("04"), // Additional
+        interestCreatedTransferred = Some("Invalid"),
+        houseNumber = Some("123"),
+        address1 = Some("Baker Street"),
+        address2 = Some("Marylebone"),
+        address3 = Some("London"),
+        address4 = None,
+        postcode = Some("NW1 6XE"),
+        landArea = None,
+        areaUnit = None,
+        localAuthorityNumber = Some("5900"),
+        mineralRights = Some("NO"),
+        NLPGUPRN = Some("10012345678"),
+        willSendPlanByPost = Some("NO"),
+        titleNumber = Some("TGL12456"),
+        landResourceRef = Some("LND-REF-001"),
+        nextLandID = None,
+        DARPostcode = Some("NW1 6XE")
+      )
+
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+
+      val result = service.populateLandInSession(land, userAnswers)
+
+      result mustBe a[Success[_]]
+      result.success.value.get(LandInterestTransferredOrCreatedPage) mustBe None
     }
   }
 }
