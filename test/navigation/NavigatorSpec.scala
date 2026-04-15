@@ -313,6 +313,11 @@ class NavigatorSpec extends SpecBase {
         "go from TransactionVatAmountPage to Forms of consideration page" in {
           navigator.nextPage(TransactionVatAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionVatAmountController.onPageLoad(NormalMode)
         }
+
+        "go from AddRegisteredCharityNumberPage to tr-8c to capture charity register number" in { //TODO - DTR-3267- SPRINT 13 update to what is charity register charity number - tr-8c
+          navigator.nextPage(AddRegisteredCharityNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
+        }
+
       }
     }
 
