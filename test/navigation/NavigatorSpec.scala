@@ -287,7 +287,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from TypeOfTransactionPage to Are you sure you want to change the transaction type page" in {
-          navigator.nextPage(TypeOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ChangeTypeOfTransactionController .onPageLoad(NormalMode)
+          navigator.nextPage(TypeOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ChangeTypeOfTransactionController.onPageLoad(NormalMode)
         }
 
         "go from TransactionEffectiveDatePage to contract or conclusion of missives page" in {
@@ -306,8 +306,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(ChangeTypeOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
         }
 
-        "go from TransactionVatIncludedPage to tr-5a Amount of VAT page" in { //TODO - DTR-2942 - SPRINT 13 - What is the amount of VAT update route
-          navigator.nextPage(TransactionVatIncludedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
+        "go from TransactionVatIncludedPage to tr-5a Amount of VAT page" in {
+          navigator.nextPage(TransactionVatIncludedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionVatAmountController.onPageLoad(NormalMode)
+        }
+        // TODO DTR-2945 - tr-6 - update to forms of consideration page when implemented
+        "go from TransactionVatAmountPage to Forms of consideration page" in {
+          navigator.nextPage(TransactionVatAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionVatAmountController.onPageLoad(NormalMode)
         }
       }
     }
