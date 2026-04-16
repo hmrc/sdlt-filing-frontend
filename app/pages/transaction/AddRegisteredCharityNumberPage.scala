@@ -21,7 +21,7 @@ import play.api.libs.json.JsPath
 
 case object AddRegisteredCharityNumberPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "transactionCurrent" \ toString
 
   override def toString: String = "addRegisteredCharityNumber"
 }
