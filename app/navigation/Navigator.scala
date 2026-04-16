@@ -208,7 +208,7 @@ class Navigator @Inject()() {
 
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
-         | TransactionVatAmountPage => true
+         | TransactionVatAmountPage | AddRegisteredCharityNumberPage => true
 
     case _ => false
   }
@@ -233,6 +233,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
     case TotalConsiderationOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
+    case AddRegisteredCharityNumberPage => //TODO - DTR-3267 - SPRINT 13 update to what is charity register charity number - tr-8c
+      _ => controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
