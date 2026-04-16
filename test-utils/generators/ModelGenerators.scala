@@ -21,11 +21,17 @@ import models.land.*
 import models.prelimQuestions.TransactionType
 import models.purchaser.*
 import models.purchaserAgent.*
+import models.transaction.TransactionFormsOfConsideration
 import models.vendor.whoIsTheVendor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryTransactionFormsOfConsideration: Arbitrary[TransactionFormsOfConsideration] =
+    Arbitrary {
+      Gen.oneOf(TransactionFormsOfConsideration.values)
+    }
 
   implicit lazy val arbitraryLandSelectMeasurementUnit: Arbitrary[LandSelectMeasurementUnit] =
     Arbitrary {

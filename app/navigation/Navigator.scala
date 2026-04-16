@@ -208,7 +208,7 @@ class Navigator @Inject()() {
 
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
-         | TransactionVatAmountPage | AddRegisteredCharityNumberPage => true
+         | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage=> true
 
     case _ => false
   }
@@ -227,12 +227,13 @@ class Navigator @Inject()() {
     case TransactionVatIncludedPage =>
       _ => controllers.transaction.routes.TransactionVatAmountController.onPageLoad(NormalMode)
     case TransactionVatAmountPage =>
-      // TODO DTR-2945 - tr-6 - update to forms of consideration page when implemented
-      _ => controllers.transaction.routes.TransactionVatAmountController.onPageLoad(NormalMode)
+      _ => controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
     case ChangeTypeOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
     case TotalConsiderationOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
+    case TransactionFormsOfConsiderationPage =>
+      _ => controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode) // TODO DTR-2953: SPRINT 13 Update to Is this transaction linked to another? - tr-7
     case AddRegisteredCharityNumberPage => //TODO - DTR-3267 - SPRINT 13 update to what is charity register charity number - tr-8c
       _ => controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
