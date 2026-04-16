@@ -30,35 +30,28 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("transaction.totalConsiderationOfTransaction.title"), section = Some(messages("site.transaction.caption")))) {
+@layout(pageTitle = title(form, messages("transaction.vatAmount.title"), section = Some(messages("site.transaction.caption")))) {
 
-    @formHelper(action = controllers.transaction.routes.TotalConsiderationOfTransactionController.onSubmit(mode)) {
+    @formHelper(action = controllers.transaction.routes.TransactionVatAmountController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @caption(messages("site.transaction.caption"))
-        @h1(messages("transaction.totalConsiderationOfTransaction.heading"))
-        @paragraph(messages("transaction.totalConsiderationOfTransaction.p1"))
-
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("transaction.totalConsiderationOfTransaction.li1")</li>
-            <li>@messages("transaction.totalConsiderationOfTransaction.li2")</li>
-            <li>@messages("transaction.totalConsiderationOfTransaction.li3")</li>
-            <li>@messages("transaction.totalConsiderationOfTransaction.li4")</li>
-        </ul>
+        @h1(messages("transaction.vatAmount.heading"))
+        @paragraph(messages("transaction.vatAmount.p1"))
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("transaction.totalConsiderationOfTransaction.h2")).asPageSubHeading()
+                label = LabelViewModel(messages("transaction.vatAmount.h2")).asPageSubHeading()
             )
             .withWidth(Fixed10)
             .withPrefix(PrefixOrSuffix(
                 content = Text(messages("site.money.prefix"))
             ))
-            .withHint(HintViewModel(HtmlContent(Html(messages("transaction.totalConsiderationOfTransaction.hint")))))
+            .withHint(HintViewModel(HtmlContent(Html(messages("transaction.vatAmount.hint")))))
         )
 
         @govukButton(

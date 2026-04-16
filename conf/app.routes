@@ -456,3 +456,8 @@ GET        /about-the-transaction/total-consideration-of-transaction            
 POST       /about-the-transaction/total-consideration-of-transaction                                 controllers.transaction.TotalConsiderationOfTransactionController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/total-consideration-of-transaction/change                          controllers.transaction.TotalConsiderationOfTransactionController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/total-consideration-of-transaction/change                          controllers.transaction.TotalConsiderationOfTransactionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/VAT-amount                                                         controllers.transaction.TransactionVatAmountController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/VAT-amount                                                         controllers.transaction.TransactionVatAmountController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/VAT-amount/change                                                  controllers.transaction.TransactionVatAmountController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/VAT-amount/change                                                  controllers.transaction.TransactionVatAmountController.onSubmit(mode: Mode = CheckMode)

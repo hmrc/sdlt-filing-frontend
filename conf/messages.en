@@ -20,6 +20,7 @@ site.success                                                                    
 site.section.prefix                                                                 = This section is
 site.fullStop                                                                       = .
 site.or                                                                             = or
+site.money.prefix                                                                   = £
 
 # Site Errors
 site.error.generic.title                                                            = Generic Error (Content TBC)
@@ -1229,7 +1230,6 @@ transaction.totalConsiderationOfTransaction.li3                                 
 transaction.totalConsiderationOfTransaction.li4                                     = payment of the vendor’s legal costs
 transaction.totalConsiderationOfTransaction.h2                                      = What is the total consideration in money or money’s worth?
 transaction.totalConsiderationOfTransaction.hint                                    = Enter the value in whole pounds only, for example £200,000
-transaction.totalConsiderationOfTransaction.prefix                                  = £
 transaction.totalConsiderationOfTransaction.checkYourAnswersLabel                   = What is the total consideration in money or money’s worth?
 transaction.totalConsiderationOfTransaction.error.required                          = Enter the total consideration in money or money’s worth, in pounds
 transaction.totalConsiderationOfTransaction.error.invalidNumeric                    = The total consideration in money or money’s worth must only include commas and numbers 0 to 9
@@ -1239,3 +1239,16 @@ transaction.totalConsiderationOfTransaction.error.vatIncludedInTotalConsideratio
 transaction.totalConsiderationOfTransaction.error.totalConsideration                = The total consideration in money or money’s worth must be less than the total consideration of all linked transactions
 transaction.totalConsiderationOfTransaction.change.hidden                           = The total consideration in money or money’s worth
 transaction.totalConsiderationOfTransaction.missing                                 = Enter the total consideration in money or money’s worth
+
+transaction.vatAmount.title                                                         = Amount of VAT
+transaction.vatAmount.heading                                                       = Amount of VAT
+transaction.vatAmount.p1                                                            = The total consideration must reflect VAT rates on the effective date of transaction. Any subsequent changes do not affect the amount due.
+transaction.vatAmount.h2                                                            = What is the amount of VAT included in the total consideration?
+transaction.vatAmount.hint                                                          = Enter the value in whole pounds only, for example £200,000
+transaction.vatAmount.checkYourAnswersLabel                                         = What is the amount of VAT included in the total consideration?
+transaction.vatAmount.error.required                                                = Enter the amount of VAT included in the total consideration, in pounds
+transaction.vatAmount.error.invalidNumeric                                          = The amount of VAT included in the total consideration must only include numbers 0 to 9 and commas
+transaction.vatAmount.error.invalidWholeNumber                                      = Enter the amount of VAT included in the total consideration in whole pounds
+transaction.vatAmount.error.maximum                                                 = The amount of VAT included in the total consideration must be equal to or less than £9,999,999,999
+transaction.vatAmount.error.vatIncludedInTotalConsideration                         = The amount of VAT included in the total consideration must be less than the total consideration in money or money’s worth
+transaction.vatAmount.change.hidden                                                 = the amount of VAT included in the total consideration
