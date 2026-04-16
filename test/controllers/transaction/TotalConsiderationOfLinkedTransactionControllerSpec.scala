@@ -18,44 +18,44 @@ package controllers.transaction
 
 import base.SpecBase
 import controllers.routes
-import forms.transaction.TotalConsiderationOfTransactionFormProvider
+import forms.transaction.TotalConsiderationOfLinkedTransactionFormProvider
+import models.prelimQuestions.TransactionType
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import models.prelimQuestions.TransactionType
-import pages.transaction._
+import pages.transaction.{TotalConsiderationOfLinkedTransactionPage, TotalConsiderationOfTransactionPage, TypeOfTransactionPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.transaction.TotalConsiderationOfTransactionView
+import views.html.transaction.TotalConsiderationOfLinkedTransactionView
 
 import scala.concurrent.Future
 
-class TotalConsiderationOfTransactionControllerSpec extends SpecBase with MockitoSugar {
+class TotalConsiderationOfLinkedTransactionControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new TotalConsiderationOfTransactionFormProvider()
-  val form = formProvider(_ => true, _ => true)
+  val formProvider = new TotalConsiderationOfLinkedTransactionFormProvider()
+  val form = formProvider(_ => true)
 
-  lazy val totalConsiderationOfTransactionRoute = controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(NormalMode).url
+  lazy val totalConsiderationOfLinkedTransactionRoute = controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(NormalMode).url
 
-  "TotalConsiderationOfTransaction Controller" - {
+  "TotalConsiderationOfLinkedTransaction Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, totalConsiderationOfTransactionRoute)
+        val request = FakeRequest(GET, totalConsiderationOfLinkedTransactionRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[TotalConsiderationOfTransactionView]
+        val view = application.injector.instanceOf[TotalConsiderationOfLinkedTransactionView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -64,14 +64,14 @@ class TotalConsiderationOfTransactionControllerSpec extends SpecBase with Mockit
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(TotalConsiderationOfTransactionPage, "answer").success.value
+      val userAnswers = emptyUserAnswers.set(TotalConsiderationOfLinkedTransactionPage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, totalConsiderationOfTransactionRoute)
+        val request = FakeRequest(GET, totalConsiderationOfLinkedTransactionRoute)
 
-        val view = application.injector.instanceOf[TotalConsiderationOfTransactionView]
+        val view = application.injector.instanceOf[TotalConsiderationOfLinkedTransactionView]
 
         val result = route(application, request).value
 
@@ -96,7 +96,7 @@ class TotalConsiderationOfTransactionControllerSpec extends SpecBase with Mockit
 
       running(application) {
         val request =
-          FakeRequest(POST, totalConsiderationOfTransactionRoute)
+          FakeRequest(POST, totalConsiderationOfLinkedTransactionRoute)
             .withFormUrlEncodedBody(("value", "10"))
 
         val result = route(application, request).value
@@ -112,34 +112,12 @@ class TotalConsiderationOfTransactionControllerSpec extends SpecBase with Mockit
 
       running(application) {
         val request =
-          FakeRequest(POST, totalConsiderationOfTransactionRoute)
+          FakeRequest(POST, totalConsiderationOfLinkedTransactionRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[TotalConsiderationOfTransactionView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must return a Bad Request and errors when VAT included in total consideration is more than total consideration value" in {
-      val userAnswers  = emptyUserAnswers
-        .set(TransactionVatAmountPage, "10").success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, totalConsiderationOfTransactionRoute)
-            .withFormUrlEncodedBody(("value", "5"))
-
-        val boundForm = form.bind(Map("value" -> "5")).withError("value", "transaction.totalConsiderationOfTransaction.error.vatIncludedInTotalConsideration")
-
-        val view = application.injector.instanceOf[TotalConsiderationOfTransactionView]
+        val view = application.injector.instanceOf[TotalConsiderationOfLinkedTransactionView]
 
         val result = route(application, request).value
 
@@ -151,18 +129,18 @@ class TotalConsiderationOfTransactionControllerSpec extends SpecBase with Mockit
     "must return a Bad Request and errors when non leased and value is greater than total consideration of linked transaction" in {
       val userAnswers = emptyUserAnswers
         .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
-        .set(TotalConsiderationOfLinkedTransactionPage, "5").success.value
+        .set(TotalConsiderationOfTransactionPage, "10").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, totalConsiderationOfTransactionRoute)
-            .withFormUrlEncodedBody(("value", "10"))
+          FakeRequest(POST, totalConsiderationOfLinkedTransactionRoute)
+            .withFormUrlEncodedBody(("value", "5"))
 
-        val boundForm = form.bind(Map("value" -> "10")).withError("value", "transaction.totalConsiderationOfTransaction.error.totalConsideration")
+        val boundForm = form.bind(Map("value" -> "5")).withError("value", "transaction.totalConsiderationOfLinkedTransaction.error.totalConsideration")
 
-        val view = application.injector.instanceOf[TotalConsiderationOfTransactionView]
+        val view = application.injector.instanceOf[TotalConsiderationOfLinkedTransactionView]
 
         val result = route(application, request).value
 
@@ -176,7 +154,7 @@ class TotalConsiderationOfTransactionControllerSpec extends SpecBase with Mockit
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, totalConsiderationOfTransactionRoute)
+        val request = FakeRequest(GET, totalConsiderationOfLinkedTransactionRoute)
 
         val result = route(application, request).value
 
@@ -191,7 +169,7 @@ class TotalConsiderationOfTransactionControllerSpec extends SpecBase with Mockit
 
       running(application) {
         val request =
-          FakeRequest(POST, totalConsiderationOfTransactionRoute)
+          FakeRequest(POST, totalConsiderationOfLinkedTransactionRoute)
             .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value

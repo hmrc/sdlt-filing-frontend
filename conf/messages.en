@@ -1336,3 +1336,16 @@ transaction.ReasonForRelief.reliefFromRate                                      
 transaction.ReasonForRelief.reliefForFreeport                                      = 36 - Relief for Freeport tax site
 transaction.ReasonForRelief.reliefInvestmentZone                                   = 37 - Relief for Investment Zone tax site
 transaction.ReasonForRelief.seedingRelief                                          = 38 - Seeding Relief
+
+transaction.totalConsiderationOfLinkedTransaction.title                             = Total consideration of all linked transactions
+transaction.totalConsiderationOfLinkedTransaction.heading                           = Total consideration of all linked transactions
+transaction.totalConsiderationOfLinkedTransaction.p1                                = When two or more transactions are linked, SDLT is calculated on the aggregate total consideration. You must include any payable VAT for all linked transactions, and anything of value (money’s worth) given by the purchaser as part of the transaction, like the release or assumption of a debt.
+transaction.totalConsiderationOfLinkedTransaction.h2                                = What is the total consideration in money or money’s worth of all transactions?
+transaction.totalConsiderationOfLinkedTransaction.hint                              = Enter the value in whole pounds only, for example £200,000
+transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel             = totalConsiderationOfLinkedTransaction
+transaction.totalConsiderationOfLinkedTransaction.error.required                    = Enter the total consideration in money or money’s worth of all transactions, in pounds
+transaction.totalConsiderationOfLinkedTransaction.error.invalidNumeric              = The total consideration in money or money’s worth of all transactions must only include numbers 0 to 9 and commas
+transaction.totalConsiderationOfLinkedTransaction.error.invalidWholeNumber          = Enter the total consideration in money or money’s worth of all transactions in whole pounds
+transaction.totalConsiderationOfLinkedTransaction.error.maximum                     = The total consideration in money or money’s worth must be less than £9,999,999,999
+transaction.totalConsiderationOfLinkedTransaction.error.totalConsideration          = The total consideration in money or money’s worth of all transactions must be more than the total consideration of a single transaction
+transaction.totalConsiderationOfLinkedTransaction.change.hidden                     = Total consideration of all linked transactions

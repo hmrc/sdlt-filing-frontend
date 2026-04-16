@@ -331,6 +331,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionLinkedTransactionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
 
+        "go from TotalConsiderationOfLinkedTransactionPage to claiming relief page" in { // TODO - DTR-2960 - SPRINT 13 update to are you claiming relief - tr-8
+          navigator.nextPage(TotalConsiderationOfLinkedTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(NormalMode)
+        }
+
       }
     }
 
