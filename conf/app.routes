@@ -462,6 +462,11 @@ POST       /about-the-transaction/VAT-amount                                    
 GET        /about-the-transaction/VAT-amount/change                                                  controllers.transaction.TransactionVatAmountController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/VAT-amount/change                                                  controllers.transaction.TransactionVatAmountController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/forms-of-consideration                                             controllers.transaction.TransactionFormsOfConsiderationController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/forms-of-consideration                                             controllers.transaction.TransactionFormsOfConsiderationController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/forms-of-consideration/change                                      controllers.transaction.TransactionFormsOfConsiderationController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/forms-of-consideration/change                                      controllers.transaction.TransactionFormsOfConsiderationController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-transaction/add-registered-charity-number                                      controllers.transaction.AddRegisteredCharityNumberController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/add-registered-charity-number                                      controllers.transaction.AddRegisteredCharityNumberController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/add-registered-charity-number/change                               controllers.transaction.AddRegisteredCharityNumberController.onPageLoad(mode: Mode = CheckMode)

@@ -67,10 +67,11 @@ class TransactionVatIncludedController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionVatIncludedPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value)
+            if (value) {
               Redirect(navigator.nextPage(TransactionVatIncludedPage, mode, updatedAnswers))
-            else
-              Redirect(controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)) // TODO - DTR-2945 - SPRINT 13 - What form does the consideration take? - tr-6
+            } else {
+              Redirect(controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode))
+            }
           }
       )
   }

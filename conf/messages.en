@@ -1253,6 +1253,29 @@ transaction.vatAmount.error.maximum                                             
 transaction.vatAmount.error.vatIncludedInTotalConsideration                         = The amount of VAT included in the total consideration must be less than the total consideration in money or money’s worth
 transaction.vatAmount.change.hidden                                                 = the amount of VAT included in the total consideration
 
+transaction.transactionFormsOfConsideration.title                                   = Forms of consideration
+transaction.transactionFormsOfConsideration.heading                                 = Forms of consideration
+transaction.transactionFormsOfConsideration.p1                                      = There are different forms of consideration. Most transactions are paid in pounds sterling, but if other types of consideration are involved in this transaction, you need to declare them. All considerations must be valued at their full market value on the effective date of transaction.
+transaction.transactionFormsOfConsideration.subHeading                              = What form does the consideration take?
+transaction.transactionFormsOfConsideration.hint                                    = Select up to 4 considerations
+transaction.transactionFormsOfConsideration.cash                                    = Cash
+transaction.transactionFormsOfConsideration.debt                                    = Debt
+transaction.transactionFormsOfConsideration.debt.hintText                           = Including assumption by the purchaser of outstanding mortgage
+transaction.transactionFormsOfConsideration.buildingWorks                           = Building works
+transaction.transactionFormsOfConsideration.employment                              = Employment
+transaction.transactionFormsOfConsideration.employment.hintText                     = Special rules might apply if the vendor is the purchaser’s employee
+transaction.transactionFormsOfConsideration.other                                   = Other
+transaction.transactionFormsOfConsideration.other.hintText                          = Such as an annuity
+transaction.transactionFormsOfConsideration.sharesInAQuotedCompany                  = Shares in a quoted company
+transaction.transactionFormsOfConsideration.sharesInAnUnquotedCompany               = Shares in an unquoted company
+transaction.transactionFormsOfConsideration.otherLand                               = Other land
+transaction.transactionFormsOfConsideration.services                                = Services
+transaction.transactionFormsOfConsideration.contingent                              = Contingent
+transaction.transactionFormsOfConsideration.checkYourAnswersLabel                   = Forms of consideration
+transaction.transactionFormsOfConsideration.error.required                          = Select up to 4 considerations
+transaction.transactionFormsOfConsideration.change.hidden                           = Transaction forms of consideration
+transaction.transactionFormsOfConsideration.missing                                 = Select forms of consideration
+
 transaction.addRegisteredCharityNumber.title                                       = Registered charity number - About the transaction
 transaction.addRegisteredCharityNumber.heading                                     = Registered charity number
 transaction.addRegisteredCharityNumber.subheading                                  = Do you know the charity’s registered number?

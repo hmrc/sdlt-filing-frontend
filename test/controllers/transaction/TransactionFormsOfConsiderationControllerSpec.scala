@@ -17,68 +17,72 @@
 package controllers.transaction
 
 import base.SpecBase
-import forms.transaction.TransactionVatIncludedFormProvider
+import controllers.routes
+import forms.transaction.TransactionFormsOfConsiderationFormProvider
 import models.NormalMode
+import models.transaction.{TransactionFormsOfConsideration, TransactionFormsOfConsiderationAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.TransactionVatIncludedPage
+import pages.transaction.TransactionFormsOfConsiderationPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.transaction.TransactionVatIncludedView
+import views.html.transaction.TransactionFormsOfConsiderationView
 
 import scala.concurrent.Future
 
-class TransactionVatIncludedControllerSpec extends SpecBase with MockitoSugar {
+class TransactionFormsOfConsiderationControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new TransactionVatIncludedFormProvider()
+  lazy val transactionFormsOfConsiderationRoute = controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode).url
+
+  val formProvider = new TransactionFormsOfConsiderationFormProvider()
   val form = formProvider()
 
-  lazy val transactionVatIncludedRoute = controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode).url
-
-  "TransactionVatIncluded Controller" - {
+  "TransactionFormsOfConsideration Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionVatIncludedRoute)
+        val request = FakeRequest(GET, transactionFormsOfConsiderationRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[TransactionVatIncludedView]
+        val view = application.injector.instanceOf[TransactionFormsOfConsiderationView]
 
         status(result) mustEqual OK
+
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(TransactionVatIncludedPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(TransactionFormsOfConsiderationPage,
+        TransactionFormsOfConsiderationAnswers.fromSet(TransactionFormsOfConsideration.values.toSet)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionVatIncludedRoute)
+        val request = FakeRequest(GET, transactionFormsOfConsiderationRoute)
 
-        val view = application.injector.instanceOf[TransactionVatIncludedView]
+        val view = application.injector.instanceOf[TransactionFormsOfConsiderationView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(TransactionFormsOfConsideration.values.toSet), NormalMode)(request, messages(application)).toString
       }
     }
 
-    "must redirect to the next page via navigator when YES is submitted" in {
+    "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -94,27 +98,13 @@ class TransactionVatIncludedControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionVatIncludedRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+          FakeRequest(POST, transactionFormsOfConsiderationRoute)
+            .withFormUrlEncodedBody(("value[0]", TransactionFormsOfConsideration.values.head.toString))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
-    "must redirect to tr-6 what form does the consideration take when NO is answered" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(POST, transactionVatIncludedRoute)
-          .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode).url
       }
     }
 
@@ -124,12 +114,12 @@ class TransactionVatIncludedControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionVatIncludedRoute)
-            .withFormUrlEncodedBody(("value", ""))
+          FakeRequest(POST, transactionFormsOfConsiderationRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[TransactionVatIncludedView]
+        val view = application.injector.instanceOf[TransactionFormsOfConsiderationView]
 
         val result = route(application, request).value
 
@@ -143,12 +133,12 @@ class TransactionVatIncludedControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionVatIncludedRoute)
+        val request = FakeRequest(GET, transactionFormsOfConsiderationRoute)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -158,13 +148,13 @@ class TransactionVatIncludedControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionVatIncludedRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+          FakeRequest(POST, transactionFormsOfConsiderationRoute)
+            .withFormUrlEncodedBody(("value[0]", TransactionFormsOfConsideration.values.head.toString))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

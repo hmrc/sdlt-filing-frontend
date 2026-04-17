@@ -309,9 +309,13 @@ class NavigatorSpec extends SpecBase {
         "go from TransactionVatIncludedPage to tr-5a Amount of VAT page" in {
           navigator.nextPage(TransactionVatIncludedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionVatAmountController.onPageLoad(NormalMode)
         }
-        // TODO DTR-2945 - tr-6 - update to forms of consideration page when implemented
+
         "go from TransactionVatAmountPage to Forms of consideration page" in {
-          navigator.nextPage(TransactionVatAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionVatAmountController.onPageLoad(NormalMode)
+          navigator.nextPage(TransactionVatAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
+        }
+
+        "go from TransactionFormsOfConsiderationPage to Is this transaction linked to another page (tr-7)" in { //TODO DTR-2953: SPRINT 13 Update to Is this transaction linked to another? - tr-7
+          navigator.nextPage(TransactionFormsOfConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
         }
 
         "go from AddRegisteredCharityNumberPage to tr-8c to capture charity register number" in { //TODO - DTR-3267- SPRINT 13 update to what is charity register charity number - tr-8c
