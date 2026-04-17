@@ -314,8 +314,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionVatAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
         }
 
-        "go from TransactionFormsOfConsiderationPage to Is this transaction linked to another page (tr-7)" in { //TODO DTR-2953: SPRINT 13 Update to Is this transaction linked to another? - tr-7
-          navigator.nextPage(TransactionFormsOfConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
+        "go from TransactionFormsOfConsiderationPage to Is this transaction linked to another page (tr-7)" in {
+          navigator.nextPage(TransactionFormsOfConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode)
         }
 
         "go from ReasonForReliefPage to Partial relief page" in {
