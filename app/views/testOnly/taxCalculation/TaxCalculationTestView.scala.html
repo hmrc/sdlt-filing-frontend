@@ -1,0 +1,131 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels.taxCalculation.CalculationResultViewModel
+@import views.html.components._
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukTextarea: GovukTextarea,
+    govukErrorSummary: GovukErrorSummary,
+    h1: h1,
+    govukButton: GovukButton,
+    govukDetails: GovukDetails,
+    govukTable: GovukTable
+)
+
+@(form: Form[String], jsonInput: String, result: Option[CalculationResultViewModel], error: Option[String])(implicit request: Request[_], messages: Messages)
+
+@validValuesContent = {
+<pre style="font-family: monospace; font-size: 13px;">
+propertyType
+  01 = Residential
+  02 = Mixed
+  03 = Non-residential
+  04 = Additional residential
+
+interestCreatedTransferred
+  FGL  FGR  FGS  FPF  FPO  FTF  FTO  LG  LPO  LPT  LT  OT
+
+transactionDescription
+  F = Conveyance/Transfer
+  L = Grant of Lease
+  A = Assignment of Lease
+  O = Other
+
+reliefReason
+  08 = Part exchange
+  09 = Relocation employment
+  10 = Compulsory purchase facilitating development
+  11 = Compliance with planning obligations
+  12 = Group relief
+  13 = Reconstruction relief
+  14 = Acquisition relief
+  15 = Demutualisation of insurance company
+  16 = Demutualisation of building society
+  17 = Incorporation of limited liability partnership
+  18 = Transfers involving public bodies
+  19 = Transfer in consequence of reorganisation of parliamentary constituencies
+  20 = Charities
+  21 = Acquisition by bodies established for national purposes
+  22 = Right to buy
+  23 = Registered social landlords
+  24 = Alternative property finance
+  25 = Collective enfranchisement by leaseholders
+  26 = Crofting community right to buy
+  27 = Diplomatic privileges
+  28 = Other
+  29 = Combination of reliefs
+  31 = Alternative finance investment bonds relief
+  32 = First time buyers relief
+  33 = Multiple dwelling relief
+  34 = Pre-completion transaction
+  35 = Relief from 15% rate
+  36 = Freeports tax site relief
+  37 = Investment zones tax site relief
+  38 = Seeding relief
+
+isLinked                yes / no
+claimingRelief          yes / no
+isNonUkResidents        yes / no
+isAnnualRentOver1000    yes / no
+
+reliefAmount          amount in pounds (set for partial relief, omit for full)
+netPresentValue       amount in pounds (used for leasehold calc instead of rents)
+effectiveDate         YYYY-MM-DD
+contractStartDate     YYYY-MM-DD
+contractEndDate       YYYY-MM-DD
+</pre>
+}
+
+@layout(pageTitle = titleNoForm("SDLT Tax Calculation Test")) {
+
+    @h1("SDLT Tax Calculation Test")
+
+    @formHelper(action = controllers.taxCalculation.routes.TaxCalculationTestController.onSubmit()) {
+
+        @govukDetails(Details(
+            summary = Text("Valid values"),
+            content = HtmlContent(validValuesContent)
+        ))
+
+        @govukTextarea(Textarea(
+            name = "json",
+            rows = 30,
+            value = Some(jsonInput),
+            label = Label(content = Text("FullReturn JSON"), classes = "govuk-label--m"),
+            attributes = Map("style" -> "font-family: monospace; font-size: 13px;")
+        ))
+
+        @govukButton(ButtonViewModel("Calculate Tax"))
+    }
+
+    @error.map { err =>
+        @govukErrorSummary(ErrorSummary(
+            title = Text("Calculation failed"),
+            errorList = Seq(ErrorLink(content = Text(err)))
+        ))
+    }
+
+    @result.map { vm =>
+        @for(table <- vm.tables) {
+            @govukTable(table)
+        }
+
+        @govukTable(vm.totalTax)
+    }
+}

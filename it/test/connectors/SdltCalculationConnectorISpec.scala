@@ -64,7 +64,8 @@ class SdltCalculationConnectorISpec
     isLinked            = None,
     interestTransferred = None,
     taxReliefDetails    = None,
-    isMultipleLand      = None
+    isMultipleLand      = None,
+    declaredNpv         = None
   )
 
   private val singleResultResponse = Json.obj(
