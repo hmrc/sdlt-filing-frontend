@@ -318,6 +318,11 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionFormsOfConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
         }
 
+        "go from ReasonForReliefPage to Partial relief page" in {
+          //TODO - DTR-3434 - Is any part of the consideration contingent or dependent on uncertain future? - tr-9
+          navigator.nextPage(ReasonForReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
+        }
+
         "go from AddRegisteredCharityNumberPage to tr-8c to capture charity register number" in { //TODO - DTR-3267- SPRINT 13 update to what is charity register charity number - tr-8c
           navigator.nextPage(AddRegisteredCharityNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
         }
