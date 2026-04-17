@@ -208,7 +208,7 @@ class Navigator @Inject()() {
 
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
-         | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage
+         | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
          | ReasonForReliefPage => true
 
     case _ => false
@@ -229,12 +229,15 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionVatAmountController.onPageLoad(NormalMode)
     case TransactionVatAmountPage =>
       _ => controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
+    case TransactionFormsOfConsiderationPage =>
+      _ => controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode)
+    case TransactionLinkedTransactionsPage =>
+      // TODO - DTR-2956 - update to total consideration of all linked transactions - tr-7a
+      _ => controllers.routes.ReturnTaskListController.onPageLoad()
     case ChangeTypeOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
     case TotalConsiderationOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
-    case TransactionFormsOfConsiderationPage =>
-      _ => controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode) // TODO DTR-2953: SPRINT 13 Update to Is this transaction linked to another? - tr-7
     case AddRegisteredCharityNumberPage => //TODO - DTR-3267 - SPRINT 13 update to what is charity register charity number - tr-8c
       _ => controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
     case ReasonForReliefPage => //TODO - DTR-3434 - Is any part of the consideration contingent or dependent on uncertain future? - tr-9

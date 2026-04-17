@@ -17,39 +17,38 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.TransactionDateOfContractFormProvider
+import forms.transaction.TransactionLinkedTransactionsFormProvider
 import models.Mode
-import models.prelimQuestions.TransactionType.GrantOfLease
 import navigation.Navigator
-import pages.transaction.{TransactionDateOfContractPage, TypeOfTransactionPage}
+import pages.transaction.TransactionLinkedTransactionsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.TransactionDateOfContractView
+import views.html.transaction.TransactionLinkedTransactionsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TransactionDateOfContractController @Inject()(
+class TransactionLinkedTransactionsController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
                                         navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: TransactionDateOfContractFormProvider,
+                                        formProvider: TransactionLinkedTransactionsFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: TransactionDateOfContractView
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                        view: TransactionLinkedTransactionsView
+                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val form = formProvider()
-
-      val preparedForm = request.userAnswers.get(TransactionDateOfContractPage) match {
-        case None => form
+      val preparedForm = request.userAnswers.get(TransactionLinkedTransactionsPage) match {
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
@@ -59,26 +58,19 @@ class TransactionDateOfContractController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val form = formProvider()
-
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionDateOfContractPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionLinkedTransactionsPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            request.userAnswers.get(TypeOfTransactionPage) match {
-              case Some(GrantOfLease) =>
-                Redirect(controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(mode))
-              case Some(_) =>
-                Redirect(navigator.nextPage(TransactionDateOfContractPage, mode, updatedAnswers))
-              case _ =>
-                Redirect(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(mode))
-            }
-
+            if (value)
+              Redirect(navigator.nextPage(TransactionLinkedTransactionsPage, mode, updatedAnswers))
+            else
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2960 - change to is the purchaser eligible to claim relief? - tr-8
           }
       )
   }

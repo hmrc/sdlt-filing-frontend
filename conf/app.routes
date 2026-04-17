@@ -472,6 +472,11 @@ POST       /about-the-transaction/add-registered-charity-number                 
 GET        /about-the-transaction/add-registered-charity-number/change                               controllers.transaction.AddRegisteredCharityNumberController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/add-registered-charity-number/change                               controllers.transaction.AddRegisteredCharityNumberController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/linked-transactions                                                controllers.transaction.TransactionLinkedTransactionsController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/linked-transactions                                                controllers.transaction.TransactionLinkedTransactionsController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/linked-transactions/change                                         controllers.transaction.TransactionLinkedTransactionsController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/linked-transactions/change                                         controllers.transaction.TransactionLinkedTransactionsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-transaction/reason-for-relief                                 controllers.transaction.ReasonForReliefController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/reason-for-relief                                 controllers.transaction.ReasonForReliefController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/reason-for-relief/change                          controllers.transaction.ReasonForReliefController.onPageLoad(mode: Mode = CheckMode)

@@ -314,8 +314,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionVatAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
         }
 
-        "go from TransactionFormsOfConsiderationPage to Is this transaction linked to another page (tr-7)" in { //TODO DTR-2953: SPRINT 13 Update to Is this transaction linked to another? - tr-7
-          navigator.nextPage(TransactionFormsOfConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
+        "go from TransactionFormsOfConsiderationPage to Is this transaction linked to another page (tr-7)" in {
+          navigator.nextPage(TransactionFormsOfConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode)
         }
 
         "go from ReasonForReliefPage to Partial relief page" in {
@@ -325,6 +325,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from AddRegisteredCharityNumberPage to tr-8c to capture charity register number" in { //TODO - DTR-3267- SPRINT 13 update to what is charity register charity number - tr-8c
           navigator.nextPage(AddRegisteredCharityNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
+        }
+
+        "go from TransactionLinkedTransactionsPage to tr-7a total consideration of all linked transactions" in { // TODO - DTR-2956 - update to tr-7a when implemented
+          navigator.nextPage(TransactionLinkedTransactionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
         }
 
       }

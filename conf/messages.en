@@ -1201,6 +1201,15 @@ transaction.addDateOfContract.error.required                                    
 transaction.addDateOfContract.change.hidden                                         = Do you know the date of contract or conclusion of missives?
 transaction.addDateOfContract.missing                                               = Select if you know the date of contract or conclusion of missives
 
+transaction.linkedTransactions.title                                                = Linked transactions
+transaction.linkedTransactions.heading                                              = Linked transactions
+transaction.linkedTransactions.h2                                                   = Is this transaction linked to another?
+transaction.linkedTransactions.p1                                                   = A transaction is linked when it forms part of an arrangement, scheme or series of transactions between the same vendor and purchaser or connected persons.
+transaction.linkedTransactions.checkYourAnswersLabel                                = Is this transaction linked to another?
+transaction.linkedTransactions.error.required                                       = Select yes if this transaction is linked to another
+transaction.linkedTransactions.change.hidden                                        = Is this transaction linked to another?
+transaction.linkedTransactions.missing                                              = Select if this transaction is linked to another
+
 transaction.transactionVatIncluded.title                                            = Is VAT included in the total consideration?
 transaction.transactionVatIncluded.heading                                          = Is VAT included in the total consideration?
 transaction.transactionVatIncluded.checkYourAnswersLabel                            = Is VAT included in the total consideration?
