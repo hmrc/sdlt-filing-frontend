@@ -148,7 +148,7 @@ class TotalConsiderationOfTransactionControllerSpec extends SpecBase with Mockit
       }
     }
 
-    "must return a Bad Request and errors when non leased and value is greater than total consideration of linked transaction" in {
+    "must return a Bad Request and errors when non leased and total consideration is greater than total consideration of linked transaction" in {
       val userAnswers = emptyUserAnswers
         .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
         .set(TotalConsiderationOfLinkedTransactionPage, "5").success.value

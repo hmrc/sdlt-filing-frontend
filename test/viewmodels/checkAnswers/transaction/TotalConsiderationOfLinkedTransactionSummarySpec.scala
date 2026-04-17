@@ -21,6 +21,7 @@ import models.CheckMode
 import pages.transaction.TotalConsiderationOfLinkedTransactionPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 class TotalConsiderationOfLinkedTransactionSummarySpec extends SpecBase {
 
@@ -40,7 +41,7 @@ class TotalConsiderationOfLinkedTransactionSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TotalConsiderationOfLinkedTransactionPage, value).success.value
 
-          val result = TotalConsiderationOfLinkedTransactionSummary.row(userAnswers).getOrElse(fail("Failed to retrieve summary list row"))
+          val result = TotalConsiderationOfLinkedTransactionSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel")
 
@@ -57,7 +58,7 @@ class TotalConsiderationOfLinkedTransactionSummarySpec extends SpecBase {
 
     "when the total consideration of linked transactions is not present" - {
 
-      "must return none" in {
+      "must return a summary list row with a missing link" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -66,7 +67,14 @@ class TotalConsiderationOfLinkedTransactionSummarySpec extends SpecBase {
 
           val result = TotalConsiderationOfLinkedTransactionSummary.row(emptyUserAnswers)
 
-          result mustEqual None
+          result.key.content.asHtml.toString() mustEqual msgs("transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("transaction.totalConsiderationOfLinkedTransaction.missing"))
+
+          result.actions mustBe None
         }
       }
     }

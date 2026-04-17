@@ -21,6 +21,7 @@ import models.CheckMode
 import pages.transaction.TransactionVatAmountPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 class TransactionVatAmountSummarySpec extends SpecBase {
 
@@ -40,7 +41,7 @@ class TransactionVatAmountSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TransactionVatAmountPage, value).success.value
 
-          val result = TransactionVatAmountSummary.row(userAnswers).getOrElse(fail("Failed to retrieve summary list row"))
+          val result = TransactionVatAmountSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.vatAmount.checkYourAnswersLabel")
 
@@ -57,7 +58,7 @@ class TransactionVatAmountSummarySpec extends SpecBase {
 
     "when the vat amount is not present" - {
 
-      "must return none" in {
+      "must return a summary list row with a missing link" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -66,7 +67,14 @@ class TransactionVatAmountSummarySpec extends SpecBase {
 
           val result = TransactionVatAmountSummary.row(emptyUserAnswers)
 
-          result mustEqual None
+          result.key.content.asHtml.toString() mustEqual msgs("transaction.vatAmount.checkYourAnswersLabel")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.transaction.routes.TransactionVatAmountController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("transaction.vatAmount.missing"))
+
+          result.actions mustBe None
         }
       }
     }
