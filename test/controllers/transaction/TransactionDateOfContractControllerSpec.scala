@@ -114,8 +114,7 @@ class TransactionDateOfContractControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, postRequest()).value
 
         status(result) mustEqual SEE_OTHER
-        // TODO - DTR-2953 - change to is transaction linked to another tr-7
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode).url
       }
     }
 

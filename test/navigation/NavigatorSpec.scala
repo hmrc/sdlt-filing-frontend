@@ -327,6 +327,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AddRegisteredCharityNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
         }
 
+        "go from TransactionLinkedTransactionsPage to tr-7a total consideration of all linked transactions" in { // TODO - DTR-2956 - update to tr-7a when implemented
+          navigator.nextPage(TransactionLinkedTransactionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.routes.ReturnTaskListController.onPageLoad()
+        }
+
       }
     }
 

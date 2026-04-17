@@ -72,7 +72,7 @@ class TransactionAddDateOfContractController @Inject()(
               case (true, Some(_)) =>
                 Redirect(navigator.nextPage(TransactionAddDateOfContractPage, mode, updatedAnswers))
               case (false, Some(GrantOfLease)) =>
-                Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO - DTR-2953 - change to is transaction linked to another tr-7
+                Redirect(controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(mode))
               case (false, Some(_)) =>
                 Redirect(controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(mode))
               case _ =>
