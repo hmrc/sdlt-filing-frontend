@@ -50,10 +50,11 @@ class SdltCalculationConnectorSpec extends SpecBase with MockitoSugar {
     isLinked            = None,
     interestTransferred = None,
     taxReliefDetails    = None,
-    isMultipleLand      = None
+    isMultipleLand      = None,
+    declaredNpv         = None
   )
 
-  private val testResult = Result(
+  private val testResult = TaxCalculationResult(
     totalTax      = 5000,
     resultHeading = None,
     resultHint    = None,
