@@ -234,7 +234,6 @@ class Navigator @Inject()() {
     case TransactionLinkedTransactionsPage =>
       // TODO - DTR-2956 - update to total consideration of all linked transactions - tr-7a
       _ => controllers.routes.ReturnTaskListController.onPageLoad()
-      _ => controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(NormalMode)
     case ChangeTypeOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
     case TotalConsiderationOfTransactionPage =>
