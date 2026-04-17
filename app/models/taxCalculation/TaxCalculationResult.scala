@@ -18,22 +18,22 @@ package models.taxCalculation
 
 import play.api.libs.json.*
 
-case class CalculationResponse(result: Seq[Result])
+case class CalculationResponse(result: Seq[TaxCalculationResult])
 
 object CalculationResponse {
   implicit val reads: Reads[CalculationResponse] = Json.reads[CalculationResponse]
 }
 
-case class Result(
-                   totalTax      : Int,
-                   resultHeading : Option[String],
-                   resultHint    : Option[String],
-                   npv           : Option[Int],
-                   taxCalcs      : Seq[CalculationDetails]
-                 )
+case class TaxCalculationResult(
+                                 totalTax      : Int,
+                                 resultHeading : Option[String],
+                                 resultHint    : Option[String],
+                                 npv           : Option[Int],
+                                 taxCalcs      : Seq[CalculationDetails]
+                               )
 
-object Result {
-  implicit val reads: Reads[Result] = Json.reads[Result]
+object TaxCalculationResult {
+  implicit val reads: Reads[TaxCalculationResult] = Json.reads[TaxCalculationResult]
 }
 
 case class CalculationDetails(

@@ -54,17 +54,48 @@ class SdltCalculationConnectorISpec
     effectiveDateDay    = 1,
     effectiveDateMonth  = 2,
     effectiveDateYear   = 2015,
-    nonUKResident       = None,
+    nonUKResident       = Some("Yes"),
     premium             = BigDecimal(100000),
     highestRent         = BigDecimal(0),
-    propertyDetails     = None,
-    leaseDetails        = None,
-    relevantRentDetails = None,
-    firstTimeBuyer      = None,
-    isLinked            = None,
-    interestTransferred = None,
-    taxReliefDetails    = None,
-    isMultipleLand      = None
+    propertyDetails     = Some(PropertyDetails(
+      individual = "Yes",
+      twoOrMoreProperties = Some("Yes"),
+      replaceMainResidence = Some("No"),
+      sharedOwnership = None,             // field not used
+      currentValue = None                 // field not used
+    )),
+    leaseDetails        = Some(LeaseDetails(
+      startDateDay    = 1,
+      startDateMonth  = 2,
+      startDateYear   = 2015,
+      endDateDay      = 31,
+      endDateMonth    = 1,
+      endDateYear     = 2020,
+      leaseTerm       = LeaseTerm(
+        years             = 5,
+        days              = 0,
+        daysInPartialYear = 0
+      ),
+      year1Rent = 0,        // field always set to zero - it is bypassed, we use declaredNpv
+      year2Rent = Some(0),  // field always set to zero - it is bypassed, we use declaredNpv
+      year3Rent = Some(0),  // field always set to zero - it is bypassed, we use declaredNpv
+      year4Rent = Some(0),  // field always set to zero - it is bypassed, we use declaredNpv
+      year5Rent = Some(0)   // field always set to zero - it is bypassed, we use declaredNpv
+    )),
+    relevantRentDetails = Some(RelevantRentDetails(
+      contractPre201603        = Some("Yes"),
+      contractVariedPost201603 = Some("No"),
+      relevantRent             = Some(BigDecimal(0))  // field always set to 0 or 1000
+    )),
+    firstTimeBuyer      = Some("No"),
+    isLinked            = Some(false),
+    interestTransferred = Some("LG"),
+    taxReliefDetails    = Some(TaxReliefDetails(
+      taxReliefCode   = 30,
+      isPartialRelief = Some(false)
+    )),
+    isMultipleLand      = Some(false),
+    declaredNpv         = Some(BigDecimal(100000))
   )
 
   private val singleResultResponse = Json.obj(
@@ -100,7 +131,7 @@ class SdltCalculationConnectorISpec
         val result = connector.calculateStampDutyLandTax(testRequest).futureValue
 
         server.getAllServeEvents.get(0).getResponse.getStatus mustBe OK
-        result mustBe CalculationResponse(Seq(Result(
+        result mustBe CalculationResponse(Seq(TaxCalculationResult(
           totalTax      = 5000,
           resultHeading = None,
           resultHint    = None,
