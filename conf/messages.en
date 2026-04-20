@@ -1296,7 +1296,7 @@ transaction.addRegisteredCharityNumber.p3                                       
 transaction.addRegisteredCharityNumber.p3.suffix                                   = the Charity Commission for Northern Ireland (opens in new tab)
 transaction.addRegisteredCharityNumber.p3.link                                     = https://www.charitycommissionni.org.uk/charity-search/?pageNumber=1
 transaction.addRegisteredCharityNumber.checkYourAnswersLabel                       = Registered charity number
-transaction.addRegisteredCharityNumber.error.required                              = Select yes if addRegisteredCharityNumber
+transaction.addRegisteredCharityNumber.error.required                              = Select yes if you know the charity’s registered number
 transaction.addRegisteredCharityNumber.change.hidden                               = Registered charity number
 
 transaction.ReasonForRelief.title                                                  = What is the reason for claiming relief? - About the transaction
