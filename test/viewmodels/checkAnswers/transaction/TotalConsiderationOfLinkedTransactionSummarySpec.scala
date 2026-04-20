@@ -18,16 +18,16 @@ package viewmodels.checkAnswers.transaction
 
 import base.SpecBase
 import models.CheckMode
-import pages.transaction.TransactionVatAmountPage
+import pages.transaction.TotalConsiderationOfLinkedTransactionPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
-class TransactionVatAmountSummarySpec extends SpecBase {
+class TotalConsiderationOfLinkedTransactionSummarySpec extends SpecBase {
 
-  "TransactionVatAmountSummary" - {
+  "TotalConsiderationOfTransactionSummary" - {
 
-    "when the vat amount is present" - {
+    "when the total consideration of linked transactions is present" - {
 
       "must return a summary list row with value and change link" in {
 
@@ -39,24 +39,24 @@ class TransactionVatAmountSummarySpec extends SpecBase {
           val value = "100.00"
 
           val userAnswers = emptyUserAnswers
-            .set(TransactionVatAmountPage, value).success.value
+            .set(TotalConsiderationOfLinkedTransactionPage, value).success.value
 
-          val result = TransactionVatAmountSummary.row(userAnswers)
+          val result = TotalConsiderationOfLinkedTransactionSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.vatAmount.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml mustEqual "£100.00"
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionVatAmountController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.vatAmount.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.totalConsiderationOfLinkedTransaction.change.hidden")
         }
       }
     }
 
-    "when the vat amount is not present" - {
+    "when the total consideration of linked transactions is not present" - {
 
       "must return a summary list row with a missing link" in {
 
@@ -65,14 +65,14 @@ class TransactionVatAmountSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = TransactionVatAmountSummary.row(emptyUserAnswers)
+          val result = TotalConsiderationOfLinkedTransactionSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.vatAmount.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TransactionVatAmountController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.vatAmount.missing"))
+          htmlContent must include(controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("transaction.totalConsiderationOfLinkedTransaction.missing"))
 
           result.actions mustBe None
         }

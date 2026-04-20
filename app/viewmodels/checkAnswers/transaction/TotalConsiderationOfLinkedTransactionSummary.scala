@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.TransactionVatAmountPage
+import pages.transaction.TotalConsiderationOfLinkedTransactionPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -25,27 +25,27 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object TransactionVatAmountSummary  {
+object TotalConsiderationOfLinkedTransactionSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    val changeRoute = controllers.transaction.routes.TransactionVatAmountController.onPageLoad(CheckMode).url
-    val label = messages("transaction.vatAmount.checkYourAnswersLabel")
-    answers.get(TransactionVatAmountPage).map {
+    val changeRoute = controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(CheckMode).url
+    val label = messages("transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel")
+    answers.get(TotalConsiderationOfLinkedTransactionPage).map {
       answer =>
 
         SummaryListRowViewModel(
           key     = label,
           value   = ValueViewModel(HtmlFormat.escape(s"£$answer").toString),
           actions = Seq(
-            ActionItemViewModel("site.change",changeRoute)
-              .withVisuallyHiddenText(messages("transaction.vatAmount.change.hidden"))
+            ActionItemViewModel("site.change", changeRoute)
+              .withVisuallyHiddenText(messages("transaction.totalConsiderationOfLinkedTransaction.change.hidden"))
           )
         )
     }.getOrElse {
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("transaction.vatAmount.missing")}</a>""")
+          s"""<a href="$changeRoute" class="govuk-link">${messages("transaction.totalConsiderationOfLinkedTransaction.missing")}</a>""")
       )
 
       SummaryListRowViewModel(

@@ -481,3 +481,8 @@ GET        /about-the-transaction/reason-for-relief                             
 POST       /about-the-transaction/reason-for-relief                                 controllers.transaction.ReasonForReliefController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/reason-for-relief/change                          controllers.transaction.ReasonForReliefController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/reason-for-relief/change                          controllers.transaction.ReasonForReliefController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/total-consideration-of-linked-transaction                          controllers.transaction.TotalConsiderationOfLinkedTransactionController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/total-consideration-of-linked-transaction                          controllers.transaction.TotalConsiderationOfLinkedTransactionController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/total-consideration-of-linked-transaction/change                   controllers.transaction.TotalConsiderationOfLinkedTransactionController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/total-consideration-of-linked-transaction/change                   controllers.transaction.TotalConsiderationOfLinkedTransactionController.onSubmit(mode: Mode = CheckMode)

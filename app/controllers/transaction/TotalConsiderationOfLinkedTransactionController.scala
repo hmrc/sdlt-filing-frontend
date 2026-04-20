@@ -17,31 +17,31 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.TotalConsiderationOfTransactionFormProvider
-import models.{Mode, UserAnswers}
+import forms.transaction.TotalConsiderationOfLinkedTransactionFormProvider
 import models.prelimQuestions.TransactionType
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.transaction.{TotalConsiderationOfTransactionPage, TransactionVatAmountPage, TotalConsiderationOfLinkedTransactionPage, TypeOfTransactionPage}
+import pages.transaction.{TotalConsiderationOfLinkedTransactionPage, TotalConsiderationOfTransactionPage, TypeOfTransactionPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.TotalConsiderationOfTransactionView
+import views.html.transaction.TotalConsiderationOfLinkedTransactionView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TotalConsiderationOfTransactionController @Inject()(
+class TotalConsiderationOfLinkedTransactionController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
                                         navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: TotalConsiderationOfTransactionFormProvider,
+                                        formProvider: TotalConsiderationOfLinkedTransactionFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: TotalConsiderationOfTransactionView
+                                        view: TotalConsiderationOfLinkedTransactionView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
@@ -49,7 +49,7 @@ class TotalConsiderationOfTransactionController @Inject()(
 
       val form = buildForm(request.userAnswers)
 
-      val preparedForm = request.userAnswers.get(TotalConsiderationOfTransactionPage) match {
+      val preparedForm = request.userAnswers.get(TotalConsiderationOfLinkedTransactionPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -68,31 +68,26 @@ class TotalConsiderationOfTransactionController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TotalConsiderationOfTransactionPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(TotalConsiderationOfLinkedTransactionPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(TotalConsiderationOfTransactionPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(TotalConsiderationOfLinkedTransactionPage, mode, updatedAnswers))
       )
   }
 
   private def buildForm(userAnswers: UserAnswers): Form[String] = {
-    val vat: Option[BigDecimal] = userAnswers.get(TransactionVatAmountPage).map(BigDecimal(_))
     val isTransactionNonLeased = !userAnswers.get(TypeOfTransactionPage).contains(TransactionType.GrantOfLease)
-    val linkedTransactionConsideration: Option[BigDecimal] = userAnswers.get(TotalConsiderationOfLinkedTransactionPage).map(BigDecimal(_))
+    val totalConsideration = userAnswers.get(TotalConsiderationOfTransactionPage).map(BigDecimal(_))
 
-    def validateVatIncludedInConsideration(totalConsideration: String): Boolean =
-      !vat.exists(_ > BigDecimal(totalConsideration))
-
-    def validateTotalConsideration(totalConsideration: String): Boolean = {
-      val totalConNum = BigDecimal(totalConsideration)
+    def validateTotalConsideration(totalLinkedConsideration: String): Boolean = {
       if (isTransactionNonLeased) {
-        if totalConNum < 0 then false
-        else if linkedTransactionConsideration.exists(totalConNum > _) then false
+        if totalConsideration.exists(_ < 0) then false
+        else if totalConsideration.exists(_ > BigDecimal(totalLinkedConsideration)) then false
         else true
       } else {
         true
       }
     }
 
-    formProvider(validateVatIncludedInConsideration, validateTotalConsideration)
+    formProvider(validateTotalConsideration)
   }
 }

@@ -209,7 +209,7 @@ class Navigator @Inject()() {
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
-         | ReasonForReliefPage => true
+         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage => true
 
     case _ => false
   }
@@ -232,8 +232,7 @@ class Navigator @Inject()() {
     case TransactionFormsOfConsiderationPage =>
       _ => controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode)
     case TransactionLinkedTransactionsPage =>
-      // TODO - DTR-2956 - update to total consideration of all linked transactions - tr-7a
-      _ => controllers.routes.ReturnTaskListController.onPageLoad()
+      _ => controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(NormalMode)
     case ChangeTypeOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
     case TotalConsiderationOfTransactionPage =>
@@ -242,6 +241,9 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
     case ReasonForReliefPage => //TODO - DTR-3434 - Is any part of the consideration contingent or dependent on uncertain future? - tr-9
       _ => controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
+    case TotalConsiderationOfLinkedTransactionPage =>
+      // TODO - DTR-2960 - SPRINT 13 update to are you claiming relief - tr-8
+      _ => controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
