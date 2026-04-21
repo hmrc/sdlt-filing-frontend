@@ -346,8 +346,8 @@ class NavigatorSpec extends SpecBase {
         "go from TransactionPartialReliefPage to How much relief is being claimed on part of the property? page" in { // TODO DTR-3431: Redirect to How much relief is being claimed on part of the property? - tr-8e
           navigator.nextPage(TransactionPartialReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
-        "go from CharityRegisteredNumberPage to purchaser claiming relief part of the land page" in { //TODO - DTR-3286 - SPRINT 13 update to  Is the purchaser claiming relief on part of the land or property - tr-8d
-          navigator.nextPage(CharityRegisteredNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.CharityRegisteredNumberController.onPageLoad(NormalMode)
+        "go from CharityRegisteredNumberPage to purchaser claiming relief part of the land page" in {
+          navigator.nextPage(CharityRegisteredNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
 
       }

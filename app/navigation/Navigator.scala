@@ -247,8 +247,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode)
     case TransactionPartialReliefPage => // TODO DTR-3431: Redirect to How much relief is being claimed on part of the property? - tr-8e
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
-    case CharityRegisteredNumberPage => //TODO - DTR-3286 - SPRINT 13 update to  Is the purchaser claiming relief on part of the land or property - tr-8d
-      _ => controllers.transaction.routes.CharityRegisteredNumberController.onPageLoad(NormalMode)
+    case CharityRegisteredNumberPage =>
+      _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
