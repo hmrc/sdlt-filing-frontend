@@ -43,6 +43,7 @@ site.vendorAgent.caption                                                        
 site.land.caption                                                                   = About the land
 site.ukResidency.caption                                                            = About UK residency
 site.transaction.caption                                                            = About the transaction
+site.taxCalculation.caption                                                         = Tax calculation
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -126,6 +127,8 @@ tasklist.failed                                                                 
 tasklist.optional                                                                   = Optional
 tasklist.transactionQuestion.details                                                = Transaction Questions
 tasklist.transactionQuestion.heading                                                = Transaction Questions
+tasklist.taxCalculationQuestion.details                                             = Tax Calculation Questions
+tasklist.taxCalculationQuestion.heading                                             = Tax Calculation Questions
 
 # Check Your Answers
 site.checkYourAnswers.heading                                                       = Check your answers
@@ -1351,3 +1354,12 @@ transaction.totalConsiderationOfLinkedTransaction.error.maximum                 
 transaction.totalConsiderationOfLinkedTransaction.error.totalConsideration          = The total consideration in money or money’s worth of all transactions must be more than the total consideration of a single transaction
 transaction.totalConsiderationOfLinkedTransaction.change.hidden                     = Total consideration of all linked transactions
 transaction.totalConsiderationOfLinkedTransaction.missing                           = Enter the total consideration of all linked transactions
+
+taxCalculation.beforeStart.title                                                    =
+taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
+taxCalculation.beforeStart.p2                                                       = You will need to know:
+taxCalculation.beforeStart.bullet1                                                  = the effective date of the transaction
+taxCalculation.beforeStart.bullet2                                                  = the tax due on the total premium payable
+taxCalculation.beforeStart.bullet3                                                  = the tax due on the NPV
+taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
+taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines

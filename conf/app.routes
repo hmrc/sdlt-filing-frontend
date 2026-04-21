@@ -486,3 +486,5 @@ GET        /about-the-transaction/total-consideration-of-linked-transaction     
 POST       /about-the-transaction/total-consideration-of-linked-transaction                          controllers.transaction.TotalConsiderationOfLinkedTransactionController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/total-consideration-of-linked-transaction/change                   controllers.transaction.TotalConsiderationOfLinkedTransactionController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/total-consideration-of-linked-transaction/change                   controllers.transaction.TotalConsiderationOfLinkedTransactionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /tax-calculation/before-you-start                                                         controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
