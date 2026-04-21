@@ -343,6 +343,9 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserEligibleToClaimReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
         }
 
+        "go from TransactionPartialReliefPage to How much relief is being claimed on part of the property? page" in { // TODO DTR-3431: Redirect to How much relief is being claimed on part of the property? - tr-8e
+          navigator.nextPage(TransactionPartialReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
+        }
       }
     }
 

@@ -492,4 +492,9 @@ POST       /about-the-transaction/claiming-relief                               
 GET        /about-the-transaction/claiming-relief/change                                             controllers.transaction.PurchaserEligibleToClaimReliefController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/claiming-relief/change                                             controllers.transaction.PurchaserEligibleToClaimReliefController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/partial-relief                                                     controllers.transaction.TransactionPartialReliefController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/partial-relief                                                     controllers.transaction.TransactionPartialReliefController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/partial-relief/change                                              controllers.transaction.TransactionPartialReliefController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/partial-relief/change                                              controllers.transaction.TransactionPartialReliefController.onSubmit(mode: Mode = CheckMode)
+
 GET        /tax-calculation/before-you-start                                                         controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
