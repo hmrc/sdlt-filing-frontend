@@ -17,38 +17,38 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.TransactionLinkedTransactionsFormProvider
+import forms.transaction.PurchaserEligibleToClaimReliefFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.TransactionLinkedTransactionsPage
+import pages.transaction.PurchaserEligibleToClaimReliefPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.TransactionLinkedTransactionsView
+import views.html.transaction.PurchaserEligibleToClaimReliefView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TransactionLinkedTransactionsController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: TransactionLinkedTransactionsFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: TransactionLinkedTransactionsView
-                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class PurchaserEligibleToClaimReliefController @Inject()(
+                                         override val messagesApi: MessagesApi,
+                                         sessionRepository: SessionRepository,
+                                         navigator: Navigator,
+                                         identify: IdentifierAction,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: PurchaserEligibleToClaimReliefFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         view: PurchaserEligibleToClaimReliefView
+                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TransactionLinkedTransactionsPage) match {
-        case None        => form
+      val preparedForm = request.userAnswers.get(PurchaserEligibleToClaimReliefPage) match {
+        case None => form
         case Some(value) => form.fill(value)
       }
 
@@ -64,13 +64,14 @@ class TransactionLinkedTransactionsController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionLinkedTransactionsPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserEligibleToClaimReliefPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value)
-              Redirect(navigator.nextPage(TransactionLinkedTransactionsPage, mode, updatedAnswers))
-            else
+            if(value) {
+              Redirect(navigator.nextPage(PurchaserEligibleToClaimReliefPage, mode, updatedAnswers))
+            } else { //TODO - DTR-3434 - SPRINT-14 - tr9 consideration affected by uncertain future events
               Redirect(controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode))
+            }
           }
       )
   }

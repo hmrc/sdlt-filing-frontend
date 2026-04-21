@@ -209,7 +209,7 @@ class Navigator @Inject()() {
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
-         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage => true
+         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage => true
 
     case _ => false
   }
@@ -239,11 +239,12 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
     case AddRegisteredCharityNumberPage => //TODO - DTR-3267 - SPRINT 13 update to what is charity register charity number - tr-8c
       _ => controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
+    case PurchaserEligibleToClaimReliefPage =>
+      _ => controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
     case ReasonForReliefPage => //TODO - DTR-3434 - Is any part of the consideration contingent or dependent on uncertain future? - tr-9
       _ => controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
     case TotalConsiderationOfLinkedTransactionPage =>
-      // TODO - DTR-2960 - SPRINT 13 update to are you claiming relief - tr-8
-      _ => controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(NormalMode)
+      _ => controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

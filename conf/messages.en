@@ -1355,6 +1355,15 @@ transaction.totalConsiderationOfLinkedTransaction.error.totalConsideration      
 transaction.totalConsiderationOfLinkedTransaction.change.hidden                     = Total consideration of all linked transactions
 transaction.totalConsiderationOfLinkedTransaction.missing                           = Enter the total consideration of all linked transactions
 
+transaction.purchaserEligibleToClaimRelief.title                                   = Claiming relief
+transaction.purchaserEligibleToClaimRelief.heading                                 = Claiming relief
+transaction.purchaserEligibleToClaimRelief.p1                                      = Relief means any reduction or exemption to the amount of payable SDLT, based on specific circumstances or criteria, like First Time Buyers’ Relief.
+transaction.purchaserEligibleToClaimRelief.h2                                      = Is the purchaser eligible to claim relief?
+transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel                   = Claiming relief
+transaction.purchaserEligibleToClaimRelief.error.required                          = Select yes if the purchaser is eligible to claim relief
+transaction.purchaserEligibleToClaimRelief.change.hidden                           = Claiming relief
+transaction.purchaserEligibleToClaimRelief.change.missing                          = Select if purchaser is eligible to claim relief
+
 taxCalculation.beforeStart.title                                                    =
 taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
 taxCalculation.beforeStart.p2                                                       = You will need to know:

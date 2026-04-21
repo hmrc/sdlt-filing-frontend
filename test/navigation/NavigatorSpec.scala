@@ -331,8 +331,16 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionLinkedTransactionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(NormalMode)
         }
 
-        "go from TotalConsiderationOfLinkedTransactionPage to claiming relief page" in { // TODO - DTR-2960 - SPRINT 13 update to are you claiming relief - tr-8
-          navigator.nextPage(TotalConsiderationOfLinkedTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(NormalMode)
+        "go from TotalConsiderationOfLinkedTransactionPage to PurchaserEligibleToClaimReliefPage" in {
+          navigator.nextPage(TotalConsiderationOfLinkedTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode)
+        }
+
+        "go from TotalConsiderationOfTransactionPage to TransactionVatIncludedController" in {
+          navigator.nextPage(TotalConsiderationOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
+        }
+
+        "go from PurchaserEligibleToClaimReliefPage to ReasonForReliefPage" in {
+          navigator.nextPage(PurchaserEligibleToClaimReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
         }
 
       }
