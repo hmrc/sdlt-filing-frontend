@@ -1158,22 +1158,22 @@ transaction.typeOfTransaction.heading                                           
 transaction.typeOfTransaction.checkYourAnswersLabel                                 = What type of transaction is this?
 transaction.typeOfTransaction.error.required                                        = Select the type of transaction
 
-transaction.transactionEffectiveDate.title                                           = Effective date of the transaction - About the transaction
-transaction.transactionEffectiveDate.heading                                         = Effective date of the transaction
-transaction.transactionEffectiveDate.subheading                                      = What is the effective date of the transaction?
-transaction.transactionEffectiveDate.details.summary                                 = About substantial performance
-transaction.transactionEffectiveDate.details.content                                 = The effective date of transaction can be brought forward if the contract is substantially performed prior to completion. Substantial performance occurs when the purchaser pays 90% or more of the total price, occupies 90% or more of the property, or pays any rent.
-transaction.transactionEffectiveDate.p                                               = This is typically the date when the transaction is legally completed. This means the land or property has changed ownership and the purchaser becomes liable to pay SDLT.
-transaction.transactionEffectiveDate.hint                                            = For example, 27 3 2023
-transaction.transactionEffectiveDate.checkYourAnswersLabel                           = Effective date of the transaction
-transaction.transactionEffectiveDate.error.required.all                              = Enter the effective date of the transaction
-transaction.transactionEffectiveDate.error.required.two                              = The effective date of transaction must include {0} and {1}
-transaction.transactionEffectiveDate.error.required                                  = The effective date of the transaction must include a {0}
-transaction.transactionEffectiveDate.error.invalid                                   = The effective date of the transaction must be a real date
-transaction.transactionEffectiveDate.change.hidden                                   = Effective date of the transaction
-transaction.transactionEffectiveDate.error.date.range.min                            = The effective date of transaction must be the same as or after 1 11 2003
-transaction.transactionEffectiveDate.error.date.range.max                            = The effective date of the transaction cannot be in the future
-transaction.transactionEffectiveDate.missing                                         = Provide Effective Date
+transaction.transactionEffectiveDate.title                                          = Effective date of the transaction - About the transaction
+transaction.transactionEffectiveDate.heading                                        = Effective date of the transaction
+transaction.transactionEffectiveDate.subheading                                     = What is the effective date of the transaction?
+transaction.transactionEffectiveDate.details.summary                                = About substantial performance
+transaction.transactionEffectiveDate.details.content                                = The effective date of transaction can be brought forward if the contract is substantially performed prior to completion. Substantial performance occurs when the purchaser pays 90% or more of the total price, occupies 90% or more of the property, or pays any rent.
+transaction.transactionEffectiveDate.p                                              = This is typically the date when the transaction is legally completed. This means the land or property has changed ownership and the purchaser becomes liable to pay SDLT.
+transaction.transactionEffectiveDate.hint                                           = For example, 27 3 2023
+transaction.transactionEffectiveDate.checkYourAnswersLabel                          = Effective date of the transaction
+transaction.transactionEffectiveDate.error.required.all                             = Enter the effective date of the transaction
+transaction.transactionEffectiveDate.error.required.two                             = The effective date of transaction must include {0} and {1}
+transaction.transactionEffectiveDate.error.required                                 = The effective date of the transaction must include a {0}
+transaction.transactionEffectiveDate.error.invalid                                  = The effective date of the transaction must be a real date
+transaction.transactionEffectiveDate.change.hidden                                  = Effective date of the transaction
+transaction.transactionEffectiveDate.error.date.range.min                           = The effective date of transaction must be the same as or after 1 11 2003
+transaction.transactionEffectiveDate.error.date.range.max                           = The effective date of the transaction cannot be in the future
+transaction.transactionEffectiveDate.missing                                        = Provide Effective Date
 
 transaction.confirmTypeOfTransaction.title                                          = Confirm the type of transaction - About the transaction
 transaction.confirmTypeOfTransaction.heading                                        = Confirm the type of transaction
@@ -1182,17 +1182,17 @@ transaction.confirmTypeOfTransaction.p                                          
 transaction.confirmTypeOfTransaction.error.required                                 = Select Yes or No
 transaction.confirmTypeOfTransaction.change.hidden                                  = Confirm Type Of Transaction
 
-transaction.changeTypeOfTransaction.title                                                   = Changing the type of transaction - About the transaction
-transaction.changeTypeOfTransaction.heading                                                 = Changing the transaction type
-transaction.changeTypeOfTransaction.subHeading                                              = Are you sure you need to change the transaction type?
-transaction.changeTypeOfTransaction.hint.option1                                            = By changing the type of transaction, the amount of SDLT due may change. All information about the lease will be deleted from this return.
-transaction.changeTypeOfTransaction.hint.option2                                            = By changing the type of transaction, the amount of SDLT due may change. All information about the total consideration of the transaction will be deleted from this return.
-transaction.changeTypeOfTransaction.hint.option3                                            = By changing the type of transaction, the amount of SDLT due may change. All information about the total premium payable and the net present value will be deleted from this return. You will now need to enter all information about the total consideration of the transaction.
-transaction.changeTypeOfTransaction.hint.option4                                            = By changing the type of transaction, the amount of SDLT due may change. All information you have entered about the total consideration of the transaction will be deleted. You will now need to enter the total premium payable and the net present value.
-transaction.changeTypeOfTransaction.checkYourAnswersLabel                                   = Changing the transaction type
-transaction.changeTypeOfTransaction.error.required                                          = Select yes if you need to change the transaction type
-transaction.changeTypeOfTransaction.change.hidden                                           = ChangeTypeOfTransaction
-transaction.changeTypeOfTransaction.missing                                                 = Select yes or no
+transaction.changeTypeOfTransaction.title                                           = Changing the type of transaction - About the transaction
+transaction.changeTypeOfTransaction.heading                                         = Changing the transaction type
+transaction.changeTypeOfTransaction.subHeading                                      = Are you sure you need to change the transaction type?
+transaction.changeTypeOfTransaction.hint.option1                                    = By changing the type of transaction, the amount of SDLT due may change. All information about the lease will be deleted from this return.
+transaction.changeTypeOfTransaction.hint.option2                                    = By changing the type of transaction, the amount of SDLT due may change. All information about the total consideration of the transaction will be deleted from this return.
+transaction.changeTypeOfTransaction.hint.option3                                    = By changing the type of transaction, the amount of SDLT due may change. All information about the total premium payable and the net present value will be deleted from this return. You will now need to enter all information about the total consideration of the transaction.
+transaction.changeTypeOfTransaction.hint.option4                                    = By changing the type of transaction, the amount of SDLT due may change. All information you have entered about the total consideration of the transaction will be deleted. You will now need to enter the total premium payable and the net present value.
+transaction.changeTypeOfTransaction.checkYourAnswersLabel                           = Changing the transaction type
+transaction.changeTypeOfTransaction.error.required                                  = Select yes if you need to change the transaction type
+transaction.changeTypeOfTransaction.change.hidden                                   = ChangeTypeOfTransaction
+transaction.changeTypeOfTransaction.missing                                         = Select yes or no
 
 
 transaction.addDateOfContract.title                                                 = Date of contract
@@ -1289,57 +1289,57 @@ transaction.transactionFormsOfConsideration.error.required                      
 transaction.transactionFormsOfConsideration.change.hidden                           = Transaction forms of consideration
 transaction.transactionFormsOfConsideration.missing                                 = Select forms of consideration
 
-transaction.addRegisteredCharityNumber.title                                       = Registered charity number - About the transaction
-transaction.addRegisteredCharityNumber.heading                                     = Registered charity number
-transaction.addRegisteredCharityNumber.subheading                                  = Do you know the charity’s registered number?
-transaction.addRegisteredCharityNumber.p1                                          = A charity’s registered number is a unique identifier that validates they are regulated and legitimate. You can find a charity’s registered number through the Charity Commission.
-transaction.addRegisteredCharityNumber.p2                                          = For England & Wales, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-transaction.addRegisteredCharityNumber.p2.suffix                                   = the Charity Commission at GOV.UK (opens in new tab)
-transaction.addRegisteredCharityNumber.p2.link                                     = https://register-of-charities.charitycommission.gov.uk/en/
-transaction.addRegisteredCharityNumber.p3                                          = For Northern Ireland, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-transaction.addRegisteredCharityNumber.p3.suffix                                   = the Charity Commission for Northern Ireland (opens in new tab)
-transaction.addRegisteredCharityNumber.p3.link                                     = https://www.charitycommissionni.org.uk/charity-search/?pageNumber=1
-transaction.addRegisteredCharityNumber.checkYourAnswersLabel                       = Registered charity number
-transaction.addRegisteredCharityNumber.error.required                              = Select yes if you know the charity’s registered number
-transaction.addRegisteredCharityNumber.change.hidden                               = Registered charity number
+transaction.addRegisteredCharityNumber.title                                        = Registered charity number - About the transaction
+transaction.addRegisteredCharityNumber.heading                                      = Registered charity number
+transaction.addRegisteredCharityNumber.subheading                                   = Do you know the charity’s registered number?
+transaction.addRegisteredCharityNumber.p1                                           = A charity’s registered number is a unique identifier that validates they are regulated and legitimate. You can find a charity’s registered number through the Charity Commission.
+transaction.addRegisteredCharityNumber.p2                                           = For England & Wales, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+transaction.addRegisteredCharityNumber.p2.suffix                                    = the Charity Commission at GOV.UK (opens in new tab)
+transaction.addRegisteredCharityNumber.p2.link                                      = https://register-of-charities.charitycommission.gov.uk/en/
+transaction.addRegisteredCharityNumber.p3                                           = For Northern Ireland, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+transaction.addRegisteredCharityNumber.p3.suffix                                    = the Charity Commission for Northern Ireland (opens in new tab)
+transaction.addRegisteredCharityNumber.p3.link                                      = https://www.charitycommissionni.org.uk/charity-search/?pageNumber=1
+transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Registered charity number
+transaction.addRegisteredCharityNumber.error.required                               = Select yes if you know the charity’s registered number
+transaction.addRegisteredCharityNumber.change.hidden                                = Registered charity number
 
-transaction.ReasonForRelief.title                                                  = What is the reason for claiming relief? - About the transaction
-transaction.ReasonForRelief.heading                                                = What is the reason for claiming relief?
-transaction.ReasonForRelief.error.required                                         = Select the reason for claiming relief                                                  = 08 - Part exchange
-transaction.ReasonForRelief.partExchange                                           = 08 - Part-exchange
-transaction.ReasonForRelief.partExchange.hint                                      = House building company
-transaction.ReasonForRelief.relocationOfEmployment                                 = 09 - Relocation of employment
-transaction.ReasonForRelief.compulsoryDevelopment                                  = 10 - Compulsory purchase facilitating development
-transaction.ReasonForRelief.compliancePlanning                                     = 11 - Compliance with planning obligations
-transaction.ReasonForRelief.groupRelief                                            = 12 - Group relief
-transaction.ReasonForRelief.reconstructionRelief                                   = 13 - Reconstruction relief
-transaction.ReasonForRelief.acquisitionReliefTax                                   = 14 - Acquisition relief tax
-transaction.ReasonForRelief.acquisitionReliefTax.hint                              = Taxed at 0.5%
-transaction.ReasonForRelief.demutualisationInsurance                               = 15 - Demutualisation of an insurance company
-transaction.ReasonForRelief.demutualisationBuildingSociety                         = 16 - Demutualisation of a building society
-transaction.ReasonForRelief.incorporationLimitedLiability                          = 17 - Incorporation of limited liability partnership
-transaction.ReasonForRelief.transfersPublic                                        = 18 - Transfers involving public bodies
-transaction.ReasonForRelief.transfersReorganisation                                = 19 - Transfers in consequence of reorganisation of parliamentary constituencies
-transaction.ReasonForRelief.charitiesRelief                                        = 20 - Charities relief
-transaction.ReasonForRelief.acquisitionByBodies                                    = 21 - Acquisition by bodies established for national purposes
-transaction.ReasonForRelief.rightToBuy                                             = 22 - Right to buy transaction
-transaction.ReasonForRelief.registeredSocial                                       = 23 - Registered social landlords
-transaction.ReasonForRelief.alternativePropertyFinance                             = 24 - Alternative property finance
-transaction.ReasonForRelief.collectiveEnfranchisement                              = 25 - Collective enfranchisement by leaseholders
-transaction.ReasonForRelief.collectiveEnfranchisement.hint                         = Does not apply in Scotland
-transaction.ReasonForRelief.croftingRightToBuy                                     = 26 - Crofting community right to buy
-transaction.ReasonForRelief.croftingRightToBuy.hint                                = Does apply in Scotland
-transaction.ReasonForRelief.diplomaticPrivileges                                   = 27 - Diplomatic privileges
-transaction.ReasonForRelief.otherRelief                                            = 28 - Other relief
-transaction.ReasonForRelief.combinationOfReliefs                                   = 29 - Combination of reliefs
-transaction.ReasonForRelief.alternativeFinanceInvestment                           = 31 - Alternative Finance Investment Bonds relief
-transaction.ReasonForRelief.firstTimeBuyer                                         = 32 - First Time Buyer’s Relief
-transaction.ReasonForRelief.multipleDwellings                                      = 33 - Multiple Dwellings Relief
-transaction.ReasonForRelief.preCompletion                                          = 34 - Pre-completion transaction
-transaction.ReasonForRelief.reliefFromRate                                         = 35 - Relief from 17% rate of SDLT
-transaction.ReasonForRelief.reliefForFreeport                                      = 36 - Relief for Freeport tax site
-transaction.ReasonForRelief.reliefInvestmentZone                                   = 37 - Relief for Investment Zone tax site
-transaction.ReasonForRelief.seedingRelief                                          = 38 - Seeding Relief
+transaction.ReasonForRelief.title                                                   = What is the reason for claiming relief? - About the transaction
+transaction.ReasonForRelief.heading                                                 = What is the reason for claiming relief?
+transaction.ReasonForRelief.error.required                                          = Select the reason for claiming relief                                                  = 08 - Part exchange
+transaction.ReasonForRelief.partExchange                                            = 08 - Part-exchange
+transaction.ReasonForRelief.partExchange.hint                                       = House building company
+transaction.ReasonForRelief.relocationOfEmployment                                  = 09 - Relocation of employment
+transaction.ReasonForRelief.compulsoryDevelopment                                   = 10 - Compulsory purchase facilitating development
+transaction.ReasonForRelief.compliancePlanning                                      = 11 - Compliance with planning obligations
+transaction.ReasonForRelief.groupRelief                                             = 12 - Group relief
+transaction.ReasonForRelief.reconstructionRelief                                    = 13 - Reconstruction relief
+transaction.ReasonForRelief.acquisitionReliefTax                                    = 14 - Acquisition relief tax
+transaction.ReasonForRelief.acquisitionReliefTax.hint                               = Taxed at 0.5%
+transaction.ReasonForRelief.demutualisationInsurance                                = 15 - Demutualisation of an insurance company
+transaction.ReasonForRelief.demutualisationBuildingSociety                          = 16 - Demutualisation of a building society
+transaction.ReasonForRelief.incorporationLimitedLiability                           = 17 - Incorporation of limited liability partnership
+transaction.ReasonForRelief.transfersPublic                                         = 18 - Transfers involving public bodies
+transaction.ReasonForRelief.transfersReorganisation                                 = 19 - Transfers in consequence of reorganisation of parliamentary constituencies
+transaction.ReasonForRelief.charitiesRelief                                         = 20 - Charities relief
+transaction.ReasonForRelief.acquisitionByBodies                                     = 21 - Acquisition by bodies established for national purposes
+transaction.ReasonForRelief.rightToBuy                                              = 22 - Right to buy transaction
+transaction.ReasonForRelief.registeredSocial                                        = 23 - Registered social landlords
+transaction.ReasonForRelief.alternativePropertyFinance                              = 24 - Alternative property finance
+transaction.ReasonForRelief.collectiveEnfranchisement                               = 25 - Collective enfranchisement by leaseholders
+transaction.ReasonForRelief.collectiveEnfranchisement.hint                          = Does not apply in Scotland
+transaction.ReasonForRelief.croftingRightToBuy                                      = 26 - Crofting community right to buy
+transaction.ReasonForRelief.croftingRightToBuy.hint                                 = Does apply in Scotland
+transaction.ReasonForRelief.diplomaticPrivileges                                    = 27 - Diplomatic privileges
+transaction.ReasonForRelief.otherRelief                                             = 28 - Other relief
+transaction.ReasonForRelief.combinationOfReliefs                                    = 29 - Combination of reliefs
+transaction.ReasonForRelief.alternativeFinanceInvestment                            = 31 - Alternative Finance Investment Bonds relief
+transaction.ReasonForRelief.firstTimeBuyer                                          = 32 - First Time Buyer’s Relief
+transaction.ReasonForRelief.multipleDwellings                                       = 33 - Multiple Dwellings Relief
+transaction.ReasonForRelief.preCompletion                                           = 34 - Pre-completion transaction
+transaction.ReasonForRelief.reliefFromRate                                          = 35 - Relief from 17% rate of SDLT
+transaction.ReasonForRelief.reliefForFreeport                                       = 36 - Relief for Freeport tax site
+transaction.ReasonForRelief.reliefInvestmentZone                                    = 37 - Relief for Investment Zone tax site
+transaction.ReasonForRelief.seedingRelief                                           = 38 - Seeding Relief
 
 transaction.totalConsiderationOfLinkedTransaction.title                             = Total consideration of all linked transactions
 transaction.totalConsiderationOfLinkedTransaction.heading                           = Total consideration of all linked transactions
@@ -1355,14 +1355,23 @@ transaction.totalConsiderationOfLinkedTransaction.error.totalConsideration      
 transaction.totalConsiderationOfLinkedTransaction.change.hidden                     = Total consideration of all linked transactions
 transaction.totalConsiderationOfLinkedTransaction.missing                           = Enter the total consideration of all linked transactions
 
-transaction.purchaserEligibleToClaimRelief.title                                   = Claiming relief
-transaction.purchaserEligibleToClaimRelief.heading                                 = Claiming relief
-transaction.purchaserEligibleToClaimRelief.p1                                      = Relief means any reduction or exemption to the amount of payable SDLT, based on specific circumstances or criteria, like First Time Buyers’ Relief.
-transaction.purchaserEligibleToClaimRelief.h2                                      = Is the purchaser eligible to claim relief?
-transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel                   = Claiming relief
-transaction.purchaserEligibleToClaimRelief.error.required                          = Select yes if the purchaser is eligible to claim relief
-transaction.purchaserEligibleToClaimRelief.change.hidden                           = Claiming relief
-transaction.purchaserEligibleToClaimRelief.change.missing                          = Select if purchaser is eligible to claim relief
+transaction.purchaserEligibleToClaimRelief.title                                    = Claiming relief
+transaction.purchaserEligibleToClaimRelief.heading                                  = Claiming relief
+transaction.purchaserEligibleToClaimRelief.p1                                       = Relief means any reduction or exemption to the amount of payable SDLT, based on specific circumstances or criteria, like First Time Buyers’ Relief.
+transaction.purchaserEligibleToClaimRelief.h2                                       = Is the purchaser eligible to claim relief?
+transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel                    = Claiming relief
+transaction.purchaserEligibleToClaimRelief.error.required                           = Select yes if the purchaser is eligible to claim relief
+transaction.purchaserEligibleToClaimRelief.change.hidden                            = Claiming relief
+transaction.purchaserEligibleToClaimRelief.change.missing                           = Select if purchaser is eligible to claim relief
+
+transaction.transactionPartialRelief.title                                          = Partial relief
+transaction.transactionPartialRelief.heading                                        = Partial relief
+transaction.transactionPartialRelief.subheading                                     = Is the purchaser claiming relief on part of the land or property?
+transaction.transactionPartialRelief.p                                              = Partial relief is available when a transaction meets most, but not all, conditions for full relief, like Freeport or Investment Zone Relief. This is where the land or property is partially located within a designated tax site, meaning a purchaser would only claim relief for the qualifying part.
+transaction.transactionPartialRelief.checkYourAnswersLabel                          = Is the purchaser claiming relief on part of the land or property?
+transaction.transactionPartialRelief.error.required                                 = Select yes if the purchaser is claiming relief on part of the land or property
+transaction.transactionPartialRelief.change.hidden                                  = Partial relief
+transaction.transactionPartialRelief.missing                                        = Select if the purchaser is claiming relief on part of the land or property
 
 taxCalculation.beforeStart.title                                                    =
 taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.

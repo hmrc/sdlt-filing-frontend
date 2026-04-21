@@ -209,7 +209,7 @@ class Navigator @Inject()() {
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
-         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage => true
+         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage => true
 
     case _ => false
   }
@@ -245,6 +245,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
     case TotalConsiderationOfLinkedTransactionPage =>
       _ => controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode)
+    case TransactionPartialReliefPage => // TODO DTR-3431: Redirect to How much relief is being claimed on part of the property? - tr-8e
+      _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
