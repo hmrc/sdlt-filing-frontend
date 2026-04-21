@@ -422,19 +422,19 @@ POST       /about-the-transaction/type-of-transaction                           
 GET        /about-the-transaction/type-of-transaction/change                                         controllers.transaction.TypeOfTransactionController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/type-of-transaction/change                                         controllers.transaction.TypeOfTransactionController.onSubmit(mode: Mode = CheckMode)
 
-GET        /about-the-transaction/effective-date-of-transaction                                controllers.transaction.TransactionEffectiveDateController.onPageLoad(mode: Mode = NormalMode)
-POST       /about-the-transaction/effective-date-of-transaction                                controllers.transaction.TransactionEffectiveDateController.onSubmit(mode: Mode = NormalMode)
-GET        /about-the-transaction/effective-date-of-transaction/change                         controllers.transaction.TransactionEffectiveDateController.onPageLoad(mode: Mode = CheckMode)
-POST       /about-the-transaction/effective-date-of-transaction/change                         controllers.transaction.TransactionEffectiveDateController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-transaction/effective-date-of-transaction                                      controllers.transaction.TransactionEffectiveDateController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/effective-date-of-transaction                                      controllers.transaction.TransactionEffectiveDateController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/effective-date-of-transaction/change                               controllers.transaction.TransactionEffectiveDateController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/effective-date-of-transaction/change                               controllers.transaction.TransactionEffectiveDateController.onSubmit(mode: Mode = CheckMode)
 
 
 GET        /about-the-transaction/confirm-type-of-transaction                                        controllers.transaction.ConfirmTypeOfTransactionController.onPageLoad()
 POST       /about-the-transaction/confirm-type-of-transaction                                        controllers.transaction.ConfirmTypeOfTransactionController.onSubmit()
 
-GET         /about-the-transaction/changing-type-of-transaction                                         controllers.transaction.ChangeTypeOfTransactionController.onPageLoad(mode: Mode = NormalMode)
-POST        /about-the-transaction/changing-type-of-transaction                                        controllers.transaction.ChangeTypeOfTransactionController.onSubmit(mode: Mode = NormalMode)
-GET         /about-the-transaction/changing-type-of-transaction/change                                  controllers.transaction.ChangeTypeOfTransactionController.onPageLoad(mode: Mode = CheckMode)
-POST        /about-the-transaction/changing-type-of-transaction/change                                  controllers.transaction.ChangeTypeOfTransactionController.onSubmit(mode: Mode = CheckMode)
+GET         /about-the-transaction/changing-type-of-transaction                                      controllers.transaction.ChangeTypeOfTransactionController.onPageLoad(mode: Mode = NormalMode)
+POST        /about-the-transaction/changing-type-of-transaction                                      controllers.transaction.ChangeTypeOfTransactionController.onSubmit(mode: Mode = NormalMode)
+GET         /about-the-transaction/changing-type-of-transaction/change                               controllers.transaction.ChangeTypeOfTransactionController.onPageLoad(mode: Mode = CheckMode)
+POST        /about-the-transaction/changing-type-of-transaction/change                               controllers.transaction.ChangeTypeOfTransactionController.onSubmit(mode: Mode = CheckMode)
 
 
 GET        /about-the-transaction/add-date-of-contract                                               controllers.transaction.TransactionAddDateOfContractController.onPageLoad(mode: Mode = NormalMode)
@@ -477,14 +477,19 @@ POST       /about-the-transaction/linked-transactions                           
 GET        /about-the-transaction/linked-transactions/change                                         controllers.transaction.TransactionLinkedTransactionsController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/linked-transactions/change                                         controllers.transaction.TransactionLinkedTransactionsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /about-the-transaction/reason-for-relief                                 controllers.transaction.ReasonForReliefController.onPageLoad(mode: Mode = NormalMode)
-POST       /about-the-transaction/reason-for-relief                                 controllers.transaction.ReasonForReliefController.onSubmit(mode: Mode = NormalMode)
-GET        /about-the-transaction/reason-for-relief/change                          controllers.transaction.ReasonForReliefController.onPageLoad(mode: Mode = CheckMode)
-POST       /about-the-transaction/reason-for-relief/change                          controllers.transaction.ReasonForReliefController.onSubmit(mode: Mode = CheckMode)
+GET        /about-the-transaction/reason-for-relief                                                  controllers.transaction.ReasonForReliefController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/reason-for-relief                                                  controllers.transaction.ReasonForReliefController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/reason-for-relief/change                                           controllers.transaction.ReasonForReliefController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/reason-for-relief/change                                           controllers.transaction.ReasonForReliefController.onSubmit(mode: Mode = CheckMode)
 
 GET        /about-the-transaction/total-consideration-of-linked-transaction                          controllers.transaction.TotalConsiderationOfLinkedTransactionController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/total-consideration-of-linked-transaction                          controllers.transaction.TotalConsiderationOfLinkedTransactionController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/total-consideration-of-linked-transaction/change                   controllers.transaction.TotalConsiderationOfLinkedTransactionController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/total-consideration-of-linked-transaction/change                   controllers.transaction.TotalConsiderationOfLinkedTransactionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/claiming-relief                                                    controllers.transaction.PurchaserEligibleToClaimReliefController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/claiming-relief                                                    controllers.transaction.PurchaserEligibleToClaimReliefController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/claiming-relief/change                                             controllers.transaction.PurchaserEligibleToClaimReliefController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/claiming-relief/change                                             controllers.transaction.PurchaserEligibleToClaimReliefController.onSubmit(mode: Mode = CheckMode)
 
 GET        /tax-calculation/before-you-start                                                         controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
