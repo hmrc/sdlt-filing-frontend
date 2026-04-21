@@ -1302,6 +1302,20 @@ transaction.addRegisteredCharityNumber.p3.link                                  
 transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Registered charity number
 transaction.addRegisteredCharityNumber.error.required                               = Select yes if you know the charity’s registered number
 transaction.addRegisteredCharityNumber.change.hidden                                = Registered charity number
+transaction.addRegisteredCharityNumber.title                                       = Registered charity number - About the transaction
+transaction.addRegisteredCharityNumber.heading                                     = Registered charity number
+transaction.addRegisteredCharityNumber.subheading                                  = Do you know the charity’s registered number?
+transaction.addRegisteredCharityNumber.p1                                          = A charity’s registered number is a unique identifier that validates they are regulated and legitimate. You can find a charity’s registered number through the Charity Commission.
+transaction.addRegisteredCharityNumber.p2                                          = For England & Wales, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+transaction.addRegisteredCharityNumber.p2.suffix                                   = the Charity Commission at GOV.UK (opens in new tab)
+transaction.addRegisteredCharityNumber.p2.link                                     = https://register-of-charities.charitycommission.gov.uk/en/
+transaction.addRegisteredCharityNumber.p3                                          = For Northern Ireland, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+transaction.addRegisteredCharityNumber.p3.suffix                                   = the Charity Commission for Northern Ireland (opens in new tab)
+transaction.addRegisteredCharityNumber.p3.link                                     = https://www.charitycommissionni.org.uk/charity-search/?pageNumber=1
+transaction.addRegisteredCharityNumber.checkYourAnswersLabel                       = Registered charity number
+transaction.addRegisteredCharityNumber.error.required                              = Select yes if you know the charity’s registered number
+transaction.addRegisteredCharityNumber.change.hidden                               = Registered charity number
+transaction.addRegisteredCharityNumber.missing                                     = Select registered charity number
 
 transaction.ReasonForRelief.title                                                   = What is the reason for claiming relief? - About the transaction
 transaction.ReasonForRelief.heading                                                 = What is the reason for claiming relief?
@@ -1381,3 +1395,13 @@ taxCalculation.beforeStart.bullet2                                              
 taxCalculation.beforeStart.bullet3                                                  = the tax due on the NPV
 taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
 taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
+
+transaction.charityRegisteredNumber.title                                           = What is the charity’s registered number?
+transaction.charityRegisteredNumber.heading                                         = What is the charity’s registered number?
+transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity Registered Number
+transaction.charityRegisteredNumber.hint                                            = Their charity number should be 5-8 digits long and may contain letters
+transaction.charityRegisteredNumber.error.required                                  = Enter the charity’s registered number
+transaction.charityRegisteredNumber.error.length                                    = The charity’s registered number must be 14 characters or fewer
+transaction.charityRegisteredNumber.change.hidden                                   = Charity Registered Number
+transaction.charityRegisteredNumber.regex                                           = The charity’s registered number must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
+transaction.charityRegisteredNumber.missing                                         = Enter charity registered number
