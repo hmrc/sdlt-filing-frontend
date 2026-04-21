@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class CharityRegisteredNumberFormProvider @Inject() extends Mappings {
 
- val regexCharityNumber = "[A-Za-z0-9 \\\\~\\\\!\\\\@\\\\%\\\\&\\\\'\\\\(\\\\)\\\\*\\\\+,\\\\-\\\\.\\\\/\\\\:\\\\=\\\\?\\\\[\\\\]\\\\^\\\\_\\\\{\\\\}\\\\;]*"
+ val regexCharityNumber = "[A-Za-z0-9 \\~\\!\\@\\%\\&\\'\\(\\)\\*\\+,\\-\\.\\/\\:\\=\\?\\[\\]\\^\\_\\{\\}\\;]*"
 
   def apply(): Form[String] =
     Form(
@@ -32,3 +32,4 @@ class CharityRegisteredNumberFormProvider @Inject() extends Mappings {
         .verifying(regexp(regexCharityNumber, "transaction.charityRegisteredNumber.regex"))
     )
 }
+
