@@ -1302,19 +1302,6 @@ transaction.addRegisteredCharityNumber.p3.link                                  
 transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Registered charity number
 transaction.addRegisteredCharityNumber.error.required                               = Select yes if you know the charity’s registered number
 transaction.addRegisteredCharityNumber.change.hidden                                = Registered charity number
-transaction.addRegisteredCharityNumber.title                                       = Registered charity number - About the transaction
-transaction.addRegisteredCharityNumber.heading                                     = Registered charity number
-transaction.addRegisteredCharityNumber.subheading                                  = Do you know the charity’s registered number?
-transaction.addRegisteredCharityNumber.p1                                          = A charity’s registered number is a unique identifier that validates they are regulated and legitimate. You can find a charity’s registered number through the Charity Commission.
-transaction.addRegisteredCharityNumber.p2                                          = For England & Wales, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-transaction.addRegisteredCharityNumber.p2.suffix                                   = the Charity Commission at GOV.UK (opens in new tab)
-transaction.addRegisteredCharityNumber.p2.link                                     = https://register-of-charities.charitycommission.gov.uk/en/
-transaction.addRegisteredCharityNumber.p3                                          = For Northern Ireland, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-transaction.addRegisteredCharityNumber.p3.suffix                                   = the Charity Commission for Northern Ireland (opens in new tab)
-transaction.addRegisteredCharityNumber.p3.link                                     = https://www.charitycommissionni.org.uk/charity-search/?pageNumber=1
-transaction.addRegisteredCharityNumber.checkYourAnswersLabel                       = Registered charity number
-transaction.addRegisteredCharityNumber.error.required                              = Select yes if you know the charity’s registered number
-transaction.addRegisteredCharityNumber.change.hidden                               = Registered charity number
 transaction.addRegisteredCharityNumber.missing                                     = Select registered charity number
 
 transaction.ReasonForRelief.title                                                   = What is the reason for claiming relief? - About the transaction
