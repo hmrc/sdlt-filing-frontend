@@ -179,7 +179,7 @@ class PurchaserSessionServiceSpec extends SpecBase with MockitoSugar with Before
             .set(PurchaserDateOfBirthPage, LocalDate.of(1985, 3, 15)).success.value
             .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("REG123", "London")).success.value
             .set(PurchaserNationalInsurancePage, "AB123456C").success.value
-            .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.Yes).success.value
+            .set(DoesPurchaserHaveNIPage, true).success.value
 
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
           when(mockNavigator.nextPage(eqTo(WhoIsMakingThePurchasePage), eqTo(NormalMode), any()))

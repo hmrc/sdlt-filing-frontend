@@ -37,11 +37,6 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(LandSelectMeasurementUnit.values.toSeq)
     }
-
-  implicit lazy val arbitraryConfirmLandOrPropertyAddress: Arbitrary[ConfirmLandOrPropertyAddress] =
-    Arbitrary {
-      Gen.oneOf(ConfirmLandOrPropertyAddress.values.toSeq)
-    }
   
   implicit lazy val arbitraryLandTypeOfProperty: Arbitrary[LandTypeOfProperty] =
     Arbitrary {
@@ -51,11 +46,6 @@ trait ModelGenerators {
   implicit lazy val arbitraryLandInterestTransferredOrCreated: Arbitrary[LandInterestTransferredOrCreated] =
     Arbitrary {
       Gen.oneOf(LandInterestTransferredOrCreated.values.toSeq)
-    }
-
-  implicit lazy val arbitraryPurchaserAgentAuthorised: Arbitrary[PurchaserAgentAuthorised] =
-    Arbitrary {
-      Gen.oneOf(PurchaserAgentAuthorised.values.toSeq)
     }
   
   implicit lazy val arbitraryPurchaserAgentsContactDetails: Arbitrary[PurchaserAgentsContactDetails] =
@@ -98,24 +88,9 @@ trait ModelGenerators {
       } yield CompanyFormOfId(referenceId, countryIssued)
     }
 
-  implicit lazy val arbitraryPurchaserAndVendorConnected: Arbitrary[PurchaserAndVendorConnected] =
-    Arbitrary {
-      Gen.oneOf(PurchaserAndVendorConnected.values.toSeq)
-    }
-
-  implicit lazy val arbitraryIsPurchaserActingAsTrustee: Arbitrary[IsPurchaserActingAsTrustee] =
-    Arbitrary {
-      Gen.oneOf(IsPurchaserActingAsTrustee.values.toSeq)
-    }
-
   implicit lazy val arbitraryPurchaserConfirmIdentity: Arbitrary[PurchaserConfirmIdentity] =
     Arbitrary {
       Gen.oneOf(PurchaserConfirmIdentity.values.toSeq)
-    }
-
-  implicit lazy val arbitraryDoesPurchaserHaveNI: Arbitrary[DoesPurchaserHaveNI] =
-    Arbitrary {
-      Gen.oneOf(DoesPurchaserHaveNI.values.toSeq)
     }
 
   implicit lazy val arbitraryPurchaserTypeOfCompany: Arbitrary[PurchaserTypeOfCompany] =

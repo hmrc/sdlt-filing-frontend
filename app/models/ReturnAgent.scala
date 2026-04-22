@@ -63,7 +63,7 @@ object CreateReturnAgentRequest {
               phoneNumber = paSessionQuestions.purchaserAgentContactDetails.flatMap(_.phoneNumber),
               email = paSessionQuestions.purchaserAgentContactDetails.flatMap(_.emailAddress),
               agentReference = paSessionQuestions.purchaserAgentReference,
-              isAuthorised = Some(paSessionQuestions.purchaserAgentAuthorised.toUpperCase)
+              isAuthorised = Some(if paSessionQuestions.purchaserAgentAuthorised then "YES" else "NO")
             ))
           case Vendor =>
             val vaSessionQuestions: VendorAgentSessionQuestions = (userAnswers.data \ "vendorAgentCurrent").as[VendorAgentSessionQuestions]
@@ -138,7 +138,7 @@ object UpdateReturnAgentRequest {
               phoneNumber = paSessionQuestions.purchaserAgentContactDetails.flatMap(_.phoneNumber),
               email = paSessionQuestions.purchaserAgentContactDetails.flatMap(_.emailAddress),
               agentReference = paSessionQuestions.purchaserAgentReference,
-              isAuthorised = Some(paSessionQuestions.purchaserAgentAuthorised.toUpperCase)
+              isAuthorised = Some(if paSessionQuestions.purchaserAgentAuthorised then "YES" else "NO")
             ))
           case Vendor =>
             val vaSessionQuestions: VendorAgentSessionQuestions = (userAnswers.data \ "vendorAgentCurrent").as[VendorAgentSessionQuestions]

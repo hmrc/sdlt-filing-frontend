@@ -18,7 +18,6 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.PurchaserNationalInsuranceFormProvider
-import models.purchaser.DoesPurchaserHaveNI
 import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserNationalInsurancePage}
@@ -61,7 +60,7 @@ class PurchaserNationalInsuranceController @Inject()(
       val doesPurchaserHaveNi = request.userAnswers.get(DoesPurchaserHaveNIPage)
 
       (purchaserName, doesPurchaserHaveNi) match {
-        case (Some(purchaserName), Some(doesPurchaserHaveNi)) if doesPurchaserHaveNi.equals(DoesPurchaserHaveNI.Yes) =>
+        case (Some(purchaserName), Some(doesPurchaserHaveNi)) if doesPurchaserHaveNi =>
           val preparedForm = request.userAnswers.get(PurchaserNationalInsurancePage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -74,7 +73,7 @@ class PurchaserNationalInsuranceController @Inject()(
           
         case (None, _) => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 
-        case (_, Some(doesPurchaserHaveNI)) if doesPurchaserHaveNI.equals(DoesPurchaserHaveNI.No) =>
+        case (_, Some(doesPurchaserHaveNI)) if !doesPurchaserHaveNI =>
           Redirect(controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(NormalMode))
 
         case (_, _) => Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))

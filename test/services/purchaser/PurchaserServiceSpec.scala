@@ -237,7 +237,7 @@ class PurchaserServiceSpec extends SpecBase {
             name = "ACME Corporation"
           ))
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(true)
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId(purchaserID = "PURCH001", companyDetailsID = Some("COMP001")))
         }
 
@@ -274,7 +274,7 @@ class PurchaserServiceSpec extends SpecBase {
             name = "Smith"
           ))
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(true)
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId(purchaserID = "PURCH002", companyDetailsID = None))
         }
 
@@ -311,7 +311,7 @@ class PurchaserServiceSpec extends SpecBase {
             name = "Doe"
           ))
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(true)
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId(purchaserID = "PURCH003", companyDetailsID = None))
         }
 
@@ -348,7 +348,7 @@ class PurchaserServiceSpec extends SpecBase {
             name = "Madonna"
           ))
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(true)
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId(purchaserID = "PURCH004", companyDetailsID = None))
         }
 
@@ -385,7 +385,7 @@ class PurchaserServiceSpec extends SpecBase {
             name = "Smith & Co Ltd"
           ))
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(true)
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId(purchaserID = "PURCH005", companyDetailsID = None))
         }
 
@@ -465,7 +465,7 @@ class PurchaserServiceSpec extends SpecBase {
           val updatedAnswers = result.get
 
           updatedAnswers.get(NameOfPurchaserPage) mustBe None
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(true)
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe None
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId(purchaserID = "PURCH008", companyDetailsID = None))
         }
@@ -481,7 +481,7 @@ class PurchaserServiceSpec extends SpecBase {
           val updatedAnswers = result.get
 
           updatedAnswers.get(NameOfPurchaserPage) mustBe None
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(true)
 
         }
 
@@ -495,7 +495,7 @@ class PurchaserServiceSpec extends SpecBase {
           val updatedAnswers = result.get
 
           updatedAnswers.get(NameOfPurchaserPage) mustBe None
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.Yes)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(true)
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe None
         }
       }
@@ -531,7 +531,7 @@ class PurchaserServiceSpec extends SpecBase {
 
           updatedAnswers.get(NameOfPurchaserPage) mustBe None
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe None
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.No)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(false)
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId(purchaserID = "PURCH009", companyDetailsID = None))
         }
 
@@ -545,7 +545,7 @@ class PurchaserServiceSpec extends SpecBase {
           val updatedAnswers = result.get
 
           updatedAnswers.get(NameOfPurchaserPage) mustBe None
-          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(ConfirmNameOfThePurchaser.No)
+          updatedAnswers.get(ConfirmNameOfThePurchaserPage) mustBe Some(false)
         }
       }
     }
@@ -1006,7 +1006,7 @@ class PurchaserServiceSpec extends SpecBase {
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(
               emptyFullReturn.copy(purchaser = Some(Seq(incompletePurchaser)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001"))))
             ))
-            .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
+            .set(ConfirmNameOfThePurchaserPage, true).success.value
           val result = service.continueIfAddingMainPurchaser(userAnswers, continueRoute, NormalMode)
           result mustBe continueRoute
         }
@@ -1015,7 +1015,7 @@ class PurchaserServiceSpec extends SpecBase {
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(
               emptyFullReturn.copy(purchaser = Some(Seq(incompletePurchaser)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH002"))))
             ))
-            .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+            .set(ConfirmNameOfThePurchaserPage, false).success.value
           val result = service.continueIfAddingMainPurchaser(userAnswers, continueRoute, NormalMode)
           redirectLocation(Future.successful(result)) mustBe Some(
             controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url
@@ -1043,7 +1043,7 @@ class PurchaserServiceSpec extends SpecBase {
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(
               emptyFullReturn.copy(purchaser = Some(Seq(incompletePurchaser)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH001"))))
             ))
-            .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
+            .set(ConfirmNameOfThePurchaserPage, true).success.value
           val result = service.continueIfAddingMainPurchaser(userAnswers, continueRoute, CheckMode)
           result mustBe continueRoute
         }
@@ -1052,7 +1052,7 @@ class PurchaserServiceSpec extends SpecBase {
           val userAnswers = emptyUserAnswers.copy(fullReturn = Some(
               emptyFullReturn.copy(purchaser = Some(Seq(incompletePurchaser)), returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PURCH002"))))
             ))
-            .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+            .set(ConfirmNameOfThePurchaserPage, false).success.value
           val result = service.continueIfAddingMainPurchaser(userAnswers, continueRoute, CheckMode)
           result mustBe continueRoute
         }
@@ -1097,7 +1097,7 @@ class PurchaserServiceSpec extends SpecBase {
         "must redirect to CYA page when main purchaser conditions are not met" in {
           val userAnswers = emptyUserAnswers
             .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-            .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+            .set(ConfirmNameOfThePurchaserPage, false).success.value
           val result = service.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
             WhoIsMakingThePurchase.Individual,
             userAnswers,
@@ -1140,7 +1140,7 @@ class PurchaserServiceSpec extends SpecBase {
         "must continue when main purchaser conditions are not met" in {
           val userAnswers = emptyUserAnswers
             .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-            .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+            .set(ConfirmNameOfThePurchaserPage, false).success.value
           val result = service.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
             WhoIsMakingThePurchase.Individual,
             userAnswers,
@@ -1157,7 +1157,7 @@ class PurchaserServiceSpec extends SpecBase {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
-          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+          .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber).success.value
           .set(AddPurchaserPhoneNumberPage, true).success.value
@@ -1178,7 +1178,7 @@ class PurchaserServiceSpec extends SpecBase {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
-          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+          .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.CorporationTaxUTR).success.value
           .set(AddPurchaserPhoneNumberPage, false).success.value
@@ -1199,7 +1199,7 @@ class PurchaserServiceSpec extends SpecBase {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
-          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+          .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.PartnershipUTR).success.value
           .set(PurchaserCompanyTypeKnownPage, true).success.value
@@ -1217,7 +1217,7 @@ class PurchaserServiceSpec extends SpecBase {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
-          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+          .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.AnotherFormOfID).success.value
           .set(PurchaserCompanyTypeKnownPage, true).success.value
@@ -1235,7 +1235,7 @@ class PurchaserServiceSpec extends SpecBase {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
-          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+          .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserUTRPage, "11111111").success.value
           .set(PurchaserCompanyTypeKnownPage, true).success.value
@@ -1255,7 +1255,7 @@ class PurchaserServiceSpec extends SpecBase {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-          .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.Yes).success.value
+          .set(DoesPurchaserHaveNIPage, true).success.value
           .set(PurchaserNationalInsurancePage, "FFFFFFF").success.value
           .set(PurchaserDateOfBirthPage, java.time.LocalDate.now()).success.value
           .set(AddPurchaserPhoneNumberPage, true).success.value
@@ -1275,7 +1275,7 @@ class PurchaserServiceSpec extends SpecBase {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-          .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
+          .set(DoesPurchaserHaveNIPage, false).success.value
           .set(PurchaserNationalInsurancePage, "FFFFFFF").success.value
           .set(PurchaserDateOfBirthPage, java.time.LocalDate.now()).success.value
           .set(AddPurchaserPhoneNumberPage, false).success.value
@@ -1341,7 +1341,7 @@ class PurchaserServiceSpec extends SpecBase {
                 addressValidated = Some(true)),
               addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636"),
-              doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+              doesPurchaserHaveNI = Some(true),
               nationalInsuranceNumber = Some("AA123456A"),
               purchaserFormOfIdIndividual = Some(PurchaserFormOfIdIndividual(idNumberOrReference = "ref", countryIssued = "country")),
               purchaserDateOfBirth = Some(LocalDate.of(2000, 2, 2)),
@@ -1350,8 +1350,8 @@ class PurchaserServiceSpec extends SpecBase {
               purchaserUTRPage = Some("UTR1234"),
               purchaserFormOfIdCompany = Some(CompanyFormOfId(referenceId = "ID12345", countryIssued = "country")),
               purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
-              isPurchaserActingAsTrustee = Some("yes"),
-              purchaserAndVendorConnected = Some("yes"),
+              isPurchaserActingAsTrustee = Some(true),
+              purchaserAndVendorConnected = Some(true),
             ))
 
           "when phone number" - {
@@ -1408,7 +1408,7 @@ class PurchaserServiceSpec extends SpecBase {
           "when nino or form of id" - {
             val dataWithNinoAnswerYesWithNinoNotPresentAndDobPresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+                doesPurchaserHaveNI = Some(true),
                 nationalInsuranceNumber = None,
                 purchaserDateOfBirth = Some(LocalDate.of(2000, 2, 2)),
                 purchaserFormOfIdIndividual = None
@@ -1416,7 +1416,7 @@ class PurchaserServiceSpec extends SpecBase {
             )
             val dataWithNinoAnswerYesWithNinoPresentAndDobNotPresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+                doesPurchaserHaveNI = Some(true),
                 nationalInsuranceNumber = Some("123456"),
                 purchaserDateOfBirth = None,
                 purchaserFormOfIdIndividual = None
@@ -1424,7 +1424,7 @@ class PurchaserServiceSpec extends SpecBase {
             )
             val dataWithNinoAnswerYesWithNinoNotPresentAndDobNotPresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+                doesPurchaserHaveNI = Some(true),
                 nationalInsuranceNumber = None,
                 purchaserDateOfBirth = None,
                 purchaserFormOfIdIndividual = None
@@ -1432,7 +1432,7 @@ class PurchaserServiceSpec extends SpecBase {
             )
             val dataWithNinoAnswerYesWithNinoPresentAndDobPresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+                doesPurchaserHaveNI = Some(true),
                 nationalInsuranceNumber = Some("123456"),
                 purchaserDateOfBirth = Some(LocalDate.of(2000, 2, 2)),
                 purchaserFormOfIdIndividual = None
@@ -1481,7 +1481,7 @@ class PurchaserServiceSpec extends SpecBase {
           "when acting as trustee" - {
             val dataWithActingAsTrusteePresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                isPurchaserActingAsTrustee = Some("YES")
+                isPurchaserActingAsTrustee = Some(true)
               )
             )
             val dataWithActingAsTrusteeNotPresent = purchaserSessionQuestions.copy(
@@ -1512,7 +1512,7 @@ class PurchaserServiceSpec extends SpecBase {
           "when purchaser or vendor connected" - {
             val dataWithPurchaserOrVendorConnectedPresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                purchaserAndVendorConnected = Some("YES")
+                purchaserAndVendorConnected = Some(true)
               )
             )
             val dataWithPurchaserOrVendorConnectedNotPresent = purchaserSessionQuestions.copy(
@@ -1564,7 +1564,7 @@ class PurchaserServiceSpec extends SpecBase {
                 addressValidated = Some(true)),
               addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636"),
-              doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+              doesPurchaserHaveNI = Some(true),
               nationalInsuranceNumber = Some("AA123456A"),
               purchaserFormOfIdIndividual = Some(PurchaserFormOfIdIndividual(idNumberOrReference = "ref", countryIssued = "country")),
               purchaserDateOfBirth = Some(LocalDate.of(2000, 2, 2)),
@@ -1573,8 +1573,8 @@ class PurchaserServiceSpec extends SpecBase {
               purchaserUTRPage = Some("UTR1234"),
               purchaserFormOfIdCompany = Some(CompanyFormOfId(referenceId = "ID12345", countryIssued = "country")),
               purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
-              isPurchaserActingAsTrustee = Some("yes"),
-              purchaserAndVendorConnected = Some("yes"),
+              isPurchaserActingAsTrustee = Some(true),
+              purchaserAndVendorConnected = Some(true),
             ))
 
           "when phone number" - {
@@ -1747,7 +1747,7 @@ class PurchaserServiceSpec extends SpecBase {
           "when acting as trustee" - {
             val dataWithActingAsTrusteePresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                isPurchaserActingAsTrustee = Some("YES")
+                isPurchaserActingAsTrustee = Some(true)
               )
             )
             val dataWithActingAsTrusteeNotPresent = purchaserSessionQuestions.copy(
@@ -1778,7 +1778,7 @@ class PurchaserServiceSpec extends SpecBase {
           "when purchaser or vendor connected" - {
             val dataWithPurchaserOrVendorConnectedPresent = purchaserSessionQuestions.copy(
               purchaserCurrent = purchaserSessionQuestions.purchaserCurrent.copy(
-                purchaserAndVendorConnected = Some("YES")
+                purchaserAndVendorConnected = Some(true)
               )
             )
             val dataWithPurchaserOrVendorConnectedNotPresent = purchaserSessionQuestions.copy(
@@ -1830,7 +1830,7 @@ class PurchaserServiceSpec extends SpecBase {
               addressValidated = Some(true)),
             addPurchaserPhoneNumber = Some(true),
             enterPurchaserPhoneNumber = Some("+447874363636"),
-            doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+            doesPurchaserHaveNI = Some(true),
             nationalInsuranceNumber = Some("AA123456A"),
             purchaserFormOfIdIndividual = Some(PurchaserFormOfIdIndividual(idNumberOrReference = "ref", countryIssued = "country")),
             purchaserDateOfBirth = Some(LocalDate.of(2000, 2, 2)),
@@ -1839,13 +1839,13 @@ class PurchaserServiceSpec extends SpecBase {
             purchaserUTRPage = Some("UTR1234"),
             purchaserFormOfIdCompany = Some(CompanyFormOfId(referenceId = "ID12345", countryIssued = "country")),
             purchaserTypeOfCompany = Some(purchaserTypeOfCompanyAnswers),
-            isPurchaserActingAsTrustee = Some("yes"),
-            purchaserAndVendorConnected = Some("yes"),
+            isPurchaserActingAsTrustee = Some(true),
+            purchaserAndVendorConnected = Some(true),
           ))
         val dataWithConfirmNameYesComplete = purchaserSessionQuestions.copy(
           purchaserCurrent =
             purchaserSessionQuestions.purchaserCurrent.copy(
-              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
+              ConfirmNameOfThePurchaser = Some(true),
               addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636")
             )
@@ -1853,7 +1853,7 @@ class PurchaserServiceSpec extends SpecBase {
         val dataWithConfirmNameYesIncomplete = purchaserSessionQuestions.copy(
           purchaserCurrent =
             purchaserSessionQuestions.purchaserCurrent.copy(
-              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
+              ConfirmNameOfThePurchaser = Some(true),
               addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = None
             )
@@ -1861,7 +1861,7 @@ class PurchaserServiceSpec extends SpecBase {
         val dataWithConfirmNameNoComplete = purchaserSessionQuestions.copy(
           purchaserCurrent =
             purchaserSessionQuestions.purchaserCurrent.copy(
-              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.No),
+              ConfirmNameOfThePurchaser = Some(false),
               addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636")
             )
@@ -1869,7 +1869,7 @@ class PurchaserServiceSpec extends SpecBase {
         val dataWithConfirmNameNoIncomplete = purchaserSessionQuestions.copy(
           purchaserCurrent =
             purchaserSessionQuestions.purchaserCurrent.copy(
-              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.No),
+              ConfirmNameOfThePurchaser = Some(false),
               addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = None
             )

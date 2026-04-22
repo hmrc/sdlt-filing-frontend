@@ -19,7 +19,7 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.IsPurchaserActingAsTrusteeFormProvider
-import models.purchaser.{IsPurchaserActingAsTrustee, NameOfPurchaser}
+import models.purchaser.NameOfPurchaser
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -73,7 +73,7 @@ class IsPurchaserActingAsTrusteeControllerSpec extends SpecBase with MockitoSuga
 
       val userAnswers = emptyUserAnswers
         .set(NameOfPurchaserPage, purchaserName).success.value
-        .set(IsPurchaserActingAsTrusteePage, IsPurchaserActingAsTrustee.values.head).success.value
+        .set(IsPurchaserActingAsTrusteePage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -85,7 +85,7 @@ class IsPurchaserActingAsTrusteeControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(IsPurchaserActingAsTrustee.values.head), NormalMode, purchaserName.fullName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, purchaserName.fullName)(request, messages(application)).toString
       }
     }
 
@@ -110,7 +110,7 @@ class IsPurchaserActingAsTrusteeControllerSpec extends SpecBase with MockitoSuga
       running(application) {
         val request =
           FakeRequest(POST, isPurchaserActingAsTrusteeRoute)
-            .withFormUrlEncodedBody(("value", IsPurchaserActingAsTrustee.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -163,7 +163,7 @@ class IsPurchaserActingAsTrusteeControllerSpec extends SpecBase with MockitoSuga
       running(application) {
         val request =
           FakeRequest(POST, isPurchaserActingAsTrusteeRoute)
-            .withFormUrlEncodedBody(("value", IsPurchaserActingAsTrustee.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -194,7 +194,7 @@ class IsPurchaserActingAsTrusteeControllerSpec extends SpecBase with MockitoSuga
       running(application) {
         val request =
           FakeRequest(POST, isPurchaserActingAsTrusteeRoute)
-            .withFormUrlEncodedBody(("value", IsPurchaserActingAsTrustee.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 

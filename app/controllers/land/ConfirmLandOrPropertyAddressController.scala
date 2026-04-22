@@ -97,7 +97,7 @@ class ConfirmLandOrPropertyAddressController @Inject()(
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
                 val updatedAnswersWithLandId = updatedAnswers.set(LandOverviewPage, landId).get
-                if (value.toString == "yes") {
+                if (value) {
                   val address = Address(line1 = add1, line2 = address2, line3 = address3, line4 = address4, postcode = postcode)
                   val updatedAnswersWithAddress = updatedAnswersWithLandId.set(LandAddressPage, address).get
 
@@ -121,7 +121,7 @@ class ConfirmLandOrPropertyAddressController @Inject()(
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ConfirmLandOrPropertyAddressPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
-                if (value.toString == "yes") {
+                if (value) {
                   Redirect(navigator.nextPage(ConfirmLandOrPropertyAddressPage, mode, updatedAnswers))
                 } else {
                   Redirect(controllers.land.routes.LandAddressController.redirectToAddressLookupLand())

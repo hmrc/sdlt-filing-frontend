@@ -78,8 +78,8 @@ class PurchaserCheckYourAnswersController @Inject()(
           def initialRows = purchaserService.initialSummaryRows(userAnswers) ++ connectedRows
 
           val rows = (confirmName, mainPurchaserID) match {
-            case (Some(ConfirmNameOfThePurchaser.Yes), _) => fullRows
-            case (Some(ConfirmNameOfThePurchaser.No), _) => initialRows
+            case (Some(true), _) => fullRows
+            case (Some(false), _) => initialRows
             case (None, id) if id == purchaserAndCompanyId => fullRows
             case _ => initialRows
           }

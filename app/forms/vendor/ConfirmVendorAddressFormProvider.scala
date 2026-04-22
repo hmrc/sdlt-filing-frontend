@@ -17,15 +17,14 @@
 package forms.vendor
 
 import forms.mappings.Mappings
-import models.vendor.ConfirmVendorAddress
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class ConfirmVendorAddressFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[ConfirmVendorAddress] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[ConfirmVendorAddress]("vendor.confirmVendorAddress.error.required")
+      "value" -> boolean("vendor.confirmVendorAddress.error.required")
     )
 }

@@ -17,15 +17,14 @@
 package forms.purchaser
 
 import forms.mappings.Mappings
-import models.purchaser.IsPurchaserActingAsTrustee
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class IsPurchaserActingAsTrusteeFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[IsPurchaserActingAsTrustee] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[IsPurchaserActingAsTrustee]("purchaser.isPurchaserActingAsTrustee.error.required")
+      "value" -> boolean("purchaser.isPurchaserActingAsTrustee.error.required")
     )
 }

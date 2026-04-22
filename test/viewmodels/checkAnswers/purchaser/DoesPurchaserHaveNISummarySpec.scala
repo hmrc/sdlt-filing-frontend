@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.purchaser
 
 import base.SpecBase
 import models.CheckMode
-import models.purchaser.{DoesPurchaserHaveNI, NameOfPurchaser}
+import models.purchaser.NameOfPurchaser
 import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
@@ -39,7 +39,7 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.Yes).success.value
+            .set(DoesPurchaserHaveNIPage, true).success.value
             .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
 
@@ -47,8 +47,7 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "Yes"
+          result.value.content.asHtml.toString() mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(CheckMode).url

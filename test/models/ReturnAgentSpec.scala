@@ -517,7 +517,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
             )).success.value
             .set(AddContactDetailsForPurchaserAgentPage, false).success.value
             .set(AddPurchaserAgentReferenceNumberPage, false).success.value
-            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+            .set(PurchaserAgentAuthorisedPage, true).success.value
 
           val createReturnAgentRequest = CreateReturnAgentRequest(
             stornId = "TESTSTORN",
@@ -556,7 +556,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
             .set(AddPurchaserAgentReferenceNumberPage, true).success.value
             .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
             .set(PurchaserAgentReferencePage, "AGT-REF-001").success.value
-            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+            .set(PurchaserAgentAuthorisedPage, true).success.value
 
           val createReturnAgentRequest = CreateReturnAgentRequest(
             stornId = "TESTSTORN",
@@ -1242,7 +1242,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
             )).success.value
             .set(AddContactDetailsForPurchaserAgentPage, false).success.value
             .set(AddPurchaserAgentReferenceNumberPage, false).success.value
-            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+            .set(PurchaserAgentAuthorisedPage, true).success.value
 
           val updateReturnAgentRequest = UpdateReturnAgentRequest(
             stornId = "TESTSTORN",
@@ -1281,7 +1281,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
             .set(AddPurchaserAgentReferenceNumberPage, true).success.value
             .set(PurchaserAgentsContactDetailsPage, PurchaserAgentsContactDetails(phoneNumber = Some("12345678"), emailAddress = Some("test@example.com"))).success.value
             .set(PurchaserAgentReferencePage, "AGT-REF-001").success.value
-            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+            .set(PurchaserAgentAuthorisedPage, true).success.value
 
           val updateReturnAgentRequest = UpdateReturnAgentRequest(
             stornId = "TESTSTORN",

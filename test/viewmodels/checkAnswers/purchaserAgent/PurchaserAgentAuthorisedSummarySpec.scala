@@ -18,7 +18,6 @@ package viewmodels.checkAnswers.purchaserAgent
 
 import base.SpecBase
 import models.CheckMode
-import models.purchaserAgent.PurchaserAgentAuthorised
 import pages.purchaserAgent.{PurchaserAgentAuthorisedPage, PurchaserAgentNamePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
@@ -36,14 +35,14 @@ class PurchaserAgentAuthorisedSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+            .set(PurchaserAgentAuthorisedPage, true).success.value
             .set(PurchaserAgentNamePage, "Agent name").success.value
 
           val result = PurchaserAgentAuthorisedSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel", "Agent name")
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          val htmlContent = result.value.content.asHtml.toString()
           htmlContent mustEqual "Yes"
 
           result.actions.get.items.size mustEqual 1
@@ -59,13 +58,13 @@ class PurchaserAgentAuthorisedSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+            .set(PurchaserAgentAuthorisedPage, true).success.value
 
           val result = PurchaserAgentAuthorisedSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel", "the agent")
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          val htmlContent = result.value.content.asHtml.toString()
           htmlContent mustEqual "Yes"
 
           result.actions.get.items.size mustEqual 1
@@ -81,14 +80,14 @@ class PurchaserAgentAuthorisedSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.No).success.value
+            .set(PurchaserAgentAuthorisedPage, false).success.value
             .set(PurchaserAgentNamePage, "Agent name").success.value
 
           val result = PurchaserAgentAuthorisedSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel", "Agent name")
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          val htmlContent = result.value.content.asHtml.toString()
           htmlContent mustEqual "No"
 
           result.actions.get.items.size mustEqual 1

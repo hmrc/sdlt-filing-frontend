@@ -19,7 +19,6 @@ package controllers.land
 import base.SpecBase
 import controllers.routes
 import forms.land.ConfirmLandOrPropertyAddressFormProvider
-import models.land.ConfirmLandOrPropertyAddress
 import models.{FullReturn, Land, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -153,7 +152,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = testUserAnswers
-        .set(ConfirmLandOrPropertyAddressPage, ConfirmLandOrPropertyAddress.values.head).success.value
+        .set(ConfirmLandOrPropertyAddressPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -165,7 +164,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ConfirmLandOrPropertyAddress.values.head), NormalMode, testAddress1, testAddress2, testAddress3, testAddress4, testPostcode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, testAddress1, testAddress2, testAddress3, testAddress4, testPostcode)(request, messages(application)).toString
       }
     }
 
@@ -347,7 +346,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, confirmLandOrPropertyAddressRoute)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -372,7 +371,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, confirmLandOrPropertyAddressRoute)
-            .withFormUrlEncodedBody(("value", "no"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
@@ -456,7 +455,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, confirmLandOrPropertyAddressRoute)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -490,7 +489,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, confirmLandOrPropertyAddressRoute)
-            .withFormUrlEncodedBody(("value", "no"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
@@ -520,7 +519,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, confirmLandOrPropertyAddressRoute)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 

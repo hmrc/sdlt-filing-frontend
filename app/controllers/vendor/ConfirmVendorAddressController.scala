@@ -20,7 +20,6 @@ import controllers.actions.*
 import forms.vendor.ConfirmVendorAddressFormProvider
 import models.Mode
 import models.address.Address
-import models.vendor.ConfirmVendorAddress
 import navigation.Navigator
 import pages.vendor.{ConfirmVendorAddressPage, VendorAddressPage, VendorOrCompanyNamePage}
 import play.api.data.Form
@@ -44,7 +43,7 @@ class ConfirmVendorAddressController @Inject()(
                                           view: ConfirmVendorAddressView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[ConfirmVendorAddress] = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -116,7 +115,7 @@ class ConfirmVendorAddressController @Inject()(
                   sessionRepository.set(updatedAnswers)
 
                   (value, line1) match {
-                    case (ConfirmVendorAddress.Yes, Some(addressLine1)) =>
+                    case (true, Some(addressLine1)) =>
                       val address = Address(
                         line1 = addressLine1,
                         line2 = line2,
@@ -128,8 +127,8 @@ class ConfirmVendorAddressController @Inject()(
                       sessionRepository.set(updatedAnswersWithAddress)
 
                       Redirect(navigator.nextPage(ConfirmVendorAddressPage, mode, updatedAnswersWithAddress))
-                    case (ConfirmVendorAddress.Yes, None) => Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
-                    case (ConfirmVendorAddress.No, _) => Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
+                    case (true, None) => Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
+                    case (false, _) => Redirect(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor())
                   }
               )
           }

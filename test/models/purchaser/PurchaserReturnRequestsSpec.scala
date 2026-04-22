@@ -369,7 +369,7 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
           "purchaserID" -> "PUR001",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -417,8 +417,8 @@ class PurchaserReturnRequestsSpec extends AnyFreeSpec with Matchers with EitherV
           "unincorporatedBuilder" -> "YES",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "YES",
-        "purchaserAndVendorConnected" -> "YES"
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true
       )),
     lastUpdated = Instant.now)
 

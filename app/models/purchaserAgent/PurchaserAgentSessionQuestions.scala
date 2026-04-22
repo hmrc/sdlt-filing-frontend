@@ -25,7 +25,7 @@ case class PurchaserAgentSessionQuestions(
                                            purchaserAgentContactDetails: Option[PurchaserAgentsContactDetails] = None,
                                            addPurchaserAgentReferenceNumber: Boolean,
                                            purchaserAgentReference: Option[String] = None,
-                                           purchaserAgentAuthorised: String
+                                           purchaserAgentAuthorised: Boolean
                                          )
 
 object PurchaserAgentSessionQuestions {

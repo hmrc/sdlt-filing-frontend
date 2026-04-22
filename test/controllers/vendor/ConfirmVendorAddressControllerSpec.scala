@@ -20,7 +20,7 @@ import base.SpecBase
 import constants.FullReturnConstants.{completeFullReturn, completeFullReturnMultipleVendors, completeVendor, minimalFullReturn}
 import controllers.routes
 import forms.vendor.ConfirmVendorAddressFormProvider
-import models.vendor.{ConfirmVendorAddress, VendorName}
+import models.vendor.VendorName
 import models.{NormalMode, UserAnswers, Vendor}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -163,7 +163,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
       }
 
       "must populate the view correctly on a GET when the question has previously been answered" in {
-        val userAnswers = uaWithVendorName(testVendorName, _.set(ConfirmVendorAddressPage, ConfirmVendorAddress.Yes).get)
+        val userAnswers = uaWithVendorName(testVendorName, _.set(ConfirmVendorAddressPage, true).get)
           .copy(fullReturn = Some(completeFullReturn))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -179,7 +179,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
           status(result) mustEqual OK
           contentAsString(result) mustEqual
             view(
-              form.fill(ConfirmVendorAddress.Yes),
+              form.fill(true),
               expectedName,
               completeVendor.address1,
               completeVendor.address2,
@@ -244,7 +244,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
         running(application) {
           val request = FakeRequest(POST, confirmVendorAddressRoute)
-            .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.Yes.toString)
+            .withFormUrlEncodedBody("value" -> "true")
 
           val result = route(application, request).get
 
@@ -261,7 +261,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
         running(application) {
           val request = FakeRequest(POST, confirmVendorAddressRoute)
-            .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.Yes.toString)
+            .withFormUrlEncodedBody("value" -> "true")
           val result = route(application, request).get
 
           status(result) mustEqual SEE_OTHER
@@ -303,7 +303,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
         running(application) {
           val request = FakeRequest(POST, confirmVendorAddressRoute)
-            .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.Yes.toString)
+            .withFormUrlEncodedBody("value" -> "true")
 
           val result = route(application, request).get
 
@@ -324,7 +324,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
         running(application) {
           val request = FakeRequest(POST, confirmVendorAddressRoute)
-            .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.No.toString)
+            .withFormUrlEncodedBody("value" -> "false")
 
           val result = route(application, request).get
 
@@ -378,7 +378,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request = FakeRequest(POST, confirmVendorAddressRoute)
-          .withFormUrlEncodedBody("value" -> ConfirmVendorAddress.Yes.toString)
+          .withFormUrlEncodedBody("value" -> "true")
 
         val result = route(application, request).get
 
@@ -404,7 +404,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       running(application) {
         val request = FakeRequest(POST, confirmVendorAddressRoute)
-          .withFormUrlEncodedBody(("value", ConfirmVendorAddress.values.head.toString))
+          .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).get
 

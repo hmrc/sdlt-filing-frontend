@@ -16,11 +16,10 @@
 
 package forms.purchaser
 
-import forms.behaviours.OptionFieldBehaviours
-import models.purchaser.ConfirmNameOfThePurchaser
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ConfirmNameOfThePurchaserFormProviderSpec extends OptionFieldBehaviours {
+class ConfirmNameOfThePurchaserFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new ConfirmNameOfThePurchaserFormProvider()()
 
@@ -29,11 +28,10 @@ class ConfirmNameOfThePurchaserFormProviderSpec extends OptionFieldBehaviours {
     val fieldName = "value"
     val requiredKey = "purchaser.confirmNameOfPurchaser.error.required"
 
-    behave like optionsField[ConfirmNameOfThePurchaser](
+    behave like booleanField(
       form,
       fieldName,
-      validValues = ConfirmNameOfThePurchaser.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, "error.boolean")
     )
 
     behave like mandatoryField(

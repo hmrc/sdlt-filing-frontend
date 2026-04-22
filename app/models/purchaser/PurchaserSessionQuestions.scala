@@ -27,13 +27,13 @@ object PurchaserSessionQuestions {
 }
 
 case class PurchaserCurrent(purchaserAndCompanyId: Option[PurchaserAndCompanyId] = None,
-                            ConfirmNameOfThePurchaser: Option[ConfirmNameOfThePurchaser] = None,
+                            ConfirmNameOfThePurchaser: Option[Boolean] = None,
                             whoIsMakingThePurchase: String,
                             nameOfPurchaser: NameOfPurchaser,
                             purchaserAddress: PurchaserSessionAddress,
                             addPurchaserPhoneNumber: Option[Boolean] = None,
                             enterPurchaserPhoneNumber: Option[String] = None,
-                            doesPurchaserHaveNI: Option[DoesPurchaserHaveNI] = None,
+                            doesPurchaserHaveNI: Option[Boolean] = None,
                             nationalInsuranceNumber: Option[String] = None,
                             purchaserFormOfIdIndividual: Option[PurchaserFormOfIdIndividual] = None,
                             purchaserDateOfBirth: Option[LocalDate] = None,
@@ -43,8 +43,8 @@ case class PurchaserCurrent(purchaserAndCompanyId: Option[PurchaserAndCompanyId]
                             purchaserFormOfIdCompany: Option[CompanyFormOfId] = None,
                             purchaserCompanyTypeKnown: Option[Boolean] = None,
                             purchaserTypeOfCompany: Option[PurchaserTypeOfCompanyAnswers] = None,
-                            isPurchaserActingAsTrustee: Option[String] = None,
-                            purchaserAndVendorConnected: Option[String] = None
+                            isPurchaserActingAsTrustee: Option[Boolean] = None,
+                            purchaserAndVendorConnected: Option[Boolean] = None
 )
 
 object PurchaserCurrent {

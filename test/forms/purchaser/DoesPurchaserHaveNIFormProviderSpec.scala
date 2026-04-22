@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package forms.purchaser
 
-import forms.behaviours.OptionFieldBehaviours
-import forms.purchaser.DoesPurchaserHaveNIFormProvider
-import models.purchaser.DoesPurchaserHaveNI
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class DoesPurchaserHaveNIFormProviderSpec extends OptionFieldBehaviours {
+class DoesPurchaserHaveNIFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new DoesPurchaserHaveNIFormProvider()()
 
@@ -30,11 +28,10 @@ class DoesPurchaserHaveNIFormProviderSpec extends OptionFieldBehaviours {
     val fieldName = "value"
     val requiredKey = "purchaser.doesPurchaserHaveNI.error.required"
 
-    behave like optionsField[DoesPurchaserHaveNI](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = DoesPurchaserHaveNI.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, "error.boolean")
     )
 
     behave like mandatoryField(

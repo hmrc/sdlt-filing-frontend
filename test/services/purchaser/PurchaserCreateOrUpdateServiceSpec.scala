@@ -68,7 +68,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "purchaserID" -> "PUR001",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -116,8 +116,8 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 
@@ -132,7 +132,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "purchaserID" -> "PUR002",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -180,8 +180,8 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 
@@ -196,7 +196,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "purchaserID" -> "PUR001",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Individual",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -244,8 +244,8 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
   private val userAnswersPurchaserIndividual = UserAnswers(
@@ -259,7 +259,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "purchaserID" -> "PUR002",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Individual",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -307,8 +307,8 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 
@@ -359,70 +359,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       fullReturn = fullReturn,
     )
   }
-
-//  private def createPurchaserJsonData(
-//                                       purchaserId: String,
-//                                       isCompany: String = "Individual"
-//                                     ): JsObject = {
-//    Json.obj(
-//      "purchaserCurrent" -> Json.obj(
-//        "purchaserAndCompanyId" -> Json.obj(
-//          "purchaserID" -> purchaserId,
-//          "companyDetailsID" -> "COMPDET001",
-//        ),
-//        "ConfirmNameOfThePurchaser" -> "yes",
-//        "whoIsMakingThePurchase" -> isCompany,
-//        "nameOfPurchaser" -> Json.obj(
-//          "forename1" -> JsNull,
-//          "forename2" -> JsNull,
-//          "name" -> "Company",
-//        ),
-//        "purchaserAddress" -> Json.obj(
-//          "houseNumber" -> JsNull,
-//          "line1" -> "Street 1",
-//          "line2" -> "Street 2",
-//          "line3" -> "Street 3",
-//          "line4" -> "Street 4",
-//          "line5" -> "Street 5",
-//          "postcode" -> "CR7 8LU",
-//          "country" -> Json.obj(
-//            "code" -> "GB",
-//            "name" -> "UK"
-//          ),
-//          "addressValidated" -> true
-//        ),
-//        "addPurchaserPhoneNumber" -> true,
-//        "enterPurchaserPhoneNumber" -> "+447874363636",
-//        "doesPurchaserHaveNI" -> JsNull,
-//        "nationalInsuranceNumber" -> JsNull,
-//        "purchaserFormOfIdIndividual" -> JsNull,
-//        "purchaserDateOfBirth" -> JsNull,
-//        "purchaserConfirmIdentity" -> JsNull,
-//        "registrationNumber" -> "VAT123",
-//        "purchaserUTRPage" -> "UTR1234",
-//        "purchaserFormOfIdCompany" -> JsNull,
-//        "purchaserTypeOfCompany" -> Json.obj(
-//          "bank" -> "YES",
-//          "buildingSociety" -> "NO",
-//          "centralGovernment" -> "NO",
-//          "individualOther" -> "NO",
-//          "insuranceAssurance" -> "NO",
-//          "localAuthority" -> "NO",
-//          "partnership" -> "NO",
-//          "propertyCompany" -> "NO",
-//          "publicCorporation" -> "NO",
-//          "otherCompany" -> "NO",
-//          "otherFinancialInstitute" -> "NO",
-//          "otherIncludingCharity" -> "NO",
-//          "superannuationOrPensionFund" -> "NO",
-//          "unincorporatedBuilder" -> "NO",
-//          "unincorporatedSoleTrader" -> "NO"
-//        ),
-//        "isPurchaserActingAsTrustee" -> "yes",
-//        "purchaserAndVendorConnected" -> "yes",
-//      )
-//    )
-//  }
 
   private val purchaserName = NameOfPurchaser(forename1 = Some("Name1"), forename2 = Some("Name2"), name = "Samsung")
 

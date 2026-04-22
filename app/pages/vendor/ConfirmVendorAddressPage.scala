@@ -16,11 +16,10 @@
 
 package pages.vendor
 
-import models.vendor.ConfirmVendorAddress
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ConfirmVendorAddressPage extends QuestionPage[ConfirmVendorAddress] {
+case object ConfirmVendorAddressPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ "vendorCurrent" \ toString
 

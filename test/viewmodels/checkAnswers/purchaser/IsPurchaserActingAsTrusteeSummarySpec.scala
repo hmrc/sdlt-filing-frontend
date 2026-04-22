@@ -18,11 +18,10 @@ package viewmodels.checkAnswers.purchaser
 
 import base.SpecBase
 import models.CheckMode
-import models.purchaser.{IsPurchaserActingAsTrustee, NameOfPurchaser}
+import models.purchaser.NameOfPurchaser
 import pages.purchaser.{IsPurchaserActingAsTrusteePage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 class IsPurchaserActingAsTrusteeSummarySpec extends SpecBase {
 
@@ -34,15 +33,14 @@ class IsPurchaserActingAsTrusteeSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(IsPurchaserActingAsTrusteePage, IsPurchaserActingAsTrustee.Yes).success.value
+            .set(IsPurchaserActingAsTrusteePage, true).success.value
             .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
           val result = IsPurchaserActingAsTrusteeSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "Yes"
+          result.value.content.asHtml.toString() mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(CheckMode).url

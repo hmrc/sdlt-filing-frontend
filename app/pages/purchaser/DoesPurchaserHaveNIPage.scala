@@ -16,11 +16,10 @@
 
 package pages.purchaser
 
-import models.purchaser.DoesPurchaserHaveNI
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object DoesPurchaserHaveNIPage extends QuestionPage[DoesPurchaserHaveNI] {
+case object DoesPurchaserHaveNIPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ "purchaserCurrent" \ toString
 

@@ -21,13 +21,12 @@ import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.completeFullReturn
 import models.{CreateReturnAgentRequest, CreateReturnAgentReturn, NormalMode, ReturnVersionUpdateReturn, UpdateReturnAgentRequest, UpdateReturnAgentReturn}
 import models.address.{Address, Country}
-import models.purchaserAgent.PurchaserAgentAuthorised
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{atLeastOnce, reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import repositories.SessionRepository
-import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, AddPurchaserAgentReferenceNumberPage, PurchaserAgentAddressPage, PurchaserAgentAuthorisedPage, PurchaserAgentNamePage, PurchaserAgentOverviewPage}
+import pages.purchaserAgent.*
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -62,7 +61,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
     )).success.value
     .set(AddContactDetailsForPurchaserAgentPage, false).success.value
     .set(AddPurchaserAgentReferenceNumberPage, false).success.value
-    .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+    .set(PurchaserAgentAuthorisedPage, true).success.value
 
   private val userAnswersWithCompleteAnswers = emptyUserAnswers
     .copy(
@@ -80,7 +79,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
     )).success.value
     .set(AddContactDetailsForPurchaserAgentPage, false).success.value
     .set(AddPurchaserAgentReferenceNumberPage, false).success.value
-    .set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+    .set(PurchaserAgentAuthorisedPage, true).success.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()

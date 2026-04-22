@@ -18,11 +18,9 @@ package viewmodels.checkAnswers.purchaser
 
 import base.SpecBase
 import models.CheckMode
-import models.purchaser.ConfirmNameOfThePurchaser
 import pages.purchaser.ConfirmNameOfThePurchaserPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
 
@@ -36,13 +34,13 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
+            .set(ConfirmNameOfThePurchaserPage, true).success.value
 
           val result = ConfirmNameOfThePurchaserSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("nameOfThePurchaser.checkYourAnswersLabel")
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          val htmlContent = result.value.content.asHtml.toString()
           htmlContent mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
@@ -61,13 +59,13 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+            .set(ConfirmNameOfThePurchaserPage, false).success.value
 
           val result = ConfirmNameOfThePurchaserSummary.row(Some(userAnswers))
 
           result.key.content.asHtml.toString() mustEqual msgs("nameOfThePurchaser.checkYourAnswersLabel")
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          val htmlContent = result.value.content.asHtml.toString()
           htmlContent mustEqual msgs("site.no")
 
           result.actions.get.items.size mustEqual 1
@@ -99,7 +97,7 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
         implicit val msgs: Messages = messages(application)
 
         val userAnswers = emptyUserAnswers
-          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
+          .set(ConfirmNameOfThePurchaserPage, true).success.value
 
         val result = ConfirmNameOfThePurchaserSummary.row(Some(userAnswers))
 
@@ -113,11 +111,11 @@ class ConfirmNameOfThePurchaserSummarySpec extends SpecBase {
         implicit val msgs: Messages = messages(application)
 
         val userAnswers = emptyUserAnswers
-          .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
+          .set(ConfirmNameOfThePurchaserPage, true).success.value
 
         val result = ConfirmNameOfThePurchaserSummary.row(Some(userAnswers))
 
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        val htmlContent = result.value.content.asHtml.toString()
         htmlContent must not include "<script>"
         htmlContent must not include "&"
 

@@ -19,7 +19,6 @@ package viewmodels.checkAnswers.purchaser
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.ConfirmNameOfThePurchaserPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
@@ -32,9 +31,7 @@ object ConfirmNameOfThePurchaserSummary {
       answer =>
 
         val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"site.$answer"))
-          )
+          if (answer) "site.yes" else "site.no"
         )
 
         SummaryListRowViewModel(

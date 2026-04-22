@@ -19,7 +19,6 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.DoesPurchaserHaveNIFormProvider
-import models.purchaser.DoesPurchaserHaveNI
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -45,7 +44,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
   lazy val doesPurchaserHaveNIRoute: String = controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
 
   val formProvider = new DoesPurchaserHaveNIFormProvider()
-  val form: Form[DoesPurchaserHaveNI] = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   val testUserAnswersIndividual: UserAnswers = UserAnswers(
     id = "test-session-id",
@@ -103,7 +102,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = testUserAnswersIndividual.set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.values.head).success.value
+      val userAnswers = testUserAnswersIndividual.set(DoesPurchaserHaveNIPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -116,7 +115,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(form.fill(DoesPurchaserHaveNI.values.head), NormalMode, "John Middle Doe")(request, messages(application)).toString
+          view(form.fill(true), NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
 
@@ -137,7 +136,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, doesPurchaserHaveNIRoute)
-            .withFormUrlEncodedBody(("value", DoesPurchaserHaveNI.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -187,7 +186,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, doesPurchaserHaveNIRoute)
-            .withFormUrlEncodedBody(("value", DoesPurchaserHaveNI.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -218,7 +217,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, doesPurchaserHaveNIRoute)
-            .withFormUrlEncodedBody(("value", DoesPurchaserHaveNI.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -234,7 +233,7 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, doesPurchaserHaveNIRoute)
-            .withFormUrlEncodedBody(("value", DoesPurchaserHaveNI.No.toString))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 

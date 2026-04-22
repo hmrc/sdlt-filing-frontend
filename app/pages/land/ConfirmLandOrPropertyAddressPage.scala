@@ -16,11 +16,10 @@
 
 package pages.land
 
-import models.land.ConfirmLandOrPropertyAddress
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ConfirmLandOrPropertyAddressPage extends QuestionPage[ConfirmLandOrPropertyAddress] {
+case object ConfirmLandOrPropertyAddressPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ "landCurrent" \ toString
 

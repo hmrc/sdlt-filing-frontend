@@ -19,7 +19,6 @@ package controllers.purchaserAgent
 import base.SpecBase
 import controllers.routes
 import forms.purchaserAgent.PurchaserAgentAuthorisedFormProvider
-import models.purchaserAgent.PurchaserAgentAuthorised
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -81,7 +80,7 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = userAnswersWithAgentName.set(PurchaserAgentAuthorisedPage, PurchaserAgentAuthorised.Yes).success.value
+      val userAnswers = userAnswersWithAgentName.set(PurchaserAgentAuthorisedPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -93,7 +92,7 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(PurchaserAgentAuthorised.values.head), NormalMode, agentName = "Secret Agent")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, agentName = "Secret Agent")(request, messages(application)).toString
       }
     }
 
@@ -114,7 +113,7 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
       running(application) {
         val request =
           FakeRequest(POST, purchaserAgentAuthorisedRoute)
-            .withFormUrlEncodedBody(("value", PurchaserAgentAuthorised.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -198,7 +197,7 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
       running(application) {
         val request =
           FakeRequest(POST, purchaserAgentAuthorisedRoute)
-            .withFormUrlEncodedBody(("value", PurchaserAgentAuthorised.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 

@@ -15,7 +15,6 @@
  *@
 
 @import viewmodels.LegendSize.Large
-@import models.purchaser.DoesPurchaserHaveNI
 @import views.html.components.Caption
 
 @this(
@@ -34,7 +33,7 @@
     @formHelper(action = controllers.purchaser.routes.DoesPurchaserHaveNIController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @caption(messages("site.purchaser.caption"))
@@ -43,7 +42,16 @@
             RadiosViewModel(
                 field = form("value"),
                 legend = LegendViewModel(messages("purchaser.doesPurchaserHaveNI.heading", purchaserName)).asPageHeading(size = Large),
-                items = DoesPurchaserHaveNI.options
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
             )
         )
 
