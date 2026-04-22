@@ -17,15 +17,14 @@
 package forms.land
 
 import forms.mappings.Mappings
-import models.land.ConfirmLandOrPropertyAddress
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class ConfirmLandOrPropertyAddressFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[ConfirmLandOrPropertyAddress] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[ConfirmLandOrPropertyAddress]("land.confirmLandOrPropertyAddress.error.required")
+      "value" -> boolean("land.confirmLandOrPropertyAddress.error.required")
     )
 }

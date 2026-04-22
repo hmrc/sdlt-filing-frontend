@@ -18,7 +18,6 @@ package controllers.purchaser
 
 import base.SpecBase
 import constants.FullReturnConstants.incompleteFullReturn
-import models.purchaser.ConfirmNameOfThePurchaser
 import models.{FullReturn, Purchaser, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -59,7 +58,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           )
           case _ => "purchaserAndCompanyId" -> JsNull
         },
-        "ConfirmNameOfThePurchaser" -> "no",
+        "ConfirmNameOfThePurchaser" -> false,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -107,8 +106,8 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "YES",
-        "purchaserAndVendorConnected" -> "YES"
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true
       )
     )
   }
@@ -526,7 +525,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           )
         }
 
-        val testuserAnswers = userAnswers.set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
+        val testuserAnswers = userAnswers.set(ConfirmNameOfThePurchaserPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testuserAnswers)))
 
@@ -579,7 +578,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           )
         }
 
-        val testuserAnswers = userAnswers.set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.No).success.value
+        val testuserAnswers = userAnswers.set(ConfirmNameOfThePurchaserPage, false).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testuserAnswers)))
 

@@ -16,11 +16,10 @@
 
 package forms.vendor
 
-import forms.behaviours.OptionFieldBehaviours
-import models.vendor.ConfirmVendorAddress
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ConfirmVendorAddressFormProviderSpec extends OptionFieldBehaviours {
+class ConfirmVendorAddressFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new ConfirmVendorAddressFormProvider()()
 
@@ -29,11 +28,10 @@ class ConfirmVendorAddressFormProviderSpec extends OptionFieldBehaviours {
     val fieldName = "value"
     val requiredKey = "vendor.confirmVendorAddress.error.required"
 
-    behave like optionsField[ConfirmVendorAddress](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = ConfirmVendorAddress.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, "error.boolean")
     )
 
     behave like mandatoryField(

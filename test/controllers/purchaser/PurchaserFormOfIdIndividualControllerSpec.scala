@@ -19,7 +19,7 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.PurchaserFormOfIdIndividualFormProvider
-import models.purchaser.{DoesPurchaserHaveNI, NameOfPurchaser, PurchaserFormOfIdIndividual}
+import models.purchaser.{NameOfPurchaser, PurchaserFormOfIdIndividual}
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -51,17 +51,17 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
 
   val userAnswersWithPurchaserNameAndNoNino: UserAnswers = emptyUserAnswers
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
-    .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
+    .set(DoesPurchaserHaveNIPage, false).success.value
     .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
 
   val userAnswersWithPurchaserNameAndNino: UserAnswers = emptyUserAnswers
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
-    .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.Yes).success.value
+    .set(DoesPurchaserHaveNIPage, true).success.value
 
   val userAnswersWithPurchaserNameAndIDAndNoNino: UserAnswers = emptyUserAnswers
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
     .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", "Germany")).success.value
-    .set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
+    .set(DoesPurchaserHaveNIPage, false).success.value
     .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
 
 

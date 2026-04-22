@@ -19,7 +19,6 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.ConfirmNameOfThePurchaserFormProvider
 import models.*
-import models.purchaser.ConfirmNameOfThePurchaser
 import navigation.Navigator
 import pages.purchaser.ConfirmNameOfThePurchaserPage
 import play.api.data.Form
@@ -48,7 +47,7 @@ class ConfirmNameOfThePurchaserController @Inject()(
                                                      view: ConfirmNameOfThePurchaserView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[ConfirmNameOfThePurchaser] = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -92,12 +91,12 @@ class ConfirmNameOfThePurchaserController @Inject()(
         },
         value =>
           purchaserService.populatePurchaserNameInSession(
-            purchaserCheck = value.toString == "yes",
+            purchaserCheck = value,
             userAnswers = request.userAnswers
           ) match {
             case Success(updatedAnswers) =>
               sessionRepository.set(updatedAnswers).map { _ =>
-                if (value.toString == "yes") {
+                if (value) {
                   Redirect(navigator.nextPage(ConfirmNameOfThePurchaserPage, mode, updatedAnswers))
                 } else {
                   Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))

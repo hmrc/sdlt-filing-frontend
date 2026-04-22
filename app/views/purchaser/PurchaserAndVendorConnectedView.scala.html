@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.purchaser.PurchaserAndVendorConnected
 @import views.html.components.Caption
 @this(
     layout: templates.Layout,
@@ -32,7 +31,7 @@
     @formHelper(action = controllers.purchaser.routes.PurchaserAndVendorConnectedController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @caption(messages("site.purchaser.caption"))
@@ -40,7 +39,16 @@
             RadiosViewModel(
                 field  = form("value"),
                 legend = LegendViewModel(messages("purchaser.purchaserAndVendorConnected.heading",purchaserName )).asPageHeading(),
-                items  = PurchaserAndVendorConnected.options
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
             ).withHint(HintViewModel(HtmlContent(Html(messages("purchaser.purchaserAndVendorConnected.hint")))))
         )
 

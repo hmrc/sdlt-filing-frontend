@@ -132,7 +132,7 @@ class PurchaserService {
                                       purchaserCheck: Boolean,
                                       userAnswers: UserAnswers
                                     ): Try[UserAnswers] = {
-    val confirmName = if (purchaserCheck) ConfirmNameOfThePurchaser.Yes else ConfirmNameOfThePurchaser.No
+    val confirmName = purchaserCheck
 
     val mainPurchaserOpt: Option[Purchaser] = getMainPurchaser(userAnswers)
     val companyDetailsIdOpt = userAnswers.fullReturn.flatMap(_.companyDetails.flatMap(_.companyDetailsID))
@@ -179,8 +179,8 @@ class PurchaserService {
       val confirmNameOfThePurchaser = userAnswers.get(ConfirmNameOfThePurchaserPage)
       (confirmNameOfThePurchaser, mainPurchaserID, mode) match {
         case (_, _, _) if mode == CheckMode => continueRoute
-        case (Some(ConfirmNameOfThePurchaser.Yes), _, _) => continueRoute
-        case (Some(ConfirmNameOfThePurchaser.No), _, _) => Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
+        case (Some(true), _, _) => continueRoute
+        case (Some(false), _, _) => Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
         case (None, None, _) => continueRoute
         case (None, Some(_), _) => Redirect(controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad())
       }
@@ -194,8 +194,8 @@ class PurchaserService {
     val confirmNameOfThePurchaser = userAnswers.get(ConfirmNameOfThePurchaserPage)
     (confirmNameOfThePurchaser, mainPurchaserID, mode) match {
       case (_, _, _) if mode == CheckMode => continueRoute
-      case (Some(ConfirmNameOfThePurchaser.Yes), _, _) => continueRoute
-      case (Some(ConfirmNameOfThePurchaser.No), _, _) => journeyJumpRoute
+      case (Some(true), _, _) => continueRoute
+      case (Some(false), _, _) => journeyJumpRoute
       case (None, None, _) => continueRoute
       case (None, Some(_), _) => journeyJumpRoute
     }
@@ -328,12 +328,12 @@ class PurchaserService {
       case Some(WhoIsMakingThePurchase.Individual) =>
         val nIQuestion = DoesPurchaserHaveNISummary.row(Some(userAnswers))
         val extraRows = userAnswers.get(DoesPurchaserHaveNIPage) match {
-          case Some(DoesPurchaserHaveNI.Yes) =>
+          case Some(true) =>
             Seq(
               PurchaserNationalInsuranceSummary.row(Some(userAnswers)),
               PurchaserDateOfBirthSummary.row(Some(userAnswers)),
             )
-          case Some(DoesPurchaserHaveNI.No) =>
+          case Some(false) =>
             Seq(PurchaserFormOfIdIndividualSummary.row(Some(userAnswers)))
           case None =>
             Seq.empty
@@ -360,7 +360,7 @@ class PurchaserService {
   def purchaserSessionOptionalQuestionsValidation(sessionData: PurchaserSessionQuestions, userAnswers: UserAnswers): Boolean = {
       val isPurchaserMain: Boolean =
         sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID) == userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
-      val isPurchaserFirstMain = sessionData.purchaserCurrent.ConfirmNameOfThePurchaser.contains(ConfirmNameOfThePurchaser.Yes)
+      val isPurchaserFirstMain = sessionData.purchaserCurrent.ConfirmNameOfThePurchaser.contains(true)
 
       if(isPurchaserMain || isPurchaserFirstMain) {
         sessionData.purchaserCurrent.whoIsMakingThePurchase match {
@@ -378,7 +378,7 @@ class PurchaserService {
   private def individualMainPurchaser(sessionData: PurchaserSessionQuestions): Boolean = {
     val isPhoneNumberYes = sessionData.purchaserCurrent.addPurchaserPhoneNumber.contains(true)
     val isPhoneNumberPresent = sessionData.purchaserCurrent.enterPurchaserPhoneNumber.isDefined
-    val doesPurchaserHaveNI = sessionData.purchaserCurrent.doesPurchaserHaveNI.contains(DoesPurchaserHaveNI.Yes)
+    val doesPurchaserHaveNI = sessionData.purchaserCurrent.doesPurchaserHaveNI.contains(true)
     val isNIPresent = sessionData.purchaserCurrent.nationalInsuranceNumber.isDefined
     val isPurchaserFormOfIdIndividualPresent = sessionData.purchaserCurrent.purchaserFormOfIdIndividual.isDefined
     val isDobPresent = sessionData.purchaserCurrent.purchaserDateOfBirth.isDefined

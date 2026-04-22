@@ -547,7 +547,7 @@ class PurchaserAgentServiceSpec extends SpecBase {
           ),
           addContactDetailsForPurchaserAgent = false,
           addPurchaserAgentReferenceNumber = false,
-          purchaserAgentAuthorised = "YES"
+          purchaserAgentAuthorised = true
         )
 
         val result = service.purchaserAgentSessionQuestionsValidation(sessionData)
@@ -575,7 +575,7 @@ class PurchaserAgentServiceSpec extends SpecBase {
           )),
           addPurchaserAgentReferenceNumber = true,
           purchaserAgentReference = Some("1234"),
-          purchaserAgentAuthorised = "YES"
+          purchaserAgentAuthorised = true
         )
 
         val result = service.purchaserAgentSessionQuestionsValidation(sessionData)
@@ -599,7 +599,7 @@ class PurchaserAgentServiceSpec extends SpecBase {
           addContactDetailsForPurchaserAgent = true,
           purchaserAgentContactDetails = None,
           addPurchaserAgentReferenceNumber = false,
-          purchaserAgentAuthorised = "YES"
+          purchaserAgentAuthorised = true
         )
 
         val result = service.purchaserAgentSessionQuestionsValidation(sessionData)
@@ -623,7 +623,7 @@ class PurchaserAgentServiceSpec extends SpecBase {
           addContactDetailsForPurchaserAgent = false,
           addPurchaserAgentReferenceNumber = true,
           purchaserAgentReference = None,
-          purchaserAgentAuthorised = "YES"
+          purchaserAgentAuthorised = true
         )
 
         val result = service.purchaserAgentSessionQuestionsValidation(sessionData)

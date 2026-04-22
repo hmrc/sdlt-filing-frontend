@@ -16,11 +16,10 @@
 
 package forms.purchaser
 
-import forms.behaviours.OptionFieldBehaviours
-import models.purchaser.IsPurchaserActingAsTrustee
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class IsPurchaserActingAsTrusteeFormProviderSpec extends OptionFieldBehaviours {
+class IsPurchaserActingAsTrusteeFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new IsPurchaserActingAsTrusteeFormProvider()()
 
@@ -29,11 +28,10 @@ class IsPurchaserActingAsTrusteeFormProviderSpec extends OptionFieldBehaviours {
     val fieldName = "value"
     val requiredKey = "purchaser.isPurchaserActingAsTrustee.error.required"
 
-    behave like optionsField[IsPurchaserActingAsTrustee](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = IsPurchaserActingAsTrustee.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, "error.boolean")
     )
 
     behave like mandatoryField(

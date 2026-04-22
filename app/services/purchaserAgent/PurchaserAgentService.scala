@@ -21,7 +21,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import models.Agent
 import models.address.*
-import models.purchaserAgent.{PurchaserAgentAuthorised, PurchaserAgentSessionQuestions, PurchaserAgentsContactDetails, SelectPurchaserAgent}
+import models.purchaserAgent.{PurchaserAgentSessionQuestions, PurchaserAgentsContactDetails, SelectPurchaserAgent}
 import navigation.Navigator
 import pages.purchaserAgent.*
 import repositories.SessionRepository
@@ -140,10 +140,7 @@ class PurchaserAgentService @Inject(
           emailAddress = returnAgent.email
         )
 
-        val authorised: PurchaserAgentAuthorised = returnAgent.isAuthorised match {
-          case Some("yes") | Some("YES") => PurchaserAgentAuthorised.Yes
-          case _ => PurchaserAgentAuthorised.No
-        }
+        val authorised = returnAgent.isAuthorised.exists(_.equalsIgnoreCase("YES"))
 
         val hasContactDetails = returnAgent.phone.isDefined || returnAgent.email.isDefined
 

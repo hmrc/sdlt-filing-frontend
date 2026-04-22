@@ -19,7 +19,6 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.PurchaserFormOfIdIndividualFormProvider
 import models.Mode
-import models.purchaser.DoesPurchaserHaveNI
 import navigation.Navigator
 import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserFormOfIdIndividualPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -52,10 +51,10 @@ class PurchaserFormOfIdIndividualController @Inject()(
     implicit request =>
       
       val maybePurchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
-      val maybeDoesPurchaserHaveNI: Option[DoesPurchaserHaveNI] = request.userAnswers.get(DoesPurchaserHaveNIPage)
+      val maybeDoesPurchaserHaveNI: Option[Boolean] = request.userAnswers.get(DoesPurchaserHaveNIPage)
 
       (maybePurchaserName, maybeDoesPurchaserHaveNI) match {
-        case (Some(purchaserName), Some(doesPurchaserHaveNI)) if doesPurchaserHaveNI.equals(DoesPurchaserHaveNI.No) =>
+        case (Some(purchaserName), Some(doesPurchaserHaveNI)) if !doesPurchaserHaveNI =>
           val preparedForm = request.userAnswers.get(PurchaserFormOfIdIndividualPage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -68,7 +67,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
           
       
         case (None, _) => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode))
-        case (_, Some(doesPurchaserHaveNI)) if doesPurchaserHaveNI.equals(DoesPurchaserHaveNI.Yes) =>
+        case (_, Some(doesPurchaserHaveNI)) if doesPurchaserHaveNI =>
           Redirect(controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(mode))
         case (_, _) => Redirect(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(mode))
       }

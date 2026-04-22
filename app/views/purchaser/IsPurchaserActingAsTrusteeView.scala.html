@@ -15,40 +15,48 @@
  *@
 
 @import viewmodels.LegendSize.Large
-@import models.purchaser.IsPurchaserActingAsTrustee
 @import views.html.components.Caption
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-govukErrorSummary: GovukErrorSummary,
-govukRadios: GovukRadios,
-govukButton: GovukButton,
-caption: Caption
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    caption: Caption
 )
 
 @(form: Form[_], mode: Mode, purchaserName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("purchaser.isPurchaserActingAsTrustee.title"))) {
 
-@formHelper(action = controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-}
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-@caption(messages("site.purchaser.caption"))
+        @caption(messages("site.purchaser.caption"))
 
-@govukRadios(
-RadiosViewModel(
-field  = form("value"),
-legend = LegendViewModel(messages("purchaser.isPurchaserActingAsTrustee.heading", purchaserName)).asPageHeading(size = Large),
-items  = IsPurchaserActingAsTrustee.options
-)
-)
+        @govukRadios(
+            RadiosViewModel(
+                field  = form("value"),
+                legend = LegendViewModel(messages("purchaser.isPurchaserActingAsTrustee.heading", purchaserName)).asPageHeading(size = Large),
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
+            )
+        )
 
-@govukButton(
-ButtonViewModel(messages("site.save.continue"))
-)
-}
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
+    }
 }

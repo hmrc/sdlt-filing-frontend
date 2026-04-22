@@ -41,18 +41,18 @@
                 field  = form("value"),
                 legend = LegendViewModel(messages("land.doYouKnowTheAreaOfLand.heading")).asPageHeading(),
                 items  = Seq(
-                            RadioItem(
-                                value = Some("true"),
-                                content = Text(messages("site.yes"))
-                            ),
-                            RadioItem(
-                                value = Some("false"),
-                                content = Text(messages("site.no"))
-                            )
-                            )
-                ).withHint(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
+            ).withHint(
                 HintViewModel(
-                content = HtmlContent(messages("land.doYouKnowTheAreaOfLand.hint"))
+                    content = HtmlContent(messages("land.doYouKnowTheAreaOfLand.hint"))
                 )
         ))
 

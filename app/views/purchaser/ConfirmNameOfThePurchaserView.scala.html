@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.purchaser.ConfirmNameOfThePurchaser
 @import views.html.components.Caption
 
 @this(
@@ -35,7 +34,7 @@
         @formHelper(action = controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
             @if(form.errors.nonEmpty) {
-                @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+                @govukErrorSummary(ErrorSummaryViewModel(form))
             }
 
             @caption(messages("site.purchaser.caption"))
@@ -44,7 +43,16 @@
                 RadiosViewModel(
                     field = form("value"),
                     legend = LegendViewModel(messages(s"purchaser.confirmNameOfPurchaser.$companyOrIndividualStr.heading", name)).asPageHeading(),
-                    items = ConfirmNameOfThePurchaser.options
+                    items = Seq(
+                        RadioItem(
+                            value = Some("true"),
+                            content = Text(messages("site.yes"))
+                        ),
+                        RadioItem(
+                            value = Some("false"),
+                            content = Text(messages("site.no"))
+                        )
+                    )
                 )
             )
 

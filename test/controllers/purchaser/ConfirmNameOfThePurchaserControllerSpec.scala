@@ -19,7 +19,6 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.ConfirmNameOfThePurchaserFormProvider
-import models.purchaser.ConfirmNameOfThePurchaser
 import models.{FullReturn, NormalMode, Purchaser, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -129,7 +128,7 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
   val userAnswersWithConfirmation: UserAnswers =
     UserAnswers(userAnswersId, storn = testStorn)
       .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
-      .set(ConfirmNameOfThePurchaserPage, ConfirmNameOfThePurchaser.Yes).success.value
+      .set(ConfirmNameOfThePurchaserPage, true).success.value
 
   "ConfirmNameOfThePurchaserController.onPageLoad" - {
 
@@ -183,7 +182,7 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
           val view = application.injector.instanceOf[ConfirmNameOfThePurchaserView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(ConfirmNameOfThePurchaser.Yes), NormalMode, "Doe", false)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form.fill(true), NormalMode, "Doe", false)(request, messages(application)).toString
         }
       }
     }
@@ -251,7 +250,7 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
 
         running(application) {
           val request = FakeRequest(POST, confirmNameOfThePurchaserRoute)
-            .withFormUrlEncodedBody("value" -> "yes")
+            .withFormUrlEncodedBody("value" -> "true")
 
           val result = route(application, request).value
 
@@ -275,7 +274,7 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
 
         running(application) {
           val request = FakeRequest(POST, confirmNameOfThePurchaserRoute)
-            .withFormUrlEncodedBody("value" -> "no")
+            .withFormUrlEncodedBody("value" -> "false")
 
           val result = route(application, request).value
 
@@ -298,7 +297,7 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
 
         running(application) {
           val request = FakeRequest(POST, confirmNameOfThePurchaserRoute)
-            .withFormUrlEncodedBody("value" -> "yes")
+            .withFormUrlEncodedBody("value" -> "true")
 
           val result = route(application, request).value
 
@@ -354,7 +353,7 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
 
       running(application) {
         val request = FakeRequest(POST, confirmNameOfThePurchaserRoute)
-          .withFormUrlEncodedBody("value" -> "yes")
+          .withFormUrlEncodedBody("value" -> "true")
 
         val result = route(application, request).value
 

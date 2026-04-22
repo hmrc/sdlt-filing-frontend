@@ -17,7 +17,6 @@
 @import viewmodels.LegendSize.Large
 @import components._
 @import viewmodels.govuk.all._
-@import models.purchaserAgent.PurchaserAgentAuthorised
 
 @this(
         layout: templates.Layout,
@@ -35,7 +34,7 @@
     @formHelper(action = controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @caption(messages("site.purchaserAgent.caption"))
@@ -44,7 +43,16 @@
             RadiosViewModel(
                 field = form("value"),
                 legend = LegendViewModel(messages("purchaserAgent.purchaserAgentAuthorised.heading", agentName)).asPageHeading(),
-                items = PurchaserAgentAuthorised.options
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
             )
         )
 

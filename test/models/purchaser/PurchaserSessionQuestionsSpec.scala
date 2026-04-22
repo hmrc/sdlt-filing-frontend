@@ -33,7 +33,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
           "purchaserID" -> "PUR001",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> "Name1",
@@ -56,7 +56,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
         ),
         "addPurchaserPhoneNumber" -> true,
         "enterPurchaserPhoneNumber" -> "+447874363636",
-        "doesPurchaserHaveNI" -> "yes",
+        "doesPurchaserHaveNI" -> true,
         "nationalInsuranceNumber" -> "AA123456A",
         "purchaserFormOfIdIndividual" -> Json.obj(
           "idNumberOrReference" -> "ref",
@@ -88,8 +88,8 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
           "unincorporatedSoleTrader" -> "NO"
         ),
         "purchaserCompanyTypeKnown" -> true,
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       ))
 
     def purchaserSessionQuestionsJsonWithNoOptional: JsObject = Json.obj(
@@ -125,8 +125,8 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> JsNull,
         "purchaserCompanyTypeKnown" -> false,
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       ))
   }
 
@@ -144,7 +144,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
           PurchaserSessionQuestions(
             PurchaserCurrent(
               purchaserAndCompanyId = Some(PurchaserAndCompanyId(purchaserID = "PUR001", companyDetailsID = Some("COMPDET001"))),
-              ConfirmNameOfThePurchaser = Some(ConfirmNameOfThePurchaser.Yes),
+              ConfirmNameOfThePurchaser = Some(true),
               whoIsMakingThePurchase = "Company",
               nameOfPurchaser = NameOfPurchaser(forename1 = Some("Name1"), forename2 = Some("Name2"), name = "Samsung"),
               purchaserAddress = PurchaserSessionAddress(
@@ -162,7 +162,7 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
                 addressValidated = Some(true)),
               addPurchaserPhoneNumber = Some(true),
               enterPurchaserPhoneNumber = Some("+447874363636"),
-              doesPurchaserHaveNI = Some(DoesPurchaserHaveNI.Yes),
+              doesPurchaserHaveNI = Some(true),
               nationalInsuranceNumber = Some("AA123456A"),
               purchaserFormOfIdIndividual = Some(PurchaserFormOfIdIndividual(idNumberOrReference = "ref", countryIssued = "country")),
               purchaserDateOfBirth = Some(LocalDate.of(2000,2,2)),
@@ -189,8 +189,8 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
                   unincorporatedSoleTrader = "NO")
               ),
               purchaserCompanyTypeKnown = Some(true),
-              isPurchaserActingAsTrustee = Some("yes"),
-              purchaserAndVendorConnected = Some("yes"),
+              isPurchaserActingAsTrustee = Some(true),
+              purchaserAndVendorConnected = Some(true),
             ))
 
         result shouldBe expectedResult
@@ -228,8 +228,8 @@ class PurchaserSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eithe
               purchaserFormOfIdCompany = None,
               purchaserTypeOfCompany = None,
               purchaserCompanyTypeKnown = Some(false),
-              isPurchaserActingAsTrustee = Some("yes"),
-              purchaserAndVendorConnected = Some("yes"),
+              isPurchaserActingAsTrustee = Some(true),
+              purchaserAndVendorConnected = Some(true),
             ))
 
         result shouldBe expectedResult

@@ -124,8 +124,16 @@ object Purchaser {
           purchaserID = purchaserSessionQuestions.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID),
           returnID = userAnswers.flatMap(_.returnId),
           isCompany = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Company") Some("YES") else Some("NO"),
-          isTrustee =  purchaserSessionQuestions.purchaserCurrent.isPurchaserActingAsTrustee.map(_.toUpperCase),
-          isConnectedToVendor = purchaserSessionQuestions.purchaserCurrent.purchaserAndVendorConnected.map(_.toUpperCase),
+          isTrustee =  purchaserSessionQuestions.purchaserCurrent.isPurchaserActingAsTrustee match {
+            case Some(true) => Some("YES")
+            case Some(false) => Some("NO")
+            case None => None
+          },
+          isConnectedToVendor = purchaserSessionQuestions.purchaserCurrent.purchaserAndVendorConnected match {
+            case Some(true) => Some("YES")
+            case Some(false) => Some("NO")
+            case None => None
+          },
           isRepresentedByAgent = Some("NO"),
           title = None,
           surname = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
@@ -154,7 +162,11 @@ object Purchaser {
           createDate  = existingPurchaser.flatMap(_.createDate),
           lastUpdateDate = existingPurchaser.flatMap(_.lastUpdateDate),
           isUkCompany = isUkCompany,
-          hasNino  = purchaserSessionQuestions.purchaserCurrent.doesPurchaserHaveNI.map(_.toString.toLowerCase),
+          hasNino  = purchaserSessionQuestions.purchaserCurrent.doesPurchaserHaveNI match {
+            case Some(true) => Some("yes")
+            case Some(false) => Some("no")
+            case None => None
+          },
           dateOfBirth  = purchaserSessionQuestions.purchaserCurrent.purchaserDateOfBirth.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
           registrationNumber = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
             purchaserSessionQuestions.purchaserCurrent.purchaserFormOfIdIndividual.map(_.idNumberOrReference)

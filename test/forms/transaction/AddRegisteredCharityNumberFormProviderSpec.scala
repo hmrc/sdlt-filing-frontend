@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package forms
+package forms.transaction
 
 import forms.behaviours.BooleanFieldBehaviours
-import forms.transaction.AddRegisteredCharityNumberFormProvider
 import play.api.data.FormError
 
 class AddRegisteredCharityNumberFormProviderSpec extends BooleanFieldBehaviours {

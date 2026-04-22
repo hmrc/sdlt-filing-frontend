@@ -174,18 +174,18 @@ class PopulatePurchaserService {
                                    ) = {
     (purchaser.nino, purchaser.dateOfBirth, purchaser.registrationNumber, purchaser.placeOfRegistration) match {
       case (Some(nino), Some(dob), _, _) if purchaser.nino.isDefined && purchaser.dateOfBirth.isDefined => for {
-        withHasNationalInsurance <- previousPages.set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.Yes)
+        withHasNationalInsurance <- previousPages.set(DoesPurchaserHaveNIPage, true)
         withNationalInsurance <- withHasNationalInsurance.set(PurchaserNationalInsurancePage, nino)
         finalAnswers <- withNationalInsurance.set(PurchaserDateOfBirthPage, LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/yyyy")))
       } yield finalAnswers
       case (_, _, Some(reg), Some(placeOfReg)) => for {
-        withHasNationalInsurance <- previousPages.set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No)
+        withHasNationalInsurance <- previousPages.set(DoesPurchaserHaveNIPage, false)
         finalAnswers <- withHasNationalInsurance.set(PurchaserFormOfIdIndividualPage,
           PurchaserFormOfIdIndividual(reg, placeOfReg))
       } yield finalAnswers
       case _ =>
         for {
-          finalAnswers <- previousPages.set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No)
+          finalAnswers <- previousPages.set(DoesPurchaserHaveNIPage, false)
         } yield finalAnswers
     }
   }
@@ -223,10 +223,8 @@ class PopulatePurchaserService {
     val isConnectedToVendor = purchaser.isConnectedToVendor.exists(_.toUpperCase == "YES")
 
     for {
-      withTrustee <- previousPages.set(IsPurchaserActingAsTrusteePage,
-        if (isTrustee) IsPurchaserActingAsTrustee.Yes else IsPurchaserActingAsTrustee.No)
-      finalAnswers <- withTrustee.set(PurchaserAndVendorConnectedPage,
-        if (isConnectedToVendor) PurchaserAndVendorConnected.Yes else PurchaserAndVendorConnected.No)
+      withTrustee <- previousPages.set(IsPurchaserActingAsTrusteePage, isTrustee)
+      finalAnswers <- withTrustee.set(PurchaserAndVendorConnectedPage, isConnectedToVendor)
     } yield finalAnswers
   }
   

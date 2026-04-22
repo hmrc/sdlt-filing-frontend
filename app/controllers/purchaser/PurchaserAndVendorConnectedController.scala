@@ -18,7 +18,6 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.PurchaserAndVendorConnectedFormProvider
-import models.purchaser.PurchaserAndVendorConnected
 import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{NameOfPurchaserPage, PurchaserAndVendorConnectedPage}
@@ -44,7 +43,7 @@ class PurchaserAndVendorConnectedController @Inject()(
                                        view: PurchaserAndVendorConnectedView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[PurchaserAndVendorConnected] = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>

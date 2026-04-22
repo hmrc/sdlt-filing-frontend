@@ -16,11 +16,10 @@
 
 package forms.land
 
-import forms.behaviours.OptionFieldBehaviours
-import models.land.ConfirmLandOrPropertyAddress
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ConfirmLandOrPropertyAddressFormProviderSpec extends OptionFieldBehaviours {
+class ConfirmLandOrPropertyAddressFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new ConfirmLandOrPropertyAddressFormProvider()()
 
@@ -29,11 +28,10 @@ class ConfirmLandOrPropertyAddressFormProviderSpec extends OptionFieldBehaviours
     val fieldName = "value"
     val requiredKey = "land.confirmLandOrPropertyAddress.error.required"
 
-    behave like optionsField[ConfirmLandOrPropertyAddress](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = ConfirmLandOrPropertyAddress.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, "error.boolean")
     )
 
     behave like mandatoryField(

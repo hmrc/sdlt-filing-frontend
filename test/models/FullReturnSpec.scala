@@ -197,7 +197,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "purchaserID" -> "PUR123",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -245,8 +245,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 
@@ -261,7 +261,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "purchaserID" -> "PUR123",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -309,8 +309,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 
@@ -325,7 +325,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "purchaserID" -> "PUR123",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -373,8 +373,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 
@@ -389,7 +389,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "purchaserID" -> "PUR123",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -437,8 +437,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 
@@ -454,7 +454,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "purchaserID" -> "PUR123",
           "companyDetailsID" -> "COMPDET001",
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Company",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> JsNull,
@@ -502,8 +502,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "unincorporatedBuilder" -> "NO",
           "unincorporatedSoleTrader" -> "NO"
         ),
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 
@@ -550,7 +550,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
           "purchaserID" -> "PUR123",
           "companyDetailsID" -> JsNull,
         ),
-        "ConfirmNameOfThePurchaser" -> "yes",
+        "ConfirmNameOfThePurchaser" -> true,
         "whoIsMakingThePurchase" -> "Individual",
         "nameOfPurchaser" -> Json.obj(
           "forename1" -> "Name",
@@ -573,7 +573,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         ),
         "addPurchaserPhoneNumber" -> true,
         "enterPurchaserPhoneNumber" -> "+447874363636",
-        "doesPurchaserHaveNI" -> "yes",
+        "doesPurchaserHaveNI" -> true,
         "nationalInsuranceNumber" -> "Nino1234",
         "purchaserFormOfIdIndividual" -> JsNull,
         "purchaserDateOfBirth" -> "2000-02-02",
@@ -582,8 +582,8 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         "purchaserUTRPage" -> JsNull,
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> JsNull,
-        "isPurchaserActingAsTrustee" -> "yes",
-        "purchaserAndVendorConnected" -> "yes",
+        "isPurchaserActingAsTrustee" -> true,
+        "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
 

@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import forms.purchaser.PurchaserAndVendorConnectedFormProvider
 import models.purchaser
-import models.purchaser.{NameOfPurchaser, PurchaserAndVendorConnected}
+import models.purchaser.NameOfPurchaser
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -46,7 +46,7 @@ class PurchaserAndVendorConnectedControllerSpec extends SpecBase with MockitoSug
   lazy val purchaserAndVendorConnectedRoute: String = controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(NormalMode).url
 
   val formProvider = new PurchaserAndVendorConnectedFormProvider()
-  val form: Form[PurchaserAndVendorConnected] = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   val testUserAnswers = UserAnswers(
     id = "test-session-id",
@@ -78,11 +78,11 @@ class PurchaserAndVendorConnectedControllerSpec extends SpecBase with MockitoSug
   )
   val userAnswersWithConnectedYes: UserAnswers = emptyUserAnswers
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
-    .set(PurchaserAndVendorConnectedPage, PurchaserAndVendorConnected.Yes).success.value
+    .set(PurchaserAndVendorConnectedPage, true).success.value
 
   val userAnswersWithConnectedNo: UserAnswers = emptyUserAnswers
     .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Smith")).success.value
-    .set(PurchaserAndVendorConnectedPage, PurchaserAndVendorConnected.No).success.value
+    .set(PurchaserAndVendorConnectedPage, false).success.value
 
   "PurchaserAndVendorConnected Controller" - {
 
@@ -104,7 +104,7 @@ class PurchaserAndVendorConnectedControllerSpec extends SpecBase with MockitoSug
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = testUserAnswers.set(PurchaserAndVendorConnectedPage, PurchaserAndVendorConnected.values.head).success.value
+      val userAnswers = testUserAnswers.set(PurchaserAndVendorConnectedPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -117,7 +117,7 @@ class PurchaserAndVendorConnectedControllerSpec extends SpecBase with MockitoSug
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          form.fill(PurchaserAndVendorConnected.values.head), NormalMode, "John Middle Doe")(request, messages(application)).toString
+          form.fill(true), NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
 
@@ -138,7 +138,7 @@ class PurchaserAndVendorConnectedControllerSpec extends SpecBase with MockitoSug
       running(application) {
         val request =
           FakeRequest(POST, purchaserAndVendorConnectedRoute)
-            .withFormUrlEncodedBody(("value", PurchaserAndVendorConnected.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -167,7 +167,7 @@ class PurchaserAndVendorConnectedControllerSpec extends SpecBase with MockitoSug
       running(application) {
         val request =
           FakeRequest(POST, purchaserAndVendorConnectedRoute)
-            .withFormUrlEncodedBody(("value", PurchaserAndVendorConnected.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -217,7 +217,7 @@ class PurchaserAndVendorConnectedControllerSpec extends SpecBase with MockitoSug
       running(application) {
         val request =
           FakeRequest(POST, purchaserAndVendorConnectedRoute)
-            .withFormUrlEncodedBody(("value", PurchaserAndVendorConnected.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 

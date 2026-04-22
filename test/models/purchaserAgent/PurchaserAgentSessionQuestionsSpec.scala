@@ -48,7 +48,7 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
       ),
       "addPurchaserAgentReferenceNumber" -> true,
       "purchaserAgentReference" -> "1234",
-      "purchaserAgentAuthorised" -> "YES"
+      "purchaserAgentAuthorised" -> true
     )
 
 
@@ -67,7 +67,7 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
       ),
       "addContactDetailsForPurchaserAgent" -> false,
       "addPurchaserAgentReferenceNumber" -> false,
-      "purchaserAgentAuthorised" -> "YES"
+      "purchaserAgentAuthorised" -> true
     )
   }
 
@@ -106,7 +106,7 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
             )),
             addPurchaserAgentReferenceNumber = true,
             purchaserAgentReference = Some("1234"),
-            purchaserAgentAuthorised = "YES"
+            purchaserAgentAuthorised = true
           )
 
         result shouldBe expectedResult
@@ -131,7 +131,7 @@ class PurchaserAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with 
             ),
             addContactDetailsForPurchaserAgent = false,
             addPurchaserAgentReferenceNumber = false,
-            purchaserAgentAuthorised = "YES"
+            purchaserAgentAuthorised = true
           )
 
         result shouldBe expectedResult

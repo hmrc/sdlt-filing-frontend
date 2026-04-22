@@ -17,15 +17,14 @@
 package forms.purchaser
 
 import forms.mappings.Mappings
-import models.purchaser.PurchaserAndVendorConnected
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class PurchaserAndVendorConnectedFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[PurchaserAndVendorConnected] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[PurchaserAndVendorConnected]("purchaser.purchaserAndVendorConnected.error.required")
+      "value" -> boolean("purchaser.purchaserAndVendorConnected.error.required")
     )
 }

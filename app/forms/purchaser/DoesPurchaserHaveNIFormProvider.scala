@@ -17,15 +17,14 @@
 package forms.purchaser
 
 import forms.mappings.Mappings
-import models.purchaser.DoesPurchaserHaveNI
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class DoesPurchaserHaveNIFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[DoesPurchaserHaveNI] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[DoesPurchaserHaveNI]("purchaser.doesPurchaserHaveNI.error.required")
+      "value" -> boolean("purchaser.doesPurchaserHaveNI.error.required")
     )
 }

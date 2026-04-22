@@ -19,7 +19,6 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.PurchaserNationalInsuranceFormProvider
-import models.purchaser.DoesPurchaserHaveNI
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -56,7 +55,7 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
           "forename2" -> "Middle",
           "name" -> "Doe"
         ),
-        "doesPurchaserHaveNI" -> "yes",
+        "doesPurchaserHaveNI" -> true,
         "whoIsMakingThePurchase" -> "Individual"
       )
     )
@@ -241,7 +240,7 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
 
     "must redirect to PurchaserFormOfIdIndividualPage if DoesPurchaserHaveNI data does not exist" in {
 
-      val userAnswers = testUserAnswersIndividual.set(DoesPurchaserHaveNIPage, DoesPurchaserHaveNI.No).success.value
+      val userAnswers = testUserAnswersIndividual.set(DoesPurchaserHaveNIPage, false).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

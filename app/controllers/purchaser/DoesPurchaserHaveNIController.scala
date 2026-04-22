@@ -18,7 +18,6 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.DoesPurchaserHaveNIFormProvider
-import models.purchaser.DoesPurchaserHaveNI
 import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserDateOfBirthPage, PurchaserFormOfIdIndividualPage, PurchaserNationalInsurancePage}
@@ -82,14 +81,14 @@ class DoesPurchaserHaveNIController @Inject()(
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName.fullName))),
 
             value =>
-              val afterRemovingNino = if (value == DoesPurchaserHaveNI.No) {
+              val afterRemovingNino = if (!value) {
                 request.userAnswers.remove(PurchaserNationalInsurancePage)
               } else {
                 Success(request.userAnswers)
               }
 
               val afterRemovingDOB = afterRemovingNino.flatMap { answers =>
-                if (value == DoesPurchaserHaveNI.No) {
+                if (!value) {
                   answers.remove(PurchaserDateOfBirthPage)
                 } else {
                   Success(answers)
@@ -97,7 +96,7 @@ class DoesPurchaserHaveNIController @Inject()(
               }
 
               val afterRemovingFormId = afterRemovingDOB.flatMap { answers =>
-                if (value == DoesPurchaserHaveNI.Yes) {
+                if (value) {
                   answers.remove(PurchaserFormOfIdIndividualPage)
                 } else {
                   Success(answers)
@@ -109,7 +108,7 @@ class DoesPurchaserHaveNIController @Inject()(
                 updatedAnswers <- Future.fromTry(cleaned.set(DoesPurchaserHaveNIPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
               } yield {
-                if (value.toString.equals("yes")) {
+                if (value) {
                   Redirect(navigator.nextPage(DoesPurchaserHaveNIPage, mode, updatedAnswers))
                 } else {
                   Redirect(controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(mode))

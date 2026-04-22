@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.land.ConfirmLandOrPropertyAddress
 @import views.html.components._
 
 @this(
@@ -36,7 +35,7 @@
     @formHelper(action = controllers.land.routes.ConfirmLandOrPropertyAddressController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @caption(messages("site.land.caption"))
@@ -47,7 +46,16 @@
             RadiosViewModel(
                 field  = form("value"),
                 legend = LegendViewModel(messages("land.confirmLandOrPropertyAddress.isThisTheLand")).asPageSubHeading(),
-                items  = ConfirmLandOrPropertyAddress.options
+                items  = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
             )
         )
 

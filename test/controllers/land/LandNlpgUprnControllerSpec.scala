@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.land
 
 import base.SpecBase
 import constants.FullReturnConstants
+import controllers.routes
 import forms.land.LandNlpgUprnFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}

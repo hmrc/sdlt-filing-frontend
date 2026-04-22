@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package forms.purchaserAgent
 
-import forms.behaviours.OptionFieldBehaviours
-import forms.purchaserAgent.PurchaserAgentAuthorisedFormProvider
-import models.purchaserAgent.PurchaserAgentAuthorised
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class PurchaserAgentAuthorisedFormProviderSpec extends OptionFieldBehaviours {
+class PurchaserAgentAuthorisedFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new PurchaserAgentAuthorisedFormProvider()()
 
@@ -30,11 +28,10 @@ class PurchaserAgentAuthorisedFormProviderSpec extends OptionFieldBehaviours {
     val fieldName = "value"
     val requiredKey = "purchaserAgent.purchaserAgentAuthorised.error.required"
 
-    behave like optionsField[PurchaserAgentAuthorised](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = PurchaserAgentAuthorised.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, "error.boolean")
     )
 
     behave like mandatoryField(
