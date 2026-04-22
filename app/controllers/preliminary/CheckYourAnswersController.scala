@@ -19,11 +19,12 @@ package controllers.preliminary
 import com.google.inject.Inject
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
 import models.prelimQuestions.{PrelimReturn, PrelimSessionQuestions}
+import pages.preliminary._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -56,16 +57,21 @@ class CheckYourAnswersController @Inject()(
         if (isDataEmpty) {
           Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
         } else {
-          val summaryList = SummaryListViewModel(
-            rows = Seq(
-              PurchaserIsIndividualSummary.row(result),
-              PurchaserSurnameOrCompanyNameSummary.row(result),
-              PrelimAddressSummary.row(result),
-              TransactionTypeSummary.row(result)
-            )
-          )
+          missingDataPageChecker(request.userAnswers) match {
+            case Some(call) =>
+              Redirect(call)
 
-          Ok(view(summaryList))
+            case None =>
+              val summaryList = SummaryListViewModel(
+                rows = Seq(
+                  PurchaserIsIndividualSummary.row(result),
+                  PurchaserSurnameOrCompanyNameSummary.row(result),
+                  PrelimAddressSummary.row(result),
+                  TransactionTypeSummary.row(result)
+                )
+              )
+              Ok(view(summaryList))
+          }
         }
       }
   }
@@ -97,5 +103,19 @@ class CheckYourAnswersController @Inject()(
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
+  }
+
+  private def missingDataPageChecker(userAnswers: UserAnswers): Option[Call] = {
+    if (userAnswers.get(PurchaserIsIndividualPage).isEmpty) {
+      Some(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode))
+    } else if (userAnswers.get(PurchaserSurnameOrCompanyNamePage).isEmpty) {
+      Some(controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode))
+    } else if (userAnswers.get(PurchaserAddressPage).isEmpty) {
+      Some(controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup(Some("change")))
+    } else if (userAnswers.get(TransactionTypePage).isEmpty) {
+      Some(controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode))
+    } else {
+      None
+    }
   }
 }
