@@ -323,8 +323,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(ReasonForReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
         }
 
-        "go from AddRegisteredCharityNumberPage to tr-8c to capture charity register number" in { //TODO - DTR-3267- SPRINT 13 update to what is charity register charity number - tr-8c
-          navigator.nextPage(AddRegisteredCharityNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
+        "go from AddRegisteredCharityNumberPage to tr-8c to capture charity register number" in {
+          navigator.nextPage(AddRegisteredCharityNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.CharityRegisteredNumberController.onPageLoad(NormalMode)
         }
 
         "go from TransactionLinkedTransactionsPage to tr-7a total consideration of all linked transactions" in {
@@ -346,6 +346,10 @@ class NavigatorSpec extends SpecBase {
         "go from TransactionPartialReliefPage to How much relief is being claimed on part of the property? page" in { // TODO DTR-3431: Redirect to How much relief is being claimed on part of the property? - tr-8e
           navigator.nextPage(TransactionPartialReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
+        "go from CharityRegisteredNumberPage to purchaser claiming relief part of the land page" in {
+          navigator.nextPage(CharityRegisteredNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
+        }
+
       }
     }
 

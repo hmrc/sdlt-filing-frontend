@@ -209,7 +209,7 @@ class Navigator @Inject()() {
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
-         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage => true
+         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage | CharityRegisteredNumberPage => true
 
     case _ => false
   }
@@ -237,8 +237,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(NormalMode)
     case TotalConsiderationOfTransactionPage =>
       _ => controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(NormalMode)
-    case AddRegisteredCharityNumberPage => //TODO - DTR-3267 - SPRINT 13 update to what is charity register charity number - tr-8c
-      _ => controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode)
+    case AddRegisteredCharityNumberPage =>
+      _ => controllers.transaction.routes.CharityRegisteredNumberController.onPageLoad(NormalMode)
     case PurchaserEligibleToClaimReliefPage =>
       _ => controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
     case ReasonForReliefPage => //TODO - DTR-3434 - Is any part of the consideration contingent or dependent on uncertain future? - tr-9
@@ -246,6 +246,8 @@ class Navigator @Inject()() {
     case TotalConsiderationOfLinkedTransactionPage =>
       _ => controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode)
     case TransactionPartialReliefPage => // TODO DTR-3431: Redirect to How much relief is being claimed on part of the property? - tr-8e
+      _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
+    case CharityRegisteredNumberPage =>
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
