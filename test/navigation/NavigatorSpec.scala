@@ -352,6 +352,10 @@ class NavigatorSpec extends SpecBase {
         "go from CharityRegisteredNumberPage to purchaser claiming relief part of the land page" in {
           navigator.nextPage(CharityRegisteredNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
+        
+        "go from TransactionDeferringPaymentPage to transaction sale of a business page" in { // TODO DTR-3446: Redirect to Is this transaction a sale of a business? - tr-12
+          navigator.nextPage(TransactionDeferringPaymentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
+        }
 
       }
     }
