@@ -1390,10 +1390,9 @@ transaction.claimingPartialReliefAmount.missing                                 
 taxCalculation.beforeStart.title                                                    =
 taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
 taxCalculation.beforeStart.p2                                                       = You will need to know:
-taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet1                         = the effective date of the transaction
-taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet2                         = the tax due on the total premium payable
+taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet                          = your self-assessed SDLT calculation
 taxCalculation.beforeStart.bullet1                                                  = the effective date of the transaction
-taxCalculation.beforeStart.bullet2                                                  = your self-assessed SDLT calculation
+taxCalculation.beforeStart.bullet2                                                  = the tax due on the total premium payable
 taxCalculation.beforeStart.bullet3                                                  = the tax due on the NPV
 taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
 taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines

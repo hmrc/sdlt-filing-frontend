@@ -75,7 +75,7 @@ class TaxCalculationBeforeYouStartViewSpec extends SpecBase {
 
     "when isLeaseholdAndSelfAssessed is false" - {
 
-      "must render the standard bullet list (bullet1, bullet2, bullet4, bullet5) and omit the leaseholdAndSelfAssessed bullets" in {
+      "must render the standard bullet list (bullet1, bullet2, bullet3, bullet4, bullet5) and omit the leaseholdAndSelfAssessed bullets" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -88,18 +88,18 @@ class TaxCalculationBeforeYouStartViewSpec extends SpecBase {
 
           bullets must contain(messagesInstance("taxCalculation.beforeStart.bullet1"))
           bullets must contain(messagesInstance("taxCalculation.beforeStart.bullet2"))
+          bullets must contain(messagesInstance("taxCalculation.beforeStart.bullet3"))
           bullets must contain(messagesInstance("taxCalculation.beforeStart.bullet4"))
           bullets must contain(messagesInstance("taxCalculation.beforeStart.bullet5"))
 
-          bullets must not contain messagesInstance("taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet2")
-          bullets must not contain messagesInstance("taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet3")
+          bullets must not contain messagesInstance("taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet")
         }
       }
     }
 
     "when isLeaseholdAndSelfAssessed is true" - {
 
-      "must swap bullet2 for the two leaseholdAndSelfAssessed bullets" in {
+      "must swap bullet2 and bullet3 for the leaseholdAndSelfAssessed bullet" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -111,8 +111,7 @@ class TaxCalculationBeforeYouStartViewSpec extends SpecBase {
           val bullets = doc.select("ul.govuk-list--bullet li").eachText()
 
           bullets must contain(messagesInstance("taxCalculation.beforeStart.bullet1"))
-          bullets must contain(messagesInstance("taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet2"))
-          bullets must contain(messagesInstance("taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet3"))
+          bullets must contain(messagesInstance("taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet"))
           bullets must contain(messagesInstance("taxCalculation.beforeStart.bullet4"))
           bullets must contain(messagesInstance("taxCalculation.beforeStart.bullet5"))
 

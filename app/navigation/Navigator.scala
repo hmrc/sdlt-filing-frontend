@@ -29,7 +29,7 @@ import pages.transaction.*
 import pages.taxCalculation.*
 import pages.ukResidency.*
 import play.api.mvc.Call
-import utils.TaxCalculationHelper
+import utils.TaxCalculationHelper.*
 
 import javax.inject.{Inject, Singleton}
 
@@ -267,7 +267,7 @@ class Navigator @Inject()() {
   private def taxCalculationRoutes(page: Page): UserAnswers => Call = page match {
 
     case TaxCalculationBeforeYouStartPage => answers =>
-      if (isLeaseholdSelfAssessed(answers))         routes.IndexController.onPageLoad() // TODO: replace -> PremiumPayableTaxController
+      if (isLeaseholdAndSelfAssessed(answers))      routes.IndexController.onPageLoad() // TODO: replace -> PremiumPayableTaxController
       else                                          routes.IndexController.onPageLoad() // TODO: replace -> CalculatedSdltController
     case CalculatedSdltPage                 => _ => routes.IndexController.onPageLoad() // TODO: replace -> SelfAssessmentAmountController
     case CalculatedSdltBreakdownPage        => _ => routes.IndexController.onPageLoad() // TODO: replace -> CalculatedSdltController
@@ -280,9 +280,6 @@ class Navigator @Inject()() {
 
     case _ => _ => routes.IndexController.onPageLoad()
   }
-
-  private def isLeaseholdSelfAssessed(answers: UserAnswers): Boolean =
-    TaxCalculationHelper.isLeasehold(answers) && answers.get(IsSelfAssessedPage).contains(true)
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case WhoIsMakingThePurchasePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
