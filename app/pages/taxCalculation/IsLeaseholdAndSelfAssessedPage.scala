@@ -19,9 +19,9 @@ package pages.taxCalculation
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IsSelfAssessedPage extends QuestionPage[Boolean] {
+case object IsLeaseholdAndSelfAssessedPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
 
-  override def toString: String = "isSelfAssessed"
+  override def toString: String = "isLeaseholdAndSelfAssessed"
 }

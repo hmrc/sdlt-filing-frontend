@@ -20,7 +20,6 @@ import models.UserAnswers
 import models.prelimQuestions.TransactionType
 import models.taxCalculation.TaxCalculationResult
 import pages.preliminary.TransactionTypePage
-import pages.taxCalculation.IsSelfAssessedPage
 
 object TaxCalculationHelper {
 
@@ -33,7 +32,4 @@ object TaxCalculationHelper {
 
   def isLeasehold(answers: UserAnswers): Boolean =
     answers.get(TransactionTypePage).contains(TransactionType.GrantOfLease)
-
-  def isLeaseholdAndSelfAssessed(answers: UserAnswers): Boolean =
-    isLeasehold(answers) && answers.get(IsSelfAssessedPage).contains(true)
 }

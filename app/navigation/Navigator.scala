@@ -29,7 +29,6 @@ import pages.transaction.*
 import pages.taxCalculation.*
 import pages.ukResidency.*
 import play.api.mvc.Call
-import utils.TaxCalculationHelper.*
 
 import javax.inject.{Inject, Singleton}
 
@@ -267,8 +266,8 @@ class Navigator @Inject()() {
   private def taxCalculationRoutes(page: Page): UserAnswers => Call = page match {
 
     case TaxCalculationBeforeYouStartPage => answers =>
-      if (isLeaseholdAndSelfAssessed(answers))      routes.IndexController.onPageLoad() // TODO: replace -> PremiumPayableTaxController
-      else                                          routes.IndexController.onPageLoad() // TODO: replace -> CalculatedSdltController
+      if (answers.get(IsLeaseholdAndSelfAssessedPage).contains(true)) routes.IndexController.onPageLoad() // TODO: replace -> PremiumPayableTaxController
+      else                                                            routes.IndexController.onPageLoad() // TODO: replace -> CalculatedSdltController
     case CalculatedSdltPage                 => _ => routes.IndexController.onPageLoad() // TODO: replace -> SelfAssessmentAmountController
     case CalculatedSdltBreakdownPage        => _ => routes.IndexController.onPageLoad() // TODO: replace -> CalculatedSdltController
     case SelfAssessmentAmountPage           => _ => routes.IndexController.onPageLoad() // TODO: replace -> TotalAmountDueController

@@ -28,7 +28,6 @@ import pages.transaction.*
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import pages.vendor.*
 import pages.vendorAgent.*
-import models.prelimQuestions.TransactionType
 import pages.taxCalculation.*
 class NavigatorSpec extends SpecBase {
 
@@ -472,28 +471,22 @@ class NavigatorSpec extends SpecBase {
 
         // Placeholders: downstream controllers haven't been built yet, so each page currently redirects to IndexController
 
-        "go from TaxCalculationBeforeYouStartPage to PremiumPayableTax page for leasehold self-assessed" in {
-
+        "go from TaxCalculationBeforeYouStartPage to PremiumPayableTax page when leasehold and self-assessed" in {
           val answers = UserAnswers("id", storn = "TESTSTORN")
-            .set(TransactionTypePage, TransactionType.GrantOfLease).success.value
-            .set(IsSelfAssessedPage, true).success.value
+            .set(IsLeaseholdAndSelfAssessedPage, true).success.value
           navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, answers) mustBe
             routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.PremiumPayableTaxController.onPageLoad()
         }
 
-        "go from TaxCalculationBeforeYouStartPage to CalculatedSdlt page for freehold" in {
+        "go from TaxCalculationBeforeYouStartPage to CalculatedSdlt page when flag is false" in {
           val answers = UserAnswers("id", storn = "TESTSTORN")
-            .set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
+            .set(IsLeaseholdAndSelfAssessedPage, false).success.value
           navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, answers) mustBe
             routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.CalculatedSdltController.onPageLoad()
         }
 
-        "go from TaxCalculationBeforeYouStartPage to CalculatedSdlt page for leasehold not self-assessed" in {
-
-          val answers = UserAnswers("id", storn = "TESTSTORN")
-            .set(TransactionTypePage, TransactionType.GrantOfLease).success.value
-            .set(IsSelfAssessedPage, false).success.value
-          navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, answers) mustBe
+        "go from TaxCalculationBeforeYouStartPage to CalculatedSdlt page when flag is unset" in {
+          navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, userAnswers) mustBe
             routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.CalculatedSdltController.onPageLoad()
         }
 
