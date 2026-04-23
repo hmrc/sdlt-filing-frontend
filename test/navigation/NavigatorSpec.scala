@@ -466,6 +466,27 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(AgentNamePage, NormalMode, userAnswers) mustBe
           controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
       }
+
+      "tax calculation routes" - {
+
+        import models.prelimQuestions.TransactionType
+        import pages.taxCalculation.*
+
+        "from BeforeYouStart, must route somewhere (placeholder until controllers built)" in {
+          // The branching reads userAnswers; both branches currently redirect to IndexController
+          // because the downstream controllers haven't been built yet.
+          val freeholdAnswers  = UserAnswers("id", storn = "TESTSTORN").set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
+          val leaseholdAnswers = UserAnswers("id", storn = "TESTSTORN").set(TransactionTypePage, TransactionType.GrantOfLease).success.value
+
+          navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, freeholdAnswers)  mustBe routes.IndexController.onPageLoad()
+          navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, leaseholdAnswers) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "from CheckYourAnswers, must return to the return task list" in {
+          navigator.nextPage(TaxCalculationCheckYourAnswersPage, NormalMode, userAnswers) mustBe
+            routes.ReturnTaskListController.onPageLoad()
+        }
+      }
     }
   }
 }

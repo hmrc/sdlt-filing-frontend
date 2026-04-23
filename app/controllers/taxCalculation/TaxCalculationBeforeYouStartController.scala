@@ -17,24 +17,56 @@
 package controllers.taxCalculation
 
 import controllers.actions.*
+import controllers.routes.*
+import models.NormalMode
+import models.taxCalculation.{MissingFullReturnError, TaxCalculationResult}
+import navigation.Navigator
+import pages.taxCalculation.{IsSelfAssessedPage, TaxCalculationBeforeYouStartPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.taxCalculation.SdltCalculationService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.TaxCalculationHelper.*
 import views.html.taxCalculation.TaxCalculationBeforeYouStartView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class TaxCalculationBeforeYouStartController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: TaxCalculationBeforeYouStartView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                        override val messagesApi: MessagesApi,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        sdltCalculationService: SdltCalculationService,
+                                        sessionRepository: SessionRepository,
+                                        navigator: Navigator,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        view: TaxCalculationBeforeYouStartView
+                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      Ok(view())
+
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+      sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).flatMap {
+        case Right(result)                =>
+
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsSelfAssessedPage, isSelfAssessedResponse(result)))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Ok(view(isLeaseholdAndSelfAssessed(updatedAnswers, result)))
+          
+        case Left(MissingFullReturnError) => Future.successful(Redirect(NoReturnReferenceController.onPageLoad()))
+        case Left(_)                      => Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
+      }
+  }
+
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request =>
+      Redirect(navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, request.userAnswers))
   }
 }

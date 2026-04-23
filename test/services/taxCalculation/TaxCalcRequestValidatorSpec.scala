@@ -51,7 +51,8 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     effectiveDate: String = "2025-06-15",
     consideration: BigDecimal = 250000,
     npv: String = "100000",
-    annualRentOver1000: Option[String] = Some("yes")
+    annualRentOver1000: Option[String] = Some("yes"),
+    startingRent: Option[String] = None
   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
     land = Some(Seq(Land(propertyType = Some("01"), interestCreatedTransferred = Some("LG")))),
@@ -62,7 +63,8 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     residency = Some(Residency(isNonUkResidents = Some("no"))),
     lease = Some(Lease(
       contractStartDate = Some(startDate), contractEndDate = Some(endDate),
-      isAnnualRentOver1000 = annualRentOver1000, netPresentValue = Some(npv)
+      isAnnualRentOver1000 = annualRentOver1000, netPresentValue = Some(npv),
+      startingRent = startingRent
     ))
   )
 
@@ -291,6 +293,13 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must fail when lease end date is missing" in {
         val fr = leaseholdReturn().copy(lease = Some(Lease(contractStartDate = Some("2025-06-15"))))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLeaseAnswerError("contractEndDate"))
+      }
+    }
+
+    "highest rent" - {
+
+      "must be parsed from startingRent for leasehold" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(leaseholdReturn(startingRent = Some("1500")))).toOption.get.highestRent mustBe BigDecimal(1500)
       }
     }
 
