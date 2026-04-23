@@ -57,7 +57,7 @@ class TaxCalculationBeforeYouStartController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsSelfAssessedPage, isSelfAssessedResponse(result)))
-            _ <- sessionRepository.set(updatedAnswers)
+                         _ <- sessionRepository.set(updatedAnswers)
           } yield Ok(view(isLeaseholdAndSelfAssessed(updatedAnswers, result)))
           
         case Left(MissingFullReturnError) => Future.successful(Redirect(NoReturnReferenceController.onPageLoad()))
