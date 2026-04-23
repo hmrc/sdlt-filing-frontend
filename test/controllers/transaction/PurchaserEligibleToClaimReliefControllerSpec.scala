@@ -105,8 +105,7 @@ class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with Mockito
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
-
-    //TODO - DTR-3434 - SPRINT-14 - tr9 consideration affected by uncertain future events
+    
     "must redirect to Consideration affected by uncertain events page when 'No' is selected" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -128,7 +127,7 @@ class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode).url
       }
     }
 

@@ -503,3 +503,8 @@ GET        /about-the-transaction/enter-registered-charity-number               
 POST       /about-the-transaction/enter-registered-charity-number                                    controllers.transaction.CharityRegisteredNumberController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/enter-registered-charity-number/change                             controllers.transaction.CharityRegisteredNumberController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/enter-registered-charity-number/change                             controllers.transaction.CharityRegisteredNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/considerations-affected-by-uncertain-future-events                                    controllers.transaction.ConsiderationsAffectedUncertainController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/considerations-affected-by-uncertain-future-events                                    controllers.transaction.ConsiderationsAffectedUncertainController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/considerations-affected-by-uncertain-future-events/change                             controllers.transaction.ConsiderationsAffectedUncertainController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/considerations-affected-by-uncertain-future-events/change                             controllers.transaction.ConsiderationsAffectedUncertainController.onSubmit(mode: Mode = CheckMode)

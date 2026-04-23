@@ -69,8 +69,8 @@ class PurchaserEligibleToClaimReliefController @Inject()(
           } yield {
             if(value) {
               Redirect(navigator.nextPage(PurchaserEligibleToClaimReliefPage, mode, updatedAnswers))
-            } else { //TODO - DTR-3434 - SPRINT-14 - tr9 consideration affected by uncertain future events
-              Redirect(controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode))
+            } else {
+              Redirect(controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode))
             }
           }
       )
