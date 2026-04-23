@@ -343,8 +343,11 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(PurchaserEligibleToClaimReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
         }
 
-        "go from TransactionPartialReliefPage to How much relief is being claimed on part of the property? page" in { // TODO DTR-3431: Redirect to How much relief is being claimed on part of the property? - tr-8e
-          navigator.nextPage(TransactionPartialReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
+        "go from TransactionPartialReliefPage to ClaimingPartialReliefAmountPage" in {
+          navigator.nextPage(TransactionPartialReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
+        }
+        "go from ClaimingPartialReliefAmountPage to tr-9 page" in { // TODO DTR-3434: Redirect to Is any part of the consideration contingent or dependent on uncertain future? - tr-9
+          navigator.nextPage(ClaimingPartialReliefAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
         }
         "go from CharityRegisteredNumberPage to purchaser claiming relief part of the land page" in {
           navigator.nextPage(CharityRegisteredNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
