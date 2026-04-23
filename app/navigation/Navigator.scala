@@ -26,8 +26,10 @@ import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
 import pages.transaction.*
+import pages.taxCalculation.*
 import pages.ukResidency.*
 import play.api.mvc.Call
+import utils.TaxCalculationHelper
 
 import javax.inject.{Inject, Singleton}
 
@@ -65,6 +67,7 @@ class Navigator @Inject()() {
     case landPage if isLandSection(landPage) => landRoutes(landPage)
     case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
     case transactionPage if isTransactionSection(transactionPage) => transactionRoutes(transactionPage)
+    case taxCalcPage if isTaxCalculationSection(taxCalcPage) => taxCalculationRoutes(taxCalcPage)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -254,6 +257,33 @@ class Navigator @Inject()() {
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
+  private def isTaxCalculationSection(page: Page): Boolean = page match {
+    case TaxCalculationBeforeYouStartPage | CalculatedSdltPage | CalculatedSdltBreakdownPage
+       | SelfAssessmentAmountPage | PremiumPayableTaxPage | NpvTaxPage
+       | TotalAmountDuePage | PenaltiesAndInterestPage | TaxCalculationCheckYourAnswersPage => true
+    case _ => false
+  }
+
+  private def taxCalculationRoutes(page: Page): UserAnswers => Call = page match {
+
+    case TaxCalculationBeforeYouStartPage => answers =>
+      if (isLeaseholdSelfAssessed(answers))         routes.IndexController.onPageLoad() // TODO: replace -> PremiumPayableTaxController
+      else                                          routes.IndexController.onPageLoad() // TODO: replace -> CalculatedSdltController
+    case CalculatedSdltPage                 => _ => routes.IndexController.onPageLoad() // TODO: replace -> SelfAssessmentAmountController
+    case CalculatedSdltBreakdownPage        => _ => routes.IndexController.onPageLoad() // TODO: replace -> CalculatedSdltController
+    case SelfAssessmentAmountPage           => _ => routes.IndexController.onPageLoad() // TODO: replace -> TotalAmountDueController
+    case PremiumPayableTaxPage              => _ => routes.IndexController.onPageLoad() // TODO: replace -> NpvTaxController
+    case NpvTaxPage                         => _ => routes.IndexController.onPageLoad() // TODO: replace -> TotalAmountDueController
+    case TotalAmountDuePage                 => _ => routes.IndexController.onPageLoad() // TODO: replace -> PenaltiesAndInterestController
+    case PenaltiesAndInterestPage           => _ => routes.IndexController.onPageLoad() // TODO: replace -> TaxCalculationCheckYourAnswersController
+    case TaxCalculationCheckYourAnswersPage => _ => routes.ReturnTaskListController.onPageLoad()
+
+    case _ => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def isLeaseholdSelfAssessed(answers: UserAnswers): Boolean =
+    TaxCalculationHelper.isLeasehold(answers) && answers.get(IsSelfAssessedPage).contains(true)
+
   private val checkRouteMap: Page => UserAnswers => Call = {
     case WhoIsMakingThePurchasePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
@@ -314,6 +344,13 @@ class Navigator @Inject()() {
     case LandSendingPlanByPostPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     case LandMineralsOrMineralRightsPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     case LandSelectMeasurementUnitPage => _ => controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
+
+    // TODO: replace -> TaxCalculationCheckYourAnswersController
+    case SelfAssessmentAmountPage => _ => routes.IndexController.onPageLoad()
+    case PremiumPayableTaxPage    => _ => routes.IndexController.onPageLoad()
+    case NpvTaxPage               => _ => routes.IndexController.onPageLoad()
+    case TotalAmountDuePage       => _ => routes.IndexController.onPageLoad()
+    case PenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad()
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }

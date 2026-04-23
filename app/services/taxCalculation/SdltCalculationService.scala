@@ -31,7 +31,8 @@ class SdltCalculationService @Inject()(
 
   // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
 
-  def calculateStampDutyLandTax(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
+  def calculateStampDutyLandTax(userAnswers: UserAnswers)
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
     TaxCalcRequestValidator.buildRequest(userAnswers) match {
       case Right(request) =>
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")

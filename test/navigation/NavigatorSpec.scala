@@ -28,7 +28,8 @@ import pages.transaction.*
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import pages.vendor.*
 import pages.vendorAgent.*
-
+import models.prelimQuestions.TransactionType
+import pages.taxCalculation.*
 class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
@@ -465,6 +466,76 @@ class NavigatorSpec extends SpecBase {
 
         navigator.nextPage(AgentNamePage, NormalMode, userAnswers) mustBe
           controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent()
+      }
+
+      "tax calculation routes" - {
+
+        // Placeholders: downstream controllers haven't been built yet, so each page currently redirects to IndexController
+
+        "go from TaxCalculationBeforeYouStartPage to PremiumPayableTax page for leasehold self-assessed" in {
+
+          val answers = UserAnswers("id", storn = "TESTSTORN")
+            .set(TransactionTypePage, TransactionType.GrantOfLease).success.value
+            .set(IsSelfAssessedPage, true).success.value
+          navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, answers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.PremiumPayableTaxController.onPageLoad()
+        }
+
+        "go from TaxCalculationBeforeYouStartPage to CalculatedSdlt page for freehold" in {
+          val answers = UserAnswers("id", storn = "TESTSTORN")
+            .set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
+          navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, answers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.CalculatedSdltController.onPageLoad()
+        }
+
+        "go from TaxCalculationBeforeYouStartPage to CalculatedSdlt page for leasehold not self-assessed" in {
+
+          val answers = UserAnswers("id", storn = "TESTSTORN")
+            .set(TransactionTypePage, TransactionType.GrantOfLease).success.value
+            .set(IsSelfAssessedPage, false).success.value
+          navigator.nextPage(TaxCalculationBeforeYouStartPage, NormalMode, answers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.CalculatedSdltController.onPageLoad()
+        }
+
+        "go from CalculatedSdltPage to SelfAssessmentAmount page" in {
+          navigator.nextPage(CalculatedSdltPage, NormalMode, userAnswers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.SelfAssessmentAmountController.onPageLoad()
+        }
+
+        "go from CalculatedSdltBreakdownPage to CalculatedSdlt page" in {
+          navigator.nextPage(CalculatedSdltBreakdownPage, NormalMode, userAnswers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.CalculatedSdltController.onPageLoad()
+        }
+
+        "go from SelfAssessmentAmountPage to TotalAmountDue page" in {
+          navigator.nextPage(SelfAssessmentAmountPage, NormalMode, userAnswers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.TotalAmountDueController.onPageLoad()
+        }
+
+        "go from PremiumPayableTaxPage to NpvTax page" in {
+          navigator.nextPage(PremiumPayableTaxPage, NormalMode, userAnswers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.NpvTaxController.onPageLoad()
+        }
+
+        "go from NpvTaxPage to TotalAmountDue page" in {
+          navigator.nextPage(NpvTaxPage, NormalMode, userAnswers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.TotalAmountDueController.onPageLoad()
+        }
+
+        "go from TotalAmountDuePage to PenaltiesAndInterest page" in {
+          navigator.nextPage(TotalAmountDuePage, NormalMode, userAnswers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.PenaltiesAndInterestController.onPageLoad()
+        }
+
+        "go from PenaltiesAndInterestPage to TaxCalculationCheckYourAnswers page" in {
+          navigator.nextPage(PenaltiesAndInterestPage, NormalMode, userAnswers) mustBe
+            routes.IndexController.onPageLoad() // TODO: replace with controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        }
+
+        "go from TaxCalculationCheckYourAnswersPage to return task list" in {
+          navigator.nextPage(TaxCalculationCheckYourAnswersPage, NormalMode, userAnswers) mustBe
+            routes.ReturnTaskListController.onPageLoad()
+        }
       }
     }
   }
