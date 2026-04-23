@@ -18,7 +18,7 @@ package controllers.transaction
 
 import controllers.actions.*
 import forms.transaction.AddRegisteredCharityNumberFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.transaction.AddRegisteredCharityNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -66,7 +66,13 @@ class AddRegisteredCharityNumberController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AddRegisteredCharityNumberPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AddRegisteredCharityNumberPage, mode, updatedAnswers))
+          } yield {
+            if (value) {
+              Redirect(navigator.nextPage(AddRegisteredCharityNumberPage, mode, updatedAnswers))
+            } else {
+              Redirect(controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode))
+            }
+          }
       )
   }
 }

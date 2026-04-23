@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.routes
 import forms.transaction.AddRegisteredCharityNumberFormProvider
 import models.{CheckMode, NormalMode}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -81,7 +80,7 @@ class AddRegisteredCharityNumberControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to add charity registered number page when valid data yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -90,7 +89,6 @@ class AddRegisteredCharityNumberControllerSpec extends SpecBase with MockitoSuga
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
@@ -103,7 +101,32 @@ class AddRegisteredCharityNumberControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.CharityRegisteredNumberController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to transaction partial relief page when valid data 'No' is selected" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addRegisteredCharityNumberRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode).url
       }
     }
 
