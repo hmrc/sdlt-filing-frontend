@@ -1374,6 +1374,19 @@ transaction.transactionPartialRelief.error.required                             
 transaction.transactionPartialRelief.change.hidden                                  = Partial relief
 transaction.transactionPartialRelief.missing                                        = Select if the purchaser is claiming relief on part of the land or property
 
+transaction.claimingPartialReliefAmount.title                                       = Claiming partial relief
+transaction.claimingPartialReliefAmount.heading                                     = Claiming partial relief
+transaction.claimingPartialReliefAmount.p1                                          = When claiming relief on part of the land or property, only enter the amount that remains chargeable to SDLT.
+transaction.claimingPartialReliefAmount.h2                                          = How much relief is being claimed on part of the land or property?
+transaction.claimingPartialReliefAmount.hint                                        = Enter the value in whole pounds only, for example £200,000
+transaction.claimingPartialReliefAmount.checkYourAnswersLabel                       = How much relief is being claimed on part of the land or property?
+transaction.claimingPartialReliefAmount.error.required                              = Enter the amount of relief being claimed on part of the land or property, in pounds
+transaction.claimingPartialReliefAmount.error.invalidNumeric                        = The amount of relief being claimed on part of the land or property must only include numbers 0 to 9 and commas
+transaction.claimingPartialReliefAmount.error.invalidWholeNumber                    = Enter the amount of relief being claimed on part of the land or property in whole pounds
+transaction.claimingPartialReliefAmount.error.maximum                               = The amount of relief being claimed on part of the land or property must be equal to or less than £9,999,999,999
+transaction.claimingPartialReliefAmount.change.hidden                               = the amount of relief being claimed on part of the land or property
+transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
+
 taxCalculation.beforeStart.title                                                    =
 taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
 taxCalculation.beforeStart.p2                                                       = You will need to know:

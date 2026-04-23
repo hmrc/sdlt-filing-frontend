@@ -209,7 +209,7 @@ class Navigator @Inject()() {
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
-         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage | CharityRegisteredNumberPage => true
+         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage => true
 
     case _ => false
   }
@@ -245,8 +245,10 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
     case TotalConsiderationOfLinkedTransactionPage =>
       _ => controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode)
-    case TransactionPartialReliefPage => // TODO DTR-3431: Redirect to How much relief is being claimed on part of the property? - tr-8e
-      _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
+    case TransactionPartialReliefPage =>
+      _ => controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
+    case ClaimingPartialReliefAmountPage => // TODO DTR-3434: Redirect to Is any part of the consideration contingent or dependent on uncertain future? - tr-9
+      _ => controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
     case CharityRegisteredNumberPage =>
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()

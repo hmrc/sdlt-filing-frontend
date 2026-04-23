@@ -497,6 +497,11 @@ POST       /about-the-transaction/partial-relief                                
 GET        /about-the-transaction/partial-relief/change                                              controllers.transaction.TransactionPartialReliefController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/partial-relief/change                                              controllers.transaction.TransactionPartialReliefController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/claiming-partial-relief                                            controllers.transaction.ClaimingPartialReliefAmountController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/claiming-partial-relief                                            controllers.transaction.ClaimingPartialReliefAmountController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/claiming-partial-relief/change                                     controllers.transaction.ClaimingPartialReliefAmountController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/claiming-partial-relief/change                                     controllers.transaction.ClaimingPartialReliefAmountController.onSubmit(mode: Mode = CheckMode)
+
 GET        /tax-calculation/before-you-start                                                         controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
 
 GET        /about-the-transaction/enter-registered-charity-number                                    controllers.transaction.CharityRegisteredNumberController.onPageLoad(mode: Mode = NormalMode)
