@@ -66,7 +66,13 @@ class AddRegisteredCharityNumberController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AddRegisteredCharityNumberPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AddRegisteredCharityNumberPage, mode, updatedAnswers))
+          } yield {
+            if (value) {
+              Redirect(navigator.nextPage(AddRegisteredCharityNumberPage, mode, updatedAnswers))
+            } else {
+              Redirect(controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(mode))
+            }
+          }
       )
   }
 }
