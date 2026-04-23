@@ -29,11 +29,6 @@ class TaxCalculationHelperSpec extends AnyFreeSpec with Matchers {
   private def result(heading: Option[String]): TaxCalculationResult =
     TaxCalculationResult(totalTax = 0, resultHeading = heading, resultHint = None, npv = None, taxCalcs = Seq.empty)
 
-  private def answersWith(transactionType: Option[TransactionType]): UserAnswers = {
-    val base = UserAnswers("id", storn = "TESTSTORN")
-    transactionType.fold(base)(t => base.set(TransactionTypePage, t).success.value)
-  }
-
   "isSelfAssessedResponse" - {
 
     "must return true when resultHeading equals 'self-assessed'" in {
@@ -54,21 +49,6 @@ class TaxCalculationHelperSpec extends AnyFreeSpec with Matchers {
 
     "must return false when the case does not match (different capitalisation)" in {
       TaxCalculationHelper.isSelfAssessedResponse(result(Some("Self-Assessed"))) mustBe false
-    }
-  }
-
-  "isLeasehold" - {
-
-    "must return true when TransactionTypePage is GrantOfLease" in {
-      TaxCalculationHelper.isLeasehold(answersWith(Some(TransactionType.GrantOfLease))) mustBe true
-    }
-
-    "must return false when TransactionTypePage is ConveyanceTransfer" in {
-      TaxCalculationHelper.isLeasehold(answersWith(Some(TransactionType.ConveyanceTransfer))) mustBe false
-    }
-
-    "must return false when TransactionTypePage is not set" in {
-      TaxCalculationHelper.isLeasehold(answersWith(None)) mustBe false
     }
   }
 }

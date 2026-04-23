@@ -19,8 +19,11 @@ package controllers.taxCalculation
 import controllers.actions.*
 import controllers.routes.*
 import models.NormalMode
+import models.prelimQuestions.TransactionType
+import models.prelimQuestions.TransactionType.GrantOfLease
 import models.taxCalculation.{MissingFullReturnError, TaxCalculationResult}
 import navigation.Navigator
+import pages.preliminary.TransactionTypePage
 import pages.taxCalculation.{IsLeaseholdAndSelfAssessedPage, TaxCalculationBeforeYouStartPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -55,12 +58,14 @@ class TaxCalculationBeforeYouStartController @Inject()(
       sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).flatMap {
         case Right(result)                =>
 
-          val flag = isLeasehold(request.userAnswers) && isSelfAssessedResponse(result)
+          val isLeasehold: Boolean = request.userAnswers.get(TransactionTypePage).contains(GrantOfLease)
+
+          val leaseholdSelfAssessedFlag = isLeasehold && isSelfAssessedResponse(result)
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsLeaseholdAndSelfAssessedPage, flag))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsLeaseholdAndSelfAssessedPage, leaseholdSelfAssessedFlag))
                          _ <- sessionRepository.set(updatedAnswers)
-          } yield Ok(view(flag))
+          } yield Ok(view(leaseholdSelfAssessedFlag))
 
         case Left(MissingFullReturnError) => Future.successful(Redirect(NoReturnReferenceController.onPageLoad()))
         case Left(_)                      => Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
