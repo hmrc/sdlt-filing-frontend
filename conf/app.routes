@@ -508,3 +508,8 @@ GET        /about-the-transaction/enter-registered-charity-number               
 POST       /about-the-transaction/enter-registered-charity-number                                    controllers.transaction.CharityRegisteredNumberController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/enter-registered-charity-number/change                             controllers.transaction.CharityRegisteredNumberController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/enter-registered-charity-number/change                             controllers.transaction.CharityRegisteredNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/deferring-payment                                                  controllers.transaction.TransactionDeferringPaymentController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/deferring-payment                                                  controllers.transaction.TransactionDeferringPaymentController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/deferring-payment/change                                           controllers.transaction.TransactionDeferringPaymentController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/deferring-payment/change                                           controllers.transaction.TransactionDeferringPaymentController.onSubmit(mode: Mode = CheckMode)

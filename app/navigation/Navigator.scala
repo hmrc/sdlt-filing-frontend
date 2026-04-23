@@ -209,7 +209,8 @@ class Navigator @Inject()() {
     case TypeOfTransactionPage | ConfirmTypeOfTransactionPage | TransactionEffectiveDatePage | TransactionAddDateOfContractPage
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
-         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage => true
+         | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
+         | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage => true
 
     case _ => false
   }
@@ -251,6 +252,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
     case CharityRegisteredNumberPage =>
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
+    case TransactionDeferringPaymentPage => // TODO DTR-3446: Redirect to Is this transaction a sale of a business? - tr-12
+      _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
