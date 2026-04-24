@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentNamePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{ Row, Missing }
 
 
 class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
@@ -40,7 +40,12 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
             .set(AddContactDetailsForPurchaserAgentPage, true).success.value
             .set(PurchaserAgentNamePage, "Agent name").success.value
 
-          val result = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+          val row = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", "Agent name")
 
@@ -64,7 +69,12 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(AddContactDetailsForPurchaserAgentPage, true).success.value
 
-          val result = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+          val row = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", "the agent")
 
@@ -89,7 +99,12 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
             .set(AddContactDetailsForPurchaserAgentPage, false).success.value
             .set(PurchaserAgentNamePage, "Agent name").success.value
 
-          val result = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+          val row = AddContactDetailsForPurchaserAgentSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", "Agent name")
 
@@ -108,7 +123,7 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
 
     "when add contact details for purchaser agent is not present" - {
 
-      "must return a SummaryListRow with a link to if they want to add contact details" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -116,14 +131,13 @@ class AddContactDetailsForPurchaserAgentSummarySpec extends SpecBase {
 
           val result = AddContactDetailsForPurchaserAgentSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel", "the agent")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("returnAgent.checkYourAnswers.addContactDetails.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

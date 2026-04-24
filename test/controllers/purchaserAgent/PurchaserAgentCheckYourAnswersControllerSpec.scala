@@ -19,7 +19,7 @@ package controllers.purchaserAgent
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.completeFullReturn
-import models.{CreateReturnAgentRequest, CreateReturnAgentReturn, NormalMode, ReturnVersionUpdateReturn, UpdateReturnAgentRequest, UpdateReturnAgentReturn}
+import models.{CheckMode, CreateReturnAgentRequest, CreateReturnAgentReturn, NormalMode, ReturnVersionUpdateReturn, UpdateReturnAgentRequest, UpdateReturnAgentReturn}
 import models.address.{Address, Country}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{atLeastOnce, reset, times, verify, when}
@@ -31,6 +31,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import services.checkAnswers.CheckAnswersService
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -39,6 +40,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
 
   private val mockSessionRepository = mock[SessionRepository]
   private val mockBackendConnector = mock[StampDutyLandTaxConnector]
+  private val mockCheckAnswersService = mock[CheckAnswersService]
 
   private val userAnswersWithCompleteAnswersAndReturnAgentId = emptyUserAnswers
     .copy(
@@ -90,12 +92,33 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
 
     "onPageLoad" - {
 
-      "must return OK and the correct view for a GET" in {
+      val address = Address(
+        line1 = "Test Street",
+        line2 = Some("Test line 2"),
+        line3 = Some("Test line 3"),
+        line4 = Some("Test line 4"),
+        line5 = Some("Test line 5"),
+        postcode = Some("LE9 7RF"),
+        country = Some(Country(
+          code = Some("GB"),
+          name = Some("United Kingdom")
+        )),
+        addressValidated = true
+      )
+
+      "must return OK and the correct view for a GET when required data is present" in {
+
+        val userAnswers = emptyUserAnswers
+          .set(PurchaserAgentNamePage, "Agent Name").success.value
+          .set(PurchaserAgentAddressPage, address).success.value
+          .set(AddContactDetailsForPurchaserAgentPage, false).success.value
+          .set(AddPurchaserAgentReferenceNumberPage, false).success.value
+          .set(PurchaserAgentAuthorisedPage, true).success.value
 
         when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers.set(PurchaserAgentNamePage, "Agent name").success.value)))
+          .thenReturn(Future.successful(Some(userAnswers)))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -128,7 +151,6 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
       }
 
       "must redirect to journey recovery for a GET if no existing data is found" in {
-
         val application = applicationBuilder(userAnswers = None).build()
 
         running(application) {
@@ -138,6 +160,42 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must return redirect call when page is missing" in {
+
+        val userAnswers = emptyUserAnswers
+          .set(PurchaserAgentNamePage, "Agent Name").success.value
+          .set(PurchaserAgentAddressPage, address).success.value
+          .set(AddContactDetailsForPurchaserAgentPage, false).success.value
+          .set(AddPurchaserAgentReferenceNumberPage, false).success.value
+
+
+        val redirectCall = controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(CheckMode)
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        when(mockCheckAnswersService.redirectOrRender(any()))
+          .thenReturn(Left(redirectCall))
+
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CheckAnswersService].toInstance(mockCheckAnswersService)
+          )
+          .build()
+
+        running(application) {
+
+          val request = FakeRequest(
+            GET,
+            controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url
+          )
+
+          val result = route(application, request).value
+
+          redirectLocation(result).value must include("agent-authorised-for-correspondence/change")
         }
       }
     }
