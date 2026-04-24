@@ -1415,3 +1415,21 @@ transaction.deferringPayment.h2                                                 
 transaction.deferringPayment.checkYourAnswersLabel                                  = Is the purchaser applying for a deferment?
 transaction.deferringPayment.error.required                                         = Select yes if the purchaser is applying for a deferment
 transaction.deferringPayment.change.hidden                                          = if the purchaser is applying for a deferment
+
+transaction.transactionUseOfLandOrProperty.title                                    = The use of the land or property
+transaction.transactionUseOfLandOrProperty.heading                                  = The use of the land or property
+transaction.transactionUseOfLandOrProperty.subheading                               = What is the land or property to be used for?
+transaction.transactionUseOfLandOrProperty.p1                                       = Non-residential property is defined by exclusion, which means any land or property that does not meet the specific definition of residential property.
+transaction.transactionUseOfLandOrProperty.p2                                       = As a non-residential property, the classification for this return depends on the actual use, or suitability for use, on the effective date of the transaction.
+transaction.transactionUseOfLandOrProperty.office                                   = Office
+transaction.transactionUseOfLandOrProperty.hotel                                    = Hotel
+transaction.transactionUseOfLandOrProperty.shop                                     = Shop
+transaction.transactionUseOfLandOrProperty.warehouse                                = Warehouse
+transaction.transactionUseOfLandOrProperty.factory                                  = Factory
+transaction.transactionUseOfLandOrProperty.otherIndustrialUnit                      = Other industrial unit
+transaction.transactionUseOfLandOrProperty.other                                    = Other
+transaction.transactionUseOfLandOrProperty.error.required                           = Select at least one use for the land or property
+transaction.transactionUseOfLandOrProperty.change.hidden                            = The use of the land or property
+transaction.transactionUseOfLandOrProperty.hint                                     = Select all that apply
+transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel                    = How the land or property will be used
+transaction.transactionUseOfLandOrProperty.missing                                  = Enter how the land or property will be used
