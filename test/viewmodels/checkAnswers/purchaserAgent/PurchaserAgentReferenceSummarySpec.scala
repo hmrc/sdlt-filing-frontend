@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgentReferencePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult. { Row, Missing }
 
 class PurchaserAgentReferenceSummarySpec extends SpecBase {
 
@@ -37,7 +37,12 @@ class PurchaserAgentReferenceSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserAgentReferencePage, "123456").success.value
 
-          val result = PurchaserAgentReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val row = PurchaserAgentReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.reference.checkYourAnswersLabel")
 
@@ -55,7 +60,7 @@ class PurchaserAgentReferenceSummarySpec extends SpecBase {
 
     "when reference number is not present" - {
 
-      "must return a SummaryListRow with a link to enter reference number when add reference number is true" in {
+      "must return a Missing and redirect call to missing page when data is not present add reference number is true but reference number is missing" in {
         val userAnswers = emptyUserAnswers.set(AddPurchaserAgentReferenceNumberPage, true).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -64,14 +69,13 @@ class PurchaserAgentReferenceSummarySpec extends SpecBase {
 
           val result = PurchaserAgentReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.reference.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("returnAgent.checkYourAnswers.referenceNumber.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
 
