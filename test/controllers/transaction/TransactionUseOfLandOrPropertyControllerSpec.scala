@@ -20,6 +20,7 @@ import base.SpecBase
 import constants.FullReturnConstants
 import controllers.routes
 import forms.transaction.TransactionUseOfLandOrPropertyFormProvider
+import models.land.LandTypeOfProperty
 import models.{FullReturn, Land, NormalMode, UserAnswers}
 import models.transaction.{TransactionUseOfLandOrProperty, TransactionUseOfLandOrPropertyAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -50,7 +51,7 @@ class TransactionUseOfLandOrPropertyControllerSpec extends SpecBase with Mockito
       fullReturn = Some(
         FullReturnConstants.completeFullReturn.copy(
           land = Some(Seq(
-            FullReturnConstants.completeLand.copy(propertyType = Some("02"))
+            FullReturnConstants.completeLand.copy(propertyType = Some(LandTypeOfProperty.Mixed.toString))
           ))
         )
       )
@@ -61,7 +62,7 @@ class TransactionUseOfLandOrPropertyControllerSpec extends SpecBase with Mockito
       fullReturn = Some(
         FullReturnConstants.completeFullReturn.copy(
           land = Some(Seq(
-            FullReturnConstants.completeLand.copy(propertyType = Some("03"))
+            FullReturnConstants.completeLand.copy(propertyType = Some(LandTypeOfProperty.NonResidential.toString))
           ))
         )
       )
@@ -72,7 +73,7 @@ class TransactionUseOfLandOrPropertyControllerSpec extends SpecBase with Mockito
       fullReturn = Some(
         FullReturnConstants.completeFullReturn.copy(
           land = Some(Seq(
-            FullReturnConstants.completeLand.copy(propertyType = Some("01"))
+            FullReturnConstants.completeLand.copy(propertyType = Some(LandTypeOfProperty.Residential.toString))
           ))
         )
       )

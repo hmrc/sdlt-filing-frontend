@@ -1432,4 +1432,4 @@ transaction.transactionUseOfLandOrProperty.error.required                       
 transaction.transactionUseOfLandOrProperty.change.hidden                            = The use of the land or property
 transaction.transactionUseOfLandOrProperty.hint                                     = Select all that apply
 transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel                    = How the land or property will be used
-transaction.transactionUseOfLandOrProperty.missing                                  = Enter how the land or property will be used
+transaction.transactionUseOfLandOrProperty.missing                                  = Select how the land or property will be used

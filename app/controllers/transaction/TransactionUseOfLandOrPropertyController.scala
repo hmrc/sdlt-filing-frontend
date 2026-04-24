@@ -19,6 +19,7 @@ package controllers.transaction
 import controllers.actions.*
 import forms.transaction.TransactionUseOfLandOrPropertyFormProvider
 import models.Mode
+import models.land.LandTypeOfProperty
 import models.transaction.TransactionUseOfLandOrPropertyAnswers
 import navigation.Navigator
 import pages.transaction.TransactionUseOfLandOrPropertyPage
@@ -52,7 +53,7 @@ class TransactionUseOfLandOrPropertyController @Inject()(
       val typeOfProperty = request.userAnswers.fullReturn.flatMap(_.land).flatMap(_.find(l => l.landID == mainLandId)).flatMap(_.propertyType)
 
       typeOfProperty match {
-        case Some("02") | Some("03") => // Mixed or Non-residential
+        case Some(LandTypeOfProperty.Mixed.toString | LandTypeOfProperty.NonResidential.toString) =>
           val preparedForm = request.userAnswers.get(TransactionUseOfLandOrPropertyPage) match {
             case None => form
             case Some(answersObject) => form.fill(TransactionUseOfLandOrPropertyAnswers.toSet(answersObject))
