@@ -23,6 +23,7 @@ import pages.preliminary.PurchaserIsIndividualPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class PurchaserIsIndividualSummarySpec extends SpecBase {
 
@@ -39,7 +40,12 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
 
-          val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
+          val row = PurchaserIsIndividualSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaserIsIndividual.checkYourAnswersLabel")
 
@@ -65,7 +71,12 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
 
-          val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
+          val row = PurchaserIsIndividualSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaserIsIndividual.checkYourAnswersLabel")
 
@@ -82,7 +93,7 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
     "when purchaser type data is not present" - {
 
-      "must return a summary list row with a link to enter purchaser type" in {
+      "must return a Missing and redirect call to missing page when data is missing" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -91,18 +102,17 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val result = PurchaserIsIndividualSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaserIsIndividual.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("prelim.purchaserIsIndividual.link.message"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
 
-      "must return a summary list row with a link when UserAnswers is None" in {
+      "must return a Missing and redirect call to missing page when UserAnswers is None" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -111,14 +121,13 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
           val result = PurchaserIsIndividualSummary.row(None)
 
-          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaserIsIndividual.checkYourAnswersLabel")
+          result match{
+            case Missing(call) =>
+              call mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("prelim.purchaserIsIndividual.link.message"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }
@@ -132,7 +141,12 @@ class PurchaserIsIndividualSummarySpec extends SpecBase {
 
         val userAnswers = emptyUserAnswers.set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
 
-        val result = PurchaserIsIndividualSummary.row(Some(userAnswers))
+        val row = PurchaserIsIndividualSummary.row(Some(userAnswers))
+
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url
       }

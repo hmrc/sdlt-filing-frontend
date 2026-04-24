@@ -23,6 +23,7 @@ import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNa
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
@@ -41,7 +42,12 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
             .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option2).success.value
             .set(PurchaserSurnameOrCompanyNamePage, "Smith").success.value
 
-          val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+          val row = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaser.name.checkYourAnswersLabel.purchaser")
 
@@ -66,7 +72,12 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
             .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
             .set(PurchaserSurnameOrCompanyNamePage, "ACME Corp").success.value
 
-          val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+          val row = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaser.name.checkYourAnswersLabel.company")
 
@@ -80,7 +91,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
         }
       }
 
-      "must return a summary list row with default label when purchaser type is not set" in {
+      "must return a Missing and redirect call to missing page when purchaser type is not set" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -90,7 +101,12 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserSurnameOrCompanyNamePage, "Test Name").success.value
 
-          val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+          val row = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaser.name.checkYourAnswersLabel.default")
 
@@ -99,7 +115,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
         }
       }
 
-      "must return a link row when PurchaserSurnameOrCompanyNamePage is missing" in {
+      "must return a Missing and redirect call to missing page when purchaser name page is missing" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -111,11 +127,13 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
 
           val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("prelim.purchaser.name.checkYourAnswersLabel.purchaser")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include(controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("prelim.purchaser.name.link.message"))
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
 
@@ -130,7 +148,12 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
             .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
             .set(PurchaserSurnameOrCompanyNamePage, "O'Brien & Sons <Ltd>").success.value
 
-          val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+          val row = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("O&#x27;Brien")
@@ -152,7 +175,12 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
           .set(PurchaserSurnameOrCompanyNamePage, "Smith").success.value
 
-        val result = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+        val row = PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers))
+
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
       }

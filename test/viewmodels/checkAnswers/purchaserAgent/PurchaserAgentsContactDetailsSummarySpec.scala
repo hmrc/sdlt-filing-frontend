@@ -22,7 +22,7 @@ import models.purchaserAgent.PurchaserAgentsContactDetails
 import pages.purchaserAgent.{AddContactDetailsForPurchaserAgentPage, PurchaserAgentsContactDetailsPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{ Row, Missing }
 
 class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
 
@@ -46,9 +46,14 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
               )
             ).success.value
 
-          val result =
+          val row =
             PurchaserAgentsContactDetailsSummary.row(userAnswers)
               .getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual
             msgs("purchaserAgent.contactDetails.checkYourAnswersLabel")
@@ -85,9 +90,14 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
               )
             ).success.value
 
-          val result =
+          val row =
             PurchaserAgentsContactDetailsSummary.row(userAnswers)
               .getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.value.content.asHtml.toString() mustEqual "Email: test@example.com"
         }
@@ -109,9 +119,14 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
               )
             ).success.value
 
-          val result =
+          val row =
             PurchaserAgentsContactDetailsSummary.row(userAnswers)
               .getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.value.content.asHtml.toString() mustEqual
             "Tel: 0123456789<br/>Email: test@example.com"
@@ -134,9 +149,14 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
               )
             ).success.value
 
-          val result =
+          val row =
             PurchaserAgentsContactDetailsSummary.row(userAnswers)
               .getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.value.content.asHtml.toString() mustEqual ""
         }
@@ -145,7 +165,7 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
 
     "when contact details are not present" - {
 
-      "must return a SummaryListRow with a link to enter contact details when add contact details is true" in {
+      "must return a Missing and redirect call to missing page when add contact details is true but contact details are missing" in {
         val userAnswers = emptyUserAnswers.set(AddContactDetailsForPurchaserAgentPage, true).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -154,14 +174,13 @@ class PurchaserAgentsContactDetailsSummarySpec extends SpecBase {
 
           val result = PurchaserAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaserAgent.contactDetails.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("returnAgent.checkYourAnswers.contactDetails.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
 
