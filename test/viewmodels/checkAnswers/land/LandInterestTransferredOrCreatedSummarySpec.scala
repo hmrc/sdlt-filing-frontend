@@ -38,14 +38,14 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FG).success.value
+            .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FGS).success.value
 
           val result = LandInterestTransferredOrCreatedSummary.row(userAnswers)
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landInterestTransferredOrCreated.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual msgs(s"land.landInterestTransferredOrCreated.${LandInterestTransferredOrCreated.FG}")
+          htmlContent mustEqual msgs(s"land.landInterestTransferredOrCreated.${LandInterestTransferredOrCreated.FGS}")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(CheckMode).url
@@ -62,9 +62,9 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val interestTransferredOrCreatedValues = Seq(
-            LandInterestTransferredOrCreated.FG,
-            LandInterestTransferredOrCreated.FPF,
-            LandInterestTransferredOrCreated.FT,
+            LandInterestTransferredOrCreated.FGS,
+            LandInterestTransferredOrCreated.FPO,
+            LandInterestTransferredOrCreated.FTF,
             LandInterestTransferredOrCreated.LG
           )
 
@@ -88,7 +88,7 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FG).success.value
+            .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FGS).success.value
 
           val result = LandInterestTransferredOrCreatedSummary.row(userAnswers)
 
@@ -130,7 +130,7 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
         implicit val msgs: Messages = messages(application)
 
         val userAnswers = emptyUserAnswers
-          .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FG).success.value
+          .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FGS).success.value
 
         val result = LandInterestTransferredOrCreatedSummary.row(userAnswers)
 
