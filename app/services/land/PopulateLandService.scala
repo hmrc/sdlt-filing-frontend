@@ -102,11 +102,11 @@ class PopulateLandService {
 
   private def interestTransferredOrCreatedPage(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
     val interestCreatedTransferred: LandInterestTransferredOrCreated = land.interestCreatedTransferred match {
-      case Some("FG") => LandInterestTransferredOrCreated.FG
-      case Some("FPF") => LandInterestTransferredOrCreated.FPF
-      case Some("FT") => LandInterestTransferredOrCreated.FT
+      case Some("FGS") => LandInterestTransferredOrCreated.FGS
+      case Some("FPO") => LandInterestTransferredOrCreated.FPO
+      case Some("FTF") => LandInterestTransferredOrCreated.FTF
       case Some("LG") => LandInterestTransferredOrCreated.LG
-      case Some("LP") => LandInterestTransferredOrCreated.LP
+      case Some("LPT") => LandInterestTransferredOrCreated.LPT
       case Some("LT") => LandInterestTransferredOrCreated.LT
       case Some("OT") => LandInterestTransferredOrCreated.OT
       case _ => LandInterestTransferredOrCreated.ER

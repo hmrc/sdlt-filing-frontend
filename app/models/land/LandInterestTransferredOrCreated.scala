@@ -26,17 +26,17 @@ sealed trait LandInterestTransferredOrCreated
 
 object LandInterestTransferredOrCreated extends Enumerable.Implicits {
 
-  case object FG extends WithName("FG") with LandInterestTransferredOrCreated
-  case object FPF extends WithName("FPF") with LandInterestTransferredOrCreated
-  case object FT extends WithName("FT") with LandInterestTransferredOrCreated
+  case object FGS extends WithName("FGS") with LandInterestTransferredOrCreated
+  case object FPO extends WithName("FPO") with LandInterestTransferredOrCreated
+  case object FTF extends WithName("FTF") with LandInterestTransferredOrCreated
   case object LG extends WithName("LG") with LandInterestTransferredOrCreated
-  case object LP extends WithName("LP") with LandInterestTransferredOrCreated
+  case object LPT extends WithName("LPT") with LandInterestTransferredOrCreated
   case object LT extends WithName("LT") with LandInterestTransferredOrCreated
   case object OT extends WithName("OT") with LandInterestTransferredOrCreated
   case object ER extends WithName("ER") with LandInterestTransferredOrCreated
 
   val values: Seq[LandInterestTransferredOrCreated] = Seq(
-    FG, FPF, FT, LG, LP, LT, OT
+    FGS, FPO, FTF, LG, LPT, LT, OT
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
