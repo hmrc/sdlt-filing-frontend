@@ -210,7 +210,7 @@ class Navigator @Inject()() {
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
-         | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage => true
+         | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage => true
 
     case _ => false
   }
@@ -254,6 +254,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
     case TransactionDeferringPaymentPage => // TODO DTR-3446: Redirect to Is this transaction a sale of a business? - tr-12
       _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
+    case TransactionUseOfLandOrPropertyPage => // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
+      _ => controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

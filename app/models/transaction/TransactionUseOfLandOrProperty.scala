@@ -1,0 +1,76 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package models.transaction
+
+import models.{Enumerable, WithName}
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.govuk.checkbox.*
+
+sealed trait TransactionUseOfLandOrProperty {
+  def order: Int
+}
+
+object TransactionUseOfLandOrProperty extends Enumerable.Implicits {
+
+  case object Office extends WithName("office") with TransactionUseOfLandOrProperty {
+    val order = 1
+  }
+  case object Hotel extends WithName("hotel") with TransactionUseOfLandOrProperty {
+    val order = 2
+  }
+  case object Shop extends WithName("shop") with TransactionUseOfLandOrProperty {
+    val order = 3
+  }
+  case object Warehouse extends WithName("warehouse") with TransactionUseOfLandOrProperty {
+    val order = 4
+  }
+  case object Factory extends WithName("factory") with TransactionUseOfLandOrProperty {
+    val order = 5
+  }
+  case object OtherIndustrialUnit extends WithName("otherIndustrialUnit") with TransactionUseOfLandOrProperty {
+    val order = 6
+  }
+  case object Other extends WithName("other") with TransactionUseOfLandOrProperty {
+    val order = 7
+  }
+
+  val values: Seq[TransactionUseOfLandOrProperty] = Seq(
+    Office,
+    Hotel,
+    Shop,
+    Warehouse,
+    Factory,
+    OtherIndustrialUnit,
+    Other
+  )
+
+  def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] =
+    values.zipWithIndex.map {
+      case (value, index) =>
+        CheckboxItemViewModel(
+          content = Text(messages(s"transaction.transactionUseOfLandOrProperty.${value.toString}")),
+          fieldId = "value",
+          index   = index,
+          value   = value.toString
+        )
+    }
+
+  implicit val enumerable: Enumerable[TransactionUseOfLandOrProperty] =
+    Enumerable(values.map(v => v.toString -> v): _*)
+}

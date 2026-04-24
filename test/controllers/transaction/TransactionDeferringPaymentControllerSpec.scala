@@ -106,7 +106,6 @@ class TransactionDeferringPaymentControllerSpec extends SpecBase with MockitoSug
       }
     }
 
-    // TODO: DTR-3441 Redirect to what is the land or property to be used for? tr-11
     "must redirect to Use of land or property page when property type is mixed or non-residential" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -131,7 +130,7 @@ class TransactionDeferringPaymentControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode).url
       }
     }
 
