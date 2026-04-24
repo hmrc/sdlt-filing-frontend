@@ -72,8 +72,7 @@ class TransactionDeferringPaymentController @Inject()(
           } yield {
             landService.getMainLand(request.userAnswers).flatMap(_.propertyType) match {
               case Some(LandTypeOfProperty.Mixed.toString | LandTypeOfProperty.NonResidential.toString) =>
-                // TODO: DTR-3441 Redirect to what is the land or property to be used for? tr-11
-                Redirect(controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(mode))
+                Redirect(controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(mode))
               case _ =>
                 Redirect(navigator.nextPage(TransactionDeferringPaymentPage, mode, updatedAnswers))
             }
