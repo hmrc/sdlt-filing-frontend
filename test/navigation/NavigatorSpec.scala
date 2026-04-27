@@ -346,9 +346,11 @@ class NavigatorSpec extends SpecBase {
         "go from TransactionPartialReliefPage to ClaimingPartialReliefAmountPage" in {
           navigator.nextPage(TransactionPartialReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
         }
+
         "go from ClaimingPartialReliefAmountPage to tr-9 page" in { // TODO DTR-3434: Redirect to Is any part of the consideration contingent or dependent on uncertain future? - tr-9
           navigator.nextPage(ClaimingPartialReliefAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
         }
+
         "go from CharityRegisteredNumberPage to purchaser claiming relief part of the land page" in {
           navigator.nextPage(CharityRegisteredNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
@@ -357,6 +359,9 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionDeferringPaymentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
         }
 
+        "go from TransactionUseOfLandOrPropertyPage to transaction part of the sale of a business page" in { // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
+          navigator.nextPage(TransactionUseOfLandOrPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
+        }
       }
     }
 

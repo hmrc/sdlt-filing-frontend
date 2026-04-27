@@ -28,7 +28,7 @@ class TransactionFormsOfConsiderationSummarySpec extends SpecBase {
 
   "TransactionFormsOfConsiderationSummary" - {
 
-    "must return a summary list row with surname only" in {
+    "must return a summary list row with forms of consideration" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           implicit val msgs: Messages = messages(application)

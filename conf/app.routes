@@ -513,3 +513,8 @@ GET        /about-the-transaction/deferring-payment                             
 POST       /about-the-transaction/deferring-payment                                                  controllers.transaction.TransactionDeferringPaymentController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/deferring-payment/change                                           controllers.transaction.TransactionDeferringPaymentController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/deferring-payment/change                                           controllers.transaction.TransactionDeferringPaymentController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/use-of-land-or-property                                            controllers.transaction.TransactionUseOfLandOrPropertyController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/use-of-land-or-property                                            controllers.transaction.TransactionUseOfLandOrPropertyController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/use-of-land-or-property/change                                     controllers.transaction.TransactionUseOfLandOrPropertyController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/use-of-land-or-property/change                                     controllers.transaction.TransactionUseOfLandOrPropertyController.onSubmit(mode: Mode = CheckMode)
