@@ -218,7 +218,8 @@ class Navigator @Inject()() {
          | TransactionVatIncludedPage | TransactionDateOfContractPage | ChangeTypeOfTransactionPage | TotalConsiderationOfTransactionPage
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
-         | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage => true
+         | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
+         | ConsiderationsAffectedUncertainPage => true
 
     case _ => false
   }
@@ -250,20 +251,22 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.CharityRegisteredNumberController.onPageLoad(NormalMode)
     case PurchaserEligibleToClaimReliefPage =>
       _ => controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
-    case ReasonForReliefPage => //TODO - DTR-3434 - Is any part of the consideration contingent or dependent on uncertain future? - tr-9
-      _ => controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
+    case ReasonForReliefPage =>
+      _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
     case TotalConsiderationOfLinkedTransactionPage =>
       _ => controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode)
     case TransactionPartialReliefPage =>
       _ => controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
-    case ClaimingPartialReliefAmountPage => // TODO DTR-3434: Redirect to Is any part of the consideration contingent or dependent on uncertain future? - tr-9
-      _ => controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
+    case ClaimingPartialReliefAmountPage =>
+      _ => controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode)
     case CharityRegisteredNumberPage =>
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
     case TransactionDeferringPaymentPage => // TODO DTR-3446: Redirect to Is this transaction a sale of a business? - tr-12
       _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
     case TransactionUseOfLandOrPropertyPage => // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
       _ => controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
+    case ConsiderationsAffectedUncertainPage =>
+      _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

@@ -18,44 +18,41 @@ package controllers.transaction
 
 import base.SpecBase
 import controllers.routes
-import forms.transaction.PurchaserEligibleToClaimReliefFormProvider
+import forms.transaction.ConsiderationsAffectedUncertainFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.PurchaserEligibleToClaimReliefPage
-import play.api.data.Form
+import pages.transaction.ConsiderationsAffectedUncertainPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.transaction.PurchaserEligibleToClaimReliefView
+import views.html.transaction.ConsiderationsAffectedUncertainView
 
 import scala.concurrent.Future
 
-class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with MockitoSugar {
+class ConsiderationsAffectedUncertainControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new PurchaserEligibleToClaimReliefFormProvider()
-  val form: Form[Boolean] = formProvider()
+  lazy val considerationsAffectedUncertainRoute = controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode).url
 
-  lazy val purchaserEligibleToClaimReliefRoute: String = controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode).url
+  val formProvider = new ConsiderationsAffectedUncertainFormProvider()
+  val form = formProvider()
 
-  "PurchaserEligibleToClaimRelief Controller" - {
+  "ConsiderationsAffectedUncertain Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserEligibleToClaimReliefRoute)
-
+        val request = FakeRequest(GET, considerationsAffectedUncertainRoute)
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[PurchaserEligibleToClaimReliefView]
+        val view = application.injector.instanceOf[ConsiderationsAffectedUncertainView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -64,15 +61,12 @@ class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with Mockito
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(PurchaserEligibleToClaimReliefPage, true).success.value
-
+      val userAnswers = emptyUserAnswers.set(ConsiderationsAffectedUncertainPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserEligibleToClaimReliefRoute)
-
-        val view = application.injector.instanceOf[PurchaserEligibleToClaimReliefView]
-
+        val request = FakeRequest(GET, considerationsAffectedUncertainRoute)
+        val view = application.injector.instanceOf[ConsiderationsAffectedUncertainView]
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -80,10 +74,9 @@ class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with Mockito
       }
     }
 
-    "must redirect to ReasonForReliefPage when 'Yes' is selected" in {
+    "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -96,38 +89,12 @@ class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserEligibleToClaimReliefRoute)
+          FakeRequest(POST, considerationsAffectedUncertainRoute)
             .withFormUrlEncodedBody(("value", "true"))
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-    
-    "must redirect to Consideration affected by uncertain events page when 'No' is selected" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, purchaserEligibleToClaimReliefRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode).url
       }
     }
 
@@ -137,13 +104,10 @@ class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserEligibleToClaimReliefRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[PurchaserEligibleToClaimReliefView]
-
+          FakeRequest(POST, considerationsAffectedUncertainRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val view = application.injector.instanceOf[ConsiderationsAffectedUncertainView]
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -156,8 +120,7 @@ class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with Mockito
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, purchaserEligibleToClaimReliefRoute)
-
+        val request = FakeRequest(GET, considerationsAffectedUncertainRoute)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -171,9 +134,8 @@ class PurchaserEligibleToClaimReliefControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request =
-          FakeRequest(POST, purchaserEligibleToClaimReliefRoute)
+          FakeRequest(POST, considerationsAffectedUncertainRoute)
             .withFormUrlEncodedBody(("value", "true"))
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

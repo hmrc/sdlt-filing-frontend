@@ -322,9 +322,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionFormsOfConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode)
         }
 
-        "go from ReasonForReliefPage to Partial relief page" in {
-          //TODO - DTR-3434 - Is any part of the consideration contingent or dependent on uncertain future? - tr-9
-          navigator.nextPage(ReasonForReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode)
+        "go from ReasonForReliefPage to TransactionPartialReliefPage" in {
+          navigator.nextPage(ReasonForReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
 
         "go from AddRegisteredCharityNumberPage to tr-8c to capture charity register number" in {
@@ -351,8 +350,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionPartialReliefPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
         }
 
-        "go from ClaimingPartialReliefAmountPage to tr-9 page" in { // TODO DTR-3434: Redirect to Is any part of the consideration contingent or dependent on uncertain future? - tr-9
-          navigator.nextPage(ClaimingPartialReliefAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(NormalMode)
+        "go from ClaimingPartialReliefAmountPage to ConsiderationsAffectedUncertainPage" in {
+          navigator.nextPage(ClaimingPartialReliefAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode)
         }
 
         "go from CharityRegisteredNumberPage to purchaser claiming relief part of the land page" in {
@@ -365,6 +364,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from TransactionUseOfLandOrPropertyPage to transaction part of the sale of a business page" in { // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
           navigator.nextPage(TransactionUseOfLandOrPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
+        }
+
+        "go from ConsiderationsAffectedUncertainPage to TransactionDeferringPaymentPage" in {
+          navigator.nextPage(ConsiderationsAffectedUncertainPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
         }
       }
 
