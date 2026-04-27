@@ -17,9 +17,14 @@
 package services.taxCalculation
 
 import connectors.SdltCalculationConnector
+import controllers.routes.ReturnTaskListController
 import models.UserAnswers
-import models.taxCalculation.{MissingDataError, TaxCalculationResult}
+import models.requests.DataRequest
+import models.taxCalculation.{MissingDataError, TaxCalculationFlow, TaxCalculationResult}
+import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.Logging
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -31,7 +36,12 @@ class SdltCalculationService @Inject()(
 
   // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
 
-  def calculateStampDutyLandTax(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
+  def whenInFlow(expected: TaxCalculationFlow)(onAllowed: => Result)(implicit request: DataRequest[?]): Result =
+    if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) onAllowed
+    else Redirect(ReturnTaskListController.onPageLoad())
+
+  def calculateStampDutyLandTax(userAnswers: UserAnswers)
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
     TaxCalcRequestValidator.buildRequest(userAnswers) match {
       case Right(request) =>
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")

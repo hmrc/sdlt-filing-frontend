@@ -24,6 +24,10 @@ import pages.land.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
+import pages.taxCalculation.freeholdSelfAssessed.*
+import pages.taxCalculation.freeholdTaxCalculated.*
+import pages.taxCalculation.leaseholdSelfAssessed.*
+import pages.taxCalculation.leaseholdTaxCalculated.*
 import pages.transaction.*
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import pages.vendor.*
@@ -363,6 +367,82 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionUseOfLandOrPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
         }
       }
+
+      "freehold tax calculated routes" - {
+
+        "go from FreeholdTaxCalculatedSdltPage to Index page" in {
+          navigator.nextPage(FreeholdTaxCalculatedSdltPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from FreeholdTaxCalculatedSelfAssessedAmountPage to Index page" in {
+          navigator.nextPage(FreeholdTaxCalculatedSelfAssessedAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from FreeholdTaxCalculatedTotalAmountDuePage to Index page" in {
+          navigator.nextPage(FreeholdTaxCalculatedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from FreeholdTaxCalculatedPenaltiesAndInterestPage to Index page" in {
+          navigator.nextPage(FreeholdTaxCalculatedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+      }
+
+      "freehold self-assessed routes" - {
+
+        "go from FreeholdSelfAssessedCannotCalculateTaxPage to Index page" in {
+          navigator.nextPage(FreeholdSelfAssessedCannotCalculateTaxPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from FreeholdSelfAssessedAmountPage to Index page" in {
+          navigator.nextPage(FreeholdSelfAssessedAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from FreeholdSelfAssessedTotalAmountDuePage to Index page" in {
+          navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from FreeholdSelfAssessedPenaltiesAndInterestPage to Index page" in {
+          navigator.nextPage(FreeholdSelfAssessedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+      }
+
+      "leasehold tax calculated routes" - {
+
+        "go from LeaseholdTaxCalculatedSdltPage to Index page" in {
+          navigator.nextPage(LeaseholdTaxCalculatedSdltPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from LeaseholdTaxCalculatedSelfAssessedAmountPage to Index page" in {
+          navigator.nextPage(LeaseholdTaxCalculatedSelfAssessedAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from LeaseholdTaxCalculatedTotalAmountDuePage to Index page" in {
+          navigator.nextPage(LeaseholdTaxCalculatedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from LeaseholdTaxCalculatedPenaltiesAndInterestPage to Index page" in {
+          navigator.nextPage(LeaseholdTaxCalculatedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+      }
+
+      "leasehold self-assessed routes" - {
+
+        "go from LeaseholdSelfAssessedPremiumPayableTaxPage to Index page" in {
+          navigator.nextPage(LeaseholdSelfAssessedPremiumPayableTaxPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from LeaseholdSelfAssessedNpvTaxPage to Index page" in {
+          navigator.nextPage(LeaseholdSelfAssessedNpvTaxPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from LeaseholdSelfAssessedTotalAmountDuePage to Index page" in {
+          navigator.nextPage(LeaseholdSelfAssessedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+
+        "go from LeaseholdSelfAssessedPenaltiesAndInterestPage to Index page" in {
+          navigator.nextPage(LeaseholdSelfAssessedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        }
+      }
     }
 
     "in Check mode" - {
@@ -449,6 +529,22 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(PurchaserIsIndividualPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
         navigator.nextPage(PurchaserSurnameOrCompanyNamePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
         navigator.nextPage(TransactionTypePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
+      }
+
+      "must go from FreeholdTaxCalculatedPenaltiesAndInterestPage to Index in CheckMode" in {
+        navigator.nextPage(FreeholdTaxCalculatedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+      }
+
+      "must go from FreeholdSelfAssessedPenaltiesAndInterestPage to Index in CheckMode" in {
+        navigator.nextPage(FreeholdSelfAssessedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+      }
+
+      "must go from LeaseholdSelfAssessedPenaltiesAndInterestPage to Index in CheckMode" in {
+        navigator.nextPage(LeaseholdSelfAssessedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+      }
+
+      "must go from LeaseholdTaxCalculatedPenaltiesAndInterestPage to Index in CheckMode" in {
+        navigator.nextPage(LeaseholdTaxCalculatedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
       }
     }
 

@@ -25,6 +25,10 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
+import pages.taxCalculation.freeholdTaxCalculated.*
+import pages.taxCalculation.freeholdSelfAssessed.*
+import pages.taxCalculation.leaseholdTaxCalculated.*
+import pages.taxCalculation.leaseholdSelfAssessed.*
 import pages.transaction.*
 import pages.ukResidency.*
 import play.api.mvc.Call
@@ -65,6 +69,10 @@ class Navigator @Inject()() {
     case landPage if isLandSection(landPage) => landRoutes(landPage)
     case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
     case transactionPage if isTransactionSection(transactionPage) => transactionRoutes(transactionPage)
+    case taxCalcPage if isFreeholdTaxCalculatedSection(taxCalcPage) => freeholdTaxCalculatedRoutes(taxCalcPage)
+    case taxCalcPage if isFreeholdSelfAssessedSection(taxCalcPage) => freeholdSelfAssessedRoutes(taxCalcPage)
+    case taxCalcPage if isLeaseholdTaxCalculatedSection(taxCalcPage) => leaseholdTaxCalculatedRoutes(taxCalcPage)
+    case taxCalcPage if isLeaseholdSelfAssessedSection(taxCalcPage) => leaseholdSelfAssessedRoutes(taxCalcPage)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -259,6 +267,62 @@ class Navigator @Inject()() {
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
+  private def isFreeholdTaxCalculatedSection(page: Page): Boolean = page match {
+    case FreeholdTaxCalculatedSdltPage | FreeholdTaxCalculatedSelfAssessedAmountPage |
+         FreeholdTaxCalculatedTotalAmountDuePage | FreeholdTaxCalculatedPenaltiesAndInterestPage  => true
+    case _ => false
+  }
+
+  private def isFreeholdSelfAssessedSection(page: Page): Boolean = page match {
+    case FreeholdSelfAssessedCannotCalculateTaxPage | FreeholdSelfAssessedAmountPage |
+         FreeholdSelfAssessedTotalAmountDuePage | FreeholdSelfAssessedPenaltiesAndInterestPage => true
+    case _ => false
+  }
+
+  private def isLeaseholdTaxCalculatedSection(page: Page): Boolean = page match {
+    case LeaseholdTaxCalculatedSdltPage | LeaseholdTaxCalculatedSelfAssessedAmountPage |
+         LeaseholdTaxCalculatedTotalAmountDuePage | LeaseholdTaxCalculatedPenaltiesAndInterestPage => true
+    case _ => false
+  }
+
+  private def isLeaseholdSelfAssessedSection(page: Page): Boolean = page match {
+    case LeaseholdSelfAssessedPremiumPayableTaxPage | LeaseholdSelfAssessedNpvTaxPage |
+         LeaseholdSelfAssessedTotalAmountDuePage | LeaseholdSelfAssessedPenaltiesAndInterestPage => true
+    case _ => false
+  }
+
+  private def freeholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
+    case FreeholdTaxCalculatedSdltPage                 => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdTaxCalculatedSelfAssessedAmountPage   => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdTaxCalculatedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case _                                             => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def freeholdSelfAssessedRoutes(page: Page): UserAnswers => Call = page match {
+    case FreeholdSelfAssessedCannotCalculateTaxPage   => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdSelfAssessedAmountPage               => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdSelfAssessedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdSelfAssessedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case _                                            => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def leaseholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
+    case LeaseholdTaxCalculatedSdltPage                 => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdTaxCalculatedSelfAssessedAmountPage   => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdTaxCalculatedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case _                                              => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def leaseholdSelfAssessedRoutes(page: Page): UserAnswers => Call = page match {
+    case LeaseholdSelfAssessedPremiumPayableTaxPage    => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdSelfAssessedNpvTaxPage               => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdSelfAssessedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdSelfAssessedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case _                                             => _ => routes.IndexController.onPageLoad()
+  }
+
   private val checkRouteMap: Page => UserAnswers => Call = {
     case WhoIsMakingThePurchasePage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
     case NameOfPurchaserPage => _ => controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad()
@@ -319,6 +383,12 @@ class Navigator @Inject()() {
     case LandSendingPlanByPostPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     case LandMineralsOrMineralRightsPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     case LandSelectMeasurementUnitPage => _ => controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
+
+    // TODO: To be updated once Tax Calculation CYA pages built
+    case FreeholdTaxCalculatedPenaltiesAndInterestPage  => _ => routes.IndexController.onPageLoad()
+    case FreeholdSelfAssessedPenaltiesAndInterestPage   => _ => routes.IndexController.onPageLoad()
+    case LeaseholdSelfAssessedPenaltiesAndInterestPage  => _ => routes.IndexController.onPageLoad()
+    case LeaseholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad()
 
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }

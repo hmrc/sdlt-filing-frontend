@@ -55,7 +55,7 @@ object TaxCalcRequestValidator {
       effectiveDateYear   = parsedDate.getYear,
       nonUKResident       = handleNonUkResident(fullReturn.residency, parsedDate, propertyType),
       premium             = premium,
-      highestRent         = BigDecimal(0),
+      highestRent         = fullReturn.lease.flatMap(_.startingRent).flatMap(v => Try(BigDecimal(v)).toOption).getOrElse(BigDecimal(0)),
       propertyDetails     = buildPropertyDetails(propertyCode),
       leaseDetails        = leaseDetails,
       relevantRentDetails = fullReturn.lease.map(buildRelevantRentDetails),
@@ -82,7 +82,7 @@ object TaxCalcRequestValidator {
 
   private def handleNonUkResident(residency: Option[Residency], effectiveDate: LocalDate, propertyType: PropertyTypes.Value): Option[String] =
     if (effectiveDate.isBefore(APR2021_RESIDENTIAL_DATE) && propertyType == PropertyTypes.residential) None
-    else residency.flatMap(_.isNonUkResidents).map(_.capitalize)
+    else residency.flatMap(_.isNonUkResidents).map(_.toLowerCase.capitalize)
 
   private def buildPropertyDetails(propertyCode: String): Option[PropertyDetails] =
     propertyCode match {

@@ -19,11 +19,16 @@ package services.taxCalculation
 import base.SpecBase
 import connectors.SdltCalculationConnector
 import models._
+import models.requests.DataRequest
 import models.taxCalculation._
+import pages.taxCalculation.TaxCalculationFlowPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.mvc.Results
+import play.api.test.FakeRequest
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -117,6 +122,37 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
 
       result mustBe a[RuntimeException]
       result.getMessage mustBe "Connector failed"
+    }
+  }
+
+  "whenInFlow" - {
+
+    "must run the onAllowed block when the session has the expected flow recorded" in {
+      val answers              = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+      implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, answers)
+
+      val result = service.whenInFlow(TaxCalculationFlow.FreeholdTaxCalculated)(Results.Ok("rendered"))
+
+      result.header.status mustBe OK
+    }
+
+    "must redirect to the return task list when the session has a different flow recorded" in {
+      val answers              = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+      implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, answers)
+
+      val result = service.whenInFlow(TaxCalculationFlow.FreeholdTaxCalculated)(Results.Ok("should not render"))
+
+      result.header.status mustBe SEE_OTHER
+      result.header.headers("Location") mustBe controllers.routes.ReturnTaskListController.onPageLoad().url
+    }
+
+    "must redirect to the return task list when no flow has been recorded in the session" in {
+      implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, emptyUserAnswers)
+
+      val result = service.whenInFlow(TaxCalculationFlow.FreeholdTaxCalculated)(Results.Ok("should not render"))
+
+      result.header.status mustBe SEE_OTHER
+      result.header.headers("Location") mustBe controllers.routes.ReturnTaskListController.onPageLoad().url
     }
   }
 }
