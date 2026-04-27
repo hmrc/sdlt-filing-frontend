@@ -25,11 +25,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.preliminary.{PrelimAddressSummary, PurchaserIsIndividualSummary, PurchaserSurnameOrCompanyNameSummary, TransactionTypeSummary}
-import viewmodels.govuk.summarylist.*
+import viewmodels.checkAnswers.preliminary._
 import views.html.preliminary.CheckYourAnswersView
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import services.checkAnswers.CheckAnswersService
 
 import scala.concurrent.*
 
@@ -41,7 +41,8 @@ class CheckYourAnswersController @Inject()(
                                             sessionRepository: SessionRepository,
                                             backendConnector: StampDutyLandTaxConnector,
                                             val controllerComponents: MessagesControllerComponents,
-                                            view: CheckYourAnswersView
+                                            view: CheckYourAnswersView,
+                                            checkAnswersService: CheckAnswersService
                                           )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -51,21 +52,26 @@ class CheckYourAnswersController @Inject()(
         result <- sessionRepository.get(request.userAnswers.id)
       } yield {
 
-        val isDataEmpty = result.exists(_.data.value.isEmpty)
+        result match {
+          case None =>
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
-        if (isDataEmpty) {
-          Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-        } else {
-          val summaryList = SummaryListViewModel(
-            rows = Seq(
-              PurchaserIsIndividualSummary.row(result),
-              PurchaserSurnameOrCompanyNameSummary.row(result),
-              PrelimAddressSummary.row(result),
-              TransactionTypeSummary.row(result)
-            )
-          )
+          case Some(userAnswers) =>
+            if (userAnswers.data.value.isEmpty && userAnswers.returnId.isEmpty) {
+              Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+            } else {
+              val rowResults = Seq(
+                PurchaserIsIndividualSummary.row(Some(userAnswers)),
+                PurchaserSurnameOrCompanyNameSummary.row(Some(userAnswers)),
+                PrelimAddressSummary.row(Some(userAnswers)),
+                TransactionTypeSummary.row(Some(userAnswers))
+              )
 
-          Ok(view(summaryList))
+              checkAnswersService.redirectOrRender(rowResults) match {
+                case Left(call) => Redirect(call)
+                case Right(summaryList) => Ok(view(summaryList))
+              }
+            }
         }
       }
   }

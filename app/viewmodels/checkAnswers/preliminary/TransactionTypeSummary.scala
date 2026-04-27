@@ -21,13 +21,17 @@ import pages.preliminary.TransactionTypePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 object TransactionTypeSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode)
+    val label = messages("prelim.transactionType.checkYourAnswersLabel")
+      
     answers.flatMap(_.get(TransactionTypePage)).map {
       answer =>
 
@@ -37,24 +41,18 @@ object TransactionTypeSummary  {
           )
         )
 
-        SummaryListRowViewModel(
-          key     = "prelim.transactionType.checkYourAnswersLabel",
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("prelim.transactionType.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = value,
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("prelim.transactionType.change.hidden"))
+            )
           )
         )
     }.getOrElse{
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("prelim.transactionType.link.message")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "prelim.transactionType.checkYourAnswersLabel",
-        value = value
-      )
+        Missing(changeRoute)
     }
+  }
 }

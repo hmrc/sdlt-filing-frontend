@@ -20,13 +20,17 @@ import models.{CheckMode, UserAnswers}
 import pages.preliminary.PurchaserIsIndividualPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 object PurchaserIsIndividualSummary {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode)
+    val label = messages("prelim.purchaserIsIndividual.checkYourAnswersLabel")
+      
     answers.flatMap(_.get(PurchaserIsIndividualPage)).map { answer =>
 
       val answerText = answer.toString match {
@@ -38,24 +42,18 @@ object PurchaserIsIndividualSummary {
         HtmlContent(answerText)
       )
 
-      SummaryListRowViewModel(
-        key = "prelim.purchaserIsIndividual.checkYourAnswersLabel",
-        value = value,
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("prelim.purchaserIsIndividual.change.hidden"))
+      Row(
+        SummaryListRowViewModel(
+          key = label,
+          value = value,
+          actions = Seq(
+            ActionItemViewModel("site.change", changeRoute.url)
+              .withVisuallyHiddenText(messages("prelim.purchaserIsIndividual.change.hidden"))
+          )
         )
       )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("prelim.purchaserIsIndividual.link.message")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "prelim.purchaserIsIndividual.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

@@ -21,41 +21,35 @@ import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNa
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 object PurchaserSurnameOrCompanyNameSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow = {
-    
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
     val typeOfPurchaser = answers.flatMap(_.get(PurchaserIsIndividualPage)) match {
       case Some(value) => if(value.toString == "Individual") "purchaser" else "company"
       case _ => "default"
     }
+    val changeRoute = controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode)
+    val label = messages(s"prelim.purchaser.name.checkYourAnswersLabel.${typeOfPurchaser}")
 
     answers.flatMap(_.get(PurchaserSurnameOrCompanyNamePage)).map {
       answer =>
-        SummaryListRowViewModel(
-          key     = s"prelim.purchaser.name.checkYourAnswersLabel.${typeOfPurchaser}",
-          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("prelim.purchaser.name.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("prelim.purchaser.name.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url}"
-             |class="govuk-link">${messages("prelim.purchaser.name.link.message")}</a>""".stripMargin)
-      )
-
-      SummaryListRowViewModel(
-        key = s"prelim.purchaser.name.checkYourAnswersLabel.$typeOfPurchaser",
-        value = value
-      )
+      Missing(changeRoute)
     }
   }
 }

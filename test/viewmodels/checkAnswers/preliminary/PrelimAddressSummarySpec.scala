@@ -23,6 +23,7 @@ import pages.preliminary.PurchaserAddressPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{ Row, Missing }
 
 class PrelimAddressSummarySpec extends SpecBase {
 
@@ -49,7 +50,12 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserAddressPage, address).success.value
 
-          val result = PrelimAddressSummary.row(Some(userAnswers))
+          val row = PrelimAddressSummary.row(Some(userAnswers))
+
+          val result = row match{
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.address.checkYourAnswersLabel")
 
@@ -87,7 +93,12 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserAddressPage, address).success.value
 
-          val result = PrelimAddressSummary.row(Some(userAnswers))
+          val row = PrelimAddressSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "123 Test Street"
@@ -113,7 +124,12 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserAddressPage, address).success.value
 
-          val result = PrelimAddressSummary.row(Some(userAnswers))
+          val row = PrelimAddressSummary.row(Some(userAnswers))
+
+          val result = row match{
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "123 Test Street, Test Area, Test County, AA1 1AA"
@@ -139,7 +155,12 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserAddressPage, address).success.value
 
-          val result = PrelimAddressSummary.row(Some(userAnswers))
+          val row = PrelimAddressSummary.row(Some(userAnswers))
+
+          val result = row match{
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("France")
@@ -166,7 +187,12 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(PurchaserAddressPage, address).success.value
 
-          val result = PrelimAddressSummary.row(Some(userAnswers))
+          val row = PrelimAddressSummary.row(Some(userAnswers))
+
+          val result = row match{
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("&amp;")
@@ -178,7 +204,7 @@ class PrelimAddressSummarySpec extends SpecBase {
 
     "when address data is not present" - {
 
-      "must return a summary list row with a link to enter address" in {
+      "must return a Missing and redirect call to missing page when address data is missing" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -187,18 +213,17 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val result = PrelimAddressSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.address.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup(Some("change"))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url)
-          htmlContent must include(msgs("purchaser.address.link.message"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
 
-      "must return a summary list row with a link when UserAnswers is None" in {
+      "must return a Missing and redirect call to missing page when UserAnswers is None" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -207,14 +232,13 @@ class PrelimAddressSummarySpec extends SpecBase {
 
           val result = PrelimAddressSummary.row(None)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.address.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup(Some("change"))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url)
-          htmlContent must include(msgs("purchaser.address.link.message"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }
@@ -238,7 +262,12 @@ class PrelimAddressSummarySpec extends SpecBase {
 
         val userAnswers = emptyUserAnswers.set(PurchaserAddressPage, address).success.value
 
-        val result = PrelimAddressSummary.row(Some(userAnswers))
+        val row = PrelimAddressSummary.row(Some(userAnswers))
+
+        val result = row match{
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must include("123 Test Street")

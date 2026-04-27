@@ -23,6 +23,7 @@ import pages.preliminary.TransactionTypePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{ Row, Missing }
 
 class TransactionTypeSummarySpec extends SpecBase {
 
@@ -40,7 +41,12 @@ class TransactionTypeSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
 
-          val result = TransactionTypeSummary.row(Some(userAnswers))
+          val row = TransactionTypeSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
 
@@ -72,7 +78,12 @@ class TransactionTypeSummarySpec extends SpecBase {
             val userAnswers = emptyUserAnswers
               .set(TransactionTypePage, transactionType).success.value
 
-            val result = TransactionTypeSummary.row(Some(userAnswers))
+            val row = TransactionTypeSummary.row(Some(userAnswers))
+
+            val result = row match {
+              case Row(r) => r
+              case _ => fail("Expected Row but got Missing")
+            }
 
             val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
             htmlContent mustEqual msgs(s"prelim.transactionType.$transactionType")
@@ -90,7 +101,12 @@ class TransactionTypeSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
 
-          val result = TransactionTypeSummary.row(Some(userAnswers))
+          val row = TransactionTypeSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent.nonEmpty mustBe true
@@ -101,7 +117,7 @@ class TransactionTypeSummarySpec extends SpecBase {
 
     "when transaction type is not present" - {
 
-      "must return a summary list row with a link to enter transaction type" in {
+      "must return a Missing and redirect call to missing page when data is missing" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -110,18 +126,17 @@ class TransactionTypeSummarySpec extends SpecBase {
 
           val result = TransactionTypeSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("prelim.transactionType.link.message"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
 
-      "must return a summary list row with a link when UserAnswers is None" in {
+      "must return a Missing and redirect call to missing page when UserAnswers is None" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -130,14 +145,13 @@ class TransactionTypeSummarySpec extends SpecBase {
 
           val result = TransactionTypeSummary.row(None)
 
-          result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("prelim.transactionType.link.message"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }
@@ -152,7 +166,12 @@ class TransactionTypeSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(TransactionTypePage, TransactionType.ConveyanceTransfer).success.value
 
-        val result = TransactionTypeSummary.row(Some(userAnswers))
+        val row = TransactionTypeSummary.row(Some(userAnswers))
+
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.actions.get.items.head.href mustEqual controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url
       }

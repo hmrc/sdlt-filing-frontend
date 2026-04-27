@@ -21,36 +21,33 @@ import pages.purchaserAgent.{AddPurchaserAgentReferenceNumberPage, PurchaserAgen
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 object PurchaserAgentReferenceSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    val label = messages("purchaserAgent.reference.checkYourAnswersLabel")
-    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
 
+    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(CheckMode)
+    val label = messages("purchaserAgent.reference.checkYourAnswersLabel")
+    
     (answers.get(PurchaserAgentReferencePage), answers.get(AddPurchaserAgentReferenceNumberPage)) match {
       case (Some(paReference), _) =>
 
-        Some(SummaryListRowViewModel(
-          key = "purchaserAgent.reference.checkYourAnswersLabel",
+        Some(Row(
+          SummaryListRowViewModel(
+          key = label,
           value = ValueViewModel(HtmlContent(HtmlFormat.escape(paReference).toString)),
           actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("purchaserAgent.reference.change.hidden"))
           )
         ))
-      case (None, Some(true)) =>
-        val value = ValueViewModel(
-          HtmlContent(
-            s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.referenceNumber.missing")}</a>""")
         )
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = value
-        ))
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
       case _ => None
     }
   }
