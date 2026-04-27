@@ -29,8 +29,9 @@ import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 object PurchaserAgentNameSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
-    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode).url
+    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode)
     val label = messages("purchaserAgent.name.checkYourAnswersLabel")
+    
     answers.get(PurchaserAgentNamePage).map {
       answer =>
 
@@ -39,13 +40,13 @@ object PurchaserAgentNameSummary {
             key = label,
             value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
             actions = Seq(
-              ActionItemViewModel("site.change", changeRoute)
+              ActionItemViewModel("site.change", changeRoute.url)
                 .withVisuallyHiddenText(messages("purchaserAgent.name.change.hidden"))
             )
           )
         )
     }.getOrElse {
-      Missing(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(CheckMode))
+      Missing(changeRoute)
     }
   }
 }

@@ -28,7 +28,10 @@ import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 object TransactionTypeSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode)
+    val label = messages("prelim.transactionType.checkYourAnswersLabel")
+      
     answers.flatMap(_.get(TransactionTypePage)).map {
       answer =>
 
@@ -40,15 +43,16 @@ object TransactionTypeSummary  {
 
         Row(
           SummaryListRowViewModel(
-            key     = "prelim.transactionType.checkYourAnswersLabel",
+            key     = label,
             value   = value,
             actions = Seq(
-              ActionItemViewModel("site.change", controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode).url)
+              ActionItemViewModel("site.change", changeRoute.url)
                 .withVisuallyHiddenText(messages("prelim.transactionType.change.hidden"))
             )
           )
         )
     }.getOrElse{
-        Missing(controllers.preliminary.routes.TransactionTypeController.onPageLoad(CheckMode))
+        Missing(changeRoute)
     }
+  }
 }

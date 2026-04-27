@@ -27,7 +27,10 @@ import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 object PurchaserIsIndividualSummary {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode)
+    val label = messages("prelim.purchaserIsIndividual.checkYourAnswersLabel")
+      
     answers.flatMap(_.get(PurchaserIsIndividualPage)).map { answer =>
 
       val answerText = answer.toString match {
@@ -41,15 +44,16 @@ object PurchaserIsIndividualSummary {
 
       Row(
         SummaryListRowViewModel(
-          key = "prelim.purchaserIsIndividual.checkYourAnswersLabel",
+          key = label,
           value = value,
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("prelim.purchaserIsIndividual.change.hidden"))
           )
         )
       )
     }.getOrElse {
-      Missing(controllers.preliminary.routes.PurchaserIsIndividualController.onPageLoad(CheckMode))
+      Missing(changeRoute)
     }
+  }
 }

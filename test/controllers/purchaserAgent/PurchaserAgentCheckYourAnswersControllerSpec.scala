@@ -198,6 +198,27 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
           redirectLocation(result).value must include("agent-authorised-for-correspondence/change")
         }
       }
+
+      "must redirect to journey recovery for a GET if session data is not found" in {
+
+        val userAnswers = emptyUserAnswers
+          .set(PurchaserAgentNamePage, "Agent name").success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
     }
 
     "onSubmit" - {

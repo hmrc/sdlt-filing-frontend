@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.preliminary
 
-import controllers.preliminary.routes
 import models.UserAnswers
 import models.address.{Address, Country}
 import pages.preliminary.PurchaserAddressPage
@@ -30,6 +29,9 @@ import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 object PrelimAddressSummary {
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup(Some("change"))
+    val label = messages("purchaser.address.checkYourAnswersLabel")
+
     answers.flatMap(_.get(PurchaserAddressPage)).map { answer =>
       
       val listOfAddressDetails = List(
@@ -56,15 +58,15 @@ object PrelimAddressSummary {
 
       Row(
         SummaryListRowViewModel(
-          key = "purchaser.address.checkYourAnswersLabel",
+          key = label,
           value = value,
           actions = Seq(
-            ActionItemViewModel("site.change", routes.PrelimAddressController.redirectToAddressLookup(Some("change")).url)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("purchaser.address.change.hidden"))
           )
         )
       )
     }.getOrElse{
-      Missing(controllers.preliminary.routes.PrelimAddressController.redirectToAddressLookup(Some("change")))
+      Missing(changeRoute)
     }
 }

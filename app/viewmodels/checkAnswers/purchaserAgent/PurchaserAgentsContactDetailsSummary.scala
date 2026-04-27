@@ -29,8 +29,9 @@ import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 object PurchaserAgentsContactDetailsSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
+
+    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode)
     val label = messages("purchaserAgent.contactDetails.checkYourAnswersLabel")
-    val changeRoute = controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode).url
 
     (answers.get(PurchaserAgentsContactDetailsPage), answers.get(AddContactDetailsForPurchaserAgentPage)) match {
       case (Some(contactDetails), _) =>
@@ -49,12 +50,12 @@ object PurchaserAgentsContactDetailsSummary {
           key = label,
           value = ValueViewModel(HtmlContent(value)),
           actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("purchaserAgent.contactDetails.change.hidden"))
           )
         )))
       case (None, Some(true)) =>
-        Some(Missing(controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(CheckMode)))
+        Some(Missing(changeRoute))
       case _ => None
     }
   }

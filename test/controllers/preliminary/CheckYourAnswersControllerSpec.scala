@@ -18,6 +18,7 @@ package controllers.preliminary
 
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
+import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import models.address.{Address, Country}
 import models.prelimQuestions.{CompanyOrIndividualRequest, TransactionType}
@@ -154,6 +155,26 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result = route(application, request).value
 
           redirectLocation(result).value must include("transaction-type/change")
+        }
+      }
+
+      "must redirect to journey recovery for a GET if session data is not found" in {
+
+        val userAnswers = emptyUserAnswers
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.preliminary.routes.CheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
     }
@@ -315,6 +336,27 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must redirect to journey recovery for a POST if session data is not found" in {
+
+        val userAnswers = emptyUserAnswers
+          .copy(fullReturn = Some(completeFullReturn))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.preliminary.routes.CheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
     }
