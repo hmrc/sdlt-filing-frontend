@@ -17,37 +17,37 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.TransactionPartialReliefFormProvider
-import models.{Mode, NormalMode}
+import forms.transaction.ConsiderationsAffectedUncertainFormProvider
+import models.Mode
 import navigation.Navigator
-import pages.transaction.TransactionPartialReliefPage
+import pages.transaction.ConsiderationsAffectedUncertainPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.TransactionPartialReliefView
+import views.html.transaction.ConsiderationsAffectedUncertainView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TransactionPartialReliefController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: TransactionPartialReliefFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: TransactionPartialReliefView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class ConsiderationsAffectedUncertainController @Inject()(
+                                       override val messagesApi: MessagesApi,
+                                       sessionRepository: SessionRepository,
+                                       navigator: Navigator,
+                                       identify: IdentifierAction,
+                                       getData: DataRetrievalAction,
+                                       requireData: DataRequiredAction,
+                                       formProvider: ConsiderationsAffectedUncertainFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       view: ConsiderationsAffectedUncertainView
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TransactionPartialReliefPage) match {
+      val preparedForm = request.userAnswers.get(ConsiderationsAffectedUncertainPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,14 +64,10 @@ class TransactionPartialReliefController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionPartialReliefPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ConsiderationsAffectedUncertainPage, value))
+            _ <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value) {
-              Redirect(navigator.nextPage(TransactionPartialReliefPage, mode, updatedAnswers))
-            } else {
-              Redirect(controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode))
-            }
+              Redirect(navigator.nextPage(ConsiderationsAffectedUncertainPage, mode, updatedAnswers))
           }
       )
   }

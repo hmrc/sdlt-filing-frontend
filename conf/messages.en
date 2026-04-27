@@ -1434,3 +1434,12 @@ transaction.transactionUseOfLandOrProperty.change.hidden                        
 transaction.transactionUseOfLandOrProperty.hint                                     = Select all that apply
 transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel                    = How the land or property will be used
 transaction.transactionUseOfLandOrProperty.missing                                  = Select how the land or property will be used
+
+transaction.considerationsAffectedUncertain.title                                   = Considerations affected by uncertain future events - About the transaction
+transaction.considerationsAffectedUncertain.heading                                 = Considerations affected by uncertain future events
+transaction.considerationsAffectedUncertain.subHeading                              = Is any part of the consideration contingent or dependent on uncertain future events?
+transaction.considerationsAffectedUncertain.error.required                          = Select yes if any part of the consideration is contingent or dependent on uncertain future events
+transaction.considerationsAffectedUncertain.p1                                      = This means any SDLT payment that may be influenced by something yet to happen, like projected company profits or receiving planning permission.
+transaction.considerationsAffectedUncertain.p2                                      = Uncertain future events are typically defined as:
+transaction.considerationsAffectedUncertain.bullet1                                 = a contingent consideration, where a fixed sum is only paid, or not paid, when the uncertain future event occurs
+transaction.considerationsAffectedUncertain.bullet2                                 = a dependent consideration, where the amount or value of a consideration depends on the uncertain future event

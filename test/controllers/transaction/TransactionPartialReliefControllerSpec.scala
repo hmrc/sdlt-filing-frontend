@@ -127,8 +127,7 @@ class TransactionPartialReliefControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        // TODO DTR-3434: Redirect to Is any part of the consideration contingent or dependent on uncertain future? - tr-9
-        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode).url
       }
     }
 
