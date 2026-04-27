@@ -1388,6 +1388,7 @@ transaction.claimingPartialReliefAmount.change.hidden                           
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
 
 taxCalculation.beforeStart.title                                                    =
+taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet                          = your self-assessed SDLT calculation
 taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
 taxCalculation.beforeStart.p2                                                       = You will need to know:
 taxCalculation.beforeStart.bullet1                                                  = the effective date of the transaction

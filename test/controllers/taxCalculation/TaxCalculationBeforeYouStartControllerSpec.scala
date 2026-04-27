@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,220 @@
 package controllers.taxCalculation
 
 import base.SpecBase
+import models.taxCalculation.{MissingAboutTheTransactionError, MissingFullReturnError, TaxCalculationFlow, TaxCalculationResult}
+import models.{FullReturn, Transaction, UserAnswers}
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
+import org.scalatestplus.mockito.MockitoSugar
+import pages.taxCalculation.TaxCalculationFlowPage
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.taxCalculation.TaxCalculationBeforeYouStartView
+import repositories.SessionRepository
+import services.taxCalculation.SdltCalculationService
 
-class TaxCalculationBeforeYouStartControllerSpec extends SpecBase {
+import scala.concurrent.Future
+
+class TaxCalculationBeforeYouStartControllerSpec extends SpecBase with MockitoSugar {
+
+  private val calculatedResult   = TaxCalculationResult(totalTax = 5000, resultHeading = None,                  resultHint = None, npv = None, taxCalcs = Seq.empty)
+  private val selfAssessedResult = TaxCalculationResult(totalTax = 0,    resultHeading = Some("self-assessed"), resultHint = None, npv = None, taxCalcs = Seq.empty)
+
+  private lazy val onPageLoadUrl = controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad().url
+
+  private def answersWith(transactionDescription: String): UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(FullReturn(
+      stornId           = "TESTSTORN",
+      returnResourceRef = "REF001",
+      transaction       = Some(Transaction(transactionDescription = Some(transactionDescription)))
+    )))
 
   "TaxCalculationBeforeYouStart Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must redirect to FreeholdTaxCalculatedBYSController and add the FreeholdTaxCalculated flow to the session" in {
+      val answers = answersWith("F")
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val mockService = mock[SdltCalculationService]
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(calculatedResult)))
+
+      val repo = mock[SessionRepository]
+      when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(answers))
+        .overrides(
+          bind[SdltCalculationService].toInstance(mockService),
+          bind[SessionRepository].toInstance(repo)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad().url)
+        val result = route(application, FakeRequest(GET, onPageLoadUrl)).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdTaxCalculatedBYSController.onPageLoad().url
 
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[TaxCalculationBeforeYouStartView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        savedAnswers(repo).get(TaxCalculationFlowPage) mustBe Some(TaxCalculationFlow.FreeholdTaxCalculated)
       }
     }
+
+    "must redirect to FreeholdSelfAssessedBYSController and add the FreeholdSelfAssessed flow to the session" in {
+      val answers = answersWith("F")
+
+      val mockService = mock[SdltCalculationService]
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(selfAssessedResult)))
+
+      val repo = mock[SessionRepository]
+      when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(answers))
+        .overrides(
+          bind[SdltCalculationService].toInstance(mockService),
+          bind[SessionRepository].toInstance(repo)
+        )
+        .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, onPageLoadUrl)).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedBYSController.onPageLoad().url
+
+        savedAnswers(repo).get(TaxCalculationFlowPage) mustBe Some(TaxCalculationFlow.FreeholdSelfAssessed)
+      }
+    }
+
+    "must redirect to LeaseholdTaxCalculatedBYSController and add the LeaseholdTaxCalculated flow to the session" in {
+      val answers = answersWith("L")
+
+      val mockService = mock[SdltCalculationService]
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(calculatedResult)))
+
+      val repo = mock[SessionRepository]
+      when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(answers))
+        .overrides(
+          bind[SdltCalculationService].toInstance(mockService),
+          bind[SessionRepository].toInstance(repo)
+        )
+        .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, onPageLoadUrl)).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedBYSController.onPageLoad().url
+
+        savedAnswers(repo).get(TaxCalculationFlowPage) mustBe Some(TaxCalculationFlow.LeaseholdTaxCalculated)
+      }
+    }
+
+    "must redirect to LeaseholdSelfAssessedBYSController and add the LeaseholdSelfAssessed flow to the session" in {
+      val answers = answersWith("L")
+
+      val mockService = mock[SdltCalculationService]
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(selfAssessedResult)))
+
+      val repo = mock[SessionRepository]
+      when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(answers))
+        .overrides(
+          bind[SdltCalculationService].toInstance(mockService),
+          bind[SessionRepository].toInstance(repo)
+        )
+        .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, onPageLoadUrl)).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedBYSController.onPageLoad().url
+
+        savedAnswers(repo).get(TaxCalculationFlowPage) mustBe Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+      }
+    }
+
+    "must clear any flow previously added to the session when no transaction type is recorded" in {
+      val staleAnswers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+
+      val mockService = mock[SdltCalculationService]
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(calculatedResult)))
+
+      val repo = mock[SessionRepository]
+      when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(staleAnswers))
+        .overrides(
+          bind[SdltCalculationService].toInstance(mockService),
+          bind[SessionRepository].toInstance(repo)
+        )
+        .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, onPageLoadUrl)).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+        savedAnswers(repo).get(TaxCalculationFlowPage) mustBe None
+      }
+    }
+
+    "must redirect to NoReturnReferenceController and clear any flow from the session when the service reports no full return" in {
+      val staleAnswers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+
+      val mockService = mock[SdltCalculationService]
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Left(MissingFullReturnError)))
+
+      val repo = mock[SessionRepository]
+      when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(staleAnswers))
+        .overrides(
+          bind[SdltCalculationService].toInstance(mockService),
+          bind[SessionRepository].toInstance(repo)
+        )
+        .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, onPageLoadUrl)).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.NoReturnReferenceController.onPageLoad().url
+
+        savedAnswers(repo).get(TaxCalculationFlowPage) mustBe None
+      }
+    }
+
+    "must redirect to ReturnTaskListController and clear any flow from the session when the service reports any other missing data" in {
+      val staleAnswers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+
+      val mockService = mock[SdltCalculationService]
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Left(MissingAboutTheTransactionError)))
+
+      val repo = mock[SessionRepository]
+      when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(staleAnswers))
+        .overrides(
+          bind[SdltCalculationService].toInstance(mockService),
+          bind[SessionRepository].toInstance(repo)
+        )
+        .build()
+
+      running(application) {
+        val result = route(application, FakeRequest(GET, onPageLoadUrl)).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+        savedAnswers(repo).get(TaxCalculationFlowPage) mustBe None
+      }
+    }
+  }
+
+  private def savedAnswers(repo: SessionRepository): UserAnswers = {
+    val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+    verify(repo).set(captor.capture())
+    captor.getValue
   }
 }

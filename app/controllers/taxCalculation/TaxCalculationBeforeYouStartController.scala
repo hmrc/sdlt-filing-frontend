@@ -17,24 +17,55 @@
 package controllers.taxCalculation
 
 import controllers.actions.*
+import controllers.routes.{NoReturnReferenceController, ReturnTaskListController}
+import controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedBYSController
+import controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdTaxCalculatedBYSController
+import controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedBYSController
+import controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedBYSController
+import models.taxCalculation.MissingFullReturnError
+import models.taxCalculation.TaxCalculationFlow.*
+import pages.taxCalculation.TaxCalculationFlowPage
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.taxCalculation.TaxCalculationBeforeYouStartView
+import utils.TaxCalculationHelper
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class TaxCalculationBeforeYouStartController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       sdltCalculationService: SdltCalculationService,
+                                       sessionRepository: SessionRepository,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: TaxCalculationBeforeYouStartView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      Ok(view())
+      for {
+        calc <- sdltCalculationService.calculateStampDutyLandTax(request.userAnswers)
+        flow  = calc.toOption.flatMap(TaxCalculationHelper.flowFor(request.userAnswers, _))
+        dest  = (flow, calc) match {
+          case (Some(FreeholdTaxCalculated),     _) => FreeholdTaxCalculatedBYSController.onPageLoad()
+          case (Some(FreeholdSelfAssessed),      _) => FreeholdSelfAssessedBYSController.onPageLoad()
+          case (Some(LeaseholdTaxCalculated),    _) => LeaseholdTaxCalculatedBYSController.onPageLoad()
+          case (Some(LeaseholdSelfAssessed),     _) => LeaseholdSelfAssessedBYSController.onPageLoad()
+          case (None, Left(MissingFullReturnError)) => NoReturnReferenceController.onPageLoad()
+          case (_,                               _) => ReturnTaskListController.onPageLoad()
+        }
+        updated <- Future.fromTry {
+          flow match {
+            case Some(f) => request.userAnswers.set(TaxCalculationFlowPage, f)
+            case None    => request.userAnswers.remove(TaxCalculationFlowPage)
+          }
+        }
+        _ <- sessionRepository.set(updated)
+      } yield Redirect(dest)
   }
 }

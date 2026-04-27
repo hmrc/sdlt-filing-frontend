@@ -502,8 +502,6 @@ POST       /about-the-transaction/claiming-partial-relief                       
 GET        /about-the-transaction/claiming-partial-relief/change                                     controllers.transaction.ClaimingPartialReliefAmountController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/claiming-partial-relief/change                                     controllers.transaction.ClaimingPartialReliefAmountController.onSubmit(mode: Mode = CheckMode)
 
-GET        /tax-calculation/before-you-start                                                         controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
-
 GET        /about-the-transaction/enter-registered-charity-number                                    controllers.transaction.CharityRegisteredNumberController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/enter-registered-charity-number                                    controllers.transaction.CharityRegisteredNumberController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/enter-registered-charity-number/change                             controllers.transaction.CharityRegisteredNumberController.onPageLoad(mode: Mode = CheckMode)
@@ -518,3 +516,59 @@ GET        /about-the-transaction/use-of-land-or-property                       
 POST       /about-the-transaction/use-of-land-or-property                                            controllers.transaction.TransactionUseOfLandOrPropertyController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/use-of-land-or-property/change                                     controllers.transaction.TransactionUseOfLandOrPropertyController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/use-of-land-or-property/change                                     controllers.transaction.TransactionUseOfLandOrPropertyController.onSubmit(mode: Mode = CheckMode)
+
+GET        /tax-calculation/before-you-start                                    controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
+#GET       /tax-calculation/leasehold-calculated/breakdown                      controllers.LeaseholdSdltCalculatedBreakdownController.onPageLoad()
+
+# ---- Tax calculation: Flow A (Freehold - Service has performed calculation) -------------------------------------
+
+GET         /tax-calculation/freehold-calculated/before-you-start               controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedBYSController.onPageLoad()
+#GET        /tax-calculation/freehold-calculated/sdlt                           controllers.FreeholdSdltCalculatedController.onPageLoad()
+#POST       /tax-calculation/freehold-calculated/sdlt                           controllers.FreeholdSdltCalculatedController.onSubmit()
+#GET        /tax-calculation/freehold-calculated/self-assessment                controllers.FreeholdSdltCalculatedSelfAssessmentController.onPageLoad()
+#POST       /tax-calculation/freehold-calculated/self-assessment                controllers.FreeholdSdltCalculatedSelfAssessmentController.onSubmit()
+#GET        /tax-calculation/freehold-calculated/total-amount-due               controllers.FreeholdSdltCalculatedTotalDueController.onPageLoad()
+#POST       /tax-calculation/freehold-calculated/total-amount-due               controllers.FreeholdSdltCalculatedTotalDueController.onSubmit()
+#GET        /tax-calculation/freehold-calculated/penalties-and-interest-charges controllers.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad()
+#POST       /tax-calculation/freehold-calculated/penalties-and-interest-charges controllers.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit()
+#GET        /tax-calculation/freehold-calculated/check-your-answers             controllers.FreeholdSdltCalculatedCheckYourAnswersController.onPageLoad()
+#POST       /tax-calculation/freehold-calculated/check-your-answers             controllers.FreeholdSdltCalculatedCheckYourAnswersController.onSubmit()
+
+# ---- Tax calculation: Flow B (Freehold - Service cannot perform calculation) -------------------------------------
+GET         /tax-calculation/freehold-not-calculated/before-you-start               controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedBYSController.onPageLoad()
+#GET        /tax-calculation/freehold-not-calculated/sdlt                           controllers.FreeholdSdltNotCalculatedController.onPageLoad()
+#POST       /tax-calculation/freehold-not-calculated/sdlt                           controllers.FreeholdSdltNotCalculatedController.onSubmit()
+#GET        /tax-calculation/freehold-not-calculated/self-assessment                controllers.FreeholdSdltNotCalculatedSelfAssessmentController.onPageLoad()
+#POST       /tax-calculation/freehold-not-calculated/self-assessment                controllers.FreeholdSdltNotCalculatedSelfAssessmentController.onSubmit()
+#GET        /tax-calculation/freehold-not-calculated/total-amount-due               controllers.FreeholdSdltNotCalculatedTotalDueController.onPageLoad()
+#POST       /tax-calculation/freehold-not-calculated/total-amount-due               controllers.FreeholdSdltNotCalculatedTotalDueController.onSubmit()
+#GET        /tax-calculation/freehold-not-calculated/penalties-and-interest-charges controllers.FreeholdSdltNotCalculatedPenaltiesAndInterestController.onPageLoad()
+#POST       /tax-calculation/freehold-not-calculated/penalties-and-interest-charges controllers.FreeholdSdltNotCalculatedPenaltiesAndInterestController.onSubmit()
+#GET        /tax-calculation/freehold-not-calculated/check-your-answers             controllers.FreeholdSdltNotCalculatedCheckYourAnswersController.onPageLoad()
+#POST       /tax-calculation/freehold-not-calculated/check-your-answers             controllers.FreeholdSdltNotCalculatedCheckYourAnswersController.onSubmit()
+
+# ---- Tax calculation: Flow C (Leasehold - Service has performed calculation) -------------------------------------
+GET         /tax-calculation/leasehold-calculated/before-you-start               controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedBYSController.onPageLoad()
+#GET        /tax-calculation/leasehold-calculated/sdlt                           controllers.LeaseholdSdltCalculatedController.onPageLoad()
+#POST       /tax-calculation/leasehold-calculated/sdlt                           controllers.LeaseholdSdltCalculatedController.onSubmit()
+#GET        /tax-calculation/leasehold-calculated/self-assessment                controllers.LeaseholdSdltCalculatedSelfAssessmentController.onPageLoad()
+#POST       /tax-calculation/leasehold-calculated/self-assessment                controllers.LeaseholdSdltCalculatedSelfAssessmentController.onSubmit()
+#GET        /tax-calculation/leasehold-calculated/total-amount-due               controllers.LeaseholdSdltCalculatedTotalDueController.onPageLoad()
+#POST       /tax-calculation/leasehold-calculated/total-amount-due               controllers.LeaseholdSdltCalculatedTotalDueController.onSubmit()
+#GET        /tax-calculation/leasehold-calculated/penalties-and-interest-charges controllers.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad()
+#POST       /tax-calculation/leasehold-calculated/penalties-and-interest-charges controllers.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit()
+#GET        /tax-calculation/leasehold-calculated/check-your-answers             controllers.LeaseholdSdltCalculatedCheckYourAnswersController.onPageLoad()
+#POST       /tax-calculation/leasehold-calculated/check-your-answers             controllers.LeaseholdSdltCalculatedCheckYourAnswersController.onSubmit()
+
+# ---- Tax calculation: Flow D (Leasehold - Service cannot perform calculation) -------------------------------------
+GET         /tax-calculation/leasehold-not-calculated/before-you-start               controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedBYSController.onPageLoad()
+#GET        /tax-calculation/leasehold-not-calculated/tax-due-on-premium             controllers.LeaseholdSdltNotCalculatedPremiumDueController.onPageLoad()
+#POST       /tax-calculation/leasehold-not-calculated/tax-due-on-premium             controllers.LeaseholdSdltNotCalculatedPremiumDueController.onSubmit()
+#GET        /tax-calculation/leasehold-not-calculated/tax-due-on-npv                 controllers.LeaseholdSdltNotCalculatedNpvDueController.onPageLoad()
+#POST       /tax-calculation/leasehold-not-calculated/tax-due-on-npv                 controllers.LeaseholdSdltNotCalculatedNpvDueController.onSubmit()
+#GET        /tax-calculation/leasehold-not-calculated/total-amount-due               controllers.LeaseholdSdltNotCalculatedTotalDueController.onPageLoad()
+#POST       /tax-calculation/leasehold-not-calculated/total-amount-due               controllers.LeaseholdSdltNotCalculatedTotalDueController.onSubmit()
+#GET        /tax-calculation/leasehold-not-calculated/penalties-and-interest-charges controllers.LeaseholdSdltNotCalculatedPenaltiesAndInterestController.onPageLoad()
+#POST       /tax-calculation/leasehold-not-calculated/penalties-and-interest-charges controllers.LeaseholdSdltNotCalculatedPenaltiesAndInterestController.onSubmit()
+#GET        /tax-calculation/leasehold-not-calculated/check-your-answers             controllers.LeaseholdSdltNotCalculatedCheckYourAnswersController.onPageLoad()
+#POST       /tax-calculation/leasehold-not-calculated/check-your-answers             controllers.LeaseholdSdltNotCalculatedCheckYourAnswersController.onSubmit()
