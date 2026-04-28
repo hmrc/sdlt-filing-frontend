@@ -38,13 +38,13 @@ class FreeholdTaxCalculatedBYSViewSpec extends SpecBase {
 
         val doc = Jsoup.parse(view().toString())
 
-        doc.select("title").first().text() must include(msgs("taxCalculation.beforeStart.title"))
+        doc.select("title").first().text() must include(msgs("taxCalculation.beforeStart.title.freehold.taxCalculated"))
         doc.select("h1").first().text() mustBe msgs("site.beforeYouStart.heading")
         doc.text() must include(msgs("site.taxCalculation.caption"))
       }
     }
 
-    "must render all five standard bullets in order" in {
+    "must replace bullets 2 and 3 with the selfAssessed bullet" in {
       val application = applicationBuilder().build()
 
       running(application) {
@@ -56,11 +56,13 @@ class FreeholdTaxCalculatedBYSViewSpec extends SpecBase {
 
         bullets must contain inOrderOnly (
           msgs("taxCalculation.beforeStart.bullet1"),
-          msgs("taxCalculation.beforeStart.bullet2"),
-          msgs("taxCalculation.beforeStart.bullet3"),
+          msgs("taxCalculation.beforeStart.selfAssessed.bullet"),
           msgs("taxCalculation.beforeStart.bullet4"),
           msgs("taxCalculation.beforeStart.bullet5")
         )
+
+        bullets must not contain msgs("taxCalculation.beforeStart.bullet2")
+        bullets must not contain msgs("taxCalculation.beforeStart.bullet3")
       }
     }
 

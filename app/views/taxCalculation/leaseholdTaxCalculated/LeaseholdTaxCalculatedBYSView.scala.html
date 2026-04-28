@@ -26,7 +26,7 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("taxCalculation.beforeStart.title"))) {
+@layout(pageTitle = titleNoForm(messages("taxCalculation.beforeStart.title.leasehold.taxCalculated"))) {
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("site.beforeYouStart.heading"))
 
@@ -35,8 +35,7 @@
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("taxCalculation.beforeStart.bullet1")</li>
-        <li>@messages("taxCalculation.beforeStart.bullet2")</li>
-        <li>@messages("taxCalculation.beforeStart.bullet3")</li>
+        <li>@messages("taxCalculation.beforeStart.selfAssessed.bullet")</li>
         <li>@messages("taxCalculation.beforeStart.bullet4")</li>
         <li>@messages("taxCalculation.beforeStart.bullet5")</li>
     </ul>
