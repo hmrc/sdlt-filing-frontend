@@ -23,7 +23,7 @@ import models.purchaserAgent.PurchaserAgentSessionQuestions
 import models.{CreateReturnAgentRequest, NormalMode, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
 import pages.purchaserAgent.PurchaserAgentOverviewPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsSuccess
+import play.api.libs.json.{JsObject, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import repositories.SessionRepository
 import services.purchaserAgent.PurchaserAgentService
@@ -62,7 +62,10 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
           case Some(userAnswers) =>
-            if (userAnswers.data.value.isEmpty && userAnswers.returnId.isEmpty) {
+            val purchaserDataEmpty =
+              (userAnswers.data \ "purchaserAgentCurrent").asOpt[JsObject].forall(_.values.isEmpty)
+
+            if (purchaserDataEmpty) {
               Redirect(controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode))
             } else {
               val rowResults = Seq(
