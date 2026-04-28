@@ -35,15 +35,15 @@ class TaxCalculationHelperSpec extends SpecBase {
 
   "calculationResponseType" - {
 
-    "must return TaxNotCalculated when resultHeading equals 'self-assessed'" in {
-      calculationResponseType(resultWithHeading(Some("self-assessed"))) mustBe TaxNotCalculated
+    "must return TaxNotCalculated when resultHeading equals 'Self-assessed'" in {
+      calculationResponseType(resultWithHeading(Some("Self-assessed"))) mustBe TaxNotCalculated
     }
 
     "must return TaxCalculated when resultHeading is None" in {
       calculationResponseType(resultWithHeading(None)) mustBe TaxCalculated
     }
 
-    "must return TaxCalculated when resultHeading is anything other than the exact 'self-assessed' string" in {
+    "must return TaxCalculated when resultHeading is anything other than the exact 'Self-assessed' string" in {
       calculationResponseType(resultWithHeading(Some("calculated"))) mustBe TaxCalculated
     }
   }
@@ -81,16 +81,16 @@ class TaxCalculationHelperSpec extends SpecBase {
       flowFor(answersWith("F"), resultWithHeading(None)) mustBe Some(TaxCalculationFlow.FreeholdTaxCalculated)
     }
 
-    "must return Some(FreeholdSelfAssessed) for freehold and a self-assessed result" in {
-      flowFor(answersWith("F"), resultWithHeading(Some("self-assessed"))) mustBe Some(TaxCalculationFlow.FreeholdSelfAssessed)
+    "must return Some(FreeholdSelfAssessed) for freehold and a Self-assessed result" in {
+      flowFor(answersWith("F"), resultWithHeading(Some("Self-assessed"))) mustBe Some(TaxCalculationFlow.FreeholdSelfAssessed)
     }
 
     "must return Some(LeaseholdTaxCalculated) for leasehold and a tax-calculated result" in {
       flowFor(answersWith("L"), resultWithHeading(None)) mustBe Some(TaxCalculationFlow.LeaseholdTaxCalculated)
     }
 
-    "must return Some(LeaseholdSelfAssessed) for leasehold and a self-assessed result" in {
-      flowFor(answersWith("L"), resultWithHeading(Some("self-assessed"))) mustBe Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+    "must return Some(LeaseholdSelfAssessed) for leasehold and a Self-assessed result" in {
+      flowFor(answersWith("L"), resultWithHeading(Some("Self-assessed"))) mustBe Some(TaxCalculationFlow.LeaseholdSelfAssessed)
     }
 
     "must return None when no FullReturn is present" in {

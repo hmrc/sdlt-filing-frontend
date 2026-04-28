@@ -21,7 +21,7 @@ import models.taxCalculation.{HoldingTypes, TaxCalculationFlow, TaxCalculationRe
 
 object TaxCalculationHelper {
 
-  private val selfAssessedHeading: String = "self-assessed"
+  private val selfAssessedHeading: String = "Self-assessed"
 
   def calculationResponseType(result: TaxCalculationResult): CalculationResultType =
     if (result.resultHeading.contains(selfAssessedHeading)) TaxNotCalculated

@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class TaxCalculationBeforeYouStartControllerSpec extends SpecBase with MockitoSugar {
 
   private val calculatedResult   = TaxCalculationResult(totalTax = 5000, resultHeading = None,                  resultHint = None, npv = None, taxCalcs = Seq.empty)
-  private val selfAssessedResult = TaxCalculationResult(totalTax = 0,    resultHeading = Some("self-assessed"), resultHint = None, npv = None, taxCalcs = Seq.empty)
+  private val selfAssessedResult = TaxCalculationResult(totalTax = 0,    resultHeading = Some("Self-assessed"), resultHint = None, npv = None, taxCalcs = Seq.empty)
 
   private lazy val onPageLoadUrl = controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad().url
 
