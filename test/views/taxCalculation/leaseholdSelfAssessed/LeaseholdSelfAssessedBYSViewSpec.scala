@@ -38,13 +38,13 @@ class LeaseholdSelfAssessedBYSViewSpec extends SpecBase {
 
         val doc = Jsoup.parse(view().toString())
 
-        doc.select("title").first().text() must include(msgs("taxCalculation.beforeStart.title"))
+        doc.select("title").first().text() must include(msgs("taxCalculation.beforeStart.title.leasehold.taxNotCalculated"))
         doc.select("h1").first().text() mustBe msgs("site.beforeYouStart.heading")
         doc.text() must include(msgs("site.taxCalculation.caption"))
       }
     }
 
-    "must replace bullets 2 and 3 with the leaseholdAndSelfAssessed bullet" in {
+    "must render all five standard bullets in order" in {
       val application = applicationBuilder().build()
 
       running(application) {
@@ -56,13 +56,11 @@ class LeaseholdSelfAssessedBYSViewSpec extends SpecBase {
 
         bullets must contain inOrderOnly (
           msgs("taxCalculation.beforeStart.bullet1"),
-          msgs("taxCalculation.beforeStart.leaseholdAndSelfAssessed.bullet"),
+          msgs("taxCalculation.beforeStart.bullet2"),
+          msgs("taxCalculation.beforeStart.bullet3"),
           msgs("taxCalculation.beforeStart.bullet4"),
           msgs("taxCalculation.beforeStart.bullet5")
         )
-
-        bullets must not contain msgs("taxCalculation.beforeStart.bullet2")
-        bullets must not contain msgs("taxCalculation.beforeStart.bullet3")
       }
     }
 
