@@ -1387,19 +1387,6 @@ transaction.claimingPartialReliefAmount.error.maximum                           
 transaction.claimingPartialReliefAmount.change.hidden                               = the amount of relief being claimed on part of the land or property
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
 
-taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start – Tax calculation – Freehold calculated
-taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start – Tax calculation – Freehold not calculated
-taxCalculation.beforeStart.title.leasehold.taxCalculated                            = Before you start – Tax calculation – Leasehold calculated
-taxCalculation.beforeStart.title.leasehold.taxNotCalculated                         = Before you start – Tax calculation – Leasehold not calculated
-taxCalculation.beforeStart.selfAssessed.bullet                                      = your self-assessed SDLT calculation
-taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
-taxCalculation.beforeStart.p2                                                       = You will need to know:
-taxCalculation.beforeStart.bullet1                                                  = the effective date of the transaction
-taxCalculation.beforeStart.bullet2                                                  = the tax due on the total premium payable
-taxCalculation.beforeStart.bullet3                                                  = the tax due on the NPV
-taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
-taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
-
 transaction.charityRegisteredNumber.title                                           = What is the charity’s registered number?
 transaction.charityRegisteredNumber.heading                                         = What is the charity’s registered number?
 transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity Registered Number
@@ -1446,3 +1433,25 @@ transaction.considerationsAffectedUncertain.p1                                  
 transaction.considerationsAffectedUncertain.p2                                      = Uncertain future events are typically defined as:
 transaction.considerationsAffectedUncertain.bullet1                                 = a contingent consideration, where a fixed sum is only paid, or not paid, when the uncertain future event occurs
 transaction.considerationsAffectedUncertain.bullet2                                 = a dependent consideration, where the amount or value of a consideration depends on the uncertain future event
+
+taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start – Tax calculation – Freehold calculated
+taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start – Tax calculation – Freehold not calculated
+taxCalculation.beforeStart.title.leasehold.taxCalculated                            = Before you start – Tax calculation – Leasehold calculated
+taxCalculation.beforeStart.title.leasehold.taxNotCalculated                         = Before you start – Tax calculation – Leasehold not calculated
+taxCalculation.beforeStart.selfAssessed.bullet                                      = your self-assessed SDLT calculation
+taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
+taxCalculation.beforeStart.p2                                                       = You will need to know:
+taxCalculation.beforeStart.bullet1                                                  = the effective date of the transaction
+taxCalculation.beforeStart.bullet2                                                  = the tax due on the total premium payable
+taxCalculation.beforeStart.bullet3                                                  = the tax due on the NPV
+taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
+taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
+
+taxCalculation.taxDueOnNpv.title                                                    = What is the tax due on the NPV? – Tax calculation – Leasehold not calculated
+taxCalculation.taxDueOnNpv.heading                                                  = What is the tax due on the NPV?
+taxCalculation.taxDueOnNpv.p1                                                       = You entered the NPV as: {0}
+taxCalculation.taxDueOnNpv.p2                                                       = You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+taxCalculation.taxDueOnNpv.p2.suffix                                                = use the SDLT calculator to work out the correct amount (opens in new tab)
+taxCalculation.taxDueOnNpv.p2.link                                                  = #
+taxCalculation.taxDueOnNpv.label                                                    = #
+taxCalculation.taxDueOnNpv.hint                                                     = Enter the amount in whole pounds only, for example £10,000
