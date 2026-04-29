@@ -273,3 +273,10 @@ site.change.hidden.year2Rent = Year 2 rent?
 site.change.hidden.year3Rent = Year 3 rent?
 site.change.hidden.year4Rent = Year 4 rent?
 site.change.hidden.year5Rent = Year 5 rent?
+
+premiumPayable.title = What is the tax due on the total premium payable?
+premiumPayable.caption = Tax calculation
+premiumPayable.description = You entered the total premium payable as: [£Total Premium Payable].
+premiumPayable.hint = Enter the amount in whole pounds only, for example £10,000
+
+premiumPayable.error = There is a problem

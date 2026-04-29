@@ -60,4 +60,8 @@ trait Mappings extends Formatters with Constraints {
                             args: Seq[String] = Seq.empty
                           ): FieldMapping[BigDecimal] =
     of(bigDecimalFormatter(decimalPlaces, requiredKey, nonNumericKey, decimalPlacesKey, args))
+
+  protected def text(errorKey: String = "error.required",
+                     args: Seq[String] = Seq.empty): FieldMapping[String] =
+    of(stringFormatter(errorKey, args))
 }

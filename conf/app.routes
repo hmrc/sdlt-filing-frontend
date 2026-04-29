@@ -86,3 +86,6 @@ GET       /detail                              controllers.scalabuild.DetailCont
 
 GET       /print                                                controllers.scalabuild.PrintController.onPageLoad()
 
+GET       /tax-calculation/leasehold-not-calculated/tax-due-on-total-premium-payable                    controllers.taxCalculation.PremiumPayableController.onPageLoad()
+POST      /tax-calculation/leasehold-not-calculated/tax-due-on-total-premium-payable                    controllers.taxCalculation.PremiumPayableController.onSubmit()
+

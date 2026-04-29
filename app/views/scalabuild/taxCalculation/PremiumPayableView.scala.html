@@ -1,0 +1,52 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ *@
+
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
+@import views.html.scalabuild._
+
+@this(
+        layout: templates.Layout,
+        govukErrorSummary: GovukErrorSummary,
+        formHelper: FormWithCSRF,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        govukDetails : GovukDetails,
+        hmrcPageHeading: HmrcPageHeading
+)
+
+@(form: Form[_])(implicit rh: RequestHeader, messages: Messages)
+
+@layout(pageTitle = Some(messages("premiumPayable.title"))) {
+
+ @formHelper(action = controllers.taxCalculation.routes.PremiumPayableController.onSubmit(), Symbol("autoComplete") -> "off") {
+
+  @if(form.errors.nonEmpty) {
+   @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+  }
+
+  @hmrcPageHeading(PageHeading(
+   text           = messages("premiumPayable.title"),
+   headingClasses = Some("govuk-heading-l"),
+   captionClasses = Some("govuk-caption-l"),
+   section        = Some(messages("premiumPayable.caption"))
+  ))
+
+  @govukInput(
+   InputViewModel(
+    field = form("premium"),
+    label = Label(
+     classes = "govuk-!-margin-bottom-4",
+     content = messages("premiumPayable.description")),
+
+   )
+   .asNumeric()
+   .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
+   .withHint(HintViewModel(HtmlContent(messages("premiumPayable.hint"))))
+   .withPrefix(PrefixOrSuffix(content = Text("£")))
+  )
+
+  @govukButton(ButtonViewModel("continue-button",messages("site.saveAndContinue")))
+ }
+}
