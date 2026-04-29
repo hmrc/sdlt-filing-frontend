@@ -358,12 +358,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(CharityRegisteredNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
         
-        "go from TransactionDeferringPaymentPage to transaction sale of a business page" in { // TODO DTR-3446: Redirect to Is this transaction a sale of a business? - tr-12
-          navigator.nextPage(TransactionDeferringPaymentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
+        "go from TransactionDeferringPaymentPage to transaction sale of a business page" in {
+          navigator.nextPage(TransactionDeferringPaymentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
         }
 
-        "go from TransactionUseOfLandOrPropertyPage to transaction part of the sale of a business page" in { // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
-          navigator.nextPage(TransactionUseOfLandOrPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
+        "go from TransactionUseOfLandOrPropertyPage to transaction part of the sale of a business page" in {
+          navigator.nextPage(TransactionUseOfLandOrPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
         }
 
         "go from ConsiderationsAffectedUncertainPage to TransactionDeferringPaymentPage" in {
@@ -372,6 +372,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from TransactionRulingFollowedPage to restrictions covenants or conditions page" in { // TODO DTR-3473: Redirect to Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted? - tr-14
           navigator.nextPage(TransactionRulingFollowedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
+        }
+
+        "go from SaleOfBusinessPage to What is included in the sale page" in { //TODO - DTR-3450 - SPRINT 14 update to what is in included in the sale tr-12a
+          navigator.nextPage(SaleOfBusinessPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
         }
       }
 
