@@ -216,7 +216,7 @@ class Navigator @Inject()() {
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
          | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
-         | Cap1OrNsbcPage => true
+         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage => true
 
     case _ => false
   }
@@ -264,14 +264,16 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
     case ConsiderationsAffectedUncertainPage =>
       _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
-    case SaleOfBusinessPage => //TODO - DTR-3450 - SPRINT 14 update to what is in included in the sale tr-12a
-      _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
+    case SaleOfBusinessPage =>
+      _ => controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
     case TransactionRulingFollowedPage =>
       _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
     case TransactionRestrictionsCovenantsAndConditionsPage => // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
       _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
     case Cap1OrNsbcPage =>
       _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
+    case TransactionSaleOfBusinessAssetsPage => // TODO DTR-3458: Redirect to tr-12b
+      _ => controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

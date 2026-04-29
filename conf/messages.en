@@ -1457,6 +1457,16 @@ transaction.rulingFollowed.hint                                                 
 transaction.rulingFollowed.error.required                                           = Select yes or no if you have received the ruling under CAP1 or NSBC, or select ‘Ruling not yet received’
 transaction.rulingFollowed.change.hidden                                            = if you have followed the ruling under CAP1 or NSBC when completing this return
 
+transaction.transactionSaleOfBusinessAssets.title                                   = What is included in the sale of the business?
+transaction.transactionSaleOfBusinessAssets.heading                                 = What is included in the sale of the business?
+transaction.transactionSaleOfBusinessAssets.hint                                    = Select all chargeable and non-chargeable assets that are included in this transaction
+transaction.transactionSaleOfBusinessAssets.stock                                   = Stock
+transaction.transactionSaleOfBusinessAssets.goodwill                                = Goodwill
+transaction.transactionSaleOfBusinessAssets.chattelsAndMoveables                    = Chattels and moveables
+transaction.transactionSaleOfBusinessAssets.others                                  = Others
+transaction.transactionSaleOfBusinessAssets.checkYourAnswersLabel                   = What is included in the sale of the business?
+transaction.transactionSaleOfBusinessAssets.error.required                          = Select at least one type of asset that is included in the sale of the business
+transaction.transactionSaleOfBusinessAssets.change.hidden                           = What is included in the sale of the business?
 
 transaction.saleOfBusiness.title                                                    = Sale of a business
 transaction.saleOfBusiness.heading                                                  = Sale of a business
