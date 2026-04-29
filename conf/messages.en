@@ -1446,3 +1446,13 @@ transaction.considerationsAffectedUncertain.p1                                  
 transaction.considerationsAffectedUncertain.p2                                      = Uncertain future events are typically defined as:
 transaction.considerationsAffectedUncertain.bullet1                                 = a contingent consideration, where a fixed sum is only paid, or not paid, when the uncertain future event occurs
 transaction.considerationsAffectedUncertain.bullet2                                 = a dependent consideration, where the amount or value of a consideration depends on the uncertain future event
+
+transaction.rulingFollowed.title                                                    = Have you followed the ruling under CAP1 or NSBC when completing this return?
+transaction.rulingFollowed.heading                                                  = Have you followed the ruling under CAP1 or NSBC when completing this return?
+transaction.rulingFollowed.yes                                                      = Yes
+transaction.rulingFollowed.no                                                       = No
+transaction.rulingFollowed.RulingNotReceived                                        = Ruling not yet received
+transaction.rulingFollowed.checkYourAnswersLabel                                    = Have you followed the ruling under CAP1 or NSBC when completing this return?
+transaction.rulingFollowed.hint                                                     = If you’ve received a ruling, confirm that you have followed that ruling when completing this return
+transaction.rulingFollowed.error.required                                           = Select yes or no if you have received the ruling under CAP1 or NSBC, or select ‘Ruling not yet received’
+transaction.rulingFollowed.change.hidden                                            = if you have followed the ruling under CAP1 or NSBC when completing this return

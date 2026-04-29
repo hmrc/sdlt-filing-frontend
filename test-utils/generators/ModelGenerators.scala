@@ -21,12 +21,17 @@ import models.land.*
 import models.prelimQuestions.TransactionType
 import models.purchaser.*
 import models.purchaserAgent.*
-import models.transaction.{TransactionFormsOfConsideration, TransactionUseOfLandOrProperty}
+import models.transaction.{TransactionFormsOfConsideration, TransactionRulingFollowed, TransactionUseOfLandOrProperty}
 import models.vendor.whoIsTheVendor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryTransactionRulingFollowed: Arbitrary[TransactionRulingFollowed] =
+    Arbitrary {
+      Gen.oneOf(TransactionRulingFollowed.values.toSeq)
+    }
 
   implicit lazy val arbitraryTransactionUseOfLandOrProperty: Arbitrary[TransactionUseOfLandOrProperty] =
     Arbitrary {
