@@ -20,37 +20,51 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.PenaltiesAndInterest
 import models.requests.DataRequest
+import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
-//import services.taxCalculation.SdltCalculationService
+import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedAmountWithPenaltiesView
 
+import scala.concurrent.Future
 import javax.inject.Inject
 
 class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
-                                                   override val messagesApi: MessagesApi,
-                                                   identify: IdentifierAction,
-                                                   getData: DataRetrievalAction,
-                                                   requireData: DataRequiredAction,
-                                                   formProvider: PenaltiesAndInterestFormProvider,
-                                                   //sdltCalculationService: SdltCalculationService,
-                                                   val controllerComponents: MessagesControllerComponents,
-                                                   view: FreeholdSelfAssessedAmountWithPenaltiesView
-                                                 ) extends FrontendBaseController with I18nSupport {
+                                                                      override val messagesApi: MessagesApi,
+                                                                      identify: IdentifierAction,
+                                                                      getData: DataRetrievalAction,
+                                                                      requireData: DataRequiredAction,
+                                                                      formProvider: PenaltiesAndInterestFormProvider,
+                                                                      sdltCalculationService: SdltCalculationService,
+                                                                      val controllerComponents: MessagesControllerComponents,
+                                                                      view: FreeholdSelfAssessedAmountWithPenaltiesView
+                                                                    ) extends FrontendBaseController with I18nSupport {
 
-  private val action: ActionBuilder[DataRequest, AnyContent] = {
-    identify andThen getData andThen requireData
-  }
+  val action: ActionBuilder[DataRequest, AnyContent] = identify andThen getData andThen requireData
 
   val form: Form[PenaltiesAndInterest] = formProvider()
 
   def onPageLoad: Action[AnyContent] = action {
     implicit request =>
-      //sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
+      sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
         Ok(view(form))
-      //}
+      }
+  }
+
+  def onSubmit(): Action[AnyContent] = action.async { implicit request =>
+      form.bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(BadRequest(view(formWithErrors))),
+        {
+            case _ =>
+              //case PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes =>
+              //case PenaltiesAndInterest.AmountIncludePenaltiesAndInterestNo =>
+              // TODO: save result and progress to CheckYourAnswers
+              Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
+        }
+      )
   }
 
 }
