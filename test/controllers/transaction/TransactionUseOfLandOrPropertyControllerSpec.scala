@@ -125,8 +125,7 @@ class TransactionUseOfLandOrPropertyControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
-        redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode).url
       }
     }
 
@@ -140,8 +139,7 @@ class TransactionUseOfLandOrPropertyControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
-        redirectLocation(result).value mustEqual routes.ReturnTaskListController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode).url
       }
     }
 

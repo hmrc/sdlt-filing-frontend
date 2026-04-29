@@ -267,10 +267,10 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
     case ConsiderationsAffectedUncertainPage =>
       _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
-    case TransactionRulingFollowedPage => // TODO DTR-3473 SPRINT 14: Redirect to Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted? - tr-14
-      _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case SaleOfBusinessPage => //TODO - DTR-3450 - SPRINT 14 update to what is in included in the sale tr-12a
       _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
+    case TransactionRulingFollowedPage => // TODO DTR-3473 SPRINT 14: Redirect to Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted? - tr-14
+      _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
