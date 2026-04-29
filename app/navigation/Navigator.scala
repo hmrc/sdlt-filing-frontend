@@ -219,7 +219,7 @@ class Navigator @Inject()() {
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
-         | ConsiderationsAffectedUncertainPage => true
+         | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage => true
 
     case _ => false
   }
@@ -267,6 +267,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
     case ConsiderationsAffectedUncertainPage =>
       _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
+    case TransactionRulingFollowedPage => // TODO DTR-3473 SPRINT 14: Redirect to Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted? - tr-14
+      _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

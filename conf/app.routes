@@ -517,6 +517,12 @@ POST       /about-the-transaction/use-of-land-or-property                       
 GET        /about-the-transaction/use-of-land-or-property/change                                     controllers.transaction.TransactionUseOfLandOrPropertyController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/use-of-land-or-property/change                                     controllers.transaction.TransactionUseOfLandOrPropertyController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/have-you-followed-the-ruling                                       controllers.transaction.TransactionRulingFollowedController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/have-you-followed-the-ruling                                       controllers.transaction.TransactionRulingFollowedController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/have-you-followed-the-ruling/change                                controllers.transaction.TransactionRulingFollowedController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/have-you-followed-the-ruling/change                                controllers.transaction.TransactionRulingFollowedController.onSubmit(mode: Mode = CheckMode)
+
+
 GET        /tax-calculation/before-you-start                                    controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
 #GET       /tax-calculation/leasehold-calculated/breakdown                      controllers.LeaseholdSdltCalculatedBreakdownController.onPageLoad()
 

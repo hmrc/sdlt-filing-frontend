@@ -369,6 +369,10 @@ class NavigatorSpec extends SpecBase {
         "go from ConsiderationsAffectedUncertainPage to TransactionDeferringPaymentPage" in {
           navigator.nextPage(ConsiderationsAffectedUncertainPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
         }
+
+        "go from TransactionRulingFollowedPage to restrictions covenants or conditions page" in { // TODO DTR-3473: Redirect to Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted? - tr-14
+          navigator.nextPage(TransactionRulingFollowedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
+        }
       }
 
       "freehold tax calculated routes" - {
