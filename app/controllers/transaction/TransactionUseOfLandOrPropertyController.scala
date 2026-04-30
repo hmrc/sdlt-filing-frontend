@@ -18,7 +18,7 @@ package controllers.transaction
 
 import controllers.actions.*
 import forms.transaction.TransactionUseOfLandOrPropertyFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import models.land.LandTypeOfProperty
 import models.transaction.TransactionUseOfLandOrPropertyAnswers
 import navigation.Navigator
@@ -61,7 +61,7 @@ class TransactionUseOfLandOrPropertyController @Inject()(
 
           Ok(view(preparedForm, mode))
           
-        case _ => Redirect(controllers.routes.ReturnTaskListController.onPageLoad()) // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
+        case _ => Redirect(controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode))
       }
   }
 

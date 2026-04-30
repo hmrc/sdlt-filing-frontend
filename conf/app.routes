@@ -582,3 +582,8 @@ GET        /about-the-transaction/considerations-affected-by-uncertain-future-ev
 POST       /about-the-transaction/considerations-affected-by-uncertain-future-events                 controllers.transaction.ConsiderationsAffectedUncertainController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/considerations-affected-by-uncertain-future-events/change          controllers.transaction.ConsiderationsAffectedUncertainController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/considerations-affected-by-uncertain-future-events/change          controllers.transaction.ConsiderationsAffectedUncertainController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/sale-of-a-business                                                 controllers.transaction.SaleOfBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/sale-of-a-business                                                 controllers.transaction.SaleOfBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/sale-of-a-business/change                                          controllers.transaction.SaleOfBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/sale-of-a-business/change                                          controllers.transaction.SaleOfBusinessController.onSubmit(mode: Mode = CheckMode)

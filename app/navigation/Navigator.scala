@@ -219,7 +219,7 @@ class Navigator @Inject()() {
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
-         | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage => true
+         | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage => true
 
     case _ => false
   }
@@ -261,12 +261,14 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode)
     case CharityRegisteredNumberPage =>
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
-    case TransactionDeferringPaymentPage => // TODO DTR-3446: Redirect to Is this transaction a sale of a business? - tr-12
-      _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
-    case TransactionUseOfLandOrPropertyPage => // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
-      _ => controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
+    case TransactionDeferringPaymentPage =>
+      _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
+    case TransactionUseOfLandOrPropertyPage =>
+      _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
     case ConsiderationsAffectedUncertainPage =>
       _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
+    case SaleOfBusinessPage => //TODO - DTR-3450 - SPRINT 14 update to what is in included in the sale tr-12a
+      _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
     case TransactionRulingFollowedPage => // TODO DTR-3473 SPRINT 14: Redirect to Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted? - tr-14
       _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()

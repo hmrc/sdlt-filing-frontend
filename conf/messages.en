@@ -1456,3 +1456,12 @@ transaction.rulingFollowed.checkYourAnswersLabel                                
 transaction.rulingFollowed.hint                                                     = If you’ve received a ruling, confirm that you have followed that ruling when completing this return
 transaction.rulingFollowed.error.required                                           = Select yes or no if you have received the ruling under CAP1 or NSBC, or select ‘Ruling not yet received’
 transaction.rulingFollowed.change.hidden                                            = if you have followed the ruling under CAP1 or NSBC when completing this return
+
+
+transaction.saleOfBusiness.title                                                    = Sale of a business
+transaction.saleOfBusiness.heading                                                  = Sale of a business
+transaction.saleOfBusiness.subheading                                               = Is this transaction part of the sale of a business?
+transaction.saleOfBusiness.paragraph                                                = If a transaction is part of the sale of a business, the land or property is separated from other assets that may not be liable for SDLT, like raw materials and machinery.
+transaction.saleOfBusiness.checkYourAnswersLabel                                    = Is the transaction part of the sale of a business?
+transaction.saleOfBusiness.error.required                                           = Select yes if this transaction is part of the sale of a business
+transaction.saleOfBusiness.change.hidden                                            = Sale of a business
