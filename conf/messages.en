@@ -1400,9 +1400,14 @@ taxCalculation.beforeStart.bullet3                                              
 taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
 taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
 
-taxCalculation.calculation.title                                                    = SDLT calculation
-taxCalculation.calculation.heading                                                  = SDLT calculation
+taxCalculation.calculation.title                                                    = SDLT breakdown
+taxCalculation.calculation.heading                                                  = SDLT breakdown
+taxCalculation.calculation.intro                                                    = The amount of SDLT due is based on the information you have entered when filing this return.
 taxCalculation.calculation.rates.caption                                            = SDLT rates
+taxCalculation.calculation.rates.captionPremium                                     = Total premium payable SDLT rates
+taxCalculation.calculation.rates.captionNpv                                         = NPV SDLT rates
+taxCalculation.calculation.rates.totalOnPremium                                     = Total SDLT due on the premium
+taxCalculation.calculation.rates.totalOnNpv                                         = Total SDLT due on the NPV
 taxCalculation.calculation.rates.column.description                                 = Description
 taxCalculation.calculation.rates.column.rate                                        = Rate
 taxCalculation.calculation.rates.column.sdltDue                                     = SDLT due
@@ -1415,6 +1420,8 @@ taxCalculation.calculation.totalSdltDue                                         
 taxCalculation.calculation.taxCalculation.heading                                   = Tax calculation
 taxCalculation.calculation.taxCalculation.effectiveDate                             = Effective date of transaction
 taxCalculation.calculation.taxCalculation.totalConsideration                        = Total consideration including VAT
+taxCalculation.calculation.taxCalculation.taxDuePremium                             = Tax due on total premium payable
+taxCalculation.calculation.taxCalculation.taxDueNpv                                 = Tax due on NPV
 taxCalculation.calculation.taxCalculation.reliefClaimed                             = Relief claimed?
 taxCalculation.calculation.taxCalculation.sdltDue                                   = SDLT due
 

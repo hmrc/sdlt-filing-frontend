@@ -23,14 +23,18 @@
         govukSummaryList: GovukSummaryList,
         h1: h1,
         h2: h2,
+        p: Paragraph,
         caption: Caption
 )
 
 @(viewModel: CalculationResultViewModel)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("taxCalculation.calculation.title"))) {
+
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("taxCalculation.calculation.heading"))
+
+    @p(messages("taxCalculation.calculation.intro"))
 
     @h2(messages("taxCalculation.calculation.taxCalculation.heading"))
     @govukSummaryList(viewModel.taxCalculationSummary)
@@ -38,6 +42,7 @@
     @h2(messages("taxCalculation.calculation.rateCard.heading"))
     @govukSummaryList(viewModel.rateCardSummary)
 
-    @govukTable(viewModel.ratesTable)
+    @govukTable(viewModel.premiumRateTable)
+    @viewModel.npvRateTable.map(govukTable(_))
     @govukTable(viewModel.totalTax)
 }
