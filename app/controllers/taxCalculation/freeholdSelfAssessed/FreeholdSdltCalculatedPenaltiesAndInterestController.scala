@@ -16,13 +16,15 @@
 
 package controllers.taxCalculation.freeholdSelfAssessed
 
+import com.google.inject.Singleton
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.routes.ReturnTaskListController
+import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.PenaltiesAndInterest
-import models.PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes
 import models.requests.DataRequest
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
-import pages.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
@@ -30,52 +32,60 @@ import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedAmountWithPenaltiesView
 
-import scala.concurrent.{ExecutionContext, Future}
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
                                                                       override val messagesApi: MessagesApi,
                                                                       identify: IdentifierAction,
                                                                       getData: DataRetrievalAction,
                                                                       requireData: DataRequiredAction,
                                                                       formProvider: PenaltiesAndInterestFormProvider,
-                                                                      sdltCalculationService: SdltCalculationService,
                                                                       val controllerComponents: MessagesControllerComponents,
+                                                                      sdltCalculationService: SdltCalculationService,
                                                                       view: FreeholdSelfAssessedAmountWithPenaltiesView
-                                                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                                    )(implicit ec: ExecutionContext) extends FrontendBaseController
+  with I18nSupport with PenaltiesAndInterestExtension with Logging {
 
   private val form: Form[PenaltiesAndInterest] = formProvider()
   private val secureAction: ActionBuilder[DataRequest, AnyContent] = identify andThen getData andThen requireData
 
-  // TODO: do we need to throw and error in case there is no penalties provided from TC-5?
-
   def onPageLoad: Action[AnyContent] = secureAction {
     implicit request =>
-      sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
-        Ok(view(form))
+      validateFlow(request.userAnswers)(FreeholdSelfAssessed) match {
+        case None =>
+          Ok(view(form))
+        case Some(firstErrorFound) =>
+          logger.error(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
+          Redirect(ReturnTaskListController.onPageLoad())
       }
   }
 
-  // TODO: add test(s) around this logic
   def onSubmit(): Action[AnyContent] = secureAction.async { implicit request =>
-    form.bindFromRequest().fold(
-      formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors))),
-      {
-        yesNoAnswerSelected =>
-          for {
-            result <- Future.fromTry {
-              request
-                .userAnswers
-                .set(FreeholdSelfAssessedPenaltiesAndInterestPage,
-                  yesNoAnswerSelected == AmountIncludePenaltiesAndInterestYes)
+    validateFlow(request.userAnswers)(FreeholdSelfAssessed) match {
+      case None =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              logger.error(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] form submitting error")
+              Future.successful(BadRequest(view(formWithErrors))),
+            {
+              yesOrNoSelected =>
+                sdltCalculationService
+                  .savePenaltiesAndInterestYesNoAnswer(yesOrNoSelected)
+                  .map { _ =>
+                    logger.info(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] userAnswer saved :: redirecting")
+                    Redirect(controllers.taxCalculation.freeholdSelfAssessed
+                      .routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad())
+                  }
             }
-          } yield
-            Redirect(controllers.routes.IndexController.onPageLoad())
-        // TODO: save result and progress to CheckYourAnswers
-
-      }
-    )
+          )
+      case Some(firstErrorFound) =>
+        logger.error(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
+        Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
+    }
   }
 
 }

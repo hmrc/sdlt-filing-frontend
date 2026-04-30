@@ -18,21 +18,25 @@ package services.taxCalculation
 
 import connectors.SdltCalculationConnector
 import controllers.routes.ReturnTaskListController
-import models.UserAnswers
+import models.PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes
+import models.{PenaltiesAndInterest, UserAnswers}
 import models.requests.DataRequest
 import models.taxCalculation.{MissingDataError, TaxCalculationFlow, TaxCalculationResult}
 import pages.taxCalculation.TaxCalculationFlowPage
+import pages.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestPage
 import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SdltCalculationService @Inject()(
-                                        connector: SdltCalculationConnector
-                                      ) extends Logging {
+                                        connector: SdltCalculationConnector,
+                                        sessionRepository: SessionRepository,
+                                      )(implicit ec: ExecutionContext) extends Logging {
 
   // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
 
@@ -47,7 +51,7 @@ class SdltCalculationService @Inject()(
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")
         connector.calculateStampDutyLandTax(request).flatMap(_.result.headOption match {
           case Some(result) => Future.successful(Right(result))
-          case None         => Future.failed(new IllegalStateException("Calculation response contained no results"))
+          case None => Future.failed(new IllegalStateException("Calculation response contained no results"))
         })
       case Left(error: MissingDataError) =>
         logger.warn(s"[SdltCalculationService][calculateStampDutyLandTax] missing session data: ${error.message}")
@@ -56,4 +60,21 @@ class SdltCalculationService @Inject()(
         logger.error(s"[SdltCalculationService][calculateStampDutyLandTax] failed to build request: ${error.message}")
         Future.failed(new IllegalStateException(error.message))
     }
+
+  // Generic method to save user choice for scenarios: 1-4
+  // TODO: might need to have a separte service for userAnswer data persistence
+  def savePenaltiesAndInterestYesNoAnswer(yesOrNoSelected: PenaltiesAndInterest)
+                                         (implicit request: DataRequest[?]): Future[Boolean] = {
+    for {
+      updatedAnswers <- Future.fromTry {
+        request
+          .userAnswers
+          .set(FreeholdSelfAssessedPenaltiesAndInterestPage,
+            yesOrNoSelected == AmountIncludePenaltiesAndInterestYes)
+      }
+      repoPersistence <- sessionRepository.set(updatedAnswers)
+    } yield
+      repoPersistence
+  }
+
 }
