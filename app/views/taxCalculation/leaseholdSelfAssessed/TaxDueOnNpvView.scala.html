@@ -29,7 +29,11 @@
     paragraphWithLink: ParagraphWithLink
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(
+    form: Form[_],
+    npv: String,
+    mode: Mode
+ )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("taxCalculation.taxDueOnNpv.title"), section = Some(messages("site.taxCalculation.caption")))) {
 
@@ -41,7 +45,7 @@
 
         @caption(messages("site.taxCalculation.caption"))
         @h1(messages("taxCalculation.taxDueOnNpv.heading"))
-        @paragraph(messages("taxCalculation.taxDueOnNpv.p1"))
+        @paragraph(messages("taxCalculation.taxDueOnNpv.p1", npv))
         @paragraphWithLink(
             messageKey = "taxCalculation.taxDueOnNpv.p2",
             linkKey    = "taxCalculation.taxDueOnNpv.p2.link",

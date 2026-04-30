@@ -48,28 +48,45 @@ class LeaseholdSdltNotCalculatedNpvDueController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(LeaseholdSelfAssessedNpvTaxPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      val npv = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.netPresentValue))
+
+      npv match {
+        case Some(npv) =>
+          val preparedForm = request.userAnswers.get(LeaseholdSelfAssessedNpvTaxPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          Ok(view(preparedForm, npv, mode))
+        case None =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
 
-      Ok(view(preparedForm, mode))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+      val npv = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.netPresentValue))
+      
+      npv match {
+        case Some(npv) =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, "", mode))), // TODO: update this with npv
+      
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseholdSelfAssessedNpvTaxPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield {
+                Redirect(navigator.nextPage(LeaseholdSelfAssessedTotalAmountDuePage, mode, updatedAnswers))
+            }
+          )
+        case None =>
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseholdSelfAssessedNpvTaxPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-              Redirect(navigator.nextPage(LeaseholdSelfAssessedTotalAmountDuePage, mode, updatedAnswers))
-          }
-      )
   }
 }
