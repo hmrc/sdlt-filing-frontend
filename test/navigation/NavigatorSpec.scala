@@ -381,6 +381,10 @@ class NavigatorSpec extends SpecBase {
         "go from TransactionRestrictionsCovenantsAndConditionsPage to DescriptionOfRestrictionsCovenantsAndConditionsPage" in { // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
           navigator.nextPage(TransactionRestrictionsCovenantsAndConditionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
         }
+
+        "go from Cap1OrNsbcPage to TransactionRulingFollowedPage" in {
+          navigator.nextPage(Cap1OrNsbcPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
+        }
       }
 
       "freehold tax calculated routes" - {

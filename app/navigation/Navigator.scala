@@ -215,7 +215,8 @@ class Navigator @Inject()() {
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
-         | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage => true
+         | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
+         | Cap1OrNsbcPage => true
 
     case _ => false
   }
@@ -269,6 +270,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
     case TransactionRestrictionsCovenantsAndConditionsPage => // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
       _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
+    case Cap1OrNsbcPage =>
+      _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

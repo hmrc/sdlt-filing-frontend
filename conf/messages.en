@@ -1476,3 +1476,11 @@ transaction.restrictionsCovenantsAndConditions.li3                              
 transaction.restrictionsCovenantsAndConditions.checkYourAnswersLabel                = Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted?
 transaction.restrictionsCovenantsAndConditions.error.required                       = Select yes if there are restrictions, covenants or conditions affecting the value of the interest transferred or granted
 transaction.restrictionsCovenantsAndConditions.change.hidden                        = if there are restrictions, covenants or conditions affecting the value of the interest transferred or granted
+
+transaction.cap1OrNsbc.title                                                        = CAP1 or NSBC - About the transaction
+transaction.cap1OrNsbc.heading                                                      = CAP1 or NSBC
+transaction.cap1OrNsbc.subHeading                                                   = Have you applied for a CAP1 or NSBC in relation to this transaction?
+transaction.cap1OrNsbc.p1                                                           = Clearance Applications Phase 1 (CAP1) and Non-Statutory Business Clearance (NSBC) service both provide formal written confirmation of HMRC’s view on how tax law applies to a specific transaction. They can help mitigate risk and provide clarity when there is uncertainty over tax obligations.
+transaction.cap1OrNsbc.error.required                                               = Select yes if you have applied for a CAP1 or NSBC in relation to this transaction
+transaction.cap1OrNsbc.checkYourAnswersLabel                                        = Have you applied for a CAP1 or NSBC in relation to the transaction?
+transaction.cap1OrNsbc.change.hidden                                                = CAP1 or NSBC
