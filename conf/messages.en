@@ -1387,10 +1387,10 @@ transaction.claimingPartialReliefAmount.error.maximum                           
 transaction.claimingPartialReliefAmount.change.hidden                               = the amount of relief being claimed on part of the land or property
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
 
-taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start – Tax calculation – Freehold calculated
-taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start – Tax calculation – Freehold not calculated
-taxCalculation.beforeStart.title.leasehold.taxCalculated                            = Before you start – Tax calculation – Leasehold calculated
-taxCalculation.beforeStart.title.leasehold.taxNotCalculated                         = Before you start – Tax calculation – Leasehold not calculated
+taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start - Tax calculation - Freehold calculated
+taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start - Tax calculation - Freehold not calculated
+taxCalculation.beforeStart.title.leasehold.taxCalculated                            = Before you start - Tax calculation - Leasehold calculated
+taxCalculation.beforeStart.title.leasehold.taxNotCalculated                         = Before you start - Tax calculation - Leasehold not calculated
 taxCalculation.beforeStart.selfAssessed.bullet                                      = your self-assessed SDLT calculation
 taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
 taxCalculation.beforeStart.p2                                                       = You will need to know:
