@@ -1465,3 +1465,14 @@ transaction.saleOfBusiness.paragraph                                            
 transaction.saleOfBusiness.checkYourAnswersLabel                                    = Is the transaction part of the sale of a business?
 transaction.saleOfBusiness.error.required                                           = Select yes if this transaction is part of the sale of a business
 transaction.saleOfBusiness.change.hidden                                            = Sale of a business
+
+transaction.restrictionsCovenantsAndConditions.title                                = Restrictions, covenants and conditions
+transaction.restrictionsCovenantsAndConditions.heading                              = Restrictions, covenants and conditions
+transaction.restrictionsCovenantsAndConditions.h2                                   = Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted?
+transaction.restrictionsCovenantsAndConditions.p1                                   = Restrictions, covenants, and conditions can affect the value of the interest transferred or granted by limiting how the land or property is used, altered, or developed.
+transaction.restrictionsCovenantsAndConditions.li1                                  = Restrictions can define how the property is used or prohibit alterations, like extensions or conversions.
+transaction.restrictionsCovenantsAndConditions.li2                                  = Covenants can dictate a property’s appearance, like exterior paint colours, types of fencing or the maintenance of a private road.
+transaction.restrictionsCovenantsAndConditions.li3                                  = Conditions can afford the vendor certain rights, like the right to buy back the land or property at a reduced rate.
+transaction.restrictionsCovenantsAndConditions.checkYourAnswersLabel                = Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted?
+transaction.restrictionsCovenantsAndConditions.error.required                       = Select yes if there are restrictions, covenants or conditions affecting the value of the interest transferred or granted
+transaction.restrictionsCovenantsAndConditions.change.hidden                        = if there are restrictions, covenants or conditions affecting the value of the interest transferred or granted
