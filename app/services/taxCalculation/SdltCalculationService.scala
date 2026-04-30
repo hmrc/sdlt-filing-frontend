@@ -19,14 +19,14 @@ package services.taxCalculation
 import connectors.SdltCalculationConnector
 import controllers.routes.ReturnTaskListController
 import models.PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes
-import models.{PenaltiesAndInterest, UserAnswers}
 import models.requests.DataRequest
 import models.taxCalculation.{MissingDataError, TaxCalculationFlow, TaxCalculationResult}
+import models.{PenaltiesAndInterest, UserAnswers}
 import pages.taxCalculation.TaxCalculationFlowPage
-import pages.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestPage
 import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import queries.Settable
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,8 +38,8 @@ class SdltCalculationService @Inject()(
                                         sessionRepository: SessionRepository,
                                       )(implicit ec: ExecutionContext) extends Logging {
 
+  // TODO: we need to log reason for redirect ??
   // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
-
   def whenInFlow(expected: TaxCalculationFlow)(onAllowed: => Result)(implicit request: DataRequest[?]): Result =
     if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) onAllowed
     else Redirect(ReturnTaskListController.onPageLoad())
@@ -61,20 +61,17 @@ class SdltCalculationService @Inject()(
         Future.failed(new IllegalStateException(error.message))
     }
 
-  // Generic method to save user choice for scenarios: 1-4
-  // TODO: might need to have a separte service for userAnswer data persistence
-  def savePenaltiesAndInterestYesNoAnswer(yesOrNoSelected: PenaltiesAndInterest)
-                                         (implicit request: DataRequest[?]): Future[Boolean] = {
+  def savePenaltiesAndInterestYesNoAnswer(key: Settable[Boolean],
+                                          value : PenaltiesAndInterest)
+                                            (implicit request: DataRequest[?]): Future[Boolean] = {
+    val valueToSave: Boolean = value == AmountIncludePenaltiesAndInterestYes
     for {
       updatedAnswers <- Future.fromTry {
-        request
-          .userAnswers
-          .set(FreeholdSelfAssessedPenaltiesAndInterestPage,
-            yesOrNoSelected == AmountIncludePenaltiesAndInterestYes)
+        request.userAnswers.set(key, valueToSave)
       }
-      repoPersistence <- sessionRepository.set(updatedAnswers)
+      persistenceResult <- sessionRepository.set(updatedAnswers)
     } yield
-      repoPersistence
+      persistenceResult
   }
 
 }

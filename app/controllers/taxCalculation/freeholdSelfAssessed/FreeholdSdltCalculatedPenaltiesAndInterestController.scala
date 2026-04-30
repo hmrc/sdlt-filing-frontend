@@ -31,7 +31,7 @@ import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerCompon
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedAmountWithPenaltiesView
-
+import pages.taxCalculation.freeholdSelfAssessed.*
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -74,7 +74,9 @@ class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
             {
               yesOrNoSelected =>
                 sdltCalculationService
-                  .savePenaltiesAndInterestYesNoAnswer(yesOrNoSelected)
+                  .savePenaltiesAndInterestYesNoAnswer(
+                    key = FreeholdSelfAssessedPenaltiesAndInterestPage,
+                    value = yesOrNoSelected)
                   .map { _ =>
                     logger.info(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] userAnswer saved :: redirecting")
                     Redirect(controllers.taxCalculation.freeholdSelfAssessed
@@ -83,7 +85,7 @@ class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
             }
           )
       case Some(firstErrorFound) =>
-        logger.error(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
+        logger.error(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] invalid flow state: $firstErrorFound")
         Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
     }
   }
