@@ -69,13 +69,13 @@ class LeaseholdSdltNotCalculatedNpvDueController @Inject()(
     implicit request =>
 
       val npv = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.netPresentValue))
-      
+
       npv match {
         case Some(npv) =>
           form.bindFromRequest().fold(
             formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, "", mode))), // TODO: update this with npv
-      
+              Future.successful(BadRequest(view(formWithErrors, npv, mode))),
+
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseholdSelfAssessedNpvTaxPage, value))
