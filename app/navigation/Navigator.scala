@@ -319,7 +319,8 @@ class Navigator @Inject()() {
   }
 
   private def leaseholdSelfAssessedRoutes(page: Page): UserAnswers => Call = page match {
-    case LeaseholdSelfAssessedPremiumPayableTaxPage    => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdSelfAssessedPremiumPayableTaxPage    =>
+      _ => controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSdltNotCalculatedNpvDueController.onPageLoad(NormalMode)
     case LeaseholdSelfAssessedNpvTaxPage               => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case LeaseholdSelfAssessedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case LeaseholdSelfAssessedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
