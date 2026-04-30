@@ -215,7 +215,7 @@ class Navigator @Inject()() {
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
-         | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage => true
+         | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage => true
 
     case _ => false
   }
@@ -265,8 +265,10 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
     case SaleOfBusinessPage => //TODO - DTR-3450 - SPRINT 14 update to what is in included in the sale tr-12a
       _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
-    case TransactionRulingFollowedPage => // TODO DTR-3473 SPRINT 14: Redirect to Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted? - tr-14
-      _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
+    case TransactionRulingFollowedPage =>
+      _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
+    case TransactionRestrictionsCovenantsAndConditionsPage => // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
+      _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
