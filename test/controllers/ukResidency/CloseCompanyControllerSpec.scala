@@ -18,14 +18,15 @@ package controllers.ukResidency
 
 import base.SpecBase
 import constants.FullReturnConstants
+import constants.FullReturnConstants.minimalFullReturn
 import controllers.routes
 import forms.ukResidency.CloseCompanyFormProvider
 import models.{CheckMode, FullReturn, NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -37,44 +38,58 @@ import scala.concurrent.Future
 class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new CloseCompanyFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val closeCompanyRoute = controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode).url
+  lazy val closeCompanyRoute: String =
+    controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode).url
 
-  private lazy val testStorn = "TESTSTORN"
+  lazy val closeCompanyCheckRoute: String =
+    controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
 
-  val userAnswersWithCompanyPurchaser: UserAnswers =
-    UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
-      .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
+  private lazy val fullReturnComplete = FullReturnConstants.completeFullReturn
+  private lazy val testStorn          = "TESTSTORN"
 
-  private def fullReturnWithCompanyPurchaser: FullReturn =
-    FullReturnConstants.completeFullReturn.copy(
-      purchaser = Some(Seq(FullReturnConstants.completePurchaser3)),
-      land = Some(Seq(FullReturnConstants.completeLandAdditional))
-    )
-
-  val userAnswersWithIndividualPurchaser: UserAnswers =
+  val userAnswersResidentialIndividual: UserAnswers =
     UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
       .copy(fullReturn = Some(fullReturnWithIndividualPurchaser))
 
+  val userAnswersAdditionalResidentialCompany: UserAnswers =
+    UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithCompanyPurchaser))
+
+  val userAnswersNonResidential: UserAnswers =
+    UserAnswers(id = userAnswersId, returnId = Some("RRF-2024-001"), storn = testStorn)
+      .copy(fullReturn = Some(fullReturnWithPurchaserNonResidential))
+
   private def fullReturnWithIndividualPurchaser: FullReturn =
-    FullReturnConstants.completeFullReturn.copy(
-      purchaser = Some(Seq(FullReturnConstants.completePurchaser3.copy(isCompany = Some("NO")))),
-      land = Some(Seq(FullReturnConstants.completeLandAdditional))
+    fullReturnComplete.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser1)),
+      land      = Some(Seq(FullReturnConstants.completeLand))
     )
-  
+
+  private def fullReturnWithCompanyPurchaser: FullReturn =
+    fullReturnComplete.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser3)),
+      land      = Some(Seq(FullReturnConstants.completeLandAdditional))
+    )
+
+  private def fullReturnWithPurchaserNonResidential: FullReturn =
+    minimalFullReturn.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser2)),
+      land      = Some(Seq(FullReturnConstants.completeLandNonResidential))
+    )
+
   "CloseCompany Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when purchaser is a company" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithCompanyPurchaser)).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany)).build()
 
       running(application) {
         val request = FakeRequest(GET, closeCompanyRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[CloseCompanyView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[CloseCompanyView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -83,29 +98,109 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = userAnswersWithCompanyPurchaser.set(CloseCompanyPage, true).success.value
+      val userAnswers = userAnswersAdditionalResidentialCompany.set(CloseCompanyPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, closeCompanyRoute)
-
-        val view = application.injector.instanceOf[CloseCompanyView]
-
-        val result = route(application, request).value
+        val view    = application.injector.instanceOf[CloseCompanyView]
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
       }
     }
-    "must redirect to JourneyRecovery when purchaser is not a company on GET" in {
+
+    "must auto-skip and redirect to Crown Employment Relief on a GET when purchaser is an individual" in {
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithIndividualPurchaser)).build()
+        applicationBuilder(userAnswers = Some(userAnswersResidentialIndividual)).build()
 
       running(application) {
-
         val request = FakeRequest(GET, closeCompanyRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to Return Task List on a GET when property type is non-residential" in {
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersNonResidential)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, closeCompanyRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Crown Employment Relief in NormalMode when yes is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, closeCompanyRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to Crown Employment Relief in NormalMode when no is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, closeCompanyRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to Check Your Answers in CheckMode when yes is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, closeCompanyCheckRoute)
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -115,14 +210,36 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to CrownEmploymentRelief when yes is submitted" in {
+    "must redirect to Check Your Answers in CheckMode when no is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, closeCompanyCheckRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must save the CloseCompanyPage answer when yes is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -134,48 +251,22 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode).url
-        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(mockSessionRepository).set(uaCaptor.capture())
+
+        val uaCaptor: org.mockito.ArgumentCaptor[UserAnswers] =
+          org.mockito.ArgumentCaptor.forClass(classOf[UserAnswers])
+        org.mockito.Mockito.verify(mockSessionRepository).set(uaCaptor.capture())
+
         uaCaptor.getValue.get(CloseCompanyPage) mustBe Some(true)
       }
     }
 
-    "must redirect to CrownEmploymentRelief in CheckMode when yes is submitted" in {
+    "must save the CloseCompanyPage answer when no is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val checkModeRoute = controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
-
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, checkModeRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url
-      }
-    }
-
-    "must redirect to CYA and remove CrownEmploymentReliefPage when no is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = emptyUserAnswers.set(CrownEmploymentReliefPage, true).success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -187,22 +278,21 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
-        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(mockSessionRepository).set(uaCaptor.capture())
-        uaCaptor.getValue.get(CrownEmploymentReliefPage) mustBe None
+
+        val uaCaptor: org.mockito.ArgumentCaptor[UserAnswers] =
+          org.mockito.ArgumentCaptor.forClass(classOf[UserAnswers])
+        org.mockito.Mockito.verify(mockSessionRepository).set(uaCaptor.capture())
+
+        uaCaptor.getValue.get(CloseCompanyPage) mustBe Some(false)
       }
     }
 
-    "must redirect to CYA and remove CrownEmploymentReliefPage in CheckMode when no is submitted" in {
+    "must not clear CrownEmploymentReliefPage when no is submitted in CheckMode" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val checkModeRoute = controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
-
-      val userAnswers = emptyUserAnswers.set(CrownEmploymentReliefPage, true).success.value
+      val userAnswers = userAnswersAdditionalResidentialCompany.set(CrownEmploymentReliefPage, true).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -211,22 +301,25 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, checkModeRoute)
+          FakeRequest(POST, closeCompanyCheckRoute)
             .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
-        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(mockSessionRepository).set(uaCaptor.capture())
-        uaCaptor.getValue.get(CrownEmploymentReliefPage) mustBe None
+
+        val uaCaptor: org.mockito.ArgumentCaptor[UserAnswers] =
+          org.mockito.ArgumentCaptor.forClass(classOf[UserAnswers])
+        org.mockito.Mockito.verify(mockSessionRepository).set(uaCaptor.capture())
+
+        uaCaptor.getValue.get(CrownEmploymentReliefPage) mustBe Some(true)
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswersAdditionalResidentialCompany)).build()
 
       running(application) {
         val request =
@@ -234,10 +327,8 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[CloseCompanyView]
-
-        val result = route(application, request).value
+        val view      = application.injector.instanceOf[CloseCompanyView]
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
@@ -250,8 +341,7 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, closeCompanyRoute)
-
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url

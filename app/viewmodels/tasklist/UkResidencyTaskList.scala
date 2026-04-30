@@ -42,9 +42,9 @@ object UkResidencyTaskList {
 
     val url =
       residency match {
-        case Some(_) =>
-          controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
-        case None =>
+        case Some(residency) if residency.isNonUkResidents.isDefined =>
+            controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        case _ =>
           controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
       }
 

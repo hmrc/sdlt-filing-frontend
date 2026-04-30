@@ -17,7 +17,8 @@
 package viewmodels.checkAnswers.ukResidency
 
 import base.SpecBase
-import models.CheckMode
+import constants.FullReturnConstants
+import models.{CheckMode, FullReturn}
 import pages.ukResidency.CloseCompanyPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
@@ -25,72 +26,109 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class CloseCompanySummarySpec extends SpecBase {
 
+  private val fullReturnWithCompany: FullReturn =
+    FullReturnConstants.completeFullReturn.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser3))
+    )
+
+  private val fullReturnWithIndividual: FullReturn =
+    FullReturnConstants.completeFullReturn.copy(
+      purchaser = Some(Seq(FullReturnConstants.completePurchaser1))
+    )
+
   "CloseCompanySummary" - {
 
-    "when close company answer is present" - {
+    "when at least one purchaser is a company" - {
 
-      "must return a SummaryListRow with 'yes' text and change link" in {
+      "and the close company answer is true" - {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        "must return Some SummaryListRow with 'yes' text and change link" in {
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-          val userAnswers =
-            emptyUserAnswers.set(CloseCompanyPage, true).success.value
+          running(application) {
+            implicit val msgs: Messages = messages(application)
 
-          val result = CloseCompanySummary.row(userAnswers).value
+            val userAnswers = emptyUserAnswers
+              .copy(fullReturn = Some(fullReturnWithCompany))
+              .set(CloseCompanyPage, true).success.value
 
-          result.key.content.asHtml.toString mustEqual msgs("ukResidency.closeCompany.checkYourAnswersLabel")
+            val result = CloseCompanySummary.row(userAnswers).value
 
-          val contentString =
-            result.value.content.asInstanceOf[Text].asHtml.toString
+            result.key.content.asHtml.toString mustEqual msgs("ukResidency.closeCompany.checkYourAnswersLabel")
 
-          contentString mustEqual msgs("site.yes")
+            result.value.content.asInstanceOf[Text].asHtml.toString mustEqual msgs("site.yes")
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual
-            controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
+            result.actions.get.items.size mustEqual 1
+            result.actions.get.items.head.href mustEqual
+              controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
 
-          result.actions.get.items.head.content.asHtml.toString must include(msgs("site.change"))
+            result.actions.get.items.head.content.asHtml.toString must include(msgs("site.change"))
 
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual
-            msgs("ukResidency.closeCompany.change.hidden")
+            result.actions.get.items.head.visuallyHiddenText.value mustEqual
+              msgs("ukResidency.closeCompany.change.hidden")
+          }
         }
       }
 
-      "must return a SummaryListRow with 'no' text and change link" in {
+      "and the close company answer is false" - {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        "must return Some SummaryListRow with 'no' text and change link" in {
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-          val userAnswers =
-            emptyUserAnswers.set(CloseCompanyPage, false).success.value
+          running(application) {
+            implicit val msgs: Messages = messages(application)
 
-          val result = CloseCompanySummary.row(userAnswers).value
+            val userAnswers = emptyUserAnswers
+              .copy(fullReturn = Some(fullReturnWithCompany))
+              .set(CloseCompanyPage, false).success.value
 
-          result.key.content.asHtml.toString mustEqual msgs("ukResidency.closeCompany.checkYourAnswersLabel")
+            val result = CloseCompanySummary.row(userAnswers).value
 
-          val contentString =
-            result.value.content.asInstanceOf[Text].asHtml.toString
+            result.key.content.asHtml.toString mustEqual msgs("ukResidency.closeCompany.checkYourAnswersLabel")
 
-          contentString mustEqual msgs("site.no")
+            result.value.content.asInstanceOf[Text].asHtml.toString mustEqual msgs("site.no")
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual
-            controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
+            result.actions.get.items.size mustEqual 1
+            result.actions.get.items.head.href mustEqual
+              controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
 
-          result.actions.get.items.head.content.asHtml.toString must include(msgs("site.change"))
+            result.actions.get.items.head.content.asHtml.toString must include(msgs("site.change"))
 
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual
-            msgs("ukResidency.closeCompany.change.hidden")
+            result.actions.get.items.head.visuallyHiddenText.value mustEqual
+              msgs("ukResidency.closeCompany.change.hidden")
+          }
+        }
+      }
+
+      "and the close company answer is not present" - {
+
+        "must return Some SummaryListRow with a missing link" in {
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+          running(application) {
+            implicit val msgs: Messages = messages(application)
+
+            val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithCompany))
+
+            val result = CloseCompanySummary.row(userAnswers).value
+
+            result.key.content.asHtml.toString mustEqual msgs("ukResidency.closeCompany.checkYourAnswersLabel")
+
+            val valueHtml = result.value.content.asHtml.toString
+            valueHtml must include(controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url)
+            valueHtml must include(msgs("ukResidency.closeCompany.missing"))
+            valueHtml must include("govuk-link")
+
+            result.actions mustBe None
+          }
         }
       }
     }
 
-    "when close company answer is not present" - {
+    "when no purchaser is a company" - {
 
       "must return None" in {
 
@@ -99,9 +137,27 @@ class CloseCompanySummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = CloseCompanySummary.row(emptyUserAnswers)
+          val userAnswers = emptyUserAnswers
+            .copy(fullReturn = Some(fullReturnWithIndividual))
+            .set(CloseCompanyPage, true).success.value
 
-          result mustBe None
+          CloseCompanySummary.row(userAnswers) mustBe None
+        }
+      }
+    }
+
+    "when fullReturn is missing" - {
+
+      "must return None" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers.set(CloseCompanyPage, true).success.value
+
+          CloseCompanySummary.row(userAnswers) mustBe None
         }
       }
     }

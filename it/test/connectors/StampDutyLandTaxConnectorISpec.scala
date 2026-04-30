@@ -30,6 +30,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.*
 import utils.WireMockHelper
+import models.transaction.*
 
 class StampDutyLandTaxConnectorISpec
   extends AnyFreeSpec
@@ -3002,10 +3003,7 @@ class StampDutyLandTaxConnectorISpec
         )
       )
 
-      val createResidencyReturnJson = Json.obj(
-        "residencyResourceRef" -> "RES-001",
-        "residencyId" -> "1"
-      )
+      val createResidencyReturnJson = Json.obj("created" -> true)
 
       "must return CreateResidencyReturn when the stub returns 200 OK" in {
         server.stubFor(
@@ -3021,8 +3019,7 @@ class StampDutyLandTaxConnectorISpec
         val request = createResidencyRequestJson.as[ukResidency.CreateResidencyRequest]
         val result = connector.createResidency(request).futureValue
 
-        result.residencyResourceRef mustBe "RES-001"
-        result.residencyId mustBe "1"
+        result.created mustBe true
 
         server.verify(
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/residency"))
@@ -3495,5 +3492,257 @@ class StampDutyLandTaxConnectorISpec
       }
     }
 
+    "updateTransaction()" - {
+
+      val updateTransactionRequestJson = Json.obj(
+        "storn" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "transaction" -> Json.obj(
+          "claimingRelief" -> "NO",
+          "totalConsider" -> "250000",
+          "considerCash" -> "YES",
+          "contractDate" -> "2025-01-15",
+          "effectiveDate" -> "2025-02-01",
+          "transactionDescription" -> "RESIDENTIAL"
+        )
+      )
+
+      val updateTransactionReturnJson = Json.obj("updated" -> true)
+
+      "must return UpdateTransactionReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateTransactionReturnJson.toString())
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        val result = connector.updateTransaction(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+        )
+      }
+
+      "must return UpdateTransactionReturn for minimal request (empty transaction payload)" in {
+        val minimalRequestJson = Json.obj(
+          "storn" -> "STORN12345",
+          "returnResourceRef" -> "RRF-2024-001",
+          "transaction" -> Json.obj()
+        )
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateTransactionReturnJson.toString())
+            )
+        )
+
+        val request = minimalRequestJson.as[transaction.UpdateTransactionRequest]
+        val result = connector.updateTransaction(request).futureValue
+
+        result.updated mustBe true
+      }
+
+      "must send correct request body with storn and returnResourceRef" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateTransactionReturnJson.toString())
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        connector.updateTransaction(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .withRequestBody(matchingJsonPath("$.storn", equalTo("STORN12345")))
+            .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
+            .withRequestBody(matchingJsonPath("$.transaction.totalConsider", equalTo("250000")))
+            .withRequestBody(matchingJsonPath("$.transaction.contractDate", equalTo("2025-01-15")))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        val result = connector.updateTransaction(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        val result = connector.updateTransaction(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        val result = connector.updateTransaction(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateTransactionReturnJson.toString())
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        connector.updateTransaction(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+        )
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateTransactionReturnJson.toString())
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        connector.updateTransaction(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .withHeader("Content-Type", containing("application/json"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        val result = connector.updateTransaction(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = updateTransactionRequestJson.as[transaction.UpdateTransactionRequest]
+        val result = connector.updateTransaction(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle request with all transaction fields populated" in {
+        val completeTransactionJson = Json.obj(
+          "storn" -> "STORN12345",
+          "returnResourceRef" -> "RRF-2024-001",
+          "transaction" -> Json.obj(
+            "claimingRelief" -> "YES",
+            "reliefAmount" -> "5000",
+            "reliefReason" -> "CHARITY",
+            "reliefSchemeNumber" -> "CIS123456",
+            "isLinked" -> "NO",
+            "totalConsider" -> "250000",
+            "considerCash" -> "YES",
+            "contractDate" -> "2025-01-15",
+            "effectiveDate" -> "2025-02-01",
+            "transactionDescription" -> "RESIDENTIAL",
+            "newTransactionDescription" -> "RESIDENTIAL",
+            "isLandExchanged" -> "NO",
+            "agreedDeferPay" -> "NO",
+            "isPartOfSaleOfBusiness" -> "NO"
+          )
+        )
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateTransactionReturnJson.toString())
+            )
+        )
+
+        val request = completeTransactionJson.as[transaction.UpdateTransactionRequest]
+        val result = connector.updateTransaction(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/transaction"))
+            .withRequestBody(matchingJsonPath("$.transaction.claimingRelief", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.transaction.totalConsider", equalTo("250000")))
+            .withRequestBody(matchingJsonPath("$.transaction.transactionDescription", equalTo("RESIDENTIAL")))
+        )
+      }
+    }
   }
 }

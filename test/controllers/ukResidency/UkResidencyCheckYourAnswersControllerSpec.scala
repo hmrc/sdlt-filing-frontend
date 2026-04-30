@@ -263,8 +263,17 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
 
       "must include close company row when close company answer is present" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(closeCompany = true))
-          .set(CloseCompanyPage, true).success.value
+        val fullReturnWithCompany = completeFullReturn.copy(
+          purchaser = Some(Seq(constants.FullReturnConstants.completePurchaser3))
+        )
+
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
+          fullReturn = Some(fullReturnWithCompany),
+          data = ukResidencyData(closeCompany = true)
+        ).set(CloseCompanyPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -305,17 +314,17 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
       "must call createResidency and redirect to ReturnTaskList when no residencyID exists" in {
         val userAnswers = UserAnswers(
-          id         = userAnswersId,
-          storn      = "TESTSTORN",
-          returnId   = Some("12345"),
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
           fullReturn = Some(completeFullReturn.copy(residency = None)),
-          data       = ukResidencyData(nonUkResident = true, crownEmployment = true)
+          data = ukResidencyData(nonUkResident = true, crownEmployment = true)
         ).set(NonUkResidentPurchaserPage, true).success.value
           .set(CrownEmploymentReliefPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockBackendConnector.createResidency(any())(any(), any()))
-          .thenReturn(Future.successful(CreateResidencyReturn(residencyResourceRef = "RES-001", residencyId = "1")))
+          .thenReturn(Future.successful(CreateResidencyReturn(created = true)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -332,6 +341,33 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
+      "must redirect back to UkResidencyCheckYourAnswers when createResidency returns created=false" in {
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(residency = None)),
+          data = ukResidencyData()
+        ).set(NonUkResidentPurchaserPage, true).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.createResidency(any())(any(), any()))
+          .thenReturn(Future.successful(CreateResidencyReturn(created = false)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        }
+      }
+      
       "must call updateResidency and redirect to ReturnTaskList when residencyID already exists" in {
         val userAnswers = UserAnswers(
           id         = userAnswersId,
@@ -362,34 +398,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           verify(mockBackendConnector, times(1)).updateResidency(any())(any(), any())
         }
       }
-
-      "must redirect back to UkResidencyCheckYourAnswers when createResidency returns empty residencyId" in {
-        val userAnswers = UserAnswers(
-          id         = userAnswersId,
-          storn      = "TESTSTORN",
-          returnId   = Some("12345"),
-          fullReturn = Some(completeFullReturn.copy(residency = None)),
-          data       = ukResidencyData()
-        ).set(NonUkResidentPurchaserPage, true).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-        when(mockBackendConnector.createResidency(any())(any(), any()))
-          .thenReturn(Future.successful(CreateResidencyReturn(residencyResourceRef = "RES-001", residencyId = "")))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
-        }
-      }
-
+      
       "must redirect back to UkResidencyCheckYourAnswers when updateResidency returns false" in {
         val userAnswers = UserAnswers(
           id         = userAnswersId,

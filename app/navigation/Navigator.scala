@@ -194,9 +194,7 @@ class Navigator @Inject()() {
   }
 
   private def isResidencySection(page: Page): Boolean = page match {
-
     case NonUkResidentPurchaserPage | CloseCompanyPage | CrownEmploymentReliefPage  => true
-
     case _ => false
   }
 
@@ -205,10 +203,8 @@ class Navigator @Inject()() {
       _ => controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode)
     case CloseCompanyPage =>
       _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
-
     case CrownEmploymentReliefPage =>
       _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
-
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

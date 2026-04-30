@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.ukResidency
 
 import base.SpecBase
 import models.CheckMode
-import pages.ukResidency.CrownEmploymentReliefPage
+import pages.ukResidency.{CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
@@ -27,58 +27,116 @@ class CrownEmploymentReliefSummarySpec extends SpecBase {
 
   "CrownEmploymentReliefSummary" - {
 
-    "when CrownEmploymentRelief has been answered" - {
+    "when the purchaser is a non-UK resident" - {
 
-      "must return a SummaryListRow with 'yes' text and change link" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      "and CrownEmploymentRelief has been answered" - {
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+        "must return Some SummaryListRow with 'yes' text and change link" in {
 
-          val userAnswers = emptyUserAnswers.set(CrownEmploymentReliefPage, true).success.value
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-          val result = CrownEmploymentReliefSummary.row(userAnswers).value
+          running(application) {
+            implicit val msgs: Messages = messages(application)
 
-          result.key.content.asHtml.toString() mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
+            val userAnswers = emptyUserAnswers
+              .set(NonUkResidentPurchaserPage, true).success.value
+              .set(CrownEmploymentReliefPage, true).success.value
 
-          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+            val result = CrownEmploymentReliefSummary.row(userAnswers).value
 
-          contentString mustEqual msgs("site.yes")
+            result.key.content.asHtml.toString mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("ukResidency.crownEmploymentRelief.change.hidden")
+            result.value.content.asInstanceOf[Text].asHtml.toString mustEqual msgs("site.yes")
+
+            result.actions.get.items.size mustEqual 1
+            result.actions.get.items.head.href mustEqual
+              controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url
+
+            result.actions.get.items.head.content.asHtml.toString must include(msgs("site.change"))
+
+            result.actions.get.items.head.visuallyHiddenText.value mustEqual
+              msgs("ukResidency.crownEmploymentRelief.change.hidden")
+          }
+        }
+
+        "must return Some SummaryListRow with 'no' text and change link" in {
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+          running(application) {
+            implicit val msgs: Messages = messages(application)
+
+            val userAnswers = emptyUserAnswers
+              .set(NonUkResidentPurchaserPage, true).success.value
+              .set(CrownEmploymentReliefPage, false).success.value
+
+            val result = CrownEmploymentReliefSummary.row(userAnswers).value
+
+            result.key.content.asHtml.toString mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
+
+            result.value.content.asInstanceOf[Text].asHtml.toString mustEqual msgs("site.no")
+
+            result.actions.get.items.size mustEqual 1
+            result.actions.get.items.head.href mustEqual
+              controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url
+
+            result.actions.get.items.head.content.asHtml.toString must include(msgs("site.change"))
+
+            result.actions.get.items.head.visuallyHiddenText.value mustEqual
+              msgs("ukResidency.crownEmploymentRelief.change.hidden")
+          }
         }
       }
 
-      "must return a SummaryListRow with 'no' text and change link" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      "and CrownEmploymentRelief has not been answered" - {
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+        "must return Some SummaryListRow with a missing link" in {
 
-          val userAnswers = emptyUserAnswers.set(CrownEmploymentReliefPage, false).success.value
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-          val result = CrownEmploymentReliefSummary.row(userAnswers).value
+          running(application) {
+            implicit val msgs: Messages = messages(application)
 
-          result.key.content.asHtml.toString() mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
+            val userAnswers = emptyUserAnswers
+              .set(NonUkResidentPurchaserPage, true).success.value
 
-          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+            val result = CrownEmploymentReliefSummary.row(userAnswers).value
 
-          contentString mustEqual msgs("site.no")
+            result.key.content.asHtml.toString mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("ukResidency.crownEmploymentRelief.change.hidden")
+            val valueHtml = result.value.content.asHtml.toString
+            valueHtml must include(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url)
+            valueHtml must include(msgs("ukResidency.crownEmploymentRelief.missing"))
+            valueHtml must include("govuk-link")
+
+            result.actions mustBe None
+          }
         }
       }
     }
 
-    "when CrownEmploymentRelief has not been answered" - {
+    "when the purchaser is not a non-UK resident" - {
 
       "must return None" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(NonUkResidentPurchaserPage, false).success.value
+            .set(CrownEmploymentReliefPage, true).success.value
+
+          CrownEmploymentReliefSummary.row(userAnswers) mustBe None
+        }
+      }
+    }
+
+    "when NonUkResidentPurchaserPage has not been answered" - {
+
+      "must return None" in {
+
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {

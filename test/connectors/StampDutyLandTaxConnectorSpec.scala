@@ -3812,10 +3812,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           isCrownRelief = "NO"
         )
       )
-      val expectedResult = models.ukResidency.CreateResidencyReturn(
-        residencyResourceRef = "RES-001",
-        residencyId = "1"
-      )
+      val expectedResult = models.ukResidency.CreateResidencyReturn(created = true)
 
       "must return CreateResidencyReturn when request is successful" in {
         val mockHttpClient = mock[HttpClientV2]
@@ -3834,8 +3831,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val result = connector.createResidency(testRequest).futureValue
 
         result mustBe expectedResult
-        result.residencyResourceRef mustBe "RES-001"
-        result.residencyId mustBe "1"
+        result.created mustBe true
       }
 
       "must handle Left response with UpstreamErrorResponse (400)" in {

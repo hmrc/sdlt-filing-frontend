@@ -17,15 +17,31 @@
 package utils
 
 import models.FullReturn
+import java.time.LocalDate
+import scala.util.Try
 
 object PropertyTypeHelper {
 
   private val ResidentialPropertyTypes: Set[String] =
     Set("01", "04")
+  
+  private val SdltCutoff = LocalDate.of(2021, 4, 1)
 
-  def isResidentialProperty(fullReturn: FullReturn): Boolean =
-    fullReturn.land
-      .flatMap(_.headOption)
+  def isResidentialProperty(fullReturn: FullReturn): Boolean = {
+    val hasResidentialLand = fullReturn.land
+      .getOrElse(Seq.empty)
       .flatMap(_.propertyType)
       .exists(ResidentialPropertyTypes.contains)
+
+    val effectiveDateOk = fullReturn.transaction
+      .flatMap(_.effectiveDate)
+      .filter(_.trim.nonEmpty) match {
+      case None => true
+      case Some(str) =>
+        Try(LocalDate.parse(str.trim)).toOption
+          .exists(_.isAfter(SdltCutoff))
+    }
+
+    hasResidentialLand && effectiveDateOk
+  }
 }

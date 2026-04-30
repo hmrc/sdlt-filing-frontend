@@ -17,7 +17,7 @@
 package services.land
 
 import models.land.LandTypeOfProperty
-import models.{NormalMode, UserAnswers, Land}
+import models.{Land, NormalMode, UserAnswers}
 import pages.land.LandTypeOfPropertyPage
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -38,7 +38,7 @@ class LandService {
 
     }
   }
-
+  
   def getMainLand(userAnswers: UserAnswers): Option[Land] = {
     val mainLandId: Option[String] = userAnswers.fullReturn
       .flatMap(_.returnInfo)
