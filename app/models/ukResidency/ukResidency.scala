@@ -49,8 +49,7 @@ object CreateResidencyRequest {
 }
 
 case class CreateResidencyReturn(
-                                  residencyResourceRef: String,
-                                  residencyId: String
+                                  created: Boolean
                                 )
 
 object CreateResidencyReturn {

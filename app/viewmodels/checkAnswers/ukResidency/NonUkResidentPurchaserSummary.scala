@@ -19,25 +19,37 @@ package viewmodels.checkAnswers.ukResidency
 import models.{CheckMode, UserAnswers}
 import pages.ukResidency.NonUkResidentPurchaserPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object NonUkResidentPurchaserSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+
     answers.get(NonUkResidentPurchaserPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel",
-          value = ValueViewModel(value),
+          key     = messages("ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel"),
+          value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("ukResidency.nonUkResidentPurchaser.change.hidden"))
           )
         )
+    }.getOrElse {
+
+      val value = ValueViewModel(
+        HtmlContent(
+          s"""<a href="${controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("ukResidency.nonUkResidentPurchaser.missing")}</a>""")
+      )
+
+      SummaryListRowViewModel(
+        key   = messages("ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel"),
+        value = value
+      )
     }
 }

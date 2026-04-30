@@ -36,17 +36,13 @@ class NonUkResidentPurchaserSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers =
-            emptyUserAnswers.set(NonUkResidentPurchaserPage, true).success.value
+          val userAnswers = emptyUserAnswers.set(NonUkResidentPurchaserPage, true).success.value
 
-          val result = NonUkResidentPurchaserSummary.row(userAnswers).value
+          val result = NonUkResidentPurchaserSummary.row(userAnswers)
 
           result.key.content.asHtml.toString mustEqual msgs("ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel")
 
-          val contentString =
-            result.value.content.asInstanceOf[Text].asHtml.toString
-
-          contentString mustEqual msgs("site.yes")
+          result.value.content.asInstanceOf[Text].asHtml.toString mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual
@@ -66,17 +62,13 @@ class NonUkResidentPurchaserSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers =
-            emptyUserAnswers.set(NonUkResidentPurchaserPage, false).success.value
+          val userAnswers = emptyUserAnswers.set(NonUkResidentPurchaserPage, false).success.value
 
-          val result = NonUkResidentPurchaserSummary.row(userAnswers).value
+          val result = NonUkResidentPurchaserSummary.row(userAnswers)
 
           result.key.content.asHtml.toString mustEqual msgs("ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel")
 
-          val contentString =
-            result.value.content.asInstanceOf[Text].asHtml.toString
-
-          contentString mustEqual msgs("site.no")
+          result.value.content.asInstanceOf[Text].asHtml.toString mustEqual msgs("site.no")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual
@@ -92,7 +84,7 @@ class NonUkResidentPurchaserSummarySpec extends SpecBase {
 
     "when non UK resident purchaser answer is not present" - {
 
-      "must return None" in {
+      "must return a SummaryListRow with a missing link" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -101,7 +93,14 @@ class NonUkResidentPurchaserSummarySpec extends SpecBase {
 
           val result = NonUkResidentPurchaserSummary.row(emptyUserAnswers)
 
-          result mustBe None
+          result.key.content.asHtml.toString mustEqual msgs("ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel")
+
+          val valueHtml = result.value.content.asHtml.toString
+          valueHtml must include(controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url)
+          valueHtml must include(msgs("ukResidency.nonUkResidentPurchaser.missing"))
+          valueHtml must include("govuk-link")
+
+          result.actions mustBe None
         }
       }
     }

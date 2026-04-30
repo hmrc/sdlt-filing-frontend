@@ -19,19 +19,18 @@ package controllers.ukResidency
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.{ReturnVersionUpdateRequest, UserAnswers}
-import models.land.LandTypeOfProperty
 import models.ukResidency.{CreateResidencyRequest, UpdateResidencyRequest}
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.*
 import repositories.SessionRepository
-import services.land.LandService
-import services.purchaser.PurchaserService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ukResidency.{CloseCompanySummary, CrownEmploymentReliefSummary, NonUkResidentPurchaserSummary}
 import viewmodels.govuk.summarylist.*
 import views.html.ukResidency.UkResidencyCheckYourAnswersView
+import utils.PropertyTypeHelper.isResidentialProperty
+
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,20 +43,14 @@ class UkResidencyCheckYourAnswersController @Inject()(
   requireData: DataRequiredAction,
   sessionRepository: SessionRepository,
   backendConnector: StampDutyLandTaxConnector,
-  landService: LandService,
-  purchaserService: PurchaserService,
   val controllerComponents: MessagesControllerComponents,
   view: UkResidencyCheckYourAnswersView
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val propertyType = landService.getMainLand(request.userAnswers)
-        .flatMap(_.propertyType)
-        .flatMap(LandTypeOfProperty.enumerable.withName)
-
-      propertyType match {
-        case Some(LandTypeOfProperty.Residential | LandTypeOfProperty.Additional) =>
+      request.userAnswers.fullReturn match {
+        case Some(fullReturn) if isResidentialProperty(fullReturn) =>
           sessionRepository.get(request.userAnswers.id).flatMap(handleSessionResult)
         case _ =>
           Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
@@ -77,7 +70,10 @@ class UkResidencyCheckYourAnswersController @Inject()(
       case None =>
         Future.successful(Redirect(controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad()))
       case Some(residency) =>
-        val isCompany = purchaserService.getMainPurchaser(userAnswers).flatMap(_.isCompany).exists(_.equalsIgnoreCase("YES"))
+        val isCompany: Boolean = userAnswers.fullReturn
+            .flatMap(_.purchaser)
+            .getOrElse(Seq.empty)
+            .exists(_.isCompany.exists(_.equalsIgnoreCase("YES")))
         (for {
           ua  <- userAnswers.set(NonUkResidentPurchaserPage, residency.isNonUkResidents.exists(_.equalsIgnoreCase("YES")))
           ua2 <- if (isCompany) ua.set(CloseCompanyPage, residency.isCloseCompany.exists(_.equalsIgnoreCase("YES"))) else Success(ua)
@@ -112,7 +108,7 @@ class UkResidencyCheckYourAnswersController @Inject()(
       createResidencyRequest <- CreateResidencyRequest.from(userAnswers)
       createResidencyReturn  <- backendConnector.createResidency(createResidencyRequest)
     } yield {
-      if (createResidencyReturn.residencyId.nonEmpty) {
+      if (createResidencyReturn.created) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
@@ -135,10 +131,10 @@ class UkResidencyCheckYourAnswersController @Inject()(
     }
   }
 
-  private def buildSummaryList(userAnswers: UserAnswers)(implicit request: RequestHeader) =
+  private def buildSummaryList(userAnswers: UserAnswers)(implicit messages: Messages) =
     SummaryListViewModel(
       rows = Seq(
-        NonUkResidentPurchaserSummary.row(userAnswers),
+        Some(NonUkResidentPurchaserSummary.row(userAnswers)),
         CloseCompanySummary.row(userAnswers),
         CrownEmploymentReliefSummary.row(userAnswers)
       ).flatten

@@ -92,6 +92,7 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
   )
 
   "CrownEmploymentRelief Controller" - {
+    
 
     "must return OK and the correct view for a GET when land property type 'Residential'" in {
 
@@ -176,7 +177,7 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to UK Residency CYA for a GET when land property type is 'Non-residential'" in {
+    "must redirect to Return Task List for a GET when land property type is 'Non-residential'" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturnNonResidential))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -187,11 +188,11 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
-    "must redirect to UK Residency CYA for a GET when land property type is 'Mixed'" in {
+    "must redirect to Return Task List for a GET when land property type is 'Mixed'" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturnMixed))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -202,11 +203,11 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
-    "must redirect to UK Residency CYA when land is missing" in {
+    "must redirect to Return Task List when land is missing" in {
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturnNoLand))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -217,7 +218,7 @@ class CrownEmploymentReliefControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
