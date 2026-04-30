@@ -16,10 +16,12 @@
 
 package utils
 
-import play.api.i18n.Lang
+import play.api.i18n.{Lang, Messages}
 
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import scala.util.Try
 
 object DateTimeFormats {
 
@@ -36,4 +38,9 @@ object DateTimeFormats {
 
   val dateTimeHintFormat: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d M yyyy")
+
+  def asDate(s: String)(implicit messages: Messages): String = {
+    implicit val lang: Lang = messages.lang
+    Try(LocalDate.parse(s)).toOption.map(_.format(DateTimeFormats.dateTimeFormat())).getOrElse(s)
+  }
 }

@@ -18,12 +18,15 @@ package utils
 
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.i18n.Lang
-import utils.DateTimeFormats.dateTimeFormat
+import play.api.i18n.{Lang, Messages}
+import play.api.test.Helpers.stubMessages
+import utils.DateTimeFormats.{asDate, dateTimeFormat, dateTimeHintFormat}
 
 import java.time.LocalDate
 
 class DateTimeFormatsSpec extends AnyFreeSpec with Matchers {
+
+  private implicit val messages: Messages = stubMessages()
 
   ".dateTimeFormat" - {
 
@@ -43,6 +46,28 @@ class DateTimeFormatsSpec extends AnyFreeSpec with Matchers {
       val formatter = dateTimeFormat()(Lang("de"))
       val result = LocalDate.of(2023, 1, 1).format(formatter)
       result mustEqual "1 January 2023"
+    }
+  }
+
+  ".dateTimeHintFormat" - {
+
+    "renders single-digit day and month without padding" in {
+      LocalDate.of(2024, 3, 7).format(dateTimeHintFormat) mustEqual "7 3 2024"
+    }
+  }
+
+  ".asDate" - {
+
+    "formats an ISO date string into the long English form" in {
+      asDate("2024-07-15") mustEqual "15 July 2024"
+    }
+
+    "returns the input unchanged when it isn't a parseable date" in {
+      asDate("not-a-date") mustEqual "not-a-date"
+    }
+
+    "passes empty strings straight through" in {
+      asDate("") mustBe ""
     }
   }
 }
