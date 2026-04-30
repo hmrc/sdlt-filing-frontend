@@ -389,6 +389,10 @@ class NavigatorSpec extends SpecBase {
         "go from Cap1OrNsbcPage to TransactionRulingFollowedPage" in {
           navigator.nextPage(Cap1OrNsbcPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
         }
+
+        "go from TotalAssetsConsiderationPage to CAP1-or-NSBC page" in {
+          navigator.nextPage(TotalAssetsConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
+        }
       }
 
       "freehold tax calculated routes" - {
