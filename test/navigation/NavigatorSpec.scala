@@ -377,9 +377,9 @@ class NavigatorSpec extends SpecBase {
         "go from SaleOfBusinessPage to What is included in the sale page" in {
           navigator.nextPage(SaleOfBusinessPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
         }
-        // TODO DTR-3458: Redirect to tr-12b
-        "go from TransactionSaleOfBusinessAssetsPage to tr-12b" in {
-          navigator.nextPage(TransactionSaleOfBusinessAssetsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
+
+        "go from TransactionSaleOfBusinessAssetsPage to TotalAssetsConsiderationPage" in {
+          navigator.nextPage(TransactionSaleOfBusinessAssetsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TotalAssetsConsiderationController.onPageLoad(NormalMode)
         }
 
         "go from TransactionRestrictionsCovenantsAndConditionsPage to DescriptionOfRestrictionsCovenantsAndConditionsPage" in { // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
@@ -392,6 +392,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from IsLandOrPropertyExchangedPage to exchange or part exchange Address Lookup integration" in { // TODO DTR-3489 - SRINT-15 - redirect to exchange or part exchange Address Lookup integration
           navigator.nextPage(IsLandOrPropertyExchangedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+        }
+
+        "go from TotalAssetsConsiderationPage to CAP1-or-NSBC page" in {
+          navigator.nextPage(TotalAssetsConsiderationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
         }
       }
 

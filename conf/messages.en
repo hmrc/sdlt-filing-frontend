@@ -1502,3 +1502,16 @@ transaction.isLandOrPropertyExchanged.paragraph                                 
 transaction.isLandOrPropertyExchanged.checkYourAnswersLabel                         = Is any land or property being exchanged or part exchanged as part of this transaction?
 transaction.isLandOrPropertyExchanged.error.required                                = Select yes if any land or property is being exchanged or part exchanged as part of this transaction
 transaction.isLandOrPropertyExchanged.change.hidden                                 = Is any land or property being exchanged or part exchanged as part of this transaction?
+
+transaction.totalAssetsConsideration.title                                          = Total consideration for all assets included in the sale of the business
+transaction.totalAssetsConsideration.heading                                        = Total consideration for all assets included in the sale of the business
+transaction.totalAssetsConsideration.checkYourAnswersLabel                          = The total consideration for the items included
+transaction.totalAssetsConsideration.error.required                                 = Enter the total amount of consideration for the sale of the business, in pounds
+transaction.totalAssetsConsideration.p1                                             = The total consideration must be apportioned on a just and reasonable basis, specifically for the land and items that are legally considered part of the land (fixtures).
+transaction.totalAssetsConsideration.h2                                             = What is the total amount of consideration for the sale of the business apportioned to these items?
+transaction.totalAssetsConsideration.hint                                           = Enter the value in whole pounds only, for example £200,000
+transaction.totalAssetsConsideration.error.invalidNumeric                           = The total amount of consideration for the sale of the business must only include numbers 0 to 9 and commas
+transaction.totalAssetsConsideration.error.invalidWholeNumber                       = Enter the total amount of consideration for the sale of the business in whole pounds
+transaction.totalAssetsConsideration.error.maximum                                  = The total amount of consideration for the sale of the business must be equal to or less than £9,999,999,999
+transaction.totalAssetsConsideration.change.hidden                                  = Total consideration for all assets included in the sale of the business
+
