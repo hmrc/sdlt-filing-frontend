@@ -1447,9 +1447,9 @@ taxCalculation.beforeStart.bullet3                                              
 taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
 taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
 
-taxCalculation.taxDueOnNpv.title                                                    = What is the tax due on the NPV? – Tax calculation – Leasehold not calculated
+taxCalculation.taxDueOnNpv.title                                                    = What is the tax due on the NPV? - Tax calculation - Leasehold not calculated
 taxCalculation.taxDueOnNpv.heading                                                  = What is the tax due on the NPV?
-taxCalculation.taxDueOnNpv.p1                                                       = You entered the NPV as: {0}
+taxCalculation.taxDueOnNpv.p1                                                       = You entered the NPV as: £{0}
 taxCalculation.taxDueOnNpv.p2                                                       = You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
 taxCalculation.taxDueOnNpv.p2.suffix                                                = use the SDLT calculator to work out the correct amount (opens in new tab)
 taxCalculation.taxDueOnNpv.p2.link                                                  = #
