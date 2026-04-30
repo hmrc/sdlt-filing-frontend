@@ -17,14 +17,14 @@
 package controllers.taxCalculation
 
 import controllers.actions.*
-import models.taxCalculation.MissingDataError
+import controllers.routes.*
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CalculationResultHelper
-import controllers.routes.*
+import views.html.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltBreakdownView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -36,6 +36,7 @@ class FreeholdCalculatedSdltBreakdown @Inject()(
                                        requireData: DataRequiredAction,
                                        sdltCalculationService: SdltCalculationService,
                                        val controllerComponents: MessagesControllerComponents,
+                                       view: FreeholdCalculatedSdltBreakdownView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -43,9 +44,9 @@ class FreeholdCalculatedSdltBreakdown @Inject()(
       sdltCalculationService
         .calculateStampDutyLandTax(request.userAnswers)
         .map {
-          case Right(result) => CalculationResultHelper.toViewModel(result)
+          case Right(result) => Ok(view(CalculationResultHelper.toViewModel(result, request.userAnswers)))
           case Left(err)     =>
-            logger.warn(s"Required field missing: ${err.message}")
+            logger.warn(s"[FreeholdCalculatedSdltBreakdown] Required field missing: ${err.message}")
             Redirect(ReturnTaskListController.onPageLoad())
         }
   }

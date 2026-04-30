@@ -1400,6 +1400,40 @@ taxCalculation.beforeStart.bullet3                                              
 taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
 taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
 
+taxCalculation.calculation.title                                                    = SDLT calculation
+taxCalculation.calculation.heading                                                  = SDLT calculation
+taxCalculation.calculation.rates.caption                                            = SDLT rates
+taxCalculation.calculation.rates.column.description                                 = Description
+taxCalculation.calculation.rates.column.rate                                        = Rate
+taxCalculation.calculation.rates.column.sdltDue                                     = SDLT due
+taxCalculation.calculation.rates.premium                                            = Premium
+taxCalculation.calculation.rates.upTo                                               = Up to {0}
+taxCalculation.calculation.rates.aboveAndUpTo                                       = Above {0} and up to {1}
+taxCalculation.calculation.rates.aboveOpen                                          = Above {0}+
+taxCalculation.calculation.totalSdltDue                                             = Total SDLT due
+
+taxCalculation.calculation.taxCalculation.heading                                   = Tax calculation
+taxCalculation.calculation.taxCalculation.effectiveDate                             = Effective date of transaction
+taxCalculation.calculation.taxCalculation.totalConsideration                        = Total consideration including VAT
+taxCalculation.calculation.taxCalculation.reliefClaimed                             = Relief claimed?
+taxCalculation.calculation.taxCalculation.sdltDue                                   = SDLT due
+
+taxCalculation.calculation.rateCard.heading                                         = Rate card
+taxCalculation.calculation.rateCard.transactionType                                 = Type of transaction
+taxCalculation.calculation.rateCard.claimingRelief                                  = Are you claiming relief?
+taxCalculation.calculation.rateCard.propertyType                                    = Type of property
+taxCalculation.calculation.rateCard.linked                                          = Is this transaction linked to any others?
+
+taxCalculation.calculation.transactionType.F                                        = F - Conveyance
+taxCalculation.calculation.transactionType.L                                        = L - Grant of lease
+taxCalculation.calculation.transactionType.A                                        = A - Conveyance and lease
+taxCalculation.calculation.transactionType.O                                        = O - Other
+
+taxCalculation.calculation.propertyType.01                                          = 01 - Residential
+taxCalculation.calculation.propertyType.02                                          = 02 - Mixed
+taxCalculation.calculation.propertyType.03                                          = 03 - Non-residential
+taxCalculation.calculation.propertyType.04                                          = 04 - Additional residential
+
 transaction.charityRegisteredNumber.title                                           = What is the charity’s registered number?
 transaction.charityRegisteredNumber.heading                                         = What is the charity’s registered number?
 transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity Registered Number
