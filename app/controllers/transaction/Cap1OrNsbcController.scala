@@ -17,37 +17,37 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.SaleOfBusinessFormProvider
+import forms.transaction.Cap1OrNsbcFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.SaleOfBusinessPage
+import pages.transaction.Cap1OrNsbcPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.SaleOfBusinessView
+import views.html.transaction.Cap1OrNsbcView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SaleOfBusinessController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: SaleOfBusinessFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: SaleOfBusinessView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class Cap1OrNsbcController @Inject()(
+                                       override val messagesApi: MessagesApi,
+                                       sessionRepository: SessionRepository,
+                                       navigator: Navigator,
+                                       identify: IdentifierAction,
+                                       getData: DataRetrievalAction,
+                                       requireData: DataRequiredAction,
+                                       formProvider: Cap1OrNsbcFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       view: Cap1OrNsbcView
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(SaleOfBusinessPage) match {
+      val preparedForm = request.userAnswers.get(Cap1OrNsbcPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,13 +64,14 @@ class SaleOfBusinessController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SaleOfBusinessPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(Cap1OrNsbcPage, value))
+            _ <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value)
-              Redirect(navigator.nextPage(SaleOfBusinessPage, mode, updatedAnswers))
-            else
-              Redirect(controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode))
+            if (value) {
+              Redirect(navigator.nextPage(Cap1OrNsbcPage, mode, updatedAnswers))
+            } else {
+              Redirect(controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode))
+            }
           }
       )
   }

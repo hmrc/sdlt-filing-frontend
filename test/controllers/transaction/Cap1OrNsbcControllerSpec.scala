@@ -18,43 +18,41 @@ package controllers.transaction
 
 import base.SpecBase
 import controllers.routes
-import forms.transaction.SaleOfBusinessFormProvider
+import forms.transaction.Cap1OrNsbcFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.SaleOfBusinessPage
+import pages.transaction.Cap1OrNsbcPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.transaction.SaleOfBusinessView
+import views.html.transaction.Cap1OrNsbcView
 
 import scala.concurrent.Future
 
-class SaleOfBusinessControllerSpec extends SpecBase with MockitoSugar {
+class Cap1OrNsbcControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new SaleOfBusinessFormProvider()
+  lazy val cap1OrNsbcRoute = controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode).url
+
+  val formProvider = new Cap1OrNsbcFormProvider()
   val form = formProvider()
 
-  lazy val saleOfBusinessRoute = controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode).url
-
-  "SaleOfBusiness Controller" - {
+  "Cap1OrNsbc Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, saleOfBusinessRoute)
-
+        val request = FakeRequest(GET, cap1OrNsbcRoute)
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SaleOfBusinessView]
+        val view = application.injector.instanceOf[Cap1OrNsbcView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -63,15 +61,12 @@ class SaleOfBusinessControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(SaleOfBusinessPage, true).success.value
-
+      val userAnswers = emptyUserAnswers.set(Cap1OrNsbcPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, saleOfBusinessRoute)
-
-        val view = application.injector.instanceOf[SaleOfBusinessView]
-
+        val request = FakeRequest(GET, cap1OrNsbcRoute)
+        val view = application.injector.instanceOf[Cap1OrNsbcView]
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -79,10 +74,9 @@ class SaleOfBusinessControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when 'Yes' is submitted" in {
+    "must redirect to the next page when true is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -95,9 +89,8 @@ class SaleOfBusinessControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, saleOfBusinessRoute)
+          FakeRequest(POST, cap1OrNsbcRoute)
             .withFormUrlEncodedBody(("value", "true"))
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -105,28 +98,24 @@ class SaleOfBusinessControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to CAP1 or NSBC page when 'No' is submitted" in {
+    "must redirect to RestrictionsCovenantsAndConditions page when false is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, saleOfBusinessRoute)
+          FakeRequest(POST, cap1OrNsbcRoute)
             .withFormUrlEncodedBody(("value", "false"))
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode).url
       }
     }
 
@@ -136,13 +125,10 @@ class SaleOfBusinessControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, saleOfBusinessRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[SaleOfBusinessView]
-
+          FakeRequest(POST, cap1OrNsbcRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val view = application.injector.instanceOf[Cap1OrNsbcView]
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -155,8 +141,7 @@ class SaleOfBusinessControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, saleOfBusinessRoute)
-
+        val request = FakeRequest(GET, cap1OrNsbcRoute)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -170,9 +155,8 @@ class SaleOfBusinessControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, saleOfBusinessRoute)
+          FakeRequest(POST, cap1OrNsbcRoute)
             .withFormUrlEncodedBody(("value", "true"))
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
