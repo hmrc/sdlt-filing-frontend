@@ -1451,7 +1451,7 @@ taxCalculation.taxDueOnNpv.title                                                
 taxCalculation.taxDueOnNpv.heading                                                  = What is the tax due on the NPV?
 taxCalculation.taxDueOnNpv.p1                                                       = You entered the NPV as: £{0}
 taxCalculation.taxDueOnNpv.p2                                                       = You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-taxCalculation.taxDueOnNpv.p2.suffix                                                = use the SDLT calculator to work out the correct amount (opens in new tab)
+taxCalculation.taxDueOnNpv.p2.linkText                                              = use the SDLT calculator to work out the correct amount (opens in new tab)
 taxCalculation.taxDueOnNpv.p2.link                                                  = #
 taxCalculation.taxDueOnNpv.label                                                    = #
 taxCalculation.taxDueOnNpv.hint                                                     = Enter the amount in whole pounds only, for example £10,000
