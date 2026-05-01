@@ -18,8 +18,10 @@ package controllers.taxCalculation.freeholdSelfAssessed
 
 import base.SpecBase
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
+import models.UserAnswers
 import models.taxCalculation.TaxCalculationFlow
 import pages.taxCalculation.TaxCalculationFlowPage
+import play.api.Application
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedAmountWithPenaltiesView
@@ -28,13 +30,17 @@ class FreeholdSdltCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
 
   private val form = new PenaltiesAndInterestFormProvider()()
 
+  trait Fixture {
+    val answersFreeHold: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
+      TaxCalculationFlow.FreeholdSelfAssessed).success.value
+    val answersLeasehold: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
+      TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+  }
+
   "PenaltiesAndInterestControllerSpec" - {
 
-    "return OK and the correct view for a GET" in {
-
-      // TODO: set expected answers min
-      val answers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdSelfAssessed).success.value
-      val application = applicationBuilder(userAnswers = Some(answers)).build()
+    "return OK for GET :: correct flow state" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHold)).build()
 
       running(application) {
         val request = FakeRequest(GET,
@@ -47,12 +53,68 @@ class FreeholdSdltCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form)(request, messages(application)).toString
       }
+    }
+
+    "return SEE_OTHER for GET:: incorrect flow state" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersLeasehold)).build()
+
+      running(application) {
+        val request = FakeRequest(GET,
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
 
     }
 
-    // TODO: implement redirect test
-    "ridirect" in {
+    "return OK for POST : valid formData" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHold)).build()
 
+      running(application) {
+        val request = FakeRequest(POST,
+          controllers.taxCalculation
+            .freeholdSelfAssessed.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad().url)
+          .withFormUrlEncodedBody(("value", "penaltiesAndInterestYes")) // or penaltiesAndInterestNo
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.taxCalculation.freeholdSelfAssessed
+          .routes.FreeholdSdltCalculatedCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "return BAD_REQUEST for POST : inValid formData" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHold)).build()
+
+      running(application) {
+        val request = FakeRequest(POST,
+          controllers.taxCalculation
+            .freeholdSelfAssessed.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad().url)
+          .withFormUrlEncodedBody(("value", "wrongFormData")) // or penaltiesAndInterestNo
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "return SEE_OTHER for POST : valid formData but inValidFlow" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersLeasehold)).build()
+
+      running(application) {
+        val request = FakeRequest(POST,
+          controllers.taxCalculation
+            .freeholdSelfAssessed.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad().url)
+          .withFormUrlEncodedBody(("value", "penaltiesAndInterestNo"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+      }
     }
   }
 

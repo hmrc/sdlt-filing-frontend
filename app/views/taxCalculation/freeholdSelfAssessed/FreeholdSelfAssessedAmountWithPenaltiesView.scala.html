@@ -32,7 +32,9 @@
 
     @caption(messages("site.taxCalculation.caption"))
 
-    @formHelper(action = routes.NoReturnReferenceController.onSubmit(), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.taxCalculation
+            .freeholdSelfAssessed.routes
+            .FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @govukRadios(
             RadiosViewModel(
@@ -44,7 +46,6 @@
 
         @govukButton(
             ButtonViewModel(messages("taxCalculation.penaltiesAndInterest.button"))
-            .asLink("#")
             .withCssClass("govuk-!-margin-top-2")
         )
 

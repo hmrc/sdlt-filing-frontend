@@ -17,21 +17,23 @@
 package controllers.taxCalculation.freeholdSelfAssessed
 
 import com.google.inject.Singleton
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes.ReturnTaskListController
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.PenaltiesAndInterest
 import models.requests.DataRequest
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
+import pages.taxCalculation.freeholdSelfAssessed.*
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggerUtil.*
 import views.html.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedAmountWithPenaltiesView
-import pages.taxCalculation.freeholdSelfAssessed.*
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,7 +59,7 @@ class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
         case None =>
           Ok(view(form))
         case Some(firstErrorFound) =>
-          logger.error(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
+          logError(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
           Redirect(ReturnTaskListController.onPageLoad())
       }
   }
@@ -69,7 +71,7 @@ class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              logger.error(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] form submitting error")
+              logError(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] form submitting error")
               Future.successful(BadRequest(view(formWithErrors))),
             {
               yesOrNoSelected =>
@@ -78,14 +80,14 @@ class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
                     key = FreeholdSelfAssessedPenaltiesAndInterestPage,
                     value = yesOrNoSelected)
                   .map { _ =>
-                    logger.info(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] userAnswer saved :: redirecting")
+                    logInfo(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] userAnswer saved :: redirecting")
                     Redirect(controllers.taxCalculation.freeholdSelfAssessed
-                      .routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad())
+                      .routes.FreeholdSdltCalculatedCheckYourAnswersController.onPageLoad())
                   }
             }
           )
       case Some(firstErrorFound) =>
-        logger.error(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] invalid flow state: $firstErrorFound")
+        logError(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] invalid flow state: $firstErrorFound")
         Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
     }
   }

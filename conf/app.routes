@@ -529,9 +529,9 @@ GET         /tax-calculation/freehold-calculated/before-you-start               
 #POST       /tax-calculation/freehold-calculated/self-assessment                controllers.FreeholdSdltCalculatedSelfAssessmentController.onSubmit()
 #GET        /tax-calculation/freehold-calculated/total-amount-due               controllers.FreeholdSdltCalculatedTotalDueController.onPageLoad()
 #POST       /tax-calculation/freehold-calculated/total-amount-due               controllers.FreeholdSdltCalculatedTotalDueController.onSubmit()
-#GET        /tax-calculation/freehold-calculated/penalties-and-interest-charges controllers.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad()
-#POST       /tax-calculation/freehold-calculated/penalties-and-interest-charges controllers.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit()
-#GET        /tax-calculation/freehold-calculated/check-your-answers             controllers.FreeholdSdltCalculatedCheckYourAnswersController.onPageLoad()
+GET        /tax-calculation/freehold-calculated/penalties-and-interest-charges controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad()
+POST       /tax-calculation/freehold-calculated/penalties-and-interest-charges controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit()
+GET        /tax-calculation/freehold-calculated/check-your-answers             controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedCheckYourAnswersController.onPageLoad()
 #POST       /tax-calculation/freehold-calculated/check-your-answers             controllers.FreeholdSdltCalculatedCheckYourAnswersController.onSubmit()
 
 # ---- Tax calculation: Flow B (Freehold - Service cannot perform calculation) -------------------------------------
@@ -542,7 +542,7 @@ GET         /tax-calculation/freehold-not-calculated/before-you-start           
 #POST       /tax-calculation/freehold-not-calculated/self-assessment                controllers.FreeholdSdltNotCalculatedSelfAssessmentController.onSubmit()
 #GET        /tax-calculation/freehold-not-calculated/total-amount-due               controllers.FreeholdSdltNotCalculatedTotalDueController.onPageLoad()
 #POST       /tax-calculation/freehold-not-calculated/total-amount-due               controllers.FreeholdSdltNotCalculatedTotalDueController.onSubmit()
-GET         /tax-calculation/freehold-not-calculated/penalties-and-interest-charges  controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad()
+#GET        /tax-calculation/freehold-not-calculated/penalties-and-interest-charges controllers.FreeholdSdltNotCalculatedPenaltiesAndInterestController.onPageLoad()
 #POST       /tax-calculation/freehold-not-calculated/penalties-and-interest-charges controllers.FreeholdSdltNotCalculatedPenaltiesAndInterestController.onSubmit()
 #GET        /tax-calculation/freehold-not-calculated/check-your-answers             controllers.FreeholdSdltNotCalculatedCheckYourAnswersController.onPageLoad()
 #POST       /tax-calculation/freehold-not-calculated/check-your-answers             controllers.FreeholdSdltNotCalculatedCheckYourAnswersController.onSubmit()
