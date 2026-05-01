@@ -216,7 +216,7 @@ class Navigator @Inject()() {
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
          | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
-         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage => true
+         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage  | TotalAssetsConsiderationPage => true
 
     case _ => false
   }
@@ -274,6 +274,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case TransactionSaleOfBusinessAssetsPage => // TODO DTR-3458: Redirect to tr-12b
       _ => controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
+    case TotalAssetsConsiderationPage =>
+      _ => controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
