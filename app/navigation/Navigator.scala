@@ -194,9 +194,7 @@ class Navigator @Inject()() {
   }
 
   private def isResidencySection(page: Page): Boolean = page match {
-
     case NonUkResidentPurchaserPage | CloseCompanyPage | CrownEmploymentReliefPage  => true
-
     case _ => false
   }
 
@@ -205,10 +203,8 @@ class Navigator @Inject()() {
       _ => controllers.ukResidency.routes.CloseCompanyController.onPageLoad(NormalMode)
     case CloseCompanyPage =>
       _ => controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(NormalMode)
-
     case CrownEmploymentReliefPage =>
       _ => controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
-
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -219,7 +215,8 @@ class Navigator @Inject()() {
          | TransactionVatAmountPage | TransactionFormsOfConsiderationPage | AddRegisteredCharityNumberPage | TransactionLinkedTransactionsPage
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
-         | ConsiderationsAffectedUncertainPage => true
+         | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
+         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage => true
 
     case _ => false
   }
@@ -261,12 +258,22 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode)
     case CharityRegisteredNumberPage =>
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
-    case TransactionDeferringPaymentPage => // TODO DTR-3446: Redirect to Is this transaction a sale of a business? - tr-12
-      _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
-    case TransactionUseOfLandOrPropertyPage => // TODO DTR-3446: Redirect to Is this transaction part of the sale of a business? - tr-12
-      _ => controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode)
+    case TransactionDeferringPaymentPage =>
+      _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
+    case TransactionUseOfLandOrPropertyPage =>
+      _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
     case ConsiderationsAffectedUncertainPage =>
       _ => controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(NormalMode)
+    case SaleOfBusinessPage =>
+      _ => controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
+    case TransactionRulingFollowedPage =>
+      _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
+    case TransactionRestrictionsCovenantsAndConditionsPage => // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
+      _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
+    case Cap1OrNsbcPage =>
+      _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
+    case TransactionSaleOfBusinessAssetsPage => // TODO DTR-3458: Redirect to tr-12b
+      _ => controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

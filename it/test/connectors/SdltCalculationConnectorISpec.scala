@@ -41,7 +41,11 @@ class SdltCalculationConnectorISpec
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .configure("sdltc-frontend.host" -> s"http://localhost:${server.port()}")
+      .configure(
+        "microservice.services.sdltc-frontend.protocol" -> "http",
+        "microservice.services.sdltc-frontend.host"     -> "localhost",
+        "microservice.services.sdltc-frontend.port"     -> server.port()
+      )
       .build()
 
   private lazy val connector = app.injector.instanceOf[SdltCalculationConnector]

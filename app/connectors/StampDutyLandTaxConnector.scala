@@ -33,6 +33,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps, UpstreamErr
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.transaction.*
 
 class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
                                           val config: FrontendAppConfig)
@@ -463,6 +464,24 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       }
       .recover {
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteResidency]")
+      }
+  }
+
+  def updateTransaction(updateTransactionRequest: UpdateTransactionRequest)(implicit hc: HeaderCarrier,
+                                                                            request: Request[_]): Future[UpdateTransactionReturn] = {
+    http.post(url"$activeBase/filing/update/transaction")
+      .withBody(Json.toJson(updateTransactionRequest))
+      .execute[Either[UpstreamErrorResponse, UpdateTransactionReturn]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][updateTransaction] update transaction request: $updateTransactionRequest, response: $resp")
+          Future.successful(resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateTransaction]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateTransaction]")
       }
   }
   

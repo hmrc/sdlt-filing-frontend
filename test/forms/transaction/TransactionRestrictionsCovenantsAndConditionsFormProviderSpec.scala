@@ -19,15 +19,12 @@ package forms.transaction
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ConsiderationsAffectedUncertainProviderSpec extends BooleanFieldBehaviours {
+class TransactionRestrictionsCovenantsAndConditionsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "transaction.considerationsAffectedUncertain.error.required"
+  val requiredKey = "transaction.restrictionsCovenantsAndConditions.error.required"
   val invalidKey = "error.boolean"
 
-  val fieldName = "value"
-
-
-  val form = new ConsiderationsAffectedUncertainFormProvider()()
+  val form = new TransactionRestrictionsCovenantsAndConditionsFormProvider()()
 
   ".value" - {
 

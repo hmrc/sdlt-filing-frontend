@@ -18,16 +18,16 @@ package controllers.ukResidency
 
 import controllers.actions.*
 import forms.ukResidency.CloseCompanyFormProvider
-import models.{CheckMode, Mode}
+import models.Mode
 import navigation.Navigator
 import play.api.data.Form
-import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage}
-import scala.util.Success
+import pages.ukResidency.CloseCompanyPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ukResidency.CloseCompanyView
+import utils.PropertyTypeHelper.isResidentialProperty
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,23 +46,31 @@ class CloseCompanyController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      request.userAnswers.fullReturn match {
+        case Some(fullReturn) if isResidentialProperty(fullReturn) =>
+          val isCompany: Boolean = fullReturn.purchaser
+            .getOrElse(Seq.empty)
+            .exists(_.isCompany.contains("YES"))
 
-      val isCompany: Boolean = request.userAnswers.fullReturn.flatMap(_.purchaser)
-        .flatMap(_.headOption).flatMap(_.isCompany).contains("YES")
+          if (isCompany) {
+            val preparedForm = request.userAnswers.get(CloseCompanyPage) match {
+              case None => form
+              case Some(value) => form.fill(value)
+            }
+            Future.successful(Ok(view(preparedForm, mode)))
+          } else {
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(CloseCompanyPage, false))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(mode))
+          }
 
-      if (isCompany) {
-        val preparedForm = request.userAnswers.get(CloseCompanyPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Ok(view(preparedForm, mode))
-      } else {
-        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+        case _ =>
+          Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
   }
-
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
@@ -71,23 +79,10 @@ class CloseCompanyController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          val cleanedAnswers =
-            if !value then request.userAnswers.remove(CrownEmploymentReliefPage)
-            else Success(request.userAnswers)
-
           for {
-            cleaned        <- Future.fromTry(cleanedAnswers)
-            updatedAnswers <- Future.fromTry(cleaned.set(CloseCompanyPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(CloseCompanyPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (value) {
-              if (mode == CheckMode && updatedAnswers.get(CrownEmploymentReliefPage).isEmpty)
-                Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode))
-              else
-                Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
-            } else
-              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
-          }
+          } yield Redirect(navigator.nextPage(CloseCompanyPage, mode, updatedAnswers))
       )
   }
 }

@@ -1387,10 +1387,10 @@ transaction.claimingPartialReliefAmount.error.maximum                           
 transaction.claimingPartialReliefAmount.change.hidden                               = the amount of relief being claimed on part of the land or property
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
 
-taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start – Tax calculation – Freehold calculated
-taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start – Tax calculation – Freehold not calculated
-taxCalculation.beforeStart.title.leasehold.taxCalculated                            = Before you start – Tax calculation – Leasehold calculated
-taxCalculation.beforeStart.title.leasehold.taxNotCalculated                         = Before you start – Tax calculation – Leasehold not calculated
+taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start - Tax calculation - Freehold calculated
+taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start - Tax calculation - Freehold not calculated
+taxCalculation.beforeStart.title.leasehold.taxCalculated                            = Before you start - Tax calculation - Leasehold calculated
+taxCalculation.beforeStart.title.leasehold.taxNotCalculated                         = Before you start - Tax calculation - Leasehold not calculated
 taxCalculation.beforeStart.selfAssessed.bullet                                      = your self-assessed SDLT calculation
 taxCalculation.beforeStart.p1                                                       = In this section, you need to provide information about your tax calculation.
 taxCalculation.beforeStart.p2                                                       = You will need to know:
@@ -1463,3 +1463,51 @@ transaction.considerationsAffectedUncertain.p1                                  
 transaction.considerationsAffectedUncertain.p2                                      = Uncertain future events are typically defined as:
 transaction.considerationsAffectedUncertain.bullet1                                 = a contingent consideration, where a fixed sum is only paid, or not paid, when the uncertain future event occurs
 transaction.considerationsAffectedUncertain.bullet2                                 = a dependent consideration, where the amount or value of a consideration depends on the uncertain future event
+
+transaction.rulingFollowed.title                                                    = Have you followed the ruling under CAP1 or NSBC when completing this return?
+transaction.rulingFollowed.heading                                                  = Have you followed the ruling under CAP1 or NSBC when completing this return?
+transaction.rulingFollowed.yes                                                      = Yes
+transaction.rulingFollowed.no                                                       = No
+transaction.rulingFollowed.RulingNotReceived                                        = Ruling not yet received
+transaction.rulingFollowed.checkYourAnswersLabel                                    = Have you followed the ruling under CAP1 or NSBC when completing this return?
+transaction.rulingFollowed.hint                                                     = If you’ve received a ruling, confirm that you have followed that ruling when completing this return
+transaction.rulingFollowed.error.required                                           = Select yes or no if you have received the ruling under CAP1 or NSBC, or select ‘Ruling not yet received’
+transaction.rulingFollowed.change.hidden                                            = if you have followed the ruling under CAP1 or NSBC when completing this return
+
+transaction.transactionSaleOfBusinessAssets.title                                   = What is included in the sale of the business?
+transaction.transactionSaleOfBusinessAssets.heading                                 = What is included in the sale of the business?
+transaction.transactionSaleOfBusinessAssets.hint                                    = Select all chargeable and non-chargeable assets that are included in this transaction
+transaction.transactionSaleOfBusinessAssets.stock                                   = Stock
+transaction.transactionSaleOfBusinessAssets.goodwill                                = Goodwill
+transaction.transactionSaleOfBusinessAssets.chattelsAndMoveables                    = Chattels and moveables
+transaction.transactionSaleOfBusinessAssets.others                                  = Others
+transaction.transactionSaleOfBusinessAssets.checkYourAnswersLabel                   = What is included in the sale of the business?
+transaction.transactionSaleOfBusinessAssets.error.required                          = Select at least one type of asset that is included in the sale of the business
+transaction.transactionSaleOfBusinessAssets.change.hidden                           = What is included in the sale of the business?
+
+transaction.saleOfBusiness.title                                                    = Sale of a business
+transaction.saleOfBusiness.heading                                                  = Sale of a business
+transaction.saleOfBusiness.subheading                                               = Is this transaction part of the sale of a business?
+transaction.saleOfBusiness.paragraph                                                = If a transaction is part of the sale of a business, the land or property is separated from other assets that may not be liable for SDLT, like raw materials and machinery.
+transaction.saleOfBusiness.checkYourAnswersLabel                                    = Is the transaction part of the sale of a business?
+transaction.saleOfBusiness.error.required                                           = Select yes if this transaction is part of the sale of a business
+transaction.saleOfBusiness.change.hidden                                            = Sale of a business
+
+transaction.restrictionsCovenantsAndConditions.title                                = Restrictions, covenants and conditions
+transaction.restrictionsCovenantsAndConditions.heading                              = Restrictions, covenants and conditions
+transaction.restrictionsCovenantsAndConditions.h2                                   = Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted?
+transaction.restrictionsCovenantsAndConditions.p1                                   = Restrictions, covenants, and conditions can affect the value of the interest transferred or granted by limiting how the land or property is used, altered, or developed.
+transaction.restrictionsCovenantsAndConditions.li1                                  = Restrictions can define how the property is used or prohibit alterations, like extensions or conversions.
+transaction.restrictionsCovenantsAndConditions.li2                                  = Covenants can dictate a property’s appearance, like exterior paint colours, types of fencing or the maintenance of a private road.
+transaction.restrictionsCovenantsAndConditions.li3                                  = Conditions can afford the vendor certain rights, like the right to buy back the land or property at a reduced rate.
+transaction.restrictionsCovenantsAndConditions.checkYourAnswersLabel                = Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted?
+transaction.restrictionsCovenantsAndConditions.error.required                       = Select yes if there are restrictions, covenants or conditions affecting the value of the interest transferred or granted
+transaction.restrictionsCovenantsAndConditions.change.hidden                        = if there are restrictions, covenants or conditions affecting the value of the interest transferred or granted
+
+transaction.cap1OrNsbc.title                                                        = CAP1 or NSBC - About the transaction
+transaction.cap1OrNsbc.heading                                                      = CAP1 or NSBC
+transaction.cap1OrNsbc.subHeading                                                   = Have you applied for a CAP1 or NSBC in relation to this transaction?
+transaction.cap1OrNsbc.p1                                                           = Clearance Applications Phase 1 (CAP1) and Non-Statutory Business Clearance (NSBC) service both provide formal written confirmation of HMRC’s view on how tax law applies to a specific transaction. They can help mitigate risk and provide clarity when there is uncertainty over tax obligations.
+transaction.cap1OrNsbc.error.required                                               = Select yes if you have applied for a CAP1 or NSBC in relation to this transaction
+transaction.cap1OrNsbc.checkYourAnswersLabel                                        = Have you applied for a CAP1 or NSBC in relation to the transaction?
+transaction.cap1OrNsbc.change.hidden                                                = CAP1 or NSBC

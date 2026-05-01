@@ -17,24 +17,46 @@
 package viewmodels.checkAnswers.ukResidency
 
 import models.{CheckMode, UserAnswers}
-import pages.ukResidency.CrownEmploymentReliefPage
+import pages.ukResidency.{CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object CrownEmploymentReliefSummary  {
+object CrownEmploymentReliefSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(CrownEmploymentReliefPage).map { answer =>
-      val value = if (answer) "site.yes" else "site.no"
-      SummaryListRowViewModel(
-        key     = "ukResidency.crownEmploymentRelief.checkYourAnswersLabel",
-        value   = ValueViewModel(value),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("ukResidency.crownEmploymentRelief.change.hidden"))
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+
+    val isNonUkResident = answers.get(NonUkResidentPurchaserPage).getOrElse(false)
+
+    if (!isNonUkResident) None
+    else Some(
+      answers.get(CrownEmploymentReliefPage).map {
+        answer =>
+
+          val value = if (answer) "site.yes" else "site.no"
+
+          SummaryListRowViewModel(
+            key     = messages("ukResidency.crownEmploymentRelief.checkYourAnswersLabel"),
+            value   = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("ukResidency.crownEmploymentRelief.change.hidden"))
+            )
+          )
+      }.getOrElse {
+
+        val value = ValueViewModel(
+          HtmlContent(
+            s"""<a href="${controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("ukResidency.crownEmploymentRelief.missing")}</a>""")
         )
-      )
-    }
+
+        SummaryListRowViewModel(
+          key   = messages("ukResidency.crownEmploymentRelief.checkYourAnswersLabel"),
+          value = value
+        )
+      }
+    )
+  }
 }

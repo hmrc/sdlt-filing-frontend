@@ -517,6 +517,16 @@ POST       /about-the-transaction/use-of-land-or-property                       
 GET        /about-the-transaction/use-of-land-or-property/change                                     controllers.transaction.TransactionUseOfLandOrPropertyController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/use-of-land-or-property/change                                     controllers.transaction.TransactionUseOfLandOrPropertyController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/have-you-followed-the-ruling                                       controllers.transaction.TransactionRulingFollowedController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/have-you-followed-the-ruling                                       controllers.transaction.TransactionRulingFollowedController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/have-you-followed-the-ruling/change                                controllers.transaction.TransactionRulingFollowedController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/have-you-followed-the-ruling/change                                controllers.transaction.TransactionRulingFollowedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/restrictions-covenants-and-conditions                              controllers.transaction.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/restrictions-covenants-and-conditions                              controllers.transaction.TransactionRestrictionsCovenantsAndConditionsController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/restrictions-covenants-and-conditions/change                       controllers.transaction.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/restrictions-covenants-and-conditions/change                       controllers.transaction.TransactionRestrictionsCovenantsAndConditionsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /tax-calculation/before-you-start                                    controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
 #GET       /tax-calculation/leasehold-calculated/breakdown                      controllers.LeaseholdSdltCalculatedBreakdownController.onPageLoad()
 
@@ -572,7 +582,23 @@ GET         /tax-calculation/leasehold-not-calculated/before-you-start          
 #POST       /tax-calculation/leasehold-not-calculated/penalties-and-interest-charges controllers.LeaseholdSdltNotCalculatedPenaltiesAndInterestController.onSubmit()
 #GET        /tax-calculation/leasehold-not-calculated/check-your-answers             controllers.LeaseholdSdltNotCalculatedCheckYourAnswersController.onPageLoad()
 #POST       /tax-calculation/leasehold-not-calculated/check-your-answers             controllers.LeaseholdSdltNotCalculatedCheckYourAnswersController.onSubmit()
+
 GET        /about-the-transaction/considerations-affected-by-uncertain-future-events                 controllers.transaction.ConsiderationsAffectedUncertainController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/considerations-affected-by-uncertain-future-events                 controllers.transaction.ConsiderationsAffectedUncertainController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/considerations-affected-by-uncertain-future-events/change          controllers.transaction.ConsiderationsAffectedUncertainController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/considerations-affected-by-uncertain-future-events/change          controllers.transaction.ConsiderationsAffectedUncertainController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/sale-of-a-business                                                 controllers.transaction.SaleOfBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/sale-of-a-business                                                 controllers.transaction.SaleOfBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/sale-of-a-business/change                                          controllers.transaction.SaleOfBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/sale-of-a-business/change                                          controllers.transaction.SaleOfBusinessController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/CAP1-or-NSBC                                                       controllers.transaction.Cap1OrNsbcController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/CAP1-or-NSBC                                                       controllers.transaction.Cap1OrNsbcController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/CAP1-or-NSBC/change                                                controllers.transaction.Cap1OrNsbcController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/CAP1-or-NSBC/change                                                controllers.transaction.Cap1OrNsbcController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/assets-included-in-sale-of-the-business                            controllers.transaction.TransactionSaleOfBusinessAssetsController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/assets-included-in-sale-of-the-business                            controllers.transaction.TransactionSaleOfBusinessAssetsController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/assets-included-in-sale-of-the-business/change                     controllers.transaction.TransactionSaleOfBusinessAssetsController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/assets-included-in-sale-of-the-business/change                     controllers.transaction.TransactionSaleOfBusinessAssetsController.onSubmit(mode: Mode = CheckMode)

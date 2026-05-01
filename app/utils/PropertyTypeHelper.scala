@@ -17,15 +17,40 @@
 package utils
 
 import models.FullReturn
+import java.time.format.DateTimeFormatter
+import java.time.LocalDate
+import scala.util.Try
 
 object PropertyTypeHelper {
 
-  private val ResidentialPropertyTypes: Set[String] =
-    Set("01", "04")
+  private val ResidentialPropertyTypes: Set[String] = Set("01", "04")
 
-  def isResidentialProperty(fullReturn: FullReturn): Boolean =
-    fullReturn.land
-      .flatMap(_.headOption)
+  private val SdltCutoff: LocalDate = LocalDate.of(2021, 4, 1)
+
+  private val DateFormatters = Seq(
+    DateTimeFormatter.ISO_LOCAL_DATE,
+    DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+    DateTimeFormatter.ofPattern("yyyy/MM/dd")
+  )
+
+  private def parseEffectiveDate(str: String): Option[LocalDate] =
+    DateFormatters.iterator
+      .map(fmt => Try(LocalDate.parse(str.trim, fmt)).toOption)
+      .collectFirst { case Some(date) => date }
+
+  def isResidentialProperty(fullReturn: FullReturn): Boolean = {
+    val hasResidentialLand = fullReturn.land
+      .getOrElse(Seq.empty)
       .flatMap(_.propertyType)
       .exists(ResidentialPropertyTypes.contains)
+
+    val effectiveDateOk = fullReturn.transaction
+      .flatMap(_.effectiveDate)
+      .filter(_.trim.nonEmpty) match {
+      case None => true
+      case Some(str) => parseEffectiveDate(str).exists(!_.isBefore(SdltCutoff))
+    }
+
+    hasResidentialLand && effectiveDateOk
+  }
 }

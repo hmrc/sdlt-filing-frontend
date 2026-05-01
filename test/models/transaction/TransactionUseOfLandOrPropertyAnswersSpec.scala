@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package services.transaction
+package models.transaction
 
 import models.transaction.TransactionUseOfLandOrProperty.{Factory, Hotel, Office, Other, OtherIndustrialUnit, Shop, Warehouse}
-import models.transaction.{TransactionUseOfLandOrProperty, TransactionUseOfLandOrPropertyAnswers}
 import org.scalatest.EitherValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.libs.json.{Format, JsValue, Json, Reads, Writes}
+import play.api.libs.json.*
 
 class TransactionUseOfLandOrPropertyAnswersSpec extends AnyFreeSpec with Matchers with EitherValues {
 

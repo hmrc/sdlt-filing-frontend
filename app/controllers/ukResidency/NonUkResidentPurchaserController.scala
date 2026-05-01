@@ -18,17 +18,16 @@ package controllers.ukResidency
 
 import controllers.actions.*
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
-import models.land.LandTypeOfProperty
-import models.{CheckMode, Mode}
+import models.Mode
 import navigation.Navigator
-import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
-import scala.util.Success
+import pages.ukResidency.{NonUkResidentPurchaserPage, CrownEmploymentReliefPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ukResidency.NonUkResidentPurchaserView
+import utils.PropertyTypeHelper.isResidentialProperty
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,64 +46,38 @@ class NonUkResidentPurchaserController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request =>
+      request.userAnswers.fullReturn match {
+        case Some(fullReturn) if isResidentialProperty(fullReturn) =>
+          val preparedForm = request.userAnswers.get(NonUkResidentPurchaserPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode))
 
-    request.userAnswers.fullReturn match {
-
-      case Some(fullReturn) =>
-
-        val propertyType = fullReturn.land.flatMap(_.headOption).flatMap(_.propertyType)
-          .flatMap(LandTypeOfProperty.enumerable.withName)
-
-        propertyType match {
-
-          case Some(LandTypeOfProperty.Residential | LandTypeOfProperty.Additional) =>
-
-            val preparedForm =
-              request.userAnswers.get(NonUkResidentPurchaserPage).fold(form)(form.fill)
-
-            Ok(view(preparedForm, mode))
-
-          case _ =>
-            Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
-        }
-
-      case None =>
-        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
-    }
+        case _ =>
+          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      val isCompany: Boolean = request.userAnswers.fullReturn.flatMap(_.purchaser)
-        .flatMap(_.headOption).flatMap(_.isCompany).contains("YES")
 
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          val cleanedAnswers =
-            if !isCompany && !value then request.userAnswers.remove(CrownEmploymentReliefPage)
-            else Success(request.userAnswers)
-
           for {
-            cleaned        <- Future.fromTry(cleanedAnswers)
-            updatedAnswers <- Future.fromTry(cleaned.set(NonUkResidentPurchaserPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (isCompany) {
-              if (mode == CheckMode && updatedAnswers.get(CloseCompanyPage).isEmpty)
-                Redirect(controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode))
-              else
-                Redirect(navigator.nextPage(NonUkResidentPurchaserPage, mode, updatedAnswers))
-            } else if (value) {
-              Redirect(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(mode))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUkResidentPurchaserPage, value))
+            cleanedAnswers <- if (!value) {
+              Future.fromTry(updatedAnswers.set(CrownEmploymentReliefPage, value))
             } else {
-              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+              Future.fromTry(updatedAnswers.remove(CrownEmploymentReliefPage))
             }
-          }
+            _              <- sessionRepository.set(cleanedAnswers)
+          } yield Redirect(navigator.nextPage(NonUkResidentPurchaserPage, mode, cleanedAnswers))
       )
   }
 }

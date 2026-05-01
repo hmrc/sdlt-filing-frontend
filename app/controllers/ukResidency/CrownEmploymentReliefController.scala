@@ -18,16 +18,16 @@ package controllers.ukResidency
 
 import controllers.actions.*
 import forms.ukResidency.CrownEmploymentReliefFormProvider
-import models.land.LandTypeOfProperty
 import models.Mode
 import navigation.Navigator
-import pages.ukResidency.CrownEmploymentReliefPage
+import pages.ukResidency.{CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ukResidency.CrownEmploymentReliefView
+import utils.PropertyTypeHelper.isResidentialProperty
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,23 +48,20 @@ class CrownEmploymentReliefController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(CrownEmploymentReliefPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      val propertyType = request.userAnswers.fullReturn
-        .flatMap(_.land)
-        .flatMap(_.headOption)
-        .flatMap(_.propertyType)
-        .flatMap(LandTypeOfProperty.enumerable.withName)
-
-      propertyType match {
-        case Some(LandTypeOfProperty.Residential | LandTypeOfProperty.Additional) =>
-          Ok(view(preparedForm, mode))
-
-        case _ => Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+      request.userAnswers.fullReturn match {
+        case Some(fullReturn) if isResidentialProperty(fullReturn) =>
+          request.userAnswers.get(NonUkResidentPurchaserPage) match {
+            case Some(false) =>
+              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+            case _ =>
+              val preparedForm = request.userAnswers.get(CrownEmploymentReliefPage) match {
+                case None => form
+                case Some(value) => form.fill(value)
+              }
+              Ok(view(preparedForm, mode))
+          }
+        case _ =>
+          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       }
   }
 
