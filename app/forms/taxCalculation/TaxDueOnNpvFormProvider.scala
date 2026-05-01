@@ -23,7 +23,6 @@ import javax.inject.Inject
 
 class TaxDueOnNpvFormProvider @Inject() extends Mappings {
   
-  private val maxValueLength = 16
   private val maxValue = BigDecimal(9999999999L)
 
   def apply(): Form[String] =
@@ -35,6 +34,5 @@ class TaxDueOnNpvFormProvider @Inject() extends Mappings {
         maxValueKey = "taxCalculation.taxDueOnNpv.error.maximum",
         maxValue = maxValue
       )
-        .verifying(maxLength(maxValueLength, "taxCalculation.taxDueOnNpv.error.length"))
     )
 }
