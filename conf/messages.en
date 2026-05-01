@@ -1494,3 +1494,11 @@ transaction.cap1OrNsbc.p1                                                       
 transaction.cap1OrNsbc.error.required                                               = Select yes if you have applied for a CAP1 or NSBC in relation to this transaction
 transaction.cap1OrNsbc.checkYourAnswersLabel                                        = Have you applied for a CAP1 or NSBC in relation to the transaction?
 transaction.cap1OrNsbc.change.hidden                                                = CAP1 or NSBC
+
+transaction.isLandOrPropertyExchanged.title                                         = The exchange or part exchange of the land or property
+transaction.isLandOrPropertyExchanged.heading                                       = The exchange or part exchange of the land or property
+transaction.isLandOrPropertyExchanged.subheading                                     = Is any land or property being exchanged or part exchanged as part of this transaction?
+transaction.isLandOrPropertyExchanged.paragraph                                    = Exchange or part exchange is when two parties are both receiving and releasing an area of land or property. This is treated as two separate transactions where each party is both a vendor and a purchaser.
+transaction.isLandOrPropertyExchanged.checkYourAnswersLabel                         = Is any land or property being exchanged or part exchanged as part of this transaction?
+transaction.isLandOrPropertyExchanged.error.required                                = Select yes if any land or property is being exchanged or part exchanged as part of this transaction
+transaction.isLandOrPropertyExchanged.change.hidden                                 = Is any land or property being exchanged or part exchanged as part of this transaction?

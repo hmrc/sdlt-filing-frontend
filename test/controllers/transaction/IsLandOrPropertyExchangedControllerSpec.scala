@@ -18,43 +18,44 @@ package controllers.transaction
 
 import base.SpecBase
 import controllers.routes
-import forms.transaction.TransactionRestrictionsCovenantsAndConditionsFormProvider
+import forms.transaction.IsLandOrPropertyExchangedFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.TransactionRestrictionsCovenantsAndConditionsPage
+import pages.transaction.IsLandOrPropertyExchangedPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.transaction.TransactionRestrictionsCovenantsAndConditionsView
+import views.html.transaction.IsLandOrPropertyExchangedView
 
 import scala.concurrent.Future
 
-class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBase with MockitoSugar {
+class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new TransactionRestrictionsCovenantsAndConditionsFormProvider()
-  val form = formProvider()
+  val formProvider = new IsLandOrPropertyExchangedFormProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val transactionRestrictionsCovenantsAndConditionsRoute = controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode).url
+  lazy val isLandOrPropertyExchangedRoute: String = controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode).url
 
-  "TransactionRestrictionsCovenantsAndConditions Controller" - {
+  "IsLandOrPropertyExchanged Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionRestrictionsCovenantsAndConditionsRoute)
+        val request = FakeRequest(GET, isLandOrPropertyExchangedRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[TransactionRestrictionsCovenantsAndConditionsView]
+        val view = application.injector.instanceOf[IsLandOrPropertyExchangedView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -63,14 +64,14 @@ class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBa
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(TransactionRestrictionsCovenantsAndConditionsPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(IsLandOrPropertyExchangedPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionRestrictionsCovenantsAndConditionsRoute)
+        val request = FakeRequest(GET, isLandOrPropertyExchangedRoute)
 
-        val view = application.injector.instanceOf[TransactionRestrictionsCovenantsAndConditionsView]
+        val view = application.injector.instanceOf[IsLandOrPropertyExchangedView]
 
         val result = route(application, request).value
 
@@ -79,7 +80,7 @@ class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBa
       }
     }
 
-    "must redirect to the next page when yes is submitted" in {
+    "must redirect via navigator when 'Yes' is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -95,7 +96,7 @@ class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBa
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionRestrictionsCovenantsAndConditionsRoute)
+          FakeRequest(POST, isLandOrPropertyExchangedRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -105,7 +106,8 @@ class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBa
       }
     }
 
-    "must redirect to the next page when no is submitted" in {
+    //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
+    "must redirect to s this transaction pursuant to a previous option agreement? when 'No' is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -120,7 +122,7 @@ class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBa
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionRestrictionsCovenantsAndConditionsRoute)
+          FakeRequest(POST, isLandOrPropertyExchangedRoute)
             .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
@@ -136,12 +138,12 @@ class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBa
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionRestrictionsCovenantsAndConditionsRoute)
+          FakeRequest(POST, isLandOrPropertyExchangedRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[TransactionRestrictionsCovenantsAndConditionsView]
+        val view = application.injector.instanceOf[IsLandOrPropertyExchangedView]
 
         val result = route(application, request).value
 
@@ -155,7 +157,7 @@ class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBa
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionRestrictionsCovenantsAndConditionsRoute)
+        val request = FakeRequest(GET, isLandOrPropertyExchangedRoute)
 
         val result = route(application, request).value
 
@@ -170,7 +172,7 @@ class TransactionRestrictionsCovenantsAndConditionsControllerSpec extends SpecBa
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionRestrictionsCovenantsAndConditionsRoute)
+          FakeRequest(POST, isLandOrPropertyExchangedRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

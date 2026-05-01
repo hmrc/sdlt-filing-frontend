@@ -17,29 +17,29 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.TransactionRestrictionsCovenantsAndConditionsFormProvider
-import models.Mode
+import forms.transaction.IsLandOrPropertyExchangedFormProvider
+import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.TransactionRestrictionsCovenantsAndConditionsPage
+import pages.transaction.IsLandOrPropertyExchangedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.TransactionRestrictionsCovenantsAndConditionsView
+import views.html.transaction.IsLandOrPropertyExchangedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TransactionRestrictionsCovenantsAndConditionsController @Inject()(
+class IsLandOrPropertyExchangedController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: TransactionRestrictionsCovenantsAndConditionsFormProvider,
+                                         formProvider: IsLandOrPropertyExchangedFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: TransactionRestrictionsCovenantsAndConditionsView
+                                         view: IsLandOrPropertyExchangedView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -47,7 +47,7 @@ class TransactionRestrictionsCovenantsAndConditionsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TransactionRestrictionsCovenantsAndConditionsPage) match {
+      val preparedForm = request.userAnswers.get(IsLandOrPropertyExchangedPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,13 +64,13 @@ class TransactionRestrictionsCovenantsAndConditionsController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionRestrictionsCovenantsAndConditionsPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsLandOrPropertyExchangedPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (value) {
-              Redirect(navigator.nextPage(TransactionRestrictionsCovenantsAndConditionsPage, mode, updatedAnswers))
-            } else {
-              Redirect(controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(mode))
+              Redirect(navigator.nextPage(IsLandOrPropertyExchangedPage, mode, updatedAnswers))
+            } else { //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
+              Redirect(controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode))
             }
           }
       )
