@@ -73,11 +73,11 @@ class FreeholdSelfAssessedAmountWithPenaltiesViewSpec extends SpecBase {
 
         val yesRadio = doc.getElementById("value_0")
         yesRadio.attr("value") mustBe "penaltiesAndInterestYes"
-        yesRadio.parent().text() must include(messagesInstance("site.yes"))
+        yesRadio.parent().text() must include(msgs("site.yes"))
 
         val noRadio = doc.getElementById("value_1")
         noRadio.attr("value") mustBe "penaltiesAndInterestNo"
-        noRadio.parent().text() must include(messagesInstance("site.no"))
+        noRadio.parent().text() must include(msgs("site.no"))
       }
     }
   }
