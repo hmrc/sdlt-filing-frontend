@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.transaction.TotalAssetsConsiderationPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class TotalAssetsConsiderationSummarySpec  extends SpecBase {
 
@@ -41,7 +41,12 @@ class TotalAssetsConsiderationSummarySpec  extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TotalAssetsConsiderationPage, value).success.value
 
-          val result = TotalAssetsConsiderationSummary.row(userAnswers)
+          val row = TotalAssetsConsiderationSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.totalAssetsConsideration.checkYourAnswersLabel")
 
@@ -67,14 +72,13 @@ class TotalAssetsConsiderationSummarySpec  extends SpecBase {
 
           val result = TotalAssetsConsiderationSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.totalAssetsConsideration.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TotalAssetsConsiderationController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TotalAssetsConsiderationController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.totalAssetsConsideration.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }
