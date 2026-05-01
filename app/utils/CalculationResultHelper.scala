@@ -158,7 +158,7 @@ object CalculationResultHelper extends CurrencyFormatter {
 
   private def getTotalTaxTable(totalTax: Int)(implicit messages: Messages): Table =
     Table(rows = Seq(Seq(
-      TableRow(content = Text(getMessage("totalSdltDue")), classes = bold  ),
+      TableRow(content = Text(getMessage("totalSdltDue")), classes = bold   ),
       TableRow(content = Empty,                            classes = ""     ),
       TableRow(content = Text(totalTax.toCurrency),        classes = numeric)
   )))
