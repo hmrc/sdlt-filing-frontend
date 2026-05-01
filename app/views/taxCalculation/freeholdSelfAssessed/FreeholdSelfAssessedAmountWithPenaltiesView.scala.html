@@ -28,7 +28,7 @@
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("taxCalculation.penaltiesAndInterest.title"))) {
+@layout(pageTitle = title(form, messages("taxCalculation.penaltiesAndInterest.scenario-one.title"))) {
 
     @caption(messages("site.taxCalculation.caption"))
 
@@ -39,15 +39,12 @@
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("taxCalculation.penaltiesAndInterest.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("taxCalculation.penaltiesAndInterest.scenario-one.heading")).asPageHeading(),
                 items = PenaltiesAndInterest.options
             )
         )
 
-        @govukButton(
-            ButtonViewModel(messages("taxCalculation.penaltiesAndInterest.button"))
-            .withCssClass("govuk-!-margin-top-2")
-        )
+        @govukButton( ButtonViewModel(messages("taxCalculation.penaltiesAndInterest.button")) )
 
     }
 

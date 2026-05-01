@@ -529,8 +529,8 @@ GET         /tax-calculation/freehold-calculated/before-you-start               
 #POST       /tax-calculation/freehold-calculated/self-assessment                controllers.FreeholdSdltCalculatedSelfAssessmentController.onSubmit()
 #GET        /tax-calculation/freehold-calculated/total-amount-due               controllers.FreeholdSdltCalculatedTotalDueController.onPageLoad()
 #POST       /tax-calculation/freehold-calculated/total-amount-due               controllers.FreeholdSdltCalculatedTotalDueController.onSubmit()
-GET        /tax-calculation/freehold-calculated/penalties-and-interest-charges controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad()
-POST       /tax-calculation/freehold-calculated/penalties-and-interest-charges controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit()
+GET        /tax-calculation/freehold-calculated/are-penalties-and-interest-included controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad()
+POST       /tax-calculation/freehold-calculated/are-penalties-and-interest-included controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit()
 GET        /tax-calculation/freehold-calculated/check-your-answers             controllers.taxCalculation.freeholdSelfAssessed.FreeholdSdltCalculatedCheckYourAnswersController.onPageLoad()
 #POST       /tax-calculation/freehold-calculated/check-your-answers             controllers.FreeholdSdltCalculatedCheckYourAnswersController.onSubmit()
 
