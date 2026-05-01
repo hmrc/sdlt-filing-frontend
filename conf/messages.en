@@ -43,6 +43,7 @@ site.vendorAgent.caption                                                        
 site.land.caption                                                                   = About the land
 site.ukResidency.caption                                                            = About UK residency
 site.transaction.caption                                                            = About the transaction
+site.lease.caption                                                                  = About the lease
 site.taxCalculation.caption                                                         = Tax calculation
 
 site.vendor.theVendor                                                               = the vendor
@@ -121,6 +122,8 @@ tasklist.landQuestion.details                                                   
 tasklist.landQuestion.heading                                                       = Land Questions
 tasklist.ukResidencyQuestion.details                                                = UK Residency Questions
 tasklist.ukResidencyQuestion.heading                                                = UK Residency Questions
+tasklist.leaseQuestion.heading                                                      = Lease Questions
+tasklist.leaseQuestion.details                                                      = Lease Questions
 tasklist.inProgress                                                                 = In Progress
 tasklist.cannotStartYet                                                             = Can not Start
 tasklist.failed                                                                     = Failed
@@ -1515,3 +1518,18 @@ transaction.totalAssetsConsideration.error.invalidWholeNumber                   
 transaction.totalAssetsConsideration.error.maximum                                  = The total amount of consideration for the sale of the business must be equal to or less than £9,999,999,999
 transaction.totalAssetsConsideration.change.hidden                                  = Total consideration for all assets included in the sale of the business
 
+lease.beforeYouStart.p1                                                             = In this section, you need to tell us about the lease on the land or property.
+lease.beforeYouStart.p2                                                             = We will ask for:
+lease.beforeYouStart.l1.li1                                                         = the type of lease
+lease.beforeYouStart.l1.li2                                                         = the lease start date
+lease.beforeYouStart.l1.li3                                                         = the lease end date
+lease.beforeYouStart.l1.li4                                                         = any rent-free period included in the lease
+lease.beforeYouStart.l1.li5                                                         = the annual starting rent
+lease.beforeYouStart.l1.li6                                                         = the end date for annual starting rent
+lease.beforeYouStart.l1.li7                                                         = the later rent if known
+lease.beforeYouStart.l1.li8                                                         = whether the later rent is more than £1,000
+lease.beforeYouStart.l1.li9                                                         = the net present value (NPV)
+lease.beforeYouStart.p3                                                             = You can also provide:
+lease.beforeYouStart.l2.li1                                                         = the duration of the rent-free period
+lease.beforeYouStart.l2.li2                                                         = the total amount of VAT on the annual rent
+lease.beforeYouStart.l2.li3                                                         = the total premium payable including VAT

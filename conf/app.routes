@@ -612,3 +612,5 @@ GET        /about-the-transaction/exchange-or-part-exchange                     
 POST       /about-the-transaction/exchange-or-part-exchange                                          controllers.transaction.IsLandOrPropertyExchangedController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/exchange-or-part-exchange/change                                   controllers.transaction.IsLandOrPropertyExchangedController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/exchange-or-part-exchange/change                                   controllers.transaction.IsLandOrPropertyExchangedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-lease/before-you-start                                                         controllers.lease.LeaseBeforeYouStartController.onPageLoad()

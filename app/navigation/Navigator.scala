@@ -69,6 +69,7 @@ class Navigator @Inject()() {
     case landPage if isLandSection(landPage) => landRoutes(landPage)
     case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
     case transactionPage if isTransactionSection(transactionPage) => transactionRoutes(transactionPage)
+    case leasePage if isLeaseSection(leasePage) => leaseRoutes(leasePage)
     case taxCalcPage if isFreeholdTaxCalculatedSection(taxCalcPage) => freeholdTaxCalculatedRoutes(taxCalcPage)
     case taxCalcPage if isFreeholdSelfAssessedSection(taxCalcPage) => freeholdSelfAssessedRoutes(taxCalcPage)
     case taxCalcPage if isLeaseholdTaxCalculatedSection(taxCalcPage) => leaseholdTaxCalculatedRoutes(taxCalcPage)
@@ -278,6 +279,14 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
     case TotalAssetsConsiderationPage =>
       _ => controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
+    case _ => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def isLeaseSection(page: Page): Boolean = page match {
+    case _ => false
+  }
+  
+  private def leaseRoutes(page: Page): UserAnswers => Call = page match {
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
