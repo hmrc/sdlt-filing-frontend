@@ -20,36 +20,32 @@ import models.{CheckMode, UserAnswers}
 import pages.transaction.TotalAssetsConsiderationPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object TotalAssetsConsiderationSummary  {
+object TotalAssetsConsiderationSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    
-    val changeRoute = controllers.transaction.routes.TotalAssetsConsiderationController.onPageLoad(CheckMode).url
-    
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+
+    val changeRoute = controllers.transaction.routes.TotalAssetsConsiderationController.onPageLoad(CheckMode)
     val label = messages("transaction.totalAssetsConsideration.checkYourAnswersLabel")
+
     answers.get(TotalAssetsConsiderationPage).map {
       answer =>
-        SummaryListRowViewModel(
-          key     = label,
-          value   = ValueViewModel(HtmlFormat.escape(s"£$answer").toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("transaction.totalAssetsConsideration.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(HtmlFormat.escape(s"£$answer").toString),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("transaction.totalAssetsConsideration.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("transaction.totalAssetsConsideration.missing")}</a>""")
-      )
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }
