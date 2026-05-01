@@ -602,3 +602,8 @@ GET        /about-the-transaction/assets-included-in-sale-of-the-business       
 POST       /about-the-transaction/assets-included-in-sale-of-the-business                            controllers.transaction.TransactionSaleOfBusinessAssetsController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/assets-included-in-sale-of-the-business/change                     controllers.transaction.TransactionSaleOfBusinessAssetsController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/assets-included-in-sale-of-the-business/change                     controllers.transaction.TransactionSaleOfBusinessAssetsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-transaction/exchange-or-part-exchange                                          controllers.transaction.IsLandOrPropertyExchangedController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/exchange-or-part-exchange                                          controllers.transaction.IsLandOrPropertyExchangedController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/exchange-or-part-exchange/change                                   controllers.transaction.IsLandOrPropertyExchangedController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/exchange-or-part-exchange/change                                   controllers.transaction.IsLandOrPropertyExchangedController.onSubmit(mode: Mode = CheckMode)

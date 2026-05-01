@@ -389,6 +389,10 @@ class NavigatorSpec extends SpecBase {
         "go from Cap1OrNsbcPage to TransactionRulingFollowedPage" in {
           navigator.nextPage(Cap1OrNsbcPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
         }
+
+        "go from IsLandOrPropertyExchangedPage to exchange or part exchange Address Lookup integration" in { // TODO DTR-3489 - SRINT-15 - redirect to exchange or part exchange Address Lookup integration
+          navigator.nextPage(IsLandOrPropertyExchangedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+        }
       }
 
       "freehold tax calculated routes" - {
