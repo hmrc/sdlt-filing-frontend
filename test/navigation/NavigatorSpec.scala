@@ -374,8 +374,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionRulingFollowedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
         }
 
-        "go from SaleOfBusinessPage to What is included in the sale page" in { //TODO - DTR-3450 - SPRINT 14 update to what is in included in the sale tr-12a
-          navigator.nextPage(SaleOfBusinessPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
+        "go from SaleOfBusinessPage to What is included in the sale page" in {
+          navigator.nextPage(SaleOfBusinessPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
+        }
+        // TODO DTR-3458: Redirect to tr-12b
+        "go from TransactionSaleOfBusinessAssetsPage to tr-12b" in {
+          navigator.nextPage(TransactionSaleOfBusinessAssetsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
         }
 
         "go from TransactionRestrictionsCovenantsAndConditionsPage to DescriptionOfRestrictionsCovenantsAndConditionsPage" in { // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?

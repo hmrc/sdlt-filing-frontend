@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package services.transaction
+package models.transaction
 
-import models.transaction.{TransactionFormsOfConsideration, TransactionFormsOfConsiderationAnswers}
 import models.transaction.TransactionFormsOfConsideration.{BuildingWorks, Cash, Contingent, Debt, Employment, Other, OtherLand, Services, SharesInAQuotedCompany, SharesInAnUnquotedCompany}
 import org.scalatest.EitherValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.libs.json.{Format, JsValue, Json, Reads, Writes}
+import play.api.libs.json.*
 
 class TransactionFormsOfConsiderationAnswersSpec extends AnyFreeSpec with Matchers with EitherValues {
 
