@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.LoggerUtil.*
 
 class SdltCalculationService @Inject()(
                                         connector: SdltCalculationConnector,
@@ -48,16 +49,16 @@ class SdltCalculationService @Inject()(
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
     TaxCalcRequestValidator.buildRequest(userAnswers) match {
       case Right(request) =>
-        logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")
+        logInfo(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")
         connector.calculateStampDutyLandTax(request).flatMap(_.result.headOption match {
           case Some(result) => Future.successful(Right(result))
           case None => Future.failed(new IllegalStateException("Calculation response contained no results"))
         })
       case Left(error: MissingDataError) =>
-        logger.warn(s"[SdltCalculationService][calculateStampDutyLandTax] missing session data: ${error.message}")
+        logError(s"[SdltCalculationService][calculateStampDutyLandTax] missing session data: ${error.message}")
         Future.successful(Left(error))
       case Left(error) =>
-        logger.error(s"[SdltCalculationService][calculateStampDutyLandTax] failed to build request: ${error.message}")
+        logError(s"[SdltCalculationService][calculateStampDutyLandTax] failed to build request: ${error.message}")
         Future.failed(new IllegalStateException(error.message))
     }
 

@@ -35,7 +35,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import models.PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionException, Future}
 
 class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
@@ -70,7 +70,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
   )
 
   val taxCalculation = TaxCalculation(includesPenalty = Some("true"))
-  val validUserAnswerWithIncludePenalties : UserAnswers = UserAnswers(
+  val validUserAnswerWithIncludePenalties: UserAnswers = UserAnswers(
     id = "id", storn = "STORN",
     fullReturn = Some(FullReturn(
       taxCalculation = Some(taxCalculation),
@@ -151,7 +151,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
   "whenInFlow" - {
 
     "must run the onAllowed block when the session has the expected flow recorded" in {
-      val answers              = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+      val answers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
       implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, answers)
 
       val result = service.whenInFlow(TaxCalculationFlow.FreeholdTaxCalculated)(Results.Ok("rendered"))
@@ -160,7 +160,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
     }
 
     "must redirect to the return task list when the session has a different flow recorded" in {
-      val answers              = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+      val answers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
       implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, answers)
 
       val result = service.whenInFlow(TaxCalculationFlow.FreeholdTaxCalculated)(Results.Ok("should not render"))
@@ -184,13 +184,24 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
     implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = DataRequest(
       FakeRequest(), "test-id", emptyUserAnswers)
 
-    "call repository to save value :: success" in {
+    "call repository to save user PenaltiesAndInterestYesNo choice :: success" in {
       when(mockSessionRepository.set(any()))
         .thenReturn(Future.successful(true))
       val result = service.savePenaltiesAndInterestYesNoAnswer(
         key = FreeholdSelfAssessedPenaltiesAndInterestPage,
         value = AmountIncludePenaltiesAndInterestYes).futureValue
       result mustBe true
+      verify(mockSessionRepository, times(1)).set(any())
+    }
+
+    "call repository to save user PenaltiesAndInterestYesNo choice :: failure" in {
+      when(mockSessionRepository.set(any()))
+        .thenThrow(Error("ConnectionTimeOut"))
+      val result =  service.savePenaltiesAndInterestYesNoAnswer(
+          key = FreeholdSelfAssessedPenaltiesAndInterestPage,
+          value = AmountIncludePenaltiesAndInterestYes).failed.futureValue
+      result mustBe an[ExecutionException]
+      result.getCause.getMessage mustBe "ConnectionTimeOut"
     }
 
   }
