@@ -18,14 +18,14 @@ package utils
 
 import config.CurrencyFormatter
 import models.UserAnswers
-import models.taxCalculation.{CalculationDetails, SliceDetails, TaxCalculationResult, TaxTypes}
-import play.api.i18n.{Lang, Messages}
+import models.taxCalculation.TaxTypes.*
+import models.taxCalculation.{CalcTypes, SliceDetails, TaxCalculationResult, TaxTypes}
+import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Empty, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryList, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
-
-import java.time.LocalDate
-import scala.util.Try
+import utils.DateTimeFormats.asDate
+import utils.YesNoHelper.toYesNo
 
 case class CalculationResultViewModel(
                                        taxCalculationSummary: SummaryList,
@@ -36,173 +36,153 @@ case class CalculationResultViewModel(
                                      )
 
 /**
- * Builds the freehold SDLT breakdown view model. The SDLT-rates and total-tax tables are derived from
- * the calc result; the tax-calculation and rate-card summary lists pull their values from the cached
+ * Builds the SDLT breakdown view model. The SDLT-rates and total-tax tables are derived from the
+ * calc result, the tax-calculation and rate-card summary lists pull their values from the session
  * FullReturn in UserAnswers.
  *
- * Every freehold result from sdltc has exactly one premium CalculationDetails — the breakdown is
- * either band-based (`slices = Some(...)`, modern rates) or single-rate (`slices = None`, legacy
- * pre-Dec-2014 residential / pre-Mar-2016 non-residential slab rates). Both shapes are handled here.
+ * Every result from sdltc has exactly one premium CalculationDetails, the breakdown is either
+ * band-based (`slices = Some(...)`, modern rates) or single-rate (`slices = None`, legacy
+ * pre-Dec-2014 residential / pre-Mar-2016 non-residential slab rates). Leasehold results add a
+ * second `rent` CalculationDetails for the NPV rate table.
  */
 
 object CalculationResultHelper extends CurrencyFormatter {
 
-  def toViewModel(result: TaxCalculationResult, answers: UserAnswers)(implicit messages: Messages): CalculationResultViewModel =
+  def toViewModel(result: TaxCalculationResult, answers: UserAnswers)
+                 (implicit messages: Messages): CalculationResultViewModel =
     CalculationResultViewModel(
       taxCalculationSummary = getTaxCalculationSummary(result, answers),
       rateCardSummary       = getRateCardSummary(answers),
-      premiumRateTable      = buildPremiumRateTable(result),
-      npvRateTable          = buildNpvRateTable(result),
-      totalTax              = buildTotalTaxTable(result.totalTax)
+      premiumRateTable      = getPremiumRateTable(result),
+      npvRateTable          = getNpvRateTable(result),
+      totalTax              = getTotalTaxTable(result.totalTax)
     )
 
   private def getTaxCalculationSummary(result: TaxCalculationResult, answers: UserAnswers)
                                       (implicit messages: Messages): SummaryList =
     (for {
-      fullReturn        <- answers.fullReturn
-      transaction       <- fullReturn.transaction
-      effectiveDate      = transaction.effectiveDate.map(asDate).getOrElse("")
-      totalConsideration = transaction.totalConsideration.map(currencyFormat).getOrElse("")
-      claimingRelief     = transaction.claimingRelief.map(asYesNo).getOrElse("")
-      premiumTax         = result.taxCalcs.find(_.taxType == TaxTypes.premium).map(c => currencyFormat(c.taxDue)).getOrElse("")
-      npvTax             = result.taxCalcs.find(_.taxType == TaxTypes.rent).map(c => currencyFormat(c.taxDue))
-    } yield {
-      val effectiveDateRow = SummaryListRow(
-        Key(Text(getMessage("taxCalculation.effectiveDate"))),
-        Value(Text(effectiveDate)))
-      val reliefRow = SummaryListRow(
-        Key(Text(getMessage("taxCalculation.reliefClaimed"))),
-        Value(Text(claimingRelief)))
-      val sdltDueRow = SummaryListRow(
-        Key(Text(getMessage("taxCalculation.sdltDue"))),
-        Value(Text(currencyFormat(result.totalTax))))
-
-      val middleRows = npvTax match {
-        case Some(npv) => Seq(
-          SummaryListRow(
-            Key(Text(getMessage("taxCalculation.taxDuePremium"))),
-            Value(Text(premiumTax))),
-          SummaryListRow(
-            Key(Text(getMessage("taxCalculation.taxDueNpv"))),
-            Value(Text(npv))))
-        case None      => Seq(
-          SummaryListRow(
-            Key(Text(getMessage("taxCalculation.totalConsideration"))),
-            Value(Text(totalConsideration))))
-      }
-
-      SummaryList(rows = effectiveDateRow +: middleRows :+ reliefRow :+ sdltDueRow)
-    }).getOrElse(SummaryList(rows = Nil))
+      transaction       <- answers.fullReturn.flatMap(_.transaction)
+      effectiveDate      = transaction.effectiveDate                  .map(asDate).getOrElse("")
+      totalConsideration = transaction.totalConsideration             .map(_.toCurrency).getOrElse("")
+      claimingRelief     = transaction.claimingRelief                 .map(toYesNo).getOrElse("")
+      premiumTax         = result.taxCalcs.find(_.taxType == premium) .map(_.taxDue.toCurrency).getOrElse("")
+      npvTax             = result.taxCalcs.find(_.taxType == rent)    .map(_.taxDue.toCurrency)
+    } yield SummaryList(Seq(
+      Some(SummaryListRow(Key(Text(getMessage("taxCalculation.effectiveDate"))),            Value(Text(effectiveDate)))),
+      Option.when(npvTax.isEmpty)(
+        SummaryListRow(Key(Text(getMessage("taxCalculation.totalConsideration"))),          Value(Text(totalConsideration)))
+      ),
+      npvTax.map(_ => SummaryListRow(Key(Text(getMessage("taxCalculation.taxDuePremium"))), Value(Text(premiumTax)))),
+      npvTax.map(npv => SummaryListRow(Key(Text(getMessage("taxCalculation.taxDueNpv"))),   Value(Text(npv)))),
+      Some(SummaryListRow(Key(Text(getMessage("taxCalculation.reliefClaimed"))),            Value(Text(claimingRelief)))),
+      Some(SummaryListRow(Key(Text(getMessage("taxCalculation.sdltDue"))),                  Value(Text(result.totalTax.toCurrency))))
+    ).flatten))
+      .getOrElse(SummaryList(rows = Nil))
 
   private def getRateCardSummary(answers: UserAnswers)
                                 (implicit messages: Messages): SummaryList =
     (for {
-      fullReturn      <- answers.fullReturn
-      transaction     <- fullReturn.transaction
-      lands           <- fullReturn.land
-      land            <- lands.headOption
-      transactionType  = transaction.transactionDescription.map(code => getMessage(s"transactionType.$code")).getOrElse("")
-      claimingRelief   = transaction.claimingRelief.map(asYesNo).getOrElse("")
-      propertyType     = land.propertyType.map(code => getMessage(s"propertyType.$code")).getOrElse("")
-      linked           = transaction.isLinked.map(asYesNo).getOrElse("")
+      transaction     <- answers.fullReturn.flatMap(_.transaction)
+      land            <- answers.fullReturn.flatMap(_.land).flatMap(_.headOption)
+      transactionType  = transaction.transactionDescription .map(code => getMessage(s"transactionType.$code")).getOrElse("")
+      claimingRelief   = transaction.claimingRelief         .map(toYesNo).getOrElse("")
+      propertyType     = land.propertyType                  .map(code => getMessage(s"propertyType.$code")).getOrElse("")
+      linked           = transaction.isLinked               .map(toYesNo).getOrElse("")
     } yield {
-      SummaryList(rows = Seq(
-        SummaryListRow(
-          Key(Text(getMessage("rateCard.transactionType"))),
-          Value(Text(transactionType))),
-        SummaryListRow(
-          Key(Text(getMessage("rateCard.claimingRelief"))),
-          Value(Text(claimingRelief))),
-        SummaryListRow(
-          Key(Text(getMessage("rateCard.propertyType"))),
-          Value(Text(propertyType))),
-        SummaryListRow(
-          Key(Text(getMessage("rateCard.linked"))),
-          Value(Text(linked)))
-      ))
-    }).getOrElse(SummaryList(rows = Nil))
+      SummaryList(Seq(
+        SummaryListRow(Key(Text(getMessage("rateCard.transactionType"))), Value(Text(transactionType))),
+        SummaryListRow(Key(Text(getMessage("rateCard.claimingRelief"))),  Value(Text(claimingRelief))),
+        SummaryListRow(Key(Text(getMessage("rateCard.propertyType"))),    Value(Text(propertyType))),
+        SummaryListRow(Key(Text(getMessage("rateCard.linked"))),          Value(Text(linked)))))
+    })
+      .getOrElse(SummaryList(rows = Nil))
 
-  private def buildPremiumRateTable(result: TaxCalculationResult)(implicit messages: Messages): Table =
-    buildRatesTable(
-      calc        = result.taxCalcs.find(_.taxType == TaxTypes.premium).getOrElse(result.taxCalcs.head),
-      isLeasehold = result.taxCalcs.exists(_.taxType == TaxTypes.rent)
-    )
-
-  private def buildNpvRateTable(result: TaxCalculationResult)(implicit messages: Messages): Option[Table] =
-    result.taxCalcs.find(_.taxType == TaxTypes.rent).map(buildRatesTable(_, isLeasehold = true))
-
-  private def buildRatesTable(calc: CalculationDetails, isLeasehold: Boolean)(implicit messages: Messages): Table = {
-    val caption = (isLeasehold, calc.taxType) match {
-      case (true, TaxTypes.premium) => getMessage("rates.captionPremium")
-      case (true, TaxTypes.rent)    => getMessage("rates.captionNpv")
-      case _                        => getMessage("rates.caption")
-    }
-
-    val footerRow: Seq[Seq[TableRow]] = if (!isLeasehold) Nil else {
-      val label = calc.taxType match {
-        case TaxTypes.rent => getMessage("rates.totalOnNpv")
-        case _             => getMessage("rates.totalOnPremium")
-      }
-      Seq(Seq(
-        TableRow(content = Text(label),                       classes = "govuk-!-font-weight-bold"),
-        TableRow(content = Empty),
-        TableRow(content = Text(currencyFormat(calc.taxDue)), classes = "govuk-table__cell--numeric")
-      ))
-    }
+  private def getPremiumRateTable(result: TaxCalculationResult)(implicit messages: Messages): Table = {
+    val calc = result.taxCalcs.find(_.taxType == TaxTypes.premium)
+      .getOrElse(throw new IllegalStateException("TaxCalculationResult missing premium CalculationDetails"))
+    val isLeasehold = result.taxCalcs.exists(_.taxType == TaxTypes.rent)
 
     Table(
-      caption        = Some(caption),
+      caption = Some(if (isLeasehold) getMessage("rates.captionPremium") else getMessage("rates.caption")),
       captionClasses = "govuk-table__caption--m",
-      head           = Some(Seq(
+      head = Some(Seq(
         HeadCell(content = Text(getMessage("rates.column.description"))),
-        HeadCell(content = Text(getMessage("rates.column.rate")),    classes = "govuk-table__header--numeric"),
-        HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = "govuk-table__header--numeric")
+        HeadCell(content = Text(getMessage("rates.column.rate")),    classes = numericHeader),
+        HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
       )),
-      rows           = dataRowsFor(calc) ++ footerRow
+      rows = (calc.calcType match {
+        case CalcTypes.slice => calc.slices.toSeq.flatten.filterNot(zeroTaxRows).map { slice =>
+          Seq(
+            TableRow(content = Text(sliceDescription(slice)),  classes = bold   ),
+            TableRow(content = Text(slice.rate.toPercentage),  classes = numeric),
+            TableRow(content = Text(slice.taxDue.toCurrency),  classes = numeric)
+          )
+        }
+        case CalcTypes.slab if calc.taxDue != 0 => Seq(Seq(
+          TableRow(content = Text(getMessage("rates.premium")),              classes = bold   ),
+          TableRow(content = Text(formatRate(calc.rate, calc.rateFraction)), classes = numeric),
+          TableRow(content = Text(calc.taxDue.toCurrency),                   classes = numeric)
+        ))
+        case CalcTypes.slab => Nil
+      }) ++ Option.when(isLeasehold)(Seq(
+        TableRow(content = Text(getMessage("rates.totalOnPremium")), classes = bold   ),
+        TableRow(content = Empty,                                    classes = ""     ),
+        TableRow(content = Text(calc.taxDue.toCurrency),             classes = numeric)
+      )).toSeq
     )
   }
 
-  private def dataRowsFor(calc: CalculationDetails)(implicit messages: Messages): Seq[Seq[TableRow]] =
-    calc.slices match {
-      case Some(slices) => slices.filter(_.taxDue != 0).map { slice =>
-        Seq(
-          TableRow(content = Text(sliceDescription(slice)),      classes = "govuk-!-font-weight-bold"),
-          TableRow(content = Text(s"${slice.rate}%"),            classes = "govuk-table__cell--numeric"),
-          TableRow(content = Text(currencyFormat(slice.taxDue)), classes = "govuk-table__cell--numeric")
-        )
-      }
-      case None if calc.taxDue != 0 => Seq(Seq(
-        TableRow(content = Text(getMessage("rates.premium")),   classes = "govuk-!-font-weight-bold"),
-        TableRow(content = Text(s"${calc.rate.getOrElse(0)}%"), classes = "govuk-table__cell--numeric"),
-        TableRow(content = Text(currencyFormat(calc.taxDue)),   classes = "govuk-table__cell--numeric")
-      ))
-      case None => Nil
+  private def getNpvRateTable(result: TaxCalculationResult)(implicit messages: Messages): Option[Table] =
+    result.taxCalcs.find(_.taxType == TaxTypes.rent).map { calc =>
+      Table(
+        caption = Some(getMessage("rates.captionNpv")),
+        captionClasses = "govuk-table__caption--m",
+        head = Some(Seq(
+          HeadCell(content = Text(getMessage("rates.column.description"))),
+          HeadCell(content = Text(getMessage("rates.column.rate")),    classes = numericHeader),
+          HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
+        )),
+        rows = calc.slices.toSeq.flatten.filterNot(zeroTaxRows).map { slice =>
+          Seq(
+            TableRow(content = Text(sliceDescription(slice)), classes = bold   ),
+            TableRow(content = Text(slice.rate.toPercentage), classes = numeric),
+            TableRow(content = Text(slice.taxDue.toCurrency), classes = numeric)
+          )
+        } ++ Seq(Seq(
+          TableRow(content = Text(getMessage("rates.totalOnNpv")), classes = bold   ),
+          TableRow(content = Empty,                                classes = ""     ),
+          TableRow(content = Text(calc.taxDue.toCurrency),         classes = numeric)
+        ))
+      )
     }
 
-  private def buildTotalTaxTable(totalTax: Int)(implicit messages: Messages): Table = Table(rows = Seq(Seq(
-    TableRow(content = Text(getMessage("totalSdltDue")), classes = "govuk-!-font-weight-bold"),
-    TableRow(content = Empty),
-    TableRow(content = Text(currencyFormat(totalTax)),   classes = "govuk-table__cell--numeric")
+  private def getTotalTaxTable(totalTax: Int)(implicit messages: Messages): Table =
+    Table(rows = Seq(Seq(
+      TableRow(content = Text(getMessage("totalSdltDue")), classes = bold  ),
+      TableRow(content = Empty,                            classes = ""     ),
+      TableRow(content = Text(totalTax.toCurrency),        classes = numeric)
   )))
 
   private def sliceDescription(slice: SliceDetails)(implicit messages: Messages): String =
     (slice.from, slice.to) match {
-      case (0,    Some(to))             => getMessage("rates.upTo",         currencyFormat(to))
-      case (from, Some(to)) if to != -1 => getMessage("rates.aboveAndUpTo", currencyFormat(from), currencyFormat(to))
-      case (from,        _)             => getMessage("rates.aboveOpen",    currencyFormat(from))
+      case (0,    Some(to))             => getMessage("rates.upTo",         to.toCurrency)
+      case (from, Some(to)) if to != -1 => getMessage("rates.aboveAndUpTo", from.toCurrency, to.toCurrency)
+      case (from,        _)             => getMessage("rates.aboveOpen",    from.toCurrency)
     }
 
-  private def asYesNo(s: String)(implicit messages: Messages): String = s.toLowerCase match {
-    case "yes" => messages("site.yes")
-    case "no"  => messages("site.no")
-    case _     => s
+  /** Renders a rate with optional fractional tenths — e.g. (Some(0), Some(5)) → "0.5%", (Some(3), None) → "3%". **/
+  private def formatRate(rate: Option[Int], fraction: Option[Int]): String = {
+    val r = rate.getOrElse(0)
+    fraction.fold(s"$r%")(f => s"$r.$f%")
   }
 
-  private def asDate(s: String)(implicit messages: Messages): String = {
-    implicit val lang: Lang = messages.lang
-    Try(LocalDate.parse(s)).toOption.map(_.format(DateTimeFormats.dateTimeFormat())).getOrElse(s)
-  }
-  
+  /** Readability helper to make removing zero tax rows more explanatory **/
+  private val zeroTaxRows: SliceDetails => Boolean = _.taxDue == 0
+
+  private val bold = "govuk-!-font-weight-bold"
+  private val numeric = "govuk-table__cell--numeric"
+  private val numericHeader = "govuk-table__header--numeric"
+
   private def getMessage(key: String, args: Any*)(implicit messages: Messages): String =
     messages(s"taxCalculation.calculation.$key", args*)
 }
