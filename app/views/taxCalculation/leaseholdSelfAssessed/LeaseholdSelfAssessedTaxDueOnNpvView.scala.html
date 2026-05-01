@@ -37,7 +37,7 @@
 
 @layout(pageTitle = title(form, messages("taxCalculation.taxDueOnNpv.title"), section = Some(messages("site.taxCalculation.caption")))) {
 
-    @formHelper(action = controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSdltNotCalculatedNpvDueController.onSubmit(mode)) {
+    @formHelper(action = controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTaxDueOnNpvController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

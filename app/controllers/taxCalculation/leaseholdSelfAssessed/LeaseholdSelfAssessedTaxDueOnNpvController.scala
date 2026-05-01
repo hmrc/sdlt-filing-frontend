@@ -21,17 +21,18 @@ import forms.taxCalculation.TaxDueOnNpvFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.taxCalculation.leaseholdSelfAssessed.{LeaseholdSelfAssessedNpvTaxPage, LeaseholdSelfAssessedTotalAmountDuePage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.taxCalculation.leaseholdSelfAssessed.TaxDueOnNpvView
+import views.html.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedTaxDueOnNpvView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LeaseholdSdltNotCalculatedNpvDueController @Inject()(
+class LeaseholdSelfAssessedTaxDueOnNpvController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
                                          navigator: Navigator,
@@ -40,10 +41,10 @@ class LeaseholdSdltNotCalculatedNpvDueController @Inject()(
                                          requireData: DataRequiredAction,
                                          formProvider: TaxDueOnNpvFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: TaxDueOnNpvView
+                                         view: LeaseholdSelfAssessedTaxDueOnNpvView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
