@@ -598,11 +598,9 @@ POST       /about-the-transaction/CAP1-or-NSBC                                  
 GET        /about-the-transaction/CAP1-or-NSBC/change                                                controllers.transaction.Cap1OrNsbcController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/CAP1-or-NSBC/change                                                controllers.transaction.Cap1OrNsbcController.onSubmit(mode: Mode = CheckMode)
 
-<<<<<<< Updated upstream
 GET        /about-the-transaction/assets-included-in-sale-of-the-business                            controllers.transaction.TransactionSaleOfBusinessAssetsController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/assets-included-in-sale-of-the-business                            controllers.transaction.TransactionSaleOfBusinessAssetsController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/assets-included-in-sale-of-the-business/change                     controllers.transaction.TransactionSaleOfBusinessAssetsController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/assets-included-in-sale-of-the-business/change                     controllers.transaction.TransactionSaleOfBusinessAssetsController.onSubmit(mode: Mode = CheckMode)
-=======
+
 GET        /about-the-lease/before-you-start                                                         controllers.lease.LeaseBeforeYouStartController.onPageLoad()
->>>>>>> Stashed changes
