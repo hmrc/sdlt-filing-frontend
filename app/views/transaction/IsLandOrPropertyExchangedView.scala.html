@@ -29,7 +29,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("transaction.isLandOrPropertyExchanged.title"))) {
+@layout(pageTitle = title(form, messages("transaction.isLandOrPropertyExchanged.title"), section = Some(messages("site.transaction.caption")))) {
 
     @formHelper(action = controllers.transaction.routes.IsLandOrPropertyExchangedController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
