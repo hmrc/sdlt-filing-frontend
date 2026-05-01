@@ -18,28 +18,34 @@ package services.taxCalculation
 
 import base.SpecBase
 import connectors.SdltCalculationConnector
-import models._
+import models.*
 import models.requests.DataRequest
-import models.taxCalculation._
+import models.taxCalculation.*
 import pages.taxCalculation.TaxCalculationFlowPage
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.Results
+import pages.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestPage
+import play.api.mvc.{AnyContentAsEmpty, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import models.PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionException, Future}
 
 class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val mockConnector: SdltCalculationConnector = mock[SdltCalculationConnector]
-  val service = new SdltCalculationService(mockConnector)
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val service = new SdltCalculationService(
+    connector = mockConnector,
+    sessionRepository = mockSessionRepository)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -49,10 +55,27 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
   val expectedResult: TaxCalculationResult =
     TaxCalculationResult(totalTax = 5000, resultHeading = None, resultHint = None, npv = None, taxCalcs = Seq.empty)
 
+
   val validUserAnswers: UserAnswers = UserAnswers(
     id = "id", storn = "STORN",
     fullReturn = Some(FullReturn(
       stornId = "STORN", returnResourceRef = "REF",
+      land = Some(Seq(Land(propertyType = Some("01"), interestCreatedTransferred = Some("FPF")))),
+      transaction = Some(Transaction(
+        transactionDescription = Some("F"), effectiveDate = Some("2025-06-15"),
+        totalConsideration = Some(250000), isLinked = Some("no")
+      )),
+      residency = Some(Residency(isNonUkResidents = Some("no")))
+    ))
+  )
+
+  val taxCalculation = TaxCalculation(includesPenalty = Some("true"))
+  val validUserAnswerWithIncludePenalties: UserAnswers = UserAnswers(
+    id = "id", storn = "STORN",
+    fullReturn = Some(FullReturn(
+      taxCalculation = Some(taxCalculation),
+      stornId = "STORN",
+      returnResourceRef = "REF",
       land = Some(Seq(Land(propertyType = Some("01"), interestCreatedTransferred = Some("FPF")))),
       transaction = Some(Transaction(
         transactionDescription = Some("F"), effectiveDate = Some("2025-06-15"),
@@ -128,7 +151,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
   "whenInFlow" - {
 
     "must run the onAllowed block when the session has the expected flow recorded" in {
-      val answers              = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+      val answers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
       implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, answers)
 
       val result = service.whenInFlow(TaxCalculationFlow.FreeholdTaxCalculated)(Results.Ok("rendered"))
@@ -137,7 +160,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
     }
 
     "must redirect to the return task list when the session has a different flow recorded" in {
-      val answers              = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+      val answers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
       implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, answers)
 
       val result = service.whenInFlow(TaxCalculationFlow.FreeholdTaxCalculated)(Results.Ok("should not render"))
@@ -155,4 +178,33 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
       result.header.headers("Location") mustBe controllers.routes.ReturnTaskListController.onPageLoad().url
     }
   }
+
+  "savePenaltiesAndInterestYesNoAnswer" - {
+
+    implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = DataRequest(
+      FakeRequest(), "test-id", emptyUserAnswers)
+
+    "call repository to save user PenaltiesAndInterestYesNo choice :: success" in {
+      when(mockSessionRepository.set(any()))
+        .thenReturn(Future.successful(true))
+      val result = service.savePenaltiesAndInterestYesNoAnswer(
+        key = FreeholdSelfAssessedPenaltiesAndInterestPage,
+        value = AmountIncludePenaltiesAndInterestYes).futureValue
+      result mustBe true
+      verify(mockSessionRepository, times(1)).set(any())
+    }
+
+    "call repository to save user PenaltiesAndInterestYesNo choice :: failure" in {
+      when(mockSessionRepository.set(any()))
+        .thenThrow(Error("ConnectionTimeOut"))
+      val result =  service.savePenaltiesAndInterestYesNoAnswer(
+          key = FreeholdSelfAssessedPenaltiesAndInterestPage,
+          value = AmountIncludePenaltiesAndInterestYes).failed.futureValue
+      result mustBe an[ExecutionException]
+      result.getCause.getMessage mustBe "ConnectionTimeOut"
+    }
+
+  }
+
+
 }

@@ -1400,6 +1400,23 @@ taxCalculation.beforeStart.bullet3                                              
 taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
 taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
 
+# Scenarios 1 - 4
+
+# Generic
+taxCalculation.penaltiesAndInterest.penaltiesAndInterestYes                         = Yes
+taxCalculation.penaltiesAndInterest.penaltiesAndInterestNo                          = No
+taxCalculation.penaltiesAndInterest.button                                          = Save and continue
+
+# Scenario-1
+taxCalculation.penaltiesAndInterest.scenario-one.title                              = Does the amount you intend to pay include penalties and interest charges? – Tax calculation – Freehold calculated
+taxCalculation.penaltiesAndInterest.scenario-one.heading                            = Does the amount you intend to pay include penalties and interest charges?
+
+# Scenario-2 - placeholder
+
+# Scenario-3 - placeholder
+
+# Scenario-4 - placeholder
+
 transaction.charityRegisteredNumber.title                                           = What is the charity’s registered number?
 transaction.charityRegisteredNumber.heading                                         = What is the charity’s registered number?
 transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity Registered Number
