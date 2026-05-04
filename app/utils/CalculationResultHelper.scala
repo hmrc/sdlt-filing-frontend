@@ -19,11 +19,7 @@ package utils
 import config.CurrencyFormatter
 import models.UserAnswers
 import models.taxCalculation.TaxTypes.*
-import models.taxCalculation.{
-  CalcTypes, CalculationDetails, MissingAboutTheLandError, MissingAboutTheTransactionError,
-  MissingDataError, MissingFullReturnError, MissingLandAnswerError, MissingPremiumCalcError,
-  MissingTransactionAnswerError, SliceDetails, TaxCalculationResult, TaxTypes
-}
+import models.taxCalculation.*
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Empty, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryList, SummaryListRow, Value}

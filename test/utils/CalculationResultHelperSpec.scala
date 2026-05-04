@@ -17,11 +17,7 @@
 package utils
 
 import base.SpecBase
-import models.taxCalculation.{
-  CalcTypes, CalculationDetails, MissingAboutTheLandError, MissingAboutTheTransactionError,
-  MissingFullReturnError, MissingLandAnswerError, MissingPremiumCalcError,
-  MissingTransactionAnswerError, SliceDetails, TaxCalculationResult, TaxTypes
-}
+import models.taxCalculation.*
 import models.{FullReturn, Land, Transaction, UserAnswers}
 import org.scalatest.EitherValues
 import play.api.i18n.Messages
