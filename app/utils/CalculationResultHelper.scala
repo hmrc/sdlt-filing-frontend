@@ -190,6 +190,6 @@ object CalculationResultHelper extends CurrencyFormatter {
   private val numeric = "govuk-table__cell--numeric"
   private val numericHeader = "govuk-table__header--numeric"
 
-  private def getMessage(key: String, args: Any*)(implicit messages: Messages): String =
+  private def getMessage(key: String, args: String*)(implicit messages: Messages): String =
     messages(s"taxCalculation.calculation.$key", args*)
 }
