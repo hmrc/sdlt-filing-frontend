@@ -159,9 +159,14 @@ class CalculationResultHelperSpec extends SpecBase with EitherValues {
       )
     }
 
-    "renders the rate with one fractional digit when rateFraction is set" in {
+    "renders the rate with one fractional digit when rateFraction is non-zero" in {
       val table = getPremiumRateTable(slabCalc(TaxTypes.premium, 5000, rate = 0, fraction = Some(5)), isLeasehold = false)
       table.rows.head.map(_.content)(1) mustBe Text("0.5%")
+    }
+
+    "treats a rateFraction of Some(0) as no fractional digit" in {
+      val table = getPremiumRateTable(slabCalc(TaxTypes.premium, 7500, rate = 3, fraction = Some(0)), isLeasehold = false)
+      table.rows.head.map(_.content)(1) mustBe Text("3%")
     }
 
     "renders the slab row even when its tax due is zero" in {

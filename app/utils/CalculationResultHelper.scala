@@ -45,9 +45,8 @@ case class CalculationResultViewModel(
  * FullReturn in UserAnswers.
  *
  * Every result from sdltc has exactly one premium CalculationDetails, the breakdown is either
- * band-based (`slices = Some(...)`, modern rates) or single-rate (`slices = None`, legacy
- * pre-Dec-2014 residential / pre-Mar-2016 non-residential slab rates). Leasehold results add a
- * second `rent` CalculationDetails for the NPV rate table.
+ * band-based (slices = Some(...)) or single-rate (slices = None)
+ * Leasehold results add a second rent CalculationDetails for the NPV rate table.
  */
 
 object CalculationResultHelper extends CurrencyFormatter {
@@ -195,10 +194,9 @@ object CalculationResultHelper extends CurrencyFormatter {
       case (from,        _)             => getMessage("rates.aboveOpen",    from.toCurrency               )
     }
 
-  /** Renders a rate with optional fractional tenths — e.g. (Some(0), Some(5)) → "0.5%", (Some(3), None) → "3%". **/
   private[utils] def formatRate(rate: Option[Int], fraction: Option[Int]): String = {
     val r = rate.getOrElse(0)
-    fraction.fold(s"$r%")(f => s"$r.$f%")
+    fraction.filter(_ != 0).fold(s"$r%")(f => s"$r.$f%")
   }
 
   private val bold          = "govuk-!-font-weight-bold"

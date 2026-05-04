@@ -30,7 +30,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     effectiveDate: String = "2025-06-15",
     consideration: BigDecimal = 250000,
     isLinked: Option[String] = Some("no"),
-    claimingRelief: Option[String] = None,
+    claimingRelief: Option[String] = Some("no"),
     reliefReason: Option[String] = None,
     reliefAmount: Option[BigDecimal] = None,
     isNonUkResident: Option[String] = Some("no")
@@ -58,7 +58,8 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     land = Some(Seq(Land(propertyType = Some("01"), interestCreatedTransferred = Some("LG")))),
     transaction = Some(Transaction(
       transactionDescription = Some("L"), effectiveDate = Some(effectiveDate),
-      totalConsideration = Some(consideration), isLinked = Some("no")
+      totalConsideration = Some(consideration), isLinked = Some("no"),
+      claimingRelief = Some("no")
     )),
     residency = Some(Residency(isNonUkResidents = Some("no"))),
     lease = Some(Lease(
@@ -139,7 +140,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must map A to freehold" in {
         val fr = freeholdReturn().copy(transaction = Some(Transaction(
           transactionDescription = Some("A"), effectiveDate = Some("2025-06-15"),
-          totalConsideration = Some(250000), isLinked = Some("no")
+          totalConsideration = Some(250000), isLinked = Some("no"), claimingRelief = Some("no")
         )))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)).toOption.get.holdingType mustBe HoldingTypes.freehold
       }
@@ -223,6 +224,11 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
 
       "must be None when not claiming relief" in {
         TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn())).toOption.get.taxReliefDetails mustBe None
+      }
+
+      "must fail when claimingRelief is missing entirely" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(claimingRelief = None))) mustBe
+          Left(MissingTransactionAnswerError("claimingRelief"))
       }
 
       "must fail when claiming relief but reliefReason is missing" in {

@@ -68,8 +68,8 @@ object TaxCalcRequestValidator {
     )
 
   private def getTaxReliefDetails(transaction: Transaction): Either[BuildRequestError, Option[TaxReliefDetails]] =
-    transaction.claimingRelief.map(_.toUpperCase) match {
-      case Some(YES) =>
+    transaction.claimingRelief.map(_.toUpperCase).toRight(MissingTransactionAnswerError("claimingRelief")).flatMap {
+      case YES =>
         for {
           reliefReason <- transaction.reliefReason.toRight(MissingTransactionAnswerError("reliefReason"))
           reliefCode   <- Try(reliefReason.toInt).toOption.toRight(InvalidReliefReasonError(reliefReason))
@@ -77,7 +77,7 @@ object TaxCalcRequestValidator {
           taxReliefCode   = reliefCode,
           isPartialRelief = Some(transaction.reliefAmount.isDefined)
         ))
-      case _ => Right(None)
+      case _   => Right(None)
     }
 
   private def handleNonUkResident(residency: Option[Residency], effectiveDate: LocalDate, propertyType: PropertyTypes.Value): Option[String] =
