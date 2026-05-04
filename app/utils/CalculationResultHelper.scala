@@ -131,12 +131,14 @@ object CalculationResultHelper extends CurrencyFormatter {
                                         (implicit messages: Messages): Table =
     Table(
       caption = Some(if (isLeasehold) getMessage("rates.captionPremium") else getMessage("rates.caption")),
-      captionClasses = "govuk-table__caption--m",
+      captionClasses = mediumCaption,
       head = Some(rateTableHeader),
       rows = (calc.calcType match {
         case CalcTypes.slice => calc.slices.toSeq.flatten.map(sliceRow)
         case CalcTypes.slab  => Seq(slabRow("rates.premium", calc))
-      }) ++ Option.when(isLeasehold)(totalRow("rates.totalOnPremium", calc.taxDue.toCurrency)).toSeq
+      }) ++ Option.when(isLeasehold)(
+        totalRow("rates.totalOnPremium", calc.taxDue.toCurrency)
+      ).toSeq
     )
 
   private[utils] def getNpvRateTable(rentCalc: Option[CalculationDetails])
@@ -144,12 +146,14 @@ object CalculationResultHelper extends CurrencyFormatter {
     rentCalc.map { calc =>
       Table(
         caption = Some(getMessage("rates.captionNpv")),
-        captionClasses = "govuk-table__caption--m",
+        captionClasses = mediumCaption,
         head = Some(rateTableHeader),
         rows = (calc.calcType match {
           case CalcTypes.slice => calc.slices.toSeq.flatten.map(sliceRow)
           case CalcTypes.slab  => Seq(slabRow("rates.npv", calc))
-        }) ++ Seq(totalRow("rates.totalOnNpv", calc.taxDue.toCurrency))
+        }) ++ Seq(
+          totalRow("rates.totalOnNpv", calc.taxDue.toCurrency)
+        )
       )
     }
 
@@ -179,16 +183,16 @@ object CalculationResultHelper extends CurrencyFormatter {
 
   private[utils] def rateTableHeader(implicit messages: Messages): Seq[HeadCell] =
     Seq(
-      HeadCell(content = Text(getMessage("rates.column.description"))),
-      HeadCell(content = Text(getMessage("rates.column.rate")),    classes = numericHeader),
-      HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
+      HeadCell(content = Text(getMessage("rates.column.description")), classes = ""           ),
+      HeadCell(content = Text(getMessage("rates.column.rate")),        classes = numericHeader),
+      HeadCell(content = Text(getMessage("rates.column.sdltDue")),     classes = numericHeader)
     )
 
   private[utils] def sliceDescription(slice: SliceDetails)(implicit messages: Messages): String =
     (slice.from, slice.to) match {
-      case (0,    Some(to))             => getMessage("rates.upTo",         to.toCurrency)
+      case (0,    Some(to))             => getMessage("rates.upTo",         to.toCurrency                 )
       case (from, Some(to)) if to != -1 => getMessage("rates.aboveAndUpTo", from.toCurrency, to.toCurrency)
-      case (from,        _)             => getMessage("rates.aboveOpen",    from.toCurrency)
+      case (from,        _)             => getMessage("rates.aboveOpen",    from.toCurrency               )
     }
 
   /** Renders a rate with optional fractional tenths — e.g. (Some(0), Some(5)) → "0.5%", (Some(3), None) → "3%". **/
@@ -197,9 +201,10 @@ object CalculationResultHelper extends CurrencyFormatter {
     fraction.fold(s"$r%")(f => s"$r.$f%")
   }
 
-  private val bold = "govuk-!-font-weight-bold"
-  private val numeric = "govuk-table__cell--numeric"
+  private val bold          = "govuk-!-font-weight-bold"
+  private val numeric       = "govuk-table__cell--numeric"
   private val numericHeader = "govuk-table__header--numeric"
+  private val mediumCaption = "govuk-table__caption--m"
 
   private def getMessage(key: String, args: String*)(implicit messages: Messages): String =
     messages(s"taxCalculation.calculation.$key", args*)
