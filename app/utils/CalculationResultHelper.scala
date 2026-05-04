@@ -58,7 +58,7 @@ object CalculationResultHelper extends CurrencyFormatter {
       totalTax              = getTotalTaxTable(result.totalTax)
     )
 
-  private def getTaxCalculationSummary(result: TaxCalculationResult, answers: UserAnswers)
+  private[utils] def getTaxCalculationSummary(result: TaxCalculationResult, answers: UserAnswers)
                                       (implicit messages: Messages): SummaryList =
     (for {
       transaction       <- answers.fullReturn.flatMap(_.transaction)
@@ -79,7 +79,7 @@ object CalculationResultHelper extends CurrencyFormatter {
     ).flatten))
       .getOrElse(SummaryList(rows = Nil))
 
-  private def getRateCardSummary(answers: UserAnswers)
+  private[utils] def getRateCardSummary(answers: UserAnswers)
                                 (implicit messages: Messages): SummaryList =
     (for {
       transaction     <- answers.fullReturn.flatMap(_.transaction)
@@ -97,7 +97,7 @@ object CalculationResultHelper extends CurrencyFormatter {
     })
       .getOrElse(SummaryList(rows = Nil))
 
-  private def getPremiumRateTable(result: TaxCalculationResult)(implicit messages: Messages): Table = {
+  private[utils] def getPremiumRateTable(result: TaxCalculationResult)(implicit messages: Messages): Table = {
     val calc = result.taxCalcs.find(_.taxType == TaxTypes.premium)
       .getOrElse(throw new IllegalStateException("TaxCalculationResult missing premium CalculationDetails"))
     val isLeasehold = result.taxCalcs.exists(_.taxType == TaxTypes.rent)
@@ -132,7 +132,7 @@ object CalculationResultHelper extends CurrencyFormatter {
     )
   }
 
-  private def getNpvRateTable(result: TaxCalculationResult)(implicit messages: Messages): Option[Table] =
+  private[utils] def getNpvRateTable(result: TaxCalculationResult)(implicit messages: Messages): Option[Table] =
     result.taxCalcs.find(_.taxType == TaxTypes.rent).map { calc =>
       Table(
         caption = Some(getMessage("rates.captionNpv")),
@@ -142,13 +142,21 @@ object CalculationResultHelper extends CurrencyFormatter {
           HeadCell(content = Text(getMessage("rates.column.rate")),    classes = numericHeader),
           HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
         )),
-        rows = calc.slices.toSeq.flatten.filterNot(zeroTaxRows).map { slice =>
-          Seq(
-            TableRow(content = Text(sliceDescription(slice)), classes = bold   ),
-            TableRow(content = Text(slice.rate.toPercentage), classes = numeric),
-            TableRow(content = Text(slice.taxDue.toCurrency), classes = numeric)
-          )
-        } ++ Seq(Seq(
+        rows = (calc.calcType match {
+          case CalcTypes.slice => calc.slices.toSeq.flatten.filterNot(zeroTaxRows).map { slice =>
+            Seq(
+              TableRow(content = Text(sliceDescription(slice)),  classes = bold   ),
+              TableRow(content = Text(slice.rate.toPercentage),  classes = numeric),
+              TableRow(content = Text(slice.taxDue.toCurrency),  classes = numeric)
+            )
+          }
+          case CalcTypes.slab if calc.taxDue != 0 => Seq(Seq(
+            TableRow(content = Text(getMessage("rates.npv")),                  classes = bold   ),
+            TableRow(content = Text(formatRate(calc.rate, calc.rateFraction)), classes = numeric),
+            TableRow(content = Text(calc.taxDue.toCurrency),                   classes = numeric)
+          ))
+          case CalcTypes.slab => Nil
+        }) ++ Seq(Seq(
           TableRow(content = Text(getMessage("rates.totalOnNpv")), classes = bold   ),
           TableRow(content = Empty,                                classes = ""     ),
           TableRow(content = Text(calc.taxDue.toCurrency),         classes = numeric)
@@ -156,14 +164,14 @@ object CalculationResultHelper extends CurrencyFormatter {
       )
     }
 
-  private def getTotalTaxTable(totalTax: Int)(implicit messages: Messages): Table =
+  private[utils] def getTotalTaxTable(totalTax: Int)(implicit messages: Messages): Table =
     Table(rows = Seq(Seq(
       TableRow(content = Text(getMessage("totalSdltDue")), classes = bold   ),
       TableRow(content = Empty,                            classes = ""     ),
       TableRow(content = Text(totalTax.toCurrency),        classes = numeric)
   )))
 
-  private def sliceDescription(slice: SliceDetails)(implicit messages: Messages): String =
+  private[utils] def sliceDescription(slice: SliceDetails)(implicit messages: Messages): String =
     (slice.from, slice.to) match {
       case (0,    Some(to))             => getMessage("rates.upTo",         to.toCurrency)
       case (from, Some(to)) if to != -1 => getMessage("rates.aboveAndUpTo", from.toCurrency, to.toCurrency)
@@ -171,7 +179,7 @@ object CalculationResultHelper extends CurrencyFormatter {
     }
 
   /** Renders a rate with optional fractional tenths — e.g. (Some(0), Some(5)) → "0.5%", (Some(3), None) → "3%". **/
-  private def formatRate(rate: Option[Int], fraction: Option[Int]): String = {
+  private[utils] def formatRate(rate: Option[Int], fraction: Option[Int]): String = {
     val r = rate.getOrElse(0)
     fraction.fold(s"$r%")(f => s"$r.$f%")
   }

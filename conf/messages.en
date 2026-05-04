@@ -1412,6 +1412,7 @@ taxCalculation.calculation.rates.column.description                             
 taxCalculation.calculation.rates.column.rate                                        = Rate
 taxCalculation.calculation.rates.column.sdltDue                                     = SDLT due
 taxCalculation.calculation.rates.premium                                            = Premium
+taxCalculation.calculation.rates.npv                                                = NPV
 taxCalculation.calculation.rates.upTo                                               = Up to {0}
 taxCalculation.calculation.rates.aboveAndUpTo                                       = Above {0} and up to {1}
 taxCalculation.calculation.rates.aboveOpen                                          = Above {0}+
