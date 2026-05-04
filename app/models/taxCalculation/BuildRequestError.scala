@@ -46,6 +46,10 @@ case class MissingLeaseAnswerError(value: String) extends MissingDataError {
   val message = s"Could not find user answer from 'About the Lease': $value"
 }
 
+case object MissingPremiumCalcError extends MissingDataError {
+  val message = "TaxCalculationResult missing premium CalculationDetails"
+}
+
 case class InvalidDateError(value: String) extends BuildRequestError {
   val message = s"Invalid date: $value"
 }

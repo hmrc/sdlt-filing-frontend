@@ -44,8 +44,14 @@ class FreeholdCalculatedSdltBreakdown @Inject()(
       sdltCalculationService
         .calculateStampDutyLandTax(request.userAnswers)
         .map {
-          case Right(result) => Ok(view(CalculationResultHelper.toViewModel(result, request.userAnswers)))
-          case Left(err)     =>
+          case Right(result) =>
+            CalculationResultHelper.toViewModel(result, request.userAnswers) match {
+              case Right(vm) => Ok(view(vm))
+              case Left(err) =>
+                logger.warn(s"[FreeholdCalculatedSdltBreakdown] Failed to construct View Model: ${err.message}")
+                Redirect(ReturnTaskListController.onPageLoad())
+            }
+          case Left(err) =>
             logger.warn(s"[FreeholdCalculatedSdltBreakdown] Required field missing: ${err.message}")
             Redirect(ReturnTaskListController.onPageLoad())
         }
