@@ -67,7 +67,6 @@ object CalculationResultHelper extends CurrencyFormatter {
       premiumCalc            <- result.taxCalcs.find(_.taxType == premium).toRight(MissingPremiumCalcError)
       rentCalc                = result.taxCalcs.find(_.taxType == rent)
     } yield {
-
       CalculationResultViewModel(
         taxCalculationSummary = getTaxCalculationSummary(
           effectiveDate      = asDate(effectiveDate),
@@ -133,29 +132,11 @@ object CalculationResultHelper extends CurrencyFormatter {
     Table(
       caption = Some(if (isLeasehold) getMessage("rates.captionPremium") else getMessage("rates.caption")),
       captionClasses = "govuk-table__caption--m",
-      head = Some(Seq(
-        HeadCell(content = Text(getMessage("rates.column.description"))),
-        HeadCell(content = Text(getMessage("rates.column.rate")),    classes = numericHeader),
-        HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
-      )),
+      head = Some(rateTableHeader),
       rows = (calc.calcType match {
-        case CalcTypes.slice => calc.slices.toSeq.flatten.map { slice =>
-          Seq(
-            TableRow(content = Text(sliceDescription(slice)),  classes = bold   ),
-            TableRow(content = Text(slice.rate.toPercentage),  classes = numeric),
-            TableRow(content = Text(slice.taxDue.toCurrency),  classes = numeric)
-          )
-        }
-        case CalcTypes.slab => Seq(Seq(
-          TableRow(content = Text(getMessage("rates.premium")),              classes = bold   ),
-          TableRow(content = Text(formatRate(calc.rate, calc.rateFraction)), classes = numeric),
-          TableRow(content = Text(calc.taxDue.toCurrency),                   classes = numeric)
-        ))
-      }) ++ Option.when(isLeasehold)(Seq(
-        TableRow(content = Text(getMessage("rates.totalOnPremium")), classes = bold   ),
-        TableRow(content = Empty,                                    classes = ""     ),
-        TableRow(content = Text(calc.taxDue.toCurrency),             classes = numeric)
-      )).toSeq
+        case CalcTypes.slice => calc.slices.toSeq.flatten.map(sliceRow)
+        case CalcTypes.slab  => Seq(slabRow("rates.premium", calc))
+      }) ++ Option.when(isLeasehold)(totalRow("rates.totalOnPremium", calc.taxDue.toCurrency)).toSeq
     )
 
   private[utils] def getNpvRateTable(rentCalc: Option[CalculationDetails])
@@ -164,38 +145,44 @@ object CalculationResultHelper extends CurrencyFormatter {
       Table(
         caption = Some(getMessage("rates.captionNpv")),
         captionClasses = "govuk-table__caption--m",
-        head = Some(Seq(
-          HeadCell(content = Text(getMessage("rates.column.description"))),
-          HeadCell(content = Text(getMessage("rates.column.rate")),    classes = numericHeader),
-          HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
-        )),
+        head = Some(rateTableHeader),
         rows = (calc.calcType match {
-          case CalcTypes.slice => calc.slices.toSeq.flatten.map { slice =>
-            Seq(
-              TableRow(content = Text(sliceDescription(slice)),  classes = bold   ),
-              TableRow(content = Text(slice.rate.toPercentage),  classes = numeric),
-              TableRow(content = Text(slice.taxDue.toCurrency),  classes = numeric)
-            )
-          }
-          case CalcTypes.slab => Seq(Seq(
-            TableRow(content = Text(getMessage("rates.npv")),                  classes = bold   ),
-            TableRow(content = Text(formatRate(calc.rate, calc.rateFraction)), classes = numeric),
-            TableRow(content = Text(calc.taxDue.toCurrency),                   classes = numeric)
-          ))
-        }) ++ Seq(Seq(
-          TableRow(content = Text(getMessage("rates.totalOnNpv")), classes = bold   ),
-          TableRow(content = Empty,                                classes = ""     ),
-          TableRow(content = Text(calc.taxDue.toCurrency),         classes = numeric)
-        ))
+          case CalcTypes.slice => calc.slices.toSeq.flatten.map(sliceRow)
+          case CalcTypes.slab  => Seq(slabRow("rates.npv", calc))
+        }) ++ Seq(totalRow("rates.totalOnNpv", calc.taxDue.toCurrency))
       )
     }
 
   private[utils] def getTotalTaxTable(totalSdltDue: String)(implicit messages: Messages): Table =
-    Table(rows = Seq(Seq(
-      TableRow(content = Text(getMessage("totalSdltDue")), classes = bold   ),
-      TableRow(content = Empty,                            classes = ""     ),
-      TableRow(content = Text(totalSdltDue),               classes = numeric)
-  )))
+    Table(rows = Seq(totalRow("totalSdltDue", totalSdltDue)))
+
+  private[utils] def sliceRow(slice: SliceDetails)(implicit messages: Messages): Seq[TableRow] =
+    Seq(
+      TableRow(content = Text(sliceDescription(slice)), classes = bold),
+      TableRow(content = Text(slice.rate.toPercentage), classes = numeric),
+      TableRow(content = Text(slice.taxDue.toCurrency), classes = numeric)
+    )
+
+  private[utils] def slabRow(labelKey: String, calc: CalculationDetails)(implicit messages: Messages): Seq[TableRow] =
+    Seq(
+      TableRow(content = Text(getMessage(labelKey)),                     classes = bold),
+      TableRow(content = Text(formatRate(calc.rate, calc.rateFraction)), classes = numeric),
+      TableRow(content = Text(calc.taxDue.toCurrency),                   classes = numeric)
+    )
+
+  private[utils] def totalRow(labelKey: String, amount: String)(implicit messages: Messages): Seq[TableRow] =
+    Seq(
+      TableRow(content = Text(getMessage(labelKey)), classes = bold),
+      TableRow(content = Empty,                      classes = ""),
+      TableRow(content = Text(amount),               classes = numeric)
+    )
+
+  private[utils] def rateTableHeader(implicit messages: Messages): Seq[HeadCell] =
+    Seq(
+      HeadCell(content = Text(getMessage("rates.column.description"))),
+      HeadCell(content = Text(getMessage("rates.column.rate")),    classes = numericHeader),
+      HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
+    )
 
   private[utils] def sliceDescription(slice: SliceDetails)(implicit messages: Messages): String =
     (slice.from, slice.to) match {
