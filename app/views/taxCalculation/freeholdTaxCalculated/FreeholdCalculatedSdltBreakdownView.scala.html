@@ -42,7 +42,7 @@
     @h2(messages("taxCalculation.calculation.rateCard.heading"))
     @govukSummaryList(viewModel.rateCardSummary)
 
-    @govukTable(viewModel.premiumRateTable)
+    @viewModel.premiumRateTable.map(govukTable(_))
     @viewModel.npvRateTable.map(govukTable(_))
     @govukTable(viewModel.totalTax)
 }

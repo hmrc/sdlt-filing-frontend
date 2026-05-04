@@ -30,7 +30,7 @@ import utils.YesNoHelper.toYesNo
 case class CalculationResultViewModel(
                                        taxCalculationSummary: SummaryList,
                                        rateCardSummary:       SummaryList,
-                                       premiumRateTable:      Table,
+                                       premiumRateTable:      Option[Table],
                                        npvRateTable:          Option[Table],
                                        totalTax:              Table
                                      )
@@ -97,12 +97,11 @@ object CalculationResultHelper extends CurrencyFormatter {
     })
       .getOrElse(SummaryList(rows = Nil))
 
-  private[utils] def getPremiumRateTable(result: TaxCalculationResult)(implicit messages: Messages): Table = {
-    val calc = result.taxCalcs.find(_.taxType == TaxTypes.premium)
-      .getOrElse(throw new IllegalStateException("TaxCalculationResult missing premium CalculationDetails"))
-    val isLeasehold = result.taxCalcs.exists(_.taxType == TaxTypes.rent)
+  private[utils] def getPremiumRateTable(result: TaxCalculationResult)(implicit messages: Messages): Option[Table] =
+    result.taxCalcs.find(_.taxType == TaxTypes.premium).map { calc =>
+      val isLeasehold = result.taxCalcs.exists(_.taxType == TaxTypes.rent)
 
-    Table(
+      Table(
       caption = Some(if (isLeasehold) getMessage("rates.captionPremium") else getMessage("rates.caption")),
       captionClasses = "govuk-table__caption--m",
       head = Some(Seq(

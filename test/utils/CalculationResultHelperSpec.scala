@@ -128,7 +128,7 @@ class CalculationResultHelperSpec extends SpecBase {
   ".getPremiumRateTable" - {
 
     "renders one row per non-zero slice with the freehold caption" in {
-      val table = getPremiumRateTable(freeholdResult)
+      val table = getPremiumRateTable(freeholdResult).value
       table.caption mustBe Some("taxCalculation.calculation.rates.caption")
       table.rows must have size 1
       table.rows.head.map(_.content).last mustBe Text("£9,000")
@@ -136,28 +136,28 @@ class CalculationResultHelperSpec extends SpecBase {
 
     "drops slices with zero tax due" in {
       // freeholdResult has two slices, only the second has tax due
-      getPremiumRateTable(freeholdResult).rows must have size 1
+      getPremiumRateTable(freeholdResult).value.rows must have size 1
     }
 
     "renders a single slab row using formatRate when calc is slab-based" in {
       val slabResult = TaxCalculationResult(7500, None, None, None, Seq(slabCalc(TaxTypes.premium, 7500, rate = 3)))
-      getPremiumRateTable(slabResult).rows.head.map(_.content) mustEqual Seq(
+      getPremiumRateTable(slabResult).value.rows.head.map(_.content) mustEqual Seq(
         Text("taxCalculation.calculation.rates.premium"), Text("3%"), Text("£7,500")
       )
     }
 
     "renders the rate with one fractional digit when rateFraction is set" in {
       val slabResult = TaxCalculationResult(5000, None, None, None, Seq(slabCalc(TaxTypes.premium, 5000, rate = 0, fraction = Some(5))))
-      getPremiumRateTable(slabResult).rows.head.map(_.content)(1) mustBe Text("0.5%")
+      getPremiumRateTable(slabResult).value.rows.head.map(_.content)(1) mustBe Text("0.5%")
     }
 
     "skips the slab row entirely when its tax due is zero" in {
       val zeroSlab = TaxCalculationResult(0, None, None, None, Seq(slabCalc(TaxTypes.premium, 0, rate = 0)))
-      getPremiumRateTable(zeroSlab).rows mustBe empty
+      getPremiumRateTable(zeroSlab).value.rows mustBe empty
     }
 
     "uses the leasehold caption and appends a totalOnPremium footer when rent calc is present" in {
-      val table = getPremiumRateTable(leaseResult)
+      val table = getPremiumRateTable(leaseResult).value
       table.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
       table.rows.last.map(_.content) mustEqual Seq(
         Text("taxCalculation.calculation.rates.totalOnPremium"), Empty, Text("£8,000")
@@ -169,7 +169,7 @@ class CalculationResultHelperSpec extends SpecBase {
         slabCalc(TaxTypes.premium, 7500, rate = 3),
         sliceCalc(TaxTypes.rent, 0, slice(0, None, 0, 0))
       ))
-      val table = getPremiumRateTable(slabPremiumLease)
+      val table = getPremiumRateTable(slabPremiumLease).value
       table.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
       table.rows.head.map(_.content) mustEqual Seq(
         Text("taxCalculation.calculation.rates.premium"), Text("3%"), Text("£7,500")
@@ -179,9 +179,9 @@ class CalculationResultHelperSpec extends SpecBase {
       )
     }
 
-    "throws an IllegalStateException when there is no premium calc" in {
-      val rentOnly = TaxCalculationResult(3000, None, None, None, Seq(sliceCalc(TaxTypes.rent, 3000, slice(0, None, 1, 3000))))
-      a[IllegalStateException] must be thrownBy getPremiumRateTable(rentOnly)
+    "is None when there is no premium calc (e.g. self-assessed result with empty taxCalcs)" in {
+      val selfAssessed = TaxCalculationResult(0, None, None, None, Seq.empty)
+      getPremiumRateTable(selfAssessed) mustBe None
     }
   }
 
@@ -241,16 +241,16 @@ class CalculationResultHelperSpec extends SpecBase {
       val vm = toViewModel(freeholdResult, freeholdAnswers)
       vm.taxCalculationSummary.rows must not be empty
       vm.rateCardSummary.rows       must not be empty
-      vm.premiumRateTable.caption   mustBe Some("taxCalculation.calculation.rates.caption")
-      vm.npvRateTable               mustBe None
+      vm.premiumRateTable.value.caption mustBe Some("taxCalculation.calculation.rates.caption")
+      vm.npvRateTable                   mustBe None
       vm.totalTax.rows.head.map(_.content).last mustBe Text("£9,000")
     }
 
     "wires up the freehold caption for a slab premium" in {
       val slabFreehold = TaxCalculationResult(7500, None, None, None, Seq(slabCalc(TaxTypes.premium, 7500, rate = 3)))
       val vm = toViewModel(slabFreehold, freeholdAnswers)
-      vm.premiumRateTable.caption mustBe Some("taxCalculation.calculation.rates.caption")
-      vm.premiumRateTable.rows.head.map(_.content) mustEqual Seq(
+      vm.premiumRateTable.value.caption mustBe Some("taxCalculation.calculation.rates.caption")
+      vm.premiumRateTable.value.rows.head.map(_.content) mustEqual Seq(
         Text("taxCalculation.calculation.rates.premium"), Text("3%"), Text("£7,500")
       )
       vm.npvRateTable mustBe None
@@ -259,8 +259,8 @@ class CalculationResultHelperSpec extends SpecBase {
 
     "produces both tables for a leasehold slice/slice result" in {
       val vm = toViewModel(leaseResult, leaseholdAnswers)
-      vm.premiumRateTable.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
-      vm.npvRateTable.value.caption mustBe Some("taxCalculation.calculation.rates.captionNpv")
+      vm.premiumRateTable.value.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
+      vm.npvRateTable.value.caption     mustBe Some("taxCalculation.calculation.rates.captionNpv")
       vm.totalTax.rows.head.map(_.content).last mustBe Text("£11,000")
     }
 
@@ -270,8 +270,8 @@ class CalculationResultHelperSpec extends SpecBase {
         sliceCalc(TaxTypes.rent, 3000, slice(0, Some(150000), 0, 0), slice(150000, None, 1, 3000))
       ))
       val vm = toViewModel(mixed, leaseholdAnswers)
-      vm.premiumRateTable.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
-      vm.premiumRateTable.rows.head.map(_.content)(1) mustBe Text("3%")
+      vm.premiumRateTable.value.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
+      vm.premiumRateTable.value.rows.head.map(_.content)(1) mustBe Text("3%")
       vm.npvRateTable.value.rows.last.map(_.content).last mustBe Text("£3,000")
       vm.totalTax.rows.head.map(_.content).last mustBe Text("£10,500")
     }
@@ -282,8 +282,8 @@ class CalculationResultHelperSpec extends SpecBase {
         slabCalc(TaxTypes.rent, 0, rate = 0)
       ))
       val vm = toViewModel(mixed, leaseholdAnswers)
-      vm.premiumRateTable.caption    mustBe Some("taxCalculation.calculation.rates.captionPremium")
-      vm.npvRateTable.value.caption  mustBe Some("taxCalculation.calculation.rates.captionNpv")
+      vm.premiumRateTable.value.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
+      vm.npvRateTable.value.caption     mustBe Some("taxCalculation.calculation.rates.captionNpv")
       vm.totalTax.rows.head.map(_.content).last mustBe Text("£9,000")
     }
 
@@ -293,10 +293,18 @@ class CalculationResultHelperSpec extends SpecBase {
         slabCalc(TaxTypes.rent,    0,    rate = 0)
       ))
       val vm = toViewModel(slabBoth, leaseholdAnswers)
-      vm.premiumRateTable.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
-      vm.premiumRateTable.rows.head.map(_.content)(1) mustBe Text("3%")
-      vm.npvRateTable.value.caption mustBe Some("taxCalculation.calculation.rates.captionNpv")
+      vm.premiumRateTable.value.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
+      vm.premiumRateTable.value.rows.head.map(_.content)(1) mustBe Text("3%")
+      vm.npvRateTable.value.caption     mustBe Some("taxCalculation.calculation.rates.captionNpv")
       vm.totalTax.rows.head.map(_.content).last mustBe Text("£7,500")
+    }
+
+    "leaves both tables as None for a self-assessed result with empty taxCalcs" in {
+      val selfAssessed = TaxCalculationResult(0, Some("Self-assessed"), None, None, Seq.empty)
+      val vm = toViewModel(selfAssessed, freeholdAnswers)
+      vm.premiumRateTable mustBe None
+      vm.npvRateTable     mustBe None
+      vm.totalTax.rows.head.map(_.content).last mustBe Text("£0")
     }
   }
 }
