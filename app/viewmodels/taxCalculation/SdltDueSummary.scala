@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package pages.taxCalculation.leaseholdSelfAssessed
+package viewmodels.taxCalculation
 
-import models.taxCalculation.LeaseholdSelfAssessedTotalAmountDue
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
-case object LeaseholdSelfAssessedTotalAmountDuePage extends QuestionPage[LeaseholdSelfAssessedTotalAmountDue] {
+object SdltDueSummary {
 
-  override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
+  def row()(implicit message: Messages): Option[SummaryListRow] = {
+    ???
+  }
 
-  override def toString: String = "leaseholdSelfAssessedTotalAmountDue"
 }
