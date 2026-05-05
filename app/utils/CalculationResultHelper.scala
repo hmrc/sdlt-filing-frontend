@@ -91,42 +91,27 @@ object CalculationResultHelper extends CurrencyFormatter {
                                                npvTax:             Option[String],
                                                totalSdltDue:       String
                                              )(implicit messages: Messages): SummaryList = {
+    
+    val topRow = Seq(
+      SummaryListRow(Key(Text(getMessage("taxCalculation.effectiveDate"))), Value(Text(effectiveDate)))
+    )
+    
     val middleRows = npvTax match {
       case Some(npv) => Seq(
-        SummaryListRow(
-          Key(Text(getMessage("taxCalculation.taxDuePremium"))),
-          Value(Text(premiumTax))
-        ),
-        SummaryListRow(
-          Key(Text(getMessage("taxCalculation.taxDueNpv"))),
-          Value(Text(npv))
-        )
+        SummaryListRow(Key(Text(getMessage("taxCalculation.taxDuePremium"))), Value(Text(premiumTax))),
+        SummaryListRow(Key(Text(getMessage("taxCalculation.taxDueNpv"))), Value(Text(npv)))
       )
       case None => Seq(
-        SummaryListRow(
-          Key(Text(getMessage("taxCalculation.totalConsideration"))),
-          Value(Text(totalConsideration))
-        )
+        SummaryListRow(Key(Text(getMessage("taxCalculation.totalConsideration"))), Value(Text(totalConsideration)))
       )
     }
+    
+    val bottomRows = Seq(
+      SummaryListRow(Key(Text(getMessage("taxCalculation.reliefClaimed"))), Value(Text(claimingRelief))),
+      SummaryListRow(Key(Text(getMessage("taxCalculation.sdltDue"))), Value(Text(totalSdltDue)))
+    )
 
-    SummaryList(Seq(
-      SummaryListRow(
-        Key(Text(getMessage("taxCalculation.effectiveDate"))),
-        Value(Text(effectiveDate))
-      )
-    ) ++
-      middleRows
-      ++ Seq(
-      SummaryListRow(
-        Key(Text(getMessage("taxCalculation.reliefClaimed"))),
-        Value(Text(claimingRelief))
-      ),
-      SummaryListRow(
-        Key(Text(getMessage("taxCalculation.sdltDue"))),
-        Value(Text(totalSdltDue))
-      )
-    ))
+    SummaryList(topRow ++ middleRows ++ bottomRows)
   }
 
   private[utils] def getRateCardSummary(
@@ -136,22 +121,10 @@ object CalculationResultHelper extends CurrencyFormatter {
                                          isLinked:               String
                                        )(implicit messages: Messages): SummaryList =
     SummaryList(Seq(
-      SummaryListRow(
-        Key(Text(getMessage("rateCard.transactionType"))),
-        Value(Text(getMessage(s"transactionType.$transactionDescription")))
-      ),
-      SummaryListRow(
-        Key(Text(getMessage("rateCard.claimingRelief"))),
-        Value(Text(claimingRelief))
-      ),
-      SummaryListRow(
-        Key(Text(getMessage("rateCard.propertyType"))),
-        Value(Text(getMessage(s"propertyType.$propertyType")))
-      ),
-      SummaryListRow(
-        Key(Text(getMessage("rateCard.linked"))),
-        Value(Text(isLinked))
-      )
+      SummaryListRow(Key(Text(getMessage("rateCard.transactionType"))), Value(Text(getMessage(s"transactionType.$transactionDescription")))),
+      SummaryListRow(Key(Text(getMessage("rateCard.claimingRelief"))), Value(Text(claimingRelief))),
+      SummaryListRow(Key(Text(getMessage("rateCard.propertyType"))), Value(Text(getMessage(s"propertyType.$propertyType")))),
+      SummaryListRow(Key(Text(getMessage("rateCard.linked"))), Value(Text(isLinked)))
     ))
 
   private[utils] def getPremiumRateTable(calc: CalculationDetails, isLeasehold: Boolean)
