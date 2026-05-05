@@ -216,7 +216,7 @@ class Navigator @Inject()() {
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
          | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
-         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage => true
+         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage | IsLandOrPropertyExchangedPage => true
 
     case _ => false
   }
@@ -274,6 +274,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case TransactionSaleOfBusinessAssetsPage => // TODO DTR-3458: Redirect to tr-12b
       _ => controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
+    case IsLandOrPropertyExchangedPage => // TODO DTR-3489 - SRINT-15 - redirect to exchange or part exchange Address Lookup integration
+      _ => controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
