@@ -1396,6 +1396,12 @@ transaction.claimingPartialReliefAmount.error.maximum                           
 transaction.claimingPartialReliefAmount.change.hidden                               = the amount of relief being claimed on part of the land or property
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
 
+transaction.checkYourAnswers.title                                                    = Check your answers - About the transaction
+transaction.purchaserEligibleToClaimRelief.missing                                    = Select if the purchaser is eligible to claim relief
+transaction.ReasonForRelief.checkYourAnswersLabel                                     = Reason for claiming relief
+transaction.ReasonForRelief.change.hidden                                             = reason for claiming relief
+transaction.ReasonForRelief.missing                                                   = Enter the reason for claiming relief
+
 taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start - Tax calculation - Freehold calculated
 taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start - Tax calculation - Freehold not calculated
 taxCalculation.beforeStart.title.leasehold.taxCalculated                            = Before you start - Tax calculation - Leasehold calculated

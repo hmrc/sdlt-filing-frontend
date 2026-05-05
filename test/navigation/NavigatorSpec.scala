@@ -565,6 +565,26 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(LandSelectMeasurementUnitPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
       }
 
+      "must go from transaction pages to TransactionCheckYourAnswers in CheckMode" in {
+        navigator.nextPage(TypeOfTransactionPage,                     CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(ConfirmTypeOfTransactionPage,              CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionEffectiveDatePage,              CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionAddDateOfContractPage,          CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionDateOfContractPage,             CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TotalConsiderationOfTransactionPage,       CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionVatIncludedPage,                CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionVatAmountPage,                  CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionFormsOfConsiderationPage,       CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionLinkedTransactionsPage,         CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TotalConsiderationOfLinkedTransactionPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(PurchaserEligibleToClaimReliefPage,        CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(ReasonForReliefPage,                       CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(AddRegisteredCharityNumberPage,            CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(CharityRegisteredNumberPage,               CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionPartialReliefPage,              CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(ClaimingPartialReliefAmountPage,           CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+      }
+
       "must go from NonUkResidentPurchaserPage to UkResidencyCheckYourAnswers in CheckMode" in {
         navigator.nextPage(NonUkResidentPurchaserPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad()
       }
