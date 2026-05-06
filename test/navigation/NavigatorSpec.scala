@@ -363,7 +363,7 @@ class NavigatorSpec extends SpecBase {
         "go from TransactionCisNumberPage to TransactionPartialReliefPage" in {
           navigator.nextPage(TransactionCisNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
-        
+
         "go from TransactionDeferringPaymentPage to transaction sale of a business page" in {
           navigator.nextPage(TransactionDeferringPaymentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
         }
@@ -406,6 +406,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from IsPurchaserRegisteredWithCISPage to TransactionCisNumberPage" in {
           navigator.nextPage(IsPurchaserRegisteredWithCISPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
+        }
+        // TODO DTR-3496 - Sprint 15: Redirect to CYA page
+        "go from TransactionExercisingAnOptionPage to CYA page" in {
+          navigator.nextPage(TransactionExercisingAnOptionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode)
         }
       }
 
