@@ -25,7 +25,7 @@ import repositories.SessionRepository
 import services.pdf.PDFGenerationService
 import services.FullReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.PropertyTypeHelper.isResidentialProperty
+import utils.{LeaseHelper, PropertyTypeHelper}
 import viewmodels.tasklist.*
 import views.html.ReturnTaskListView
 
@@ -62,9 +62,9 @@ class ReturnTaskListController @Inject()(
             Some(PurchaserTaskList.build(fullReturn)),
             Some(PurchaserAgentTaskList.build(fullReturn)),
             Some(LandTaskList.build(fullReturn)),
-            if (isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
+            if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
             Some(TransactionTaskList.build(fullReturn)),
-            Some(LeaseTaskList.build(fullReturn)),
+            if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn)) else None,
             Some(TaxCalculationTaskList.build(fullReturn))
           ).flatten
           Ok(view(sections: _*))
