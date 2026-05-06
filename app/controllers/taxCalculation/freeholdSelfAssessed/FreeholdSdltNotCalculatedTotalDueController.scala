@@ -16,43 +16,65 @@
 
 package controllers.taxCalculation.freeholdSelfAssessed
 
-import controllers.ReturnTaskListController
 import controllers.actions.*
+import forms.taxCalculation.TotalAmountToPayFormProvider
+import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
+import models.taxCalculation.{MissingDataError, MissingFullReturnError}
+import pages.taxCalculation.freeholdSelfAssessed.TotalAmountDuePage
 import play.api.Logging
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.taxCalculation.CalculatedTotalDueHelper
 import views.html.taxCalculation.freeholdSelfAssessed.TotalAmountDueView
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-@Singleton
-class FreeholdSelfAssessedSdltCalculatedTotalDueController @Inject()(
+class FreeholdSdltNotCalculatedTotalDueController @Inject()(
                                                                       override val messagesApi: MessagesApi,
                                                                       identify: IdentifierAction,
                                                                       getData: DataRetrievalAction,
                                                                       requireData: DataRequiredAction,
+                                                                      formProvider: TotalAmountToPayFormProvider,
                                                                       sdltCalculationService: SdltCalculationService,
                                                                       val controllerComponents: MessagesControllerComponents,
                                                                       view: TotalAmountDueView
                                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      sdltCalculationService
-        .calculateStampDutyLandTax(request.userAnswers)
-        .map {
-          case Right(result) => Ok(view(CalculatedTotalDueHelper.getSummaryListRows(request.userAnswers, result.totalTax)))
-          case Left(error) =>
-            logger.warn(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onPageLoad] sdltc reported missing data: ${error.message}")
-            Redirect(controllers.routes.ReturnTaskListController.onPageLoad(request.userId))
+
+  lazy val form: Form[String] = formProvider()
+  val postAction: Call = controllers.routes.ReturnTaskListController.onPageLoad()
+
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    sdltCalculationService.validateAsyncFlow(FreeholdSelfAssessed) {
+        sdltCalculationService.calculateStampDutyLandTax(request.userAnswers) map {
+          case Right(result) =>
+            val preparedForm = request.userAnswers.get(TotalAmountDuePage) match {
+              case None => form
+              case Some(value) => form.fill(value.amount)
+            }
+            Ok(view(preparedForm, CalculatedTotalDueHelper.getSummaryListRows(request.userAnswers, result.totalTax), postAction))
+
+          case Left(error:MissingDataError) => error match {
+            case MissingFullReturnError =>
+              logger.error(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onPageLoad] sdltc reported missing full return: ${error.message}")
+              Redirect(controllers.routes.NoReturnReferenceController.onPageLoad())
+            case _ =>
+              logger.error(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onPageLoad] sdltc reported missing data: ${error.message}")
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          }
         }
+    }
   }
+
 
   def onSubmit: Action[AnyContent] = {
     ???
   }
 }
+
+
+

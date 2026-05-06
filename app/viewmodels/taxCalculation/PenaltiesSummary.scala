@@ -17,12 +17,18 @@
 package viewmodels.taxCalculation
 
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.govuk.all.{SummaryListRowViewModel, ValueViewModel}
+import viewmodels.implicits.*
 
 object PenaltiesSummary {
 
-  def row()(implicit message: Messages): Option[SummaryListRow] = {
-    ???
+  def row(penalites:BigDecimal)(implicit messages: Messages): SummaryListRow = {
+    SummaryListRowViewModel(
+      key = messages("taxCalculation.totalAmountDue.summaryList.penaltiesDue"),
+      value = ValueViewModel(Text(penalites.toString()))
+    )
   }
-
+  
 }

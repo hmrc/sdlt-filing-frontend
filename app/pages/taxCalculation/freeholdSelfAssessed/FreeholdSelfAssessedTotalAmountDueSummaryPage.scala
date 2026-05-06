@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package viewmodels.taxCalculation
+package pages.taxCalculation.freeholdSelfAssessed
 
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.all.{SummaryListRowViewModel, ValueViewModel}
-import viewmodels.implicits.*
+import models.taxCalculation.FreeHoldSelfAssessedTotalAmountDue
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-object SdltDueSummary {
+case object FreeholdSelfAssessedTotalAmountDueSummaryPage extends QuestionPage[FreeHoldSelfAssessedTotalAmountDue] {
 
-  def row(sdltDue:BigDecimal)(implicit messages: Messages): SummaryListRow = {
-    SummaryListRowViewModel(
-      key = messages("taxCalculation.totalAmountDue.summaryList.sdltDue"),
-      value = ValueViewModel(Text(sdltDue.toString()))
-    )
-  }
+  override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
 
+  override def toString: String = "freeholdSelfAssessedTotalAmountDueSummary"
 }

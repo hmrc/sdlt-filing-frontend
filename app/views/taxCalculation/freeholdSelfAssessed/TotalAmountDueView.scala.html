@@ -16,6 +16,7 @@
 
 @import viewmodels.govuk.button.ButtonViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
+@import viewmodels.InputWidth._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
 
 @this(
@@ -27,7 +28,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[?], list:SummaryList, postAction: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], list:SummaryList, postAction:Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("taxCalculation.totalAmountDue.caption"))) {
 
@@ -44,11 +45,17 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("taxCalculation.totalAmountDue.totalAmountToPay.heading2"))
+                label = LabelViewModel(messages("taxCalculation.totalAmountDue.totalAmountToPay.heading2")).asPageSubHeading()
             )
+            .withWidth(Fixed10)
+            .withPrefix(PrefixOrSuffix(
+                content = Text(messages("site.money.prefix"))
+            ))
+            .withHint(HintViewModel(HtmlContent(Html(messages("taxCalculation.totalAmountDue.totalAmountToPay.hint")))))
         )
+
         @govukButton(
-            ButtonViewModel(messages("site.saveAndContinue"))
+            ButtonViewModel(messages("site.save.continue"))
         )
     }
 }

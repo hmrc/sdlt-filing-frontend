@@ -25,7 +25,7 @@ class FreeholdSelfAssessedPagesSpec extends SpecBase {
   private val pages: Seq[(QuestionPage[Boolean], String)] = Seq(
     FreeholdSelfAssessedCannotCalculateTaxPage   -> "freeholdSelfAssessedCannotCalculateTax",
     FreeholdSelfAssessedAmountPage               -> "freeholdSelfAssessedAmount",
-    FreeholdSelfAssessedTotalAmountDuePage       -> "freeholdSelfAssessedTotalAmountDue",
+    FreeholdSelfAssessedTotalAmountDueSummaryPage       -> "freeholdSelfAssessedTotalAmountDue",
     FreeholdSelfAssessedPenaltiesAndInterestPage -> "freeholdSelfAssessedPenaltiesAndInterest"
   )
 

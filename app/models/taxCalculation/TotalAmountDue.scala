@@ -18,15 +18,9 @@ package models.taxCalculation
 
 import play.api.libs.json.{Json, OFormat}
 
-case class LeaseholdSelfAssessedTotalAmountDue(sdltDue:Option[BigDecimal],
-                                               penalties:Option[BigDecimal],
-                                               interestCharges:Option[BigDecimal],
-                                               total:Option[BigDecimal],
-                                               amountIntendedToPayForReturn:Option[BigDecimal]
-                                              )
+case class TotalAmountDue(amount: String)
 
-object LeaseholdSelfAssessedTotalAmountDue {
-  
-  implicit val format: OFormat[LeaseholdSelfAssessedTotalAmountDue]= Json.format[LeaseholdSelfAssessedTotalAmountDue]
+object TotalAmountDue {
+
+  implicit val format: OFormat[TotalAmountDue] = Json.format[TotalAmountDue]
 }
-

@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package viewmodels.taxCalculation
+package models.taxCalculation
 
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.all.{SummaryListRowViewModel, ValueViewModel}
-import viewmodels.implicits.*
+import play.api.libs.json.{Json, OFormat}
 
-object SdltDueSummary {
+case class FreeHoldSelfAssessedTotalAmountDue(sdltDue: BigDecimal,
+                                              penalties: BigDecimal,
+                                              total: BigDecimal
+                                             )
 
-  def row(sdltDue:BigDecimal)(implicit messages: Messages): SummaryListRow = {
-    SummaryListRowViewModel(
-      key = messages("taxCalculation.totalAmountDue.summaryList.sdltDue"),
-      value = ValueViewModel(Text(sdltDue.toString()))
-    )
-  }
+object FreeHoldSelfAssessedTotalAmountDue {
 
+  implicit val format: OFormat[FreeHoldSelfAssessedTotalAmountDue] = Json.format[FreeHoldSelfAssessedTotalAmountDue]
 }
+

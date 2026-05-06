@@ -17,20 +17,35 @@
 package utils.taxCalculation
 
 import models.UserAnswers
+import models.taxCalculation.FreeHoldSelfAssessedTotalAmountDue
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.all.SummaryListViewModel
-import viewmodels.taxCalculation.{InterestChargesSummary, PenaltiesSummary, SdltDueSummary, TotalAmountDueSummary}
+import viewmodels.taxCalculation.{PenaltiesSummary, SdltDueSummary, TotalAmountDueSummary}
 
 object CalculatedTotalDueHelper {
   
-  def getSummaryListRows(userAnswers: UserAnswers, sdltDue:Int)(implicit messages:Messages):SummaryList = SummaryListViewModel(
+  def calculateFreeHoldSelfAssessedTotalAmountSummaryRow(userAnswers: UserAnswers, sdltTaxDue:Int):FreeHoldSelfAssessedTotalAmountDue =
+    FreeHoldSelfAssessedTotalAmountDue(
+      sdltDue = convertSdltDueToBigDecimal(sdltTaxDue),
+      penalties = calculatePenalties(),
+      total = calculateTotalAmountDue(convertSdltDueToBigDecimal(sdltTaxDue), calculatePenalties())
+    )
+  
+  def getSummaryListRows(userAnswers: UserAnswers, sdltTaxDue:Int)(implicit messages:Messages):SummaryList = SummaryListViewModel(
     Seq(
-      SdltDueSummary.row(),
-      PenaltiesSummary.row(),
-      InterestChargesSummary.row(),
-      TotalAmountDueSummary.row()
-    ).flatten
+      SdltDueSummary.row(convertSdltDueToBigDecimal(sdltTaxDue)),
+      PenaltiesSummary.row(calculatePenalties()),
+      TotalAmountDueSummary.row(calculateTotalAmountDue(convertSdltDueToBigDecimal(sdltTaxDue), calculatePenalties()))
+    )
   )
+  
+  private def convertSdltDueToBigDecimal(sdltDue:Int):BigDecimal = BigDecimal(sdltDue)
+
+  private def calculatePenalties(): BigDecimal = {
+    123456
+  }
+  private def calculateTotalAmountDue(sdltTaxDue:BigDecimal, penalties:BigDecimal):BigDecimal = sdltTaxDue + penalties
+  
 
 }

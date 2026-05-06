@@ -16,11 +16,10 @@
 
 package pages.taxCalculation.leaseholdSelfAssessed
 
-import models.taxCalculation.LeaseholdSelfAssessedTotalAmountDue
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object LeaseholdSelfAssessedTotalAmountDuePage extends QuestionPage[LeaseholdSelfAssessedTotalAmountDue] {
+case object LeaseholdSelfAssessedTotalAmountDuePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
 

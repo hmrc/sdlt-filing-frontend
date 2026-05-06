@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package viewmodels.taxCalculation
+package pages.taxCalculation.freeholdSelfAssessed
 
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import models.taxCalculation.TotalAmountDue
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-object InterestChargesSummary {
-  
-  def row()(implicit message: Messages):Option[SummaryListRow] = {
-    ???
-  }
+case object TotalAmountDuePage extends QuestionPage[TotalAmountDue] {
 
+  override def path: JsPath = JsPath \ "taxCalculationCurrent" \ "freeholdSelfAssessedTotalAmountDue" \ toString
+
+  override def toString: String = "totalAmountDue"
 }
