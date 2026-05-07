@@ -1539,3 +1539,31 @@ lease.beforeYouStart.p3                                                         
 lease.beforeYouStart.l2.li1                                                         = the duration of the rent-free period
 lease.beforeYouStart.l2.li2                                                         = the total amount of VAT on the annual rent
 lease.beforeYouStart.l2.li3                                                         = the total premium payable including VAT
+
+# Transaction Address lookup
+addressLookup.transactionQuestionsAddress.lookupPage.title                          = Find the address of the land or property being exchanged or part exchanged - About the transaction
+addressLookup.transactionQuestionsAddress.lookupPage.heading                        = Find the address of the land or property being exchanged or part exchanged
+addressLookup.transactionQuestionsAddress.lookupPage.filterLabel                    = Property name or number (optional)
+addressLookup.transactionQuestionsAddress.lookupPage.submitLabel                    = Continue
+addressLookup.transactionQuestionsAddress.lookupPage.manualAddressLinkText          = Enter the address manually
+addressLookup.transactionQuestionsAddress.selectPage.title                          = Choose the address of the land or property being exchanged or part exchanged - About the transaction
+addressLookup.transactionQuestionsAddress.selectPage.heading                        = Choose the address of the land or property being exchanged or part exchanged
+addressLookup.transactionQuestionsAddress.selectPage.editAddressLinkText            = Enter address manually
+addressLookup.transactionQuestionsAddress.selectPage.submitLabel                    = Continue
+addressLookup.transactionQuestionsAddress.editPage.title                            = Enter the address of the land or property being exchanged or part exchanged - About the transaction
+addressLookup.transactionQuestionsAddress.editPage.heading                          = Enter the address of the land or property being exchanged or part exchanged
+addressLookup.transactionQuestionsAddress.editPage.line1Label                       = Address line 1
+addressLookup.transactionQuestionsAddress.editPage.line2Label                       = Address line 2
+addressLookup.transactionQuestionsAddress.editPage.line3Label                       = Address line 3
+addressLookup.transactionQuestionsAddress.editPage.postcodeLabel                    = Postcode
+addressLookup.transactionQuestionsAddress.editPage.countryLabel                     = County
+addressLookup.transactionQuestionsAddress.editPage.submitLabel                      = Continue
+addressLookup.transactionQuestionsAddress.confirmPage.title                         = Review and confirm the address of the land or property being exchanged or part exchanged - About the transaction
+addressLookup.transactionQuestionsAddress.confirmPage.heading                       = Review and confirm the address of the land or property being exchanged or part exchanged
+addressLookup.transactionQuestionsAddress.confirmPage.changeLinkText                = Edit this address
+addressLookup.transactionQuestionsAddress.confirmPage.submitLabel                   = Confirm address
+addressLookup.transactionQuestionsAddress.countryPicker.title                       = Find the address of the land or property - About the transaction
+addressLookup.transactionQuestionsAddress.countryPicker.heading                     = Find the address of the land or property
+
+transaction.address.checkYourAnswersLabel                                           = Property address
+transaction.address.change.hidden                                                   = Property address

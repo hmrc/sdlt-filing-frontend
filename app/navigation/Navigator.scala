@@ -275,8 +275,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case TransactionSaleOfBusinessAssetsPage =>
       _ => controllers.transaction.routes.TotalAssetsConsiderationController.onPageLoad(NormalMode)
-    case IsLandOrPropertyExchangedPage => // TODO DTR-3489 - SRINT-15 - redirect to exchange or part exchange Address Lookup integration
-      _ => controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+    case IsLandOrPropertyExchangedPage =>
+      _ => controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction()
     case TotalAssetsConsiderationPage =>
       _ => controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()

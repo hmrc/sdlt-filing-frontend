@@ -390,8 +390,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(Cap1OrNsbcPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
         }
 
-        "go from IsLandOrPropertyExchangedPage to exchange or part exchange Address Lookup integration" in { // TODO DTR-3489 - SRINT-15 - redirect to exchange or part exchange Address Lookup integration
-          navigator.nextPage(IsLandOrPropertyExchangedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+        "go from IsLandOrPropertyExchangedPage to exchange or part exchange Address Lookup integration" in { 
+          navigator.nextPage(IsLandOrPropertyExchangedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction()
         }
 
         "go from TotalAssetsConsiderationPage to CAP1-or-NSBC page" in {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package models.address
+package pages.transaction
 
-object AddressLookupJourneyIdentifier extends Enumeration {
-  val prelimQuestionsAddress: Value = Value
-  val vendorQuestionsAddress: Value = Value
-  val vendorAgentQuestionsAddress: Value = Value
-  val purchaserQuestionsAddress: Value = Value
-  val purchaserAgentQuestionsAddress: Value = Value
-  val landQuestionsAddress: Value = Value
-  val transactionQuestionsAddress: Value = Value
+import models.address.Address
+import pages.QuestionPage
+import play.api.libs.json.JsPath
+
+case object TransactionAddressPage extends QuestionPage[Address] {
+
+  override def path: JsPath = JsPath \ "transactionCurrent" \ toString
+
+  override def toString: String = "transactionAddress"
 }
-
