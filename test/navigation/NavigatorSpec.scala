@@ -399,7 +399,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from IsPurchaserRegisteredWithCISPage to TransactionCisNumberPage" in {
-          navigator.nextPage(IsPurchaserRegisteredWithCISPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(NormalMode)
+          navigator.nextPage(IsPurchaserRegisteredWithCISPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
         }
       }
 

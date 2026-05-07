@@ -620,6 +620,11 @@ POST       /about-the-transaction/exchange-or-part-exchange                     
 GET        /about-the-transaction/exchange-or-part-exchange/change                                   controllers.transaction.IsLandOrPropertyExchangedController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/exchange-or-part-exchange/change                                   controllers.transaction.IsLandOrPropertyExchangedController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/enter-CIS-number                                                   controllers.transaction.TransactionCisNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/enter-CIS-number                                                   controllers.transaction.TransactionCisNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/enter-CIS-number/change                                            controllers.transaction.TransactionCisNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/enter-CIS-number/change                                            controllers.transaction.TransactionCisNumberController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-lease/before-you-start                                                         controllers.lease.LeaseBeforeYouStartController.onPageLoad()
 
 GET         /about-the-transaction/transaction-address-lookup                                        controllers.transaction.TransactionAddressController.redirectToAddressLookupTransaction(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)

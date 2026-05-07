@@ -217,7 +217,8 @@ class Navigator @Inject()() {
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
          | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
-         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage | IsLandOrPropertyExchangedPage | TotalAssetsConsiderationPage | IsPurchaserRegisteredWithCISPage => true
+         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage | IsLandOrPropertyExchangedPage | TotalAssetsConsiderationPage
+         | IsPurchaserRegisteredWithCISPage | TransactionCisNumberPage => true
 
     case _ => false
   }
@@ -259,6 +260,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode)
     case CharityRegisteredNumberPage =>
       _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
+    case TransactionCisNumberPage =>
+      _ => controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
     case TransactionDeferringPaymentPage =>
       _ => controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
     case TransactionUseOfLandOrPropertyPage =>
@@ -279,8 +282,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction()
     case TotalAssetsConsiderationPage =>
       _ => controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
-    case IsPurchaserRegisteredWithCISPage => //TODO DTR-4325 - redirect to What is Purchaser CIS number page
-      _ => controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(NormalMode)
+    case IsPurchaserRegisteredWithCISPage =>
+      _ => controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

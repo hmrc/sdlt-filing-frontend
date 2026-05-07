@@ -1530,6 +1530,15 @@ transaction.totalAssetsConsideration.error.invalidWholeNumber                   
 transaction.totalAssetsConsideration.error.maximum                                  = The total amount of consideration for the sale of the business must be equal to or less than £9,999,999,999
 transaction.totalAssetsConsideration.change.hidden                                  = Total consideration for all assets included in the sale of the business
 
+transaction.cisNumber.title                                                         = What is the purchaser’s CIS registration number?
+transaction.cisNumber.heading                                                       = What is the purchaser’s CIS registration number?
+transaction.cisNumber.hint                                                          = This is typically their 10-digit Unique Taxpayer Reference (UTR)
+transaction.cisNumber.checkYourAnswersLabel                                         = What is the purchaser’s CIS registration number?
+transaction.cisNumber.error.required                                                = Enter the purchaser’s CIS registration number
+transaction.cisNumber.error.length                                                  = The purchaser’s CIS number must be 14 characters or less
+transaction.cisNumber.invalid                                                       = invalid error
+transaction.cisNumber.change.hidden                                                 = The purchaser’s CIS registration number
+
 lease.beforeYouStart.p1                                                             = In this section, you need to tell us about the lease on the land or property.
 lease.beforeYouStart.p2                                                             = We will ask for:
 lease.beforeYouStart.l1.li1                                                         = the type of lease
