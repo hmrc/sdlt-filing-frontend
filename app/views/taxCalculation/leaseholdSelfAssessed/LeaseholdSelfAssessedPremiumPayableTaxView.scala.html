@@ -1,0 +1,62 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
+
+@this(
+        layout: templates.Layout,
+        govukErrorSummary: GovukErrorSummary,
+        formHelper: FormWithCSRF,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        hmrcPageHeading: HmrcPageHeading
+)
+
+@(form: Form[_], premiumPayable: String, mode: Mode)(implicit rh: RequestHeader, messages: Messages)
+
+@layout(pageTitle = title(form, messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.title"))) {
+
+    @formHelper(action = controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPremiumPayableTaxController.onSubmit(mode)) {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @hmrcPageHeading(PageHeading(
+            text           = messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.heading"),
+            headingClasses = Some("govuk-heading-l"),
+            captionClasses = Some("govuk-caption-l"),
+            section        = Some(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.caption"))
+        ))
+
+        @govukInput(
+            InputViewModel(
+                field = form("leaseholdSelfAssessedPremiumPayableTax"),
+                label = Label(
+                    classes = "govuk-!-margin-bottom-4",
+                    content = messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.description", premiumPayable)),
+
+            )
+            .asNumeric()
+            .withId("TPPtax")
+            .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
+            .withHint(HintViewModel(HtmlContent(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.hint"))))
+            .withPrefix(PrefixOrSuffix(content = Text("£")))
+        )
+
+        @govukButton(ButtonViewModel("site.save.continue"))
+    }
+}

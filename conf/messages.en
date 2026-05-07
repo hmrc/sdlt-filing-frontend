@@ -1504,6 +1504,22 @@ taxCalculation.genericPenaltiesDue.checkYourAnswersLabel                        
 taxCalculation.totalAmountDue.checkYourAnswersLabel                                 = Amount to be paid
 taxCalculation.totalAmountDue.change.hidden                                         = amount to be paid
 
+taxCalculation.leaseholdSelfAssessed.premiumPayable.title = What is the tax due on the total premium payable? - Tax calculation - Leasehold not calculated - Stamp Taxes Online - GOV.UK
+taxCalculation.leaseholdSelfAssessed.premiumPayable.heading = What is the tax due on the total premium payable?
+taxCalculation.leaseholdSelfAssessed.premiumPayable.caption = Tax calculation
+taxCalculation.leaseholdSelfAssessed.premiumPayable.description = You entered the total premium payable as: £{0}.
+taxCalculation.leaseholdSelfAssessed.premiumPayable.hint = Enter the amount in whole pounds only, for example £10,000
+
+taxCalculation.leaseholdSelfAssessed.premiumPayable.checkYourAnswers                = Tax due on premium payable
+taxCalculation.leaseholdSelfAssessed.premiumPayable.change.hidden                   = tax due on premium payable
+taxCalculation.leaseholdSelfAssessed.premiumPayable.missing                         = Enter tax due on premium payable
+
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.emptyValue = Enter the tax due on the total premium payable, in pounds
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxLength = The tax due on the total premium payable must be 16 characters or fewer
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxValue = The tax due on the total premium payable must be equal to or less than £9,999,999,999
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidWholeNumber = Enter the tax due on the total premium payable in whole pounds
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidNumeric = The tax due on the total premium payable must only include commas and numbers 0 to 9
+
 transaction.charityRegisteredNumber.title                                           = What is the charity’s registered number?
 transaction.charityRegisteredNumber.heading                                         = What is the charity’s registered number?
 transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity’s registered number
