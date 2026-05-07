@@ -358,6 +358,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(CharityRegisteredNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
         }
         
+        "go from TransactionCisNumberPage to TransactionPartialReliefPage" in {
+          navigator.nextPage(TransactionCisNumberPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode)
+        }
+        
         "go from TransactionDeferringPaymentPage to transaction sale of a business page" in {
           navigator.nextPage(TransactionDeferringPaymentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode)
         }
