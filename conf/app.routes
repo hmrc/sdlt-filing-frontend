@@ -616,3 +616,8 @@ GET        /about-the-transaction/exchange-or-part-exchange/change              
 POST       /about-the-transaction/exchange-or-part-exchange/change                                   controllers.transaction.IsLandOrPropertyExchangedController.onSubmit(mode: Mode = CheckMode)
 
 GET        /about-the-lease/before-you-start                                                         controllers.lease.LeaseBeforeYouStartController.onPageLoad()
+
+GET         /about-the-transaction/transaction-address-lookup                                        controllers.transaction.TransactionAddressController.redirectToAddressLookupTransaction(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
+GET         /about-the-transaction/transaction-address-return                                        controllers.transaction.TransactionAddressController.addressLookupCallbackTransaction(id: String ?= "", mode: Mode = NormalMode)
+GET         /about-the-transaction/transaction-address-return/change                                 controllers.transaction.TransactionAddressController.addressLookupCallbackChangeTransaction(id: String ?= "", mode: Mode = NormalMode)
+
