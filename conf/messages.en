@@ -1582,3 +1582,19 @@ addressLookup.transactionQuestionsAddress.countryPicker.heading                 
 
 transaction.address.checkYourAnswersLabel                                           = Address of the land or property being exchanged or part exchanged
 transaction.address.change.hidden                                                   = Address of the land or property being exchanged or part exchanged
+
+lease.typeOfLease.title                                                             = What is the type of lease?
+lease.typeOfLease.heading                                                           = What is the type of lease?
+lease.typeOfLease.R                                                                 = R - Residential
+lease.typeOfLease.R.hintText                                                        = A building used, suitable for use, or being constructed as a dwelling, including the garden, grounds and any right of way
+lease.typeOfLease.N                                                                 = N - Non-residential
+lease.typeOfLease.N.hintText                                                        = Where the whole property is non-residential
+lease.typeOfLease.M                                                                 = M - Mixed use
+lease.typeOfLease.M.hintText                                                        = Where part of the property is residential
+lease.typeOfLease.checkYourAnswersLabel                                             = Type of lease
+lease.typeOfLease.error.required                                                    = Select the type of lease
+lease.typeOfLease.change.hidden                                                     = Type of lease
+lease.typeOfLease.error.invalid                                                     = Invalid Selection
+lease.typeOfLease.error.invalidResidentialRule                                      = When the type of lease is ‘R - Residential’, the type of property must be ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
+lease.typeOfLease.error.invalidNonResidentialRule                                   = When the type of lease is ‘N - Non-residential’, the type of property must be ‘03 - Non-residential’
+lease.typeOfLease.error.invalidMixedRule                                            = When the type of lease is ‘M - Mixed use’, the type of property must be ‘02 - Mixed’

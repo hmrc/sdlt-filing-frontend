@@ -25,6 +25,7 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
+import pages.lease.TypeOfLeasePage
 import pages.taxCalculation.freeholdTaxCalculated.*
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.leaseholdTaxCalculated.*
@@ -288,10 +289,13 @@ class Navigator @Inject()() {
   }
 
   private def isLeaseSection(page: Page): Boolean = page match {
+    case TypeOfLeasePage => true
     case _ => false
   }
   
   private def leaseRoutes(page: Page): UserAnswers => Call = page match {
+    case TypeOfLeasePage => //TODO - DTR-3506 - SPRINT 15 - update to what is the start date ls-2
+      _ => controllers.lease.routes.TypeOfLeaseController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

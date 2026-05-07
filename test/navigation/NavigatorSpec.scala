@@ -21,6 +21,7 @@ import controllers.routes
 import models.*
 import pages.*
 import pages.land.*
+import pages.lease._
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
@@ -43,6 +44,7 @@ class NavigatorSpec extends SpecBase {
   "Navigator" - {
 
     "in Normal mode" - {
+
       "must go from a page that doesn't exist in the route map to Index" in {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
       }
@@ -404,6 +406,13 @@ class NavigatorSpec extends SpecBase {
 
         "go from IsPurchaserRegisteredWithCISPage to TransactionCisNumberPage" in {
           navigator.nextPage(IsPurchaserRegisteredWithCISPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
+        }
+      }
+
+      "lease routes" - {
+
+        "go from TypeOfLeasePage to ls-2" in { //TODO - DTR-3506 - SPRINT 15 - update to what is the start date ls-2
+          navigator.nextPage(TypeOfLeasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.TypeOfLeaseController.onPageLoad(NormalMode)
         }
       }
 
