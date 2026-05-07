@@ -36,9 +36,15 @@ object TransactionTaskList {
     )
 
   def buildTransactionRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
-    
-    val url = controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
-    
+
+    val transactionComplete = fullReturn.transaction.exists(_.effectiveDate.isDefined)
+
+    val url = if (transactionComplete) {
+      controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+    } else {
+      controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+    }
+
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
@@ -49,7 +55,7 @@ object TransactionTaskList {
         url
       },
       tagId = "transactionQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.transaction.isDefined),
+      checks = scheme => Seq(transactionComplete),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
     ).build(fullReturn)
   }

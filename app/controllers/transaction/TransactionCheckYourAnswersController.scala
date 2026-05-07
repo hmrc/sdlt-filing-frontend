@@ -18,14 +18,16 @@ package controllers.transaction
 
 import controllers.actions.*
 import models.UserAnswers
-import models.transaction.ReasonForRelief
+import models.prelimQuestions.TransactionType
 import pages.transaction.*
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsObject
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.checkAnswers.CheckAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.transaction.*
-import viewmodels.govuk.all.SummaryListViewModel
 import views.html.transaction.TransactionCheckYourAnswersView
 
 import javax.inject.Inject
@@ -37,28 +39,30 @@ class TransactionCheckYourAnswersController @Inject()(
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   sessionRepository: SessionRepository,
+  checkAnswersService: CheckAnswersService,
   val controllerComponents: MessagesControllerComponents,
   view: TransactionCheckYourAnswersView
 )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      for {
-        result <- sessionRepository.get(request.userAnswers.id)
-      } yield {
+      sessionRepository.get(request.userAnswers.id).map {
+        case None =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
-        val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
-        val isDataEmpty     = result.exists(_.data.value.isEmpty)
+        case Some(userAnswers) =>
+          if (userAnswers.returnId.isEmpty) {
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          } else {
+            val isTransactionDataEmpty =
+              (userAnswers.data \ "transactionCurrent").asOpt[JsObject].forall(_.values.isEmpty)
 
-        if (isReturnIdEmpty) {
-          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        } else {
-          (isDataEmpty, result) match {
-            case (true, _)                 => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-            case (_, Some(userAnswers))    => Ok(view(buildSummaryList(userAnswers)))
-            case (false, None)             => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            if (isTransactionDataEmpty) {
+              Redirect(controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad())
+            } else {
+              renderOrRedirect(userAnswers)
+            }
           }
-        }
       }
   }
 
@@ -70,46 +74,32 @@ class TransactionCheckYourAnswersController @Inject()(
       }
   }
 
-  private def buildSummaryList(userAnswers: UserAnswers)(implicit request: RequestHeader) =
-    SummaryListViewModel(
-      rows = Seq(
-        Some(TypeOfTransactionSummary.row(Some(userAnswers))),
-        Some(TransactionEffectiveDateSummary.row(Some(userAnswers))),
-        Some(TransactionAddDateOfContractSummary.row(userAnswers)),
-        Option.when(contractDateKnown(userAnswers))(TransactionDateOfContractSummary.row(userAnswers)),
-        Some(TotalConsiderationOfTransactionSummary.row(userAnswers)),
-        Some(TransactionVatIncludedSummary.row(userAnswers)),
-        Option.when(vatIncluded(userAnswers))(TransactionVatAmountSummary.row(userAnswers)),
-        Some(TransactionFormsOfConsiderationSummary.row(userAnswers)),
-        Some(TransactionLinkedTransactionsSummary.row(userAnswers)),
-        Option.when(isLinkedTransaction(userAnswers))(TotalConsiderationOfLinkedTransactionSummary.row(userAnswers)),
-        Some(PurchaserEligibleToClaimReliefSummary.row(userAnswers)),
-        Option.when(isClaimingRelief(userAnswers))(ReasonForReliefSummary.row(userAnswers)),
-        Option.when(isCharitiesRelief(userAnswers))(AddRegisteredCharityNumberSummary.row(userAnswers)),
-        Option.when(knowsCharityNumber(userAnswers))(CharityRegisteredNumberSummary.row(userAnswers)),
-        Some(TransactionPartialReliefSummary.row(userAnswers)),
-        Option.when(isPartialRelief(userAnswers))(ClaimingPartialReliefAmountSummary.row(userAnswers))
-      ).flatten
-    )
+  private def renderOrRedirect(ua: UserAnswers)(implicit request: Request[_]): Result =
+    checkAnswersService.redirectOrRender(buildRowResults(ua)) match {
+      case Left(call)         => Redirect(call)
+      case Right(summaryList) => Ok(view(summaryList))
+    }
 
-  private def contractDateKnown(ua: UserAnswers): Boolean =
-    ua.get(TransactionAddDateOfContractPage).contains(true)
+  private def buildRowResults(ua: UserAnswers)(implicit request: Request[_]): Seq[SummaryRowResult] =
+    Seq(
+      Some(TypeOfTransactionSummary.row(ua)),
+      Some(TransactionEffectiveDateSummary.row(ua)),
+      Some(TransactionAddDateOfContractSummary.row(ua)),
+      TransactionDateOfContractSummary.row(ua),
+      Option.when(!isGrantOfLease(ua))(TotalConsiderationOfTransactionSummary.row(ua)),
+      Option.when(!isGrantOfLease(ua))(TransactionVatIncludedSummary.row(ua)),
+      if (!isGrantOfLease(ua)) TransactionVatAmountSummary.row(ua) else None,
+      Option.when(!isGrantOfLease(ua))(TransactionFormsOfConsiderationSummary.row(ua)),
+      Some(TransactionLinkedTransactionsSummary.row(ua)),
+      TotalConsiderationOfLinkedTransactionSummary.row(ua),
+      Some(PurchaserEligibleToClaimReliefSummary.row(ua)),
+      ReasonForReliefSummary.row(ua),
+      AddRegisteredCharityNumberSummary.row(ua),
+      CharityRegisteredNumberSummary.row(ua),
+      Some(TransactionPartialReliefSummary.row(ua)),
+      ClaimingPartialReliefAmountSummary.row(ua)
+    ).flatten
 
-  private def vatIncluded(ua: UserAnswers): Boolean =
-    ua.get(TransactionVatIncludedPage).contains(true)
-
-  private def isLinkedTransaction(ua: UserAnswers): Boolean =
-    ua.get(TransactionLinkedTransactionsPage).contains(true)
-
-  private def isClaimingRelief(ua: UserAnswers): Boolean =
-    ua.get(PurchaserEligibleToClaimReliefPage).contains(true)
-
-  private def isCharitiesRelief(ua: UserAnswers): Boolean =
-    ua.get(ReasonForReliefPage).contains(ReasonForRelief.CharitiesRelief)
-
-  private def knowsCharityNumber(ua: UserAnswers): Boolean =
-    ua.get(AddRegisteredCharityNumberPage).contains(true)
-
-  private def isPartialRelief(ua: UserAnswers): Boolean =
-    ua.get(TransactionPartialReliefPage).contains(true)
+  private def isGrantOfLease(ua: UserAnswers): Boolean =
+    ua.get(TypeOfTransactionPage).contains(TransactionType.GrantOfLease)
 }

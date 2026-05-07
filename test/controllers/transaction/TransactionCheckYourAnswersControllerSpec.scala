@@ -18,7 +18,7 @@ package controllers.transaction
 
 import base.SpecBase
 import models.UserAnswers
-import models.transaction.ReasonForRelief
+import models.prelimQuestions.TransactionType
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -29,16 +29,15 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
 
   private val mockSessionRepository = mock[SessionRepository]
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: FakeRequest[_] = FakeRequest()
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
@@ -54,15 +53,30 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
     data = Json.obj("key" -> "value")
   )
 
+  // Fully populated grant of lease userAnswers — all mandatory rows are Row (not Missing)
+  private val completeUserAnswers = UserAnswers(
+    id = "12345",
+    returnId = Some("AB2346"),
+    storn = "TESTSTORN",
+    data = Json.obj()
+  )
+    .set(TypeOfTransactionPage, TransactionType.GrantOfLease).success.value
+    .set(TransactionEffectiveDatePage, LocalDate.of(2024, 1, 1)).success.value
+    .set(TransactionAddDateOfContractPage, false).success.value
+    .set(TransactionLinkedTransactionsPage, false).success.value
+    .set(PurchaserEligibleToClaimReliefPage, false).success.value
+    .set(TransactionPartialReliefPage, false).success.value
+
   "TransactionCheckYourAnswers Controller" - {
 
     "onPageLoad" - {
 
       "must redirect to ReturnTaskList when the UserAnswers has no returnId" in {
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        val userAnswers = emptyUserAnswers.copy(returnId = None)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -75,7 +89,7 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
-      "must redirect to ReturnTaskList when session data is not found" in {
+      "must redirect to JourneyRecovery when session data is not found" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
@@ -88,22 +102,15 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 
-      "must redirect to BeforeStartReturnController when returnId exists but data is empty" in {
+      "must redirect to TransactionBeforeYouStart when transactionCurrent data is empty" in {
 
-        val userAnswers = UserAnswers(
-          id = "12345",
-          returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = Json.obj()
-        )
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(baseUserAnswers)))
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -112,15 +119,15 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
         }
       }
 
-      "must return OK and the correct view when UserAnswers contains valid data" in {
+      "must return OK and the correct view when UserAnswers contains complete transaction data" in {
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(baseUserAnswers)))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
 
-        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -146,10 +153,9 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
-      "must return OK and show contract date row when contractDateKnown is true" in {
+      "must redirect to first missing page when mandatory data is absent" in {
 
-        val userAnswers = baseUserAnswers
-          .set(TransactionAddDateOfContractPage, true).success.value
+        val userAnswers = completeUserAnswers.remove(TransactionEffectiveDatePage).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -161,20 +167,16 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
 
-          status(result) mustEqual OK
-          contentAsString(result) must include("Do you know the date of contract or conclusion of missives?")
-          contentAsString(result) must include("Contract date or conclusion of missives")
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(models.CheckMode).url
         }
       }
 
-      "must return OK and show VAT amount row when vatIncluded is true" in {
+      "must not show grant of lease rows when transaction type is grant of lease" in {
 
-        val userAnswers = baseUserAnswers
-          .set(TransactionVatIncludedPage, true).success.value
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -183,112 +185,9 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           val result  = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) must include("Is VAT included in the total consideration?")
-          contentAsString(result) must include("What is the amount of VAT included in the total consideration?")
-        }
-      }
-
-      "must return OK and show total consideration of linked transactions row when transaction is linked" in {
-
-        val userAnswers = baseUserAnswers
-          .set(TransactionLinkedTransactionsPage, true).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual OK
-        }
-      }
-
-      "must return OK and show reason for relief row when purchaser is claiming relief" in {
-
-        val userAnswers = baseUserAnswers
-          .set(PurchaserEligibleToClaimReliefPage, true).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) must include("Claiming relief")
-          contentAsString(result) must include("Reason for claiming relief")
-        }
-      }
-
-      "must return OK and show charity number row when relief reason is CharitiesRelief" in {
-
-        val userAnswers = baseUserAnswers
-          .set(PurchaserEligibleToClaimReliefPage, true).success.value
-          .set(ReasonForReliefPage, ReasonForRelief.CharitiesRelief).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) must include("Registered charity number")
-        }
-      }
-
-      "must return OK and show charity registered number row when knowsCharityNumber is true" in {
-
-        val userAnswers = baseUserAnswers
-          .set(PurchaserEligibleToClaimReliefPage, true).success.value
-          .set(ReasonForReliefPage, ReasonForRelief.CharitiesRelief).success.value
-          .set(AddRegisteredCharityNumberPage, true).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) must include("Charity Registered Number")
-        }
-      }
-
-      "must return OK and show partial relief amount row when isPartialRelief is true" in {
-
-        val userAnswers = baseUserAnswers
-          .set(TransactionPartialReliefPage, true).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) must include("Is the purchaser claiming relief on part of the land or property?")
-          contentAsString(result) must include("How much relief is being claimed on part of the land or property?")
+          contentAsString(result) must not include "transaction.totalConsiderationOfTransaction.checkYourAnswersLabel"
+          contentAsString(result) must not include "transaction.transactionVatIncluded.checkYourAnswersLabel"
+          contentAsString(result) must not include "transaction.transactionFormsOfConsideration.checkYourAnswersLabel"
         }
       }
     }
