@@ -17,37 +17,36 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.ClaimingPartialReliefAmountPage
+import pages.transaction.{ClaimingPartialReliefAmountPage, TransactionPartialReliefPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object ClaimingPartialReliefAmountSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    val changeRoute = controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
+    val changeRoute = controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(CheckMode)
     val label = messages("transaction.claimingPartialReliefAmount.checkYourAnswersLabel")
-    answers.get(ClaimingPartialReliefAmountPage).map {
-      answer =>
-        SummaryListRowViewModel(
-          key     = label,
-          value   = ValueViewModel(HtmlFormat.escape(s"£$answer").toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("transaction.claimingPartialReliefAmount.change.hidden"))
+
+    (answers.get(ClaimingPartialReliefAmountPage), answers.get(TransactionPartialReliefPage)) match {
+      case (Some(amount), _) =>
+        Some(Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(HtmlFormat.escape(s"£$amount").toString),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("transaction.claimingPartialReliefAmount.change.hidden"))
+            )
           )
-        )
-    }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("transaction.claimingPartialReliefAmount.missing")}</a>""")
-      )
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+        ))
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+      case _ =>
+        None
     }
+  }
 }

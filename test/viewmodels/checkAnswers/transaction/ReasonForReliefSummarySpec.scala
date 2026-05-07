@@ -19,10 +19,11 @@ package viewmodels.checkAnswers.transaction
 import base.SpecBase
 import models.CheckMode
 import models.transaction.ReasonForRelief
-import pages.transaction.ReasonForReliefPage
+import pages.transaction.{PurchaserEligibleToClaimReliefPage, ReasonForReliefPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class ReasonForReliefSummarySpec extends SpecBase {
 
@@ -39,7 +40,12 @@ class ReasonForReliefSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(ReasonForReliefPage, ReasonForRelief.GroupRelief).success.value
 
-          val result = ReasonForReliefSummary.row(userAnswers)
+          val row = ReasonForReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.ReasonForRelief.checkYourAnswersLabel")
 
@@ -71,7 +77,12 @@ class ReasonForReliefSummarySpec extends SpecBase {
             val userAnswers = emptyUserAnswers
               .set(ReasonForReliefPage, reliefType).success.value
 
-            val result = ReasonForReliefSummary.row(userAnswers)
+            val row = ReasonForReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+            val result = row match {
+              case Row(r) => r
+              case _ => fail("Expected Row but got Missing")
+            }
 
             val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
             htmlContent mustEqual msgs(s"transaction.ReasonForRelief.${reliefType.toString}")
@@ -82,38 +93,35 @@ class ReasonForReliefSummarySpec extends SpecBase {
 
     "when reason for relief is not present" - {
 
-      "must return a summary list row with a link to enter the reason for relief" in {
+      "must return a Missing and redirect call to missing page when purchaser is eligible but reason is missing" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = ReasonForReliefSummary.row(emptyUserAnswers)
+          val userAnswers = emptyUserAnswers
+            .set(PurchaserEligibleToClaimReliefPage, true).success.value
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.ReasonForRelief.checkYourAnswersLabel")
+          val result = ReasonForReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.ReasonForRelief.missing"))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode)
 
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
-    }
 
-    "must use CheckMode for the change link" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      "must return None when purchaser is not eligible to claim relief" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        val userAnswers = emptyUserAnswers
-          .set(ReasonForReliefPage, ReasonForRelief.GroupRelief).success.value
-
-        val result = ReasonForReliefSummary.row(userAnswers)
-
-        result.actions.get.items.head.href mustEqual controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
+          ReasonForReliefSummary.row(emptyUserAnswers) mustBe None
+        }
       }
     }
   }

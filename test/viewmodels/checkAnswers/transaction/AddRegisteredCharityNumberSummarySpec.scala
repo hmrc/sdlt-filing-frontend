@@ -18,18 +18,18 @@ package viewmodels.checkAnswers.transaction
 
 import base.SpecBase
 import models.CheckMode
-import pages.transaction.AddRegisteredCharityNumberPage
+import models.transaction.ReasonForRelief
+import pages.transaction.{AddRegisteredCharityNumberPage, ReasonForReliefPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class AddRegisteredCharityNumberSummarySpec extends SpecBase {
 
-
   "AddRegisteredCharityNumberSummary" - {
 
-    "when the add registered charity number of transaction is present" - {
+    "when the add registered charity number is present" - {
 
       "must return a summary list row with 'yes' value and change link" in {
 
@@ -37,15 +37,20 @@ class AddRegisteredCharityNumberSummarySpec extends SpecBase {
 
         running(application) {
           implicit val msgs: Messages = messages(application)
-          
+
           val userAnswers = emptyUserAnswers.set(AddRegisteredCharityNumberPage, true).success.value
 
-          val result = AddRegisteredCharityNumberSummary.row(userAnswers)
+          val row = AddRegisteredCharityNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.addRegisteredCharityNumber.checkYourAnswersLabel")
 
           val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
-          
+
           contentString mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
@@ -64,7 +69,12 @@ class AddRegisteredCharityNumberSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(AddRegisteredCharityNumberPage, false).success.value
 
-          val result = AddRegisteredCharityNumberSummary.row(userAnswers)
+          val row = AddRegisteredCharityNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.addRegisteredCharityNumber.checkYourAnswersLabel")
 
@@ -78,28 +88,40 @@ class AddRegisteredCharityNumberSummarySpec extends SpecBase {
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.addRegisteredCharityNumber.change.hidden")
         }
       }
-
     }
 
-    "when the add registered charity number of transaction is no present" - {
+    "when the add registered charity number is not present" - {
 
-      "must return a summary list row with a missing link" in {
+      "must return a Missing and redirect call to missing page when reason for relief is CharitiesRelief but answer is missing" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = AddRegisteredCharityNumberSummary.row(emptyUserAnswers)
+          val userAnswers = emptyUserAnswers
+            .set(ReasonForReliefPage, ReasonForRelief.CharitiesRelief).success.value
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.addRegisteredCharityNumber.checkYourAnswersLabel")
+          val result = AddRegisteredCharityNumberSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.addRegisteredCharityNumber.missing"))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(CheckMode)
 
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
+      }
+
+      "must return None when reason for relief is not CharitiesRelief" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          AddRegisteredCharityNumberSummary.row(emptyUserAnswers) mustBe None
         }
       }
     }

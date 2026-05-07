@@ -17,40 +17,36 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.TotalConsiderationOfLinkedTransactionPage
+import pages.transaction.{TotalConsiderationOfLinkedTransactionPage, TransactionLinkedTransactionsPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object TotalConsiderationOfLinkedTransactionSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    val changeRoute = controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
+    val changeRoute = controllers.transaction.routes.TotalConsiderationOfLinkedTransactionController.onPageLoad(CheckMode)
     val label = messages("transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel")
-    answers.get(TotalConsiderationOfLinkedTransactionPage).map {
-      answer =>
 
-        SummaryListRowViewModel(
-          key     = label,
-          value   = ValueViewModel(HtmlFormat.escape(s"£$answer").toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("transaction.totalConsiderationOfLinkedTransaction.change.hidden"))
+    (answers.get(TotalConsiderationOfLinkedTransactionPage), answers.get(TransactionLinkedTransactionsPage)) match {
+      case (Some(amount), _) =>
+        Some(Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(HtmlFormat.escape(s"£$amount").toString),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("transaction.totalConsiderationOfLinkedTransaction.change.hidden"))
+            )
           )
-        )
-    }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("transaction.totalConsiderationOfLinkedTransaction.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+        ))
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+      case _ =>
+        None
     }
+  }
 }

@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.transaction.PurchaserEligibleToClaimReliefPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class PurchaserEligibleToClaimReliefSummarySpec extends SpecBase {
 
@@ -39,7 +39,12 @@ class PurchaserEligibleToClaimReliefSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserEligibleToClaimReliefPage, true).success.value
 
-          val result = PurchaserEligibleToClaimReliefSummary.row(userAnswers)
+          val row = PurchaserEligibleToClaimReliefSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel")
           result.value.content.asHtml.toString() mustEqual msgs("site.yes")
@@ -60,7 +65,12 @@ class PurchaserEligibleToClaimReliefSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserEligibleToClaimReliefPage, false).success.value
 
-          val result = PurchaserEligibleToClaimReliefSummary.row(userAnswers)
+          val row = PurchaserEligibleToClaimReliefSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel")
           result.value.content.asHtml.toString() mustEqual msgs("site.no")
@@ -74,7 +84,7 @@ class PurchaserEligibleToClaimReliefSummarySpec extends SpecBase {
 
     "when answer is not present" - {
 
-      "must return a summary list row with a link to enter if transaction is linked" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -83,31 +93,14 @@ class PurchaserEligibleToClaimReliefSummarySpec extends SpecBase {
 
           val result = PurchaserEligibleToClaimReliefSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.purchaserEligibleToClaimRelief.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
-      }
-    }
-
-    "must use CheckMode for the change link" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        implicit val msgs: Messages = messages(application)
-
-        val userAnswers = emptyUserAnswers
-          .set(PurchaserEligibleToClaimReliefPage, true).success.value
-
-        val result = PurchaserEligibleToClaimReliefSummary.row(userAnswers)
-
-        result.actions.get.items.head.href mustEqual controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(CheckMode).url
       }
     }
   }

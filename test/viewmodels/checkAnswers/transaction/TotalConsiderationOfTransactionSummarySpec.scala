@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.transaction.TotalConsiderationOfTransactionPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class TotalConsiderationOfTransactionSummarySpec extends SpecBase {
 
@@ -41,7 +41,12 @@ class TotalConsiderationOfTransactionSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TotalConsiderationOfTransactionPage, value).success.value
 
-          val result = TotalConsiderationOfTransactionSummary.row(userAnswers)
+          val row = TotalConsiderationOfTransactionSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.totalConsiderationOfTransaction.checkYourAnswersLabel")
 
@@ -58,7 +63,7 @@ class TotalConsiderationOfTransactionSummarySpec extends SpecBase {
 
     "when the total consideration of transaction is not present" - {
 
-      "must return a summary list row with a missing link" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -67,14 +72,13 @@ class TotalConsiderationOfTransactionSummarySpec extends SpecBase {
 
           val result = TotalConsiderationOfTransactionSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.totalConsiderationOfTransaction.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.totalConsiderationOfTransaction.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

@@ -22,51 +22,38 @@ import pages.transaction.TransactionFormsOfConsiderationPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object TransactionFormsOfConsiderationSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(CheckMode)
+    val label = messages("transaction.transactionFormsOfConsideration.checkYourAnswersLabel")
 
-    val changeRoute = controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(CheckMode).url
-    val checkYourAnswersLabelMsg = messages("transaction.transactionFormsOfConsideration.checkYourAnswersLabel")
-    val displayMissingMsgContent = messages("transaction.transactionFormsOfConsideration.missing")
-    
-    answers.get(TransactionFormsOfConsiderationPage).map {
-      answersObject =>
-
-        val selectedItems = TransactionFormsOfConsiderationAnswers.toSet(answersObject).toSeq
-          .map(_.toString)
-
-        val value = ValueViewModel(
-          HtmlContent(
-            selectedItems.map {
-              answer => HtmlFormat.escape(messages(s"transaction.transactionFormsOfConsideration.$answer")).toString
-            }
-            .mkString(",<br>")
-          )
+    answers.get(TransactionFormsOfConsiderationPage).map { answersObject =>
+      val selectedItems = TransactionFormsOfConsiderationAnswers.toSet(answersObject).toSeq.map(_.toString)
+      val value = ValueViewModel(
+        HtmlContent(
+          selectedItems.map { answer =>
+            HtmlFormat.escape(messages(s"transaction.transactionFormsOfConsideration.$answer")).toString
+          }.mkString(",<br>")
         )
-
+      )
+      Row(
         SummaryListRowViewModel(
-          key     = checkYourAnswersLabelMsg,
+          key     = label,
           value   = value,
           actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("transaction.transactionFormsOfConsideration.change.hidden"))
           )
         )
+      )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">$displayMissingMsgContent</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = checkYourAnswersLabelMsg,
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

@@ -17,49 +17,37 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.ReasonForReliefPage
+import pages.transaction.{PurchaserEligibleToClaimReliefPage, ReasonForReliefPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object ReasonForReliefSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
+    val changeRoute = controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode)
+    val label = messages("transaction.ReasonForRelief.checkYourAnswersLabel")
 
-    val changeRoute               = controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
-    val checkYourAnswersLabelMsg  = messages("transaction.ReasonForRelief.checkYourAnswersLabel")
-    val displayMissingMsgContent  = messages("transaction.ReasonForRelief.missing")
-
-    answers.get(ReasonForReliefPage).map {
-      answer =>
-
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"transaction.ReasonForRelief.${answer.toString}"))
+    (answers.get(ReasonForReliefPage), answers.get(PurchaserEligibleToClaimReliefPage)) match {
+      case (Some(reason), _) =>
+        Some(Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(HtmlContent(HtmlFormat.escape(messages(s"transaction.ReasonForRelief.${reason.toString}")))),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("transaction.ReasonForRelief.change.hidden"))
+            )
           )
-        )
-
-        SummaryListRowViewModel(
-          key     = checkYourAnswersLabelMsg,
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("transaction.ReasonForRelief.change.hidden"))
-          )
-        )
-    }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">$displayMissingMsgContent</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key   = checkYourAnswersLabelMsg,
-        value = value
-      )
+        ))
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+      case _ =>
+        None
     }
+  }
 }

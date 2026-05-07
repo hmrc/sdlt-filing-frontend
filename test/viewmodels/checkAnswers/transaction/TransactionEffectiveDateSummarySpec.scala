@@ -21,57 +21,65 @@ import models.CheckMode
 import pages.transaction.TransactionEffectiveDatePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import java.time.LocalDate
 
-class TransactionEffectiveDateSummarySpec extends SpecBase{
+class TransactionEffectiveDateSummarySpec extends SpecBase {
 
   "TransactionEffectiveDateSummary" - {
-    "must return a summary list row with the transaction effective date" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+    "when the transaction effective date is present" - {
 
-        val userAnswers = emptyUserAnswers
-          .set(TransactionEffectiveDatePage, LocalDate.of(2016, 10, 26)).success.value
+      "must return a summary list row with the transaction effective date" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val result = TransactionEffectiveDateSummary.row(Some(userAnswers))
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionEffectiveDate.checkYourAnswersLabel")
+          val userAnswers = emptyUserAnswers
+            .set(TransactionEffectiveDatePage, LocalDate.of(2016, 10, 26)).success.value
 
-        val htmlContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-        htmlContent mustEqual msgs("26 October 2016")
+          val row = TransactionEffectiveDateSummary.row(userAnswers)
 
-        result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
-        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionEffectiveDate.change.hidden")
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
+
+          result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionEffectiveDate.checkYourAnswersLabel")
+
+          val htmlContent = result.value.content.asInstanceOf[Text].asHtml.toString()
+          htmlContent mustEqual msgs("26 October 2016")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionEffectiveDate.change.hidden")
+        }
       }
     }
 
-    "must return a summary list row with a link to enter transaction effective date when userAnswers is empty" in {
+    "when the transaction effective date is not present" - {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val userAnswers = emptyUserAnswers
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        val result = TransactionEffectiveDateSummary.row(Some(userAnswers))
+          val result = TransactionEffectiveDateSummary.row(emptyUserAnswers)
 
-        result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionEffectiveDate.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode)
 
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-        htmlContent must include("govuk-link")
-        htmlContent must include(controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("transaction.transactionEffectiveDate.missing"))
-        result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
       }
     }
-
   }
-
 }

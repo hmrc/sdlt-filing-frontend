@@ -16,45 +16,39 @@
 
 package viewmodels.checkAnswers.transaction
 
+import models.transaction.ReasonForRelief
 import models.{CheckMode, UserAnswers}
-import pages.transaction.AddRegisteredCharityNumberPage
+import pages.transaction.{AddRegisteredCharityNumberPage, ReasonForReliefPage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object AddRegisteredCharityNumberSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
+    val changeRoute = controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(CheckMode)
+    val label = messages("transaction.addRegisteredCharityNumber.checkYourAnswersLabel")
 
-    val changeRoute = controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(CheckMode).url
-    val checkYourAnswersLabelMsg = messages("transaction.addRegisteredCharityNumber.checkYourAnswersLabel")
-    val displayMissingMsgContent = messages("transaction.addRegisteredCharityNumber.missing")
-
-    answers.get(AddRegisteredCharityNumberPage).map {
-      answer =>
-
+    (answers.get(AddRegisteredCharityNumberPage), answers.get(ReasonForReliefPage)) match {
+      case (Some(answer), _) =>
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key = "transaction.addRegisteredCharityNumber.checkYourAnswersLabel",
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("transaction.addRegisteredCharityNumber.change.hidden"))
+        Some(Row(
+          SummaryListRowViewModel(
+            key   = label,
+            value = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("transaction.addRegisteredCharityNumber.change.hidden"))
+            )
           )
-        )
-    }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">$displayMissingMsgContent</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = checkYourAnswersLabelMsg,
-        value = value
-      )
+        ))
+      case (None, Some(ReasonForRelief.CharitiesRelief)) =>
+        Some(Missing(changeRoute))
+      case _ =>
+        None
     }
+  }
 }
