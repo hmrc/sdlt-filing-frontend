@@ -105,7 +105,7 @@ class TransactionAddressSummarySpec extends SpecBase {
 
     "when address data is not present" - {
 
-      "must return a summary list row with a missing link" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
